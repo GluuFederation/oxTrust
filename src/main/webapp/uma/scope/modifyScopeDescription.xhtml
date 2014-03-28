@@ -1,0 +1,115 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <s:div id="formArea">
+            <h:outputStylesheet>
+                .uploadFile {
+                     width: 300px;        
+                }
+            </h:outputStylesheet>
+
+            <ui:param name="_scopeDescription" value="#{updateScopeDescriptionAction.scopeDescription}" />
+
+            <h:form>
+                <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
+                        <ui:define name="label">Name</ui:define>
+                        <rich:inplaceInput value="#{_scopeDescription.displayName}" defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="180" required="true" id="displayNameId" />
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="type">
+                        <ui:define name="label">Type</ui:define>
+                        <h:selectOneMenu value="#{_scopeDescription.type}" id="typeId">
+                            <s:selectItems value="#{organizationService.internalExternalTypes}" var="_type" label="#{_type.displayName}"
+                                noSelectionLabel="Type"/>
+                            <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                            <a4j:ajax event="change" render="internalTypeGroupId, externalTypeGroupId" execute="@this" limitRender="true"/>
+                        </h:selectOneMenu>
+                    </s:decorate>
+
+                    <h:panelGroup id="internalTypeGroupId">
+                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scope" rendered="#{_scopeDescription.type.value eq 'internal'}">
+                            <ui:define name="label">Id</ui:define>
+                            <rich:inplaceInput value="#{_scopeDescription.id}" defaultLabel="Click to enter Scope Name" maxlength="30" inputWidth="180" required="true" id="scope" />
+                        </s:decorate>
+    
+                        <s:decorate template="/WEB-INF/incl/layout/view.xhtml" rendered="#{_scopeDescription.type.value eq 'internal'}">
+                            <ui:define name="label">Icon</ui:define>
+    
+                            <h:panelGrid id="iconPanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <rich:fileUpload id="upload" fileUploadListener="#{updateScopeDescriptionAction.setIconImage}" acceptedTypes="jpg, jpeg, gif, png, bmp"
+                                    ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px" styleClass="uploadFile"
+                                    rendered="#{not updateScopeDescriptionAction.iconExist}">
+                                    <a4j:ajax event="uploadcomplete" execute="@none" render="iconPanelId" />
+                                </rich:fileUpload>
+                                <h:panelGrid columns="1" width="100%" cellspacing="0" cellpadding="0" border="0" columnClasses="alignCenter" rendered="#{updateScopeDescriptionAction.iconExist}">
+                                    <h:panelGroup layout="block">
+                                        <s:graphicImage value="#{updateScopeDescriptionAction.iconImageThumbData}" fileName="#{updateScopeDescriptionAction.iconImageSourceName}" />
+                                    </h:panelGroup>
+    
+                                    <richext:spacer height="8" />
+    
+                                    <a4j:commandLink value="Remove" action="#{updateScopeDescriptionAction.removeIconImage()}" execute="@this" render="iconPanelId" eventsQueue="scopeDescriptionQueue" />
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </s:decorate>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="externalTypeGroupId">
+                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
+                            <ui:define name="label">Icon Uri</ui:define>
+                            <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Icon Url" maxlength="60" inputWidth="180" required="true" id="iconUrlId" />
+                        </s:decorate>
+
+                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
+                            <ui:define name="label">Url</ui:define>
+                            <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Url" maxlength="60" inputWidth="180" required="true" id="urlId" />
+                        </s:decorate>
+                    </h:panelGroup>
+
+                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="clients">
+                        <ui:define name="label">Clients</ui:define>
+                        <h:panelGroup id="selectedClientsId">
+                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <a4j:repeat value="#{updateScopeDescriptionAction.clients}" rowKeyVar="_clientIdx" var="_client">
+                                    <h:outputText value="#{_client.displayName}" />
+                                    <h:outputText value="&#160;" />
+                                    <a4j:commandLink action="#{updateScopeDescriptionAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
+                                        <h:graphicImage value="/img/remove.gif" />
+                                    </a4j:commandLink>
+                                    <br />
+                                </a4j:repeat>
+                                <richext:spacer height="8" />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+                        <h:panelGroup>
+                            <a4j:commandButton value="Add Client" onclick="#{rich:component('client:selectEntityModalPanel')}.show();" />
+                        </h:panelGroup>
+                    </s:decorate>
+                </h:panelGrid>
+
+                <s:div id="updateButtons">
+                    <h:commandButton value="#{updateScopeDescriptionAction.update ? 'Update' : 'Add'}" action="#{updateScopeDescriptionAction.save}" />
+                    <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true"
+                        rendered="#{updateScopeDescriptionAction.update}" />
+                    <s:button value="Cancel" action="#{updateScopeDescriptionAction.cancel}" immediate="true" propagation="end" />
+                </s:div>
+            </h:form>
+
+            <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeDescriptionAction.scopeDescription.id}" deleteMethod="#{updateScopeDescriptionAction.delete}" />
+
+            <ox:selectSelectableEntityDialog id="client" searchPattern="#{updateScopeDescriptionAction.searchAvailableClientPattern}" searchMethod="#{updateScopeDescriptionAction.searchAvailableClients}"
+                searchResult="#{updateScopeDescriptionAction.availableClients}" acceptMethod="#{updateScopeDescriptionAction.acceptSelectClients}" cancelMethod="#{updateScopeDescriptionAction.cancelSelectClients}"
+                render="selectedClientsId" nameProperty="entity.inum" displayNameProperty="entity.displayName" label="Add Client" />
+        </s:div>
+    </ui:define>
+
+</ui:composition>

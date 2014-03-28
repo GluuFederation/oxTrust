@@ -1,0 +1,70 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <div id="formArea">
+            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <s:link view="/trustmanager/addTrustRelationship.xhtml" styleClass="addAttribute" value="Add Relationship" propagation="none" />
+
+                <richext:spacer height="16" />
+                <a4j:region>
+                    <h:form>
+                        <a4j:poll id="poll" interval="30000" render="poll, relationshipstable" action="#{trustRelationshipInventoryAction.search()}" enabled="true" />
+                    </h:form>
+                </a4j:region>
+
+                <h:form id="trustRelationsshipList">
+                    <s:fragment rendered="#{trustRelationshipInventoryAction.trustedSpList.size eq 0}">
+                        <richext:spacer height="30" />
+                        <h:outputText value="No Trust Relationships Found" />
+                    </s:fragment>
+
+                    <rich:dataTable sortMode="single" id="relationshipstable" value="#{trustRelationshipInventoryAction.trustedSpList}" rows="20" styleClass="data sortable" var="tsps"
+                        rendered="#{trustRelationshipInventoryAction.trustedSpList.size gt 0}">
+                        <rich:column sortBy="#{tsps.displayName}">
+                            <f:facet name="header">Community</f:facet>
+                            <s:link view="/trustmanager/updateTrustRelationship.xhtml" value="#{tsps.displayName}" propagation="none">
+                                <f:param name="inum" value="#{tsps.inum}" />
+                            </s:link>
+                        </rich:column>
+                        <rich:column sortBy="#{tsps.description}">
+                            <f:facet name="header">Description</f:facet>
+                            <h:outputText value="#{tsps.description}" />
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">Attributes Published</f:facet>
+                            <ox:attributeList value="#{tsps.releasedCustomAttributes}" />
+                        </rich:column>
+                        <rich:column sortBy="#{tsps.isFederation()}">
+                            <f:facet name="header">Relationship type</f:facet>
+                            <h:outputText
+                                value="#{tsps.isFederation() ? 'federation' : (tsps.containerFederation ne null ? 'site federated with '.concat(tsps.containerFederation.displayName) : 'site')}" />
+                        </rich:column>
+                        <rich:column sortBy="#{tsps.validationStatus.value}">
+                            <f:facet name="header">Validation Status</f:facet>
+                            <h:outputText value="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}" />
+                        </rich:column>
+                        <rich:column sortBy="#{tsps.status.value}">
+                            <f:facet name="header">Status</f:facet>
+                            <h:outputText value="#{tsps.status.displayName}" />
+                        </rich:column>
+                        <f:facet name="footer">
+                            <rich:dataScroller renderIfSinglePage="false" rendered="#{trustRelationshipInventoryAction.trustedSpList.size > 0}" for="relationshipstable" maxPages="10"
+                                stepControls="auto" align="left" />
+                        </f:facet>
+                    </rich:dataTable>
+                </h:form>
+            </h:panelGrid>
+        </div>
+    </ui:define>
+</ui:composition>

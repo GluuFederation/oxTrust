@@ -1,0 +1,82 @@
+body{
+	font-family:'#{richSkin.generalFamilyFont}';
+	color:'#{richSkin.generalTextColor}';
+}
+h1{
+	font-family:'#{richSkin.generalFamilyFont}';
+	color:'#{richSkin.tabDisabledTextColor}';
+}
+a:active, a:link, a:visited{
+	color:'#{richSkin.generalLinkColor}';
+}
+a:hover{
+	color:'#{richSkin.hoverLinkColor}';
+}
+input[type=text], input[type=password], textarea, select{
+	background-color:'#{richSkin.controlBackgroundColor}';
+	color:'#{richSkin.controlTextColor}';
+	background-position:left top;
+	background-repeat:repeat-x;
+	background-image:"url(#{resource['org.richfaces.renderkit.html.images.SliderFieldGradient']})";
+	border:1px solid;
+	border-color:'#{richSkin.tableBorderColor}';
+}
+select{
+	background-color:transparent;
+	background-image:"url(#{resource['org.richfaces.renderkit.html.images.SliderFieldGradient']})";
+}
+option{
+	background-color:'#{richSkin.generalBackgroundColor}';
+}
+select[multiple]{
+	background-color:'#{richSkin.controlBackgroundColor}';
+}
+select[multiple] option{
+	background-color:transparent;
+}
+input[type=submit], input[type=button]{
+	padding:1px 4px;
+	background-image:"url(#{resource['org.richfaces.renderkit.html.GradientA']})";
+	border:1px solid;
+	border-color:'#{richSkin.headerBackgroundColor}';
+	color:'#{richSkin.headerTextColor}';
+	font-weight:bold;
+}
+input[type=submit][disabled], input[type=button][disabled]{
+	opacity:0.33;
+}
+* html input[type=submit], * html input[type=button], *+html input[type=submit], *+html input[type=button]{
+	border:0;
+	font-size:11px;
+}
+.rich-table-subheadercell{
+	background-image:"url(#{resource['org.richfaces.renderkit.images.TabGradientB']})";
+}
+.rich-toolbar a:link, .rich-toolbar a:visited, .rich-toolbar a:active, .rich-toolbar a:hover{
+	color:'#{richSkin.headerTextColor}';
+}
+.rich-toolbar a:hover{
+	color:'#{richSkin.generalTextColor}';
+}
+.rich-toolbar .rich-menu-item, .rich-toolbar .rich-menu-item a, .rich-toolbar .rich-menu-item a:hover, .rich-toolbar .rich-menu-item a:visited{
+	color:'#{richSkin.generalTextColor}';
+}
+.rich-table-subheadercell a:hover{
+	color:'#{richSkin.calendarHolidaysTextColor}';
+}
+input[type=text][class*=rich-combobox-button-icon]{
+	background-image:"url(#{resource['org.richfaces.renderkit.html.images.ComboBoxArrowImage']})";
+	background-color:transparent;
+}
+input[type=text][class~=rich-combobox-button-icon-disabled]{
+	background-image:"url(#{resource['org.richfaces.renderkit.html.images.ComboBoxArrowImageDisable']})";
+	background-color:transparent;
+}
+input[type=text][class*=rich-combobox-button-background]{
+	background-image:"url(#{resource['org.richfaces.renderkit.html.images.SpinnerButtonGradient']})";
+	background-color:'#{richSkin.tabBackgroundColor}';
+}
+input[type=text][class~=rich-combobox-button-pressed-background]{
+	background-image:"url(#{resource['org.richfaces.renderkit.html.images.ComboBoxButtonPressGradient']})";
+	background-color:'#{richSkin.tabBackgroundColor}';
+}

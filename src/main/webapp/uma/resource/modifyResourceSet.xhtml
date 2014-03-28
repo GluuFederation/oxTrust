@@ -1,0 +1,116 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <s:div id="formArea">
+            <h:outputStylesheet>
+                .uploadFile {
+                     width: 300px;        
+                }
+            </h:outputStylesheet>
+
+            <ui:param name="_resourceSet" value="#{updateResourceSetAction.resourceSet}" />
+
+            <h:form>
+                <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="resourceSet" rendered="#{updateResourceSetAction.update}">
+                        <ui:define name="label">Resource Set</ui:define>
+                        <h:outputText value="#{_resourceSet.inum}" />
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
+                        <ui:define name="label">Name</ui:define>
+                        <rich:inplaceInput value="#{_resourceSet.name}" defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="180" required="true" id="displayNameId" />
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                        <ui:define name="label">Icon Uri</ui:define>
+                        <rich:inplaceInput value="#{_resourceSet.iconUri}" defaultLabel="Click to enter Icon Url" maxlength="60" inputWidth="180" required="true" id="iconUrlId" />
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="scopes">
+                        <ui:define name="label">Scopes</ui:define>
+                        <h:panelGroup id="selectedScopesId">
+                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <a4j:repeat value="#{updateResourceSetAction.scopes}" rowKeyVar="_scopeIdx" var="_scope">
+                                    <h:outputText value="#{_scope.displayName}" />
+                                    <h:outputText value="&#160;" />
+                                    <a4j:commandLink action="#{updateResourceSetAction.removeScope(_scope.inum)}" render="selectedScopesId" eventsQueue="resourceSetQueue">
+                                        <h:graphicImage value="/img/remove.gif" />
+                                    </a4j:commandLink>
+                                    <br />
+                                </a4j:repeat>
+                                <richext:spacer height="8" />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="resources">
+                        <ui:define name="label">Resources</ui:define>
+                        <h:panelGroup id="selectedResourcesId">
+                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <a4j:repeat value="#{updateResourceSetAction.resources}" rowKeyVar="_resourceIdx" var="_resource">
+                                    <h:outputText value="#{_resource}" />
+                                    <h:outputText value="&#160;" />
+                                    <a4j:commandLink action="#{updateResourceSetAction.removeResource(_resource)}" render="selectedResourcesId" eventsQueue="resourceSetQueue">
+                                        <h:graphicImage value="/img/remove.gif" />
+                                    </a4j:commandLink>
+                                    <br />
+                                </a4j:repeat>
+                                <richext:spacer height="8" />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="clients">
+                        <ui:define name="label">Clients</ui:define>
+                        <h:panelGroup id="selectedClientsId">
+                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <a4j:repeat value="#{updateResourceSetAction.clients}" rowKeyVar="_clientIdx" var="_client">
+                                    <h:outputText value="#{_client.displayName}" />
+                                    <h:outputText value="&#160;" />
+                                    <a4j:commandLink action="#{updateResourceSetAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
+                                        <h:graphicImage value="/img/remove.gif" />
+                                    </a4j:commandLink>
+                                    <br />
+                                </a4j:repeat>
+                                <richext:spacer height="8" />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+                        <h:panelGroup>
+                            <a4j:commandButton value="Add Resource" onclick="#{rich:component('resource:inputText')}.show();" />
+                            <a4j:commandButton value="Add Scope" onclick="#{rich:component('scope:selectEntityModalPanel')}.show();" />
+                            <a4j:commandButton value="Add Client" onclick="#{rich:component('client:selectEntityModalPanel')}.show();" />
+                        </h:panelGroup>
+                    </s:decorate>
+                </h:panelGrid>
+
+                <s:div id="updateButtons">
+                    <h:commandButton value="#{updateResourceSetAction.update ? 'Update' : 'Add'}" action="#{updateResourceSetAction.save}" />
+                    <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{updateResourceSetAction.update}" />
+                    <s:button value="Cancel" action="#{updateResourceSetAction.cancel}" immediate="true" propagation="end" />
+                </s:div>
+            </h:form>
+        </s:div>
+
+        <ox:inputTextDialog id="resource" label="Add Resource" inputLabel="Resource" text="#{updateResourceSetAction.newResource}" acceptMethod="#{updateResourceSetAction.acceptResource}"
+            cancelMethod="#{updateResourceSetAction.cancelResource}" maxLength="256" inputWidth="80" dialogWidth="600" render="selectedResourcesId" queue="resourceSetQueue" />
+
+        <ox:selectSelectableEntityDialog id="scope" searchPattern="#{updateResourceSetAction.searchAvailableScopePattern}" searchMethod="#{updateResourceSetAction.searchAvailableScopes}"
+            searchResult="#{updateResourceSetAction.availableScopes}" acceptMethod="#{updateResourceSetAction.acceptSelectScopes}" cancelMethod="#{updateResourceSetAction.cancelSelectScopes}"
+            render="selectedScopesId" nameProperty="entity.id" displayNameProperty="entity.displayName" label="Add Scope" />
+
+        <ox:selectSelectableEntityDialog id="client" searchPattern="#{updateResourceSetAction.searchAvailableClientPattern}" searchMethod="#{updateResourceSetAction.searchAvailableClients}"
+            searchResult="#{updateResourceSetAction.availableClients}" acceptMethod="#{updateResourceSetAction.acceptSelectClients}" cancelMethod="#{updateResourceSetAction.cancelSelectClients}"
+            render="selectedClientsId" nameProperty="entity.inum" displayNameProperty="entity.displayName" label="Add Client" />
+
+        <ox:acceptRemovalDialog id="deleteConfirmation" subject="resource set" value="#{updateResourceSetAction.resourceSet.id}" deleteMethod="#{updateResourceSetAction.delete}" />
+    </ui:define>
+
+</ui:composition>

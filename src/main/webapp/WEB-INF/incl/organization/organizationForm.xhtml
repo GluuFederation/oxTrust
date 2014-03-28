@@ -1,0 +1,417 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions">
+
+	<h:outputStylesheet>
+        .addConfig {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .removeConfig {
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .half{
+			width: 50%;
+			height: 4px;
+			border: 1px solid #999;
+			vertical-align: top;
+		}
+		
+		.applianceSheet{
+			border: 1px solid #999;
+		}
+    </h:outputStylesheet>
+
+	<h:outputStylesheet>
+            #colorSelector div {
+                position: relative;
+                width: 36px;
+                height: 36px;
+                background: url(../img/colorpicker/select2.png);
+            }
+        </h:outputStylesheet>
+	<h:outputScript name="/js/colorpicker.js" />
+	<h:outputScript name="/js/jquery.cluetip.js" />
+	<h:outputStylesheet name="/stylesheet/colorpicker.css" />
+
+
+
+	<h:outputScript>
+	
+	function loadColorPicker(){
+        $('#colorSelector').ColorPicker({
+            color: '#{gluufn:getColor(_organization.themeColor, "00ff00")}',
+            onSubmit: function(hsb, hex, rgb, el) {
+                $(el).val(hex);
+                $(el).ColorPickerHide();
+            },
+            onChange: function (hsb, hex, rgb) {
+                $('#colorSelector div').css('backgroundColor', '#' + hex);
+                $('input[id*=themeColor]').val(hex);
+            }
+        });
+    }
+    
+    function addToBodyOnload(oFunction) {
+	    var existingOnload = window.onload;
+	    if (typeof window.onload != 'function'){
+	    	window.onload = oFunction;
+	    }else{
+	    	window.onload = function () { oFunction(); existingOnload(); }
+	    } 
+	    
+	}
+
+	addToBodyOnload(loadColorPicker);
+    </h:outputScript>
+
+	<ox:changePasswordDialog id="appliancePassword" label="Change Appliance Password" password="#{appliancePasswordAction.newPassword}"
+		setPasswordMethod="#{appliancePasswordAction.update}" />
+
+	<h:form id="organizationForm">
+		<!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
+		<input type='hidden' name='cid' value='#{conversation.id}' />
+
+		<rich:collapsiblePanel switchType="client" opened="false" header="Configure cluster partners" id="clusterManagement" rendered="true">
+			<a4j:region>
+				<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+					<h:panelGrid columns="2" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+						<h:selectOneMenu value="#{updateOrganizationAction.clusterType}" required="true" id="clusterTypeSelectId">
+							<f:selectItem id="clusterDisabledId" itemLabel="Disabled" itemValue="Disabled" />
+							<f:selectItem id="clusterMemcachedId" itemLabel="Memcached" itemValue="Memcached" />
+							<a4j:ajax event="change" render="clusterManagement" limitRender="true" execute="@this" />
+						</h:selectOneMenu>
+						<h:panelGroup id="MemcachedGroupId"
+							rendered="#{updateOrganizationAction.clusterType ne 'Disabled' and not empty updateOrganizationAction.clusterType}">
+							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="name">
+								<ui:define name="label">Memcached server address</ui:define>
+								<h:inputText value="#{updateOrganizationAction.memcachedServerAddress}" required="true" />
+							</s:decorate>
+							<!--                <ox:stringPropertiesList label="Add cluster partner" labelAdd="cluster partner" maxItems="4" 
+			                	properties="#{updateOrganizationAction.clusterPartners}" 
+			                	propertiesAction="#{updateOrganizationAction}" 
+			                	required="false"/> -->
+						</h:panelGroup>
+					</h:panelGrid>
+					<a4j:region>
+						<h:panelGrid columns="2" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="half,half"
+							rendered="#{updateOrganizationAction.clusterType ne 'Disabled' and not empty updateOrganizationAction.clusterType}">
+							<rich:panel style="height: 100%;">
+								<f:facet name="header">
+									<h:outputText value="Standalone Servers" />
+								</f:facet>
+								<rich:dropTarget acceptedTypes="appliance" dropValue="Standalone" dropListener="#{updateOrganizationAction.clusterUpdate}"
+									render="clustertable, src" />
+								<h:dataTable id="src" columns="1" value="#{updateOrganizationAction.appliances}" var="appliance">
+									<h:column>
+										<a4j:outputPanel layout="block" styleClass="rf-ind-drag applianceSheet">
+											<rich:dragSource type="appliance" dragValue="#{appliance}" />
+											<h:outputText value="Display Name: #{appliance.displayName}"></h:outputText>
+											<br />
+											<h:outputText value="Iname: #{appliance.iname}"></h:outputText>
+											<br />
+											<h:outputText value="Inum: #{appliance.inum}"></h:outputText>
+											<br />
+											<h:outputText value="Description: #{appliance.description}"></h:outputText>
+										</a4j:outputPanel>
+									</h:column>
+								</h:dataTable>
+							</rich:panel>
+							<rich:panel style="height: 100%;">
+								<f:facet name="header">
+									<h:outputText value="Cluster" />
+								</f:facet>
+								<rich:dropTarget acceptedTypes="appliance" dropValue="Cluster" dropListener="#{updateOrganizationAction.clusterUpdate}"
+									render="clustertable, src" />
+								<h:dataTable id="clustertable" columns="1" value="#{updateOrganizationAction.clusterPartners}" var="appliance">
+									<h:column>
+										<a4j:outputPanel layout="block" styleClass="rf-ind-drag applianceSheet">
+											<rich:dragSource type="appliance" dragValue="#{appliance}"
+												rendered="#{not (appliance.inum eq updateOrganizationAction.appliance.inum)}" />
+											<h:outputText value="Display Name: #{appliance.displayName}"></h:outputText>
+											<br />
+											<h:outputText value="Iname: #{appliance.iname}"></h:outputText>
+											<br />
+											<h:outputText value="Inum: #{appliance.inum}"></h:outputText>
+											<br />
+											<h:outputText value="Description: #{appliance.description}"></h:outputText>
+										</a4j:outputPanel>
+									</h:column>
+								</h:dataTable>
+							</rich:panel>
+						</h:panelGrid>
+					</a4j:region>
+				</h:panelGrid>
+				<a4j:commandLink value="Add new cluster" eventsQueue="trustQueue" action="#{updateOrganizationAction.addNewCluster()}"
+					render="clusterManagement" limitRender="true" />
+			</a4j:region>
+		</rich:collapsiblePanel>
+
+		<rich:collapsiblePanel switchType="client" opened="false" header="System configuration">
+			<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="whitePages">
+					<ui:define name="label">White Pages</ui:define>
+					<h:selectOneMenu value="#{_appliance.whitePagesEnabled}" id="whitePagesId">
+						<s:selectItems value="#{organizationService.booleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="federationHosting">
+					<ui:define name="label">Federation Hosting</ui:define>
+					<h:selectOneMenu value="#{_appliance.federationHostingEnabled}" id="whitePagesId">
+						<s:selectItems value="#{organizationService.booleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="vdsCacheRefreshState">
+					<ui:define name="label">Cache Refresh</ui:define>
+					<h:selectOneMenu value="#{_appliance.vdsCacheRefreshEnabled}" id="vdsCacheRefreshStateId">
+						<s:selectItems value="#{organizationService.booleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scimEnabledState">
+					<ui:define name="label">SCIM Support</ui:define>
+					<h:selectOneMenu value="#{_appliance.scimEnabled}" id="scimEnabledStateId">
+						<s:selectItems value="#{organizationService.booleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="dnsServer">
+					<ui:define name="label">DNS Server(s)</ui:define>
+					<h:inputText title="Multiple addresses can be specified using comma (,)" value="#{_appliance.applianceDnsServer}" size="100" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="maxLogSize">
+					<ui:define name="label">Maximum Log Size (MB)</ui:define>
+					<h:inputText value="#{_appliance.maxLogSize}" required="true" size="10" />
+				</s:decorate>
+			</h:panelGrid>
+		</rich:collapsiblePanel>
+
+		<rich:collapsiblePanel switchType="client" opened="false" header="Manage Email Addresses" id="emailManagement" rendered="true">
+			<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Email for Centreon</ui:define>
+					<h:inputText value="#{_appliance.centreonEmail}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Email for Jira</ui:define>
+					<h:inputText value="#{_appliance.jiraEmail}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Email for Billing</ui:define>
+					<h:inputText value="#{_appliance.billingEmail}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Email for Privacy</ui:define>
+					<h:inputText value="#{_appliance.privacyEmail}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Email for SVN</ui:define>
+					<h:inputText value="#{_appliance.svnEmail}" />
+				</s:decorate>
+			</h:panelGrid>
+		</rich:collapsiblePanel>
+
+		<rich:collapsiblePanel switchType="client" opened="false" header="SMTP Server Configuration" id="smtpServerConfiguration" rendered="true">
+			<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">SMTP Host</ui:define>
+					<h:inputText value="#{_appliance.smtpHost}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">From Name</ui:define>
+					<h:inputText value="#{_appliance.smtpFromName}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">From Email Address</ui:define>
+					<h:inputText value="#{_appliance.smtpFromEmailAddress}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Requires Authentication</ui:define>
+					<h:selectBooleanCheckbox value="#{_appliance.requiresAuthentication}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">SMTP User Name</ui:define>
+					<h:inputText value="#{_appliance.smtpUserName}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">SMTP Password</ui:define>
+					<h:inputSecret value="#{_appliance.smtpPasswordStr}" redisplay="true" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Requires SSL</ui:define>
+					<h:selectBooleanCheckbox value="#{_appliance.requiresSsl}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">SMTP Port</ui:define>
+					<h:inputText value="#{_appliance.smtpPort}" />
+				</s:decorate>
+				<h:commandButton value="Test Configuration" action="#{updateOrganizationAction.verifySmtpConfiguration}" />
+			</h:panelGrid>
+		</rich:collapsiblePanel>
+
+		<rich:collapsiblePanel switchType="client" opened="false" header="Configuration">
+			<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="inum">
+					<ui:define name="label">Inum</ui:define>
+					<h:outputText value="#{_organization.inum}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="iname">
+					<ui:define name="label">Iname</ui:define>
+					<h:outputText value="#{_organization.iname}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="buildDate">
+					<ui:define name="label">Build Date</ui:define>
+					<h:outputText value="#{_organizationAction.buildDate}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="buildNumber">
+					<ui:define name="label">Build Number</ui:define>
+					<h:outputText value="#{_organizationAction.buildNumber}" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="title">
+					<ui:define name="label">Title</ui:define>
+					<h:inputText value="#{_organization.title}" size="100" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
+					<ui:define name="label">Display name</ui:define>
+					<h:inputText value="#{_organization.displayName}" size="100" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="shortName">
+					<ui:define name="label">Short name</ui:define>
+					<h:inputText value="#{_organization.shortName}" size="100" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
+					<ui:define name="label">Description</ui:define>
+					<h:inputTextarea value="#{_organization.description}" cols="100" rows="3" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="loginPageCustomMessage">
+					<ui:define name="label">Login page message</ui:define>
+					<h:inputTextarea value="#{_organizationAction.loginPageCustomMessage}" cols="100" rows="3" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="welcomeTitleText">
+					<ui:define name="label">Welcome Title Text</ui:define>
+					<h:inputTextarea value="#{_organizationAction.welcomeTitleText}" cols="100" rows="3" />
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="welcomePageCustomMessage">
+					<ui:define name="label">Welcome Page Message</ui:define>
+					<h:inputTextarea value="#{_organizationAction.welcomePageCustomMessage}" cols="100" rows="3" />
+				</s:decorate>
+
+				<ui:param name="_ownerGroup" value="#{gluufn:getDisplayNameEntry(_organization.ownerGroup)}" />
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="ownerGroup">
+					<ui:define name="label">Owner group</ui:define>
+					<s:link view="/group/updateGroup.xhtml" value="#{_ownerGroup.displayName}" propagation="none">
+						<f:param name="inum" value="#{_ownerGroup.inum}" />
+					</s:link>
+				</s:decorate>
+
+				<ui:param name="_managerGroup" value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="managerGroup">
+					<ui:define name="label">Manager group</ui:define>
+					<s:link view="/group/updateGroup.xhtml" value="#{_managerGroup.displayName}" propagation="none">
+						<f:param name="inum" value="#{_managerGroup.inum}" />
+					</s:link>
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Organization Logo</ui:define>
+					<h:panelGrid id="custLogoImagePanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+						<rich:fileUpload id="custUploadId" fileUploadListener="#{_organizationAction.setCustLogoImage}"
+							acceptedTypes="jpg, jpeg, gif, png, bmp" ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+							maxFilesQuantity="1" immediateUpload="true" listHeight="60px" styleClass="uploadFile"
+							rendered="#{not _organizationAction.custLogoImageExist}">
+							<a4j:ajax event="uploadcomplete" execute="@none" render="custLogoImagePanelId" />
+						</rich:fileUpload>
+
+						<h:panelGrid columns="1" width="100%" cellspacing="0" cellpadding="0" border="0" columnClasses="alignCenter"
+							rendered="#{_organization.logoImage ne null}">
+							<h:panelGroup layout="block">
+								<s:graphicImage value="#{_organizationAction.logoImageThumbData}" fileName="#{_organizationAction.logoImageSourceName}" />
+							</h:panelGroup>
+							<richext:spacer height="8" />
+							<a4j:commandLink value="Remove" action="#{_organizationAction.removeLogoImage()}" render="custLogoImagePanelId"
+								eventsQueue="organizationQueue" />
+						</h:panelGrid>
+					</h:panelGrid>
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Organization Favicon</ui:define>
+					<h:panelGrid id="custFaviconImagePanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+						<rich:fileUpload id="custFaviconUploadId" fileUploadListener="#{_organizationAction.setFaviconImage}" acceptedTypes="ico"
+							ontyperejected="alert('Only ICO files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
+							styleClass="uploadFile" rendered="#{not _organizationAction.faviconImageExist}">
+							<a4j:ajax event="uploadcomplete" execute="@none" render="custFaviconImagePanelId" />
+						</rich:fileUpload>
+
+						<h:panelGrid columns="1" width="100%" cellspacing="0" cellpadding="0" border="0" columnClasses="alignCenter"
+							rendered="#{_organization.faviconImage ne null}">
+							<h:panelGroup layout="block">
+								<img src="#{request.contextPath}/servlet/favicon?preview=true" />
+							</h:panelGroup>
+							<richext:spacer height="8" />
+							<a4j:commandLink value="Remove" action="#{_organizationAction.removeFaviconImage()}" render="custFaviconImagePanelId"
+								ajaxSingle="true" limitRender="true" eventsQueue="organizationQueue" />
+						</h:panelGrid>
+					</h:panelGrid>
+				</s:decorate>
+
+				<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+					<ui:define name="label">Menu Color</ui:define>
+					<h:panelGrid id="custThemeColorPanelId" columns="1" width="100%" cellspacing="0" cellpadding="0" border="0" columnClasses="alignCenter">
+						<div id="colorSelector">
+							<div style="background-color: #{gluufn:getColor(_organization.themeColor, '00ff00')}"></div>
+						</div>
+						<h:inputHidden value="#{_organization.themeColor}" id="themeColor" />
+						<richext:spacer height="8" />
+						<a4j:commandLink value="Remove" action="#{_organizationAction.removeThemeColor()}" render="custThemeColorPanelId" limitRender="true" />
+					</h:panelGrid>
+				</s:decorate>
+			</h:panelGrid>
+		</rich:collapsiblePanel>
+
+		<richext:spacer height="16" />
+
+		<rich:notifyMessages stayTime="2000" nonblocking="true" />
+		<ui:insert name="controlButttons" />
+	</h:form>
+</ui:composition>

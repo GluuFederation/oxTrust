@@ -1,0 +1,36 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <s:div id="formArea">
+            <ui:decorate template="/WEB-INF/incl/person/personForm.xhtml">
+                <ui:param name="_person" value="#{updatePersonAction.person}" />
+                <ui:param name="_customAttributeAction" value="#{customAttributeAction}" />
+                <ui:param name="_new" value="false" />
+
+                <ui:define name="controlButtons">
+                    <s:div id="updateButtons">
+                        <a4j:commandButton value="Change Password" onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"/>
+                        <h:commandButton value="Update" action="#{updatePersonAction.save}" rendered="#{organizationService.instance().allowPersonModification}" />
+                        <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" eventsQueue="personQueue" rendered="#{not _new and organizationService.instance().allowPersonModification}" />
+                        <h:commandButton value="#{organizationService.instance().allowPersonModification ? 'Cancel' : 'Back' }" action="#{updatePersonAction.cancel}" immediate="true" />
+                    </s:div>
+                </ui:define>
+            </ui:decorate>
+
+            <ox:changePasswordDialog id="personPassword" label="Change Person Password" password="#{userPasswordAction.newPassword}" setPasswordMethod="#{userPasswordAction.update}" />
+
+            <ox:acceptRemovalDialog id="deleteConfirmation" subject="person" value="#{updatePersonAction.person.displayName}" deleteMethod="#{updatePersonAction.delete}" queue="personQueue" />
+        </s:div>
+    </ui:define>
+
+</ui:composition>

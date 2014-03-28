@@ -1,0 +1,45 @@
+package org.gluu.oxtrust.util;
+
+import java.io.FileInputStream;
+import java.security.KeyStore;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+
+import org.apache.commons.httpclient.HttpClientError;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.util.EasySSLProtocolSocketFactory;
+import org.xdi.util.EasyX509TrustManager;
+import org.xdi.util.security.StringEncrypter;
+
+public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory {
+	private static final Log LOG = LogFactory.getLog(EasyCASSLProtocolSocketFactory.class);
+
+	protected SSLContext createEasySSLContext(ApplicationConfiguration applicationConfiguration) {
+		try {
+
+			String password = applicationConfiguration.getCaCertsPassphrase();
+			char[] passphrase = null;
+			if (password != null) {
+				passphrase = StringEncrypter.defaultInstance().decrypt(password).toCharArray();
+			}
+			KeyStore cacerts = null;
+			String cacertsFN = applicationConfiguration.getCaCertsLocation();
+			if (cacertsFN != null) {
+				cacerts = KeyStore.getInstance(KeyStore.getDefaultType());
+				FileInputStream cacertsFile = new FileInputStream(cacertsFN);
+				cacerts.load(cacertsFile, passphrase);
+				cacertsFile.close();
+			}
+
+			SSLContext context = SSLContext.getInstance("SSL");
+			context.init(null, new TrustManager[] { new EasyX509TrustManager(cacerts) }, null);
+			return context;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new HttpClientError(e.toString());
+		}
+	}
+}

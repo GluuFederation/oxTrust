@@ -1,0 +1,24 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <ui:decorate template="/WEB-INF/incl/test/scim/testOperationForm.xhtml">
+            <ui:param name="_scimAction" value="#{testScimOperationAction}" />
+
+            <ui:define name="controlButttons">
+                <div id="operationalButtons">
+                    <h:commandButton value="Execute" action="#{testScimOperationAction.execute}"/>
+                    <h:commandButton value="Cancel" action="#{testScimOperationAction.cancel}" immediate="true"/>
+                </div>
+            </ui:define>
+        </ui:decorate>
+    </ui:define>
+</ui:composition>

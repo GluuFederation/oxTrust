@@ -1,0 +1,66 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <div id="formArea">
+            <div id="register">
+                <h1>Sign up</h1>
+                To create an account, please complete your details below. Already have an account?
+                <richext:spacer width="4" />
+                <s:link view="/login.xhtml" value="Login" rendered="#{not identity.loggedIn and not isLogin}" propagation="none" />
+            </div>
+
+            <div id="addPerson">
+                <h:form id="personRegistrationForm">
+                    <h:panelGrid columns="1" width="100%" columnClasses="formColumn" border="0" cellpadding="0" cellspacing="0">
+
+                        <ui:param name="_mandatoryAttributes" value="#{registerPersonAction.mandatoryAttributes}" />
+                        <h:panelGroup id="selectedCustomAttributesId">
+                            <div id="registrationFormHolder">
+                                <a4j:repeat value="#{registerPersonAction.person.customAttributes}" var="_custAttr" rowKeyVar="_custAttrIdx">
+                                    <ui:param name="_mandatory" value="#{_mandatoryAttributes.contains(_custAttr)}" />
+                                    <s:decorate id="_custAttrIdx" template="/WEB-INF/incl/layout/edit.xhtml">
+                                        <ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
+                                        <h:inputText value="#{_custAttr.value}" maxlength="60" size="40" required="true" id="custId" tabindex="#{_custAttrIdx + 1}">
+                                            <s:validate />
+                                        </h:inputText>
+                                        <h:outputText value="&#160;" />
+                                    </s:decorate>
+                                </a4j:repeat>
+                                <s:decorate id="passwordField" template="/WEB-INF/incl/layout/edit.xhtml">
+                                    <ui:define name="label">Password</ui:define>
+                                    <h:inputSecret id="password" value="#{registerPersonAction.password}" maxlength="60" size="40" tabindex="6" required="true" redisplay="true" autocomplete="off"/>
+                                    <h:outputText value="&#160;" />
+                                </s:decorate>
+                                <s:decorate id="repeatPasswordField" template="/WEB-INF/incl/layout/edit.xhtml">
+                                    <ui:define name="label">Repeat password</ui:define>
+                                    <h:inputSecret id="passwordValidation" value="#{registerPersonAction.repeatPassword}" maxlength="60" size="40" tabindex="7" required="true" redisplay="true"  autocomplete="off">
+                                        <s:validateEquality for="#{'password'}" message="Passwords don't match" />
+                                    </h:inputSecret>
+                                    <h:outputText value="&#160;" />
+                                </s:decorate>
+                            </div>
+                            <div id="captchaHolder">
+                                <h:outputText value="#{recaptcha.html}" escape="false" />
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGrid>
+
+                    <div id="updateButtons">
+                        <h:commandButton value="Register" action="#{registerPersonAction.register}" />
+                        <h:commandButton value="Cancel" action="#{registerPersonAction.cancel}" immediate="true" />
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

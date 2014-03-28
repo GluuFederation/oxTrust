@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.org/schema/seam/pages"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
+    view-id="/ssologin.xhtml">
+
+    <action execute="#{ssoLoginAction.start}" />
+
+    <rewrite pattern="/ssologin" />
+
+    <navigation from-action="#{ssoLoginAction.start}">
+        <rule if-outcome="success">
+            <begin-conversation flush-mode="manual" join="true" />
+            <render view-id="/ssologin.xhtml" />
+        </rule>
+
+        <rule if-outcome="failure">
+            <end-conversation/>
+            <redirect view-id="/error.xhtml"/>
+           </rule>
+    </navigation>
+
+</page>

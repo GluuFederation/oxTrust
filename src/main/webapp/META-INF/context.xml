@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/oxTrust" docBase="oxTrust"
+         debug="5" reloadable="true" crossContext="true">
+
+  <Resource name="jdbc/inumDB" auth="Container" type="javax.sql.DataSource"
+               maxActive="100" maxIdle="30" maxWait="10000"
+               driverClassName="com.mysql.jdbc.Driver"
+               username="inumbase" password="InUmB@53"
+               url="jdbc:mysql://${db.inumdb.host}:3306/inumbase?autoReconnect=true" validationQuery="select 1"/>
+               
+     
+</Context>

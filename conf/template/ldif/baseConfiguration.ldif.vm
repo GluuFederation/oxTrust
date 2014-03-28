@@ -1,0 +1,54 @@
+dn: o=gluu
+objectClass: top
+objectClass: organization
+o: gluu
+
+dn: ou=appliances,o=gluu
+objectclass: top
+objectclass: organizationalUnit
+ou: appliances
+
+dn: o=$orgInum,o=gluu
+objectClass: gluuOrganization
+objectClass: top
+o: $orgInum
+inum: $orgInum
+iname: $orgIname
+displayName: $orgDisplayName
+gluuOrgShortName: $orgShortName
+gluuOwnerGroup: inum=$orgOwnerGroupInum,ou=groups,o=$orgInum,o=gluu
+gluuManagerGroup: inum=$orgManagerGroupInum,ou=groups,o=$orgInum,o=gluu
+
+dn: ou=groups,o=$orgInum,o=gluu
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
+
+dn: ou=people,o=$orgInum,o=gluu
+objectclass: top
+objectclass: organizationalUnit
+ou: people
+
+dn: ou=attributes,o=$orgInum,o=gluu
+objectclass: top
+objectclass: organizationalUnit
+ou: attributes
+
+dn: inum=$orgOwnerGroupInum,ou=groups,o=$orgInum,o=gluu
+objectclass: top
+objectclass: gluuGroup
+gluuGroupType: Gluu Owner Group
+inum: $orgOwnerGroupInum
+iname: $orgIname*ownerGroup
+gluuStatus: active
+displayName: Gluu Owner Group
+
+dn: inum=$orgManagerGroupInum,ou=groups,o=$orgInum,o=gluu
+objectclass: top
+objectclass: gluuGroup
+gluuGroupType: Gluu Manager Group
+inum: $orgManagerGroupInum
+iname: $orgIname*managerGroup
+gluuStatus: active
+displayName: Gluu Manager Group
+

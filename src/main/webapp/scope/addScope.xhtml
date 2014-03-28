@@ -1,0 +1,35 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <s:div id="formArea">
+            <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
+
+                <ui:param name="_scope" value="#{updateScopeAction.scope}" />
+                <ui:param name="_scopeAction" value="#{updateScopeAction}" />
+                <ui:param name="_new" value="true" />
+
+                <ui:define name="controlButttons">
+                    <div id="updateButtons">
+                        <h:commandButton value="Add" action="#{updateScopeAction.save}" />
+                        <h:commandButton value="Cancel" action="#{updateScopeAction.cancel}" immediate="true" />
+                    </div>
+                </ui:define>
+            </ui:decorate>
+
+            <ox:selectAttributeDialog id="claim" label="Add Claim" searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
+                searchMethod="#{updateScopeAction.searchAvailableClaims}" searchResult="#{updateScopeAction.availableClaims}"
+                acceptMethod="#{updateScopeAction.acceptSelectClaims}" cancelMethod="#{updateScopeAction.cancelSelectClaims}"
+                render="selectedClaimsId" queue="scopeQueue"/>
+        </s:div>
+    </ui:define>
+</ui:composition>

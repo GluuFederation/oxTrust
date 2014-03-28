@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.org/schema/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
+    no-conversation-view-id="/home.xhtml" login-required="true"
+    view-id="/scim/configuration.xhtml">
+
+    <restrict>#{s:hasPermission('scim', 'access')}</restrict>
+    <action execute="#{scimConfigurationAction.init}" if="#{not scimConfigurationAction.initialized}" on-postback="false" />
+
+    <rewrite pattern="/scim/configuration" />
+
+    <navigation from-action="#{scimConfigurationAction.init}">
+        <rule if-outcome="success">
+            <begin-conversation join="true" flush-mode="manual" />
+            <render view-id="/scim/configuration.xhtml" />
+        </rule>
+
+        <rule if-outcome="no_permissions">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">You don't have permissions to modify SCIM configuration</message>
+            </redirect>
+        </rule>
+
+        <rule if-outcome="failure">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">Failed to load SCIM configuration</message>
+            </redirect>
+        </rule>
+    </navigation>
+
+    <navigation from-action="#{scimConfigurationAction.changeAuthMode}">
+        <rule if-outcome="success">
+            <redirect view-id="/scim/configuration.xhtml">
+                <message severity="info">Authorization mode changed successfully! - REMEMBER: you need to restart the server for the changes to take effect</message>
+            </redirect>
+        </rule>
+
+        <rule if-outcome="failure">
+            <redirect view-id="/scim/configuration.xhtml">
+                <message severity="ERROR">Could not change authorization mode</message>
+            </redirect>
+        </rule>
+    </navigation>
+
+    <navigation from-action="#{scimConfigurationAction.changeScimStatus}">
+        <rule if-outcome="success">
+            <redirect view-id="/scim/configuration.xhtml">
+                <message severity="info">SCIM status changed successfully</message>
+            </redirect>
+        </rule>
+
+        <rule if-outcome="failure">
+            <redirect view-id="/scim/configuration.xhtml">
+                <message severity="ERROR">Could not change SCIM status</message>
+            </redirect>
+        </rule>
+    </navigation>
+
+    <navigation from-action="#{scimConfigurationAction.cancel}">
+        <end-conversation />
+        <redirect view-id="/home.xhtml">
+            <message severity="INFO">SCIM configuration not updated</message>
+        </redirect>
+    </navigation>
+
+</page>

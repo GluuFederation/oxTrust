@@ -1,0 +1,76 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+<div id="home">
+
+        <ui:param name="welcomeTitle" value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}" />
+
+        <s:fragment rendered="#{not empty welcomeTitle}">
+            <s:div>
+                <h:outputText value="#{welcomeTitle}" escape="false"/>
+            </s:div>
+           </s:fragment>
+           <s:fragment rendered="#{empty welcomeTitle}">
+               <h1>Welcome to your Gluu Identity Appliance!</h1>
+        </s:fragment>
+        
+        <rich:panel>
+                <ui:param name="welcomePage" value="#{organizationService.getOrganizationCustomMessage('welcomePage')}" />
+
+                <s:fragment rendered="#{not empty welcomePage}">
+                    <s:div>
+                        <h:outputText value="#{welcomePage}" escape="false"/>
+                    </s:div>
+                </s:fragment>
+
+                <s:fragment rendered="#{empty welcomePage}">
+                    <s:div styleClass="info">
+                        <div class="left">
+                            <p><strong>Your federation service is live!</strong> Here are some of the features this appliance provides:</p>
+                            <ol class="bullets">
+                                <s:fragment rendered="#{s:hasPermission('configuration', 'access')}">
+                                    <li>Upload SSL certificates, configure appliance appearance and capabilities, import people -  <s:link id="menuConfigurationId" view="/organization/updateOrganization.xhtml" value="Configuration" propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment rendered="#{s:hasPermission('attribute', 'access')}">
+                                    <li>Activate attributes to release - <s:link id="menuAttributeId" view="/attribute/attributeInventory.xhtml" value="Attributes" propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment rendered="#{s:hasPermission('trust', 'access')}" >
+                                    <li>Create a Trust Relationship -  <s:link id="menuTrustRelationshipId" view="/trustmanager/trustRelationships.xhtml" value="Trust&#160;Relationships" propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment rendered="#{s:hasPermission('group', 'access')}">
+                                    <li>Manage User Groups -  <s:link id="menuGroupId" view="/group/groupInventory.xhtml" value="Groups" propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment rendered="#{s:hasPermission('person', 'access')}">
+                                    <li>Change person attributes -  <s:link id="menuPeopleId" view="/person/personInventory.xhtml" value="People" propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment  rendered="#{s:hasPermission('profile', 'access')}">
+                                    <li>Change your own attributes and password - <s:link id="menuProfileId" view="/profile/person/viewProfile.xhtml" value="Profile" propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment rendered="#{s:hasPermission('trust', 'access') and s:hasPermission(applianceService.appliance, 'federationHostingEnabled')}">
+                                    <li >Create Federation -  <s:link id="menuHostFederation" view="/federation/proposal/proposalsInventory.xhtml" value="Federations" propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment rendered="#{not s:hasPermission('trust', 'access') and s:hasPermission(applianceService.appliance, 'federationHostingEnabled')}">
+                                    <li >View Hosted Federations -  <s:link id="menuFederationLink" view="/federation/hosted/federationInventory.xhtml" value="Hosted Federations" propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment  rendered="#{not s:hasPermission('trust', 'access') and s:hasPermission(applianceService.appliance, 'federationHostingEnabled')}">
+                                    <li >Join Federation -  <s:link id="menuGuestFederation" view="/federation/proposal/addProposal.xhtml" value="Join Federation"  propagation="none"/></li>
+                                </s:fragment>
+                                <s:fragment rendered="#{s:hasPermission('trust', 'access')}">
+                                    <li>Check appliance status - <s:link id="menuStatusId" view="/status/applianceStatus.xhtml" value="Status" propagation="none"/></li>
+                                </s:fragment>
+                               </ol>
+                        </div>
+                    </s:div>
+                </s:fragment>
+        </rich:panel>
+</div>
+    </ui:define>
+</ui:composition>

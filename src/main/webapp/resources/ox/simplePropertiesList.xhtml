@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions"
+    xmlns:cc="http://java.sun.com/jsf/composite">
+
+<cc:interface>
+    <cc:attribute name="label" default="" type="java.lang.String" />
+    <cc:attribute name="labelAdd" default="" type="java.lang.String" />
+    <cc:attribute name="inputWidth" default="48" required="false" type="java.lang.Integer" />
+    <cc:attribute name="maxItems" type="java.lang.Integer" />
+    <cc:attribute name="properties" rerquired="true" type="java.util.List" />
+    <cc:attribute name="propertiesAction" rerquired="true" type="org.gluu.oxtrust.model.SimplePropertiesListModel"/>
+    <cc:attribute name="required" default="false" type="java.lang.Boolean" />
+</cc:interface>
+
+<cc:implementation>
+    <a4j:region>
+        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+            <ui:define name="label">#{cc.attrs.label}</ui:define>
+            <h:panelGroup id="propertiesList">
+                <a4j:region>
+                    <a4j:repeat value="#{cc.attrs.properties}" var="_property">
+                        <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <h:panelGroup>
+                                <h:inputText value="#{_property.value}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.required and empty param['sv']}" />
+                                &#160;
+    
+                                <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
+                                <a4j:commandLink action="#{cc.attrs.propertiesAction.removeItemFromSimpleProperties(cc.attrs.properties, _property)}" render="propertiesList" execute="@region">
+                                    <h:graphicImage value="/img/remove.gif" />
+                                    <f:param name="sv" value="1" />
+                                </a4j:commandLink>
+                            </h:panelGroup>
+    
+                            <s:message styleClass="errors" />
+                        </h:panelGrid>
+                    </a4j:repeat>
+    
+                    <a4j:commandLink action="#{cc.attrs.propertiesAction.addItemToSimpleProperties(cc.attrs.properties)}" render="propertiesList" execute="@region"
+                        rendered="#{empty maxItems or maxItems gt properties.size()}">
+                        <h:outputText value="Add #{cc.attrs.labelAdd eq null ? cc.attrs.label : cc.attrs.labelAdd}" />
+                        <f:param name="sv" value="1" />
+                    </a4j:commandLink>
+                </a4j:region>
+            </h:panelGroup>
+        </s:decorate>
+    </a4j:region>
+</cc:implementation>
+</html>

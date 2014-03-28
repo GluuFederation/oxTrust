@@ -1,0 +1,182 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions">
+
+    <h:outputStylesheet>
+        .paddning4 {
+            padding: 4px;
+            background-color: white;
+        }
+
+        .noBorder {
+            border-right: 0px;
+        }
+
+        .addConfig {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .removeConfig {
+            text-align: left;
+            vertical-align: top;
+        }
+    </h:outputStylesheet>
+
+    <h:outputScript>
+        function validateCollapsiblePanel(collapsiblePanelId) {
+            var presentErrors = $('div[id*=' + collapsiblePanelId + '] span[class=errors]').length > 0;
+            if (presentErrors) {
+                // TODO: Find a way how to expand panel in RichFaces 4. Maybe we can do that on server side
+            }
+        }
+    </h:outputScript>
+
+    <ox:changePasswordDialog id="bindPasswordDialogId" label="Change Backend '#{_configureCacheRefreshAction.activeLdapConfig.configId}' Bind Password" password="#{_configureCacheRefreshAction.activeLdapConfig.bindPassword}"
+	   setPasswordMethod="#{configureCacheRefreshAction.updateBindPassword}"/>
+
+
+    <h:form id="cacheRefreshForm">
+        <s:validateAll />
+        <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+            <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+                <ui:define name="label">Last run</ui:define>
+                <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdateDate}">
+                    <s:convertDateTime pattern="MMM. d yyyy hh:mm a" />
+                </h:outputText>
+            </s:decorate>
+            <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+                <ui:define name="label">Updates at the last run</ui:define>
+                <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdateCount}" />
+            </s:decorate>
+            <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+                <ui:define name="label">Problems at the last run</ui:define>
+                <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshProblemCount}" />
+            </s:decorate>
+
+            <rich:collapsiblePanel id="sourceAttributesPanel" switchType="client" expanded="false" header="Customer Backend key/attributes" width="100%" bodyClass="noPadding">
+                <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <ox:simplePropertiesList label="Key attribute" labelAdd="key attribute" maxItems="3" properties="#{_configureCacheRefreshAction.cacheRefreshConfig.attrs}"
+                        propertiesAction="#{_configureCacheRefreshAction}" required="true" />
+
+                    <ox:simplePropertiesList label="Object class" labelAdd="object class" properties="#{_configureCacheRefreshAction.cacheRefreshConfig.objectClasses}"
+                        propertiesAction="#{_configureCacheRefreshAction}" required="true" />
+
+                    <ox:simplePropertiesList label="Source attribute" labelAdd="source attribute" properties="#{_configureCacheRefreshAction.cacheRefreshConfig.sourceAttributes}"
+                        propertiesAction="#{_configureCacheRefreshAction}" required="true" />
+
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="customLdapFilter">
+                        <ui:define name="label">Custom LDAP filter</ui:define>
+                        <h:panelGroup>
+                            <h:inputText value="#{_configureCacheRefreshAction.cacheRefreshConfig.customLdapFilter}" size="48" />
+                            <richext:spacer width="50" />
+                        </h:panelGroup>
+                    </s:decorate>
+                </h:panelGrid>
+            </rich:collapsiblePanel>
+
+            <rich:collapsiblePanel id="sourceTogglePanel" switchType="client" expanded="false" header="Source Backend LDAP servers" width="100%" bodyClass="noPadding">
+                <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <rich:dataGrid id="sourceConfigsId" value="#{_configureCacheRefreshAction.sourceConfigs}" var="_ldapConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
+                        <ox:ldapConfig ldapConfig="#{_ldapConfig}" ldapConfigList="#{_configureCacheRefreshAction.sourceConfigs}"
+                            ldapConfigAction="#{configureCacheRefreshAction}" propertiesAction="#{_configureCacheRefreshAction}"
+                            renderAfterRomoval="sourceConfigsId" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" /> 
+                    </rich:dataGrid>
+
+                    <s:div styleClass="addConfig">
+                        <a4j:commandLink value="Add source LDAP server" action="#{_configureCacheRefreshAction.addSourceConfig()}" render="sourceConfigsId" execute="@this" />
+                    </s:div>
+                </h:panelGrid>
+            </rich:collapsiblePanel>
+
+            <rich:collapsiblePanel id="inumTogglePanel" switchType="client" expanded="false" header="Inum LDAP server" width="100%" bodyClass="paddning4">
+                <ox:ldapConfig ldapConfig="#{_configureCacheRefreshAction.inumConfig}" ldapConfigAction="#{configureCacheRefreshAction}"
+                    propertiesAction="#{_configureCacheRefreshAction}" maxBaseDnItems="1" displayAnonymousBind="false"
+                    displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" /> 
+            </rich:collapsiblePanel>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="editType">
+                <ui:define name="label">Refresh Method</ui:define>
+                <h:selectOneMenu value="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod}" required="true" id="refreshMethodId">
+                    <s:selectItems value="#{_configureCacheRefreshAction.allCacheRefreshUpdateMethods}" var="_type" label="#{_type.displayName}" />
+                    <!-- <s:convertEnum/> -->
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                    <a4j:ajax event="change" render="vdsTogglePanelGroup, copyTogglePanelGroup" execute="@this" limitRender="true" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Keep external persons</ui:define>
+
+                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"/>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Load source data with limited search</ui:define>
+
+                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.loadSourceUsingSearchLimit}"/>
+            </s:decorate>
+
+            <h:panelGroup id="vdsTogglePanelGroup">
+                <rich:collapsiblePanel id="vdsTogglePanel" switchType="client" expanded="false" header="VDS LDAP server" width="100%" bodyClass="paddning4"
+                    rendered="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod.value eq 'vds'}">
+                    <ox:ldapConfig ldapConfig="#{_configureCacheRefreshAction.targetConfig}" ldapConfigAction="#{configureCacheRefreshAction}"
+                        propertiesAction="#{_configureCacheRefreshAction}" displayBaseDn="false" displayAnonymousBind="false"
+                        displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" /> 
+                </rich:collapsiblePanel>
+            </h:panelGroup>
+
+            <h:panelGroup id="copyTogglePanelGroup">
+                <rich:collapsiblePanel id="copyTogglePanel" switchType="client" expanded="false" header="Attributes mapping" width="100%" bodyClass="paddning4"
+                    rendered="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod.value eq 'copy'}">
+                    <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <ox:simpleCustomPropertiesList label="Source attribute to desination attribute mapping" labelAdd="source attribute to desination attribute mapping"
+                            properties="#{_configureCacheRefreshAction.cacheRefreshConfig.attrsMapping}" propertiesAction="#{_configureCacheRefreshAction}" />
+                    </h:panelGrid>
+                </rich:collapsiblePanel>
+            </h:panelGroup>
+
+            <h:outputScript>
+                validateCollapsiblePanel("cacheRefreshForm\\:sourceAttributesPanel");
+                validateCollapsiblePanel("cacheRefreshForm\\:sourceTogglePanel");
+                validateCollapsiblePanel("cacheRefreshForm\\:inumTogglePanel");
+                validateCollapsiblePanel("cacheRefreshForm\\:vdsTogglePanel");
+                validateCollapsiblePanel("cacheRefreshForm\\:copyTogglePanel");
+           </h:outputScript>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="vdsCacheRefreshPollingInterval">
+                <ui:define name="label">Pooling interval (minutes)</ui:define>
+                <h:inputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshPollingInterval}" id="vdsCacheRefreshPollingIntervalId" size="5" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scriptFileName">
+                <ui:define name="label">Script File Name</ui:define>
+                <h:inputText value="#{_configureCacheRefreshAction.cacheRefreshConfig.interceptorScriptFileName}" size="48" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="snapshotFolder">
+                <ui:define name="label">Snapshot Folder</ui:define>
+                <h:inputText value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotsFolder}" size="48" required="true" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="snapshotCount">
+                <ui:define name="label">Snapshots count</ui:define>
+                <h:inputText value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotsCount}" size="5" required="true" />
+            </s:decorate>
+        </h:panelGrid>
+
+        <ui:insert name="controlButttons" />
+    </h:form>
+
+    <ui:include src="/WEB-INF/incl/organization/cacheRefreshInterceptorValidationDialog.xhtml" />
+
+</ui:composition>

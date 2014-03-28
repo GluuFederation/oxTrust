@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+                            xmlns:afp="urn:mace:shibboleth:2.0:afp"
+                            xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
+                            xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
+                                                urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd
+                                                urn:mace:shibboleth:2.0:afp:mf:saml classpath:/schema/shibboleth-2.0-afp-mf-saml.xsd">
+
+#foreach( $trustRelationship in $trustParams.trusts )
+#if ($trustParams.trustIds.get($trustRelationship.inum))
+    <afp:AttributeFilterPolicy id="SiteApp$trustParams.trustIds.get($trustRelationship.inum)">
+
+#set ($isFederation = ($trustParams.trustEntityIds.get($trustRelationship.inum).size() > 1))
+#if ($isFederation)
+    <afp:PolicyRequirementRule xsi:type="basic:OR">
+#foreach( $entityId in $trustParams.trustEntityIds.get($trustRelationship.inum) )
+            <basic:Rule xsi:type="basic:AttributeRequesterString" value="$entityId" />
+#end
+    </afp:PolicyRequirementRule>
+
+#else
+    <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="$trustParams.trustEntityIds.get($trustRelationship.inum).get(0)" />
+#end
+
+#foreach( $attribute in $trustRelationship.releasedCustomAttributes )
+
+        <afp:AttributeRule attributeID="$attribute.name">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+#end
+    </afp:AttributeFilterPolicy>
+#end
+#end
+
+#foreach( $trustRelationship in $trustParams.deconstructed )
+    <afp:AttributeFilterPolicy id="FederatedSiteApp$trustParams.deconstructedIds.get($trustRelationship.entityId)">
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="$trustRelationship.entityId" />
+#foreach( $attribute in $trustRelationship.releasedCustomAttributes )
+        <afp:AttributeRule attributeID="$attribute.name">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+            </afp:AttributeRule>
+#end
+    </afp:AttributeFilterPolicy>
+#end
+
+
+</afp:AttributeFilterPolicyGroup>
+
+

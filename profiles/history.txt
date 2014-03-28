@@ -1,0 +1,5 @@
+1. 2013/02/26 - Initial configuration
+2. 2013/03/11 - Rename property config.host.ldap_base64_encoded_password to config.host.idp.ldap_base64_encoded_password
+                Add new property config.host.vds.ldap_base64_encoded_password
+                Add new property config.organization.inum-fn
+3. 2013/08/20 - Add new properties: config.oxauth.issuer, config.uma.issuer, config.uma.user_id, config.uma.user_password, config.uma.client_id, config.uma.client_password, config.uma.resource_id, config.uma.scope

@@ -1,0 +1,47 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <a4j:region>
+        <h:panelGrid columns="1" width="100%" id="trustContacts">
+
+            <rich:dataGrid value="#{trustContactsAction.trustContacts}" columnClasses="half,half" var="_contact" columns="2" elements="#{trustContactsAction.trustContacts.size()}" width="100%">
+                <rich:panel bodyClass="pbody" styleClass="half">
+                    <f:facet name="header">
+                        <s:fragment>
+                            <h:outputText value="#{_contact.title} #{_contact.name}" rendered="#{(not empty _contact.title) or (not empty _contact.name)}" />
+                            <h:outputText value="New Contact" rendered="#{(empty _contact.title) and (empty _contact.name)}" />
+
+                            <a4j:commandLink action="#{trustContactsAction.removeContact(_contact)}" render="trustContacts" eventsQueue="trustQueue">
+                                <h:graphicImage value="/img/remove.gif" />
+                            </a4j:commandLink>
+                        </s:fragment>
+                    </f:facet>
+
+                    <h:panelGrid columns="2" columnClasses="contactLabels">
+                        <h:outputText value="Name" styleClass="label" />
+                        <rich:inplaceInput layout="block" value="#{_contact.name}" selectOnEdit="true" editEvent="click" defaultLabel="click to enter Name">
+                        </rich:inplaceInput>
+                        <h:outputText value="title" styleClass="label" />
+                        <rich:inplaceInput layout="block" value="#{_contact.title}" selectOnEdit="true" editEvent="click" defaultLabel="click to enter Title" />
+                        <h:outputText value="Telephone Number" styleClass="label" />
+                        <rich:inplaceInput layout="block" value="#{_contact.phone}" selectOnEdit="true" editEvent="click" defaultLabel="click to enter Phone" />
+                        <h:outputText value="mail" styleClass="label" />
+                        <rich:inplaceInput layout="block" value="#{_contact.mail}" selectOnEdit="true" editEvent="click" defaultLabel="click to enter E-Mail" />
+                    </h:panelGrid>
+                </rich:panel>
+            </rich:dataGrid>
+
+            <a4j:commandLink value="Add new contact" eventsQueue="trustQueue" action="#{trustContactsAction.addEmptyContact()}" render="trustContacts" limitRender="true" />
+        </h:panelGrid>
+    </a4j:region>
+
+</ui:composition>

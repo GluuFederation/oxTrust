@@ -1,0 +1,38 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <div id="formArea">
+            <h:form id="logViewerForm">
+                <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
+                <input type='hidden' name='cid' value='#{conversation.id}' />
+        
+                <s:validateAll />
+    
+                <rich:collapsiblePanel id="logTemplatesPanel" switchType="client" expanded="true" header="Allowed log templates" width="100%" bodyClass="noPadding">
+                    <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <ox:simpleCustomPropertiesList label="Allowed log templates" labelAdd="log template"
+                            properties="#{configureLogViewerAction.logViewerConfiguration.logTemplates}" propertiesAction="#{configureLogViewerAction}" inputWidth="50" />
+                    </h:panelGrid>
+                </rich:collapsiblePanel>
+        
+                <div id="updateButtons">
+                    <h:commandButton value="Update" action="#{configureLogViewerAction.update}" />
+                    <h:commandButton value="Cancel" action="#{configureLogViewerAction.cancel}" immediate="true" />
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

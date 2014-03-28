@@ -1,0 +1,8 @@
+bindDN: $config.ldap.idp.bindDN
+bindPassword: $config.ldap.idp.bindPassword
+servers: $config.ldap.idp.servers
+maxconnections: $config.ldap.idp.maxconnections
+useSSL: $config.ldap.idp.useSSL
+
+baseConfigurationDN: ${config.configuration.ldap.entryDN}
+createLdapConfigurationEntryIfNotExist: true

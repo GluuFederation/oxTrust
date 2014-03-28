@@ -1,0 +1,168 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+        <div id="formArea">
+            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <richext:spacer height="8" />
+
+                <h:form>
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
+                        <ui:param name="_hideLabel" value="true" />
+                        <h:inputText value="#{umaInventoryAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters"
+                            alt="Search parameters for UMA resource set like Inum, Display Name" />
+                        <a4j:commandButton value="Search" action="#{umaInventoryAction.search}" render="resourcesListId, policiesListId, scopesListId" />
+                    </s:decorate>
+                </h:form>
+
+                <richext:spacer height="8" />
+
+                <h:form>
+                    <rich:tabPanel headerPosition="top" switchType="client">
+                        <rich:tab name="Resources">
+                            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+
+                                <s:button view="/uma/resource/modifyResourceSet.xhtml" value="Add Resource Set" propagation="none">
+                                    <f:param name="resource" value="#{null}" />
+                                </s:button>
+
+                                <richext:spacer height="8" />
+
+                                <s:fragment rendered="#{umaInventoryAction.resourcesList.size eq 0}">
+                                    <richext:spacer height="30" />
+                                    <h:outputText value="No Search Result Found" />
+                                </s:fragment>
+
+                                <rich:dataTable sortMode="single" id="resourcesListId" value="#{umaInventoryAction.resourcesList}" rows="20" styleClass="data sortable" var="_row"
+                                    rendered="#{umaInventoryAction.resourcesList.size gt 0}" style="width: 750px;">
+                                    <rich:column sortBy="#{_row.name}">
+                                        <f:facet name="header">Name</f:facet>
+                                        <s:link value="#{_row.name}" view="/uma/resource/modifyResourceSet.xhtml" propagation="none">
+                                            <f:param name="resource" value="#{_row.inum}" />
+                                        </s:link>
+                                    </rich:column>
+
+                                    <rich:column>
+                                        <f:facet name="header">Scopes</f:facet>
+                                        <ox:displayNameEntryList value="#{umaInventoryAction.getScopeDisplayNameEntries(_row.getScopes())}" />
+                                    </rich:column>
+
+                                    <rich:column sortBy="#{_row.iconUri}">
+                                        <f:facet name="header">Icon URI</f:facet>
+                                        <h:outputText value="#{_row.iconUri}" />
+                                    </rich:column>
+
+                                    <rich:column>
+                                        <f:facet name="header">Clients</f:facet>
+                                        <ox:displayNameEntryList value="#{umaInventoryAction.getClientDisplayNameEntries(_row.getClients())}" />
+                                    </rich:column>
+
+                                    <f:facet name="footer">
+                                        <rich:dataScroller renderIfSinglePage="false" rendered="#{umaInventoryAction.resourcesList.size > 0}" for="resourcesListId" maxPages="10" stepControls="auto"
+                                            align="left" />
+                                    </f:facet>
+                                </rich:dataTable>
+                            </h:panelGrid>
+                        </rich:tab>
+
+                        <rich:tab name="Policies">
+                            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <s:button view="/uma/policy/modifyPolicy.xhtml" value="Add Policy" propagation="none">
+                                    <f:param name="policy" value="#{null}" />
+                                </s:button>
+
+                                <richext:spacer height="8" />
+
+                                <s:fragment rendered="#{umaInventoryAction.policiesList.size eq 0}">
+                                    <richext:spacer height="30" />
+                                    <h:outputText value="No Search Result Found" />
+                                </s:fragment>
+
+                                <rich:dataTable sortMode="single" id="policiesListId" value="#{umaInventoryAction.policiesList}" rows="20" styleClass="data sortable" var="_row"
+                                    rendered="#{umaInventoryAction.policiesList.size gt 0}" style="width: 750px;">
+                                    <rich:column sortBy="#{_row.displayName}">
+                                        <f:facet name="header">Name</f:facet>
+                                        <s:link value="#{_row.displayName}" view="/uma/policy/modifyPolicy.xhtml" propagation="none">
+                                            <f:param name="policy" value="#{_row.inum}" />
+                                        </s:link>
+                                    </rich:column>
+
+                                    <rich:column>
+                                        <f:facet name="header">Scopes</f:facet>
+                                        <ox:displayNameEntryList value="#{umaInventoryAction.getScopeDisplayNameEntries(_row.getScopeDns())}" />
+                                    </rich:column>
+
+                                    <rich:column sortBy="#{_row.programmingLanguage.displayName}">
+                                        <f:facet name="header">Language</f:facet>
+                                        <h:outputText value="#{_row.programmingLanguage.displayName}" />
+                                    </rich:column>
+
+                                    <f:facet name="footer">
+                                        <rich:dataScroller renderIfSinglePage="false" rendered="#{umaInventoryAction.policiesList.size > 0}" for="policiesListId" maxPages="10" stepControls="auto"
+                                            align="left" />
+                                    </f:facet>
+                                </rich:dataTable>
+                            </h:panelGrid>
+                        </rich:tab>
+
+                        <rich:tab name="Scopes">
+                            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <s:button view="/uma/scope/modifyScopeDescription.xhtml" value="Add Scope Description" propagation="none">
+                                    <f:param name="scope" value="#{null}" />
+                                </s:button>
+
+                                <richext:spacer height="8" />
+                                <s:fragment rendered="#{umaInventoryAction.scopesList.size eq 0}">
+                                    <richext:spacer height="30" />
+                                    <h:outputText value="No Search Result Found" />
+                                </s:fragment>
+
+                                <rich:dataTable sortMode="single" id="scopesListId" value="#{umaInventoryAction.scopesList}" rows="20" styleClass="data sortable" var="_row"
+                                    rendered="#{umaInventoryAction.scopesList.size gt 0}" style="width: 750px;">
+                                    <rich:column sortBy="#{_row.displayName}">
+                                        <f:facet name="header">Name</f:facet>
+                                        <s:link value="#{_row.displayName}" view="/uma/scope/modifyScopeDescription.xhtml" propagation="none">
+                                            <f:param name="scope" value="#{_row.inum}" />
+                                        </s:link>
+                                    </rich:column>
+
+                                    <rich:column sortBy="#{_row.type.displayName}">
+                                        <f:facet name="header">Type</f:facet>
+                                        <h:outputText value="#{_row.type.displayName}" />
+                                    </rich:column>
+
+                                    <rich:column sortBy="#{_row.url}">
+                                        <f:facet name="header">Reference</f:facet>
+                                        <h:outputText value="#{_row.url}" />
+                                    </rich:column>
+
+                                    <rich:column>
+                                        <f:facet name="header">Action</f:facet>
+                                        <s:fragment rendered="#{_row.id != null}">
+                                            <s:link value="Download" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
+                                                <f:param name="scope" value="#{_row.id}" />
+                                                <f:param name="dl" value="#{true}" />
+                                            </s:link>
+                                            <h:outputText value="/" />
+                                            <s:link value="Link" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
+                                                <f:param name="scope" value="#{_row.id}" />
+                                            </s:link>
+                                        </s:fragment>
+                                    </rich:column>
+
+                                    <f:facet name="footer">
+                                        <rich:dataScroller renderIfSinglePage="false" rendered="#{umaInventoryAction.scopesList.size > 0}" for="scopesListId" maxPages="10" stepControls="auto"
+                                            align="left" />
+                                    </f:facet>
+                                </rich:dataTable>
+                            </h:panelGrid>
+                        </rich:tab>
+                    </rich:tabPanel>
+                </h:form>
+            </h:panelGrid>
+        </div>
+    </ui:define>
+</ui:composition>

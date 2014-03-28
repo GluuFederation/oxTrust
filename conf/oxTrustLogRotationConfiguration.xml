@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entries>
+	<entry>
+		<prefix>host-manager</prefix>
+		<location>${base.root}/opt/tomcat/logs</location>
+	</entry>
+	<entry>
+		<prefix>oxtrust</prefix>
+		<location>${base.root}/opt/tomcat/logs</location>
+	</entry>
+	<entry>
+		<prefix>catalina</prefix>
+		<location>${base.root}/opt/tomcat/logs</location>
+	</entry>
+	<entry>
+		<prefix>localhost</prefix>
+		<location>${base.root}/opt/tomcat/logs</location>
+	</entry>
+</entries>

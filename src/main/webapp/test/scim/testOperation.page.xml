@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.org/schema/seam/pages"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
+       no-conversation-view-id="/home.xhtml" login-required="true"
+       view-id="/test/scim/testOperation.xhtml">
+
+    <restrict>#{s:hasPermission('scim_test', 'access')}</restrict>
+
+    <begin-conversation join="true" flush-mode="manual"/>      
+    <action execute="#{testScimOperationAction.init}" on-postback="false" />
+
+    <navigation from-action="#{testScimOperationAction.init}">
+        <rule if-outcome="no_permissions">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">You don't have permissions to execute SCIM operation</message>
+            </redirect>
+        </rule>
+
+        <rule if-outcome="failure">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">Failed to prepare SCIM operation form</message>
+            </redirect>
+        </rule>
+    </navigation>
+
+    <navigation from-action="#{testScimOperationAction.execute}">
+        <rule if-outcome="no_permissions">
+            <end-conversation/>
+               <redirect view-id="/home.xhtml">
+                <message severity="ERROR">You don't have permissions to execute SCIM operation</message>
+            </redirect>
+           </rule>
+
+        <rule if-outcome="failure">
+               <redirect view-id="/test/scim/testOperation.xhtml">
+                <message severity="ERROR">Failed to execute SCIM operation</message>
+            </redirect>
+           </rule>
+    </navigation>
+
+    <navigation from-action="#{testScimOperationAction.cancel}">
+        <end-conversation/>
+        <redirect view-id="/home.xhtml"/>
+    </navigation>
+
+</page>
