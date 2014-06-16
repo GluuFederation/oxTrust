@@ -41,6 +41,7 @@ import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.GluuImage;
+import org.xdi.model.SmtpConfiguration;
 import org.xdi.util.FileUtil;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
@@ -226,7 +227,9 @@ public class UpdateOrganizationAction implements Serializable {
 			appliance.setOxClusterPartners(oxClusterPartners);
 			appliance.setMemcachedServerAddress(memcachedServerAddress);
 			
-			applianceService.updateAppliance(appliance);
+			updateSmptConfiguration(this.appliance);
+			
+			applianceService.updateAppliance(this.appliance);
 
 			Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ORGANIZATION);
 
@@ -240,6 +243,20 @@ public class UpdateOrganizationAction implements Serializable {
 		}
 
 		return modify();
+	}
+
+	private void updateSmptConfiguration(GluuAppliance appliance) {
+		SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
+		smtpConfiguration.setHost(appliance.getSmtpHost());
+		smtpConfiguration.setPort(StringHelper.toInteger(appliance.getSmtpPort(), 25));
+		smtpConfiguration.setRequiresSsl(StringHelper.toBoolean(appliance.getSmtpRequiresSsl(), false));
+		smtpConfiguration.setFromName(appliance.getSmtpFromName());
+		smtpConfiguration.setFromEmailAddress(appliance.getSmtpFromEmailAddress());
+		smtpConfiguration.setRequiresAuthentication(StringHelper.toBoolean(appliance.getSmtpRequiresAuthentication(), false));
+		smtpConfiguration.setUserName(appliance.getSmtpUserName());
+		smtpConfiguration.setPassword(appliance.getSmtpPassword());
+		
+		appliance.setSmtpConfiguration(smtpConfiguration);
 	}
 
 	/**

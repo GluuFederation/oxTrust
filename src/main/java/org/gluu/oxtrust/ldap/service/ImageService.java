@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.io.FilenameUtils;
-import org.gluu.oxtrust.model.GluuAttributeDataType;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -19,6 +17,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuImage;
 import org.xdi.service.XmlService;
 import org.xdi.util.StringHelper;

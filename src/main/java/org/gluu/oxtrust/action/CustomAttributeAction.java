@@ -12,11 +12,8 @@ import java.util.Map;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.model.GluuAttribute;
-import org.gluu.oxtrust.model.GluuAttributeDataType;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.xdi.model.GluuImage;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -28,6 +25,9 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuAttributeDataType;
+import org.xdi.model.GluuImage;
 import org.xdi.util.StringHelper;
 
 /**

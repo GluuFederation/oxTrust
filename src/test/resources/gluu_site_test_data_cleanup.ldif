@@ -1,0 +1,73 @@
+dn: inum=@!1111!0003!D9B4,ou=groups,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0003!B2C6,ou=groups,o=@!1111,o=gluu
+changetype: delete
+
+dn: ou=groups,o=@!1111,o=gluu
+changetype: delete
+
+# Delete records added by tests
+
+dn: inum=@!1111!0000!D4E7,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!9711,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!B99B,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!4F68,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!B51E,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!87CF,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!A1F9,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!9D7B,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!9D7B,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!4FEA,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!4FEB,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!4FEC,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!9396,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+# Delete records added by tests
+dn: inum=@!1111!0000!4FED,ou=people,o=@!1111,o=gluu
+changetype: delete
+
+dn: inum=@!1111!0000!B98T,ou=people,o=@!1111,o=gluu
+changetype: delete
+# Delete records added by tests
+
+dn: ou=people,o=@!1111,o=gluu
+changetype: delete
+
+# Delete records added by tests
+dn: inum=@!1111!0005!21F2,ou=attributes,o=@!1111,o=gluu
+changetype: delete
+# Delete records added by tests
+
+dn: ou=attributes,o=@!1111,o=gluu
+changetype: delete
+
+#dn: cn=schema
+#changetype: modify
+#delete: objectClasses
+#objectClasses: ( ox1111-oid NAME 'ox-1111' SUP top STRUCTURAL MUST objectClass MAY ( education $ ssNumber ) X-ORIGIN 'gluu' )

@@ -123,10 +123,13 @@ public class GroupService implements Serializable {
 	 *            Group Inum
 	 * @return Group
 	 */
-	public GluuGroup getGroupByInum(String inum) throws Exception {
-
-		GluuGroup result = ldapEntryManager.find(GluuGroup.class, getDnForGroup(inum));
-
+	public GluuGroup getGroupByInum(String inum) {
+		GluuGroup result = null;
+		try{
+			result = ldapEntryManager.find(GluuGroup.class, getDnForGroup(inum));
+		}catch(Exception e){
+			log.error("Failed to find group by Inum " + inum, e);
+		}
 		return result;
 
 	}

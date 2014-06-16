@@ -1,6 +1,5 @@
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,16 +7,13 @@ import java.util.Map;
 
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.oxauth.model.uma.persistence.InternalExternal;
@@ -34,15 +30,9 @@ import org.xdi.util.StringHelper;
 @Scope(ScopeType.STATELESS)
 @Name("organizationService")
 @AutoCreate
-public class OrganizationService implements Serializable {
+public class OrganizationService extends org.xdi.service.OrganizationService{
 
-	private static final long serialVersionUID = 5537567020929600777L;
-
-	@Logger
-	private Log log;
-
-	@In
-	private LdapEntryManager ldapEntryManager;
+	private static final long serialVersionUID = -1959146007518514678L;
 
 	@In
 	private CacheService cacheService;
@@ -57,17 +47,26 @@ public class OrganizationService implements Serializable {
 	 *            Organization
 	 */
 	public void updateOrganization(GluuOrganization organization) {
-		ldapEntryManager.merge(organization);
+		getLdapEntryManager().merge(organization);
 
 	}
 
+	/**
+	 * Get organizationService instance
+	 * 
+	 * @return OrganizationService instance
+	 */
+	public static OrganizationService instance() {
+		return (OrganizationService) Component.getInstance(OrganizationService.class);
+	}
+	
 	/**
 	 * Check if LDAP server contains organization with specified attributes
 	 * 
 	 * @return True if organization with specified attributes exist
 	 */
 	public boolean containsOrganization(GluuOrganization organization) {
-		return ldapEntryManager.contains(organization);
+		return getLdapEntryManager().contains(organization);
 	}
 
 	/**
@@ -90,11 +89,15 @@ public class OrganizationService implements Serializable {
 		String key = OxTrustConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
 		GluuOrganization organization = (GluuOrganization) cacheService.get(OxTrustConstants.CACHE_APPLICATION_NAME, key);
 		if (organization == null) {
-			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
+			organization = getLdapEntryManager().find(GluuOrganization.class, getDnForOrganization(inum));
 			cacheService.put(OxTrustConstants.CACHE_APPLICATION_NAME, key, organization);
 		}
 
 		return organization;
+	}
+
+	public String getDnForOrganization(String inum) {
+		return getDnForOrganization(inum, applicationConfiguration.getBaseDN());
 	}
 
 	/**
@@ -157,7 +160,7 @@ public class OrganizationService implements Serializable {
 	 */
 	@Observer(OxTrustConstants.EVENT_CLEAR_ORGANIZATION)
 	public void clearOrganizationCache() throws Exception {
-		log.debug("Removing organization from cache");
+		getLog().debug("Removing organization from cache");
 		cacheService.removeAll(OxTrustConstants.CACHE_APPLICATION_NAME);
 	}
 
@@ -170,14 +173,7 @@ public class OrganizationService implements Serializable {
 		return getDnForOrganization(getOrganizationInum());
 	}
 
-	/**
-	 * Build DN string for organization
-	 * 
-	 * @return DN string for organization
-	 */
-	public String getDnForOrganization(String inum) {
-		return String.format("o=%s,%s", inum, applicationConfiguration.getBaseDN());
-	}
+
 
 	/**
 	 * Build DN string for organization
@@ -210,17 +206,14 @@ public class OrganizationService implements Serializable {
 		return applicationConfiguration.getOrgInum();
 	}
 
-	/**
-	 * Get organizationService instance
-	 * 
-	 * @return OrganizationService instance
-	 */
-	public static OrganizationService instance() {
-		return (OrganizationService) Component.getInstance(OrganizationService.class);
-	}
+
 
 	public GluuBoolean[] getBooleanSelectionTypes() {
 		return new GluuBoolean[] { GluuBoolean.DISABLED, GluuBoolean.ENABLED };
+	}
+
+	public GluuBoolean[] getJavaBooleanSelectionTypes() {
+		return new GluuBoolean[] { GluuBoolean.TRUE, GluuBoolean.FALSE };
 	}
 
 	public ProgrammingLanguage[] getProgrammingLanguageTypes() {

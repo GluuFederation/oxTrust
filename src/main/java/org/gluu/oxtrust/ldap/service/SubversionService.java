@@ -12,7 +12,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.SubversionFile;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.svn.SvnHelper;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -161,10 +160,13 @@ public class SubversionService {
 	/*
 	 * Initialize singleton instance during startup
 	 */
+	
 	public void initSubversionService() {
 		String svnConfigurationStoreRoot = applicationConfiguration.getSvnConfigurationStoreRoot();
 
 		SVNAdminAreaFactory.setSelector(new ISVNAdminAreaFactorySelector() {
+
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			public Collection getEnabledFactories(File path, Collection factories, boolean writeAccess) throws SVNException {
 				Collection enabledFactories = new TreeSet();
 				for (Iterator factoriesIter = factories.iterator(); factoriesIter.hasNext();) {

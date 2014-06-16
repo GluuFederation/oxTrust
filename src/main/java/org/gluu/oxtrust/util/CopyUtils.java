@@ -15,10 +15,8 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.GluuUserRole;
 import org.gluu.oxtrust.model.Person;
 import org.gluu.oxtrust.model.PersonAttribute;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
@@ -50,6 +48,8 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuUserRole;
 
 @Name("copyUtils")
 public class CopyUtils implements Serializable {

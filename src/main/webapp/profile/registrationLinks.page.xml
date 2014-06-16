@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.org/schema/seam/pages"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
+       no-conversation-view-id="/home.xhtml" login-required="true"
+       view-id="/profile/registrationLinks.xhtml">
+
+    <restrict>#{s:hasPermission('registrationLinks', 'access')}</restrict>
+
+    <action execute="#{registrationLinkInventoryAction.start}" on-postback="true"/>
+
+    <rewrite pattern="/profile/invitationCodes" />
+
+    <navigation from-action="#{registrationLinkInventoryAction.start}">
+        <rule if-outcome="success">
+            <begin-conversation join="true" flush-mode="manual" />
+            <render view-id="/profile/registrationLinks.xhtml"/>
+        </rule>
+
+        <rule if-outcome="no_permissions">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">You don't have permissions manage invitation codes</message>
+            </redirect>
+        </rule>
+    </navigation>
+    
+    <navigation from-action="#{registrationLinkInventoryAction.initShareForm}">
+        <rule if-outcome="success">
+        	<render view-id="/profile/registrationLinks.xhtml"/>
+        </rule>
+    </navigation>
+    
+    <navigation from-action="#{registrationLinkInventoryAction.sendShare}">    
+        <rule if-outcome="validation_error">
+        	<render view-id="/profile/registrationLinks.xhtml">
+        		<message severity="ERROR">Recipients list may not be empty</message>
+        	</render>
+        </rule>
+        <rule if-outcome="success">
+        	<render view-id="/profile/registrationLinks.xhtml">
+        		<message severity="INFO">Invitation sent successfully</message>
+        	</render>
+        </rule>
+       	<rule if-outcome="failure">
+        	<render view-id="/profile/registrationLinks.xhtml">
+        		<message severity="ERROR">Failed to send email message. Please check your configuration.</message>
+        	</render>
+        </rule>
+    </navigation>
+    <navigation from-action="#{registrationLinkInventoryAction.addTo}">
+        <rule if-outcome="success">
+        	<render view-id="/profile/registrationLinks.xhtml">
+        		
+        	</render>
+        </rule>
+    </navigation>
+    
+    <navigation from-action="#{registrationLinkInventoryAction.removeRecepient}">
+        <rule if-outcome="success">
+        	<render view-id="/profile/registrationLinks.xhtml">
+        	</render>
+        </rule>
+    </navigation>
+    
+    <navigation from-action="#{registrationLinkInventoryAction.clearTo}">
+        <rule if-outcome="success">
+        	<render view-id="/profile/registrationLinks.xhtml">
+        	</render>
+        </rule>
+    </navigation>
+</page>

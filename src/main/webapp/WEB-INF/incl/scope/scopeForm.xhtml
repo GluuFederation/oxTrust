@@ -20,17 +20,19 @@
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
                 <ui:define name="label">Display Name</ui:define>
-                <h:panelGroup rendered="#{!_scope.isDefault}">
-                    <rich:inplaceInput value="#{_scope.displayName}" defaultLabel="click to enter Display Name" maxlength="60" inputWidth="180" required="true" id="displayNameId" />
-                </h:panelGroup>
-                <h:panelGroup rendered="#{_scope.isDefault}">
-                    <h:outputText value="#{_scope.displayName}" propagation="none" />
-                </h:panelGroup>
+                <rich:inplaceInput value="#{_scope.displayName}" defaultLabel="click to enter Display Name" maxlength="60" inputWidth="180" required="true" id="displayNameId" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
                 <ui:define name="label">Description</ui:define>
                 <h:inputTextarea value="#{_scope.description}" rows="3" cols="80" maxlength="4000" id="descriptionId" />
+            </s:decorate>
+  
+            <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+                <ui:define name="label">Default scope</ui:define>
+                <h:selectOneMenu value="#{_scope.defaultScope}">
+                    <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" noSelectionLabel="Select"/>
+                </h:selectOneMenu>
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="claims">

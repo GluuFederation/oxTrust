@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -16,7 +15,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
-import org.xdi.oxauth.model.uma.persistence.InternalExternal;
 import org.xdi.util.StringHelper;
 
 /**

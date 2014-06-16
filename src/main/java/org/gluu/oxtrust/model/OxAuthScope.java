@@ -10,24 +10,21 @@ import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
+import org.xdi.ldap.model.GluuBoolean;
 
 /**
- * oxAuth client
+ * oxAuth scope
  * 
- * @author Reda Zerrad Date: 06.18.2012
+ * @author Reda Zerrad Date: 06/18/2012
+ * @author Yuriy Movchan Date: 03/21/2014
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "oxAuthCustomScope" })
 public class OxAuthScope extends Entry implements Serializable {
 
-	/**
-     *
-     */
 	private static final long serialVersionUID = 4308826784917052508L;
 
 	private transient boolean selected;
-
-	private transient boolean isDefault;
 
 	@LdapAttribute(ignoreDuringUpdate = true)
 	private String inum;
@@ -45,7 +42,7 @@ public class OxAuthScope extends Entry implements Serializable {
 	private List<String> oxAuthClaims;
 
 	@LdapAttribute(name = "defaultScope")
-	private String defaultScope;
+	private GluuBoolean defaultScope;
 
 	public String getInum() {
 		return this.inum;
@@ -87,29 +84,17 @@ public class OxAuthScope extends Entry implements Serializable {
 		this.selected = selected;
 	}
 
-	public String getDefaultScope() {
+	public GluuBoolean getDefaultScope() {
 		return this.defaultScope;
 	}
 
-	public void setDefaultScope(String defaultScope) {
+	public void setDefaultScope(GluuBoolean defaultScope) {
 		this.defaultScope = defaultScope;
-	}
-
-	public boolean getIsDefault() {
-		if (this.defaultScope == null) {
-			return false;
-		}
-		if (this.defaultScope.equalsIgnoreCase("true")) {
-			this.isDefault = true;
-			return this.isDefault;
-		}
-		this.isDefault = false;
-		return this.isDefault;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("oxAuthScope [description=%s, displayName=%s, inum=%s, oxAuthClaims=%s, defaultScope=%s, toString()=%s]",
-				description, displayName, inum, oxAuthClaims, defaultScope, super.toString());
+		return "OxAuthScope [inum=" + inum + ", displayName=" + displayName + ", description=" + description + ", oxAuthClaims="
+				+ oxAuthClaims + ", defaultScope=" + defaultScope + "]";
 	}
 }

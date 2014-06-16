@@ -43,8 +43,8 @@ shibboleth2.idp.root-dir=/opt/idp
 shibboleth2.federation.root-dir=/opt/shibboleth-federation
 shibboleth2.sp.conf-dir=/etc/shibboleth
 
-poken.application.id=
-poken.application.secret=
+poken.application.id=gluu
+poken.application.secret=4zqhyP93hsg
 
 velocity.log=/opt/tomcat/logs/velocity.log
 

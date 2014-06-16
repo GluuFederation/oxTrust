@@ -12,14 +12,11 @@ import javax.mail.MessagingException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.GluuAttribute;
-import org.gluu.oxtrust.model.GluuAttributePrivacyLevel;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.gluu.oxtrust.model.GluuUserRole;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.MailUtils;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -32,10 +29,13 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuAttributePrivacyLevel;
+import org.xdi.model.GluuUserRole;
 import org.xdi.model.TrustContact;
+import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
-import org.xdi.service.XmlService;
 
 /**
  * Provides operations with trust relationships

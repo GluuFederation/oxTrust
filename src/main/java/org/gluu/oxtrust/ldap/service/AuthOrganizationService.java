@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.ehcache.CacheManager;
-
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -15,11 +13,8 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
@@ -37,8 +32,6 @@ public class AuthOrganizationService implements Serializable {
 
 	private static final long serialVersionUID = 5537567020929600777L;
 
-	@Logger
-	private Log log;
 
 	@In
 	private LdapEntryManager ldapAuthEntryManager;

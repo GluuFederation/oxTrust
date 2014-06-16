@@ -25,7 +25,6 @@ public class ScimConfigureAction implements Serializable {
 
 	private static final long serialVersionUID = -1290460481895022469L;
 
-	@SuppressWarnings("unused")
 	@Logger
 	private Log log;
 

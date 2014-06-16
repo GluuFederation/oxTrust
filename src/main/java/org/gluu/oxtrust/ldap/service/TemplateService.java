@@ -11,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -94,8 +93,12 @@ public class TemplateService implements Serializable {
 						+ File.separator + "idp" + File.separator + "ProfileConfiguration";
 				String folder6 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "template"
 						+ File.separator + "conf";
+				String folder7 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "template"
+						+ File.separator + "shibboleth2";
 				properties.setProperty("file.resource.loader.path", folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
-						+ folder5 + ", " + folder6);
+						+ folder5 + ", " + folder6  + ", " + folder7);
+				log.info("file.resource.loader.path" + folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
+						+ folder5 + ", " + folder6 + ", " + folder7);
 			}
 		} catch (IOException ex) {
 			log.error("Failed to load velocity.properties", ex);

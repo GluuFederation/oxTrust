@@ -13,8 +13,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
+import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Version;
 import org.gluu.site.ldap.OperationsFacade;
@@ -133,8 +135,11 @@ public class AppInitializer {
 		PythonService.instance().initPythonInterpreter();
 
 //		checkAndUpdateLdapbaseConfiguration(); // We do not need to create ldapbase configuration any more because we 
-											   //supply working ldap data with either dashboard or python setup sript. 
+											   //supply working ldap data with either dashboard or python setup sript.
+		
+		startInviteCodesExpirationService();
 
+		
 		startStatusChecker();
 		startDailyStatusChecker();
 		startSvnSync();
@@ -146,6 +151,42 @@ public class AppInitializer {
 		prepareConfigurations();
 
 		logSizeChecker();
+	}
+
+	private void startInviteCodesExpirationService() {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.SECOND, 60);
+		GluuOrganization org = OrganizationService.instance().getOrganization();
+		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
+		boolean accountsTimeLimited;
+		long linksExpirationFrequency;
+		long accountsExpirationServiceFrequency;
+		if(config != null){
+			log.debug("OxRegistrationConfiguration found. Trying to get the custom expiration configuration");
+			try{
+				linksExpirationFrequency = Long.parseLong(config.getLinksExpirationFrequency());
+				accountsExpirationServiceFrequency = Long.parseLong(config.getAccountsExpirationServiceFrequency());
+				accountsTimeLimited = config.isAccountsTimeLimited();
+			}catch (NumberFormatException e) {
+				log.debug("OxRegistrationConfiguration malformed. Resorting to the default values");
+
+				linksExpirationFrequency = RegistrationsExpirationService.instance().getDefaultLinksExpirationFrequency();
+				accountsExpirationServiceFrequency = RegistrationsExpirationService.instance().getDefaultAccountsExpirationServiceFrequency();
+				accountsTimeLimited = false;
+			}
+		}else{
+			log.debug("OxRegistrationConfiguration missing. Resorting to the default values");
+			linksExpirationFrequency = RegistrationsExpirationService.instance().getDefaultLinksExpirationFrequency();
+			accountsExpirationServiceFrequency = RegistrationsExpirationService.instance().getDefaultAccountsExpirationServiceFrequency();
+			accountsTimeLimited = false;
+		}
+		log.debug("OxRegistrationConfiguration parsed: linksExpirationFrequency: " + linksExpirationFrequency + ", accountsExpirationServiceFrequency: " + accountsExpirationServiceFrequency + ", accountsTimeLimited: " + accountsTimeLimited);
+
+		RegistrationsExpirationService.instance().expireLinks(calendar.getTime(), linksExpirationFrequency);
+		if(accountsTimeLimited){
+			RegistrationsExpirationService.instance().expireUsers(calendar.getTime(), accountsExpirationServiceFrequency);
+		}
+
 	}
 
 	private void createConnectionAuthProvider(String configurationLdapConfigComponentName, String fileName, String configurationComponentName, String connectionProviderComponentName) {
@@ -255,7 +296,7 @@ public class AppInitializer {
 	private void createConnectionProvider(FileConfiguration configuration, String configurationComponentName, String connectionProviderComponentName)
 			throws ConfigurationException {
 		Contexts.getApplicationContext().set(configurationComponentName, configuration);
-
+//TODO: Oleksiy Tataryn: Make oxTrust guess configuration if none available instead of just crashing. Or at least give give better explanation to the user.
 		LdapConnectionService connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(configuration
 				.getProperties()));
 		Contexts.getApplicationContext().set(connectionProviderComponentName, connectionProvider);
@@ -301,18 +342,13 @@ public class AppInitializer {
 		log.debug("Destroying application components");
 		LdapConnectionService connectionProvider = (LdapConnectionService) Contexts.getApplicationContext().get("connectionProvider");
 		connectionProvider.closeConnectionPool();
-		//
+
+		LdapConnectionService authConnectionProvider = (LdapConnectionService) Contexts.getApplicationContext().get("authConnectionProvider");
+		authConnectionProvider.closeConnectionPool();
 
 		LdapConnectionService centralConnectionProvider = (LdapConnectionService) Contexts.getApplicationContext().get(
 				"centralConnectionProvider");
 		centralConnectionProvider.closeConnectionPool();
-	}
-
-	private void checkAndUpdateLdapbaseConfiguration() {
-		boolean result = BaseConfigurationService.instance().checkAndUpdateLdapbaseConfiguration();
-		if (!result) {
-			log.error("Failed to update or create organization of appliance entry");
-		}
 	}
 
 	@Factory(value = "ldapEntryManager", scope = ScopeType.APPLICATION, autoCreate = true)
@@ -411,6 +447,9 @@ public class AppInitializer {
 		}
 
 		List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
+		if (idpConfs == null) {
+			return;
+		}
 
 		for (OxIDPAuthConf oneConf : idpConfs) {
 			if (oneConf.getType().equalsIgnoreCase("ldap")) {

@@ -2,6 +2,7 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +23,14 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.GluuAttribute;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
+import com.unboundid.util.StaticUtils;
 
 /**
  * Provides operations with persons
@@ -185,7 +189,7 @@ public class PersonService implements Serializable {
 
 	}
 
-	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes) throws Exception {
+	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes)  {
 		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, null);
 
 		return result;
@@ -249,7 +253,15 @@ public class PersonService implements Serializable {
 	 * @return Person
 	 */
 	public GluuCustomPerson getPersonByInum(String inum) {
-		return ldapEntryManager.find(GluuCustomPerson.class, getDnForPerson(inum));
+		GluuCustomPerson person = null;
+		try{
+			person = ldapEntryManager.find(GluuCustomPerson.class, getDnForPerson(inum));
+		}catch (Exception e) {
+			log.error("Failed to find Person by Inum " + inum, e);
+		}
+		
+		
+		return person;
 	}
 
 	/**
@@ -468,6 +480,28 @@ public class PersonService implements Serializable {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Remove custom attribute from all persons.
+	 */
+	public void removeAttribute(GluuAttribute attribute) {
+		ldapEntryManager.removeAttributeFromEntries(getDnForPerson(null), GluuCustomPerson.class, attribute.getName());
+		
+	}
+
+	/**
+	 * @param time
+	 * @return
+	 */
+	public List<GluuCustomPerson> findPersonsForExpiration(Date time) {
+		Filter timeFilter = Filter.createLessOrEqualFilter("oxCreationTimestamp", StaticUtils.encodeGeneralizedTime(time));
+		Filter linkFilter = Filter.createPresenceFilter("oxInviteCode");
+		Filter statusFilter = Filter.createEqualityFilter("gluuStatus", GluuStatus.ACTIVE.getValue());
+		Filter searchFilter = Filter.createANDFilter(timeFilter, linkFilter, statusFilter);
+		
+		List<GluuCustomPerson> people = ldapEntryManager.findEntries(getDnForPerson(null),  GluuCustomPerson.class, searchFilter);
+		return people;
 	}
 
 }

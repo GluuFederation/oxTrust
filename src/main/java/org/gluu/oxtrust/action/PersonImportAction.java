@@ -18,8 +18,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
 import org.gluu.oxtrust.ldap.service.ExcelService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuAttribute;
-import org.gluu.oxtrust.model.GluuAttributeDataType;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.table.Table;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -38,6 +36,8 @@ import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuAttributeDataType;
 import org.xdi.util.StringHelper;
 
 /**

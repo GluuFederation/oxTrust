@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
+import org.xdi.model.GluuAttribute;
+
 import com.unboundid.util.StaticUtils;
 
 /**

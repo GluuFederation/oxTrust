@@ -23,7 +23,7 @@
 	</target>
 
 	<target name="encrypt-password" depends="package" description="Run the password encryption for password specified in command line">
-		<fail message="Example: # ant -Dpassword=test encrypt-password" unless="password"/>
+		<fail message="Example: # ant -Dpassword=secret encrypt-password" unless="password"/>
 		<fail message="Cannot run password encryption because path to project contains spaces.">
 			<condition>
 				<contains string="${basedir}" substring=" "/>
@@ -46,7 +46,7 @@
 	</target>
 
 	<target name="decrypt-password" depends="package" description="Run the password decryption for encrypted password specified in command line">
-		<fail message="Example: # ant -Dpassword=test decrypt-password" unless="password"/>
+		<fail message="Example: # ant -Dpassword=secret decrypt-password" unless="password"/>
 		<fail message="Cannot run password encryption because path to project contains spaces.">
 			<condition>
 				<contains string="${basedir}" substring=" "/>

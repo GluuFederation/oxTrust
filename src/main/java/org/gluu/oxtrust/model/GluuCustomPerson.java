@@ -2,7 +2,11 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
+
+import lombok.Data;
 
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
@@ -18,7 +22,7 @@ import org.xdi.ldap.model.GluuStatus;
 
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "person", "organizationalPerson", "inetOrgPerson", "gluuPerson","eduPerson", "oxEntry", "oxCustomAttributes" })
-public class GluuCustomPerson extends User implements Serializable {
+public @Data class GluuCustomPerson extends User implements Serializable {
 
 	private static final long serialVersionUID = -1879582184398161112L;
 
@@ -34,6 +38,12 @@ public class GluuCustomPerson extends User implements Serializable {
 
 	@LdapAttribute(name = "associatedClient")
 	private List<String> associatedClient;
+	
+	@LdapAttribute
+	private Date oxCreationTimestamp;
+	
+	@LdapAttribute
+	private String oxInviteCode;
 
 	public String getIname() {
 		return getAttribute("iname");
@@ -200,6 +210,16 @@ public class GluuCustomPerson extends User implements Serializable {
 		customAttributes.add(attribute);
 	}
 
+	public void removeAttribute(String attributeName) {
+		for (Iterator<GluuCustomAttribute> it = customAttributes.iterator(); it.hasNext();) {
+			GluuCustomAttribute attribute = (GluuCustomAttribute) it.next();
+			if (attribute.getName().equalsIgnoreCase(attributeName)) {
+				it.remove();
+				break;
+			}
+		}
+	}
+
 	@Override
 	public String toString() {
 		return super.toString();
@@ -243,6 +263,20 @@ public class GluuCustomPerson extends User implements Serializable {
 
 	public void setSourceServerName(String sourceServerName) {
 		this.sourceServerName = sourceServerName;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		boolean result = false;
+		if(obj != null && getInum()!=null && obj instanceof GluuCustomPerson){
+			result = getInum().equals(((GluuCustomPerson) obj).getInum());
+		}
+		
+		return result;
 	}
 
 }

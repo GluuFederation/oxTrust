@@ -82,7 +82,6 @@ rule AccessWhitePagesProfile
   no-loop
   activation-group "permissions"
 when
-
   org: GluuAppliance()
   check: PermissionCheck(target == org, action == "whitePagesEnabled", granted == false)
   (GluuAppliance((whitePagesEnabled != null) && (whitePagesEnabled.booleanValue == true)) && Role((name == "owner") || (name == "manager") || (name == "user")))
@@ -123,6 +122,15 @@ then
   check.grant();
 end
 
+rule AccessRegistrationLinks
+  no-loop
+  activation-group "permissions"
+when
+  check: PermissionCheck(target == "registrationLinks", action == "access", granted == false)
+  Role((name == "owner") || (name == "manager"))
+then
+  check.grant();
+end
 rule AccessSelfTest
   no-loop
   activation-group "permissions"
@@ -189,6 +197,39 @@ rule AccessOxPushInventory
 when
   check: PermissionCheck(target == "oxpush", action == "access", granted == false)
   Role((name == "owner") || (name == "manager"))
+then
+  check.grant();
+end
+
+rule AccessLinktrackConfiguration
+  no-loop
+  activation-group "permissions"
+when
+  org: GluuOrganization()
+  check: PermissionCheck(target == org, action == "linktrack", granted == false)
+  (GluuOrganization((oxRegistrationConfiguration != null) && (oxRegistrationConfiguration.invitationCodesManagementEnabled == true)) && Role((name == "owner") || (name == "manager")))
+then
+  check.grant();
+end
+
+rule RegistrationLinksModeration
+  no-loop
+  activation-group "permissions"
+when
+  org: GluuOrganization()
+  check: PermissionCheck(target == org, action == "registrationLinksModeration", granted == false)
+  (GluuOrganization((oxRegistrationConfiguration != null) && (oxRegistrationConfiguration.invitationCodesManagementEnabled == true)))
+then
+  check.grant();
+end
+
+rule RegistrationLinksManagement
+  no-loop
+  activation-group "permissions"
+when
+  org: GluuOrganization()
+  check: PermissionCheck(target == org, action == "registrationLinksManagement", granted == false)
+  (GluuOrganization((oxRegistrationConfiguration != null) && (oxRegistrationConfiguration.invitationCodesManagementEnabled == true)) && Role((name == "owner") || (name == "manager")))
 then
   check.grant();
 end

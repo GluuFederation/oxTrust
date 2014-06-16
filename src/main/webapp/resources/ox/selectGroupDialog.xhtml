@@ -16,12 +16,13 @@
     <cc:attribute name="searchMethod" required="true" method-signature="void action()" />
     <cc:attribute name="acceptMethod" required="true" method-signature="void action()" />
     <cc:attribute name="cancelMethod" required="true" method-signature="void action()" />
+    <cc:attribute name="updateSelectionMethod" required="false" method-signature="void action()" />
     <cc:attribute name="searchResult" required="true" type="java.util.List" />
     <cc:attribute name="render" required="false" type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="selectGroupModalPanel" onmaskclick="#{rich:component('selectGroupModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="300" height="460">
+    <rich:popupPanel id="selectGroupModalPanel" onmaskclick="#{rich:component('selectGroupModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="300" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
         <f:facet name="header">
             <h:outputText value="#{cc.attrs.label}" />
         </f:facet>
@@ -41,7 +42,11 @@
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
 
-                <h:panelGroup style="overflow:auto; width:265px;#{cc.attrs.searchResult.size gt 10 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                <s:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
+                    <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="groupPanelId"/>
+                </s:fragment>
+
+                <h:panelGroup style="overflow:auto; width:280px;#{cc.attrs.searchResult.size gt 10 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
                     <rich:dataTable sortMode="single" id="groupListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">
                         <rich:column>
                             <f:facet name="header">X</f:facet>

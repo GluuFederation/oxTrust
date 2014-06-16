@@ -39,7 +39,11 @@
                 <param name="inum" value="#{updateAttributeAction.attribute.inum}" />
             </redirect>
         </rule>
-
+        
+        <rule if-outcome="confirm">
+            <render view-id="/attribute/addAttribute.xhtml"/>
+        </rule>
+        
         <rule if-outcome="no_permissions">
             <end-conversation />
             <redirect view-id="/home.xhtml">
@@ -54,7 +58,47 @@
             </redirect>
         </rule>
     </navigation>
+    
+    <navigation from-action="#{cc.attrs.acceptMethod}">
+        <rule if-outcome="success">
+            <redirect view-id="/attribute/updateAttribute.xhtml">
+                <message severity="INFO">New attribute '#{updateAttributeAction.attribute.displayName}' added successfully</message>
+                <param name="inum" value="#{updateAttributeAction.attribute.inum}" />
+            </redirect>
+        </rule>
+        
+        <rule if-outcome="no_permissions">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">You don't have permissions to add attribute</message>
+            </redirect>
+        </rule>
 
+        <rule if-outcome="failure">
+            <redirect view-id="/attribute/addAttribute.xhtml"/>
+        </rule>
+    </navigation>
+    
+    <navigation from-action="#{cc.attrs.cancelMethod}">
+        <rule if-outcome="success">
+            <redirect view-id="/attribute/updateAttribute.xhtml">
+                <message severity="INFO">New attribute '#{updateAttributeAction.attribute.displayName}' added successfully</message>
+                <param name="inum" value="#{updateAttributeAction.attribute.inum}" />
+            </redirect>
+        </rule>
+        
+        <rule if-outcome="no_permissions">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">You don't have permissions to add attribute</message>
+            </redirect>
+        </rule>
+
+        <rule if-outcome="failure">
+            <redirect view-id="/attribute/addAttribute.xhtml"/>
+        </rule>
+    </navigation>
+    
     <navigation from-action="#{updateAttributeAction.cancel}">
         <end-conversation />
         <redirect view-id="/attribute/attributeInventory.xhtml">

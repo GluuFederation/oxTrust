@@ -18,7 +18,7 @@
         </cc:interface>
 
         <cc:implementation>
-            <rich:popupPanel id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="360" height="460" onshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch();}">
+            <rich:popupPanel id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="360" height="460" onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch();}">
                 <f:facet name="header">
                     <h:outputText value="#{cc.attrs.label}" />
                 </f:facet>

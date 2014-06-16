@@ -20,9 +20,7 @@
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
                         <h:commandButton value="Update" action="#{updateScopeAction.save}" />
-                        <h:panelGroup rendered="#{!updateScopeAction.scope.isDefault}">
-                            <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" eventsQueue="scopeQueue" rendered="#{not _new}" />
-                        </h:panelGroup>
+                        <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" eventsQueue="scopeQueue" rendered="#{not _new}" />
                         <h:commandButton value="Cancel" action="#{updateScopeAction.cancel}" immediate="true" />
                     </div>
                 </ui:define>

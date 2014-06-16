@@ -8,12 +8,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.GluuAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.sql.InumSqlEntry;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.DbConnectionUtil;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
@@ -26,6 +24,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.InumEntry;
+import org.xdi.model.GluuAttribute;
 import org.xdi.util.INumGenerator;
 
 import com.mysql.jdbc.PreparedStatement;

@@ -31,15 +31,15 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.Error;
 import org.gluu.oxtrust.model.Errors;
-import org.gluu.oxtrust.model.GluuAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuCustomPersonList;
-import org.gluu.oxtrust.model.GluuUserRole;
 import org.gluu.oxtrust.model.Person;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.CopyUtils;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuUserRole;
 import org.xdi.util.StringHelper;
 import org.xml.sax.InputSource;
 

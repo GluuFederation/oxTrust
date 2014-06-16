@@ -28,12 +28,13 @@
                             <div id="registrationFormHolder">
                                 <a4j:repeat value="#{registerPersonAction.person.customAttributes}" var="_custAttr" rowKeyVar="_custAttrIdx">
                                     <ui:param name="_mandatory" value="#{_mandatoryAttributes.contains(_custAttr)}" />
-                                    <s:decorate id="_custAttrIdx" template="/WEB-INF/incl/layout/edit.xhtml">
-                                        <ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
-                                        <h:inputText value="#{_custAttr.value}" maxlength="60" size="40" required="true" id="custId" tabindex="#{_custAttrIdx + 1}">
+                                    <s:decorate id="_custAttrIdx" template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name)}">
+                                        <ui:define name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
+                                        <h:inputText value="#{_custAttr.value}" maxlength="60" size="40" required="#{_mandatory}" id="custId" tabindex="#{_custAttrIdx + 1}">
                                             <s:validate />
                                         </h:inputText>
                                         <h:outputText value="&#160;" />
+                                       
                                     </s:decorate>
                                 </a4j:repeat>
                                 <s:decorate id="passwordField" template="/WEB-INF/incl/layout/edit.xhtml">

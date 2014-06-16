@@ -65,7 +65,6 @@ public class GroupWebService extends BaseScimWebService {
 					ScimGroup group = CopyUtils.copy(gluuGroup, null);
 					allGroupList.getResources().add(group);
 				}
-
 			}
 			List<String> schema = new ArrayList<String>();
 			schema.add("urn:scim:schemas:core:1.0");
@@ -114,7 +113,6 @@ public class GroupWebService extends BaseScimWebService {
 			return getErrorResponse("Unexpected processing error, please check the input parameters",
 					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
-
 	}
 
 	@POST
@@ -203,7 +201,6 @@ public class GroupWebService extends BaseScimWebService {
 			return getErrorResponse("Unexpected processing error, please check the input parameters",
 					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
-
 	}
 
 	@Path("{id}")

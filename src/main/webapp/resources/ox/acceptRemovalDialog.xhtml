@@ -16,7 +16,6 @@
     <cc:attribute name="deleteMethod" required="true" method-signature="void action()" />
     <cc:attribute name="cancelMethod" required="false" method-signature="void action()" />
     <cc:attribute name="render" required="false" type="java.lang.String" />
-    <cc:attribute name="queue" default="ox" required="false" type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
@@ -29,7 +28,6 @@
         </f:facet>
 
         <h:form>
-            <input type='hidden' name='cid' value='#{conversation.id}'/> <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
                 <h:panelGroup>
                     <h:outputText value="Warning:&#160;" styleClass="bolded" />
@@ -41,12 +39,10 @@
                 <richext:spacer height="8" />
 
                 <h:panelGroup>
-                    <a4j:commandButton value="Ok" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide();" render="#{cc.attrs.render}" execute="@this" action="#{cc.attrs.deleteMethod}"
-                        eventsQueue="#{cc.attrs.queue}"/>&nbsp;
-                    <a4j:commandButton value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"
-                        eventsQueue="#{cc.attrs.queue}" />&nbsp;
+                    <a4j:commandButton value="Ok" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide();" render="#{cc.attrs.render}" execute="@this" action="#{cc.attrs.deleteMethod}"/>&nbsp;
+                    <a4j:commandButton value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
                     <a4j:commandButton value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
-                        action="#{cc.attrs.cancelMethod}" eventsQueue="#{cc.attrs.queue}" />&nbsp;
+                        action="#{cc.attrs.cancelMethod}"/>&nbsp;
                     <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
                 </h:panelGroup>
             </h:panelGrid>

@@ -362,10 +362,10 @@ public class AuthenticationService implements Serializable {
 	            primaryKey = ldapAuthConfig.getPrimaryKey();
 	        }
 	
-	        String localPrimaryKey = "uid";
-	        if (StringHelper.isNotEmpty(ldapAuthConfig.getLocalPrimaryKey())) {
-	            localPrimaryKey = ldapAuthConfig.getLocalPrimaryKey();
-	        }
+//	        String localPrimaryKey = "uid";
+//	        if (StringHelper.isNotEmpty(ldapAuthConfig.getLocalPrimaryKey())) {
+//	            localPrimaryKey = ldapAuthConfig.getLocalPrimaryKey();
+//	        }
         
 	        log.debug("Attempting to find userDN by primary key: {0}", primaryKey);
 

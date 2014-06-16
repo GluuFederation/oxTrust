@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<suite name="Site. Person Service Tests" verbose="2" parallel="false">
+	<!-- Load testing data -->
+	<test name="Site 1.0. Load test LDAP data" enabled="true">
+		<classes>
+			<class name="org.gluu.site.action.test.util.LoadTestingDataTest" />
+		</classes>
+	</test>
+
+	<test name="Site. Test service method to work with persons" enabled="true">
+		<classes>
+			<class name="org.gluu.site.service.test.PersonServiceTest" />
+		</classes>
+	</test>
+
+	<!-- Cleanup testing data -->
+	<test name="Site. Cleanup test LDAP data" enabled="true">
+		<classes>
+			<class name="org.gluu.site.action.test.util.CleanupTestingDataTest" />
+		</classes>
+	</test>
+</suite>

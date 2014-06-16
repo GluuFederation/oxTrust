@@ -45,7 +45,7 @@
             </s:decorate>
 
             <h:panelGroup id="bindDnGroup">
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="bindDn">
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="bindDn" rendered="#{not cc.attrs.ldapConfig.useAnonymousBind}">
                     <ui:define name="label">Bind DN</ui:define>
                     <h:inputText value="#{cc.attrs.ldapConfig.bindDN}" size="46" required="#{not ldapConfig.useAnonymousBind}"/>
                 </s:decorate>

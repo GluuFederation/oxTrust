@@ -242,6 +242,10 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 			}
 
 			if (this.existLdapConfigIdpAuthConf) {
+				if (this.ldapConfig.isUseAnonymousBind()) {
+					this.ldapConfig.setBindDN(null);
+				}
+
 				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
 				ldapConfigIdpAuthConf.setType("auth");
 				ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);

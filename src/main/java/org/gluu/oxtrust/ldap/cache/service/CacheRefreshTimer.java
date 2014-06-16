@@ -24,7 +24,6 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.ldap.service.SchemaService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -51,6 +50,7 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuDummyEntry;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.service.ObjectSerializationService;
+import org.xdi.service.SchemaService;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
@@ -234,6 +234,7 @@ public class CacheRefreshTimer {
 		return;
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean detectChangedEntries(GluuAppliance currentAppliance, LdapServerConnection[] sourceServerConnections,
 			LdapServerConnection inumDbServerConnection, LdapServerConnection targetServerConnection, CacheRefreshUpdateMethod updateMethod) {
 		boolean isVDSMode = CacheRefreshUpdateMethod.VDS.equals(updateMethod);

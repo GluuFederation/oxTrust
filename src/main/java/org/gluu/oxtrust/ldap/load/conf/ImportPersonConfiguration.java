@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.model.GluuAttribute;
-import org.gluu.oxtrust.model.GluuAttributeDataType;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -17,6 +15,8 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuAttributeDataType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 

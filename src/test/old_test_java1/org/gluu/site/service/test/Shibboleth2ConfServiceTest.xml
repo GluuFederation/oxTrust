@@ -1,0 +1,24 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<suite name="Site. Shibboleth2 Service Tests" verbose="2" parallel="false">
+	<!-- Load testing data -->
+	<test name="Site 1.0. Load test LDAP data" enabled="true">
+		<classes>
+			<class name="org.gluu.site.action.test.util.LoadTestingDataTest" />
+		</classes>
+	</test>
+
+	<test name="Site. Test service methods to work with Shibboleth2 configuration" enabled="true">
+		<parameter name="userKey" value="shibboleth2ConfServiceTest.login.user" />
+		<classes>
+			<class name="org.gluu.site.service.test.Shibboleth2ConfServiceTest" />
+		</classes>
+	</test>
+
+	<!-- Cleanup testing data -->
+	<test name="Site. Cleanup test LDAP data" enabled="true">
+		<classes>
+			<class name="org.gluu.site.action.test.util.CleanupTestingDataTest" />
+		</classes>
+	</test>
+</suite>

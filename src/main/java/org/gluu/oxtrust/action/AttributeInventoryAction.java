@@ -6,8 +6,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.model.GluuAttribute;
-import org.gluu.oxtrust.model.GluuUserRole;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.annotations.In;
@@ -17,6 +15,8 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuUserRole;
 
 /**
  * Action class for displaying attributes

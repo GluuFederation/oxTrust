@@ -16,13 +16,13 @@
     <cc:attribute name="searchMethod" required="true" method-signature="void action()" />
     <cc:attribute name="acceptMethod" required="true" method-signature="void action()" />
     <cc:attribute name="cancelMethod" required="true" method-signature="void action()" />
+    <cc:attribute name="updateSelectionMethod" required="false" method-signature="void action()" />
     <cc:attribute name="searchResult" required="true" type="java.util.List" />
     <cc:attribute name="render" required="false" type="java.lang.String" />
-    <cc:attribute name="queue" default="ox" required="false" type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="selectScopeModalPanel" onmaskclick="#{rich:component('selectScopeModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="450" height="460">
+    <rich:popupPanel id="selectScopeModalPanel" onmaskclick="#{rich:component('selectScopeModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="450" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
         <f:facet name="header">
             <h:outputText value="#{cc.attrs.label}" />
         </f:facet>
@@ -36,14 +36,18 @@
                     <ui:param name="_hideLabel" value="true" />
                     <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" id="searchScopePatternId" styleClass="searchParameters"
                         alt="Search parameters like iNum, Name, Display Name" />
-                    <a4j:commandButton value="Search" action="#{cc.attrs.searchMethod}" render="scopePanelId" eventsQueue="#{cc.attrs.queue}" />
+                    <a4j:commandButton value="Search" action="#{cc.attrs.searchMethod}" render="scopePanelId" />
                 </s:decorate>
 
                 <h:panelGroup id="scopeNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
 
-                <h:panelGroup style="overflow:auto; width:415px;#{cc.attrs.searchResult.size gt 10 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                <s:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
+                    <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="scopePanelId"/>
+                </s:fragment>
+
+                <h:panelGroup style="overflow:auto; width:415px;#{cc.attrs.searchResult.size gt 10 ? ' height:300px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
                     <rich:dataTable sortMode="single" id="scopeListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">
                         <rich:column>
                             <f:facet name="header">X</f:facet>
@@ -67,10 +71,8 @@
                 <richext:spacer height="16" />
 
                 <h:panelGroup>
-                    <a4j:commandButton action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectScopeModalPanel')}.hide();" render="scopeListId #{cc.attrs.render}"
-                        eventsQueue="#{cc.attrs.queue}" />&nbsp;
-                        <a4j:commandButton action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectScopeModalPanel')}.hide(); return false;" render="scopeListId"
-                        eventsQueue="#{cc.attrs.queue}" />&nbsp;
+                    <a4j:commandButton action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectScopeModalPanel')}.hide();" render="scopeListId #{cc.attrs.render}"/>&nbsp;
+                        <a4j:commandButton action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectScopeModalPanel')}.hide(); return false;" render="scopeListId"/>&nbsp;
                         <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
                 </h:panelGroup>
             </h:panelGrid>

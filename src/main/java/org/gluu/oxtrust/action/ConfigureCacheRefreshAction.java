@@ -360,9 +360,9 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean generateCacheConfigurationFile() {
 		VelocityContext context = new VelocityContext();
 		context.put("propUtil", new PropertyUtil());
-		context.put("sourceConfigs", sourceConfigs);
-		context.put("inumConfig", inumConfig);
-		context.put("targetConfig", targetConfig);
+		context.put("sourceConfigs", fixLdapConfigurations(sourceConfigs));
+		context.put("inumConfig", fixLdapConfiguration(inumConfig));
+		context.put("targetConfig", fixLdapConfiguration(targetConfig));
 		context.put("cacheRefreshConfig", cacheRefreshConfig);
 
 		String conf = templateService.generateConfFile(CACHE_REFRESH_TEMPLATE_FILE, context);
@@ -371,6 +371,22 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		}
 
 		return templateService.writeApplicationConfFile(CACHE_REFRESH_CONFIGURATION_FILE, conf);
+	}
+	
+	private GluuLdapConfiguration fixLdapConfiguration(GluuLdapConfiguration ldapConfig) {
+		if (ldapConfig.isUseAnonymousBind()) {
+			ldapConfig.setBindDN(null);
+		}
+		
+		return ldapConfig;
+	}
+
+	private List<GluuLdapConfiguration> fixLdapConfigurations(List<GluuLdapConfiguration> ldapConfigs) {
+		for (GluuLdapConfiguration ldapConfig : ldapConfigs) {
+			fixLdapConfiguration(ldapConfig);
+		}
+		
+		return ldapConfigs;
 	}
 
 	public CacheRefreshUpdateMethod[] getAllCacheRefreshUpdateMethods() {

@@ -52,6 +52,9 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 	@LdapAttribute(name = "oxAuthRedirectURI")
 	private List<String> oxAuthRedirectURIs;
 
+	@LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
+	private List<String> oxAuthPostLogoutRedirectURIs;
+
 	@LdapAttribute(name = "oxAuthScope")
 	private List<String> oxAuthScopes;
 

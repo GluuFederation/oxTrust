@@ -22,7 +22,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuUserRole;
 import org.gluu.oxtrust.model.oxchooser.ForwardedRequest;
 import org.gluu.oxtrust.model.oxchooser.IdentityRequest;
 import org.gluu.oxtrust.model.oxchooser.IdentityResponse;
@@ -53,6 +52,7 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
+import org.xdi.model.GluuUserRole;
 
 @Name("oxChooserWebService")
 @Path("/Chooser")

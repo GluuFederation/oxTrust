@@ -1,6 +1,7 @@
 package org.gluu.oxtrust.util;
 
-import org.xdi.util.LDAPConstants;
+
+import org.xdi.util.OxConstants;
 
 /**
  * Constants loads the LDAP schema attribute names like uid, iname
@@ -8,7 +9,7 @@ import org.xdi.util.LDAPConstants;
  * @author Yuriy Movchan
  * @version 0.1, 10/14/2010
  */
-public final class OxTrustConstants extends LDAPConstants {
+public final class OxTrustConstants extends OxConstants {
 
 	public static final String CURRENT_PERSON = "currentPerson";
 
@@ -20,7 +21,7 @@ public final class OxTrustConstants extends LDAPConstants {
 	public static final String inameDelimiter = "*";
 
 	public static final String ouPeople = "ou=people";
-	public static final String schemaDN = "cn=schema";
+
 
 	public static final String inum = "inum";
 	public static final String iname = "iname";
@@ -41,16 +42,10 @@ public final class OxTrustConstants extends LDAPConstants {
 	public static final String RESULT_DISABLED = "disabled";
 	public static final String RESULT_NO_PERMISSIONS = "no_permissions";
 	public static final String RESULT_VALIDATION_ERROR = "validation_error";
+	public static final String RESULT_CONFIRM = "confirm";
 	public static final String RESULT_LOGOUT = "logout";
 
-	public static final String CACHE_ORGANIZATION_KEY = "organization";
-	public static final String CACHE_APPLICATION_NAME = "ApplicationCache";
-	public static final String CACHE_ATTRIBUTE_NAME = "AttributeCache";
-	public static final String CACHE_LOOKUP_NAME = "LookupCache";
 
-	public static final String CACHE_ATTRIBUTE_KEY_LIST = "attributeList";
-	public static final String CACHE_ACTIVE_ATTRIBUTE_KEY_LIST = "activeAttributeList";
-	public static final String CACHE_ACTIVE_ATTRIBUTE_NAME = "ActiveAttributeCache";
 	public static final String CACHE_ATTRIBUTE_PERSON_KEY_LIST = "personAttributeList";
 	public static final String CACHE_ATTRIBUTE_CONTACT_KEY_LIST = "contactAttributeList";
 	public static final String CACHE_ATTRIBUTE_CUSTOM_KEY_LIST = "customAttributeList";
@@ -111,8 +106,6 @@ public final class OxTrustConstants extends LDAPConstants {
 
 	public static final char[] HEX_CHARACTERS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-	private static OxTrustConstants instance;
-	private static Object lock = new Object();
 
 	public static String ouAppliances = "ou=appliances";
 
@@ -183,6 +176,10 @@ public final class OxTrustConstants extends LDAPConstants {
 	 * page of results.
 	 */
 	public static final String QUERY_PARAMETER_PAGE_SIZE = "count";
+
+	public static final String PRE_REGISTRATION_SCRIPT = "PreRegistrationScript";
+
+	public static final String POST_REGISTRATION_SCRIPT = "PostRegistrationScript";
 
 	public static String getGluuSvnRevisionVersion() {
 		return Version.GLUU_SVN_REVISION_VERSION;

@@ -1,13 +1,16 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.Data;
+
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
+import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
 import org.xdi.ldap.model.GluuStatus;
@@ -19,7 +22,7 @@ import org.xdi.ldap.model.GluuStatus;
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "gluuGroup", "oxEntry" })
-public class GluuOrganization extends Entry implements Serializable {
+public @Data class GluuOrganization extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -8284018077740582699L;
 
@@ -95,214 +98,25 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	@LdapAttribute(name = "title")
 	private String title;
+	
+	@LdapAttribute(name = "oxLinktrackEnabled")
+	private Boolean linktrackEnabled;
 
-	/**
-	 * @return the title
-	 */
-	public String getTitle() {
-		return title;
-	}
+	@LdapAttribute(name = "oxLinktrackLogin")
+	private String linktrackLogin;
 
-	/**
-	 * @param title
-	 *            the title to set
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getInum() {
-		return inum;
-	}
-
-	public void setInum(String inum) {
-		this.inum = inum;
-	}
-
-	public String getIname() {
-		return iname;
-	}
-
-	public void setIname(String iname) {
-		this.iname = iname;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getMember() {
-		return member;
-	}
-
-	public void setMember(String member) {
-		this.member = member;
-	}
-
-	public String getCountryName() {
-		return countryName;
-	}
-
-	public void setCountryName(String countryName) {
-		this.countryName = countryName;
-	}
-
-	public String getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(String organization) {
-		this.organization = organization;
-	}
-
-	public String getSeeAlso() {
-		return seeAlso;
-	}
-
-	public void setSeeAlso(String seeAlso) {
-		this.seeAlso = seeAlso;
-	}
-
-	public GluuStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(GluuStatus status) {
-		this.status = status;
-	}
-
-	public String getCommunityAttribute() {
-		return communityAttribute;
-	}
-
-	public void setCommunityAttribute(String communityAttribute) {
-		this.communityAttribute = communityAttribute;
-	}
-
-	public String getManagerGroup() {
-		return managerGroup;
-	}
-
-	public void setManagerGroup(String managerGroup) {
-		this.managerGroup = managerGroup;
-	}
-
-	public String getOwnerGroup() {
-		return ownerGroup;
-	}
-
-	public void setOwnerGroup(String ownerGroup) {
-		this.ownerGroup = ownerGroup;
-	}
-
-	public String getLogoImage() {
-		return logoImage;
-	}
-
-	public void setLogoImage(String logoImage) {
-		this.logoImage = logoImage;
-	}
-
-	public String getThemeColor() {
-		return themeColor;
-	}
-
-	public void setThemeColor(String themeColor) {
-		this.themeColor = themeColor;
-	}
-
-	public String getShortName() {
-		return shortName;
-	}
-
-	public void setShortName(String shortName) {
-		this.shortName = shortName;
-	}
-
-	public String[] getCustomMessages() {
-		return customMessages;
-	}
-
-	public void setCustomMessages(String[] customMessages) {
-		this.customMessages = customMessages;
-	}
-
-	public String getFaviconImage() {
-		return faviconImage;
-	}
-
-	public void setFaviconImage(String faviconImage) {
-		this.faviconImage = faviconImage;
-	}
-
-	public void setTempFaviconImage(String tempFaviconImage) {
-		this.tempFaviconImage = tempFaviconImage;
-	}
-
-	public String getTempFaviconImage() {
-		return this.tempFaviconImage;
-	}
-
-	public void setScimStatus(GluuStatus scimStatus) {
-		this.scimStatus = scimStatus;
-	}
-
-	public GluuStatus getScimStatus() {
-		return this.scimStatus;
-	}
-
-	public void setScimAuthMode(String scimAuthMode) {
-		this.scimAuthMode = scimAuthMode;
-	}
-
-	public String getScimAuthMode() {
-		return this.scimAuthMode;
-	}
-
-	public void setScimGroup(String scimGroup) {
-		this.scimGroup = scimGroup;
-	}
-
-	public String getScimGroup() {
-		return this.scimGroup;
-	}
-
-	public String getOxInumConfig() {
-		return this.oxInumConfig;
-	}
-
-	public void setOxInumConfig(String oxInumConfig) {
-		this.oxInumConfig = oxInumConfig;
-	}
+	@LdapAttribute(name = "oxLinktrackPassword")
+	private String linktrackPassword;
+	
+	@LdapAttribute(name = "oxRegistrationConfiguration")
+	@LdapJsonObject
+	private RegistrationConfiguration oxRegistrationConfiguration;
 
 	public String getOrganizationTitle() {
 		if (title == null || title.trim().equals("")) {
 			return "Gluu";
 		}
 		return title;
-	}
-
-	@Override
-	public String toString() {
-		return "GluuOrganization [inum=" + inum + ", iname=" + iname + ", displayName=" + displayName + ", description=" + description
-				+ ", member=" + member + ", countryName=" + countryName + ", organization=" + organization + ", seeAlso=" + seeAlso
-				+ ", status=" + status + ", communityAttribute=" + communityAttribute + ", managerGroup=" + managerGroup + ", ownerGroup="
-				+ ownerGroup + ", logoImage=" + logoImage + ", themeColor=" + themeColor + ", shortName=" + shortName + ", customMessages="
-				+ Arrays.toString(customMessages) + ", faviconImage=" + faviconImage + ", tempFaviconImage=" + tempFaviconImage
-				+ ", scimStatus=" + scimStatus + ", scimAuthMode=" + scimAuthMode + ", scimGroup=" + scimGroup + ", oxInumConfig="
-				+ oxInumConfig + ", toString()=" + super.toString() + "]";
 	}
 
 }

@@ -51,6 +51,10 @@
                             <f:facet name="header">Description</f:facet>
                             <h:outputText value="#{clt.description}" />
                         </rich:column>
+                        <rich:column>
+                            <f:facet name="header">Default</f:facet>
+                            <h:outputText value="#{clt.defaultScope.displayName}" />
+                        </rich:column>
                         <f:facet name="footer">
                             <rich:dataScroller renderIfSinglePage="false" rendered="#{searchScopeAction.scopeList.size > 0}" for="scopesListId" maxPages="10" stepControls="auto" align="left" />
                         </f:facet>

@@ -23,7 +23,6 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuUserRole;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.security.OauthData;
 import org.gluu.oxtrust.service.AuthenticationSessionService;
@@ -48,6 +47,8 @@ import org.jboss.seam.security.Credentials;
 import org.jboss.seam.security.Identity;
 import org.jboss.seam.security.SimplePrincipal;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.GluuUserRole;
 import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
 import org.xdi.oxauth.client.UserInfoClient;
@@ -85,7 +86,10 @@ public class Authenticator implements Serializable {
 
 	@In
 	private Credentials credentials;
-
+	
+	@In
+	Redirect redirect;
+	
 	@In
 	private PersonService personService;
 
@@ -292,6 +296,7 @@ public class Authenticator implements Serializable {
 	 */
 	public boolean shibboleth2Authenticate() {
 		log.debug("Checking if user authenticated with shibboleth already");
+		boolean result = false;
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 
 		String authType = request.getAuthType();
@@ -312,7 +317,7 @@ public class Authenticator implements Serializable {
 		}
 
 		if (StringHelper.isEmpty(userUid) || StringHelper.isEmpty(authType) || !authType.equals("shibboleth")) {
-			return false;
+			result = false;
 		}
 
 		Pattern pattern = Pattern.compile(".+@.+\\.[a-z]+");
@@ -328,25 +333,41 @@ public class Authenticator implements Serializable {
 		}
 
 		if (user == null) {
-			return false;
+			result = false;
 		}
 		log.debug("Person Inum is " + user.getInum());
 
-		credentials.setUsername(user.getUid());
-		// credentials.setPassword("");
-		Principal principal = new SimplePrincipal(user.getUid());
-		log.debug("Principal is " + principal.toString());
-
-		identity.acceptExternallyAuthenticatedPrincipal(principal);
-
-		log.info("User '{0}' authenticated with shibboleth already", userUid);
-		identity.quietLogin();
-		postLogin(user);
-
-		Contexts.getSessionContext().set(OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE,
-				OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH2);
-
-		return true;
+		if (GluuStatus.ACTIVE.getValue().equals(user.getAttribute("gluuStatus"))){
+		
+			credentials.setUsername(user.getUid());
+			// credentials.setPassword("");
+			Principal principal = new SimplePrincipal(user.getUid());
+			log.debug("Principal is " + principal.toString());
+	
+			identity.acceptExternallyAuthenticatedPrincipal(principal);
+	
+			log.info("User '{0}' authenticated with shibboleth already", userUid);
+			identity.quietLogin();
+			postLogin(user);
+	
+			Contexts.getSessionContext().set(OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE,
+					OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH2);
+	
+			result = true;
+			if (Events.exists()) {
+				facesMessages.clear();
+				Events.instance().raiseEvent(Identity.EVENT_LOGIN_SUCCESSFUL);
+			}
+		}else if(GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus")) || GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))){
+		     redirect.setViewId("/register.xhtml");
+		     redirect.setParameter("inum", user.getInum());
+		     redirect.execute();
+		     result = true;
+		}else{
+			result = false;
+		}
+		
+		return result;
 	}
 
 	/**
@@ -358,10 +379,7 @@ public class Authenticator implements Serializable {
 		}
 
 		if (shibboleth2Authenticate()) {
-			if (Events.exists()) {
-				facesMessages.clear();
-				Events.instance().raiseEvent(Identity.EVENT_LOGIN_SUCCESSFUL);
-			}
+
 			return true;
 		}
 		// try {
@@ -429,20 +447,22 @@ public class Authenticator implements Serializable {
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
 
-		String authorizationCode = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-				.get(OxTrustConstants.OXAUTH_CODE);
+		Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext().getRequestCookieMap();
 
-		Object sessionIdCookie = FacesContext.getCurrentInstance().getExternalContext().getRequestCookieMap().get(Parameters.SESSION_ID.getParamName());
+		String authorizationCode = requestParameterMap.get(OxTrustConstants.OXAUTH_CODE);
+
+		Object sessionIdCookie = requestCookieMap.get(Parameters.SESSION_ID.getParamName());
 		String sessionId = null;
 		if (sessionIdCookie != null) {
 			sessionId = ((Cookie) sessionIdCookie).getValue();
 		}
 
-		String idToken = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(OxTrustConstants.OXAUTH_ID_TOKEN);
+		String idToken = requestParameterMap.get(OxTrustConstants.OXAUTH_ID_TOKEN);
 
 		if (authorizationCode == null) {
-			String error = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(OxTrustConstants.OXAUTH_ERROR);
-			String errorDescription = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+			String error = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR);
+			String errorDescription = requestParameterMap
 					.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
 
 			log.info("No authorization code sent. Error: " + error + ". Error description: " + errorDescription);
@@ -462,7 +482,7 @@ public class Authenticator implements Serializable {
 		// applicationConfiguration.getOxAuthClientCredentials();
 		log.info("authorizationCode : " + authorizationCode);
 
-		String scopes = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(OxTrustConstants.OXAUTH_SCOPE);
+		String scopes = requestParameterMap.get(OxTrustConstants.OXAUTH_SCOPE);
 		log.info(" scopes : " + scopes);
 
 		String clientID = applicationConfiguration.getOxAuthClientId();

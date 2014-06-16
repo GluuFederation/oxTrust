@@ -13,7 +13,6 @@ import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.ldap.service.intercept.InumGeneratorInterceptorService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
-import org.gluu.oxtrust.model.GluuUserRole;
 import org.gluu.oxtrust.model.InumConf;
 import org.gluu.oxtrust.model.InumResponse;
 import org.gluu.oxtrust.model.python.InumGeneratorType;
@@ -29,6 +28,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.GluuUserRole;
 
 /**
  * Inum Generation WebService Implementation

@@ -10,10 +10,8 @@ import javax.faces.context.FacesContext;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 
 /**
  * Provides operations with view id
@@ -25,9 +23,6 @@ import org.jboss.seam.log.Log;
 @Scope(ScopeType.STATELESS)
 @AutoCreate
 public class ViewHandlerService {
-
-	@Logger
-	private Log log;
 
 	@In
 	private FacesContext facesContext;

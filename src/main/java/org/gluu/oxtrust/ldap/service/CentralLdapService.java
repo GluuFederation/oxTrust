@@ -5,10 +5,8 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 
 /**
  * Provides operations with central LDAP server
@@ -19,9 +17,6 @@ import org.jboss.seam.log.Log;
 @Name("centralLdapService")
 @AutoCreate
 public class CentralLdapService {
-
-	@Logger
-	private Log log;
 
 	@In
 	LdapEntryManager centralLdapEntryManager;

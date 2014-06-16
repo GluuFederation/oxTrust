@@ -24,30 +24,21 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.ldap.service.GroupService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.GluuOrganization;
-import org.gluu.oxtrust.model.GluuUserRole;
 import org.gluu.oxtrust.model.scim.BulkRequests;
 import org.gluu.oxtrust.model.scim.BulkResponseStatus;
 import org.gluu.oxtrust.model.scim.BulkResponses;
-import org.gluu.oxtrust.model.scim.Error;
-import org.gluu.oxtrust.model.scim.Errors;
 import org.gluu.oxtrust.model.scim.ScimBulkOperation;
 import org.gluu.oxtrust.model.scim.ScimBulkResponse;
 import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim.ScimPerson;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.contexts.Contexts;
-import org.xdi.ldap.model.GluuStatus;
 
 /**
  * SCIM Bulk Implementation

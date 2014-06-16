@@ -6,10 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 
 /**
  * Provides operations to get property values
@@ -23,8 +21,6 @@ public class PropertyService implements Serializable {
 
 	private static final long serialVersionUID = -1707238475653913313L;
 
-	@Logger
-	private Log log;
 
 	/**
 	 * Returns object property value

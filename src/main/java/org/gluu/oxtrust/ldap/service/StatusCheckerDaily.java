@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;

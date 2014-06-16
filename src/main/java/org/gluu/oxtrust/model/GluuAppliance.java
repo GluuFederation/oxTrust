@@ -19,12 +19,14 @@ import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
+import org.xdi.model.SmtpConfiguration;
 import org.xdi.util.security.StringEncrypter;
 
 /**
  * GluuAppliance
  * 
  * @author Reda Zerrad Date: 08.10.2012
+ * @author Yuriy Movchan Date: 04/20/2014
  */
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuAppliance" })
@@ -199,6 +201,10 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "gluuSmtpPort")
 	private String smtpPort;
+
+	@LdapAttribute(name = "oxSmtpConfiguration")
+	@LdapJsonObject
+	private SmtpConfiguration smtpConfiguration;
 
 	@LdapAttribute(name = "gluuApplianceDnsServer")
 	private String applianceDnsServer;

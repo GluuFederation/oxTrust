@@ -8,12 +8,8 @@ import java.util.List;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuAttribute;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.model.GluuImage;
-import org.gluu.oxtrust.model.GluuUserRole;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
@@ -24,6 +20,10 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuImage;
+import org.xdi.model.GluuUserRole;
 
 /**
  * Action class for view and update profile actions.
