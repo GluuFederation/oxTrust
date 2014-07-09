@@ -26,53 +26,6 @@ public class Utils implements Serializable {
 	private static Log log = Logging.getLog(Utils.class);
 
 	/**
-	 * checks if the User is a member or owner of SCIM group.
-	 * 
-	 * @return boolean
-	 * @throws Exception
-	 */
-	public static boolean isScimGroupMemberOrOwner(GluuCustomPerson user) throws Exception {
-
-		GroupService groupService = GroupService.instance();
-		OrganizationService organizationService = OrganizationService.instance();
-		GluuOrganization org = organizationService.getOrganization();
-		GluuGroup group = groupService.getGroupByDn(org.getScimGroup());
-		List<String> members = group.getMembers();
-		String owner = group.getOwner();
-		if (owner.equalsIgnoreCase(user.getDn())) {
-			return true;
-		}
-
-		for (String member : members) {
-
-			if (member.equalsIgnoreCase(user.getDn())) {
-				return true;
-			}
-		}
-
-		return false;
-
-	}
-
-	/**
-	 * Gets Scim Authorization mode
-	 * 
-	 * @return AuthMode
-	 */
-	public static String scimAuthMode() {
-		try {
-			OrganizationService orgService;
-			orgService = OrganizationService.instance();
-			GluuOrganization org = orgService.getOrganization();
-			return org.getScimAuthMode();
-		} catch (Exception ex) {
-			log.error("an Error occured could not get ScimAuthMode : ", ex);
-		}
-		return null;
-
-	}
-
-	/**
 	 * Delete a Group from a Person
 	 * 
 	 * @return void

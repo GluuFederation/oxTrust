@@ -18,8 +18,8 @@ import org.jboss.seam.annotations.Scope;
 @AutoCreate
 public class CentralLdapService {
 
-	@In
-	LdapEntryManager centralLdapEntryManager;
+	@In(required = false)
+	private LdapEntryManager centralLdapEntryManager;
 
 	/**
 	 * Add appliance entry
@@ -48,6 +48,10 @@ public class CentralLdapService {
 	 */
 	public boolean containsAppliance(GluuAppliance appliance) {
 		return centralLdapEntryManager.contains(appliance);
+	}
+	
+	public boolean isUseCentralServer() {
+		return centralLdapEntryManager != null;
 	}
 
 }

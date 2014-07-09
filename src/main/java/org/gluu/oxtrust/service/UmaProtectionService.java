@@ -9,9 +9,13 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.jboss.resteasy.client.ClientResponseFailure;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
@@ -76,9 +80,13 @@ public class UmaProtectionService implements Serializable {
 	@Create
 	public void init() {
 		if (this.umaMetadataConfiguration != null) {
-	        this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration);
-	        this.resourceSetRegistrationService = UmaClientFactory.instance().createResourceSetRegistrationService(this.umaMetadataConfiguration);
-			this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration);
+			ClientConnectionManager connectoinManager = new PoolingClientConnectionManager();
+	        final DefaultHttpClient defaultHttpClient = new DefaultHttpClient(connectoinManager);
+	        final ApacheHttpClient4Executor clientExecutor = new ApacheHttpClient4Executor(defaultHttpClient);
+
+	        this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration, clientExecutor);
+	        this.resourceSetRegistrationService = UmaClientFactory.instance().createResourceSetRegistrationService(this.umaMetadataConfiguration, clientExecutor);
+			this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration, clientExecutor);
 		}
 	}
 
@@ -133,7 +141,7 @@ public class UmaProtectionService implements Serializable {
 		RptStatusResponse rptStatusResponse = null;
 		try {
 			RptStatusRequest tokenStatusRequest = new RptStatusRequest(rptToken);
-			rptStatusResponse = rptStatusService.requestRptStatus(authorization, tokenStatusRequest);
+			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, tokenStatusRequest);
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
 		}

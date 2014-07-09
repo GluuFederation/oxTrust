@@ -28,7 +28,6 @@
             <rich:menuItem label="Manage Certificates" action="#{menuAction.endConversation('/cert/certificateManagement.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuItem label="Manage Authentication" action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuItem label="Manage Registration" action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
-            <rich:menuItem label="SCIM configuration" action="#{menuAction.endConversation('/scim/configuration.xhtml')}" rendered="#{s:hasPermission('scim', 'access')}" />
             <rich:menuItem label="Import People" action="#{menuAction.endConversation('/person/personImport.xhtml')}" rendered="#{s:hasPermission('import', 'person')}" />
             <rich:menuItem label="Attributes" action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}" rendered="#{s:hasPermission('attribute', 'access')}" />
             <rich:menuItem label="Cache refresh" action="#{menuAction.endConversation('/organization/cacheRefresh.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />

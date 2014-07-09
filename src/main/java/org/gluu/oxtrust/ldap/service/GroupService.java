@@ -236,7 +236,6 @@ public class GroupService implements Serializable {
 		String orgInum = OrganizationService.instance().getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_GROUP_OBJECTTYPE + OxTrustConstants.inumDelimiter
 				+ INumGenerator.generate(2);
-
 	}
 
 	/**

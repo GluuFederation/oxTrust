@@ -14,7 +14,7 @@
 
     <ui:define name="body">
         <div id="viewProfile">
-            <h:outputScript src="/js/attributesSlide.js" />
+        	<script type="text/javascript" src="#{oxTrustConfigurationService.jsLocation}/attributesSlide.js"/>
             <h:outputScript>
                 function changeAttributeVisibility(attrId, show) {
                     var attr = $('a[id*=' + attrId + ']');

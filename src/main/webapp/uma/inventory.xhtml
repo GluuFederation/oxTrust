@@ -46,6 +46,11 @@
                                     </rich:column>
 
                                     <rich:column>
+                                        <f:facet name="header">Id</f:facet>
+                                        <h:outputText value="#{_row.id}" />
+                                    </rich:column>
+
+                                    <rich:column>
                                         <f:facet name="header">Scopes</f:facet>
                                         <ox:displayNameEntryList value="#{umaInventoryAction.getScopeDisplayNameEntries(_row.getScopes())}" />
                                     </rich:column>

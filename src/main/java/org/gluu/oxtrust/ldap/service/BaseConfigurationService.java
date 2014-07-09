@@ -132,14 +132,16 @@ public class BaseConfigurationService implements Serializable {
 					String newPassword = RandomStringUtils.randomAlphanumeric(8);
 					appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword));
 
-					GluuAppliance tmpAppliance = new GluuAppliance();
-					tmpAppliance.setDn(appliance.getDn());
-					boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
-
-					if (existAppliance) {
-						centralLdapService.updateAppliance(appliance);
-					} else {
-						centralLdapService.addAppliance(appliance);
+					if (centralLdapService.isUseCentralServer()) {
+						GluuAppliance tmpAppliance = new GluuAppliance();
+						tmpAppliance.setDn(appliance.getDn());
+						boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
+	
+						if (existAppliance) {
+							centralLdapService.updateAppliance(appliance);
+						} else {
+							centralLdapService.addAppliance(appliance);
+						}
 					}
 
 					appliance.setUserPassword(newPassword);

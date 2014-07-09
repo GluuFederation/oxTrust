@@ -60,6 +60,15 @@
                 </h:selectOneMenu>
             </s:decorate>
 
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenAuthMethod">
+                <ui:define name="label">Authentication method</ui:define>
+                <h:selectOneMenu value="#{_client.tokenEndpointAuthMethod}" id="idTokenAuthMethodId" required="false">
+                    <s:selectItems value="#{clientService.authenticationMethods}" noSelectionLabel="Authentication method" var="_method" label="#{_method.displayName}" />
+                    <!-- <s:convertEnum/> -->
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
             <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="redirectLoginUrls">
                 <ui:define name="label">Redirect Login URIs</ui:define>
                 <h:panelGroup id="selectedLoginURIsId">

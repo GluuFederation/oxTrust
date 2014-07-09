@@ -162,7 +162,10 @@ public class SubversionService {
 	 */
 	
 	public void initSubversionService() {
-		String svnConfigurationStoreRoot = applicationConfiguration.getSvnConfigurationStoreRoot();
+		String svnConfigurationStoreRoot = null;
+		if (applicationConfiguration.isPersistSVN()) { 
+			svnConfigurationStoreRoot  = applicationConfiguration.getSvnConfigurationStoreRoot();
+		}
 
 		SVNAdminAreaFactory.setSelector(new ISVNAdminAreaFactorySelector() {
 
@@ -181,7 +184,7 @@ public class SubversionService {
 		});
 
 		if (StringHelper.isEmpty(svnConfigurationStoreRoot)) {
-			log.error("Failed to initialize Subversion store due to wrong SVN root path");
+			log.warn("The service which commit configuration files into SVN was disabled");
 			return;
 		}
 

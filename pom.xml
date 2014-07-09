@@ -6,7 +6,7 @@
     <name>oxTrust</name>
     <url>http://ox.gluu.org</url>
     <packaging>war</packaging>
-    <version>1.1.0.Final</version>
+    <version>1.2.0.Final</version>
 
     <prerequisites>
         <maven>2.3</maven>
@@ -23,11 +23,10 @@
         <drools.version>5.3.3.Final</drools.version>
         <arquillian.version>1.1.2.Final</arquillian.version>
         <shibboleth.version>1.1.0</shibboleth.version>
-        <oxcore.version>1.1.0.Final</oxcore.version>
-        <release.identifier>SNAPSHOT</release.identifier>
+        <oxcore.version>1.2.0.Final</oxcore.version>
+        <oxauth.version>1.2.0.Final</oxauth.version>
 
         <jndiPattern>java:app/oxtrust-ejb/#{ejbName}</jndiPattern>
-        <oxauth.version>1.1.0.Final</oxauth.version>
     </properties>
 
     <repositories>
@@ -382,6 +381,11 @@
             <groupId>org.xdi</groupId>
             <artifactId>oxauth-model</artifactId>
             <version>${oxauth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>oxTrustStatic</artifactId>
+            <version>${oxcore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.xdi</groupId>

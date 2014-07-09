@@ -7,10 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.ldap.service.intercept.InumGeneratorInterceptorService;
+import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.InumConf;
@@ -27,6 +29,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
 
@@ -47,6 +50,9 @@ public class InumGenerationWebServiceImpl implements InumGenerationWebService {
 
 	@In
 	InumService inumService;
+
+	@In
+	private ApplianceService applianceService;
 
 	@Override
 	public Response getInum(HttpServletRequest request, String prefix) throws Exception {
@@ -120,29 +126,25 @@ public class InumGenerationWebServiceImpl implements InumGenerationWebService {
 	private boolean getAuthorizedUser() {
 		try {
 			GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
-			SecurityService securityService = SecurityService.instance();
 
-			OrganizationService organizationService = OrganizationService.instance();
-			GluuOrganization org = organizationService.getOrganization();
-			if (!GluuStatus.ACTIVE.equals(org.getScimStatus())) {
+			if (authUser == null) {
 				return false;
 			}
 
-			GluuUserRole[] userRoles = securityService.getUserRoles(authUser);
-			for (GluuUserRole role : userRoles) {
-
-				if (role.getRoleName().equalsIgnoreCase("MANAGER") || role.getRoleName().equalsIgnoreCase("OWNER")) {
-					if (Utils.isScimGroupMemberOrOwner(authUser)) {
-						return true;
-					}
-				}
+			GluuAppliance appliance = applianceService.getAppliance();
+			if (appliance == null) {
+				return false;
 			}
-			return false;
+
+			if (!(GluuBoolean.TRUE.equals(appliance.getScimEnabled()) || GluuBoolean.ENABLED.equals(appliance.getScimEnabled()))) {
+				return false;
+			}
+
+			return true;
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			return false;
 		}
-
 	}
 
 }

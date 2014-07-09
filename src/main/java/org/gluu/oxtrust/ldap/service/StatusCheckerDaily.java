@@ -25,19 +25,19 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 public class StatusCheckerDaily {
 
 	@Logger
-	Log log;
+	private Log log;
 
 	@In
-	ApplianceService applianceService;
+	private ApplianceService applianceService;
 
 	@In
-	GroupService groupService;
+	private GroupService groupService;
 
 	@In
-	PersonService personService;
+	private PersonService personService;
 
 	@In
-	CentralLdapService centralLdapService;
+	private CentralLdapService centralLdapService;
 
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
@@ -88,19 +88,21 @@ public class StatusCheckerDaily {
 			return;
 		}
 
-		try {
-			GluuAppliance tmpAppliance = new GluuAppliance();
-			tmpAppliance.setDn(appliance.getDn());
-			boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
-
-			if (existAppliance) {
-				centralLdapService.updateAppliance(appliance);
-			} else {
-				centralLdapService.addAppliance(appliance);
+		if (centralLdapService.isUseCentralServer()) {
+			try {
+				GluuAppliance tmpAppliance = new GluuAppliance();
+				tmpAppliance.setDn(appliance.getDn());
+				boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
+	
+				if (existAppliance) {
+					centralLdapService.updateAppliance(appliance);
+				} else {
+					centralLdapService.addAppliance(appliance);
+				}
+			} catch (LdapMappingException ex) {
+				log.error("Failed to update appliance at central server", ex);        
+				return;
 			}
-		} catch (LdapMappingException ex) {
-			log.error("Failed to update appliance at central server", ex);
-			return;
 		}
 
 		log.debug("Daily Appliance status update finished");
@@ -112,7 +114,7 @@ public class StatusCheckerDaily {
 		int personCount = personService.countPersons();
 
 		appliance.setGroupCount(String.valueOf(groupCount));
-		appliance.setPersonCount(String.valueOf(personCount));
+		appliance.setPersonCount(String.valueOf(personCount)); 
 		appliance.setGluuDSStatus(Boolean.toString(groupCount > 0 && personCount > 0));
 	}
 

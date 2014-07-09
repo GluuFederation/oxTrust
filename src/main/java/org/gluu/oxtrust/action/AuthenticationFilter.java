@@ -98,8 +98,6 @@ public class AuthenticationFilter extends AbstractFilter {
 				final String header = httpRequest.getHeader("Authorization");
 				if (((header != null) && header.startsWith("Bearer ")) || StringHelper.isNotEmpty(httpRequest.getParameter("authCreds"))) {
 					processBearerAuth(httpRequest, httpResponse, chain);
-				} else if ((header != null) && header.startsWith("Basic ")) {
-					processBasicAuth(httpRequest, httpResponse, chain);
 				} else {
 					throw new ServletException("Invalid authentication type");
 				}
@@ -185,64 +183,6 @@ public class AuthenticationFilter extends AbstractFilter {
 		}
 
 		return false;
-	}
-
-	private void processBasicAuth(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
-		Identity identity = Identity.instance();
-
-		if (identity == null) {
-			throw new ServletException("Identity not found - please ensure that the Identity component is created on startup.");
-		}
-
-		Credentials credentials = identity.getCredentials();
-
-		boolean requireAuth = false;
-		String header = request.getHeader("Authorization");
-		if (header != null && header.startsWith("Basic ")) {
-			String base64Token = header.substring(6);
-			String token = new String(Base64.decode(base64Token));
-
-			String userName = "";
-			String password = "";
-			int delim = token.indexOf(":");
-
-			if (delim != -1) {
-				userName = token.substring(0, delim);
-				password = token.substring(delim + 1);
-			}
-
-			if (!StringHelper.isEmpty(userName)) {
-				// Only reauthenticate if username doesn't match Identity.username and user isn't authenticated
-				if (!userName.equals(credentials.getUsername()) || !identity.isLoggedIn()) {
-					try {
-						Authenticator authenticator = getAuthenticator(userName, password);
-						requireAuth = !authenticator.authenticateBasicWebService();
-					} catch (Exception ex) {
-						log.warn("Error authenticating: " + ex.getMessage());
-						requireAuth = true;
-					}
-				}
-			}
-		}
-
-		if (!identity.isLoggedIn() && !credentials.isSet()) {
-			requireAuth = true;
-		}
-
-		try {
-			if (!requireAuth) {
-				chain.doFilter(request, response);
-				return;
-			}
-		} catch (NotLoggedInException ex) {
-			requireAuth = true;
-		}
-
-		if ((requireAuth && !identity.isLoggedIn())) {
-			response.addHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not authorized");
-		}
 	}
 
 	private boolean authenticateUserSilently(Identity identity, Credentials credentials, String userName) {

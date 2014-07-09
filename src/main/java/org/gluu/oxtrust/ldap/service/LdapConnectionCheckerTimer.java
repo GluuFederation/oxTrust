@@ -34,13 +34,13 @@ public class LdapConnectionCheckerTimer extends AbstractConnectionCheckerTimer {
 	@In
 	private FileConfiguration localLdapConfiguration;
 
-	@In
+	@In(required = false)
 	private FileConfiguration centralLdapConfiguration;
 
 	@In
 	private LDAPConnectionProvider connectionProvider;
 
-	@In
+	@In(required = false)
 	private LDAPConnectionProvider centralConnectionProvider;
 
 	private boolean isActive;

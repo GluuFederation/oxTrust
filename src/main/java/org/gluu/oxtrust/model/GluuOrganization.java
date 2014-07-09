@@ -1,7 +1,6 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -83,15 +82,6 @@ public @Data class GluuOrganization extends Entry implements Serializable {
 
 	@LdapAttribute(name = "gluuTempFaviconImage")
 	private String tempFaviconImage;
-
-	@LdapAttribute(name = "scimStatus")
-	private GluuStatus scimStatus;
-
-	@LdapAttribute(name = "scimAuthMode")
-	private String scimAuthMode;
-
-	@LdapAttribute(name = "scimGroup")
-	private String scimGroup;
 
 	@LdapAttribute(name = "oxInumConfig")
 	private String oxInumConfig;

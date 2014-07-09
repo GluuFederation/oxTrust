@@ -296,9 +296,12 @@ public class AppInitializer {
 	private void createConnectionProvider(FileConfiguration configuration, String configurationComponentName, String connectionProviderComponentName)
 			throws ConfigurationException {
 		Contexts.getApplicationContext().set(configurationComponentName, configuration);
-//TODO: Oleksiy Tataryn: Make oxTrust guess configuration if none available instead of just crashing. Or at least give give better explanation to the user.
-		LdapConnectionService connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(configuration
+
+		LdapConnectionService connectionProvider = null;
+		if (configuration != null) {
+			connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(configuration
 				.getProperties()));
+		}
 		Contexts.getApplicationContext().set(connectionProviderComponentName, connectionProvider);
 	}
 
@@ -348,7 +351,9 @@ public class AppInitializer {
 
 		LdapConnectionService centralConnectionProvider = (LdapConnectionService) Contexts.getApplicationContext().get(
 				"centralConnectionProvider");
-		centralConnectionProvider.closeConnectionPool();
+		if (centralConnectionProvider != null) {
+			centralConnectionProvider.closeConnectionPool();
+		}
 	}
 
 	@Factory(value = "ldapEntryManager", scope = ScopeType.APPLICATION, autoCreate = true)
@@ -368,6 +373,10 @@ public class AppInitializer {
 	public LdapEntryManager createCentralLdapEntryManager() {
 		LdapConnectionService centralConnectionProvider = (LdapConnectionService) Contexts.getApplicationContext().get(
 				"centralConnectionProvider");
+		if (centralConnectionProvider == null) {
+			return null;
+		}
+
 		LdapEntryManager centralLdapEntryManager = new LdapEntryManager(new OperationsFacade(centralConnectionProvider));
 		log.debug("Created central LdapEntryManager: " + centralLdapEntryManager);
 

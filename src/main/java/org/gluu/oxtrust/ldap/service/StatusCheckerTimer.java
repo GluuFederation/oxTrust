@@ -25,8 +25,8 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.NumberHelper;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -43,17 +43,6 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.process.ProcessHelper;
-import org.xdi.util.security.StringEncrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
-
-import com.unboundid.ldap.sdk.LDAPConnectionPool;
-import com.unboundid.ldap.sdk.SearchResult;
-import com.unboundid.ldap.sdk.SearchScope;
-import com.unboundid.ldap.sdk.ServerSet;
-import com.unboundid.ldap.sdk.SimpleBindRequest;
-import com.unboundid.ldap.sdk.SingleServerSet;
-import com.unboundid.util.ssl.SSLUtil;
-import com.unboundid.util.ssl.TrustAllTrustManager;
 
 /**
  * Gather periodically site and server status
@@ -66,19 +55,19 @@ import com.unboundid.util.ssl.TrustAllTrustManager;
 public class StatusCheckerTimer {
 
 	@Logger
-	Log log;
+	private Log log;
 
 	@In
-	ApplianceService applianceService;
+	private ApplianceService applianceService;
 
 	@In
-	GroupService groupService;
+	private GroupService groupService;
 
 	@In
-	PersonService personService;
+	private PersonService personService;
 
 	@In
-	CentralLdapService centralLdapService;
+	private CentralLdapService centralLdapService;
 
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
@@ -130,7 +119,7 @@ public class StatusCheckerTimer {
 
 		setCertificateExpiryAttributes(appliance);
 
-		setVDSAttributes(appliance);
+//		setVDSAttributes(appliance);
 
 		appliance.setLastUpdate(toIntString(System.currentTimeMillis() / 1000));
 
@@ -141,19 +130,21 @@ public class StatusCheckerTimer {
 			return;
 		}
 
-		try {
-			GluuAppliance tmpAppliance = new GluuAppliance();
-			tmpAppliance.setDn(appliance.getDn());
-			boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
-
-			if (existAppliance) {
-				centralLdapService.updateAppliance(appliance);
-			} else {
-				centralLdapService.addAppliance(appliance);
+		if (centralLdapService.isUseCentralServer()) {
+			try {
+				GluuAppliance tmpAppliance = new GluuAppliance();
+				tmpAppliance.setDn(appliance.getDn());
+				boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
+	
+				if (existAppliance) {
+					centralLdapService.updateAppliance(appliance);
+				} else {
+					centralLdapService.addAppliance(appliance);
+				}
+			} catch (LdapMappingException ex) {
+				log.error("Failed to update appliance at central server", ex);
+				return;
 			}
-		} catch (LdapMappingException ex) {
-			log.error("Failed to update appliance at central server", ex);
-			return;
 		}
 
 		log.debug("Appliance status update finished");
@@ -209,7 +200,7 @@ public class StatusCheckerTimer {
 		appliance.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
 
 	}
-
+/*
 	private void setVDSAttributes(GluuAppliance appliance) {
 		log.debug("Setting VDS attributes");
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
@@ -271,7 +262,7 @@ public class StatusCheckerTimer {
 		}
 		appliance.setGluuVDSStatus(Boolean.toString(topPresent && vdapcontainerPresent && vdlabelPresent && vdDirectoryViewPresent));
 	}
-
+*/
 	private String getHttpdPage(String idpUrl, String httpdTestPageName) {
 		String[] urlParts = idpUrl.split("://");
 		if ("https".equals(urlParts[0])) {

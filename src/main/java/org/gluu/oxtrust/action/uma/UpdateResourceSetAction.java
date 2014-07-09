@@ -158,9 +158,11 @@ public class UpdateResourceSetAction implements Serializable {
 			}
 		} else {
 			// Prepare resource set
+		    String id = String.valueOf(System.currentTimeMillis());
 			String inum = resourceSetService.generateInumForNewResourceSet();
 			String resourceSetDn = resourceSetService.getDnForResourceSet(inum);
 
+			this.resourceSet.setId(id);
 			this.resourceSet.setInum(inum);
 			this.resourceSet.setDn(resourceSetDn);
 			this.resourceSet.setRev(String.valueOf(0));

@@ -155,7 +155,7 @@ public class UpdateClientAction implements Serializable {
 
 	private List<String> getNonEmptyStringList(List<String> currentList) {
 		if (currentList != null && currentList.size() > 0) {
-			return currentList;
+			return new ArrayList<String>(currentList);
 		} else {
 			return new ArrayList<String>();
 		}
@@ -377,7 +377,7 @@ public class UpdateClientAction implements Serializable {
 
 	private void updateLogoutURIs() {
 		if (this.logoutUris == null || this.logoutUris.size() == 0) {
-			this.client.setOxAuthRedirectURIs(null);
+			this.client.setOxAuthPostLogoutRedirectURIs(null);
 			return;
 		}
 

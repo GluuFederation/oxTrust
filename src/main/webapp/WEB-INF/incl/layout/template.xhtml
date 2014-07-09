@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
 <f:view xmlns="http://www.w3.org/1999/xhtml"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:f="http://java.sun.com/jsf/core"
@@ -8,11 +9,10 @@
         xmlns:s="http://jboss.org/schema/seam/taglib"
         xmlns:gluufn="http://www.gluu.org/jsf/functions"
         contentType="text/html">
-    <h:html>
     <h:head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title>#{organizationService.organization.organizationTitle}</title>
-        <script>
+        <script type="text/javascript">
             if (top != self)
                 top.location.href = self.document.location;
             if (parent != self)
@@ -23,15 +23,12 @@
                 top.location.href = location.href;
         </script>
 
-      <link rel="shortcut icon" href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}"/>
-      <link rel="icon" href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}"/>
-        <!--<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico"/>-->
-        <!--<link rel="icon" href="#{request.contextPath}/favicon.ico"/>-->
-        <h:outputStylesheet name="/stylesheet/theme.ecss"/>
-        <h:outputStylesheet name="/stylesheet/theme.css"/>
-        <h:outputStylesheet name="/stylesheet/site.css"/>
-
-        <h:outputScript name="/js/gluuCommon.js"/>
+        <link rel="shortcut icon" href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}"/>
+        <link rel="icon" href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}"/>
+        <link type="text/css" rel="stylesheet" href="#{oxTrustConfigurationService.cssLocation}/theme.ecss" />
+        <link type="text/css" rel="stylesheet" href="#{oxTrustConfigurationService.cssLocation}/theme.css" />
+        <link type="text/css" rel="stylesheet" href="#{oxTrustConfigurationService.cssLocation}/site.css" />
+        <script type="text/javascript" src="#{oxTrustConfigurationService.jsLocation}/gluuCommon.js"></script>
 
         <ui:insert name="head"/>
 
@@ -47,7 +44,6 @@
         </s:fragment>
     </h:head>
     <h:body>
-        <!--<img src="#{request.contextPath}/img/default_logo.png" alt="logo" id="logo"/>-->
         <img src="#{request.contextPath}/servlet/logo" alt="logo" id="logo"/>
         <h:form>
             <ui:include src="menu.xhtml">
@@ -81,5 +77,5 @@
          </s:fragment>
       </div>
     </h:body>
-    </h:html>
 </f:view>
+</html>

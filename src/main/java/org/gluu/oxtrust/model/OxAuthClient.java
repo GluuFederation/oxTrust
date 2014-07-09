@@ -1,7 +1,6 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -10,11 +9,11 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import org.xdi.oxauth.model.common.ResponseType;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
+import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
@@ -29,9 +28,6 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @EqualsAndHashCode(callSuper=false)
 public @Data class OxAuthClient extends Entry implements Serializable {
 
-	/**
-     *
-     */
 	private static final long serialVersionUID = -2310140703735705346L;
 
 	@LdapAttribute(ignoreDuringUpdate = true)
@@ -79,13 +75,14 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 
 	@LdapAttribute(name = "oxAuthResponseType")
 	private ResponseType[] responseTypes;
+
+    @LdapAttribute(name = "oxAuthTokenEndpointAuthMethod")
+    private OxAuthAuthenticationMethod tokenEndpointAuthMethod;
 	
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
     private String[] postLogoutRedirectUris;
 
 	private String oxAuthClientSecret;
-
-
 
 	public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
 		this.oxAuthClientSecret = oxAuthClientSecret;

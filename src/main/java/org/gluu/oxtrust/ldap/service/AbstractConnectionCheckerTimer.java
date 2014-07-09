@@ -18,6 +18,10 @@ public class AbstractConnectionCheckerTimer {
 	private Log log;
 
 	protected void processImpl(FileConfiguration configuration, LDAPConnectionProvider connectionProvider) {
+		if ((configuration == null) || (connectionProvider == null)) {
+			return;
+		}
+
 		// Check if application has connection to LDAP server
 		boolean isConnected = connectionProvider.isConnected();
 		if (!isConnected) {

@@ -71,29 +71,6 @@
                             <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Url" maxlength="60" inputWidth="180" required="true" id="urlId" />
                         </s:decorate>
                     </h:panelGroup>
-
-                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="clients">
-                        <ui:define name="label">Clients</ui:define>
-                        <h:panelGroup id="selectedClientsId">
-                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                <a4j:repeat value="#{updateScopeDescriptionAction.clients}" rowKeyVar="_clientIdx" var="_client">
-                                    <h:outputText value="#{_client.displayName}" />
-                                    <h:outputText value="&#160;" />
-                                    <a4j:commandLink action="#{updateScopeDescriptionAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
-                                        <h:graphicImage value="/img/remove.gif" />
-                                    </a4j:commandLink>
-                                    <br />
-                                </a4j:repeat>
-                                <richext:spacer height="8" />
-                            </h:panelGrid>
-                        </h:panelGroup>
-                    </s:decorate>
-
-                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-                        <h:panelGroup>
-                            <a4j:commandButton value="Add Client" onclick="#{rich:component('client:selectEntityModalPanel')}.show();" />
-                        </h:panelGroup>
-                    </s:decorate>
                 </h:panelGrid>
 
                 <s:div id="updateButtons">
@@ -105,10 +82,6 @@
             </h:form>
 
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeDescriptionAction.scopeDescription.id}" deleteMethod="#{updateScopeDescriptionAction.delete}" />
-
-            <ox:selectSelectableEntityDialog id="client" searchPattern="#{updateScopeDescriptionAction.searchAvailableClientPattern}" searchMethod="#{updateScopeDescriptionAction.searchAvailableClients}"
-                searchResult="#{updateScopeDescriptionAction.availableClients}" acceptMethod="#{updateScopeDescriptionAction.acceptSelectClients}" cancelMethod="#{updateScopeDescriptionAction.cancelSelectClients}"
-                render="selectedClientsId" nameProperty="entity.inum" displayNameProperty="entity.displayName" label="Add Client" />
         </s:div>
     </ui:define>
 

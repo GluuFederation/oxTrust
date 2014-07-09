@@ -2,8 +2,10 @@ package org.gluu.oxtrust.ws.rs.scim;
 
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
+import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.scim.Error;
@@ -16,6 +18,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
 import org.xdi.util.Pair;
@@ -32,6 +35,9 @@ public class BaseScimWebService {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+
+	@In
+	private ApplianceService applianceService;
 
 	@In
 	private UmaAuthenticationService umaAuthenticationService;
@@ -59,33 +65,25 @@ public class BaseScimWebService {
 	protected boolean getAuthorizedUser() {
 		try {
 			GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
-			SecurityService securityService = SecurityService.instance();
-
-			OrganizationService organizationService = OrganizationService.instance();
-			GluuOrganization org = organizationService.getOrganization();
-			if (!GluuStatus.ACTIVE.equals(org.getScimStatus())) {
-				return false;
-			}
 
 			if (authUser == null) {
 				return false;
 			}
 
-			GluuUserRole[] userRoles = securityService.getUserRoles(authUser);
-			for (GluuUserRole role : userRoles) {
-
-				if (role.getRoleName().equalsIgnoreCase("MANAGER") || role.getRoleName().equalsIgnoreCase("OWNER")) {
-					if (Utils.isScimGroupMemberOrOwner(authUser)) {
-						return true;
-					}
-				}
+			GluuAppliance appliance = applianceService.getAppliance();
+			if (appliance == null) {
+				return false;
 			}
-			return false;
+
+			if (!(GluuBoolean.TRUE.equals(appliance.getScimEnabled()) || GluuBoolean.ENABLED.equals(appliance.getScimEnabled()))) {
+				return false;
+			}
+
+			return true;
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			return false;
 		}
-
 	}
 
 	protected Response getErrorResponse(String errMsg, int statusCode) {

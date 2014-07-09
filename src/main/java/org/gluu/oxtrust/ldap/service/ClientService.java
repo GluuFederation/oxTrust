@@ -8,6 +8,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthCustomClient;
 import org.gluu.oxtrust.model.OxAuthTrustedClientBox;
 import org.gluu.oxtrust.model.TokenResponseAlgs;
+import org.gluu.oxtrust.model.OxAuthAuthenticationMethod;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
@@ -363,6 +364,15 @@ public class ClientService implements Serializable {
 	 */
 	public OxAuthTrustedClientBox[] getOxAuthTrustedClient() {
 		return OxAuthTrustedClientBox.values();
+	}
+
+	/**
+	 * Get all available Authentication methods
+	 * 
+	 * @return Array of Authentication methods
+	 */
+	public OxAuthAuthenticationMethod[] getAuthenticationMethods() {
+		return OxAuthAuthenticationMethod.values();
 	}
 
 }

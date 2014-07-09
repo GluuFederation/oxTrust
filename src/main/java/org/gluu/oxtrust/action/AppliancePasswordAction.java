@@ -61,15 +61,17 @@ public class AppliancePasswordAction implements Serializable {
 				log.error("Failed to encrypt password", e);
 			}
 			appliance.setUserPassword(newPassword);
-
-			GluuAppliance tmpAppliance = new GluuAppliance();
-			tmpAppliance.setDn(appliance.getDn());
-			boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
-
-			if (existAppliance) {
-				centralLdapService.updateAppliance(appliance);
-			} else {
-				centralLdapService.addAppliance(appliance);
+			
+			if (centralLdapService.isUseCentralServer()) {
+				GluuAppliance tmpAppliance = new GluuAppliance();
+				tmpAppliance.setDn(appliance.getDn());
+				boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
+	
+				if (existAppliance) {
+					centralLdapService.updateAppliance(appliance);
+				} else {
+					centralLdapService.addAppliance(appliance);
+				}
 			}
 
 			applianceService.updateAppliance(appliance);

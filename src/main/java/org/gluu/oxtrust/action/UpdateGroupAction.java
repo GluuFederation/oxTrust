@@ -314,7 +314,7 @@ public class UpdateGroupAction implements Serializable {
 		String groupDn = this.group.getDn();
 
 		GluuOrganization organization = OrganizationService.instance().getOrganization();
-		String organizationGroups[] = { organization.getManagerGroup(), organization.getOwnerGroup(), organization.getScimGroup() };
+		String organizationGroups[] = { organization.getManagerGroup(), organization.getOwnerGroup() };
 
 		// Convert members to array of DNs
 		String[] oldMemberDns = convertToDNsArray(oldMembers);

@@ -318,6 +318,7 @@ public class Authenticator implements Serializable {
 
 		if (StringHelper.isEmpty(userUid) || StringHelper.isEmpty(authType) || !authType.equals("shibboleth")) {
 			result = false;
+			return result;
 		}
 
 		Pattern pattern = Pattern.compile(".+@.+\\.[a-z]+");
@@ -334,6 +335,7 @@ public class Authenticator implements Serializable {
 
 		if (user == null) {
 			result = false;
+			return result;
 		}
 		log.debug("Person Inum is " + user.getInum());
 

@@ -49,7 +49,7 @@ public class OxTrustConfiguration {
 	@Create
 	public void create() {
 		this.ldapConfiguration = createFileConfiguration(CONFIGURATION_FILE_LOCAL_LDAP_PROPERTIES_FILE);
-		this.ldapCentralConfiguration = createFileConfiguration(CONFIGURATION_FILE_CENTRAL_LDAP_PROPERTIES_FILE);
+		this.ldapCentralConfiguration = createFileConfiguration(CONFIGURATION_FILE_CENTRAL_LDAP_PROPERTIES_FILE, false);
 	}
 
 	@Observer(EVENT_INIT_CONFIGURATION)
@@ -63,12 +63,23 @@ public class OxTrustConfiguration {
 	}
 
 	private FileConfiguration createFileConfiguration(String fileName) {
+		return createFileConfiguration(fileName, true);
+	}
+
+	private FileConfiguration createFileConfiguration(String fileName, boolean isMandatory) {
 		try {
-			return new FileConfiguration(fileName);
+			FileConfiguration fileConfiguration = new FileConfiguration(fileName);
+			if (fileConfiguration.isLoaded()) {
+				return fileConfiguration;
+			}
 		} catch (Exception ex) {
-			log.error("Failed to load configuration from {0}", ex, fileName);
-			throw new ConfigurationException("Failed to load configuration from " + fileName, ex);
+			if (isMandatory) {
+				log.error("Failed to load configuration from {0}", ex, fileName);
+				throw new ConfigurationException("Failed to load configuration from " + fileName, ex);
+			}
 		}
+
+		return null;
 	}
 
 	private boolean createConfigurationFromLdap(boolean recoverFromFiles) {

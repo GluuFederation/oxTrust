@@ -122,7 +122,6 @@ public class Shibboleth2ConfService implements Serializable {
 
 	public static final String SHIB2_IDP_SP_CERT_FILE = "spcert.crt";
 
-
 	@In
 	private AttributeService attributeService;
 
@@ -900,16 +899,16 @@ public class Shibboleth2ConfService implements Serializable {
 
 		// Prepare data for files
 		VelocityContext context = new VelocityContext();
-		String host = applicationConfiguration.getVdsLdapProtocol() + "://" + applicationConfiguration.getVdsLdapServer();
+		String host = applicationConfiguration.getIdpLdapProtocol() + "://" + applicationConfiguration.getIdpLdapServer();
 		String base = applicationConfiguration.getBaseDN();
-		String serviceUser = applicationConfiguration.getVdsBindDn();
+		String serviceUser = applicationConfiguration.getIdpBindDn();
 		String serviceCredential = "";
 		try {
-			serviceCredential = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getVdsBindPassword());
+			serviceCredential = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword());
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt bindPassword", e);
 		}
-		String userField = applicationConfiguration.getVdsUserField();
+		String userField = applicationConfiguration.getIdpUserFields();
 		context.put("host", host);
 		context.put("base", base);
 		context.put("serviceUser", serviceUser);

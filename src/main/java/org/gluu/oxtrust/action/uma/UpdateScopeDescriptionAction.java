@@ -136,8 +136,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 		initIconImage();
 
-		this.clients = getClientDisplayNameEntries();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -147,8 +145,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	@Restrict("#{s:hasPermission('uma', 'access')}")
 	public String save() {
-		updateClients();
-
 		if (this.update) {
 			scopeDescription.setRevision(String.valueOf(StringHelper.toInteger(scopeDescription.getRevision(), 0) + 1));
 			// Update scope description
@@ -357,30 +353,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				break;
 			}
 		}
-	}
-
-	private void updateClients() {
-		if ((this.clients == null) || (this.clients.size() == 0)) {
-			this.scopeDescription.setClients(null);
-			return;
-		}
-
-		List<String> tmpClients = new ArrayList<String>();
-		for (DisplayNameEntry group : this.clients) {
-			tmpClients.add(group.getDn());
-		}
-
-		this.scopeDescription.setClients(tmpClients);
-	}
-
-	private List<DisplayNameEntry> getClientDisplayNameEntries() {
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null), this.scopeDescription.getClients());
-		if (tmp != null) {
-			result.addAll(tmp);
-		}
-
-		return result;
 	}
 
 	public List<DisplayNameEntry> getClients() {
