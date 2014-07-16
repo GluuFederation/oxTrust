@@ -186,7 +186,7 @@ public class UmaProtectionService implements Serializable {
 
         return resourceSetPermissionTicket.getTicket();
 	}
-	
+
 	public Response prepareRegisterUmaPermissionsResponse(Token patToken, String resourceSetId, String umaScope) {
 		String ticket = registerUmaPermissions(patToken, resourceSetId, umaScope);
 		if (StringHelper.isEmpty(ticket)) {
@@ -232,19 +232,16 @@ public class UmaProtectionService implements Serializable {
 			return;
 		}
 
-		String umaUserPassword = PropertiesDecrypter.decryptProperty(applicationConfiguration.getUmaUserPassword(), true);
 		String umaClientPassword = PropertiesDecrypter.decryptProperty(applicationConfiguration.getUmaClientPassword(), true);
 		try {
-			this.umaPat = UmaClient.requestPat(umaMetadataConfiguration.getUserEndpoint(), umaMetadataConfiguration.getTokenEndpoint(),
-					applicationConfiguration.getUmaUserId(), umaUserPassword,
-					applicationConfiguration.getUmaClientId(), umaClientPassword,
-					applicationConfiguration.getUmaRedirectUri());
+			this.umaPat = UmaClient.requestPat(umaMetadataConfiguration.getTokenEndpoint(),
+					applicationConfiguration.getUmaClientId(), umaClientPassword);
 			this.umaPatAccessTokenExpiration = computeAccessTokenExpirationTime(this.umaPat.getExpiresIn());
 		} catch (Exception ex) {
 			throw new UmaProtectionException("Failed to obtain valid UMA PAT token", ex);
 		}
 		
-		if ((this.umaPat == null) || (this.umaPat.getAccessToken() == null) || (this.umaPat.getRefreshToken() == null)) {
+		if ((this.umaPat == null) || (this.umaPat.getAccessToken() == null)) {
 			throw new UmaProtectionException("Failed to obtain valid UMA PAT token");
 		}
 	}
