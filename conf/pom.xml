@@ -6,7 +6,7 @@
     <name>oxTrust configuration</name>
     <url>http://ox.gluu.org</url>
     <packaging>jar</packaging>
-    <version>1.3.1.Final</version>
+    <version>1.3.2.Final</version>
 
     <prerequisites>
         <maven>2.3</maven>

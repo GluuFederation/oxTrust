@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
-import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Install;
@@ -36,6 +35,7 @@ import org.xdi.oxauth.client.UserInfoResponse;
 import org.xdi.oxauth.client.ValidateTokenClient;
 import org.xdi.oxauth.client.ValidateTokenResponse;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
+import org.xdi.util.StringHelper;
 
 /**
  * Custom AuthenticationFilter
@@ -51,6 +51,7 @@ import org.xdi.oxauth.model.jwt.JwtClaimName;
 public class AuthenticationFilter extends AbstractFilter {
 
 	private static final String DEFAULT_REALM = "oxTrust";
+	private static final String BEARER_TOKEN_TYPE_HEADER = "BearerTokenType" ;
 
 	@Logger
 	private Log log;
@@ -125,8 +126,21 @@ public class AuthenticationFilter extends AbstractFilter {
 			} else {
 				accessToken = request.getParameter("authCreds");
 			}
+			
+			boolean oxAuthToken = true;
+			String bearerTokenTypeHeader = request.getHeader(BEARER_TOKEN_TYPE_HEADER);
+			if (StringHelper.isNotEmpty(bearerTokenTypeHeader)) {
+				if (StringHelper.equalsIgnoreCase(bearerTokenTypeHeader, "uma")) {
+					oxAuthToken = false;
+				}
+			}
 
-			requireAuth = !validateOAuthToken(identity, credentials, applicationConfiguration, accessToken);
+			if (oxAuthToken) {
+				requireAuth = !validateOAuthToken(identity, credentials, applicationConfiguration, accessToken);
+			} else {
+				requireAuth = true;
+			}
+
 			if (requireAuth) {
 				UmaAuthenticationService umaAuthenticationService = (UmaAuthenticationService) Component.getInstance("umaAuthenticationService");
 				if (umaAuthenticationService.isEnabledUmaAuthentication()) {

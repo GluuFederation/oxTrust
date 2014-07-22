@@ -127,55 +127,55 @@ public class CopyUtils implements Serializable {
 		}
 
 		if (destination == null) {
-			log.info(" creating a new GluuCustomPerson instant ");
+			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new GluuCustomPerson();
 
 		}
 
 		if (isUpdate) {
 
-			log.info(" setting userName ");
+			log.trace(" setting userName ");
 			if (source.getUserName() != null && source.getUserName().length() > 0) {
 				destination.setUid(source.getUserName());
 			}
-			log.info(" setting givenname ");
+			log.trace(" setting givenname ");
 			if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
 				destination.setGivenName(source.getName().getGivenName());
 			}
-			log.info(" setting famillyname ");
+			log.trace(" setting famillyname ");
 			if (source.getName().getFamilyName() != null && source.getName().getFamilyName().length() > 0) {
 				destination.setSurname(source.getName().getFamilyName());
 			}
-			log.info(" setting middlename ");
+			log.trace(" setting middlename ");
 			if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
 				destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
 			}
-			log.info(" setting honor");
+			log.trace(" setting honor");
 			if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
 				destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
 			}
 			if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
 				destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
 			}
-			log.info(" setting displayname ");
+			log.trace(" setting displayname ");
 			if (source.getDisplayName() != null && source.getDisplayName().length() > 0) {
 				destination.setDisplayName(source.getDisplayName());
 			}
-			log.info(" setting externalID ");
+			log.trace(" setting externalID ");
 			if (source.getExternalId() != null && source.getExternalId().length() > 0) {
 				destination.setAttribute("oxTrustExternalId", source.getExternalId());
 			}
-			log.info(" setting nickname ");
+			log.trace(" setting nickname ");
 			if (source.getNickName() != null && source.getNickName().length() > 0) {
 				destination.setAttribute("oxTrustNickName", source.getNickName());
 			}
-			log.info(" setting profileURL ");
+			log.trace(" setting profileURL ");
 			if (source.getProfileUrl() != null && source.getProfileUrl().length() > 0) {
 				destination.setAttribute("oxTrustProfileURL", source.getProfileUrl());
 			}
 
 			// getting emails
-			log.info(" setting emails ");
+			log.trace(" setting emails ");
 			if (source.getEmails() != null && source.getEmails().size() > 0) {
 				List<ScimPersonEmails> emails = source.getEmails();
 				StringWriter listOfEmails = new StringWriter();
@@ -187,7 +187,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting addresses
-			log.info(" settting addresses ");
+			log.trace(" setting addresses ");
 			if (source.getAddresses() != null && source.getAddresses().size() > 0) {
 				List<ScimPersonAddresses> addresses = source.getAddresses();
 
@@ -199,7 +199,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting phone numbers;
-			log.info(" setting phoneNumbers ");
+			log.trace(" setting phoneNumbers ");
 			if (source.getPhoneNumbers() != null && source.getPhoneNumbers().size() > 0) {
 				List<ScimPersonPhones> phones = source.getPhoneNumbers();
 
@@ -211,7 +211,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting ims
-			log.info(" setting ims ");
+			log.trace(" setting ims ");
 			if (source.getIms() != null && source.getIms().size() > 0) {
 
 				List<ScimPersonIms> ims = source.getIms();
@@ -224,7 +224,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting Photos
-			log.info(" setting photos ");
+			log.trace(" setting photos ");
 			if (source.getPhotos() != null && source.getPhotos().size() > 0) {
 
 				List<ScimPersonPhotos> photos = source.getPhotos();
@@ -259,7 +259,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting user groups
-			log.info(" setting groups ");
+			log.trace(" setting groups ");
 			if (source.getGroups() != null && source.getGroups().size() > 0) {
 				GroupService groupService = GroupService.instance();
 				List<ScimPersonGroups> listGroups = source.getGroups();
@@ -273,7 +273,7 @@ public class CopyUtils implements Serializable {
 
 			// getting roles
 
-			log.info(" setting roles ");
+			log.trace(" setting roles ");
 			if (source.getRoles() != null && source.getRoles().size() > 0) {
 				List<ScimRoles> roles = source.getRoles();
 
@@ -285,7 +285,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting entitlements
-			log.info(" setting entilements ");
+			log.trace(" setting entilements ");
 			if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
 				List<ScimEntitlements> ents = source.getEntitlements();
 
@@ -297,7 +297,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting x509Certificates
-			log.info(" setting certs ");
+			log.trace(" setting certs ");
 			if (source.getX509Certificates() != null && source.getX509Certificates().size() > 0) {
 				List<Scimx509Certificates> certs = source.getX509Certificates();
 
@@ -309,7 +309,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting meta
-			log.info(" setting meta ");
+			log.trace(" setting meta ");
 
 			if (source.getMeta().getCreated() != null && source.getMeta().getCreated().length() > 0) {
 				destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated());
@@ -325,14 +325,14 @@ public class CopyUtils implements Serializable {
 			}
 
 			// getting customAttributes
-			log.info("getting custom attributes");
+			log.trace("getting custom attributes");
 
 			if (source.getCustomAttributes() != null) {
-				log.info("source.getCustomAttributes() != null");
-				log.info("getting a list of ScimCustomAttributes");
+				log.trace("source.getCustomAttributes() != null");
+				log.trace("getting a list of ScimCustomAttributes");
 
 				List<ScimCustomAttributes> customAttr = source.getCustomAttributes();
-				log.info("checling every attribute in the request");
+				log.trace("checling every attribute in the request");
 
 				for (ScimCustomAttributes oneAttr : customAttr) {
 					if (oneAttr == null) {
@@ -341,26 +341,26 @@ public class CopyUtils implements Serializable {
 
 					int countValues = oneAttr.getValues().size();
 					if (countValues == 0) {
-						log.info("setting a empty attribute");
+						log.trace("setting a empty attribute");
 						destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), oneAttr.getValues().toArray(new String[0]));
 					} else if (countValues == 1) {
-						log.info("setting a single attribute");
+						log.trace("setting a single attribute");
 						destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), oneAttr.getValues().get(0));
 					} else if (countValues > 1) {
-						log.info("setting a multivalued attribute");
+						log.trace("setting a multivalued attribute");
 
 						List<String> listOfAttr = oneAttr.getValues();
 						String[] AttrArray = new String[listOfAttr.size()];
 						int i = 0;
 						for (String oneValue : listOfAttr) {
 							if (oneValue != null && oneValue.length() > 0) {
-								log.info("setting a value");
+								log.trace("setting a value");
 								AttrArray[i] = oneValue;
 								i++;
 							}
 
 						}
-						log.info("setting the list of multivalued attributes");
+						log.trace("setting the list of multivalued attributes");
 						destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), AttrArray);
 					}
 				}
@@ -373,48 +373,48 @@ public class CopyUtils implements Serializable {
 				if (personService1.getPersonByUid(source.getUserName()) != null) {
 					return null;
 				}
-				log.info(" setting userName ");
+				log.trace(" setting userName ");
 				if (source.getUserName() != null && source.getUserName().length() > 0) {
 					destination.setUid(source.getUserName());
 				}
-				log.info(" setting givenname ");
+				log.trace(" setting givenname ");
 				if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
 					destination.setGivenName(source.getName().getGivenName());
 				}
-				log.info(" setting famillyname ");
+				log.trace(" setting famillyname ");
 				if (source.getName().getFamilyName() != null && source.getName().getFamilyName().length() > 0) {
 					destination.setSurname(source.getName().getFamilyName());
 				}
-				log.info(" setting middlename ");
+				log.trace(" setting middlename ");
 				if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
 					destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
 				}
-				log.info(" setting honor");
+				log.trace(" setting honor");
 				if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
 					destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
 				}
 				if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
 					destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
 				}
-				log.info(" setting displayname ");
+				log.trace(" setting displayname ");
 				if (source.getDisplayName() != null && source.getDisplayName().length() > 0) {
 					destination.setDisplayName(source.getDisplayName());
 				}
-				log.info(" setting externalID ");
+				log.trace(" setting externalID ");
 				if (source.getExternalId() != null && source.getExternalId().length() > 0) {
 					destination.setAttribute("oxTrustExternalId", source.getExternalId());
 				}
-				log.info(" setting nickname ");
+				log.trace(" setting nickname ");
 				if (source.getNickName() != null && source.getNickName().length() > 0) {
 					destination.setAttribute("oxTrustNickName", source.getNickName());
 				}
-				log.info(" setting profileURL ");
+				log.trace(" setting profileURL ");
 				if (source.getProfileUrl() != null && source.getProfileUrl().length() > 0) {
 					destination.setAttribute("oxTrustProfileURL", source.getProfileUrl());
 				}
 
 				// getting emails
-				log.info(" setting emails ");
+				log.trace(" setting emails ");
 				if (source.getEmails() != null && source.getEmails().size() > 0) {
 					List<ScimPersonEmails> emails = source.getEmails();
 					StringWriter listOfEmails = new StringWriter();
@@ -426,7 +426,7 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting addresses
-				log.info(" settting addresses ");
+				log.trace(" setting addresses ");
 				if (source.getAddresses() != null && source.getAddresses().size() > 0) {
 					List<ScimPersonAddresses> addresses = source.getAddresses();
 
@@ -438,7 +438,7 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting phone numbers;
-				log.info(" setting phoneNumbers ");
+				log.trace(" setting phoneNumbers ");
 				if (source.getPhoneNumbers() != null && source.getPhoneNumbers().size() > 0) {
 					List<ScimPersonPhones> phones = source.getPhoneNumbers();
 
@@ -450,7 +450,7 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting ims
-				log.info(" setting ims ");
+				log.trace(" setting ims ");
 				if (source.getIms() != null && source.getIms().size() > 0) {
 
 					List<ScimPersonIms> ims = source.getIms();
@@ -463,7 +463,7 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting Photos
-				log.info(" setting photos ");
+				log.trace(" setting photos ");
 				if (source.getPhotos() != null && source.getPhotos().size() > 0) {
 
 					List<ScimPersonPhotos> photos = source.getPhotos();
@@ -498,7 +498,7 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting user groups
-				log.info(" setting groups ");
+				log.trace(" setting groups ");
 				if (source.getGroups() != null && source.getGroups().size() > 0) {
 					GroupService groupService = GroupService.instance();
 					List<ScimPersonGroups> listGroups = source.getGroups();
@@ -512,7 +512,7 @@ public class CopyUtils implements Serializable {
 
 				// getting roles
 
-				log.info(" setting roles ");
+				log.trace(" setting roles ");
 				if (source.getRoles() != null && source.getRoles().size() > 0) {
 					List<ScimRoles> roles = source.getRoles();
 
@@ -524,7 +524,7 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting entitlements
-				log.info(" setting entilements ");
+				log.trace(" setting entilements ");
 				if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
 					List<ScimEntitlements> ents = source.getEntitlements();
 
@@ -536,7 +536,7 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting x509Certificates
-				log.info(" setting certs ");
+				log.trace(" setting certs ");
 				if (source.getX509Certificates() != null && source.getX509Certificates().size() > 0) {
 					List<Scimx509Certificates> certs = source.getX509Certificates();
 
@@ -548,7 +548,7 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting meta
-				log.info(" setting meta ");
+				log.trace(" setting meta ");
 
 				if (source.getMeta().getCreated() != null && source.getMeta().getCreated().length() > 0) {
 					destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated());
@@ -564,34 +564,34 @@ public class CopyUtils implements Serializable {
 				}
 
 				// getting customAttributes
-				log.info("getting custom attributes");
+				log.trace("getting custom attributes");
 
 				if (source.getCustomAttributes() != null && source.getCustomAttributes().size() > 0) {
-					log.info("source.getCustomAttributes() != null");
-					log.info("getting a list of ScimCustomAttributes");
+					log.trace("source.getCustomAttributes() != null");
+					log.trace("getting a list of ScimCustomAttributes");
 
 					List<ScimCustomAttributes> customAttr = source.getCustomAttributes();
-					log.info("checling every attribute in the request");
+					log.trace("checling every attribute in the request");
 
 					for (ScimCustomAttributes oneAttr : customAttr) {
 						if (oneAttr != null && oneAttr.getValues().size() == 1) {
-							log.info("setting a single attribute");
+							log.trace("setting a single attribute");
 							destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), oneAttr.getValues().get(0));
 						} else if (oneAttr != null && oneAttr.getValues().size() > 1) {
-							log.info("setting a multivalued attribute");
+							log.trace("setting a multivalued attribute");
 
 							List<String> listOfAttr = oneAttr.getValues();
 							String[] AttrArray = new String[listOfAttr.size()];
 							int i = 0;
 							for (String oneValue : listOfAttr) {
 								if (oneValue != null && oneValue.length() > 0) {
-									log.info("setting a value");
+									log.trace("setting a value");
 									AttrArray[i] = oneValue;
 									i++;
 								}
 
 							}
-							log.info("setting the list of multivalued attributes");
+							log.trace("setting the list of multivalued attributes");
 							destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), AttrArray);
 						}
 					}
@@ -655,58 +655,59 @@ public class CopyUtils implements Serializable {
 			return null;
 		}
 		if (destination == null) {
+            log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new ScimPerson();
 		}
 		destination.getSchemas().add("urn:scim:schemas:core:1.0");
-		log.info(" setting ID ");
+		log.trace(" setting ID ");
 		if (source.getInum() != null) {
 			destination.setId(source.getInum());
 		}
-		log.info(" setting userName ");
+		log.trace(" setting userName ");
 		if (source.getUid() != null) {
 			destination.setUserName(source.getUid());
 		}
-		log.info(" setting ExternalID ");
+		log.trace(" setting ExternalID ");
 		if (source.getAttribute("oxTrustExternalId") != null) {
 			destination.setExternalId(source.getAttribute("oxTrustExternalId"));
 		}
-		log.info(" setting givenname ");
+		log.trace(" setting givenname ");
 		if (source.getGivenName() != null) {
 			destination.getName().setGivenName(source.getGivenName());
 		}
-		log.info(" getting family name ");
+		log.trace(" getting family name ");
 		if (source.getSurname() != null) {
 			destination.getName().setFamilyName(source.getSurname());
 		}
-		log.info(" cgetting middlename ");
+		log.trace(" getting middlename ");
 		if (source.getAttribute("oxTrustMiddleName") != null) {
 			destination.getName().setMiddleName(source.getAttribute("oxTrustMiddleName"));
 		}
 		;
-		log.info(" getting honorificPrefix ");
+		log.trace(" getting honorificPrefix ");
 		if (source.getAttribute("oxTrusthonorificPrefix") != null) {
 			destination.getName().setHonorificPrefix(source.getAttribute("oxTrusthonorificPrefix"));
 		}
 		;
-		log.info(" getting honorificSuffix ");
+		log.trace(" getting honorificSuffix ");
 		if (source.getAttribute("oxTrusthonorificSuffix") != null) {
 			destination.getName().setHonorificSuffix(source.getAttribute("oxTrusthonorificSuffix"));
 		}
 		;
-		log.info(" getting displayname ");
+		log.trace(" getting displayname ");
 		if (source.getDisplayName() != null) {
 			destination.setDisplayName(source.getDisplayName());
 		}
-		log.info(" getting nickname ");
+		log.trace(" getting nickname ");
 		if (source.getAttribute("oxTrustNickName") != null) {
 			destination.setNickName(source.getAttribute("oxTrustNickName"));
 		}
-		log.info(" getting profileURL ");
+		log.trace(" getting profileURL ");
 		if (source.getAttribute("oxTrustProfileURL") != null) {
 			destination.setProfileUrl(source.getAttribute("oxTrustProfileURL"));
 		}
 
-		log.info(" getting emails ");
+		log.trace(" getting emails ");
 		// getting emails
 		if (source.getAttribute("oxTrustEmail") != null) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -728,7 +729,7 @@ public class CopyUtils implements Serializable {
 
 			destination.setEmails(listOfEmails);
 		}
-		log.info(" getting addresses ");
+		log.trace(" getting addresses ");
 		// getting addresses
 
 		if (source.getAttribute("oxTrustAddresses") != null) {
@@ -785,7 +786,7 @@ public class CopyUtils implements Serializable {
 			 */
 			destination.setAddresses(listOfAddresses);
 		}
-		log.info(" setting phoneNumber ");
+		log.trace(" setting phoneNumber ");
 		// getting user's PhoneNumber
 		if (source.getAttribute("oxTrustPhoneValue") != null) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -813,7 +814,7 @@ public class CopyUtils implements Serializable {
 			destination.setPhoneNumbers(listOfPhones);
 		}
 
-		log.info(" getting ims ");
+		log.trace(" getting ims ");
 		// getting ims
 		if (source.getAttribute("oxTrustImsValue") != null) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -832,7 +833,7 @@ public class CopyUtils implements Serializable {
 			 */
 			destination.setIms(listOfIms);
 		}
-		log.info(" setting photos ");
+		log.trace(" setting photos ");
 		// getting photos
 
 		if (source.getAttribute("oxTrustPhotos") != null) {
@@ -857,35 +858,35 @@ public class CopyUtils implements Serializable {
 			 */
 			destination.setPhotos(listOfPhotos);
 		}
-		log.info(" setting userType ");
+		log.trace(" setting userType ");
 		if (source.getAttribute("oxTrustUserType") != null) {
 			destination.setUserType(source.getAttribute("oxTrustUserType"));
 		}
-		log.info(" setting title ");
+		log.trace(" setting title ");
 		if (source.getAttribute("oxTrustTitle") != null) {
 			destination.setTitle(source.getAttribute("oxTrustTitle"));
 		}
-		log.info(" setting Locale ");
+		log.trace(" setting Locale ");
 		if (source.getAttribute("oxTrustLocale") != null) {
 			destination.setLocale(source.getAttribute("oxTrustLocale"));
 		}
-		log.info(" setting preferredLanguage ");
+		log.trace(" setting preferredLanguage ");
 		if (source.getPreferredLanguage() != null) {
 			destination.setPreferredLanguage(source.getPreferredLanguage());
 		}
-		log.info(" setting timeZone ");
+		log.trace(" setting timeZone ");
 		if (source.getTimezone() != null) {
 			destination.setTimezone(source.getTimezone());
 		}
-		log.info(" setting active ");
+		log.trace(" setting active ");
 		if (source.getAttribute("oxTrustActive") != null) {
 			destination.setActive(source.getAttribute("oxTrustActive"));
 		}
-		log.info(" setting password ");
+		log.trace(" setting password ");
 		destination.setPassword("Hidden for Privacy Reasons");
 
 		// getting user groups
-		log.info(" setting  groups ");
+		log.trace(" setting  groups ");
 		if (source.getMemberOf() != null) {
 			GroupService groupService = GroupService.instance();
 
@@ -919,7 +920,7 @@ public class CopyUtils implements Serializable {
 
 			destination.setRoles(listOfRoles);
 		}
-		log.info(" getting entilements ");
+		log.trace(" getting entilements ");
 		// getting entitlements
 		if (source.getAttribute("oxTrustEntitlements") != null) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -942,7 +943,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting x509Certificates
-		log.info(" setting certs ");
+		log.trace(" setting certs ");
 		if (source.getAttribute("oxTrustx509Certificate") != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			List<Scimx509Certificates> listOfCerts = mapper.readValue(source.getAttribute("oxTrustx509Certificate"),
@@ -963,7 +964,7 @@ public class CopyUtils implements Serializable {
 
 			destination.setX509Certificates(listOfCerts);
 		}
-		log.info(" setting meta ");
+		log.trace(" setting meta ");
 		// getting meta data
 		if (source.getAttribute("oxTrustMetaCreated") != null) {
 			destination.getMeta().setCreated(source.getAttribute("oxTrustMetaCreated"));
@@ -977,7 +978,7 @@ public class CopyUtils implements Serializable {
 		if (source.getAttribute("oxTrustMetaLocation") != null) {
 			destination.getMeta().setLocation(source.getAttribute("oxTrustMetaLocation"));
 		}
-		log.info(" getting custom Attributes ");
+		log.trace(" getting custom Attributes ");
 		// getting custom Attributes
 
 		AttributeService attributeService = AttributeService.instance();
@@ -1016,7 +1017,7 @@ public class CopyUtils implements Serializable {
 				destination.setCustomAttributes(listOfCustomAttr);
 			}
 		}
-		log.info(" returning destination ");
+		log.trace(" returning destination ");
 		return destination;
 	}
 
@@ -1190,55 +1191,55 @@ public class CopyUtils implements Serializable {
 			return null;
 		}
 		if (destination == null) {
-			log.info(" creating a new Scimperson instant ");
+			log.trace(" creating a new Scimperson instant ");
 			destination = new GluuCustomPerson();
 
 		}
 
-		log.info(" setting userName ");
-		log.info(" source.getUserName() :" + source.getUserName() + "h");
-		log.info("  userName length : " + source.getUserName().length());
+		log.trace(" setting userName ");
+		log.trace(" source.getUserName() :" + source.getUserName() + "h");
+		log.trace("  userName length : " + source.getUserName().length());
 		if (source.getUserName() != null && source.getUserName().length() > 0) {
 			destination.setUid(source.getUserName());
 		}
-		log.info(" setting givenname ");
+		log.trace(" setting givenname ");
 		if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
 			destination.setGivenName(source.getName().getGivenName());
 		}
-		log.info(" setting famillyname ");
+		log.trace(" setting famillyname ");
 		if (source.getName().getFamilyName() != null && source.getName().getGivenName().length() > 0) {
 			destination.setSurname(source.getName().getFamilyName());
 		}
-		log.info(" setting middlename ");
+		log.trace(" setting middlename ");
 		if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
 			destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
 		}
-		log.info(" setting honor");
+		log.trace(" setting honor");
 		if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
 			destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
 		}
 		if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
 			destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
 		}
-		log.info(" setting displayname ");
+		log.trace(" setting displayname ");
 		if (source.getDisplayName() != null && source.getDisplayName().length() > 0) {
 			destination.setDisplayName(source.getDisplayName());
 		}
-		log.info(" setting externalID ");
+		log.trace(" setting externalID ");
 		if (source.getExternalId() != null && source.getExternalId().length() > 0) {
 			destination.setAttribute("oxTrustExternalId", source.getExternalId());
 		}
-		log.info(" setting nickname ");
+		log.trace(" setting nickname ");
 		if (source.getNickName() != null && source.getNickName().length() > 0) {
 			destination.setAttribute("oxTrustNickName", source.getNickName());
 		}
-		log.info(" setting profileURL ");
+		log.trace(" setting profileURL ");
 		if (source.getProfileUrl() != null && source.getProfileUrl().length() > 0) {
 			destination.setAttribute("oxTrustProfileURL", source.getProfileUrl());
 		}
 
 		// getting emails
-		log.info(" setting emails ");
+		log.trace(" setting emails ");
 		if (source.getEmails() != null && source.getEmails().size() > 0) {
 			List<ScimPersonEmailsPatch> emails = source.getEmails();
 			String[] emailsList = new String[source.getEmails().size()];
@@ -1307,7 +1308,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting addresses
-		log.info(" settting addresses ");
+		log.trace(" settting addresses ");
 		if (source.getAddresses() != null && source.getAddresses().size() == 2) {
 			List<ScimPersonAddressesPatch> addresses = source.getAddresses();
 			String[] street = new String[source.getAddresses().size()];
@@ -1375,7 +1376,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting phone numbers;
-		log.info(" setting phoneNumbers ");
+		log.trace(" setting phoneNumbers ");
 		if (source.getPhoneNumbers() != null && source.getPhoneNumbers().size() > 0) {
 			List<ScimPersonPhonesPatch> phones = source.getPhoneNumbers();
 			String[] phoneNumber = new String[source.getPhoneNumbers().size()];
@@ -1404,7 +1405,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting ims
-		log.info(" setting ims ");
+		log.trace(" setting ims ");
 		if (source.getIms() != null && source.getIms().size() > 0) {
 			List<ScimPersonImsPatch> ims = source.getIms();
 			String[] imValue = new String[source.getIms().size()];
@@ -1431,7 +1432,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting Photos
-		log.info(" setting photos ");
+		log.trace(" setting photos ");
 		if (source.getPhotos() != null && source.getPhotos().size() > 0) {
 			List<ScimPersonPhotosPatch> photos = source.getPhotos();
 			String[] photoType = new String[source.getPhotos().size()];
@@ -1480,7 +1481,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting user groups
-		log.info(" setting groups ");
+		log.trace(" setting groups ");
 		if (source.getGroups() != null && source.getGroups().size() > 0) {
 			GroupService groupService = GroupService.instance();
 			List<ScimPersonGroupsPatch> listGroups = source.getGroups();
@@ -1494,7 +1495,7 @@ public class CopyUtils implements Serializable {
 
 		// getting roles
 
-		log.info(" setting roles ");
+		log.trace(" setting roles ");
 		if (source.getRoles() != null && source.getRoles().size() > 0) {
 			List<ScimRolesPatch> roles = source.getRoles();
 			String[] scimRole = new String[source.getRoles().size()];
@@ -1517,7 +1518,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting entitlements
-		log.info(" setting entilements ");
+		log.trace(" setting entilements ");
 		if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
 			List<ScimEntitlementsPatch> ents = source.getEntitlements();
 			String[] listEnts = new String[source.getEntitlements().size()];
@@ -1539,7 +1540,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting x509Certificates
-		log.info(" setting certs ");
+		log.trace(" setting certs ");
 		if (source.getX509Certificates() != null && source.getX509Certificates().size() > 0) {
 			List<Scimx509CertificatesPatch> certs = source.getX509Certificates();
 			String[] listCerts = new String[source.getX509Certificates().size()];
@@ -1561,7 +1562,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting meta
-		log.info(" setting meta ");
+		log.trace(" setting meta ");
 
 		if (source.getMeta().getCreated() != null && source.getMeta().getCreated().length() > 0) {
 			destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated());
@@ -1615,7 +1616,7 @@ public class CopyUtils implements Serializable {
 			return null;
 		}
 		if (destination == null) {
-			log.info(" creating a new GluuGroup instant ");
+			log.trace(" creating a new GluuGroup instant ");
 			destination = new GluuGroup();
 
 		}
@@ -1636,12 +1637,12 @@ public class CopyUtils implements Serializable {
 			}
 
 		} else {
-			log.info(" creating a new GroupService instant ");
+			log.trace(" creating a new GroupService instant ");
 			GroupService groupService1 = GroupService.instance();
-			log.info(" source.getDisplayName() : ", source.getDisplayName());
+			log.trace(" source.getDisplayName() : ", source.getDisplayName());
 
 			if (groupService1.getGroupByDisplayName(source.getDisplayName()) != null) {
-				log.info(" groupService1.getGroupByDisplayName(source.getDisplayName() != null : ");
+				log.trace(" groupService1.getGroupByDisplayName(source.getDisplayName() != null : ");
 
 				return null;
 			}
@@ -1649,8 +1650,8 @@ public class CopyUtils implements Serializable {
 				destination.setDisplayName(source.getDisplayName());
 			}
 
-			log.info(" source.getMembers() : ", source.getMembers());
-			log.info(" source.getMembers().size() : ", source.getMembers().size());
+			log.trace(" source.getMembers() : ", source.getMembers());
+			log.trace(" source.getMembers().size() : ", source.getMembers().size());
 
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
 				PersonService personService = PersonService.instance();
@@ -1666,7 +1667,7 @@ public class CopyUtils implements Serializable {
 
 			GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
 			destination.setOwner(authUser.getDn());
-			log.info(" authUser.getDn() : ", authUser.getDn());
+			log.trace(" authUser.getDn() : ", authUser.getDn());
 			destination.setStatus(GluuStatus.ACTIVE);
 			OrganizationService orgService = OrganizationService.instance();
 			destination.setOrganization(orgService.getDnForOrganization());
