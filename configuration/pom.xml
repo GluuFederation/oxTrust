@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>oxtrust-configuration</artifactId>
+	<name>oxTrust configuration</name>
+	<packaging>jar</packaging>
+	<url>http://ox.gluu.org</url>
+
+	<parent>
+		<groupId>org.xdi</groupId>
+		<artifactId>oxtrust</artifactId>
+		<version>1.4.1.Final</version>
+	</parent>
+
+	<prerequisites>
+		<maven>${maven.min-version}</maven>
+	</prerequisites>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>template</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.vm</include>
+					<include>**/*.xsd</include>
+					<include>**/*.dtd</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+
+</project>

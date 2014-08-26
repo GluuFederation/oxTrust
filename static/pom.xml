@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>oxtrust-static</artifactId>
+	<name>oxTrust static resources</name>
+	<packaging>jar</packaging>
+	<url>http://ox.gluu.org</url>
+
+	<parent>
+		<groupId>org.xdi</groupId>
+		<artifactId>oxtrust</artifactId>
+		<version>1.4.1.Final</version>
+	</parent>
+
+	<prerequisites>
+		<maven>${maven.min-version}</maven>
+	</prerequisites>
+</project>

@@ -1,0 +1,112 @@
+input.newuser {
+  background: url(../img/btnnewuser.png) top left no-repeat;
+  height: 39px;
+  width: 113px;
+  margin: 4px 4px 4px 4px;
+  border: 0px;
+  cursor: pointer;  
+}
+
+input.newrole {
+  background: url(../img/btnnewrole.png) top left no-repeat;
+  height: 39px;
+  width: 113px;
+  margin: 4px 4px 4px 4px;
+  border: 0px;
+  cursor: pointer;  
+}
+
+input.newpermission {
+  background: url(../img/btnnewpermission.png) top left no-repeat;
+  height: 39px;
+  width: 113px;
+  margin: 4px 4px 4px 4px;
+  border: 0px;
+  cursor: pointer;  
+}
+
+input.manageusers {
+  display: block;
+  background: url(../img/btnmanageusers.png) top left no-repeat;
+  height: 88px;
+  width: 300px;
+  padding-left: 10px;
+  font-size: 19px;
+  font-weight: bold;
+  color: #333333;
+  border: 0px;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+input.manageroles {
+  display: block;
+  background: url(../img/btnmanageroles.png) top left no-repeat;
+  height: 88px;
+  width: 300px;
+  padding-left: 10px;
+  font-size: 19px;
+  font-weight: bold;
+  color: #333333;
+  border: 0px;
+  cursor: pointer;  
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.roles {
+  width: 120px;
+  border: 1px solid #7F9DB9;
+  background-color: #E7EDF7;
+}
+
+div.selectMany label {
+  float: none;
+}
+
+div.selectMany input[type="checkbox"] {
+  vertical-align: middle;
+}
+
+div.status-true {
+  background: url(../img/true.png) top left no-repeat;
+  width: 14px;
+  height: 15px;
+  margin-left: auto;
+  margin-right: auto;    
+}
+
+div.status-false {
+  background: url(../img/false.png) top left no-repeat;
+  width: 14px;
+  height: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.useradmin, div.useradmin {
+  width: 500px;
+}
+
+/*
+table.useradmin tr.odd {
+  background-color: #FFFFFF;
+}
+
+table.useradmin tr.even {
+  background-color: #E9F5FF;
+}
+*/
+
+td.enabled {
+  text-align: center;
+}
+
+fieldset.roles .roles {
+  border: none;
+}
+
+table.iceSelMnyCb td {
+  text-align: left;
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entries>
+	<entry>
+		<prefix>host-manager</prefix>
+		<location>$config.tomcat.log_folder</location>
+	</entry>
+	<entry>
+		<prefix>oxtrust</prefix>
+		<location>$config.tomcat.log_folder</location>
+	</entry>
+	<entry>
+		<prefix>catalina</prefix>
+		<location>$config.tomcat.log_folder</location>
+	</entry>
+	<entry>
+		<prefix>localhost</prefix>
+		<location>$config.tomcat.log_folder</location>
+	</entry>
+</entries>
