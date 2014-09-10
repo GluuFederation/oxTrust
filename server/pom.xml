@@ -76,6 +76,8 @@
 				<includes>
 					<include>**/*.xml</include>
 					<include>**/*.properties</include>
+                    <include>**/*.drl</include>
+                    <include>**/*.sql</include>
 				</includes>
 			</resource>
 		</resources>
