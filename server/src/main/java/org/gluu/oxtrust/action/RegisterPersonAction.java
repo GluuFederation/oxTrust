@@ -3,8 +3,12 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -56,6 +60,9 @@ public class RegisterPersonAction implements Serializable {
 	
 	private String invitationGuid;
 	
+	@In(value = "#{facesContext.externalContext}")
+	private ExternalContext externalContext;
+	
 	@In
 	private RegistrationLinkService registrationLinkService;
 	
@@ -96,16 +103,20 @@ public class RegisterPersonAction implements Serializable {
 	
 	@In
 	private RegistrationInterceptionService registrationInterceptionService;
+
+	private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
 	/**
 	 * Initializes attributes for registering new person
 	 * 
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	public String initPerson() throws Exception {
+	public String initPerson(){
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
+		
+		requestParameters.putAll(externalContext.getRequestParameterValuesMap());
 		GluuOrganization organization = organizationService.getOrganization();
 		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
 		boolean registrationCustomized = config != null;
@@ -140,7 +151,7 @@ public class RegisterPersonAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String register() throws Exception {
+	public String register() {
 		ReCaptchaResponse reCaptchaResponse = RecaptchaUtils.getRecaptchaResponseFromServletContext();
 		if (reCaptchaResponse.isValid() && password.equals(repeatPassword)) {
 			String customObjectClass = attributeService.getCustomOrigin();
@@ -200,7 +211,7 @@ public class RegisterPersonAction implements Serializable {
 			
 			try {
 				
-				boolean result = registrationInterceptionService.runPreRegistrationScripts(this.person);
+				boolean result = registrationInterceptionService.runPreRegistrationScripts(this.person, requestParameters);
 				if(! result){
 					return OxTrustConstants.RESULT_FAILURE;
 				}
@@ -209,7 +220,7 @@ public class RegisterPersonAction implements Serializable {
 				}else{
 					personService.addPerson(this.person);
 				}
-				registrationInterceptionService.runPostRegistrationScripts(this.person);
+				registrationInterceptionService.runPostRegistrationScripts(this.person, requestParameters);
 				Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_SAVED, this.person, null, null, null, null, true);
 			} catch (Exception ex) {
 				log.error("Failed to add new person {0}", ex, this.person.getInum());
@@ -229,7 +240,7 @@ public class RegisterPersonAction implements Serializable {
 	public void cancel() {
 	}
 
-	private void initAttributes() throws Exception {
+	private void initAttributes(){
 		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
 		GluuOrganization organization = organizationService.getOrganization();

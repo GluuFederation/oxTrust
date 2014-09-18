@@ -2,6 +2,7 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.net.URISyntaxException;
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
+import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Version;
 import org.gluu.site.ldap.OperationsFacade;
@@ -117,11 +119,13 @@ public class AppInitializer {
 		// Initialize local LDAP connection provider
 		createConnectionProvider(oxTrustConfiguration.getLdapConfiguration(), "localLdapConfiguration", "connectionProvider");
 
-		// Initialize central LDAP connection provider
-		createConnectionProvider(oxTrustConfiguration.getLdapCentralConfiguration(), "centralLdapConfiguration", "centralConnectionProvider");
-		
 		Events.instance().raiseEvent(OxTrustConfiguration.EVENT_INIT_CONFIGURATION);
 
+		// Initialize central LDAP connection provider
+		
+		if(oxTrustConfiguration.getApplicationConfiguration().isUpdateApplianceStatus()){
+			createConnectionProvider(oxTrustConfiguration.getLdapCentralConfiguration(), "centralLdapConfiguration", "centralConnectionProvider");
+		}
 		initializeLdifArchiver();
 		initiateLDAPAuthConf();
 
@@ -432,24 +436,9 @@ public class AppInitializer {
 	}
 
 	public void initiateLDAPAuthConf() {
-		LdapEntryManager localLdapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
-
 		GluuAppliance appliance = null;
-
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		String baseDn = applicationConfiguration.getBaseDN();
-		String applianceInum = applicationConfiguration.getApplianceInum();
-		if (StringHelper.isEmpty(baseDn) || StringHelper.isEmpty(applianceInum)) {
-			return;
-		}
-
-		String applianceDn = String.format("inum=%s,ou=appliances,%s", applianceInum, baseDn);
-		try {
-			appliance = localLdapEntryManager.find(GluuAppliance.class, applianceDn);
-		} catch (LdapMappingException ex) {
-			log.error("Failed to load appliance entry from Ldap", ex);
-			return;
-		}
+		
+		appliance = ApplianceService.instance().getAppliance();
 
 		if (appliance == null) {
 			return;
@@ -457,7 +446,59 @@ public class AppInitializer {
 
 		List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
 		if (idpConfs == null) {
-			return;
+			log.warn("Appliance entry in database does not contain authentication configuration. Guessing local ldap.");
+			idpConfs = new ArrayList<OxIDPAuthConf>();
+			OxIDPAuthConf oxIDPAuthentication = new OxIDPAuthConf();
+			oxIDPAuthentication.setType("ldap");
+			oxIDPAuthentication.setName("Ldap authentication");
+			oxIDPAuthentication.setLevel(0);
+			oxIDPAuthentication.setPriority(1);
+			oxIDPAuthentication.setEnabled(true);
+			oxIDPAuthentication.setVersion(0);
+			List<ScimCustomAttributes> fields = new ArrayList<ScimCustomAttributes>();
+			ScimCustomAttributes attribute = null;
+			List<String> values = null;
+
+			LdapConnectionService connectionProvider = (LdapConnectionService) Contexts.getApplicationContext().get("connectionProvider");
+
+			attribute = new ScimCustomAttributes();
+			attribute.setName("ldapHost");
+			values = Arrays.asList(connectionProvider.getServers());
+			attribute.setValues(values);
+			fields.add(attribute);
+
+			attribute = new ScimCustomAttributes();
+			attribute.setName("ldapPort");
+			values = new ArrayList<String>();
+			for(int i : connectionProvider.getPorts() ){
+				values.add(Integer.toString(i));
+			}
+			attribute.setValues(values);
+			fields.add(attribute);
+
+			attribute = new ScimCustomAttributes();
+			attribute.setName("ldapBindDn");
+			values = new ArrayList<String>();
+			values.add(connectionProvider.getBindDn());
+			attribute.setValues(values);
+			fields.add(attribute);
+
+			attribute = new ScimCustomAttributes();
+			attribute.setName("ldapBindPw");
+			values = new ArrayList<String>();
+			values.add(connectionProvider.getBindPassword());
+			attribute.setValues(values);
+			fields.add(attribute);
+
+			attribute = new ScimCustomAttributes();
+			attribute.setName("ldapUseSSL");
+			values = new ArrayList<String>();
+			values.add(Boolean.toString(connectionProvider.isUseSSL()));
+			attribute.setValues(values);
+			fields.add(attribute);
+			
+			oxIDPAuthentication.setFields(fields);
+			idpConfs.add(oxIDPAuthentication);
 		}
 
 		for (OxIDPAuthConf oneConf : idpConfs) {

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
@@ -22,6 +23,7 @@ import org.xdi.ldap.model.GluuStatus;
 
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "person", "organizationalPerson", "inetOrgPerson", "gluuPerson","eduPerson", "oxEntry", "oxCustomAttributes" })
+@EqualsAndHashCode(callSuper=false)
 public @Data class GluuCustomPerson extends User implements Serializable {
 
 	private static final long serialVersionUID = -1879582184398161112L;

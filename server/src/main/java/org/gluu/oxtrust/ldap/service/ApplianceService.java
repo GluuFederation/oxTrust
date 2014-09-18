@@ -1,9 +1,12 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.OxIDPAuthConf;
+import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -15,6 +18,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
+import org.xdi.model.ScimCustomAtribute;
 import org.xdi.util.StringHelper;
 
 /**
@@ -95,8 +99,17 @@ public class ApplianceService {
 	 * @throws Exception
 	 */
 	public GluuAppliance getAppliance(String[] returnAttributes) {
-		GluuAppliance result = ldapEntryManager.find(GluuAppliance.class, getDnForAppliance(getApplianceInum()), returnAttributes);
+		GluuAppliance result = null;
+		if(ldapEntryManager.contains(GluuAppliance.class, getDnForAppliance(getApplianceInum()))){
+			result = ldapEntryManager.find(GluuAppliance.class, getDnForAppliance(getApplianceInum()), returnAttributes);
+		}else{
+			result = new GluuAppliance();
+			result.setInum(getApplianceInum());
+			result.setDn(getDnForAppliance(getApplianceInum()));
 
+			ldapEntryManager.persist(result);
+			
+		}
 		return result;
 
 	}

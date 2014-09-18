@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
@@ -30,6 +31,7 @@ import org.xdi.util.security.StringEncrypter;
  */
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuAppliance" })
+@EqualsAndHashCode(callSuper=false)
 @Data
 public class GluuAppliance extends InumEntry implements Serializable {
 

@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -24,6 +25,7 @@ import org.jboss.seam.log.Log;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.xdi.exception.PythonException;
+import org.xdi.model.SimpleCustomProperty;
 import org.xdi.oxauth.model.util.Util;
 import org.xdi.service.PythonService;
 
@@ -39,7 +41,7 @@ public class RegistrationInterceptionService {
 	@Logger
 	private Log log;
 
-	public boolean runPreRegistrationScripts(GluuCustomPerson person) {
+	public boolean runPreRegistrationScripts(GluuCustomPerson person, Map<String, String[]> requestParameters) {
 		GluuOrganization org = OrganizationService.instance().getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		if(config != null && config.isRegistrationInterceptorsConfigured()){
@@ -49,7 +51,7 @@ public class RegistrationInterceptionService {
 				boolean result = true;
 				for(RegistrationInterceptorScript script: sortedEnabledPreregistrationScripts){
 					RegistrationScript registrationScript = createRegistrationScriptFromStringWithPythonException(script);
-					result &= registrationScript.execute(script.getCustomAttributes(), person);
+					result &= registrationScript.execute(script.getCustomAttributes(), person, requestParameters);
 				}
 				return result;
 			}else{
@@ -125,7 +127,7 @@ public class RegistrationInterceptionService {
 		
 	}
 
-	public boolean runPostRegistrationScripts(GluuCustomPerson person) {
+	public boolean runPostRegistrationScripts(GluuCustomPerson person, Map<String, String[]> requestParameters) {
 		GluuOrganization org = OrganizationService.instance().getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		if(config.isRegistrationInterceptorsConfigured()){
@@ -135,7 +137,7 @@ public class RegistrationInterceptionService {
 				boolean result = true;
 				for(RegistrationInterceptorScript script: sortedEnabledPreregistrationScripts){
 					RegistrationScript registrationScript = createRegistrationScriptFromStringWithPythonException(script);
-					result &= registrationScript.execute(script.getCustomAttributes(), person);
+					result &= registrationScript.execute(script.getCustomAttributes(), person, requestParameters);
 				}
 				return result;
 			}else{
