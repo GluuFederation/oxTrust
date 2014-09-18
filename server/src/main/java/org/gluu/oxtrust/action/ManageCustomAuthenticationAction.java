@@ -237,7 +237,6 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 			for (CustomAuthenticationConfiguration customAuthenticationConfig : this.customAuthenticationConfigurations) {
 				customAuthenticationConfig.setVersion(customAuthenticationConfig.getVersion() + 1);
 				OxIDPAuthConf oxIDPAuthConf = customAuthenticationToIdp(customAuthenticationConfig);
-				oxIDPAuthConf.setVersion(oxIDPAuthConf.getVersion());
 				idpConf.add(oxIDPAuthConf);
 			}
 
@@ -248,12 +247,15 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 
 				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
 				ldapConfigIdpAuthConf.setType("auth");
-				ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
+				this.ldapConfig.setVersion(this.ldapConfig.getVersion() + 1);
+				ldapConfigIdpAuthConf.setVersion(this.ldapConfig.getVersion());
 				ldapConfigIdpAuthConf.setName(this.ldapConfig.getConfigId());
 				ldapConfigIdpAuthConf.setEnabled(this.ldapConfig.isEnabled());
 				ldapConfigIdpAuthConf.setConfig(objectToJson(this.ldapConfig));
 	
 				idpConf.add(ldapConfigIdpAuthConf);
+			} else {
+				this.ldapConfig = new GluuLdapConfiguration();
 			}
 
 			appliance.setOxIDPAuthentication(idpConf);
