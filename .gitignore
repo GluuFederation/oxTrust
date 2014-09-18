@@ -3,3 +3,8 @@
 .settings/
 *.classpath
 *.iml
+.classpath
+.pydevproject
+
+# Maven
+target
