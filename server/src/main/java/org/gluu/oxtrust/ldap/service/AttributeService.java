@@ -783,7 +783,11 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 
 		List<GluuAttribute> result = getLdapEntryManager().findEntries(getDnForAttribute(null), GluuAttribute.class, searchFilter, sizeLimit);
-
+		String customOrigin = getCustomOrigin();
+		for (GluuAttribute attribute : result) {
+			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
+		}
+		
 		return result;
 	}
 

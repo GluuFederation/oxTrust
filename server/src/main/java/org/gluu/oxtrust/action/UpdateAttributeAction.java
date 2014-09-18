@@ -201,13 +201,13 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean addNewAttribute(String attributeName, boolean addToSchema) {
-		log.info("getting attribute inum : ", attributeService.generateInumForNewAttribute());
+		log.info("getting attribute inum : " + attributeService.generateInumForNewAttribute());
 		String inum = attributeService.generateInumForNewAttribute();
-		log.info("getting the dn : ", attributeService.getDnForAttribute(inum));
+		log.info("getting the dn : " + attributeService.getDnForAttribute(inum));
 		String dn = attributeService.getDnForAttribute(inum);
-		log.info("getting ldapAttributeName : ", attributeService.toInumWithoutDelimiters(inum));
+		log.info("getting ldapAttributeName : " + attributeService.toInumWithoutDelimiters(inum));
 		String ldapAttributedName = attributeService.toInumWithoutDelimiters(inum);
-		log.info("getting objectClassName : ", attributeService.getCustomOrigin());
+		log.info("getting objectClassName : " + attributeService.getCustomOrigin());
 		String objectClassName = attributeService.getCustomOrigin();
 		if (attribute.getSaml1Uri() == null || attribute.getSaml1Uri().equals("")) {
 			attribute.setSaml1Uri("urn:gluu:dir:attribute-def:" + attributeName);
@@ -220,8 +220,8 @@ public class UpdateAttributeAction implements Serializable {
 			// Add new attribute type to LDAP schema
 			try {
 				log.info("adding string attribute");
-				log.info("ldapAttributedName : ", ldapAttributedName);
-				log.info("attributeName : ", attributeName);
+				log.info("ldapAttributedName : " + ldapAttributedName);
+				log.info("attributeName : " + attributeName);
 	
 				schemaService.addStringAttribute(ldapAttributedName, attributeName, applicationConfiguration.getSchemaAddAttributeDefinition());
 			} catch (Exception ex) {
