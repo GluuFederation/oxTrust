@@ -16,7 +16,6 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.util.StringHelper;
 

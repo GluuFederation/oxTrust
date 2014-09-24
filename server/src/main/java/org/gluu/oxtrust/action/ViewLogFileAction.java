@@ -18,7 +18,6 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;

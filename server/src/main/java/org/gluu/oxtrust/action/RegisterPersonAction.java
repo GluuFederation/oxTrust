@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -179,7 +178,7 @@ public class RegisterPersonAction implements Serializable {
 
 			boolean registrationCustomized = registrationConfig != null;
 			boolean invitationCodeAllowed = registrationCustomized && registrationConfig.isInvitationCodesManagementEnabled();
-			boolean invitationCodeOptional = registrationCustomized && registrationConfig.isUninvitedRegistrationAllowed();
+//			boolean invitationCodeOptional = registrationCustomized && registrationConfig.isUninvitedRegistrationAllowed();
 			boolean  invitationCodePresent = invitationGuid != null;
 			OxLink invitationLink = registrationLinkService.getLinkByGuid(invitationGuid);
 			boolean invitationCodeModerated = invitationCodePresent && invitationLink != null && invitationLink.getLinkModerated();

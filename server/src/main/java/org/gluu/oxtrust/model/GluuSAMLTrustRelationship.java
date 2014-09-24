@@ -2,7 +2,6 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;

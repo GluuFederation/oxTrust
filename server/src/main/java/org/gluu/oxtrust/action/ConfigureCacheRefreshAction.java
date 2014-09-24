@@ -272,7 +272,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		String bindPassword = "";
 		try {
-			bindPassword = StringEncrypter.defaultInstance().decrypt(cacheRefreshConfiguration.getString(prefix + "bindPassword"));
+			bindPassword = StringEncrypter.defaultInstance().decrypt(cacheRefreshConfiguration.getString(prefix + "bindPassword"), applicationConfiguration.getEncodeSalt());
 		} catch (Exception ex) {
 			log.error("Failed to decrypt password for property: {0}", ex, prefix + "bindPassword");
 		}

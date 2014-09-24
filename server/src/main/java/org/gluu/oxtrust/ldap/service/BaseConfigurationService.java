@@ -130,7 +130,7 @@ public class BaseConfigurationService implements Serializable {
 					appliance.setIname(confApplianceIname);
 					appliance.setInumFN(StringHelper.removePunctuation(appliance.getInum()));
 					String newPassword = RandomStringUtils.randomAlphanumeric(8);
-					appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword));
+					appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, applicationConfiguration.getEncodeSalt()));
 
 					if (centralLdapService.isUseCentralServer()) {
 						GluuAppliance tmpAppliance = new GluuAppliance();

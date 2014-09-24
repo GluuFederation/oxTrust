@@ -24,6 +24,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.oxauth.client.uma.ResourceSetPermissionRegistrationService;
 import org.xdi.oxauth.client.uma.ResourceSetRegistrationService;
@@ -61,7 +62,10 @@ public class UmaProtectionService implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
-	
+
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
+		
 	@In
 	private JsonService jsonService;
 	
@@ -232,7 +236,7 @@ public class UmaProtectionService implements Serializable {
 			return;
 		}
 
-		String umaClientPassword = PropertiesDecrypter.decryptProperty(applicationConfiguration.getUmaClientPassword(), true);
+		String umaClientPassword = PropertiesDecrypter.decryptProperty(applicationConfiguration.getUmaClientPassword(), true, cryptoConfiguration.getEncodeSalt());
 		try {
 			this.umaPat = UmaClient.requestPat(umaMetadataConfiguration.getTokenEndpoint(),
 					applicationConfiguration.getUmaClientId(), umaClientPassword);

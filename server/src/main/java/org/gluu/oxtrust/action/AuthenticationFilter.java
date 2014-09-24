@@ -27,7 +27,6 @@ import org.jboss.seam.security.Credentials;
 import org.jboss.seam.security.Identity;
 import org.jboss.seam.security.NotLoggedInException;
 import org.jboss.seam.servlet.ContextualHttpServletRequest;
-import org.jboss.seam.util.Base64;
 import org.jboss.seam.web.AbstractFilter;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.oxauth.client.UserInfoClient;

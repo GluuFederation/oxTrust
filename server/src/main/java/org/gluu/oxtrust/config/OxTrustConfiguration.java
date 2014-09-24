@@ -15,6 +15,7 @@ import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.ApplicationConfigurationFile;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
@@ -41,15 +42,18 @@ public class OxTrustConfiguration {
 	public static final String CONFIGURATION_FILE_LOCAL_LDAP_PROPERTIES_FILE = "oxTrustLdap.properties";
 	public static final String CONFIGURATION_FILE_CENTRAL_LDAP_PROPERTIES_FILE = "oxTrustCentralLdap.properties";
 	public static final String CONFIGURATION_FILE_APPLICATION_CONFIGURATION = "oxTrust.properties";
+	public static final String CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE = "salt";
 
 	private FileConfiguration ldapConfiguration;
 	private FileConfiguration ldapCentralConfiguration;
+	private CryptoConfigurationFile cryptoConfiguration;
 	private ApplicationConfiguration applicationConfiguration;
 
 	@Create
 	public void create() {
 		this.ldapConfiguration = createFileConfiguration(CONFIGURATION_FILE_LOCAL_LDAP_PROPERTIES_FILE);
 		this.ldapCentralConfiguration = createFileConfiguration(CONFIGURATION_FILE_CENTRAL_LDAP_PROPERTIES_FILE, false);
+		createCryptoConfigurationFromFile();
 	}
 
 	@Observer(EVENT_INIT_CONFIGURATION)
@@ -155,6 +159,18 @@ public class OxTrustConfiguration {
 			throw new ConfigurationException("Failed to load configuration from " + CONFIGURATION_FILE_APPLICATION_CONFIGURATION, ex);
 		}
 	}
+	
+	private void createCryptoConfigurationFromFile() {
+		try {
+			FileConfiguration cryptoConfiguration = createFileConfiguration(CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE);
+			CryptoConfigurationFile cryptoConfigurationFile = new CryptoConfigurationFile(cryptoConfiguration);
+
+			this.cryptoConfiguration = cryptoConfigurationFile;
+		} catch (Exception ex) {
+			log.error("Failed to load configuration from {0}", ex, CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE);
+			throw new ConfigurationException("Failed to load configuration from " + CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE, ex);
+		}
+	}
 
 	private LdapOxTrustConfiguration prepareLdapConfiguration(String configurationDn) {
 		LdapOxTrustConfiguration conf = new LdapOxTrustConfiguration();
@@ -178,6 +194,10 @@ public class OxTrustConfiguration {
 		return ldapConfiguration;
 	}
 
+	public CryptoConfigurationFile getCryptoConfiguration() {
+		return cryptoConfiguration;
+	}
+	
 	public FileConfiguration getLdapCentralConfiguration() {
 		return ldapCentralConfiguration;
 	}

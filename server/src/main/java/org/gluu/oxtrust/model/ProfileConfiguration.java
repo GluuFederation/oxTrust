@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 import lombok.Data;
 
-import org.apache.log4j.Logger;
-import org.jboss.seam.ScopeType;
-
 
 public @Data class ProfileConfiguration implements Serializable {
 

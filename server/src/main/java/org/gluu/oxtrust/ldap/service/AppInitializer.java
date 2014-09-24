@@ -24,7 +24,6 @@ import org.gluu.oxtrust.util.Version;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -209,7 +208,7 @@ public class AppInitializer {
 		}
 		//
 
-		LdapConnectionService connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(properties));
+		LdapConnectionService connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(properties, oxTrustConfiguration.getCryptoConfiguration().getEncodeSalt()));
 		Contexts.getApplicationContext().set(connectionProviderComponentName, connectionProvider);
 	}
 
@@ -304,7 +303,7 @@ public class AppInitializer {
 		LdapConnectionService connectionProvider = null;
 		if (configuration != null) {
 			connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(configuration
-				.getProperties()));
+				.getProperties(), oxTrustConfiguration.getCryptoConfiguration().getEncodeSalt()));
 		}
 		Contexts.getApplicationContext().set(connectionProviderComponentName, connectionProvider);
 	}

@@ -1,8 +1,10 @@
 package org.gluu.oxtrust.ldap.service;
 
 import org.gluu.site.ldap.LDAPConnectionProvider;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.log.Log;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
 
@@ -16,6 +18,10 @@ public class AbstractConnectionCheckerTimer {
 
 	@Logger
 	private Log log;
+	
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
+	
 
 	protected void processImpl(FileConfiguration configuration, LDAPConnectionProvider connectionProvider) {
 		if ((configuration == null) || (connectionProvider == null)) {
@@ -31,7 +37,7 @@ public class AbstractConnectionCheckerTimer {
 
 			try {
 				// Make attempt to reconnect to LDAP server
-				connectionProvider.init(PropertiesDecrypter.decryptProperties(configuration.getProperties()));
+				connectionProvider.init(PropertiesDecrypter.decryptProperties(configuration.getProperties(),cryptoConfiguration.getEncodeSalt()));
 				isConnected = connectionProvider.isConnected();
 				if (isConnected) {
 					log.info("Connection to LDAP server was restored");

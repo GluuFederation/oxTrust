@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  */
 public class ScimData extends ScimPerson {
 
+	private static final long serialVersionUID = -8671209028069880837L;
 	private String id;
 	private List<ScimGroupMembers> members;
 

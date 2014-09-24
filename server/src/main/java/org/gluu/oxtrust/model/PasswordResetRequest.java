@@ -6,7 +6,6 @@ package org.gluu.oxtrust.model;
 import java.io.Serializable;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;

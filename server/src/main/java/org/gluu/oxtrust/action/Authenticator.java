@@ -493,7 +493,7 @@ public class Authenticator implements Serializable {
 		String clientPassword = applicationConfiguration.getOxAuthClientPassword();
 		if (clientPassword != null) {
 			try {
-				clientPassword = StringEncrypter.defaultInstance().decrypt(clientPassword);
+				clientPassword = StringEncrypter.defaultInstance().decrypt(clientPassword, applicationConfiguration.getEncodeSalt());
 			} catch (EncryptionException ex) {
 				log.error("Failed to decrypt client password", ex);
 			}

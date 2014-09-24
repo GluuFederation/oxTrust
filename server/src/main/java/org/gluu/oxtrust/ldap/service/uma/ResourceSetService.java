@@ -17,7 +17,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
-import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.util.INumGenerator;
 
 import com.unboundid.ldap.sdk.Filter;

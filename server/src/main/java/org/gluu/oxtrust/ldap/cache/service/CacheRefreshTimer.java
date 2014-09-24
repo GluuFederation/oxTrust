@@ -45,6 +45,7 @@ import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuDummyEntry;
@@ -108,6 +109,9 @@ public class CacheRefreshTimer {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+	
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
 	
 	@In
 	private ObjectSerializationService objectSerializationService;
@@ -979,7 +983,7 @@ public class CacheRefreshTimer {
 		String prefix = String.format("ldap.conf.%s.", ldapConfig);
 		Properties ldapProperties = cacheRefreshConfiguration.getPropertiesByPrefix(prefix);
 
-		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties));
+		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties, cryptoConfiguration.getEncodeSalt()));
 
 		if (!ldapConnectionProvider.isConnected()) {
 			log.error("Failed to connect to LDAP server using configuration {0}", ldapConfig);

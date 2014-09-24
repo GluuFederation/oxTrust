@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.util.Calendar;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.DeleteNotifier;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;

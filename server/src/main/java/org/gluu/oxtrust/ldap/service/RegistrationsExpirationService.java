@@ -1,14 +1,8 @@
 package org.gluu.oxtrust.ldap.service;
 
-import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-
-import javax.faces.application.ViewHandler;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -23,7 +17,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
-import org.jboss.seam.async.QuartzTriggerHandle;
 import org.xdi.ldap.model.GluuStatus;
 
 /**

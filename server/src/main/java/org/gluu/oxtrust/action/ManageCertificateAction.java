@@ -43,8 +43,6 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -59,11 +57,8 @@ import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.model.AuthenticationScriptUsageType;
-import org.xdi.model.config.CustomAuthenticationConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileHelper;
-import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
 
 /**

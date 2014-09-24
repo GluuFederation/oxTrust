@@ -26,7 +26,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Credentials;
-import org.xdi.oxauth.model.util.StringUtils;
 import org.xdi.util.StringHelper;
 
 /**

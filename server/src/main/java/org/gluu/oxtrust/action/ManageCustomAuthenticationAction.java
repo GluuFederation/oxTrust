@@ -35,6 +35,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
@@ -97,6 +98,9 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 	private List<String> customAuthenticationConfigLevels;
 
 	private boolean initialized;
+	
+	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	private ApplicationConfiguration applicationConfiguration;
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify() {
@@ -366,7 +370,7 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 			properties.setProperty("bindPassword", this.ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(this.ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(this.ldapConfig.isUseSSL()));
-			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(properties));
+			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(properties, applicationConfiguration.getEncodeSalt()));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -405,7 +409,7 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 	public void updateLdapBindPassword() {
 		String encryptedLdapBindPassword = null;
 		try {
-			encryptedLdapBindPassword = StringEncrypter.defaultInstance().encrypt(this.ldapConfig.getBindPassword());
+			encryptedLdapBindPassword = StringEncrypter.defaultInstance().encrypt(this.ldapConfig.getBindPassword(), applicationConfiguration.getEncodeSalt());
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt LDAP bind password", ex);
 		}
