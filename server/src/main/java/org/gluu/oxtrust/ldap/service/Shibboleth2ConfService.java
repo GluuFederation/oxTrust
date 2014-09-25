@@ -491,7 +491,7 @@ public class Shibboleth2ConfService implements Serializable {
 		context.put("bindDN", applicationConfiguration.getIdpBindDn());
 
 		try {
-			context.put("ldapPass", StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword()));
+			context.put("ldapPass", StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword(), applicationConfiguration.getEncodeSalt()));
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt bindPassword", e);
 		}
@@ -500,7 +500,7 @@ public class Shibboleth2ConfService implements Serializable {
 		context.put("securityCert", applicationConfiguration.getIdpSecurityCert());
 		try {
 			context.put("securityKeyPassword",
-					StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpSecurityKeyPassword()));
+					StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpSecurityKeyPassword(), applicationConfiguration.getEncodeSalt()));
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt idp.securityKeyPassword", e);
 		}
@@ -509,7 +509,7 @@ public class Shibboleth2ConfService implements Serializable {
 		context.put("mysqlUser", applicationConfiguration.getMysqlUser());
 
 		try {
-			context.put("mysqlPass", StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getMysqlPassword()));
+			context.put("mysqlPass", StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getMysqlPassword(), applicationConfiguration.getEncodeSalt()));
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt mysqlPassword", e);
 		}
@@ -904,7 +904,7 @@ public class Shibboleth2ConfService implements Serializable {
 		String serviceUser = applicationConfiguration.getIdpBindDn();
 		String serviceCredential = "";
 		try {
-			serviceCredential = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword());
+			serviceCredential = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword(), applicationConfiguration.getEncodeSalt());
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt bindPassword", e);
 		}
