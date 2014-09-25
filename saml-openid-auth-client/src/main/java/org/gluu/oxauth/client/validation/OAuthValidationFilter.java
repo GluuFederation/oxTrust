@@ -57,7 +57,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
 
         if (this.oAuthClientPassword != null) {
             try {
-                this.oAuthClientPassword = StringEncrypter.defaultInstance().decrypt(this.oAuthClientPassword);
+                this.oAuthClientPassword = StringEncrypter.defaultInstance().decrypt(this.oAuthClientPassword, Configuration.instance().getCryptoPropertyValue("encodeSalt"));
             } catch (EncryptionException ex) {
                 log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
             }
