@@ -118,7 +118,7 @@ public class OxTrustConfiguration {
 
 			return conf;
 		} catch (LdapMappingException ex) {
-			log.error("Failed to load configuration from LDAP", ex);
+			log.error("Failed to load configuration from LDAP");
 		}
 
 		return null;
