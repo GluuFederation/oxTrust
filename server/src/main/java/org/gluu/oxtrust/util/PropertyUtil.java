@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.jboss.seam.annotations.In;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.model.SimpleProperty;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
@@ -18,9 +20,12 @@ public class PropertyUtil {
 
 	private static final Logger log = Logger.getLogger(PropertyUtil.class);
 
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
+	
 	public String encryptString(String value) {
 		try {
-			return StringEncrypter.defaultInstance().encrypt(value);
+			return StringEncrypter.defaultInstance().encrypt(value, cryptoConfiguration.getEncodeSalt());
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt string: " + value, ex);
 		}

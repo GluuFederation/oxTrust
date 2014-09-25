@@ -13,6 +13,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
@@ -36,6 +37,9 @@ public class AppliancePasswordAction implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
 	
 	@Logger
 	private Log log;
@@ -60,7 +64,7 @@ public class AppliancePasswordAction implements Serializable {
 		if (true /* validatePassword().equals(Configuration.RESULT_SUCCESS) */) {
 			GluuAppliance appliance = applianceService.getAppliance();
 			try {
-				appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, applicationConfiguration.getEncodeSalt()));
+				appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, cryptoConfiguration.getEncodeSalt()));
 			} catch (EncryptionException e) {
 				log.error("Failed to encrypt password", e);
 			}

@@ -46,6 +46,7 @@ import org.jboss.seam.navigation.Pages;
 import org.jboss.seam.security.Credentials;
 import org.jboss.seam.security.Identity;
 import org.jboss.seam.security.SimplePrincipal;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
@@ -114,6 +115,9 @@ public class Authenticator implements Serializable {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;	
+	
 	public boolean preAuthenticate() throws IOException, Exception {
 		boolean result = true;
 		if (isOxAuthAuth()) {
@@ -493,7 +497,7 @@ public class Authenticator implements Serializable {
 		String clientPassword = applicationConfiguration.getOxAuthClientPassword();
 		if (clientPassword != null) {
 			try {
-				clientPassword = StringEncrypter.defaultInstance().decrypt(clientPassword, applicationConfiguration.getEncodeSalt());
+				clientPassword = StringEncrypter.defaultInstance().decrypt(clientPassword, cryptoConfiguration.getEncodeSalt());
 			} catch (EncryptionException ex) {
 				log.error("Failed to decrypt client password", ex);
 			}

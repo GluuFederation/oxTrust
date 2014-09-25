@@ -9,6 +9,8 @@ import javax.net.ssl.TrustManager;
 import org.apache.commons.httpclient.HttpClientError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.seam.annotations.In;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.EasySSLProtocolSocketFactory;
 import org.xdi.util.EasyX509TrustManager;
@@ -16,14 +18,17 @@ import org.xdi.util.security.StringEncrypter;
 
 public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory {
 	private static final Log LOG = LogFactory.getLog(EasyCASSLProtocolSocketFactory.class);
-
+	
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
+	
 	protected SSLContext createEasySSLContext(ApplicationConfiguration applicationConfiguration) {
 		try {
 
 			String password = applicationConfiguration.getCaCertsPassphrase();
 			char[] passphrase = null;
 			if (password != null) {
-				passphrase = StringEncrypter.defaultInstance().decrypt(password).toCharArray();
+				passphrase = StringEncrypter.defaultInstance().decrypt(password, cryptoConfiguration.getEncodeSalt()).toCharArray();
 			}
 			KeyStore cacerts = null;
 			String cacertsFN = applicationConfiguration.getCaCertsLocation();

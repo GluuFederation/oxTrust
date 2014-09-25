@@ -42,6 +42,7 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.exception.PythonException;
 import org.xdi.ldap.model.GluuStatus;
@@ -95,6 +96,9 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+	
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
 
 	private boolean cacheRefreshEnabled;
 	private int cacheRefreshEnabledIntervalMinutes;
@@ -272,7 +276,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		String bindPassword = "";
 		try {
-			bindPassword = StringEncrypter.defaultInstance().decrypt(cacheRefreshConfiguration.getString(prefix + "bindPassword"), applicationConfiguration.getEncodeSalt());
+			bindPassword = StringEncrypter.defaultInstance().decrypt(cacheRefreshConfiguration.getString(prefix + "bindPassword"), cryptoConfiguration.getEncodeSalt());
 		} catch (Exception ex) {
 			log.error("Failed to decrypt password for property: {0}", ex, prefix + "bindPassword");
 		}

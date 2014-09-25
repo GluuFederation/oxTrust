@@ -12,6 +12,8 @@ import lombok.EqualsAndHashCode;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.jboss.seam.annotations.In;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.ldap.model.Entry;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.util.security.StringEncrypter;
@@ -81,13 +83,16 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 	
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
     private String[] postLogoutRedirectUris;
+    
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
 
 	private String oxAuthClientSecret;
 
 	public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
 		this.oxAuthClientSecret = oxAuthClientSecret;
 		if (oxAuthClientSecret != null && oxAuthClientSecret.length() > 1) {
-			setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret));
+			setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, cryptoConfiguration.getEncodeSalt()));
 		}
 	}
 
