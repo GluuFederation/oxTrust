@@ -17,6 +17,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -54,7 +55,10 @@ public class BaseConfigurationService implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
-
+	
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
+	
 	public boolean checkAndUpdateLdapbaseConfiguration() {
 		try {
 			return checkAndUpdateLdapbaseConfigurationImpl();
@@ -130,7 +134,7 @@ public class BaseConfigurationService implements Serializable {
 					appliance.setIname(confApplianceIname);
 					appliance.setInumFN(StringHelper.removePunctuation(appliance.getInum()));
 					String newPassword = RandomStringUtils.randomAlphanumeric(8);
-					appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, applicationConfiguration.getEncodeSalt()));
+					appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, cryptoConfiguration.getEncodeSalt()));
 
 					if (centralLdapService.isUseCentralServer()) {
 						GluuAppliance tmpAppliance = new GluuAppliance();

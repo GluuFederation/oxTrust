@@ -17,6 +17,8 @@ import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.jboss.seam.annotations.In;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
@@ -34,6 +36,9 @@ import org.xdi.util.security.StringEncrypter;
 @EqualsAndHashCode(callSuper=false)
 @Data
 public class GluuAppliance extends InumEntry implements Serializable {
+	
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
 
 	private static final long serialVersionUID = -1817003894646725601L;
 
@@ -283,7 +288,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 			this.smtpPassword = smtpPassword;
 			smtpPasswordStr = smtpPassword;
 			try {
-				smtpPasswordStr = StringEncrypter.defaultInstance().decrypt(smtpPasswordStr);
+				smtpPasswordStr = StringEncrypter.defaultInstance().decrypt(smtpPasswordStr, cryptoConfiguration.getEncodeSalt());
 			} catch (Exception ex) {
 				log.error("Failed to decrypt password: " + smtpPassword, ex);
 			}
@@ -295,7 +300,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 			this.smtpPasswordStr = smtpPasswordStr;
 			smtpPassword = smtpPasswordStr;
 			try {
-				smtpPassword = StringEncrypter.defaultInstance().encrypt(smtpPassword);
+				smtpPassword = StringEncrypter.defaultInstance().encrypt(smtpPassword, cryptoConfiguration.getEncodeSalt());
 			} catch (Exception ex) {
 				log.error("Failed to encrypt password: " + smtpPassword, ex);
 			}

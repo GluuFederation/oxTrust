@@ -53,6 +53,8 @@ public final class Configuration {
 	 * Configuration files
 	 */
 	public static final String CONFIGURATION_FILE_APPLICATION_CONFIGURATION = "oxTrust.properties";
+	private static final String CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE = "salt";
+	
 
 	private static class ConfigurationSingleton {
 		static Configuration INSTANCE = new Configuration();
@@ -60,8 +62,11 @@ public final class Configuration {
 
 	private FileConfiguration applicationConfiguration;
 
+	private FileConfiguration cryptoConfiguration;
+
 	private Configuration() {
 		applicationConfiguration = new FileConfiguration(CONFIGURATION_FILE_APPLICATION_CONFIGURATION);
+	    cryptoConfiguration = new FileConfiguration(CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE);
 	}
 
 	public static Configuration instance() {
@@ -72,4 +77,7 @@ public final class Configuration {
 		return applicationConfiguration.getString(propertyName);
 	}
 
+	public String getCryptoPropertyValue(String propertyName) {
+		return cryptoConfiguration.getString(propertyName);
+	}
 }

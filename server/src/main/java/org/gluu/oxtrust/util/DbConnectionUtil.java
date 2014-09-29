@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.security.StringEncrypter;
 
@@ -23,11 +24,13 @@ public class DbConnectionUtil {
 	 */
 	private DbConnectionUtil() {
 		ApplicationConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
+		CryptoConfigurationFile cryptoConfiguration = OxTrustConfiguration.instance().getCryptoConfiguration();
+		
 		this.dbUrl = applicationConfiguration.getMysqlUrl();
 		this.userName = applicationConfiguration.getMysqlUser();
 		try {
 			String password = applicationConfiguration.getMysqlPassword();
-			this.password = StringEncrypter.defaultInstance().decrypt(password);
+			this.password = StringEncrypter.defaultInstance().decrypt(password, cryptoConfiguration.getEncodeSalt());
 			log.debug("Url::: " + dbUrl + " User: " + userName + " Password: " + password);
 		} catch (Exception ex) {
 			log.error("Error while decrypting MySql connection password: " + applicationConfiguration.getMysqlPassword() + " Msg: "

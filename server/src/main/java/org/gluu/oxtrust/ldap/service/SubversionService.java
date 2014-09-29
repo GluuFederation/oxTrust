@@ -28,6 +28,7 @@ import org.tmatesoft.svn.core.internal.wc.admin.ISVNAdminAreaFactorySelector;
 import org.tmatesoft.svn.core.internal.wc.admin.SVNAdminAreaFactory;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
@@ -47,6 +48,9 @@ public class SubversionService {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+	
+	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+	private CryptoConfigurationFile cryptoConfiguration;
 
 	final private static String baseSvnDir = "/var/gluu/svn";
 
@@ -66,7 +70,7 @@ public class SubversionService {
 		SVNClientManager clientManager = null;
 		try {
 			// Decrypt password
-			svnPassword = StringEncrypter.defaultInstance().decrypt(svnPassword);
+			svnPassword = StringEncrypter.defaultInstance().decrypt(svnPassword, cryptoConfiguration.getEncodeSalt());
 
 			// Create an instance of SVNClientManager
 			log.debug("Creating an instance of SVNClientManager");
