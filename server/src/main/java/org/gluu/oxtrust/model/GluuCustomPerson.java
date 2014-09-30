@@ -21,7 +21,7 @@ import org.xdi.ldap.model.GluuStatus;
  */
 
 @LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "person", "organizationalPerson", "inetOrgPerson", "gluuPerson","eduPerson", "oxEntry", "oxCustomAttributes" })
+@LdapObjectClass(values = { "top", "gluuPerson"})
 public @Data class GluuCustomPerson extends User implements Serializable {
 
 	private static final long serialVersionUID = -1879582184398161112L;
