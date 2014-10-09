@@ -159,7 +159,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	private GluuBoolean vdsCacheRefreshEnabled;
 
 	@LdapAttribute(name = "oxTrustCacheRefreshServerIpAddress")
-	private String сacheRefreshServerIpAddress;
+	private String cacheRefreshServerIpAddress;
 
 	@LdapAttribute(name = "gluuVdsCacheRefreshPollingInterval")
 	private String vdsCacheRefreshPollingInterval;
