@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ldap.cache.service;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -199,20 +200,24 @@ public class CacheRefreshTimer {
 
 		// Compare server IP address with cacheRefreshServerIp
 		boolean cacheRefreshServer = false;
-        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-        for (NetworkInterface networkInterface : Collections.list(nets)) {
-            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-            	if (StringHelper.equals(cacheRefreshServerIp, inetAddress.getHostAddress())) {
-            		cacheRefreshServer = true;
-            		break;
-            	}
-            }
-            
-            if (cacheRefreshServer) {
-            	break;
-            }
-        }
+		try {
+			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+	        for (NetworkInterface networkInterface : Collections.list(nets)) {
+	            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+	            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+	            	if (StringHelper.equals(cacheRefreshServerIp, inetAddress.getHostAddress())) {
+	            		cacheRefreshServer = true;
+	            		break;
+	            	}
+	            }
+	            
+	            if (cacheRefreshServer) {
+	            	break;
+	            }
+	        }
+		} catch (SocketException ex) {
+			log.error("Failed to enumerate server IP addresses", ex);
+		}
         
         if (!cacheRefreshServer) {
 			log.debug("This server isn't master Cache Refresh server");
