@@ -192,8 +192,8 @@ public class CacheRefreshTimer {
 			return false;
 		}
 		
-		String cacheRefreshServerIp = currentAppliance.getCacheRefreshServerIpAddress();
-		if (StringHelper.isEmpty(cacheRefreshServerIp)) {
+		String cacheRefreshServerIpAddress = currentAppliance.getCacheRefreshServerIpAddress();
+		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
 			log.debug("There is no master Cache Refresh server");
 			return false;
 		}
@@ -205,7 +205,7 @@ public class CacheRefreshTimer {
 	        for (NetworkInterface networkInterface : Collections.list(nets)) {
 	            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
 	            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-	            	if (StringHelper.equals(cacheRefreshServerIp, inetAddress.getHostAddress())) {
+	            	if (StringHelper.equals(cacheRefreshServerIpAddress, inetAddress.getHostAddress())) {
 	            		cacheRefreshServer = true;
 	            		break;
 	            	}
