@@ -6,9 +6,13 @@
 
 package org.gluu.oxtrust.ldap.cache.service;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -186,6 +190,34 @@ public class CacheRefreshTimer {
 		if (poolingInterval < 0) {
 			return false;
 		}
+		
+		String cacheRefreshServerIp = currentAppliance.getCacheRefreshServerIpAddress();
+		if (StringHelper.isEmpty(cacheRefreshServerIp)) {
+			log.debug("There is no master Cache Refresh server");
+			return false;
+		}
+
+		// Compare server IP address with cacheRefreshServerIp
+		boolean cacheRefreshServer = false;
+        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+        for (NetworkInterface networkInterface : Collections.list(nets)) {
+            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+            	if (StringHelper.equals(cacheRefreshServerIp, inetAddress.getHostAddress())) {
+            		cacheRefreshServer = true;
+            		break;
+            	}
+            }
+            
+            if (cacheRefreshServer) {
+            	break;
+            }
+        }
+        
+        if (!cacheRefreshServer) {
+			log.debug("This server isn't master Cache Refresh server");
+			return false;
+        }
 
 		this.cacheRefreshConfiguration.reloadProperties();
 
