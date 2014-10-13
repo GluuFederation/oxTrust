@@ -166,6 +166,11 @@ public class Authenticator implements Serializable {
 			if (user == null) {
 				log.error("Person '{0}' not found in LDAP", userName);
 				return false;
+			}else if(GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus")) || GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))){
+			     redirect.setViewId("/register.xhtml");
+			     redirect.setParameter("inum", user.getInum());
+			     redirect.execute();
+			     return false;
 			}
 
 			postLogin(user);
@@ -370,11 +375,6 @@ public class Authenticator implements Serializable {
 				facesMessages.clear();
 				Events.instance().raiseEvent(Identity.EVENT_LOGIN_SUCCESSFUL);
 			}
-		}else if(GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus")) || GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))){
-		     redirect.setViewId("/register.xhtml");
-		     redirect.setParameter("inum", user.getInum());
-		     redirect.execute();
-		     result = true;
 		}else{
 			result = false;
 		}
