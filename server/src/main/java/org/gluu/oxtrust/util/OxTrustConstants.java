@@ -188,6 +188,8 @@ public final class OxTrustConstants extends OxConstants {
 
 	public static final String POST_REGISTRATION_SCRIPT = "PostRegistrationScript";
 
+	public static final String INIT_REGISTRATION_SCRIPT = "InitRegistrationScript";
+
 	public static String getGluuSvnRevisionVersion() {
 		return Version.GLUU_SVN_REVISION_VERSION;
 	}

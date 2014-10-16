@@ -52,10 +52,10 @@ public class RegistrationInterceptionService {
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		if(config != null && config.isRegistrationInterceptorsConfigured()){
 			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();
-			List<RegistrationInterceptorScript> sortedEnabledPreregistrationScripts = sort(getActive(getPreregistrationScripts(scripts)));
-			if(sortedEnabledPreregistrationScripts != null){
+			List<RegistrationInterceptorScript> sortedEnabledPreRegistrationScripts = sort(getActive(getPreRegistrationScripts(scripts)));
+			if(sortedEnabledPreRegistrationScripts != null){
 				boolean result = true;
-				for(RegistrationInterceptorScript script: sortedEnabledPreregistrationScripts){
+				for(RegistrationInterceptorScript script: sortedEnabledPreRegistrationScripts){
 					RegistrationScript registrationScript = createRegistrationScriptFromStringWithPythonException(script);
 					result &= registrationScript.execute(script.getCustomAttributes(), person, requestParameters);
 				}
@@ -117,18 +117,18 @@ public class RegistrationInterceptionService {
 		}
 	}
 
-	private List<RegistrationInterceptorScript> getPreregistrationScripts(
+	private List<RegistrationInterceptorScript> getPreRegistrationScripts(
 			List<RegistrationInterceptorScript> scripts) {
 		if(scripts == null || scripts.isEmpty()){
 			return null;
 		}else{
-			List<RegistrationInterceptorScript> preregistrationScripts = new ArrayList<RegistrationInterceptorScript>();
+			List<RegistrationInterceptorScript> preRegistrationScripts = new ArrayList<RegistrationInterceptorScript>();
 			for(RegistrationInterceptorScript script: scripts){
 				if(script.getType().equals(OxTrustConstants.PRE_REGISTRATION_SCRIPT)){
-					preregistrationScripts.add(script);
+					preRegistrationScripts.add(script);
 				}
 			}
-			return preregistrationScripts;
+			return preRegistrationScripts;
 		}
 		
 	}
@@ -138,10 +138,10 @@ public class RegistrationInterceptionService {
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		if(config.isRegistrationInterceptorsConfigured()){
 			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();
-			List<RegistrationInterceptorScript> sortedEnabledPreregistrationScripts = sort(getActive(getPostregistrationScripts(scripts)));
-			if(sortedEnabledPreregistrationScripts != null){
+			List<RegistrationInterceptorScript> sortedEnabledPostRegistrationScripts = sort(getActive(getPostRegistrationScripts(scripts)));
+			if(sortedEnabledPostRegistrationScripts != null){
 				boolean result = true;
-				for(RegistrationInterceptorScript script: sortedEnabledPreregistrationScripts){
+				for(RegistrationInterceptorScript script: sortedEnabledPostRegistrationScripts){
 					RegistrationScript registrationScript = createRegistrationScriptFromStringWithPythonException(script);
 					result &= registrationScript.execute(script.getCustomAttributes(), person, requestParameters);
 				}
@@ -154,19 +154,56 @@ public class RegistrationInterceptionService {
 		}
 	}
 
-	private List<RegistrationInterceptorScript> getPostregistrationScripts(
+	private List<RegistrationInterceptorScript> getPostRegistrationScripts(
 			List<RegistrationInterceptorScript> scripts) {
 		if(scripts == null || scripts.isEmpty()){
 			return null;
 		}else{
-			List<RegistrationInterceptorScript> postregistrationScripts = new ArrayList<RegistrationInterceptorScript>();
+			List<RegistrationInterceptorScript> postRegistrationScripts = new ArrayList<RegistrationInterceptorScript>();
 			for(RegistrationInterceptorScript script: scripts){
 				if(script.getType().equals(OxTrustConstants.POST_REGISTRATION_SCRIPT)){
-					postregistrationScripts.add(script);
+					postRegistrationScripts.add(script);
 				}
 			}
-			return postregistrationScripts;
+			return postRegistrationScripts;
 		}
 		
+	}
+
+	public boolean runInitRegistrationScripts(GluuCustomPerson person,
+			Map<String, String[]> requestParameters) {
+		GluuOrganization org = OrganizationService.instance().getOrganization();
+		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
+		if(config.isRegistrationInterceptorsConfigured()){
+			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();
+			List<RegistrationInterceptorScript> sortedEnabledInitRegistrationScripts = sort(getActive(getInitRegistrationScripts(scripts)));
+			if(sortedEnabledInitRegistrationScripts != null){
+				boolean result = true;
+				for(RegistrationInterceptorScript script: sortedEnabledInitRegistrationScripts){
+					RegistrationScript registrationScript = createRegistrationScriptFromStringWithPythonException(script);
+					result &= registrationScript.execute(script.getCustomAttributes(), person, requestParameters);
+				}
+				return result;
+			}else{
+				return true;
+			}
+		}else{
+			return true;
+		}
+	}
+
+	private List<RegistrationInterceptorScript> getInitRegistrationScripts(
+			List<RegistrationInterceptorScript> scripts) {
+		if(scripts == null || scripts.isEmpty()){
+			return null;
+		}else{
+			List<RegistrationInterceptorScript> initRegistrationScripts = new ArrayList<RegistrationInterceptorScript>();
+			for(RegistrationInterceptorScript script: scripts){
+				if(script.getType().equals(OxTrustConstants.INIT_REGISTRATION_SCRIPT)){
+					initRegistrationScripts.add(script);
+				}
+			}
+			return initRegistrationScripts;
+		}
 	}
 }

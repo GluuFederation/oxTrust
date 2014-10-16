@@ -153,7 +153,12 @@ public class RegisterPersonAction implements Serializable {
 			}
 		}
 		initAttributes();
-		return OxTrustConstants.RESULT_SUCCESS;
+		boolean result = registrationInterceptionService.runInitRegistrationScripts(this.person, requestParameters);
+		if(result){
+			return OxTrustConstants.RESULT_SUCCESS;
+		}else{
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 	}
 
 	public String register() {
@@ -225,8 +230,12 @@ public class RegisterPersonAction implements Serializable {
 				}else{
 					personService.addPerson(this.person);
 				}
-				registrationInterceptionService.runPostRegistrationScripts(this.person, requestParameters);
+				result = registrationInterceptionService.runPostRegistrationScripts(this.person, requestParameters);
+
 				Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_SAVED, this.person, null, null, null, null, true);
+				if(! result){
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			} catch (Exception ex) {
 				log.error("Failed to add new person {0}", ex, this.person.getInum());
 				facesMessages.add(StatusMessage.Severity.ERROR, "Failed to add new person");

@@ -117,8 +117,10 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 	
 	public String init(){
 		customScriptTypes = new ArrayList<String>();
+		customScriptTypes.add(OxTrustConstants.INIT_REGISTRATION_SCRIPT);
 		customScriptTypes.add(OxTrustConstants.PRE_REGISTRATION_SCRIPT);
 		customScriptTypes.add(OxTrustConstants.POST_REGISTRATION_SCRIPT);
+
 		GluuOrganization org = organizationService.getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		List<RegistrationInterceptorScript> newScripts = new ArrayList<RegistrationInterceptorScript>();
