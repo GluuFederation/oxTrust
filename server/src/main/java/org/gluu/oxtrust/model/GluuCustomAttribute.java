@@ -34,6 +34,8 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	private transient boolean newAttribute = false;
 
 	private transient boolean mandatory = false;
+	
+	private transient boolean readonly = false;
 
 	public GluuCustomAttribute() {
 	}
@@ -166,6 +168,14 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.mandatory = mandatory;
 	}
 
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
+	}
+	
 	public String getDisplayValue() {
 		if (values == null) {
 			return "";
