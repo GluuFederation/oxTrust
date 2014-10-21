@@ -30,14 +30,15 @@
                                     <ui:param name="_mandatory" value="#{_mandatoryAttributes.contains(_custAttr)}" />
                                     <s:decorate id="_custAttrIdx" template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')}">
                                         <ui:define name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
-                                        <h:inputText value="#{_custAttr.value}" maxlength="60" size="40" required="#{_mandatory}" id="custId" tabindex="#{_custAttrIdx + 1}" rendered="#{not _custAttr.readonly}" >
+                                        <h:inputText value="#{_custAttr.value}" maxlength="60" size="40" required="#{_mandatory}" id="custId" tabindex="#{_custAttrIdx + 1}" rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE')}" >
                                             <s:validate />
                                         </h:inputText>
                                         <h:outputText value="#{_custAttr.value}" size="40" id="custIdText" rendered="#{_custAttr.readonly}">
 
                                         </h:outputText>
                                         <h:outputText value="&#160;" />
-                                       
+                                        <rich:calendar value="#{_custAttr.value}" rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType eq 'DATE')}"
+                                        datePattern="EEE MMM dd HH:mm:ss Z yyyy" readonly="#{_custAttr.readonly}"/>
                                     </s:decorate>
                                     
                                     <s:decorate id="_custAttrIdx2" template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and _custAttr.name.equals('exampleSpecialAttribute')}">
