@@ -57,6 +57,7 @@ public class OxTrustConfiguration {
 
 	@Create
 	public void create() {
+		log.error("Creating oxTrustConfiguration");
 		this.ldapConfiguration = createFileConfiguration(CONFIGURATION_FILE_LOCAL_LDAP_PROPERTIES_FILE);
 		this.ldapCentralConfiguration = createFileConfiguration(CONFIGURATION_FILE_CENTRAL_LDAP_PROPERTIES_FILE, false);
 		createCryptoConfigurationFromFile();
@@ -168,6 +169,7 @@ public class OxTrustConfiguration {
 	
 	private void createCryptoConfigurationFromFile() {
 		try {
+			log.error("Creating cryptoConfiguration");
 			FileConfiguration cryptoConfiguration = createFileConfiguration(CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE);
 			CryptoConfigurationFile cryptoConfigurationFile = new CryptoConfigurationFile(cryptoConfiguration);
 
