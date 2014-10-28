@@ -105,15 +105,18 @@ public @Data class PasswordResetAction implements Serializable {
 				question = person.getGluuCustomAttribute("secretQuestion");
 				answer = person.getGluuCustomAttribute("secretAnswer");
 			}
-			if(request!= null && requestCalendarExpiry.after(currentCalendar) && question != null && answer != null){	
-			 
-			    String correctAnswer = answer.getValue();
-			    Boolean securityQuestionAnswered = (securityAnswer != null) && securityAnswer.equals(correctAnswer);
-			    if(securityQuestionAnswered){
-			    	person.setUserPassword(password);
-			    	PersonService.instance().updatePerson(person);
-			    	return OxTrustConstants.RESULT_SUCCESS;
-			    }
+			if(request!= null && requestCalendarExpiry.after(currentCalendar) /*&& question != null && answer != null*/){	
+				if(question != null && answer != null){
+				    String correctAnswer = answer.getValue();
+				    Boolean securityQuestionAnswered = (securityAnswer != null) && securityAnswer.equals(correctAnswer);
+				    if(securityQuestionAnswered){
+				    	person.setUserPassword(password);
+				    	PersonService.instance().updatePerson(person);
+				    	return OxTrustConstants.RESULT_SUCCESS;
+				    }
+				}else{
+					return OxTrustConstants.RESULT_SUCCESS;
+				}
 			}
 		}
 		return OxTrustConstants.RESULT_FAILURE;
