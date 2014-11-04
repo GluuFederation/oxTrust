@@ -20,6 +20,7 @@
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
                         <h:commandButton value="Update" action="#{updateClientAction.save}" />
+                        <a4j:commandButton value="Change Password" onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();" />
                         <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" eventsQueue="clientQueue" rendered="#{not _new}" />
                         <h:commandButton value="Cancel" action="#{updateClientAction.cancel}" immediate="true" />
                     </div>
@@ -52,6 +53,9 @@
                 searchResult="#{updateClientAction.availableResponseTypes}" displaySearchForm="false"
                 acceptMethod="#{updateClientAction.acceptSelectResponseTypes}" cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
                 render="selectedResponseTypesId" nameProperty="entity.value" displayNameProperty="entity.displayName"/>
+
+			<ox:changePasswordDialog id="clientPassword" label="Change Client Password" password="#{clientPasswordAction.newPassword}"
+				setPasswordMethod="#{clientPasswordAction.update}" />
 
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="client" value="#{updateClientAction.client.displayName}" deleteMethod="#{updateClientAction.delete}" queue="clientQueue" />
         </div>

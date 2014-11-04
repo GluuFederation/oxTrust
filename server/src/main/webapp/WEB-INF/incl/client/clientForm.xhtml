@@ -28,11 +28,6 @@
                 <rich:inplaceInput value="#{_client.oxAuthClientSecret}" defaultLabel="click to enter Client Secret" maxlength="60" inputWidth="180" required="true" id="applicationTypeId" />
             </s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clientSecretUpdate" rendered="#{not _new}">
-                <ui:define name="label">Client Secret</ui:define>
-                <rich:inplaceInput value="#{_client.oxAuthClientSecret}" defaultLabel="click to change Client Secret" maxlength="60" inputWidth="180" id="applicationTypeUpdateId" />
-            </s:decorate>
-
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="applicatonType">
                 <ui:define name="label">Application Type</ui:define>
                 <h:selectOneMenu value="#{_client.oxAuthAppType}" id="applicationTypeId" required="true">

@@ -65,7 +65,7 @@ public class ClientService implements Serializable {
 	 * @param OxAuthClient
 	 *            Client
 	 */
-	public void addClient(OxAuthClient client) throws Exception {
+	public void addClient(OxAuthClient client) {
 		ldapEntryManager.persist(client);
 
 	}
@@ -76,7 +76,7 @@ public class ClientService implements Serializable {
 	 * @param OxAuthClient
 	 *            Client
 	 */
-	public void removeClient(OxAuthClient client) throws Exception {
+	public void removeClient(OxAuthClient client) {
 		ldapEntryManager.remove(client);
 
 	}
@@ -102,7 +102,7 @@ public class ClientService implements Serializable {
 	 *            client Inum
 	 * @return client
 	 */
-	public OxAuthCustomClient getClientByInumCustom(String inum) throws Exception {
+	public OxAuthCustomClient getClientByInumCustom(String inum) {
 
 		OxAuthCustomClient result = ldapEntryManager.find(OxAuthCustomClient.class, getDnForClient(inum));
 
@@ -144,7 +144,7 @@ public class ClientService implements Serializable {
 	 * @param client
 	 *            Client
 	 */
-	public void updateCustomClient(OxAuthCustomClient client) throws Exception {
+	public void updateCustomClient(OxAuthCustomClient client) {
 		ldapEntryManager.merge(client);
 
 	}
@@ -154,7 +154,7 @@ public class ClientService implements Serializable {
 	 * 
 	 * @return New inum for client
 	 */
-	public String generateInumForNewClient() throws Exception {
+	public String generateInumForNewClient() {
 		OxAuthClient client = new OxAuthClient();
 		String newInum = null;
 		do {
@@ -171,7 +171,7 @@ public class ClientService implements Serializable {
 	 * 
 	 * @return New inum for client
 	 */
-	private String generateInumForNewClientImpl() throws Exception {
+	private String generateInumForNewClientImpl() {
 		String orgInum = OrganizationService.instance().getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + "0008" + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
 
@@ -182,7 +182,7 @@ public class ClientService implements Serializable {
 	 * 
 	 * @return New iname for client
 	 */
-	public String generateInameForNewClient(String name) throws Exception {
+	public String generateInameForNewClient(String name) {
 		return String.format("%s*clients*%s", applicationConfiguration.getOrgIname(), name);
 	}
 
@@ -195,7 +195,7 @@ public class ClientService implements Serializable {
 	 *            Maximum count of results
 	 * @return List of clients
 	 */
-	public List<OxAuthClient> searchClients(String pattern, int sizeLimit) throws Exception {
+	public List<OxAuthClient> searchClients(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
@@ -214,7 +214,7 @@ public class ClientService implements Serializable {
 	 * @return list of clients
 	 */
 
-	public List<OxAuthClient> getAllClientsList() throws Exception {
+	public List<OxAuthClient> getAllClientsList() {
 
 		List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class,
 				Filter.createPresenceFilter("inum"), 10);
@@ -229,7 +229,7 @@ public class ClientService implements Serializable {
 	 * @return oxAuthClient
 	 */
 
-	public OxAuthClient getClientByDn(String Dn) throws Exception {
+	public OxAuthClient getClientByDn(String Dn) {
 		OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, Dn);
 
 		return result;
@@ -241,7 +241,7 @@ public class ClientService implements Serializable {
 	 * @return oxAuthClient
 	 */
 
-	public OxAuthCustomClient getClientByDnCustom(String Dn) throws Exception {
+	public OxAuthCustomClient getClientByDnCustom(String Dn) {
 		OxAuthCustomClient result = ldapEntryManager.find(OxAuthCustomClient.class, Dn);
 
 		return result;
@@ -258,7 +258,7 @@ public class ClientService implements Serializable {
 	 * 
 	 * @return ClientService instance
 	 */
-	public static ClientService instance() throws Exception {
+	public static ClientService instance() {
 		return (ClientService) Component.getInstance(ClientService.class);
 	}
 
@@ -268,7 +268,7 @@ public class ClientService implements Serializable {
 	 * @param iname
 	 * @return Client
 	 */
-	public OxAuthClient getClientByIname(String iname) throws Exception {
+	public OxAuthClient getClientByIname(String iname) {
 		OxAuthClient client = new OxAuthClient();
 		client.setBaseDn(getDnForClient(null));
 		client.setIname(iname);
@@ -289,7 +289,7 @@ public class ClientService implements Serializable {
 	 * @return client
 	 * @throws Exception
 	 */
-	public OxAuthClient getClientByDisplayName(String DisplayName) throws Exception {
+	public OxAuthClient getClientByDisplayName(String DisplayName) {
 		OxAuthClient client = new OxAuthClient();
 		client.setBaseDn(getDnForClient(null));
 		client.setDisplayName(DisplayName);
