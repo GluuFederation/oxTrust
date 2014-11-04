@@ -9,6 +9,8 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.Set;
 
+import lombok.Data;
+
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -37,7 +39,7 @@ import org.xdi.util.StringHelper;
 @Scope(ScopeType.CONVERSATION)
 @Name("updateAttributeAction")
 @Restrict("#{identity.loggedIn}")
-public class UpdateAttributeAction implements Serializable {
+public @Data class UpdateAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -2932167044333943687L;
 
@@ -62,6 +64,8 @@ public class UpdateAttributeAction implements Serializable {
 	private boolean update;
 	private boolean showAttributeDeleteConfirmation;
 	private boolean showAttributeExistConfirmation;
+	
+	private boolean validationToggle;
 
 	private boolean canEdit;
 
@@ -325,29 +329,6 @@ public class UpdateAttributeAction implements Serializable {
 		return true;
 	}
 
-	public String getInum() {
-		return inum;
-	}
-
-	public void setInum(String inum) {
-		this.inum = inum;
-	}
-
-	public GluuAttribute getAttribute() {
-		return attribute;
-	}
-
-	public boolean isUpdate() {
-		return update;
-	}
-
-	public boolean isShowAttributeDeleteConfirmation() {
-		return showAttributeDeleteConfirmation;
-	}
-
-	public boolean isShowAttributeExistConfirmation() {
-		return showAttributeExistConfirmation;
-	}
 
 	public boolean canEdit() {
 		return canEdit;

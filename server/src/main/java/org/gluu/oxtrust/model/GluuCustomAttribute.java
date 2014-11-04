@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
+import lombok.Data;
+
 import org.xdi.model.GluuAttribute;
 
 import com.unboundid.util.StaticUtils;
@@ -22,7 +24,7 @@ import com.unboundid.util.StaticUtils;
  * 
  * @author Yuriy Movchan Date: 10.07.2010
  */
-public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomAttribute> {
+public @Data class GluuCustomAttribute implements Serializable, Comparable<GluuCustomAttribute> {
 
 	private static final long serialVersionUID = 1468440094325406153L;
 
@@ -136,21 +138,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.values = values.toArray(new String[0]);
 	}
 
-	public final String getName() {
-		return name;
-	}
 
-	public final void setName(String name) {
-		this.name = name;
-	}
-
-	public void setMetadata(GluuAttribute metadata) {
-		this.metadata = metadata;
-	}
-
-	public GluuAttribute getMetadata() {
-		return metadata;
-	}
 
 	public boolean isNew() {
 		return newAttribute;
@@ -160,22 +148,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.newAttribute = newAttribute;
 	}
 
-	public boolean isMandatory() {
-		return mandatory;
-	}
 
-	public void setMandatory(boolean mandatory) {
-		this.mandatory = mandatory;
-	}
-
-	public boolean isReadonly() {
-		return readonly;
-	}
-
-	public void setReadonly(boolean readonly) {
-		this.readonly = readonly;
-	}
-	
 	public String getDisplayValue() {
 		if (values == null) {
 			return "";
