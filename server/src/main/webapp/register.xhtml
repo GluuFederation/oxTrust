@@ -30,9 +30,19 @@
                                     <ui:param name="_mandatory" value="#{_mandatoryAttributes.contains(_custAttr)}" />
                                     <s:decorate id="_custAttrIdx" template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')}">
                                         <ui:define name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
-                                        <h:inputText value="#{_custAttr.value}" maxlength="60" size="40" required="#{_mandatory}" id="custId" tabindex="#{_custAttrIdx + 1}" rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE')}" >
-                                            <s:validate />
+                                        <h:inputText value="#{_custAttr.value}" maxlength="60" size="40" required="#{_mandatory}"
+                                        	id="custId" tabindex="#{_custAttrIdx + 1}" rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE')}" 
+                                        	>
+                                        	
+                                            <f:validator validatorId="extendedRegexValidator">
+   										    </f:validator>
+   										    
+   										    <f:attribute name="pattern" value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.regExp))?'.*':_custAttr.metadata.regExp}"/>
+
+                                            <rich:validator event="keyup"/>
                                         </h:inputText>
+                                        <rich:message for="custId" />
+                                        
                                         <h:outputText value="#{_custAttr.value}" size="40" id="custIdText" rendered="#{_custAttr.readonly}">
 
                                         </h:outputText>

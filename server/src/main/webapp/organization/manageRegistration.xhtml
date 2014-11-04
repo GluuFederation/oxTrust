@@ -216,7 +216,8 @@ var changeTooltipPosition = function(event) {
 						                <h:panelGroup id="foundAttributes" >
 								        	<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 								                <ui:define name="label">Attributes</ui:define>
-								                <rich:pickList value="#{registrationManagementAction.selectedAttributes}"  rendered="#{not empty registrationManagementAction.selectedAttributes or not empty registrationManagementAction.attributes}">		           
+								                <rich:pickList value="#{registrationManagementAction.selectedAttributes}" orderable="true" 
+								               		rendered="#{not empty registrationManagementAction.selectedAttributes or not empty registrationManagementAction.attributes}">		           
 								                	<f:selectItems value="#{registrationManagementAction.attributes}" var="attribute" itemValue="#{attribute}" itemLabel="#{attribute.name}"/>
 								                	<f:converter converterId="AttributeNameConverter" />
 								                </rich:pickList>

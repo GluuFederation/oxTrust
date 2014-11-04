@@ -131,6 +131,24 @@
                 <ui:define name="label">Description</ui:define>
                 <h:inputTextarea value="#{_attribute.description}" rows="3" size="40" maxlength="4000" required="true" id="descriptionId" disabled="#{not _attributeAction.canEdit()}"/>
              </s:decorate>
+            
+             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="validationToggle">
+                <ui:define name="label">Enable custom validation for this attribute </ui:define>
+                <h:selectBooleanCheckbox value="#{_attributeAction.validationToggle}"
+                	id="validationToggleId" disabled="#{not _attributeAction.canEdit()}">
+                	<a4j:ajax  event="click"  render="validation" />
+                </h:selectBooleanCheckbox>
+             </s:decorate>
+             
+             <h:panelGroup id="validation">
+             	 <h:panelGroup rendered="#{_attributeAction.validationToggle}">
+		             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="validationRE">
+		                 <ui:define name="label">Validation RegExp</ui:define>
+		                 <h:inputText value="#{_attribute.regExp}"  size="30" maxlength="256" 
+		                     required="true" id="validationREId" disabled="#{not _attributeAction.canEdit()}"/>
+		             </s:decorate>
+	             </h:panelGroup>
+             </h:panelGroup>
              
              <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="status">
                 <ui:define name="label">Status</ui:define>

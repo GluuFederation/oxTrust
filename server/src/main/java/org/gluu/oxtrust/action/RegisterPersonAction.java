@@ -270,7 +270,6 @@ public class RegisterPersonAction implements Serializable {
 				.getPersonObjectClassTypes(), applicationConfiguration.getPersonObjectClassDisplayNames());
 
 		List<GluuCustomAttribute> mandatoryAttributes = new ArrayList<GluuCustomAttribute>();
-		mandatoryAttributes.addAll(personService.getMandatoryAtributes());
 		
 		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
 		boolean registrationCustomized = config != null;
@@ -281,6 +280,14 @@ public class RegisterPersonAction implements Serializable {
 				mandatoryAttributes.add(new GluuCustomAttribute(attribute.getName(), "", true, true));
 			}
 		}
+		for (GluuCustomAttribute attribute: personService.getMandatoryAtributes()){
+			if(! mandatoryAttributes.contains(attribute)){
+				mandatoryAttributes.add(attribute);
+			}
+		}
+		mandatoryAttributes.addAll(personService.getMandatoryAtributes());
+		
+
 		if (newPerson) {
 			customAttributeAction.addCustomAttributes(mandatoryAttributes);
 		}
