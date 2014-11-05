@@ -66,6 +66,7 @@ public @Data class UpdateAttributeAction implements Serializable {
 	private boolean showAttributeExistConfirmation;
 	
 	private boolean validationToggle;
+	private boolean tooltipToggle;
 
 	private boolean canEdit;
 
@@ -106,7 +107,10 @@ public @Data class UpdateAttributeAction implements Serializable {
 		if (!loadAttribute(this.inum)) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
+		
+		if(attribute.getRegExp() != null){
+			validationToggle = true;
+		}
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -169,6 +173,10 @@ public @Data class UpdateAttributeAction implements Serializable {
 			return null;
 		}
 
+		if(! validationToggle){
+			attribute.setRegExp(null);
+		}
+		
 		if (this.update) {
 			try {
 				attributeService.updateAttribute(this.attribute);
