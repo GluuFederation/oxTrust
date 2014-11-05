@@ -111,6 +111,10 @@ public @Data class UpdateAttributeAction implements Serializable {
 		if(attribute.getRegExp() != null){
 			validationToggle = true;
 		}
+		
+		if(attribute.getGluuTooltip()  != null){
+			tooltipToggle = true;
+		}
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -175,6 +179,9 @@ public @Data class UpdateAttributeAction implements Serializable {
 
 		if(! validationToggle){
 			attribute.setRegExp(null);
+		}
+		if(! tooltipToggle){
+			attribute.setGluuTooltip(null);
 		}
 		
 		if (this.update) {

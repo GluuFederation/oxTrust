@@ -162,7 +162,7 @@
              	 <h:panelGroup rendered="#{_attributeAction.tooltipToggle}">
 		             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="tooltipText">
 		                 <ui:define name="label">Tooltip Text</ui:define>
-		                 <h:inputText value="#{_attribute.tooltip}"  size="30" maxlength="256" 
+		                 <h:inputText value="#{_attribute.gluuTooltip}"  size="30" maxlength="256" 
 		                     required="true" id="tooltipTextId" disabled="#{not _attributeAction.canEdit()}"/>
 		             </s:decorate>
 	             </h:panelGroup>

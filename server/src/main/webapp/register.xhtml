@@ -27,7 +27,8 @@
                         <h:panelGroup id="selectedCustomAttributesId">
                             <div id="registrationFormHolder">
                                 <a4j:repeat value="#{registerPersonAction.person.customAttributes}" var="_custAttr" rowKeyVar="_custAttrIdx">
-                                    <ui:param name="_mandatory" value="#{_mandatoryAttributes.contains(_custAttr)}" />
+                                <a4j:outputPanel>
+                                    <ui:param name="_mandatory" value="#{_mandatoryAttributes.contains(_custAttr)}" />   
                                     <s:decorate id="_custAttrIdx" template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')}">
                                         <ui:define name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
                                         <h:inputText value="#{_custAttr.value}" maxlength="60" size="40" required="#{_mandatory}"
@@ -40,6 +41,7 @@
    										    <f:attribute name="pattern" value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.regExp))?'.*':_custAttr.metadata.regExp}"/>
 
                                             <rich:validator event="keyup"/>
+                                            
                                         </h:inputText>
                                         <rich:message for="custId" />
                                         
@@ -49,6 +51,8 @@
                                         <h:outputText value="&#160;" />
                                         <rich:calendar value="#{_custAttr.value}" rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType eq 'DATE')}"
                                         datePattern="EEE MMM dd HH:mm:ss Z yyyy" readonly="#{_custAttr.readonly}"/>
+                                        
+                                        
                                     </s:decorate>
                                     
                                     <s:decorate id="_custAttrIdx2" template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and _custAttr.name.equals('exampleSpecialAttribute')}">
@@ -64,6 +68,8 @@
                                         <h:outputText value="&#160;" />
                                        
                                     </s:decorate>
+                                    <rich:tooltip value="#{_custAttr.metadata.gluuTooltip}" rendered="#{((not empty _custAttr) and (not empty _custAttr.metadata) and ( not empty _custAttr.metadata.gluuTooltip))}"/>
+                                    </a4j:outputPanel>
                                 </a4j:repeat>
 
 	                            <s:decorate id="passwordField" template="/WEB-INF/incl/layout/edit.xhtml">
