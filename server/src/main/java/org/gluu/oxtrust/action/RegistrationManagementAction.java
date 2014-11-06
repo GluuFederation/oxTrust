@@ -218,15 +218,32 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 		if(config == null){
 			config = new RegistrationConfiguration();
 		}
-		config.setRegistrationInterceptorScripts(registrationInterceptors);
-		config.setInvitationCodesManagementEnabled(enableInvitationCodes);
 		config.setRegistrationInterceptorsConfigured(configureInterceptors);
-		config.setUninvitedRegistrationAllowed(enableRegistrationWithoutInvitation);
-		config.setAccountsTimeLimited(accountsTimeLimited);
+		if(configureInterceptors){
+			config.setRegistrationInterceptorScripts(registrationInterceptors);
+		}else{
+			config.setRegistrationInterceptorScripts(null);
+		}
+		config.setInvitationCodesManagementEnabled(enableInvitationCodes);
+		if(enableInvitationCodes){
+			config.setUninvitedRegistrationAllowed(enableRegistrationWithoutInvitation);
+			config.setAccountsTimeLimited(accountsTimeLimited);
+		}else{
+			config.setUninvitedRegistrationAllowed(true);
+			config.setAccountsTimeLimited(false);
+		}
 		
-		config.setLinksExpirationFrequency(getPeriod(linksExpirationServicePeriod));
-		config.setAccountsExpirationServiceFrequency(getPeriod(accountsExpirationServicePeriod));
-		config.setAccountsExpirationPeriod(getPeriod(accountsExpirationPeriod));
+		if(config.isAccountsTimeLimited()){
+			config.setLinksExpirationFrequency(getPeriod(linksExpirationServicePeriod));
+			config.setAccountsExpirationServiceFrequency(getPeriod(accountsExpirationServicePeriod));
+			config.setAccountsExpirationPeriod(getPeriod(accountsExpirationPeriod));
+		}else{
+			config.setLinksExpirationFrequency(null);
+			config.setAccountsExpirationServiceFrequency(null);
+			config.setAccountsExpirationPeriod(null);
+		}
+		
+
 		
 		List<String> attributeList = new ArrayList<String>();
 		if(configureRegistrationForm){

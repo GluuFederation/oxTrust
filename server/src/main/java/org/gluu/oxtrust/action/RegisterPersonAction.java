@@ -277,7 +277,7 @@ public class RegisterPersonAction implements Serializable {
 		if(registrationAttributesCustomized){
 			for(String attributeInum: config.getAdditionalAttributes()){
 				GluuAttribute attribute = attributeService.getAttributeByInum(attributeInum);
-				mandatoryAttributes.add(new GluuCustomAttribute(attribute.getName(), "", true, true));
+				mandatoryAttributes.add(new GluuCustomAttribute(attribute.getName(), "", false, false));
 			}
 		}
 		for (GluuCustomAttribute attribute: personService.getMandatoryAtributes()){
