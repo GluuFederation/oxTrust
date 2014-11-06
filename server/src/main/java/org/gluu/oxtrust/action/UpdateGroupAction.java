@@ -37,6 +37,7 @@ import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
@@ -85,6 +86,9 @@ public class UpdateGroupAction implements Serializable {
 
 	@In
 	private FacesMessages facesMessages;
+
+	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	private ApplicationConfiguration applicationConfiguration;
 
 	@Restrict("#{s:hasPermission('group', 'access')}")
 	public String add() throws Exception {
@@ -359,41 +363,52 @@ public class UpdateGroupAction implements Serializable {
 
 		for (String dn : addedMembers) {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
-			GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 			log.debug("Adding group {0} to person {1} memberOf", groupDn, person.getDisplayName());
+
+			if (applicationConfiguration.isUpdateApplianceStatus()) {
+				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
+				person.setSLAManager(slaManager);
+			}
 
 			List<String> personMemberOf = new ArrayList<String>(person.getMemberOf());
 			personMemberOf.add(groupDn);
 			person.setMemberOf(personMemberOf);
-			person.setSLAManager(slaManager);
+
 			personService.updatePerson(person);
 			Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_ADDED_TO_GROUP, person, groupDn);
 		}
 
 		for (String dn : removedMembers) {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
-			GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 			log.debug("Removing group {0} from person {1} memberOf", groupDn, person.getDisplayName());
+
+			if (applicationConfiguration.isUpdateApplianceStatus()) {
+				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
+				person.setSLAManager(slaManager);
+			}
 
 			List<String> personMemberOf = new ArrayList<String>(person.getMemberOf());
 			personMemberOf.remove(groupDn);
 			person.setMemberOf(personMemberOf);
-			person.setSLAManager(slaManager);
+
 			personService.updatePerson(person);
 			Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_REMOVED_FROM_GROUP, person, groupDn);
 		}
 
-		// Update existing members if needed
-		for (String dn : existingMembers) {
-			GluuCustomPerson person = personService.getPersonByDn(dn);
-			GluuBoolean slaManager = isSLAManager(organizationGroups, person);
-			if (slaManager.equals(person.getSLAManager())) {
-				continue;
-			}
-			log.debug("Updating group {0} to person {1} memberOf", groupDn, person.getDisplayName());
+		if (applicationConfiguration.isUpdateApplianceStatus()) {
+			// Update existing members if needed
+			for (String dn : existingMembers) {
+				GluuCustomPerson person = personService.getPersonByDn(dn);
+				log.debug("Updating group {0} to person {1} memberOf", groupDn, person.getDisplayName());
 
-			person.setSLAManager(slaManager);
-			personService.updatePerson(person);
+				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
+				if (slaManager.equals(person.getSLAManager())) {
+					continue;
+				}
+	
+				person.setSLAManager(slaManager);
+				personService.updatePerson(person);
+			}
 		}
 	}
 
