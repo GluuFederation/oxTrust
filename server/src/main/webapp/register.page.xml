@@ -40,10 +40,10 @@
 
     <navigation from-action="#{registerPersonAction.register}">
         <rule if-outcome="success">
-            <end-conversation />
-            <redirect url="#{registerPersonAction.redirectUri}">
+            <render view-id="/postRegister.xhtml" />
+            <!-- <redirect url="#{registerPersonAction.redirectUri}">
                 <message severity="INFO">You have successfully registered with oxTrust. Login to begin your session.</message>
-            </redirect>
+            </redirect> -->
         </rule>
         <rule if-outcome="captcha_validation_failed">
             <redirect view-id="/register.xhtml">

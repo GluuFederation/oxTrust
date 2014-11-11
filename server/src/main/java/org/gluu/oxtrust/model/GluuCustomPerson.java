@@ -1,5 +1,6 @@
 /*
- * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ * oxTrust is available under the MIT License (2008). 
+ * See http://opensource.org/licenses/MIT for full text.
  *
  * Copyright (c) 2014, Gluu
  */
@@ -22,267 +23,275 @@ import org.xdi.ldap.model.GluuStatus;
 
 /**
  * Person
- * 
+ *
  * @author Yuriy Movchan Date: 10.21.2010
  */
 
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "gluuPerson"})
-public @Data class GluuCustomPerson extends User implements Serializable {
+public @Data class GluuCustomPerson extends User 
+                                    implements Serializable {
 
-	private static final long serialVersionUID = -1879582184398161112L;
+    private static final long serialVersionUID = -1879582184398161112L;
 
-	private transient boolean selected;
+    private transient boolean selected;
 
-	private String sourceServerName;
+    private transient String postRegistrationInformation;
 
-	@LdapAttribute(name = "gluuWhitePagesListed")
-	private String gluuAllowPublication;
+    private String sourceServerName;
 
-	@LdapAttribute(name = "gluuOptOuts")
-	private List<String> gluuOptOuts;
+    @LdapAttribute(name = "gluuWhitePagesListed")
+    private String gluuAllowPublication;
 
-	@LdapAttribute(name = "associatedClient")
-	private List<String> associatedClient;
-	
-	@LdapAttribute
-	private Date oxCreationTimestamp;
-	
-	@LdapAttribute
-	private String oxInviteCode;
+    @LdapAttribute(name = "gluuOptOuts")
+    private List<String> gluuOptOuts;
 
-	public String getIname() {
-		return getAttribute("iname");
-	}
+    @LdapAttribute(name = "associatedClient")
+    private List<String> associatedClient;
 
-	public void setIname(String value) {
-		setAttribute("iname", value);
-	}
+    @LdapAttribute
+    private Date oxCreationTimestamp;
 
-	public String getMail() {
-		return getAttribute("mail");
-	}
+    @LdapAttribute
+    private String oxInviteCode;
 
-	public void setMail(String value) {
-		setAttribute("mail", value);
-	}
 
-	public String getNetworkPoken() {
-		return getAttribute("networkPoken");
-	}
+    public String getIname() {
+        return getAttribute("iname");
+    }
 
-	public void setNetworkPoken(String value) {
-		setAttribute("networkPoken", value);
-	}
+    public void setIname(String value) {
+        setAttribute("iname", value);
+    }
 
-	public String getCommonName() {
-		return getAttribute("cn");
-	}
+    public String getMail() {
+        return getAttribute("mail");
+    }
 
-	public void setCommonName(String value) {
-		setAttribute("cn", value);
-	}
+    public void setMail(String value) {
+        setAttribute("mail", value);
+    }
 
-	public String getGivenName() {
-		return getAttribute("givenName");
-	}
+    public String getNetworkPoken() {
+        return getAttribute("networkPoken");
+    }
 
-	public void setGivenName(String value) {
-		setAttribute("givenName", value);
-	}
+    public void setNetworkPoken(String value) {
+        setAttribute("networkPoken", value);
+    }
 
-	public GluuStatus getStatus() {
-		return GluuStatus.getByValue(getAttribute("gluuStatus"));
-	}
+    public String getCommonName() {
+        return getAttribute("cn");
+    }
 
-	public void setStatus(GluuStatus value) {
-		setAttribute("gluuStatus", value.getValue());
-	}
+    public void setCommonName(String value) {
+        setAttribute("cn", value);
+    }
 
-	public String getUserPassword() {
-		return getAttribute("userPassword");
-	}
+    public String getGivenName() {
+        return getAttribute("givenName");
+    }
 
-	public void setUserPassword(String value) {
-		setAttribute("userPassword", value);
-	}
+    public void setGivenName(String value) {
+        setAttribute("givenName", value);
+    }
 
-	public boolean isSelected() {
-		return selected;
-	}
+    public GluuStatus getStatus() {
+        return GluuStatus.getByValue(getAttribute("gluuStatus"));
+    }
 
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
+    public void setStatus(GluuStatus value) {
+        setAttribute("gluuStatus", value.getValue());
+    }
 
-	public GluuBoolean getSLAManager() {
-		return GluuBoolean.getByValue(getAttribute("gluuSLAManager"));
-	}
+    public String getUserPassword() {
+        return getAttribute("userPassword");
+    }
 
-	public void setSLAManager(GluuBoolean value) {
-		setAttribute("gluuSLAManager", value.getValue());
-	}
+    public void setUserPassword(String value) {
+        setAttribute("userPassword", value);
+    }
 
-	public List<String> getMemberOf() {
-		String[] value = {};
-		for (GluuCustomAttribute attribute : customAttributes) {
-			if (attribute.getName().equalsIgnoreCase("memberOf")) {
-				value = attribute.getValues();
-				break;
-			}
-		}
-		return Arrays.asList(value);
-	}
+    public boolean isSelected() {
+        return selected;
+    }
 
-	public void setMemberOf(List<String> value) {
-		setAttribute("memberOf", value.toArray(new String[] {}));
-	}
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
-	public String getSurname() {
-		return getAttribute("sn");
-	}
+    public GluuBoolean getSLAManager() {
+        return GluuBoolean.getByValue(getAttribute("gluuSLAManager"));
+    }
 
-	public void setSurname(String value) {
-		setAttribute("sn", value);
-	}
+    public void setSLAManager(GluuBoolean value) {
+        setAttribute("gluuSLAManager", value.getValue());
+    }
 
-	public void setTimezone(String value) {
-		setAttribute("timezone", value);
-	}
+    public List<String> getMemberOf() {
+        String[] value = {};
+        for (GluuCustomAttribute attribute : customAttributes) {
+            if (attribute.getName().equalsIgnoreCase("memberOf")) {
+                value = attribute.getValues();
+                break;
+            }
+        }
+        return Arrays.asList(value);
+    }
 
-	public String getTimezone() {
-		return getAttribute("timezone");
-	}
+    public void setMemberOf(List<String> value) {
+        setAttribute("memberOf", value.toArray(new String[] {}));
+    }
 
-	public void setPreferredLanguage(String value) {
-		setAttribute("preferredLanguage", value);
-	}
+    public String getSurname() {
+        return getAttribute("sn");
+    }
 
-	public String getPreferredLanguage() {
-		return getAttribute("preferredLanguage");
-	}
+    public void setSurname(String value) {
+        setAttribute("sn", value);
+    }
 
-	public int getAttributeIndex(String attributeName) {
-		int idx = 0;
-		for (GluuCustomAttribute attribute : customAttributes) {
-			if (attribute.getName().equalsIgnoreCase(attributeName)) {
-				return idx;
-			}
-			idx++;
-		}
+    public void setTimezone(String value) {
+        setAttribute("timezone", value);
+    }
 
-		return idx;
-	}
+    public String getTimezone() {
+        return getAttribute("timezone");
+    }
 
-	public String getAttribute(String attributeName) {
-		String value = null;
-		for (GluuCustomAttribute attribute : customAttributes) {
-			if (attribute.getName().equalsIgnoreCase(attributeName)) {
-				value = attribute.getValue();
-				break;
-			}
-		}
-		return value;
-	}
+    public void setPreferredLanguage(String value) {
+        setAttribute("preferredLanguage", value);
+    }
 
-	public String[] getAttributeArray(String attributeName) {
-		GluuCustomAttribute gluuCustomAttribute = getGluuCustomAttribute(attributeName);
-		if (gluuCustomAttribute == null) {
-			return null;
-		} else {
-			return gluuCustomAttribute.getValues();
-		}
-	}
+    public String getPreferredLanguage() {
+        return getAttribute("preferredLanguage");
+    }
 
-	public GluuCustomAttribute getGluuCustomAttribute(String attributeName) {
-		for (GluuCustomAttribute gluuCustomAttribute : customAttributes) {
-			if (gluuCustomAttribute.getName().equalsIgnoreCase(attributeName)) {
-				return gluuCustomAttribute;
-			}
-		}
+    public int getAttributeIndex(String attributeName) {
+        int idx = 0;
+        for (GluuCustomAttribute attribute : customAttributes) {
+            if (attribute.getName().equalsIgnoreCase(attributeName)) {
+                return idx;
+            }
+            idx++;
+        }
 
-		return null;
-	}
+        return idx;
+    }
 
-	public void setAttribute(String attributeName, String attributeValue) {
-		GluuCustomAttribute attribute = new GluuCustomAttribute(attributeName, attributeValue);
-		customAttributes.remove(attribute);
-		customAttributes.add(attribute);
-	}
+    public String getAttribute(String attributeName) {
+        String value = null;
+        for (GluuCustomAttribute attribute : customAttributes) {
+            if (attribute.getName().equalsIgnoreCase(attributeName)) {
+                value = attribute.getValue();
+                break;
+            }
+        }
+        return value;
+    }
 
-	public void setAttribute(String attributeName, String[] attributeValue) {
-		GluuCustomAttribute attribute = new GluuCustomAttribute(attributeName, attributeValue);
-		customAttributes.remove(attribute);
-		customAttributes.add(attribute);
-	}
+    public String[] getAttributeArray(String attributeName) {
+        GluuCustomAttribute gluuCustomAttribute = 
+                                getGluuCustomAttribute(attributeName);
+        if (gluuCustomAttribute == null) {
+            return null;
+        } else {
+            return gluuCustomAttribute.getValues();
+        }
+    }
 
-	public void removeAttribute(String attributeName) {
-		for (Iterator<GluuCustomAttribute> it = customAttributes.iterator(); it.hasNext();) {
-			GluuCustomAttribute attribute = (GluuCustomAttribute) it.next();
-			if (attribute.getName().equalsIgnoreCase(attributeName)) {
-				it.remove();
-				break;
-			}
-		}
-	}
+    public GluuCustomAttribute getGluuCustomAttribute(String attributeName) {
+        for (GluuCustomAttribute gluuCustomAttribute : customAttributes) {
+            if (gluuCustomAttribute.getName().equalsIgnoreCase(attributeName)) {
+                return gluuCustomAttribute;
+            }
+        }
 
-	@Override
-	public String toString() {
-		return super.toString();
-	}
+        return null;
+    }
 
-	public void setGluuAllowPublication(String allowPublication) {
-		this.gluuAllowPublication = allowPublication;
-	}
+    public void setAttribute(String attributeName, String attributeValue) {
+        GluuCustomAttribute attribute = new GluuCustomAttribute(attributeName, 
+                                                                attributeValue);
+        customAttributes.remove(attribute);
+        customAttributes.add(attribute);
+    }
 
-	public String getGluuAllowPublication() {
-		return gluuAllowPublication;
-	}
+    public void setAttribute(String attributeName, String[] attributeValue) {
+        GluuCustomAttribute attribute = new GluuCustomAttribute(attributeName, 
+                                                                attributeValue);
+        customAttributes.remove(attribute);
+        customAttributes.add(attribute);
+    }
 
-	public boolean isAllowPublication() {
-		return Boolean.parseBoolean(gluuAllowPublication);
-	}
+    public void removeAttribute(String attributeName) {
+        for (Iterator<GluuCustomAttribute> it = customAttributes.iterator(); 
+                                                                it.hasNext();) {
+            GluuCustomAttribute attribute = (GluuCustomAttribute) it.next();
+            if (attribute.getName().equalsIgnoreCase(attributeName)) {
+                it.remove();
+                break;
+            }
+        }
+    }
 
-	public void setAllowPublication(boolean allowPublication) {
-		this.gluuAllowPublication = Boolean.toString(allowPublication);
-	}
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 
-	public void setGluuOptOuts(List<String> optOuts) {
-		this.gluuOptOuts = optOuts;
-	}
+    public void setGluuAllowPublication(String allowPublication) {
+        this.gluuAllowPublication = allowPublication;
+    }
 
-	public List<String> getGluuOptOuts() {
-		return gluuOptOuts;
-	}
+    public String getGluuAllowPublication() {
+        return gluuAllowPublication;
+    }
 
-	public List<String> getAssociatedClient() {
-		return this.associatedClient;
-	}
+    public boolean isAllowPublication() {
+        return Boolean.parseBoolean(gluuAllowPublication);
+    }
 
-	public void setAssociatedClient(List<String> associatedClientDNs) {
-		this.associatedClient = associatedClientDNs;
-	}
+    public void setAllowPublication(boolean allowPublication) {
+        this.gluuAllowPublication = Boolean.toString(allowPublication);
+    }
 
-	public String getSourceServerName() {
-		return sourceServerName;
-	}
+    public void setGluuOptOuts(List<String> optOuts) {
+        this.gluuOptOuts = optOuts;
+    }
 
-	public void setSourceServerName(String sourceServerName) {
-		this.sourceServerName = sourceServerName;
-	}
-	
+    public List<String> getGluuOptOuts() {
+        return gluuOptOuts;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		boolean result = false;
-		if(obj != null && getInum()!=null && obj instanceof GluuCustomPerson){
-			result = getInum().equals(((GluuCustomPerson) obj).getInum());
-		}
-		
-		return result;
-	}
+    public List<String> getAssociatedClient() {
+        return this.associatedClient;
+    }
+
+    public void setAssociatedClient(List<String> associatedClientDNs) {
+        this.associatedClient = associatedClientDNs;
+    }
+
+    public String getSourceServerName() {
+        return sourceServerName;
+    }
+
+    public void setSourceServerName(String sourceServerName) {
+        this.sourceServerName = sourceServerName;
+    }
+
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        boolean result = false;
+        if(obj != null && getInum()!=null && obj instanceof GluuCustomPerson){
+            result = getInum().equals(((GluuCustomPerson) obj).getInum());
+        }
+
+        return result;
+    }
 
 }
