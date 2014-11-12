@@ -1,6 +1,7 @@
 .idea/
 .project
 .settings/
+.sass-cache/
 *.classpath
 *.iml
 .classpath
