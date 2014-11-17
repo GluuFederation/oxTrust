@@ -339,7 +339,7 @@ public class UpdateOrganizationAction implements Serializable {
 					"SMTP Server Configuration Verification Successful.");
 		} catch (AuthenticationFailedException ex) {
 			log.error("SMTP Authentication Error: ", ex);
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
+			return OxTrustConstants.RESULT_FAILURE;
 		} catch (MessagingException ex) {
 			log.error("SMTP Host Connection Error", ex);
 			return OxTrustConstants.RESULT_FAILURE;
