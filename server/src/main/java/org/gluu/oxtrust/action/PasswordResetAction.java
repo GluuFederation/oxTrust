@@ -76,10 +76,11 @@ public @Data class PasswordResetAction implements Serializable {
 			question = person.getGluuCustomAttribute("secretQuestion");
 			answer = person.getGluuCustomAttribute("secretAnswer");
 		}
-		if(request!= null && requestCalendarExpiry.after(currentCalendar) && question != null && answer != null){			   
-		    securityQuestion = question.getValue();
+		if(request!= null && requestCalendarExpiry.after(currentCalendar)/* && question != null && answer != null*/){	
+			if(question != null){
+				securityQuestion = question.getValue();
+			}
 		    return OxTrustConstants.RESULT_SUCCESS;
-		    
 		}else{
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -115,6 +116,8 @@ public @Data class PasswordResetAction implements Serializable {
 				    	return OxTrustConstants.RESULT_SUCCESS;
 				    }
 				}else{
+					person.setUserPassword(password);
+			    	PersonService.instance().updatePerson(person);
 					return OxTrustConstants.RESULT_SUCCESS;
 				}
 			}
