@@ -24,14 +24,20 @@ import org.xdi.context.WebContext;
 import org.xdi.oxauth.client.AuthorizationRequest;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
+import org.xdi.oxauth.client.RegisterClient;
+import org.xdi.oxauth.client.RegisterRequest;
+import org.xdi.oxauth.client.RegisterResponse;
 import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
 import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
 import org.xdi.oxauth.client.ValidateTokenClient;
 import org.xdi.oxauth.client.ValidateTokenResponse;
+import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.ResponseType;
+import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
+import org.xdi.oxauth.model.register.ApplicationType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.init.Initializable;
 
@@ -46,19 +52,26 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 	private static final String STATE_PARAMETER = "#oxauth_state_parameter";
 
-	@NotNull
+	private static final List<String> OAUTH_REQUEST_SCOPES = Arrays.asList("openid", "profile", "email");
+	
+	 // Register new client earlier than old client was expired to allow execute authorization requests
+	private static final long NEW_CLIENT_EXPIRATION_OVERLAP = 15 * 60 * 1000;
+
 	private String clientId;
-
-	@NotNull
 	private String clientSecret;
+	private long clientExpiration;
 
 	@NotNull
-	private String discoveryUrl;
+	private String openIdProvider;
 
 	@NotNull
-	private String callbackUrl;
+	private String redirectUri;
 
 	private OpenIdConfigurationResponse openIdConfiguration;
+
+	private boolean preRegisteredClient;
+	
+	private boolean initialized = false;
 
 	public AuthClient() {}
 
@@ -67,16 +80,30 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		this.clientSecret = clientSecret;
 	}
 
+	public AuthClient(final String clientId, final String clientSecret, String openIdProvider, String redirectUri) {
+		this(clientId, clientSecret);
+		this.openIdProvider = openIdProvider;
+		this.redirectUri = redirectUri;
+	}
+
 	protected void initInternal() {
-		loadOpenIdConfiguration();
+		if (!initialized) {
+			loadOpenIdConfiguration();
+			this.preRegisteredClient = StringHelper.isNotEmpty(this.clientId) && StringHelper.isNotEmpty(this.clientSecret);
+			this.initialized = true;
+		}
+
+		if (!this.preRegisteredClient) {
+			initClient();
+		}
 	}
 
 	private void loadOpenIdConfiguration() {
-		if (StringHelper.isEmpty(this.discoveryUrl)) {
-			throw new ConfigurationException("Discovery Url is invalid");
+		if (StringHelper.isEmpty(this.openIdProvider)) {
+			throw new ConfigurationException("OpenIdProvider Url is invalid");
 		}
 
-		final OpenIdConfigurationClient openIdConfigurationClient = new OpenIdConfigurationClient(this.discoveryUrl);
+		final OpenIdConfigurationClient openIdConfigurationClient = new OpenIdConfigurationClient(this.openIdProvider);
 		final OpenIdConfigurationResponse response = openIdConfigurationClient.execOpenIdConfiguration();
 		if ((response == null) || (response.getStatus() != 200)) {
 			throw new ConfigurationException("Failed to load oxAuth configuration");
@@ -85,6 +112,43 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		logger.info("Successfully loaded oxAuth configuration");
 
 		this.openIdConfiguration = response;
+	}
+
+	private void initClient() {
+		long now = System.currentTimeMillis();
+
+		// Register new client if the previous one is missing or expired
+		if (!isValidClient(now)) {
+			RegisterResponse clientRegisterResponse = registerOpenIdClient();
+
+			this.clientId = clientRegisterResponse.getClientId();
+			this.clientSecret = clientRegisterResponse.getClientSecret();
+			this.clientExpiration = clientRegisterResponse.getClientSecretExpiresAt().getTime();
+		}
+	}
+
+	private boolean isValidClient(final long now) {
+		if (StringHelper.isEmpty(this.clientId) || StringHelper.isEmpty(this.clientSecret) || (this.clientExpiration - NEW_CLIENT_EXPIRATION_OVERLAP <= now)) {
+			return false;
+		}
+		
+		return true;
+	}
+
+	private RegisterResponse registerOpenIdClient() {
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "CAS client", OAUTH_REQUEST_SCOPES);
+        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.RS256);
+        registerRequest.setTokenEndpointAuthMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
+
+        RegisterClient registerClient = new RegisterClient(openIdConfiguration.getRegistrationEndpoint());
+        registerClient.setRequest(registerRequest);
+        RegisterResponse response = registerClient.exec();
+
+        if ((response == null) || (response.getStatus() != 200)) {
+			throw new ConfigurationException("Failed to register new client");
+		}
+        
+        return response;
 	}
 
 	/**
@@ -104,7 +168,7 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		final String state = RandomStringUtils.randomAlphanumeric(10);
 
 		final AuthorizationRequest authorizationRequest = new AuthorizationRequest(Arrays.asList(ResponseType.CODE), this.clientId,
-				Arrays.asList("openid", "profile", "email"), this.callbackUrl, null);
+				OAUTH_REQUEST_SCOPES, this.redirectUri, null);
 
 		authorizationRequest.setNonce("none");
 		authorizationRequest.setState(state);
@@ -192,7 +256,7 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 		final TokenClient tokenClient = new TokenClient(this.openIdConfiguration.getTokenEndpoint());
 
-		final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.callbackUrl, this.clientId, this.clientSecret);
+		final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.redirectUri, this.clientId, this.clientSecret);
 		logger.trace("tokenResponse.getStatus(): '{}'", tokenResponse.getStatus());
 		logger.trace("tokenResponse.getErrorType(): '{}'", tokenResponse.getErrorType());
 
@@ -265,26 +329,26 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		this.clientSecret = clientSecret;
 	}
 
-	public String getDiscoveryUrl() {
-		return discoveryUrl;
+	public String getOpenIdProvider() {
+		return openIdProvider;
 	}
 
-	public void setDiscoveryUrl(String discoveryUrl) {
-		this.discoveryUrl = discoveryUrl;
+	public void setOpenIdProvider(String openIdProvider) {
+		this.openIdProvider = openIdProvider;
 	}
 
-	public String getCallbackUrl() {
-		return callbackUrl;
+	public String getRedirectUri() {
+		return redirectUri;
 	}
 
-	public void setCallbackUrl(String callbackUrl) {
-		this.callbackUrl = callbackUrl;
+	public void setRedirectUri(String redirectUri) {
+		this.redirectUri = redirectUri;
 	}
 
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("AuthClient [clientId=").append(clientId).append(", discoveryUrl=").append(discoveryUrl).append(", callbackUrl=")
-				.append(callbackUrl).append("]");
+		builder.append("AuthClient [clientId=").append(clientId).append(", discoveryUrl=").append(openIdProvider).append(", openIdProvider=")
+				.append(redirectUri).append("]");
 		return builder.toString();
 	}
 
