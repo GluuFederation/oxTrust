@@ -70,10 +70,12 @@ public class MailUtils {
 		props.put("mail.from", from);
 		props.put("mail.smtp.connectiontimeout", this.connectionTimeout);
 		props.put("mail.smtp.timeout", this.connectionTimeout);
-
+		props.put("mail.debug", true);
+		props.put("mail.transport.protocol", "smtp");
 		if (requiresSsl) {
 			// props.put("mail.smtp.socketFactory.port", "465");
-			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.starttls.enable", true);
+//			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		}
 
 		Session session = null;
@@ -89,7 +91,7 @@ public class MailUtils {
 				}
 			});
 		} else {
-			Session.getInstance(props, null);
+			session = Session.getInstance(props, null);
 		}
 
 		MimeMessage msg = new MimeMessage(session);

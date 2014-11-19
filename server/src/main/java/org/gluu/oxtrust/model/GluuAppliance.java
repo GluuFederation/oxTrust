@@ -17,6 +17,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import org.apache.log4j.Logger;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
@@ -42,9 +43,6 @@ import org.xdi.util.security.StringEncrypter;
 @EqualsAndHashCode(callSuper=false)
 @Data
 public class GluuAppliance extends InumEntry implements Serializable {
-	
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
 
 	private static final long serialVersionUID = -1817003894646725601L;
 
@@ -297,6 +295,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 			this.smtpPassword = smtpPassword;
 			smtpPasswordStr = smtpPassword;
 			try {
+				CryptoConfigurationFile cryptoConfiguration = OxTrustConfiguration.instance().getCryptoConfiguration();
 				smtpPasswordStr = StringEncrypter.defaultInstance().decrypt(smtpPasswordStr, cryptoConfiguration.getEncodeSalt());
 			} catch (Exception ex) {
 				log.error("Failed to decrypt password: " + smtpPassword, ex);
@@ -309,6 +308,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 			this.smtpPasswordStr = smtpPasswordStr;
 			smtpPassword = smtpPasswordStr;
 			try {
+				CryptoConfigurationFile cryptoConfiguration = OxTrustConfiguration.instance().getCryptoConfiguration();
 				smtpPassword = StringEncrypter.defaultInstance().encrypt(smtpPassword, cryptoConfiguration.getEncodeSalt());
 			} catch (Exception ex) {
 				log.error("Failed to encrypt password: " + smtpPassword, ex);

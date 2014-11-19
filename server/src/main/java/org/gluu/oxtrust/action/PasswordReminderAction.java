@@ -128,8 +128,13 @@ public @Data class PasswordReminderAction implements Serializable {
 	
 	public boolean enabled(){
 		GluuAppliance appliance = ApplianceService.instance().getAppliance();
-		return appliance.getSmtpHost() != null && appliance.getSmtpPort() != null && 
-		 appliance.getSmtpUserName() != null && appliance.getSmtpPasswordStr() != null && appliance.getPasswordResetAllowed()!=null && appliance.getPasswordResetAllowed().isBooleanValue();
+		return 	appliance.getSmtpHost() != null 
+					&& appliance.getSmtpPort() != null 
+					&&((! appliance.isRequiresAuthentication()) 
+							|| (appliance.getSmtpUserName() != null 
+								&& appliance.getSmtpPasswordStr() != null))
+					&& appliance.getPasswordResetAllowed()!=null 
+					&& appliance.getPasswordResetAllowed().isBooleanValue();
 
 		
 	}

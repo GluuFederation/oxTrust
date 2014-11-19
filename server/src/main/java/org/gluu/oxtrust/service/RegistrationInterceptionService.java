@@ -136,7 +136,7 @@ public class RegistrationInterceptionService {
 	public boolean runPostRegistrationScripts(GluuCustomPerson person, Map<String, String[]> requestParameters) {
 		GluuOrganization org = OrganizationService.instance().getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
-		if(config.isRegistrationInterceptorsConfigured()){
+		if(config != null && config.isRegistrationInterceptorsConfigured()){
 			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();
 			List<RegistrationInterceptorScript> sortedEnabledPostRegistrationScripts = sort(getActive(getPostRegistrationScripts(scripts)));
 			if(sortedEnabledPostRegistrationScripts != null){
@@ -174,7 +174,7 @@ public class RegistrationInterceptionService {
 			Map<String, String[]> requestParameters) {
 		GluuOrganization org = OrganizationService.instance().getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
-		if(config.isRegistrationInterceptorsConfigured()){
+		if(config != null && config.isRegistrationInterceptorsConfigured()){
 			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();
 			List<RegistrationInterceptorScript> sortedEnabledInitRegistrationScripts = sort(getActive(getInitRegistrationScripts(scripts)));
 			if(sortedEnabledInitRegistrationScripts != null){
