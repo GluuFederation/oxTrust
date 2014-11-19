@@ -13,7 +13,7 @@
 		<version>1.7.0-SNAPSHOT</version>
 	</parent>
 
-	<repositories>
+	<!--repositories>
 		<repository>
 			<id>rubygems-releases</id>
 			<url>http://rubygems-proxy.torquebox.org/releases</url>
@@ -28,11 +28,18 @@
 			<type>gem</type>
 		</dependency>
 		<dependency>
-		  <groupId>rubygems</groupId>
-		  <artifactId>bootstrap-sass</artifactId>
-		  <version>3.3.0.1</version>
+			<groupId>rubygems</groupId>
+			<artifactId>bootstrap-sass</artifactId>
+			<version>3.3.0.1</version>
 			<type>gem</type>
 		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>compass-import-onces</artifactId>
+			<version>1.0.5</version>
+			<type>gem</type>
+		</dependency>
+		
 	</dependencies>
 	
 	<build>
@@ -56,7 +63,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>
+	</build-->
 	
 	<prerequisites>
 		<maven>${maven.min-version}</maven>
