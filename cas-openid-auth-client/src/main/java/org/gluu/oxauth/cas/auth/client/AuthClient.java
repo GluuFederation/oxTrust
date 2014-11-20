@@ -8,6 +8,7 @@ package org.gluu.oxauth.cas.auth.client;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.validation.constraints.NotNull;
 
@@ -57,6 +58,8 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	 // Register new client earlier than old client was expired to allow execute authorization requests
 	private static final long NEW_CLIENT_EXPIRATION_OVERLAP = 15 * 60 * 1000;
 
+	private final ReentrantLock clientLock = new ReentrantLock();
+
 	private String clientId;
 	private String clientSecret;
 	private long clientExpiration;
@@ -70,8 +73,6 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	private OpenIdConfigurationResponse openIdConfiguration;
 
 	private boolean preRegisteredClient;
-	
-	private boolean initialized = false;
 
 	public AuthClient() {}
 
@@ -86,16 +87,15 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		this.redirectUri = redirectUri;
 	}
 
-	protected void initInternal() {
-		if (!initialized) {
-			loadOpenIdConfiguration();
-			this.preRegisteredClient = StringHelper.isNotEmpty(this.clientId) && StringHelper.isNotEmpty(this.clientSecret);
-			this.initialized = true;
-		}
+	@Override
+	public void init() {
+		super.init();
+		initClient();
+	}
 
-		if (!this.preRegisteredClient) {
-			initClient();
-		}
+	protected void initInternal() {
+		loadOpenIdConfiguration();
+		this.preRegisteredClient = StringHelper.isNotEmpty(this.clientId) && StringHelper.isNotEmpty(this.clientSecret);
 	}
 
 	private void loadOpenIdConfiguration() {
@@ -115,15 +115,27 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	}
 
 	private void initClient() {
+		if (this.preRegisteredClient) {
+			return;
+		}
+
 		long now = System.currentTimeMillis();
 
 		// Register new client if the previous one is missing or expired
 		if (!isValidClient(now)) {
-			RegisterResponse clientRegisterResponse = registerOpenIdClient();
+			clientLock.lock();
+			try {
+				now = System.currentTimeMillis();
+				if (!isValidClient(now)) {
+					RegisterResponse clientRegisterResponse = registerOpenIdClient();
 
-			this.clientId = clientRegisterResponse.getClientId();
-			this.clientSecret = clientRegisterResponse.getClientSecret();
-			this.clientExpiration = clientRegisterResponse.getClientSecretExpiresAt().getTime();
+					this.clientId = clientRegisterResponse.getClientId();
+					this.clientSecret = clientRegisterResponse.getClientSecret();
+					this.clientExpiration = clientRegisterResponse.getClientSecretExpiresAt().getTime();
+				}
+			} finally {
+				clientLock.unlock();
+			}
 		}
 	}
 
@@ -139,6 +151,7 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "CAS client", OAUTH_REQUEST_SCOPES);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.RS256);
         registerRequest.setTokenEndpointAuthMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
+        registerRequest.setRedirectUris(Arrays.asList(this.redirectUri));
 
         RegisterClient registerClient = new RegisterClient(openIdConfiguration.getRegistrationEndpoint());
         registerClient.setRequest(registerRequest);
