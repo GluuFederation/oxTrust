@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -142,7 +143,20 @@ public class UpdatePersonAction implements Serializable {
 
 		String customObjectClass = attributeService.getCustomOrigin();
 		this.person.setStatus(GluuStatus.ACTIVE);
-		this.person.setCustomObjectClasses(new String[] { customObjectClass });
+		String[] customObjectClassesArray = this.person.getCustomObjectClasses();
+		if(customObjectClassesArray != null && customObjectClassesArray.length != 0){
+			List<String> customObjectClassesList = Arrays.asList(customObjectClassesArray);
+			if(! customObjectClassesList.contains(customObjectClass)){
+				List<String> customObjectClassesListUpdated = new ArrayList<String>();
+				customObjectClassesListUpdated.addAll(customObjectClassesList);
+				customObjectClassesListUpdated.add(customObjectClass);
+				customObjectClassesList = customObjectClassesListUpdated;
+			}
+			this.person.setCustomObjectClasses(customObjectClassesList.toArray(new String[0]));
+			
+		}else{
+			this.person.setCustomObjectClasses(new String[] { customObjectClass });
+		}
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
 
 		if (update) {
