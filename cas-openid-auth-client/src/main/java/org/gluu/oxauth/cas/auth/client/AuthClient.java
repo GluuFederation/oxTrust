@@ -52,8 +52,6 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
 	private static final String STATE_PARAMETER = "#oxauth_state_parameter";
-
-	private static final List<String> OAUTH_REQUEST_SCOPES = Arrays.asList("openid", "profile", "email");
 	
 	 // Register new client earlier than old client was expired to allow execute authorization requests
 	private static final long NEW_CLIENT_EXPIRATION_OVERLAP = 15 * 60 * 1000;
@@ -63,6 +61,9 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	private String clientId;
 	private String clientSecret;
 	private long clientExpiration;
+
+	@NotNull
+	private List<String> openIdScopes;
 
 	@NotNull
 	private String openIdProvider;
@@ -81,9 +82,10 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		this.clientSecret = clientSecret;
 	}
 
-	public AuthClient(final String clientId, final String clientSecret, String openIdProvider, String redirectUri) {
+	public AuthClient(final String clientId, final String clientSecret, String openIdProvider, List<String> openIdScopes, String redirectUri) {
 		this(clientId, clientSecret);
 		this.openIdProvider = openIdProvider;
+		this.openIdScopes = openIdScopes;
 		this.redirectUri = redirectUri;
 	}
 
@@ -148,10 +150,9 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	}
 
 	private RegisterResponse registerOpenIdClient() {
-        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "CAS client", OAUTH_REQUEST_SCOPES);
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "CAS client", Arrays.asList(this.redirectUri));
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.RS256);
         registerRequest.setTokenEndpointAuthMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
-        registerRequest.setRedirectUris(Arrays.asList(this.redirectUri));
 
         RegisterClient registerClient = new RegisterClient(openIdConfiguration.getRegistrationEndpoint());
         registerClient.setRequest(registerRequest);
@@ -181,7 +182,7 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		final String state = RandomStringUtils.randomAlphanumeric(10);
 
 		final AuthorizationRequest authorizationRequest = new AuthorizationRequest(Arrays.asList(ResponseType.CODE), this.clientId,
-				OAUTH_REQUEST_SCOPES, this.redirectUri, null);
+				this.openIdScopes, this.redirectUri, null);
 
 		authorizationRequest.setNonce("none");
 		authorizationRequest.setState(state);
@@ -303,7 +304,7 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		final CommonProfile profile = new CommonProfile();
 
 		profile.setId(getFirstClaim(userInfoResponse, JwtClaimName.SUBJECT_IDENTIFIER));
-		profile.setUserName(getFirstClaim(userInfoResponse, JwtClaimName.SUBJECT_IDENTIFIER));
+		profile.setUserName(getFirstClaim(userInfoResponse, JwtClaimName.USER_NAME));
 
 		profile.setEmail(getFirstClaim(userInfoResponse, JwtClaimName.EMAIL));
 
@@ -340,6 +341,14 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
+	}
+
+	public List<String> getOpenIdScopes() {
+		return openIdScopes;
+	}
+
+	public void setOpenIdScopes(List<String> openIdScopes) {
+		this.openIdScopes = openIdScopes;
 	}
 
 	public String getOpenIdProvider() {
