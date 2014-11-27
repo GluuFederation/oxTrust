@@ -551,7 +551,7 @@ public class Authenticator implements Serializable {
 
 			this.oauthData.setHost(oxAuthHost);
 			// Determine uid
-			List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.SUBJECT_IDENTIFIER);
+			List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
 			if ((uidValues == null) || (uidValues.size() == 0)) {
 				log.error("User infor response doesn't contains uid claim");
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
