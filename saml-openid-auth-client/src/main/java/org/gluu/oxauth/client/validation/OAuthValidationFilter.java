@@ -159,7 +159,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
             OAuthData oAuthData = new OAuthData();
             oAuthData.setHost(oAuthHost);
             // Determine uid
-            List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.SUBJECT_IDENTIFIER);
+            List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
             if ((uidValues == null) || (uidValues.size() == 0)) {
                 log.error("User infor response doesn't contains uid claim");
                 return null;
