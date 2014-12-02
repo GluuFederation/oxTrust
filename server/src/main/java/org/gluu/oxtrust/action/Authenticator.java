@@ -284,6 +284,10 @@ public class Authenticator implements Serializable {
 	}
 
 	public String postLogout() {
+		if (identity.isLoggedIn()) {
+			identity.logout();
+		}
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
