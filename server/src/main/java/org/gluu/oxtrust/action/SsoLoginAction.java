@@ -173,10 +173,6 @@ public class SsoLoginAction implements Serializable {
 			}
 		}
 
-		if (identity.isLoggedIn()) {
-			identity.logout();
-		}
-
 		return isShib2Authentication ? OxTrustConstants.RESULT_LOGOUT_SSO : OxTrustConstants.RESULT_LOGOUT;
 	}
 
