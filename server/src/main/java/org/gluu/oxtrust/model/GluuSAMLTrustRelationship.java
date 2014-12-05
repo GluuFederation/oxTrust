@@ -175,7 +175,9 @@ public @Data class GluuSAMLTrustRelationship extends InumEntry implements Serial
 
 	public void setEntityId(String entityId) {
 		Set<String> entityIds = new TreeSet<String>();
-		entityIds.add(entityId);
+		if (entityId != null) {
+			entityIds.add(entityId);
+		}
 		setGluuEntityId(entityIds);
 	}
 
@@ -187,6 +189,5 @@ public @Data class GluuSAMLTrustRelationship extends InumEntry implements Serial
 	public boolean getSpecificRelyingPartyConfig() {
 		return Boolean.parseBoolean(gluuSpecificRelyingPartyConfig);
 	}
-
 
 }
