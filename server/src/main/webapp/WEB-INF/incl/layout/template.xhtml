@@ -53,11 +53,17 @@
             </ui:include>
         </h:form>
       <div class="#{not isLogin?'body':'loginBody'}">
-            <h:messages id="messages" globalOnly="true" styleClass="message"
-                        errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
-                        rendered="#{showGlobalMessages != 'false'}"/>
-            <ui:insert name="body"/>
-        </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-md-8 col-sm-offset-0 col-md-offset-2">
+                        <h:messages id="messages" globalOnly="true" styleClass="message"
+                            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+                            rendered="#{showGlobalMessages != 'false'}"/>
+                        <ui:insert name="body"/>
+                    </div>
+                </div>
+            </div>
+      </div>
         <s:fragment rendered="#{not isLogin}">
             <div class="footer">
                 <p>Copyright <a href="http://www.gluu.org">Gluu</a> All rights reserved.</p>

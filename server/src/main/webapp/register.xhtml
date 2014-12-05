@@ -12,19 +12,22 @@
 
     <ui:define name="body">
         <div id="formArea">
-            <div id="register">
-                <h1>Sign up</h1>
-                To create an account, please complete your details below. Already have an account?
-                <richext:spacer width="4" />
-                <s:link view="/login.xhtml" value="Login" rendered="#{not identity.loggedIn and not isLogin}" propagation="none" />
+            <div class="row">
+                <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1">
+                    <div id="register">
+                        <h1>Sign up</h1>
+                        To create an account, please complete your details below. Already have an account?
+                        <richext:spacer width="4" />
+                        <s:link view="/login.xhtml" value="Login" rendered="#{not identity.loggedIn and not isLogin}" propagation="none" />
+                    </div>
+                </div>
             </div>
-
             <div id="addPerson">
                 <h:form id="personRegistrationForm">
-                    <h:panelGrid columns="1" width="100%" columnClasses="formColumn" border="0" cellpadding="0" cellspacing="0">
 
+                    <div class="formColumn row">
+                      <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1">
                         <ui:param name="_mandatoryAttributes" value="#{registerPersonAction.mandatoryAttributes}" />
-                        <h:panelGroup id="selectedCustomAttributesId">
                             <div id="registrationFormHolder">
                                 <a4j:repeat value="#{registerPersonAction.person.customAttributes}" var="_custAttr" rowKeyVar="_custAttrIdx">
                                 <a4j:outputPanel>
@@ -87,15 +90,20 @@
                             <div id="captchaHolder">
                                 <h:outputText value="#{recaptcha.html}" escape="false" />
                             </div>
-                        </h:panelGroup>
-                    </h:panelGrid>
-
-                    <div id="updateButtons">
-                        <h:commandButton value="Register" action="#{registerPersonAction.register}" />
-                        <h:commandButton value="Cancel" action="#{registerPersonAction.cancel}" immediate="true" />
+                          </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1">
+                            <div id="updateButtons">
+                                <h:commandButton value="Register" action="#{registerPersonAction.register}" />
+                                <h:commandButton value="Cancel" action="#{registerPersonAction.cancel}" immediate="true" />
+                            </div>
+                        </div>
                     </div>
                 </h:form>
             </div>
+
+
         </div>
     </ui:define>
 </ui:composition>
