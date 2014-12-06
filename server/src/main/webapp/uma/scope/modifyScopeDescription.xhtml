@@ -35,7 +35,7 @@
                     <h:panelGroup id="internalTypeGroupId">
                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scope" rendered="#{_scopeDescription.type.value eq 'internal'}">
                             <ui:define name="label">Id</ui:define>
-                            <rich:inplaceInput value="#{_scopeDescription.id}" defaultLabel="Click to enter Scope Name" maxlength="30" inputWidth="180" required="true" id="scope" />
+                            <rich:inplaceInput value="#{_scopeDescription.id}" defaultLabel="Click to enter Scope Name" maxlength="300" inputWidth="180" required="true" id="scope" />
                         </s:decorate>
     
                         <s:decorate template="/WEB-INF/incl/layout/view.xhtml" rendered="#{_scopeDescription.type.value eq 'internal'}">
