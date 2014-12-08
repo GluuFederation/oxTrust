@@ -52,5 +52,9 @@ public @Data class RegistrationConfiguration {
 	
 	@LdapJsonObject
 	private List<String> additionalAttributes;
+
+	
+	@LdapJsonObject
+	private boolean isCaptchaDisabled;
 	
 }

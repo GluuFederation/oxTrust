@@ -114,6 +114,8 @@ public class RegisterPersonAction implements Serializable {
 
     private Map<String, String[]> requestParameters
         = new HashMap<String, String[]>();
+
+    private boolean captchaDisabled = false;
     /**
      * Initializes attributes for registering new person
      *
@@ -138,6 +140,10 @@ public class RegisterPersonAction implements Serializable {
             = registrationCustomized
                 && inviteCodesActive
                 && config.isUninvitedRegistrationAllowed();
+        
+        this.captchaDisabled
+        = registrationCustomized
+            && config.isCaptchaDisabled();
 
         if((! inviteCodesActive) && (invitationGuid != null)){
             return OxTrustConstants.RESULT_DISABLED;
@@ -179,9 +185,19 @@ public class RegisterPersonAction implements Serializable {
     }
 
     public String register() {
-        ReCaptchaResponse reCaptchaResponse
-            = RecaptchaUtils.getRecaptchaResponseFromServletContext();
-        if (reCaptchaResponse.isValid() && password.equals(repeatPassword)) {
+        GluuOrganization organization = organizationService.getOrganization();
+        RegistrationConfiguration registrationConfig
+            = organization.getOxRegistrationConfiguration();
+        boolean registrationCustomized = registrationConfig != null;
+        this.captchaDisabled
+            = registrationCustomized
+                && registrationConfig.isCaptchaDisabled();
+        ReCaptchaResponse reCaptchaResponse = null;
+        if(! captchaDisabled){
+            reCaptchaResponse
+                = RecaptchaUtils.getRecaptchaResponseFromServletContext();
+        }
+        if (captchaDisabled || reCaptchaResponse != null && reCaptchaResponse.isValid() && password.equals(repeatPassword)) {
             String customObjectClass = attributeService.getCustomOrigin();
 
 
@@ -206,11 +222,7 @@ public class RegisterPersonAction implements Serializable {
                 this.person.setDn(dn);
             }
 
-            RegistrationConfiguration registrationConfig
-                            = organizationService.getOrganization()
-                                .getOxRegistrationConfiguration();
 
-            boolean registrationCustomized = registrationConfig != null;
             boolean invitationCodeAllowed = registrationCustomized
                     && registrationConfig.isInvitationCodesManagementEnabled();
 //          boolean invitationCodeOptional = registrationCustomized

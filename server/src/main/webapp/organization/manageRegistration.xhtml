@@ -196,6 +196,11 @@ var changeTooltipPosition = function(event) {
 				                </h:panelGroup>
 			                </h:panelGroup>
 			                <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+			                    <ui:define name="label">Disable Captcha for registration form</ui:define>
+			                    <h:selectBooleanCheckbox value="#{registrationManagementAction.captchaDisabled}">
+				                </h:selectBooleanCheckbox>
+			                </s:decorate>
+			                <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
 			                    <ui:define name="label">Configure Registration Form Attributes</ui:define>
 			                    <h:selectBooleanCheckbox value="#{registrationManagementAction.configureRegistrationForm}">
 				                    <a4j:ajax  event="click"  render="attributes" />

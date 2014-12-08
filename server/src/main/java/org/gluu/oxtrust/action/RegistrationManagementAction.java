@@ -53,6 +53,8 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 	private boolean enableRegistrationWithoutInvitation;
 	
 	private boolean enableInboundSAMLRegistration;
+
+	private boolean captchaDisabled;
 	
 	private List<RegistrationInterceptorScript> registrationInterceptors;
 	
@@ -135,6 +137,7 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 			enableInvitationCodes = config.isInvitationCodesManagementEnabled();
 			configureInterceptors = config.isRegistrationInterceptorsConfigured();
 			enableRegistrationWithoutInvitation = config.isUninvitedRegistrationAllowed();
+			captchaDisabled = config.isCaptchaDisabled();
 			accountsTimeLimited = config.isAccountsTimeLimited();
 			configLinksExpirationFrequency = config.getLinksExpirationFrequency();
 			configAccountsExpirationServiceFrequency = config.getAccountsExpirationServiceFrequency();
@@ -243,7 +246,7 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 			config.setAccountsExpirationPeriod(null);
 		}
 		
-
+        config.setCaptchaDisabled(captchaDisabled);
 		
 		List<String> attributeList = new ArrayList<String>();
 		if(configureRegistrationForm){
