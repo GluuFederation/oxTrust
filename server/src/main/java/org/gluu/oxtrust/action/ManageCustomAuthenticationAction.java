@@ -325,6 +325,9 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 					String basedInum = OrganizationService.instance().getOrganizationInum();
 					customScriptId = basedInum + "!" + INumGenerator.generate(2);
 					dn = customScriptService.buildDn(customScriptId);
+
+					customAuthenticationConfig.setDn(dn);
+					customAuthenticationConfig.setInum(customScriptId);
 					update = false;
 				};
 
