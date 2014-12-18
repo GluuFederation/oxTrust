@@ -9,6 +9,7 @@ package org.gluu.oxtrust.action;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -17,7 +18,6 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -44,10 +44,15 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
+import org.xdi.model.ProgrammingLanguage;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.config.CustomAuthenticationConfiguration;
+import org.xdi.model.cusom.script.conf.CustomScript;
+import org.xdi.model.cusom.script.type.CustomScriptType;
 import org.xdi.model.ldap.GluuLdapConfiguration;
+import org.xdi.service.custom.script.AbstractCustomScriptService;
+import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
@@ -66,9 +71,9 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 
 	private static final long serialVersionUID = -4470460481895022468L;
 
-	private static final String CUSTOM_AUTHENTICATION_SCRIPT_PROPERTY_NAME = "script.__$__customAuthenticationScript__$__";
-	private static final String CUSTOM_AUTHENTICATION_PROPERTY_PREFIX = "property.";
-	private static final String CUSTOM_AUTHENTICATION_SCRIPT_USAGE_TYPE = "usage.";
+//	private static final String CUSTOM_AUTHENTICATION_SCRIPT_PROPERTY_NAME = "script.__$__customAuthenticationScript__$__";
+//	private static final String CUSTOM_AUTHENTICATION_PROPERTY_PREFIX = "property.";
+//	private static final String CUSTOM_AUTHENTICATION_SCRIPT_USAGE_TYPE = "usage.";
 
 	@Logger
 	private Log log;
@@ -88,8 +93,8 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 	@In
 	private ApplianceService applianceService;
 
-	@In(required = false)
-	private CacheRefreshConfiguration cacheRefreshConfiguration;
+	@In(value = "customScriptService")
+	private AbstractCustomScriptService customScriptService;
 
 	@In
 	private FacesMessages facesMessages;
@@ -126,15 +131,18 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 			}
 
 			this.customAuthenticationConfigurations = new ArrayList<CustomAuthenticationConfiguration>();
+			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.CUSTOM_AUTHENTICATION), null);
+			for (CustomScript customScript : customScripts) {
+				CustomAuthenticationConfiguration customAuthenticationConfig = toCustomAuthenticationConfiguration(customScript);
+				this.customAuthenticationConfigurations.add(customAuthenticationConfig);
+			}
 
 			List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
 			if (idpConfs != null) {
 				for (OxIDPAuthConf idpConf : idpConfs) {
 					if (idpConf.getType().equalsIgnoreCase("auth")) {
 						this.ldapConfig = mapLdapConfig(idpConf.getConfig());
-					} else if (idpConf.getType().equalsIgnoreCase("customAuthentication")) {
-						CustomAuthenticationConfiguration customAuthenticationConfig = mapCustomAuthentication(idpConf);
-						this.customAuthenticationConfigurations.add(customAuthenticationConfig);
+						break;
 					}
 				}
 			}
@@ -156,6 +164,58 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 		this.initialized = true;
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	// TODO: Don't use this conversion in next version
+	private CustomAuthenticationConfiguration toCustomAuthenticationConfiguration(CustomScript customScript) {
+		CustomAuthenticationConfiguration result = new CustomAuthenticationConfiguration();
+
+		result.setDn(customScript.getDn());
+		result.setInum(customScript.getInum());
+
+		result.setName(customScript.getName());
+		result.setLevel(customScript.getLevel());
+		result.setEnabled(customScript.isEnabled());
+		result.setVersion(customScript.getRevision());
+		result.setCustomAuthenticationScript(customScript.getScript());
+		result.setCustomAuthenticationAttributes(customScript.getConfigurationProperties());
+
+		AuthenticationScriptUsageType tmpUsageType = null;
+		for (SimpleCustomProperty moduleProperty : customScript.getModuleProperties()) {
+			if (StringHelper.equalsIgnoreCase(moduleProperty.getValue1(), "usage_type")) {
+				tmpUsageType = AuthenticationScriptUsageType.getByValue(moduleProperty.getValue2());
+				break;
+			}
+		}
+		result.setUsageType(tmpUsageType);
+
+		return result;
+	}
+
+	// TODO: Don't use this conversion in next version
+	private CustomScript toCustomScript(CustomAuthenticationConfiguration customAuthenticationConfiguration) {
+		CustomScript result = new CustomScript();
+
+		result.setProgrammingLanguage(ProgrammingLanguage.PYTHON);
+		result.setScriptType(CustomScriptType.CUSTOM_AUTHENTICATION);
+		
+		result.setName(customAuthenticationConfiguration.getName());
+		result.setLevel(customAuthenticationConfiguration.getLevel());
+		result.setEnabled(customAuthenticationConfiguration.isEnabled());
+		result.setRevision(customAuthenticationConfiguration.getVersion());
+		result.setScript(customAuthenticationConfiguration.getCustomAuthenticationScript());
+
+		List<SimpleCustomProperty> moduleProperties = Arrays.asList(new SimpleCustomProperty("usage_type", customAuthenticationConfiguration.getUsageType().toString()));
+		result.setModuleProperties(moduleProperties);
+
+		List<SimpleCustomProperty> configurationProperties = customAuthenticationConfiguration.getCustomAuthenticationAttributes();
+		if (configurationProperties.size() > 0) {
+			result.setConfigurationProperties(configurationProperties);
+		} else {
+			result.setConfigurationProperties(null);
+		}
+
+		return result;
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -191,43 +251,43 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
 	}
 
-	private CustomAuthenticationConfiguration mapCustomAuthentication(OxIDPAuthConf oneConf) {
-		CustomAuthenticationConfiguration customAuthenticationConfig = new CustomAuthenticationConfiguration();
-		customAuthenticationConfig.setName(oneConf.getName());
-		customAuthenticationConfig.setLevel(oneConf.getLevel());
-		customAuthenticationConfig.setPriority(oneConf.getPriority());
-		customAuthenticationConfig.setEnabled(oneConf.getEnabled());
-		customAuthenticationConfig.setVersion(oneConf.getVersion());
-
-		for (ScimCustomAttributes scimCustomAttributes : oneConf.getFields()) {
-			if ((scimCustomAttributes.getValues() == null) || (scimCustomAttributes.getValues().size() == 0)) {
-				continue;
-			}
-
-			String attrName = StringHelper.toLowerCase(scimCustomAttributes.getName());
-
-			if (StringHelper.isEmpty(attrName)) {
-				continue;
-			}
-
-			String value = scimCustomAttributes.getValues().get(0);
-
-			if (attrName.startsWith(CUSTOM_AUTHENTICATION_PROPERTY_PREFIX)) {
-				String key = scimCustomAttributes.getName().substring(CUSTOM_AUTHENTICATION_PROPERTY_PREFIX.length());
-				SimpleCustomProperty property = new SimpleCustomProperty(key, value);
-				customAuthenticationConfig.getCustomAuthenticationAttributes().add(property);
-			} else if (StringHelper.equalsIgnoreCase(attrName, CUSTOM_AUTHENTICATION_SCRIPT_PROPERTY_NAME)) {
-				customAuthenticationConfig.setCustomAuthenticationScript(value);
-			} else if (StringHelper.equalsIgnoreCase(attrName, CUSTOM_AUTHENTICATION_SCRIPT_USAGE_TYPE)) {
-				if (StringHelper.isNotEmpty(value)) {
-					AuthenticationScriptUsageType authenticationScriptUsageType =  AuthenticationScriptUsageType.getByValue(value);
-					customAuthenticationConfig.setUsageType(authenticationScriptUsageType);
-				}
-			}
-		}
-
-		return customAuthenticationConfig;
-	}
+//	private CustomAuthenticationConfiguration mapCustomAuthentication(OxIDPAuthConf oneConf) {
+//		CustomAuthenticationConfiguration customAuthenticationConfig = new CustomAuthenticationConfiguration();
+//		customAuthenticationConfig.setName(oneConf.getName());
+//		customAuthenticationConfig.setLevel(oneConf.getLevel());
+//		customAuthenticationConfig.setPriority(oneConf.getPriority());
+//		customAuthenticationConfig.setEnabled(oneConf.getEnabled());
+//		customAuthenticationConfig.setVersion(oneConf.getVersion());
+//
+//		for (ScimCustomAttributes scimCustomAttributes : oneConf.getFields()) {
+//			if ((scimCustomAttributes.getValues() == null) || (scimCustomAttributes.getValues().size() == 0)) {
+//				continue;
+//			}
+//
+//			String attrName = StringHelper.toLowerCase(scimCustomAttributes.getName());
+//
+//			if (StringHelper.isEmpty(attrName)) {
+//				continue;
+//			}
+//
+//			String value = scimCustomAttributes.getValues().get(0);
+//
+//			if (attrName.startsWith(CUSTOM_AUTHENTICATION_PROPERTY_PREFIX)) {
+//				String key = scimCustomAttributes.getName().substring(CUSTOM_AUTHENTICATION_PROPERTY_PREFIX.length());
+//				SimpleCustomProperty property = new SimpleCustomProperty(key, value);
+//				customAuthenticationConfig.getCustomAuthenticationAttributes().add(property);
+//			} else if (StringHelper.equalsIgnoreCase(attrName, CUSTOM_AUTHENTICATION_SCRIPT_PROPERTY_NAME)) {
+//				customAuthenticationConfig.setCustomAuthenticationScript(value);
+//			} else if (StringHelper.equalsIgnoreCase(attrName, CUSTOM_AUTHENTICATION_SCRIPT_USAGE_TYPE)) {
+//				if (StringHelper.isNotEmpty(value)) {
+//					AuthenticationScriptUsageType authenticationScriptUsageType =  AuthenticationScriptUsageType.getByValue(value);
+//					customAuthenticationConfig.setUsageType(authenticationScriptUsageType);
+//				}
+//			}
+//		}
+//
+//		return customAuthenticationConfig;
+//	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
@@ -247,12 +307,49 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 	public boolean updateAuthConf(GluuAppliance appliance) {
 		try {
 			List<OxIDPAuthConf> idpConf = new ArrayList<OxIDPAuthConf>();
+			
+			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.CUSTOM_AUTHENTICATION), "dn", "inum");
 
+			List<String> updatedInums = new ArrayList<String>();
 			for (CustomAuthenticationConfiguration customAuthenticationConfig : this.customAuthenticationConfigurations) {
 				customAuthenticationConfig.setVersion(customAuthenticationConfig.getVersion() + 1);
-				OxIDPAuthConf oxIDPAuthConf = customAuthenticationToIdp(customAuthenticationConfig);
-				oxIDPAuthConf.setVersion(oxIDPAuthConf.getVersion());
-				idpConf.add(oxIDPAuthConf);
+//				OxIDPAuthConf oxIDPAuthConf = customAuthenticationToIdp(customAuthenticationConfig);
+//				oxIDPAuthConf.setVersion(oxIDPAuthConf.getVersion());
+				
+				CustomScript customScript = toCustomScript(customAuthenticationConfig);
+
+				boolean update = true;
+				String dn = customAuthenticationConfig.getDn();
+				String customScriptId = customAuthenticationConfig.getInum();
+				if (StringHelper.isEmpty(dn)) {
+					String basedInum = OrganizationService.instance().getOrganizationInum();
+					customScriptId = basedInum + "!" + INumGenerator.generate(2);
+					dn = customScriptService.buildDn(customScriptId);
+
+					customAuthenticationConfig.setDn(dn);
+					customAuthenticationConfig.setInum(customScriptId);
+					update = false;
+				};
+
+
+				customScript.setDn(dn);
+				customScript.setInum(customScriptId);
+				
+				updatedInums.add(customScriptId);
+
+				if (update) {
+					customScriptService.update(customScript);
+				} else {
+					customScriptService.add(customScript);
+				}
+//				idpConf.add(oxIDPAuthConf);
+			}
+			
+			// Remove removed scripts
+			for (CustomScript oldCustomScript : oldCustomScripts) {
+				if (!updatedInums.contains(oldCustomScript.getInum())) {
+					customScriptService.remove(oldCustomScript);
+				}
 			}
 
 			if (this.existLdapConfigIdpAuthConf) {
@@ -280,43 +377,43 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 		return true;
 	}
 
-	private OxIDPAuthConf customAuthenticationToIdp(CustomAuthenticationConfiguration customAuthenticationConfig) {
-		OxIDPAuthConf oxIDP = new OxIDPAuthConf();
-		oxIDP.setEnabled(customAuthenticationConfig.isEnabled());
-
-		oxIDP.setType("customAuthentication");
-		oxIDP.setName(customAuthenticationConfig.getName());
-		oxIDP.setLevel(customAuthenticationConfig.getLevel());
-		oxIDP.setPriority(customAuthenticationConfig.getPriority());
-		oxIDP.setVersion(customAuthenticationConfig.getVersion());
-
-		List<ScimCustomAttributes> properties = new ArrayList<ScimCustomAttributes>();
-
-		ScimCustomAttributes usageProperty = new ScimCustomAttributes();
-		usageProperty.setName(CUSTOM_AUTHENTICATION_SCRIPT_USAGE_TYPE);
-		usageProperty.getValues().add(customAuthenticationConfig.getUsageType().getValue());
-
-		properties.add(usageProperty);
-
-		for (SimpleCustomProperty customProperty : customAuthenticationConfig.getCustomAuthenticationAttributes()) {
-			ScimCustomAttributes property = new ScimCustomAttributes();
-
-			property.setName(CUSTOM_AUTHENTICATION_PROPERTY_PREFIX + customProperty.getValue1());
-			property.getValues().add(customProperty.getValue2());
-
-			properties.add(property);
-		}
-
-		ScimCustomAttributes property = new ScimCustomAttributes();
-		property.setName(CUSTOM_AUTHENTICATION_SCRIPT_PROPERTY_NAME);
-		property.getValues().add(customAuthenticationConfig.getCustomAuthenticationScript());
-
-		properties.add(property);
-
-		oxIDP.setFields(properties);
-
-		return oxIDP;
-	}
+//	private OxIDPAuthConf customAuthenticationToIdp(CustomAuthenticationConfiguration customAuthenticationConfig) {
+//		OxIDPAuthConf oxIDP = new OxIDPAuthConf();
+//		oxIDP.setEnabled(customAuthenticationConfig.isEnabled());
+//
+//		oxIDP.setType("customAuthentication");
+//		oxIDP.setName(customAuthenticationConfig.getName());
+//		oxIDP.setLevel(customAuthenticationConfig.getLevel());
+//		oxIDP.setPriority(customAuthenticationConfig.getPriority());
+//		oxIDP.setVersion(customAuthenticationConfig.getVersion());
+//
+//		List<ScimCustomAttributes> properties = new ArrayList<ScimCustomAttributes>();
+//
+//		ScimCustomAttributes usageProperty = new ScimCustomAttributes();
+//		usageProperty.setName(CUSTOM_AUTHENTICATION_SCRIPT_USAGE_TYPE);
+//		usageProperty.getValues().add(customAuthenticationConfig.getUsageType().getValue());
+//
+//		properties.add(usageProperty);
+//
+//		for (SimpleCustomProperty customProperty : customAuthenticationConfig.getCustomAuthenticationAttributes()) {
+//			ScimCustomAttributes property = new ScimCustomAttributes();
+//
+//			property.setName(CUSTOM_AUTHENTICATION_PROPERTY_PREFIX + customProperty.getValue1());
+//			property.getValues().add(customProperty.getValue2());
+//
+//			properties.add(property);
+//		}
+//
+//		ScimCustomAttributes property = new ScimCustomAttributes();
+//		property.setName(CUSTOM_AUTHENTICATION_SCRIPT_PROPERTY_NAME);
+//		property.getValues().add(customAuthenticationConfig.getCustomAuthenticationScript());
+//
+//		properties.add(property);
+//
+//		oxIDP.setFields(properties);
+//
+//		return oxIDP;
+//	}
 
 	public List<CustomAuthenticationConfiguration> getCustomAuthenticationConfigurations() {
 		return customAuthenticationConfigurations;
