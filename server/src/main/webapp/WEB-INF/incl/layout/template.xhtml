@@ -31,8 +31,8 @@
         <link type="text/css" rel="stylesheet" href="#{oxTrustConfigurationService.cssLocation}/../stylesheets/styles.css" />
 
         <script type="text/javascript" src="#{oxTrustConfigurationService.jsLocation}/gluuCommon.js"></script>
-
-        <ui:insert name="head"/>
+        <script type="text/javascript" src="#{oxTrustConfigurationService.jsLocation}/bootstrap.js"></script>
+        <ui:insert name="head"/>	
 
         <ui:param name="themeColor" value="#{organizationService.organization.themeColor}" />
         <s:fragment rendered="#{not empty themeColor}">
