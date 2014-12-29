@@ -1,0 +1,30 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="body">
+        <div id="formArea">
+            <ui:decorate template="/WEB-INF/incl/script/customScriptListForm.xhtml">
+                <ui:param name="_action" value="#{manageCustomScriptAction}" />
+
+                <ui:define name="controlButttons">
+                    <div id="updateButtons">
+                        <h:commandButton value="Update" action="#{manageCustomScriptAction.save}" />
+                        <h:commandButton value="Cancel" action="#{manageCustomScriptAction.cancel}" immediate="true" />
+                    </div>
+                </ui:define>
+            </ui:decorate>
+        </div>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,109 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:outputStylesheet>
+        .addConfig {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .removeConfig {
+            text-align: left;
+            vertical-align: top;
+        }
+    </h:outputStylesheet>
+
+    <h:form id="customScriptForm">
+	    <rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId">
+	        <c:forEach items="#{_action.customScriptsByTypes.entrySet()}" var="_scriptsByType">
+	        	<ui:param name="_scriptType" value="#{_scriptsByType.key}" />
+	        	<ui:param name="_customScriptTypeId" value="#{_action.getId(_scriptType)}" />
+	            <rich:tab header="#{_scriptType.displayName}">
+		            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+		                <a4j:region>
+		                    <rich:dataGrid id="#{_customScriptTypeId}" columns="1" value="#{_scriptsByType.value}" var="_customScript" style="width: 100%;">            
+					        	<ui:param name="_customScriptId" value="#{_action.getId(_customScript)}" />
+		                        <h:panelGrid id="#{_customScriptId}" columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
+		                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+		                                    <ui:define name="label">Name</ui:define>
+		                                    <h:inputText value="#{_customScript.name}" size="90" />
+		                                </s:decorate>
+
+		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+		                                    <ui:define name="label">Description</ui:define>
+		                                    <h:inputText value="#{_customScript.description}" size="90" />
+		                                </s:decorate>
+
+		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+		                                    <ui:define name="label">Programming Language</ui:define>
+		                                    <h:selectOneMenu value="#{_customScript.programmingLanguage}" required="true" disabled="true">
+		                                        <s:selectItems value="#{applianceService.programmingLanguages}" var="_type" label="#{_type.displayName}"/>
+		                                        <a4j:ajax event="change" render="#{_customScriptId}" limitRender="true" execute="@this" />
+		                                    </h:selectOneMenu>
+		                                </s:decorate>
+		            
+		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+		                                    <ui:define name="label">Level</ui:define>
+		                                    <rich:inputNumberSpinner value="#{_customScript.level}" inputSize="2" minValue="0" maxValue="100"/>
+		                                </s:decorate>
+		                                
+		                                <!-- Custom Authentication specific parameters -->
+		                                <s:fragment rendered="#{_scriptType.value eq 'custom_authentication'}">
+			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+			                                    <ui:define name="label">Usage type</ui:define> 
+			                                    <h:selectOneMenu value="#{_customScript.usageType}" required="true">
+			                                        <s:selectItems value="#{applianceService.scriptUsageTypes}" var="_usageType" label="#{_usageType.displayName}"/>
+			                                        <a4j:ajax event="change" render="customScriptId" limitRender="true" execute="@this" />
+			                                    </h:selectOneMenu>
+			                                </s:decorate>
+		                                </s:fragment>
+
+		                                <ox:simpleCustomPropertiesList label="Custom property (key/value)" labelAdd="custom property"
+		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" />
+		                
+		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="customScriptScript">
+		                                    <ui:define name="label">Custom Script</ui:define>
+		                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
+		                                </s:decorate>
+		                
+		                                <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+		                                    <ui:define name="label">Enabled</ui:define>
+		                                    <h:selectBooleanCheckbox value="#{_customScript.enabled}" />
+		                                </s:decorate>
+		                            </h:panelGrid>
+		    
+		                            <a4j:commandLink action="#{_action.removeCustomScript(_customScript)}" render="#{_customScriptTypeId}" execute="@region">
+		                                <h:graphicImage value="/img/remove.gif" />
+		                                <f:param name="sv" value="1" />
+		                            </a4j:commandLink>
+		                        </h:panelGrid>
+		                    </rich:dataGrid>
+		    
+		                    <s:div styleClass="addConfig">
+		                        <a4j:commandLink value="Add custom script configuration" action="#{_action.addCustomScript(_scriptType)}" render="#{_customScriptTypeId}" execute="@region" />
+		                        <f:param name="sv" value="1" />
+		                    </s:div>
+		                </a4j:region>
+	        	    </h:panelGrid>
+    	        </rich:tab>
+	        </c:forEach>
+        </rich:tabPanel>
+
+        <richext:spacer height="16"/>       
+
+        <rich:notifyMessages stayTime="2000" nonblocking="true" />
+        <ui:insert name="controlButttons" />
+    </h:form>
+</ui:composition>

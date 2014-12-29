@@ -60,64 +60,6 @@
         	</h:panelGrid>
         </rich:collapsiblePanel>
 
-        <rich:collapsiblePanel id="customAuthenticationTogglePanel" switchType="client" opened="false" width="100%" bodyClass="paddning4" header="Manage Custom Authentication Methods">
-            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                <a4j:region>
-                    <rich:dataGrid id="customAuthConfigsId" columns="1" value="#{_action.customAuthenticationConfigurations}" var="_authConf" style="width: 100%;">            
-                        <h:panelGrid columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
-                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
-                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                                    <ui:define name="label">Name</ui:define>
-                                    <h:inputText value="#{_authConf.name}" size="100" />
-                                </s:decorate>
-            
-                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                                    <ui:define name="label">Level</ui:define>
-                                    <rich:inputNumberSpinner value="#{_authConf.level}" inputSize="2" minValue="0" maxValue="100"  disabled="#{_authConf.usageType.displayName eq 'Logout'}"/>
-                                </s:decorate>
-
-                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                                    <ui:define name="label">Usage type</ui:define> 
-                                    <h:selectOneMenu value="#{_authConf.usageType}" required="true">
-                                        <s:selectItems value="#{applianceService.authenticationScriptUsageTypes}" var="_usageType" label="#{_usageType.displayName}"/>
-                                        <a4j:ajax event="change" render="customAuthConfigsId" limitRender="true" execute="@this" />
-                                    </h:selectOneMenu>
-                                </s:decorate>
-            
-                                <ox:simpleCustomPropertiesList label="Custom property (key/value)" labelAdd="custom auth. property"
-                                    properties="#{_authConf.customAuthenticationAttributes}" propertiesAction="#{_action}" />
-                
-                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="customAuthenticationScript">
-                                    <ui:define name="label">Custom Script</ui:define>
-                                    <h:inputTextarea value="#{_authConf.customAuthenticationScript}" cols="100" rows="10" />
-                                </s:decorate>
-                
-                                <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-                                    <ui:define name="label">Enabled</ui:define>
-                                    <h:selectBooleanCheckbox value="#{_authConf.enabled}" />
-                                </s:decorate>
-            
-                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                                    <ui:define name="label">Priority</ui:define>
-                                    <rich:inputNumberSpinner value="#{_authConf.priority}" inputSize="2" minValue="0" maxValue="100" disabled="#{_authConf.usageType.displayName eq 'Logout'}"/>
-                                </s:decorate>
-                            </h:panelGrid>
-    
-                            <a4j:commandLink action="#{_action.removeCustomAuthenticationConfiguration(_authConf)}" render="customAuthConfigsId" execute="@region">
-                                <h:graphicImage value="/img/remove.gif" />
-                                <f:param name="sv" value="1" />
-                            </a4j:commandLink>
-                        </h:panelGrid>
-                    </rich:dataGrid>
-    
-                    <s:div styleClass="addConfig">
-                        <a4j:commandLink value="Add custom authentication configuration" action="#{_action.addCustomAuthenticationConfiguration()}" render="customAuthConfigsId" execute="@region" />
-                        <f:param name="sv" value="1" />
-                    </s:div>
-                </a4j:region>
-            </h:panelGrid>
-        </rich:collapsiblePanel>
-
         <richext:spacer height="16"/>       
 
         <rich:notifyMessages stayTime="2000" nonblocking="true" />
