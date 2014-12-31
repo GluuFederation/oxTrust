@@ -211,7 +211,8 @@ public class ApplianceService {
 	}
 
 	public CustomScriptType[] getCustomScriptTypes() {
-		return new CustomScriptType[] { CustomScriptType.CUSTOM_AUTHENTICATION, CustomScriptType.CLIENT_REGISTRATION };
+		return new CustomScriptType[] { CustomScriptType.CUSTOM_AUTHENTICATION, CustomScriptType.CLIENT_REGISTRATION,
+				CustomScriptType.USER_REGISTRATION, CustomScriptType.CACHE_REFRESH };
 	}
 
 }
