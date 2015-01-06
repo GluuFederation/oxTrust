@@ -230,8 +230,8 @@ public @Data class UpdateAttributeAction implements Serializable {
 		String inum = attributeService.generateInumForNewAttribute();
 		log.info("getting the dn : " + attributeService.getDnForAttribute(inum));
 		String dn = attributeService.getDnForAttribute(inum);
-		log.info("getting ldapAttributeName : " + attributeService.toInumWithoutDelimiters(inum));
-		String ldapAttributedName = attributeService.toInumWithoutDelimiters(inum);
+		log.info("getting ldapAttributeName : " + attributeService.generateRandomOid());
+		String ldapAttributedName = attributeService.generateRandomOid();
 		log.info("getting objectClassName : " + attributeService.getCustomOrigin());
 		String objectClassName = attributeService.getCustomOrigin();
 		if (attribute.getSaml1Uri() == null || attribute.getSaml1Uri().equals("")) {

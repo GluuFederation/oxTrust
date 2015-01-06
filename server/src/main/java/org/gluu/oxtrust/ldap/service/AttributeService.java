@@ -50,9 +50,6 @@ import com.unboundid.ldap.sdk.LDAPException;
 @AutoCreate
 public class AttributeService  extends org.xdi.service.AttributeService{
 
-
-
-
 	@In
 	private SchemaService schemaService;
 
@@ -567,6 +564,10 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 */
 	public String toInumWithoutDelimiters(String inum) {
 		return inum.replace(".", "").replace(OxTrustConstants.inumDelimiter, "").replace("@", "");
+	}
+
+	public String generateRandomOid() {
+		return Long.toString(System.currentTimeMillis());
 	}
 
 	/**
