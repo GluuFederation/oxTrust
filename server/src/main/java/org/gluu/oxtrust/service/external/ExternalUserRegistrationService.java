@@ -38,12 +38,12 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 		super(CustomScriptType.USER_REGISTRATION);
 	}
 
-	public boolean executeExternalUserRegistrationUpdateMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson person, boolean persisted) {
+	public boolean executeExternalUserRegistrationUpdateMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, boolean persisted) {
 		try {
 			log.debug("Executing python 'updateUser' method");
 			UserRegistrationType externalType = (UserRegistrationType) customScriptConfiguration.getExternalType();
 			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
-			return externalType.updateUser(person, persisted, configurationAttributes);
+			return externalType.updateUser(user, persisted, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
@@ -51,14 +51,14 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 		return false;
 	}
 
-	public boolean executeExternalDefaultUserRegistrationUpdateMethod(GluuCustomPerson person, boolean persisted) {
-		return executeExternalUserRegistrationUpdateMethod(this.defaultExternalCustomScript, person, persisted);
+	public boolean executeExternalDefaultUserRegistrationUpdateMethod(GluuCustomPerson user, boolean persisted) {
+		return executeExternalUserRegistrationUpdateMethod(this.defaultExternalCustomScript, user, persisted);
 	}
 
-	public boolean executeExternalAddPersonMethods(GluuCustomPerson person) {
+	public boolean executeExternalAddPersonMethods(GluuCustomPerson user) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
-			result &= executeExternalUserRegistrationUpdateMethod(customScriptConfiguration, person, false);
+			result &= executeExternalUserRegistrationUpdateMethod(customScriptConfiguration, user, false);
 			if (!result) {
 				return result;
 			}
@@ -67,10 +67,10 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 		return result;
 	}
 
-	public boolean executeExternalUpdatePersonMethods(GluuCustomPerson person) {
+	public boolean executeExternalUpdatePersonMethods(GluuCustomPerson user) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
-			result &= executeExternalUserRegistrationUpdateMethod(customScriptConfiguration, person, true);
+			result &= executeExternalUserRegistrationUpdateMethod(customScriptConfiguration, user, true);
 			if (!result) {
 				return result;
 			}
