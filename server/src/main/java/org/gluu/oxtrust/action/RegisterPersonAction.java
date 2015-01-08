@@ -30,7 +30,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.OxLink;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
-import org.gluu.oxtrust.service.RegistrationInterceptionService;
+import org.gluu.oxtrust.service.external.RegistrationInterceptionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.jboss.seam.ScopeType;

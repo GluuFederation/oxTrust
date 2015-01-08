@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.service;
+package org.gluu.oxtrust.service.custom;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.jboss.seam.ScopeType;

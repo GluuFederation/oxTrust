@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.service;
+package org.gluu.oxtrust.service.external;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
