@@ -18,6 +18,7 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
@@ -74,6 +75,9 @@ public class UpdatePersonAction implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+
+	@In
+	private ExternalUserRegistrationService externalUserRegistrationService;
 
 	/**
 	 * Initializes attributes for adding new person
@@ -161,6 +165,9 @@ public class UpdatePersonAction implements Serializable {
 
 		if (update) {
 			try {
+				if (externalUserRegistrationService.isEnabled()) {
+					externalUserRegistrationService.executeExternalUpdatePersonMethods(this.person);
+                }
 				personService.updatePerson(this.person);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update person {0}", ex, inum);
@@ -191,6 +198,9 @@ public class UpdatePersonAction implements Serializable {
 			}
 
 			try {
+				if (externalUserRegistrationService.isEnabled()) {
+					externalUserRegistrationService.executeExternalAddPersonMethods(this.person);
+                }
 				personService.addPerson(this.person);
 			} catch (Exception ex) {
 				log.error("Failed to add new person {0}", ex, this.person.getInum());

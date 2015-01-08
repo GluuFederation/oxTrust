@@ -25,6 +25,7 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
+import org.gluu.oxtrust.service.custom.ExtendedCustomScriptManager;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Version;
 import org.gluu.site.ldap.OperationsFacade;
@@ -47,6 +48,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.exception.OxIntializationException;
 import org.xdi.model.SimpleProperty;
+import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
@@ -160,6 +162,9 @@ public class AppInitializer {
 		prepareConfigurations();
 
 		logSizeChecker();
+
+		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.USER_REGISTRATION );
+        ExtendedCustomScriptManager.instance().init(supportedCustomScriptTypes);
 	}
 
 	private void startInviteCodesExpirationService() {

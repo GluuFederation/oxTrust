@@ -26,13 +26,13 @@
 
     <h:form id="customScriptForm">
 	    <rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId">
-	        <c:forEach items="#{_action.customScriptsByTypes.entrySet()}" var="_scriptsByType">
-	        	<ui:param name="_scriptType" value="#{_scriptsByType.key}" />
+	        <c:forEach items="#{applianceService.customScriptTypes}" var="_scriptType">
 	        	<ui:param name="_customScriptTypeId" value="#{_action.getId(_scriptType)}" />
+	        	<ui:param name="_customScripts" value="#{_action.customScriptsByTypes[_scriptType]}" />
 	            <rich:tab header="#{_scriptType.displayName}">
 		            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 		                <a4j:region>
-		                    <rich:dataGrid id="#{_customScriptTypeId}" columns="1" value="#{_scriptsByType.value}" var="_customScript" style="width: 100%;">            
+		                    <rich:dataGrid id="#{_customScriptTypeId}" columns="1" value="#{_customScripts}" var="_customScript" style="width: 100%;">            
 					        	<ui:param name="_customScriptId" value="#{_action.getId(_customScript)}" />
 		                        <h:panelGrid id="#{_customScriptId}" columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
 		                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
