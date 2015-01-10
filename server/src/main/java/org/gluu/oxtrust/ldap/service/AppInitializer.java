@@ -25,7 +25,6 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
-import org.gluu.oxtrust.service.custom.ExtendedCustomScriptManager;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Version;
 import org.gluu.site.ldap.OperationsFacade;
@@ -58,6 +57,7 @@ import org.xdi.oxauth.client.uma.MetaDataConfigurationService;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.model.uma.MetadataConfiguration;
 import org.xdi.service.PythonService;
+import org.xdi.service.custom.script.CustomScriptManager;
 import org.xdi.service.ldap.LdapConnectionService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
@@ -164,7 +164,7 @@ public class AppInitializer {
 		logSizeChecker();
 
 		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.USER_REGISTRATION );
-        ExtendedCustomScriptManager.instance().init(supportedCustomScriptTypes);
+        CustomScriptManager.instance().init(supportedCustomScriptTypes);
 	}
 
 	private void startInviteCodesExpirationService() {
