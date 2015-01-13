@@ -71,6 +71,23 @@
                             <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Url" maxlength="60" inputWidth="180" required="true" id="urlId" />
                         </s:decorate>
                     </h:panelGroup>
+
+		            <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="responseTypes">
+		                <ui:define name="label">Authorization Policy</ui:define>
+		                <h:panelGroup id="selectedAuthorizationPolicyId">
+		                    <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+		                        <a4j:repeat value="#{updateScopeDescriptionAction.responseTypes}" rowKeyVar="_authorizationPolicyIdx" var="_authorizationPolicy">
+		                            <h:outputText value="#{_authorizationPolicy.displayName}" />
+		                            <h:outputText value="&#160;" />
+		                            <a4j:commandLink action="#{updateScopeDescriptionAction.removeResponseType(_authorizationPolicy.value)}" execute="@this" render="selectedAuthorizationPolicyId" eventsQueue="clientQueue">
+		                                <h:graphicImage value="/img/remove.gif" />
+		                            </a4j:commandLink>
+		                            <br />
+		                        </a4j:repeat>
+		                        <richext:spacer height="16" />
+		                    </h:panelGrid>
+		                </h:panelGroup>
+		            </s:decorate>
                 </h:panelGrid>
 
                 <s:div id="updateButtons">
@@ -80,6 +97,12 @@
                     <s:button value="Cancel" action="#{updateScopeDescriptionAction.cancel}" immediate="true" propagation="end" />
                 </s:div>
             </h:form>
+
+            <ox:selectSelectableEntityDialog id="authorizationPolicy" searchMethod="#{updateScopeDescriptionAction.searchAvailableAuthorizationPolicy}"
+                searchResult="#{updateScopeDescriptionAction.availableAuthorizationPolicy}" displaySearchForm="false"
+                acceptMethod="#{updateScopeDescriptionAction.acceptSelectAuthorizationPolicy}" cancelMethod="#{updateScopeDescriptionAction.cancelSelectAuthorizationPolicy}"
+                render="selectedAuthorizationPolicyId" nameProperty="entity.value" displayNameProperty="entity.displayName"
+                label="Add Authorization Policy"/>
 
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeDescriptionAction.scopeDescription.id}" deleteMethod="#{updateScopeDescriptionAction.delete}" />
         </s:div>

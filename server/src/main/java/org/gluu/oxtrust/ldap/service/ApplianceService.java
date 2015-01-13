@@ -212,7 +212,7 @@ public class ApplianceService {
 
 	public CustomScriptType[] getCustomScriptTypes() {
 		return new CustomScriptType[] { CustomScriptType.CUSTOM_AUTHENTICATION, CustomScriptType.CLIENT_REGISTRATION,
-				CustomScriptType.USER_REGISTRATION, CustomScriptType.CACHE_REFRESH };
+				CustomScriptType.USER_REGISTRATION, CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_AUTHORIZATION_POLICY };
 	}
 
 }

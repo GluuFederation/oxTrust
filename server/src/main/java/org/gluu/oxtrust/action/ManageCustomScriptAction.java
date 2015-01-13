@@ -193,6 +193,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	}
 
 	private void reset() {
+		this.initialized = false;
 	}
 
 

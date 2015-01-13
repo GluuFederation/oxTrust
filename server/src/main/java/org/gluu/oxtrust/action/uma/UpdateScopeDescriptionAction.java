@@ -9,18 +9,18 @@ package org.gluu.oxtrust.action.uma;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.LookupService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.DisplayNameEntry;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
@@ -35,15 +35,15 @@ import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SelectableEntity;
+import org.xdi.model.custom.script.CustomScriptType;
+import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.oxauth.model.uma.persistence.InternalExternal;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.service.JsonService;
-import org.xdi.util.SelectableEntityHelper;
 import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
 
 /**
- * Action class for view and update scope description
+ * Action class for view and update UMA scope description
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
@@ -53,6 +53,8 @@ import org.xdi.util.Util;
 public class UpdateScopeDescriptionAction implements Serializable {
 
 	private static final long serialVersionUID = 6180729281938167478L;
+
+	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName" };
 
 	@Logger
 	private Log log;
@@ -64,9 +66,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	protected ScopeDescriptionService scopeDescriptionService;
 
 	@In
-	private ClientService clientService;
-
-	@In
 	private ImageService imageService;
 	
 	@In
@@ -74,6 +73,9 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	@In
 	private LookupService lookupService;
+	
+	@In
+	private CustomScriptService customScriptService;
 
 	private String scopeInum;
 
@@ -81,10 +83,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	private GluuImage curIconImage;
 
-	private List<DisplayNameEntry> clients;
-
-	private List<SelectableEntity<OxAuthClient>> availableClients;
-	private String searchAvailableClientPattern, oldSearchAvailableClientPattern;
+	private List<CustomScript> authorizationPolicies;
+	private List<SelectableEntity<CustomScript>> availableAuthorizationPolicies;
 
 	private boolean update;
 
@@ -103,6 +103,14 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
+		try {
+			this.authorizationPolicies = getInitialAuthorizationPolicies();
+		} catch (LdapMappingException ex) {
+			log.error("Failed to prepare lists", ex);
+
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
 		if (update) {
 			return update();
 		} else {
@@ -116,7 +124,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 
 		this.scopeDescription = new ScopeDescription();
-		this.clients = new ArrayList<DisplayNameEntry>();
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -151,6 +158,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	@Restrict("#{s:hasPermission('uma', 'access')}")
 	public String save() {
+		updateAuthorizationPolicies();
+
 		if (this.update) {
 			scopeDescription.setRevision(String.valueOf(StringHelper.toInteger(scopeDescription.getRevision(), 0) + 1));
 			// Update scope description
@@ -277,92 +286,123 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return this.curIconImage != null;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
-	public void searchAvailableClients() {
-		if (Util.equals(this.oldSearchAvailableClientPattern, this.searchAvailableClientPattern)) {
+	private List<CustomScript> getInitialAuthorizationPolicies() {
+		List<CustomScript> result = new ArrayList<CustomScript>();
+		if ((this.scopeDescription.getAuthorizationPolicies() == null) || (this.scopeDescription.getAuthorizationPolicies().size() == 0)) {
+			return result;
+		}
+
+		List<DisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
+				this.scopeDescription.getAuthorizationPolicies());
+		if (displayNameEntries != null) {
+			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
+				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(), displayNameEntry.getDisplayName()));
+			}
+		}
+
+		return result;
+	}
+
+	private void updateAuthorizationPolicies() {
+		if (this.authorizationPolicies == null || this.authorizationPolicies.size() == 0) {
+			this.scopeDescription.setAuthorizationPolicies(null);
 			return;
 		}
 
-		try {
-			this.availableClients = SelectableEntityHelper.convertToSelectableEntityModel(clientService.searchClients(
-					this.searchAvailableClientPattern, 100));
-			this.oldSearchAvailableClientPattern = this.searchAvailableClientPattern;
-
-			selectAddedClients();
-		} catch (Exception ex) {
-			log.error("Failed to find clients", ex);
+		List<String> tmpAuthorizationPolicies = new ArrayList<String>();
+		for (CustomScript authorizationPolicy : this.authorizationPolicies) {
+			tmpAuthorizationPolicies.add(authorizationPolicy.getDn());
 		}
+
+		this.scopeDescription.setAuthorizationPolicies(tmpAuthorizationPolicies);
 	}
 
 	@Restrict("#{s:hasPermission('uma', 'access')}")
-	public void selectAddedClients() {
-		Set<String> addedClientInums = getAddedClientsInums();
-
-		for (SelectableEntity<OxAuthClient> availableClient : this.availableClients) {
-			availableClient.setSelected(addedClientInums.contains(availableClient.getEntity().getInum()));
-		}
-	}
-
-	@Restrict("#{s:hasPermission('uma', 'access')}")
-	public void acceptSelectClients() {
-		Set<String> addedClientInums = getAddedClientsInums();
-
-		for (SelectableEntity<OxAuthClient> availableClient : this.availableClients) {
-			OxAuthClient oxAuthClient = availableClient.getEntity();
-			String oxAuthClientInum = oxAuthClient.getInum();
-			if (availableClient.isSelected() && !addedClientInums.contains(oxAuthClientInum)) {
-				addClient(oxAuthClient);
-			}
-
-			if (!availableClient.isSelected() && addedClientInums.contains(oxAuthClientInum)) {
-				removeClient(oxAuthClientInum);
-			}
-		}
-	}
-
-	private Set<String> getAddedClientsInums() {
-		Set<String> addedClientInums = new HashSet<String>();
-
-		if (this.availableClients == null) {
-			return addedClientInums;
-		}
-
-		for (DisplayNameEntry group : this.clients) {
-			addedClientInums.add(group.getInum());
-		}
-
-		return addedClientInums;
-	}
-
-	@Restrict("#{s:hasPermission('uma', 'access')}")
-	public void cancelSelectClients() {
-	}
-
-	@Restrict("#{s:hasPermission('uma', 'access')}")
-	public void addClient(OxAuthClient group) {
-		DisplayNameEntry oneClient = new DisplayNameEntry(group.getDn(), group.getInum(), group.getDisplayName());
-		this.clients.add(oneClient);
-	}
-
-	@Restrict("#{s:hasPermission('uma', 'access')}")
-	public void removeClient(String inum) {
-		if (StringHelper.isEmpty(inum)) {
+	public void acceptSelectAuthorizationPolicies() {
+		if (this.availableAuthorizationPolicies == null) {
 			return;
 		}
 
-		String removeClientInum = clientService.getDnForClient(inum);
+		Set<String> addedAuthorizationPolicyInums = getAddedAuthorizationPolicyInums();
 
-		for (Iterator<DisplayNameEntry> iterator = this.clients.iterator(); iterator.hasNext();) {
-			DisplayNameEntry oneClient = iterator.next();
-			if (removeClientInum.equals(oneClient.getDn())) {
-				iterator.remove();
+		for (SelectableEntity<CustomScript> availableAuthorizationPolicy : this.availableAuthorizationPolicies) {
+			CustomScript authorizationPolicy = availableAuthorizationPolicy.getEntity();
+			if (availableAuthorizationPolicy.isSelected() && !addedAuthorizationPolicyInums.contains(authorizationPolicy.getInum())) {
+				addAuthorizationPolicy(authorizationPolicy);
+			}
+
+			if (!availableAuthorizationPolicy.isSelected() && addedAuthorizationPolicyInums.contains(authorizationPolicy.getInum())) {
+				removeAuthorizationPolicy(authorizationPolicy);
+			}
+		}
+	}
+
+	@Restrict("#{s:hasPermission('uma', 'access')}")
+	public void cancelSelectAuthorizationPolicies() {
+	}
+
+	@Restrict("#{s:hasPermission('uma', 'access')}")
+	public void addAuthorizationPolicy(CustomScript addAuthorizationPolicy) {
+		if (addAuthorizationPolicy == null) {
+			return;
+		}
+
+		this.authorizationPolicies.add(addAuthorizationPolicy);
+	}
+
+	@Restrict("#{s:hasPermission('uma', 'access')}")
+	public void removeAuthorizationPolicy(CustomScript removeAuthorizationPolicy) {
+		if (removeAuthorizationPolicy == null) {
+			return;
+		}
+
+		for (Iterator<CustomScript> it = this.authorizationPolicies.iterator(); it.hasNext();) {
+			CustomScript authorizationPolicy = (CustomScript) it.next();
+			
+			if (StringHelper.equalsIgnoreCase(removeAuthorizationPolicy.getInum(), authorizationPolicy.getInum())) {
+				it.remove();
 				break;
 			}
 		}
 	}
+	
+	@Restrict("#{s:hasPermission('uma', 'access')}")
+	public void searchAvailableAuthorizationPolicies() {
+		if (this.availableAuthorizationPolicies != null) {
+			selectAddedAuthorizationPolicies();
+			return;
+		}
 
-	public List<DisplayNameEntry> getClients() {
-		return clients;
+		try {
+			List<CustomScript> availableScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.UMA_AUTHORIZATION_POLICY), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
+
+			List<SelectableEntity<CustomScript>> tmpAvailableAuthorizationPolicies = new ArrayList<SelectableEntity<CustomScript>>();
+			for (CustomScript authorizationPolicy : availableScripts) {
+				tmpAvailableAuthorizationPolicies.add(new SelectableEntity<CustomScript>(authorizationPolicy));
+			}
+			
+			this.availableAuthorizationPolicies = tmpAvailableAuthorizationPolicies;
+			selectAddedAuthorizationPolicies();
+		} catch (LdapMappingException ex) {
+			log.error("Failed to find available authorization policies", ex);
+		}
+
+	}
+
+	private void selectAddedAuthorizationPolicies() {
+		Set<String> addedAuthorizationPolicyInums = getAddedAuthorizationPolicyInums();
+
+		for (SelectableEntity<CustomScript> availableAuthorizationPolicy : this.availableAuthorizationPolicies) {
+			availableAuthorizationPolicy.setSelected(addedAuthorizationPolicyInums.contains(availableAuthorizationPolicy.getEntity().getInum()));
+		}
+	}
+
+	private Set<String> getAddedAuthorizationPolicyInums() {
+		Set<String> addedAuthorizationPolicyInums = new HashSet<String>();
+		for (CustomScript authorizationPolicy : this.authorizationPolicies) {
+			addedAuthorizationPolicyInums.add(authorizationPolicy.getInum());
+		}
+		return addedAuthorizationPolicyInums;
 	}
 
 	public boolean isUpdate() {
@@ -381,16 +421,12 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return scopeDescription;
 	}
 
-	public String getSearchAvailableClientPattern() {
-		return searchAvailableClientPattern;
+	public List<SelectableEntity<CustomScript>> getAvailableAuthorizationPolicies() {
+		return this.availableAuthorizationPolicies;
 	}
 
-	public void setSearchAvailableClientPattern(String searchAvailableClientPattern) {
-		this.searchAvailableClientPattern = searchAvailableClientPattern;
-	}
-
-	public List<SelectableEntity<OxAuthClient>> getAvailableClients() {
-		return availableClients;
+	public List<CustomScript> getAuthorizationPolicies() {
+		return authorizationPolicies;
 	}
 
 }

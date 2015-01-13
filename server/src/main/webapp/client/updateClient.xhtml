@@ -52,7 +52,8 @@
             <ox:selectSelectableEntityDialog id="responseType" searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
                 searchResult="#{updateClientAction.availableResponseTypes}" displaySearchForm="false"
                 acceptMethod="#{updateClientAction.acceptSelectResponseTypes}" cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
-                render="selectedResponseTypesId" nameProperty="entity.value" displayNameProperty="entity.displayName"/>
+                render="selectedResponseTypesId" nameProperty="entity.value" displayNameProperty="entity.displayName"
+                label="Add Response Type"/>
 
 			<ox:changePasswordDialog id="clientPassword" label="Change Client Password" password="#{clientPasswordAction.newPassword}"
 				setPasswordMethod="#{clientPasswordAction.update}" />

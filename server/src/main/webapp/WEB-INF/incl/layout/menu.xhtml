@@ -35,7 +35,7 @@
             <rich:menuSeparator/>
             <rich:menuItem label="Configure log viewer" action="#{menuAction.endConversation('/logviewer/configureLogViewer.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuItem label="View log file" action="#{menuAction.endConversation('/logviewer/viewLogFile.xhtml')}" rendered="#{s:hasPermission('log', 'access')}" />
-            <rich:menuSeparator/>
+            <rich:menuSeparator rendered="#{s:hasPermission(organizationService.organization, 'linktrack')}"/>
             <rich:menuItem label="Configure Linktrack API" action="#{menuAction.endConversation('/apis/linktrack.xhtml')}" rendered="#{s:hasPermission(organizationService.organization, 'linktrack')}" />
             <rich:menuSeparator/>
             <rich:menuItem label="Status" action="#{menuAction.endConversation('/status/applianceStatus.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
