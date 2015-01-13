@@ -29,8 +29,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
-import org.gluu.oxtrust.ldap.cache.service.intercept.CacheRefreshInterceptorService;
-import org.gluu.oxtrust.ldap.cache.service.intercept.interfaces.EntryInterceptorType;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.InumService;
@@ -38,6 +36,7 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
@@ -110,7 +109,7 @@ public class CacheRefreshTimer {
 	private CacheRefreshSnapshotFileService cacheRefreshSnapshotFileService;
 
 	@In
-	private CacheRefreshInterceptorService cacheRefreshInterceptorService;
+	private ExternalCacheRefreshService externalCacheRefreshService;
 
 	@In
 	private SchemaService schemaService;
@@ -191,7 +190,7 @@ public class CacheRefreshTimer {
 		if (poolingInterval < 0) {
 			return false;
 		}
-		
+//		currentAppliance.setCacheRefreshServerIpAddress("192.168.1.13")
 		String cacheRefreshServerIpAddress = currentAppliance.getCacheRefreshServerIpAddress();
 		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
 			log.debug("There is no master Cache Refresh server");
@@ -520,7 +519,6 @@ public class CacheRefreshTimer {
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap, Set<String> changedInums) {
 		HashMap<String, CacheCompoundKey> inumCacheCompoundKeyMap = getInumCacheCompoundKeyMap(primaryKeyAttrValueInumMap);
 		Map<String, String> targetServerAttributesMapping = cacheRefreshConfiguration.getTargetServerAttributesMapping();
-		EntryInterceptorType entryInterceptorType = cacheRefreshInterceptorService.createEntryInterceptor();
 		String[] customObjectClasses = applicationConfiguration.getPersonObjectClassTypes();
 
 		List<String> result = new ArrayList<String>();
@@ -540,7 +538,7 @@ public class CacheRefreshTimer {
 				continue;
 			}
 
-			if (updateTargetEntryViaCopy(sourcePerson, targetInum, customObjectClasses, targetServerAttributesMapping, entryInterceptorType)) {
+			if (updateTargetEntryViaCopy(sourcePerson, targetInum, customObjectClasses, targetServerAttributesMapping)) {
 				result.add(targetInum);
 			}
 		}
@@ -556,7 +554,7 @@ public class CacheRefreshTimer {
 
 		GluuSimplePerson sourcePerson = new GluuSimplePerson();
 		for (String returnAttribute : returnAttributes) {
-			sourcePerson.setAttribute(returnAttribute, (String) null);
+			sourcePerson.setAttribute(returnAttribute, "Test");
 		}
 
 		String targetInum = inumService.generateInums(OxTrustConstants.INUM_TYPE_PEOPLE_SLUG, false);
@@ -572,8 +570,12 @@ public class CacheRefreshTimer {
 		cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
 
 		// Execute interceptor script
-		EntryInterceptorType entryInterceptorType = cacheRefreshInterceptorService.createEntryInterceptor();
-		executeInterceptorScript(entryInterceptorType, targetPerson);
+		externalCacheRefreshService.executeExternalCacheRefreshUpdateMethods(targetPerson);
+		boolean executionResult = externalCacheRefreshService.executeExternalCacheRefreshUpdateMethods(targetPerson);
+		if (!executionResult) {
+			log.error("Failed to execute Cache Refresh scripts for person '{0}'", targetInum);
+			return false;
+		}
 
 		// Validate target server attributes
 		List<GluuCustomAttribute> customAttributes = targetPerson.getCustomAttributes();
@@ -609,7 +611,7 @@ public class CacheRefreshTimer {
 	}
 
 	private boolean updateTargetEntryViaCopy(GluuSimplePerson sourcePerson, String targetInum, String[] targetCustomObjectClasses,
-			Map<String, String> targetServerAttributesMapping, EntryInterceptorType entryInterceptorType) {
+			Map<String, String> targetServerAttributesMapping) {
 		String targetPersonDn = personService.getDnForPerson(targetInum);
 		GluuCustomPerson targetPerson = null;
 		boolean updatePerson;
@@ -635,7 +637,12 @@ public class CacheRefreshTimer {
 
 		cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
 
-		executeInterceptorScript(entryInterceptorType, targetPerson);
+		// Execute interceptor script
+		boolean executionResult = externalCacheRefreshService.executeExternalCacheRefreshUpdateMethods(targetPerson);
+		if (!executionResult) {
+			log.error("Failed to execute Cache Refresh scripts for person '{0}'", targetInum);
+			return false;
+		}
 
 		try {
 			if (updatePerson) {
@@ -651,14 +658,6 @@ public class CacheRefreshTimer {
 		}
 
 		return true;
-	}
-
-	private void executeInterceptorScript(EntryInterceptorType entryInterceptorType, GluuCustomPerson targetPerson) {
-		if (entryInterceptorType == null) {
-			return;
-		}
-
-		cacheRefreshInterceptorService.executeEntryInterceptor(entryInterceptorType, targetPerson);
 	}
 
 	private HashMap<String, CacheCompoundKey> getInumCacheCompoundKeyMap(HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap) {

@@ -158,11 +158,6 @@
                 <h:inputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshPollingInterval}" id="vdsCacheRefreshPollingIntervalId" size="5" />
             </s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scriptFileName">
-                <ui:define name="label">Script File Name</ui:define>
-                <h:inputText value="#{_configureCacheRefreshAction.cacheRefreshConfig.interceptorScriptFileName}" size="48" />
-            </s:decorate>
-
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="snapshotFolder">
                 <ui:define name="label">Snapshot Folder</ui:define>
                 <h:inputText value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotsFolder}" size="48" required="true" />

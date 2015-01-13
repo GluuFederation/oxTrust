@@ -38,8 +38,6 @@ public class GluuCacheRefreshConfiguration implements Serializable {
 	private boolean keepExternalPerson;
 	private boolean loadSourceUsingSearchLimit;
 
-	private String interceptorScriptFileName;
-
 	private List<SimpleDoubleProperty> attrsMapping;
 
 	public GluuCacheRefreshConfiguration() {
@@ -51,7 +49,7 @@ public class GluuCacheRefreshConfiguration implements Serializable {
 
 	public GluuCacheRefreshConfiguration(List<SimpleProperty> attrs, List<SimpleProperty> objectClasses,
 			List<SimpleProperty> sourceAttributes, String customLdapFilter, String snapshotsFolder, int snapshotsCount, int cacheSizeLimit,
-			CacheRefreshUpdateMethod updateMethod, boolean keepExternalPerson, boolean loadSourceUsingSearchLimit, String interceptorScriptFileName, List<SimpleDoubleProperty> attrsMapping) {
+			CacheRefreshUpdateMethod updateMethod, boolean keepExternalPerson, boolean loadSourceUsingSearchLimit, List<SimpleDoubleProperty> attrsMapping) {
 		this.attrs = attrs;
 		this.objectClasses = objectClasses;
 		this.sourceAttributes = sourceAttributes;
@@ -62,7 +60,6 @@ public class GluuCacheRefreshConfiguration implements Serializable {
 		this.updateMethod = updateMethod;
 		this.keepExternalPerson = keepExternalPerson;
 		this.loadSourceUsingSearchLimit = loadSourceUsingSearchLimit;
-		this.interceptorScriptFileName = interceptorScriptFileName;
 		this.attrsMapping = attrsMapping;
 	}
 
@@ -146,14 +143,6 @@ public class GluuCacheRefreshConfiguration implements Serializable {
 		this.loadSourceUsingSearchLimit = loadSourceUsingSearchLimit;
 	}
 
-	public String getInterceptorScriptFileName() {
-		return interceptorScriptFileName;
-	}
-
-	public void setInterceptorScriptFileName(String interceptorScriptFileName) {
-		this.interceptorScriptFileName = interceptorScriptFileName;
-	}
-
 	public List<SimpleDoubleProperty> getAttrsMapping() {
 		return attrsMapping;
 	}
@@ -170,8 +159,7 @@ public class GluuCacheRefreshConfiguration implements Serializable {
 				.append(", snapshotsFolder=").append(snapshotsFolder).append(", snapshotsCount=").append(snapshotsCount)
 				.append(", cacheSizeLimit=").append(cacheSizeLimit).append(", updateMethod=").append(updateMethod)
 				.append(", keepExternalPerson=").append(keepExternalPerson).append(", loadSourceUsingSearchLimit=")
-				.append(loadSourceUsingSearchLimit).append(", interceptorScriptFileName=").append(interceptorScriptFileName)
-				.append(", attrsMapping=").append(attrsMapping).append("]");
+				.append(loadSourceUsingSearchLimit).append(", attrsMapping=").append(attrsMapping).append("]");
 		return builder.toString();
 	}
 

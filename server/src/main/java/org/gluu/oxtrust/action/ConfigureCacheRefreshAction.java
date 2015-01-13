@@ -22,8 +22,6 @@ import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
-import org.gluu.oxtrust.ldap.cache.service.intercept.CacheRefreshInterceptorService;
-import org.gluu.oxtrust.ldap.cache.service.intercept.interfaces.EntryInterceptorType;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.InumService;
@@ -36,6 +34,7 @@ import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimpleDoubleProperty;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
+import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;
 import org.gluu.oxtrust.util.jsf.ValidationUtil;
@@ -50,7 +49,6 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.exception.PythonException;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
@@ -86,7 +84,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private PersonService personService;
 
 	@In
-	private CacheRefreshInterceptorService cacheRefreshInterceptorService;
+	private ExternalCacheRefreshService externalCacheRefreshService;
 
 	@In
 	private InumService inumService;
@@ -301,7 +299,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 				cacheRefreshConfiguration.getSnapshotFolder(), cacheRefreshConfiguration.getSnapshotMaxCount(),
 				cacheRefreshConfiguration.getSizeLimit(), cacheRefreshConfiguration.getUpdateMethod(),
 				cacheRefreshConfiguration.isKeepExternalPerson(), cacheRefreshConfiguration.isLoadSourceUsingSearchLimit(),
-				cacheRefreshConfiguration.getInterceptorScriptFileName(),
 				toSimpleDoubleProperties(cacheRefreshConfiguration.getTargetServerAttributesMapping()));
 	}
 
@@ -421,66 +418,67 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		this.showInterceptorValidationDialog = true;
 
-		try {
-			EntryInterceptorType entryInterceptorType = cacheRefreshInterceptorService.createEntryInterceptorWithPythonException();
+		boolean loadedScripts = externalCacheRefreshService.getCustomScriptConfigurations().size() > 0;
+		if (!loadedScripts) {
+			String message = "Can't load Cache Refresh scripts. Using default script";
+			log.error(message);
+			this.interceptorValidationMessage = message;
 
-			if (entryInterceptorType == null) {
-				String message = "Failed to load python file. Please check path specified in 'Script File Name' field";
-				log.error(message);
-				this.interceptorValidationMessage = message;
-
-				return;
-			}
-
-			// Prepare data for dummy entry
-			String targetInum = inumService.generateInums(OxTrustConstants.INUM_TYPE_PEOPLE_SLUG, false);
-			String targetPersonDn = personService.getDnForPerson(targetInum);
-			String[] targetCustomObjectClasses = applicationConfiguration.getPersonObjectClassTypes();
-
-			// Collect all attributes
-			String[] keyAttributesWithoutValues = cacheRefreshConfiguration.getCompoundKeyAttributesWithoutValues();
-			String[] sourceAttributes = cacheRefreshConfiguration.getSourceAttributes();
-
-			// Merge all attributes into one set
-			Set<String> allAttributes = new HashSet<String>();
-			for (String attribute : keyAttributesWithoutValues) {
-				allAttributes.add(attribute);
-			}
-
-			for (String attribute : sourceAttributes) {
-				allAttributes.add(attribute);
-			}
-
-			// Prepare source person entry with default attributes values
-			GluuSimplePerson sourcePerson = new GluuSimplePerson();
-			List<GluuCustomAttribute> customAttributes = sourcePerson.getCustomAttributes();
-			for (String attribute : allAttributes) {
-				customAttributes.add(new GluuCustomAttribute(attribute, "Test value"));
-			}
-
-			// Prepare target person
-			GluuCustomPerson targetPerson = new GluuCustomPerson();
-			targetPerson.setDn(targetPersonDn);
-			targetPerson.setInum(targetInum);
-			targetPerson.setStatus(GluuStatus.ACTIVE);
-			targetPerson.setCustomObjectClasses(targetCustomObjectClasses);
-
-			// Execute mapping according to configuration
-			Map<String, String> targetServerAttributesMapping = cacheRefreshConfiguration.getTargetServerAttributesMapping();
-			cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
-
-			// Execute interceptor script
-			cacheRefreshInterceptorService.executeEntryInterceptorWithPythonException(entryInterceptorType, targetPerson);
-
-			log.info("Script has been executed successfully.\n\nSample source entry is:\n'{0}'.\n\nSample result entry is:\n'{1}'",
-					getGluuSimplePersonAttributesWithValues(sourcePerson), getGluuCustomPersonAttributesWithValues(targetPerson));
-			this.interceptorValidationMessage = String.format(
-					"Script has been executed successfully.\n\nSample source entry is:\n%s.\n\nSample result entry is:\n%s",
-					getGluuSimplePersonAttributesWithValues(sourcePerson), getGluuCustomPersonAttributesWithValues(targetPerson));
-		} catch (PythonException ex) {
-			log.error(ex);
-			this.interceptorValidationMessage = ex.getMessage();
+			return;
 		}
+
+		// Prepare data for dummy entry
+		String targetInum = inumService.generateInums(OxTrustConstants.INUM_TYPE_PEOPLE_SLUG, false);
+		String targetPersonDn = personService.getDnForPerson(targetInum);
+		String[] targetCustomObjectClasses = applicationConfiguration.getPersonObjectClassTypes();
+
+		// Collect all attributes
+		String[] keyAttributesWithoutValues = cacheRefreshConfiguration.getCompoundKeyAttributesWithoutValues();
+		String[] sourceAttributes = cacheRefreshConfiguration.getSourceAttributes();
+
+		// Merge all attributes into one set
+		Set<String> allAttributes = new HashSet<String>();
+		for (String attribute : keyAttributesWithoutValues) {
+			allAttributes.add(attribute);
+		}
+
+		for (String attribute : sourceAttributes) {
+			allAttributes.add(attribute);
+		}
+
+		// Prepare source person entry with default attributes values
+		GluuSimplePerson sourcePerson = new GluuSimplePerson();
+		List<GluuCustomAttribute> customAttributes = sourcePerson.getCustomAttributes();
+		for (String attribute : allAttributes) {
+			customAttributes.add(new GluuCustomAttribute(attribute, "Test value"));
+		}
+
+		// Prepare target person
+		GluuCustomPerson targetPerson = new GluuCustomPerson();
+		targetPerson.setDn(targetPersonDn);
+		targetPerson.setInum(targetInum);
+		targetPerson.setStatus(GluuStatus.ACTIVE);
+		targetPerson.setCustomObjectClasses(targetCustomObjectClasses);
+
+		// Execute mapping according to configuration
+		Map<String, String> targetServerAttributesMapping = cacheRefreshConfiguration.getTargetServerAttributesMapping();
+		cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
+
+		// Execute interceptor script
+		boolean executionResult = externalCacheRefreshService.executeExternalCacheRefreshUpdateMethods(targetPerson);
+		if (!executionResult) {
+			String message = "Can't execute Cache Refresh scripts.";
+			log.error(message);
+			this.interceptorValidationMessage = message;
+
+			return;
+		}
+
+		log.info("Script has been executed successfully.\n\nSample source entry is:\n'{0}'.\n\nSample result entry is:\n'{1}'",
+				getGluuSimplePersonAttributesWithValues(sourcePerson), getGluuCustomPersonAttributesWithValues(targetPerson));
+		this.interceptorValidationMessage = String.format(
+				"Script has been executed successfully.\n\nSample source entry is:\n%s.\n\nSample result entry is:\n%s",
+				getGluuSimplePersonAttributesWithValues(sourcePerson), getGluuCustomPersonAttributesWithValues(targetPerson));
 	}
 
 	private String getGluuSimplePersonAttributesWithValues(GluuSimplePerson gluuSimplePerson) {

@@ -146,7 +146,7 @@
         <appender-ref ref="OX_TRUST_PERSISTENCE_LDAP_STATISTICS_FILE" />
     </logger>
 
-    <logger name="org.gluu.oxtrust.ldap.cache.service.intercept" additivity="false">
+    <logger name="org.gluu.oxtrust.service.external.ExternalCacheRefreshService" additivity="false">
         <level value="DEBUG" />
         <appender-ref ref="OX_TRUST_CACHE_REFRESH_PYTHON_FILE" />
     </logger>
