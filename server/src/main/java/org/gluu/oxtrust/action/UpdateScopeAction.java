@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.LookupService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
-import org.gluu.oxtrust.model.DisplayNameEntry;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -29,7 +27,9 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
+import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuAttribute;
+import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 

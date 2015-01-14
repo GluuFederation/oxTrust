@@ -15,10 +15,8 @@ import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.LookupService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
-import org.gluu.oxtrust.model.DisplayNameEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -27,8 +25,10 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
+import org.xdi.model.DisplayNameEntry;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
+import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 

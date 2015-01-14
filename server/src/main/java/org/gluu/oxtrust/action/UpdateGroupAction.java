@@ -18,10 +18,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.GroupService;
-import org.gluu.oxtrust.ldap.service.LookupService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.DisplayNameEntry;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -39,6 +37,8 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.model.DisplayNameEntry;
+import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 

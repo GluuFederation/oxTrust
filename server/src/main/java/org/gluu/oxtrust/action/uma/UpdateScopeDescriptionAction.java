@@ -16,9 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.LookupService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
-import org.gluu.oxtrust.model.DisplayNameEntry;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -33,6 +31,7 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SelectableEntity;
 import org.xdi.model.custom.script.CustomScriptType;
@@ -40,6 +39,7 @@ import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.oxauth.model.uma.persistence.InternalExternal;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.service.JsonService;
+import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 
 /**

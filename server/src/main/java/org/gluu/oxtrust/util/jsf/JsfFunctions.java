@@ -7,8 +7,8 @@
 package org.gluu.oxtrust.util.jsf;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.gluu.oxtrust.ldap.service.LookupService;
-import org.gluu.oxtrust.model.DisplayNameEntry;
+import org.xdi.model.DisplayNameEntry;
+import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 
 //import org.gluu.site.model.Entry;
