@@ -37,7 +37,13 @@
                 <message severity="INFO">Custom script configuration updated successfully</message>
             </redirect>
         </rule>
-    </navigation>
+
+        <rule if-outcome="failure">
+            <render view-id="/script/manageCustomScript.xhtml">
+                <message severity="ERROR">Failed to update custom script configuration</message>
+            </render>
+        </rule>
+        </navigation>
 
     <navigation from-action="#{manageCustomScriptAction.cancel}">
         <end-conversation />

@@ -78,32 +78,15 @@ public class LookupService implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<DisplayNameEntry> getDisplayNameEntries(String baseDn, List<String> dns) {
-		if (dns == null) {
+		List<String> inums = getInumsFromDns(dns);
+		if (inums.size() == 0) {
 			return null;
 		}
 
-		StringBuilder compoundKey = new StringBuilder();
-		List<String> inums = new ArrayList<String>(dns.size());
-		for (String dn : dns) {
-			String inum = getInumFromDn(dn);
-			if (inum != null) {
-				if (compoundKey.length() > 0) {
-					compoundKey.append("_");
-				}
-				compoundKey.append(inum);
-				inums.add(inum);
-			}
-		}
-		Collections.sort(inums);
-
-		String key = compoundKey.toString();
+		String key = getCompoundKey(inums);
 		List<DisplayNameEntry> entries = (List<DisplayNameEntry>) cacheService.get(OxTrustConstants.CACHE_LOOKUP_NAME, key);
 		if (entries == null) {
-			List<Filter> inumFilters = new ArrayList<Filter>(dns.size());
-			for (String inum : inums) {
-				inumFilters.add(Filter.createEqualityFilter(OxTrustConstants.inum, inum));
-			}
-			Filter searchFilter = Filter.createORFilter(inumFilters);
+			Filter searchFilter = buildInumFilter(inums);
 
 			entries = ldapEntryManager.findEntries(baseDn, DisplayNameEntry.class, searchFilter);
 
@@ -111,6 +94,48 @@ public class LookupService implements Serializable {
 		}
 
 		return entries;
+	}
+
+	public Filter buildInumFilter(List<String> inums) {
+		List<Filter> inumFilters = new ArrayList<Filter>(inums.size());
+		for (String inum : inums) {
+			inumFilters.add(Filter.createEqualityFilter(OxTrustConstants.inum, inum));
+		}
+
+		Filter searchFilter = Filter.createORFilter(inumFilters);
+
+		return searchFilter;
+	}
+
+	public List<String> getInumsFromDns(List<String> dns) {
+		List<String> inums = new ArrayList<String>();
+
+		if (dns == null) {
+			return inums;
+		}
+
+		for (String dn : dns) {
+			String inum = getInumFromDn(dn);
+			if (inum != null) {
+				inums.add(inum);
+			}
+		}
+
+		Collections.sort(inums);
+		
+		return inums;
+	}
+	
+	private String getCompoundKey(List<String> inums) {
+		StringBuilder compoundKey = new StringBuilder();
+		for (String inum : inums) {
+			if (compoundKey.length() > 0) {
+				compoundKey.append("_");
+			}
+			compoundKey.append(inum);
+		}
+		
+		return compoundKey.toString();
 	}
 
 	public List<DisplayNameEntry> getDisplayNameEntriesByEntries(String baseDn, List<? extends Entry> entries) throws Exception {

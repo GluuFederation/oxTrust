@@ -32,7 +32,7 @@ class CacheRefresh(CacheRefreshType):
         attributes.add(attrPrefferedLanguage)
 
         # Add new attribute userPassword
-        attrUserPassword = GluuCustomAttribute("userPassword", "secret")
+        attrUserPassword = GluuCustomAttribute("userPassword", "test")
         attributes.add(attrUserPassword)
 
         # Update givenName attribute

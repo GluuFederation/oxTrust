@@ -18,7 +18,6 @@ import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.LookupService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
-import org.gluu.oxtrust.ldap.service.uma.UmaPolicyService;
 import org.gluu.oxtrust.model.DisplayNameEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
@@ -30,7 +29,6 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
-import org.xdi.oxauth.model.uma.persistence.UmaPolicy;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
@@ -56,9 +54,6 @@ public class UmaInventoryAction implements Serializable {
 	private ClientService clientService;
 
 	@In
-	private UmaPolicyService umaPolicyService;
-
-	@In
 	private ScopeDescriptionService scopeDescriptionService;
 
 	@In
@@ -74,7 +69,6 @@ public class UmaInventoryAction implements Serializable {
 	private String oldSearchPattern;
 
 	private List<ResourceSet> resourcesList;
-	private List<UmaPolicy> policiesList;
 	private List<ScopeDescription> scopesList;
 	
 	private boolean initialized;
@@ -107,7 +101,6 @@ public class UmaInventoryAction implements Serializable {
 
 		try {
 			this.resourcesList = resourceSetService.findResourceSets(this.searchPattern, 100);
-			this.policiesList = umaPolicyService.findUmaPolicies(this.searchPattern, 100);
 			this.scopesList = scopeDescriptionService.findScopeDescriptions(this.searchPattern, 100);
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
@@ -145,10 +138,6 @@ public class UmaInventoryAction implements Serializable {
 
 	public List<ResourceSet> getResourcesList() {
 		return resourcesList;
-	}
-
-	public List<UmaPolicy> getPoliciesList() {
-		return policiesList;
 	}
 
 	public List<ScopeDescription> getScopesList() {

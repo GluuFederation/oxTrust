@@ -14,7 +14,7 @@
                         <ui:param name="_hideLabel" value="true" />
                         <h:inputText value="#{umaInventoryAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters"
                             alt="Search parameters for UMA resource set like Inum, Display Name" />
-                        <a4j:commandButton value="Search" action="#{umaInventoryAction.search}" render="resourcesListId, policiesListId, scopesListId" />
+                        <a4j:commandButton value="Search" action="#{umaInventoryAction.search}" render="resourcesListId, scopesListId" />
                     </s:decorate>
                 </h:form>
 
@@ -67,46 +67,6 @@
 
                                     <f:facet name="footer">
                                         <rich:dataScroller renderIfSinglePage="false" rendered="#{umaInventoryAction.resourcesList.size > 0}" for="resourcesListId" maxPages="10" stepControls="auto"
-                                            align="left" />
-                                    </f:facet>
-                                </rich:dataTable>
-                            </h:panelGrid>
-                        </rich:tab>
-
-                        <rich:tab name="Policies">
-                            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
-                                <s:button view="/uma/policy/modifyPolicy.xhtml" value="Add Policy" propagation="none">
-                                    <f:param name="policy" value="#{null}" />
-                                </s:button>
-
-                                <richext:spacer height="8" />
-
-                                <s:fragment rendered="#{umaInventoryAction.policiesList.size eq 0}">
-                                    <richext:spacer height="30" />
-                                    <h:outputText value="No Search Result Found" />
-                                </s:fragment>
-
-                                <rich:dataTable sortMode="single" id="policiesListId" value="#{umaInventoryAction.policiesList}" rows="20" styleClass="data sortable" var="_row"
-                                    rendered="#{umaInventoryAction.policiesList.size gt 0}" style="width: 750px;">
-                                    <rich:column sortBy="#{_row.displayName}">
-                                        <f:facet name="header">Name</f:facet>
-                                        <s:link value="#{_row.displayName}" view="/uma/policy/modifyPolicy.xhtml" propagation="none">
-                                            <f:param name="policy" value="#{_row.inum}" />
-                                        </s:link>
-                                    </rich:column>
-
-                                    <rich:column>
-                                        <f:facet name="header">Scopes</f:facet>
-                                        <ox:displayNameEntryList value="#{umaInventoryAction.getScopeDisplayNameEntries(_row.getScopeDns())}" />
-                                    </rich:column>
-
-                                    <rich:column sortBy="#{_row.programmingLanguage.displayName}">
-                                        <f:facet name="header">Language</f:facet>
-                                        <h:outputText value="#{_row.programmingLanguage.displayName}" />
-                                    </rich:column>
-
-                                    <f:facet name="footer">
-                                        <rich:dataScroller renderIfSinglePage="false" rendered="#{umaInventoryAction.policiesList.size > 0}" for="policiesListId" maxPages="10" stepControls="auto"
                                             align="left" />
                                     </f:facet>
                                 </rich:dataTable>

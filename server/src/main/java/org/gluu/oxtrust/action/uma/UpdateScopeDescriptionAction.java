@@ -54,7 +54,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	private static final long serialVersionUID = 6180729281938167478L;
 
-	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName" };
+	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description" };
 
 	@Logger
 	private Log log;
@@ -98,16 +98,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 		try {
 			scopeDescriptionService.prepareScopeDescriptionBranch();
-		} catch (Exception ex) {
-			log.error("Failed to initialize form", ex);
-			return OxTrustConstants.RESULT_FAILURE;
-		}
-
-		try {
-			this.authorizationPolicies = getInitialAuthorizationPolicies();
 		} catch (LdapMappingException ex) {
-			log.error("Failed to prepare lists", ex);
-
+			log.error("Failed to initialize form", ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -124,6 +116,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 
 		this.scopeDescription = new ScopeDescription();
+		this.authorizationPolicies = getInitialAuthorizationPolicies();
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -137,6 +130,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		try {
 			String scopeDn = scopeDescriptionService.getDnForScopeDescription(this.scopeInum);
 			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
+			this.authorizationPolicies = getInitialAuthorizationPolicies();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to find scope description '{0}'", ex, this.scopeInum);
 			return OxTrustConstants.RESULT_FAILURE;
@@ -399,9 +393,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	private Set<String> getAddedAuthorizationPolicyInums() {
 		Set<String> addedAuthorizationPolicyInums = new HashSet<String>();
+
 		for (CustomScript authorizationPolicy : this.authorizationPolicies) {
 			addedAuthorizationPolicyInums.add(authorizationPolicy.getInum());
 		}
+
 		return addedAuthorizationPolicyInums;
 	}
 
