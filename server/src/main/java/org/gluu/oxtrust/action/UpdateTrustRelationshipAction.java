@@ -871,6 +871,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			String idpHost = idpUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 			context.put("idpHost", idpHost);
 			context.put("orgInum", StringHelper.removePunctuation(OrganizationService.instance().getOrganizationInum()));
+			context.put("orgSupportEmail", applicationConfiguration.getOrgSupportEmail());
 			String shibConfig = templateService.generateConfFile(Shibboleth2ConfService.SHIB2_SP_SHIBBOLETH2, context);
 			if (!ResponseHelper.addFileContentToZip(shibConfig, zos, Shibboleth2ConfService.SHIB2_SP_SHIBBOLETH2)) {
 				log.error("Failed to add " + spShibboleth2FilePath + " to zip");

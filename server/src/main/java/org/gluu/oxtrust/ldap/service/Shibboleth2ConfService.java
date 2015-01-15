@@ -482,6 +482,7 @@ public class Shibboleth2ConfService implements Serializable {
 		context.put("medataFolder", idpMetadataFolder);
 		context.put("applianceInum", StringHelper.removePunctuation(ApplianceService.instance().getApplianceInum()));
 		context.put("orgInum", StringHelper.removePunctuation(OrganizationService.instance().getOrganizationInum()));
+		context.put("orgSupportEmail", applicationConfiguration.getOrgSupportEmail());
 
 		String idpUrl = applicationConfiguration.getIdpUrl();
 		context.put("idpUrl", idpUrl);

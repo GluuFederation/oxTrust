@@ -138,7 +138,7 @@
         Allows overriding of error template filenames. You can also add attributes with values
         that can be plugged into the templates.
         -->
-        <Errors supportContact="support@gluu.org"
+        <Errors supportContact="${orgSupportEmail}"
             logoLocation="/shibboleth-sp/logo.jpg"
             styleSheet="/shibboleth-sp/main.css"/>
         

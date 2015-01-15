@@ -28,8 +28,9 @@
                 <li><h:outputLink value="https://jira.gluu.org/browse/#{organizationService.organization.shortName}">#{organizationService.organization.shortName.toUpperCase()}</h:outputLink></li>
             </ul>
             <p class="info">support email:</p>
+            <ui:param name="support_email" value="#{oxTrustConfiguration.applicationConfiguration.orgSupportEmail}" />
             <ul>
-                <li><h:outputLink value="mailto:support@gluu.org">support@gluu.org</h:outputLink></li>
+                <li><h:outputLink value="mailto:#{support_email}">#{support_email}</h:outputLink></li>
             </ul>
         </rich:panel>
     </h:form>
