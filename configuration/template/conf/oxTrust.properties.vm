@@ -3,6 +3,7 @@ orgDisplayName=$config.organization.displayName
 orgInum=$config.organization.inum
 orgIname=$config.organization.iname
 orgShortName=$config.organization.shortName
+orgSupportEmail=$config.organization.supportEmail
 applianceIname=$config.appliance.iname
 applianceInum=$config.appliance.inum
 
