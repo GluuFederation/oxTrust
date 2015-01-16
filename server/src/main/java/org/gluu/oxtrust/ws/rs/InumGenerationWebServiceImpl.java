@@ -14,21 +14,18 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.IdGenService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.SecurityService;
-import org.gluu.oxtrust.ldap.service.intercept.InumGeneratorInterceptorService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.InumConf;
 import org.gluu.oxtrust.model.InumResponse;
-import org.gluu.oxtrust.model.python.InumGeneratorType;
 import org.gluu.oxtrust.model.scim.Error;
 import org.gluu.oxtrust.model.scim.Errors;
 import org.gluu.oxtrust.model.sql.InumSqlEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
 import org.jboss.seam.Component;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -36,8 +33,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuBoolean;
-import org.xdi.ldap.model.GluuStatus;
-import org.xdi.model.GluuUserRole;
 
 /**
  * Inum Generation WebService Implementation
@@ -48,8 +43,6 @@ import org.xdi.model.GluuUserRole;
 public class InumGenerationWebServiceImpl implements InumGenerationWebService {
 	@Logger
 	Log log;
-
-	InumGeneratorInterceptorService inumInterService;
 
 	@In
 	OrganizationService organizationService;
@@ -72,27 +65,26 @@ public class InumGenerationWebServiceImpl implements InumGenerationWebService {
 		try {
 			organizationService = OrganizationService.instance();
 			GluuOrganization org = organizationService.getOrganization();
-			inumInterService = InumGeneratorInterceptorService.instance();
-			InumGeneratorType inumGeneratorType = inumInterService.createInumGenerator();
-			InumConf conf = null;
+			IdGenService idGenService = IdGenService.instance();
 
+			InumConf conf = null;
 			conf = (InumConf) jsonToObject(org.getOxInumConfig(), InumConf.class);
 
-			String EntityPrefix = null;
+			String entityPrefix = null;
 
 			if (prefix.equalsIgnoreCase("person")) {
-				EntityPrefix = conf.getPersonPrefix();
+				entityPrefix = conf.getPersonPrefix();
 			} else if (prefix.equalsIgnoreCase("group")) {
-				EntityPrefix = conf.getGroupPrefix();
+				entityPrefix = conf.getGroupPrefix();
 			} else if (prefix.equalsIgnoreCase("client")) {
-				EntityPrefix = conf.getClientPrefix();
+				entityPrefix = conf.getClientPrefix();
 			} else if (prefix.equalsIgnoreCase("scope")) {
-				EntityPrefix = conf.getScopePrefix();
+				entityPrefix = conf.getScopePrefix();
 			} else {
-				EntityPrefix = prefix;
+				entityPrefix = prefix;
 			}
 
-			String inum = inumGeneratorType.generateInum(org.getInum(), EntityPrefix);
+			String inum = idGenService.generateId(org.getInum(), entityPrefix);
 
 			EntityManager inumEntryManager = (EntityManager) Component.getInstance("InumEntryManager");
 			inumService.addInum(inumEntryManager, inum, prefix);
