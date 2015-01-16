@@ -38,7 +38,7 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 		super(CustomScriptType.CACHE_REFRESH);
 	}
 
-	public boolean executeExternalCacheRefreshUpdateMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user) {
+	public boolean executeExternalUpdateUserMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user) {
 		try {
 			log.debug("Executing python 'updateUser' method");
 			CacheRefreshType externalType = (CacheRefreshType) customScriptConfiguration.getExternalType();
@@ -51,14 +51,10 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 		return false;
 	}
 
-	public boolean executeExternalDefaultCacheRefreshUpdateMethod(GluuCustomPerson user) {
-		return executeExternalCacheRefreshUpdateMethod(this.defaultExternalCustomScript, user);
-	}
-
-	public boolean executeExternalCacheRefreshUpdateMethods(GluuCustomPerson user) {
+	public boolean executeExternalUpdateUserMethods(GluuCustomPerson user) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
-			result &= executeExternalCacheRefreshUpdateMethod(customScriptConfiguration, user);
+			result &= executeExternalUpdateUserMethod(customScriptConfiguration, user);
 			if (!result) {
 				return result;
 			}

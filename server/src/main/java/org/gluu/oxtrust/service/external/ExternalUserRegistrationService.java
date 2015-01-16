@@ -22,9 +22,9 @@ import org.xdi.model.custom.script.type.user.UserRegistrationType;
 import org.xdi.service.custom.script.ExternalScriptService;
 
 /**
- * Provides factory methods needed to create external dynamic client registration extension
- *
- * @author Yuriy Movchan Date: 01/08/2015
+ * Provides factory methods needed to create external user registration extension
+ * 
+ * @author Yuriy Movchan Date: 01/16/2015
  */
 @Scope(ScopeType.APPLICATION)
 @Name("externalUserRegistrationService")
@@ -32,33 +32,55 @@ import org.xdi.service.custom.script.ExternalScriptService;
 @Startup
 public class ExternalUserRegistrationService extends ExternalScriptService {
 
-	private static final long serialVersionUID = 1416361273036208685L;
+	private static final long serialVersionUID = 1767751544454591273L;
 
 	public ExternalUserRegistrationService() {
 		super(CustomScriptType.USER_REGISTRATION);
 	}
 
-	public boolean executeExternalUserRegistrationUpdateMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, boolean persisted) {
+	public boolean executeExternalInitRegistrationMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, Map<String, String[]> requestParameters) {
 		try {
-			log.debug("Executing python 'updateUser' method");
+			log.debug("Executing python 'initRegistration' method");
 			UserRegistrationType externalType = (UserRegistrationType) customScriptConfiguration.getExternalType();
 			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
-			return externalType.updateUser(user, persisted, configurationAttributes);
+			return externalType.initRegistration(user, requestParameters, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
-		
+
 		return false;
 	}
 
-	public boolean executeExternalDefaultUserRegistrationUpdateMethod(GluuCustomPerson user, boolean persisted) {
-		return executeExternalUserRegistrationUpdateMethod(this.defaultExternalCustomScript, user, persisted);
+	public boolean executeExternalPreRegistrationMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, Map<String, String[]> requestParameters) {
+		try {
+			log.debug("Executing python 'preRegistration' method");
+			UserRegistrationType externalType = (UserRegistrationType) customScriptConfiguration.getExternalType();
+			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+			return externalType.preRegistration(user, requestParameters, configurationAttributes);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
+
+		return false;
 	}
 
-	public boolean executeExternalAddPersonMethods(GluuCustomPerson user) {
+	public boolean executeExternalPostRegistrationMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, Map<String, String[]> requestParameters) {
+		try {
+			log.debug("Executing python 'postRegistration' method");
+			UserRegistrationType externalType = (UserRegistrationType) customScriptConfiguration.getExternalType();
+			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+			return externalType.postRegistration(user, requestParameters, configurationAttributes);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
+
+		return false;
+	}
+
+	public boolean executeExternalInitRegistrationMethods(GluuCustomPerson user, Map<String, String[]> requestParameters) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
-			result &= executeExternalUserRegistrationUpdateMethod(customScriptConfiguration, user, false);
+			result &= executeExternalInitRegistrationMethod(customScriptConfiguration, user, requestParameters);
 			if (!result) {
 				return result;
 			}
@@ -67,10 +89,10 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 		return result;
 	}
 
-	public boolean executeExternalUpdatePersonMethods(GluuCustomPerson user) {
+	public boolean executeExternalPreRegistrationMethods(GluuCustomPerson user, Map<String, String[]> requestParameters) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
-			result &= executeExternalUserRegistrationUpdateMethod(customScriptConfiguration, user, true);
+			result &= executeExternalPreRegistrationMethod(customScriptConfiguration, user, requestParameters);
 			if (!result) {
 				return result;
 			}
@@ -79,8 +101,20 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 		return result;
 	}
 
-    public static ExternalUserRegistrationService instance() {
-        return (ExternalUserRegistrationService) Component.getInstance(ExternalUserRegistrationService.class);
-    }
+	public boolean executeExternalPostRegistrationMethods(GluuCustomPerson user, Map<String, String[]> requestParameters) {
+		boolean result = true;
+		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+			result &= executeExternalPostRegistrationMethod(customScriptConfiguration, user, requestParameters);
+			if (!result) {
+				return result;
+			}
+		}
+
+		return result;
+	}
+
+	public static ExternalUserRegistrationService instance() {
+		return (ExternalUserRegistrationService) Component.getInstance(ExternalUserRegistrationService.class);
+	}
 
 }

@@ -163,7 +163,7 @@ public class AppInitializer {
 
 		logSizeChecker();
 
-		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.USER_REGISTRATION );
+		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER );
         CustomScriptManager.instance().init(supportedCustomScriptTypes);
 	}
 

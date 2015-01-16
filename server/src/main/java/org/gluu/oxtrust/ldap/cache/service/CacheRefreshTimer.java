@@ -570,8 +570,8 @@ public class CacheRefreshTimer {
 		cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
 
 		// Execute interceptor script
-		externalCacheRefreshService.executeExternalCacheRefreshUpdateMethods(targetPerson);
-		boolean executionResult = externalCacheRefreshService.executeExternalCacheRefreshUpdateMethods(targetPerson);
+		externalCacheRefreshService.executeExternalUpdateUserMethods(targetPerson);
+		boolean executionResult = externalCacheRefreshService.executeExternalUpdateUserMethods(targetPerson);
 		if (!executionResult) {
 			log.error("Failed to execute Cache Refresh scripts for person '{0}'", targetInum);
 			return false;
@@ -638,7 +638,7 @@ public class CacheRefreshTimer {
 		cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
 
 		// Execute interceptor script
-		boolean executionResult = externalCacheRefreshService.executeExternalCacheRefreshUpdateMethods(targetPerson);
+		boolean executionResult = externalCacheRefreshService.executeExternalUpdateUserMethods(targetPerson);
 		if (!executionResult) {
 			log.error("Failed to execute Cache Refresh scripts for person '{0}'", targetInum);
 			return false;

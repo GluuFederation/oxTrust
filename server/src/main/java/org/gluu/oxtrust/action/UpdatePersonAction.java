@@ -18,7 +18,7 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
+import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
@@ -77,7 +77,7 @@ public class UpdatePersonAction implements Serializable {
 	private ApplicationConfiguration applicationConfiguration;
 
 	@In
-	private ExternalUserRegistrationService externalUserRegistrationService;
+	private ExternalUpdateUserService externalUpdateUserService;
 
 	/**
 	 * Initializes attributes for adding new person
@@ -165,8 +165,8 @@ public class UpdatePersonAction implements Serializable {
 
 		if (update) {
 			try {
-				if (externalUserRegistrationService.isEnabled()) {
-					externalUserRegistrationService.executeExternalUpdatePersonMethods(this.person);
+				if (externalUpdateUserService.isEnabled()) {
+					externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
                 }
 				personService.updatePerson(this.person);
 			} catch (LdapMappingException ex) {
@@ -198,8 +198,8 @@ public class UpdatePersonAction implements Serializable {
 			}
 
 			try {
-				if (externalUserRegistrationService.isEnabled()) {
-					externalUserRegistrationService.executeExternalAddPersonMethods(this.person);
+				if (externalUpdateUserService.isEnabled()) {
+					externalUpdateUserService.executeExternalAddUserMethods(this.person);
                 }
 				personService.addPerson(this.person);
 			} catch (Exception ex) {

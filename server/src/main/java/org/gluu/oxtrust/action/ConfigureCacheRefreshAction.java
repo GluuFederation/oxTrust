@@ -465,7 +465,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
 
 		// Execute interceptor script
-		boolean executionResult = externalCacheRefreshService.executeExternalCacheRefreshUpdateMethods(targetPerson);
+		boolean executionResult = externalCacheRefreshService.executeExternalUpdateUserMethods(targetPerson);
 		if (!executionResult) {
 			String message = "Can't execute Cache Refresh scripts.";
 			log.error(message);

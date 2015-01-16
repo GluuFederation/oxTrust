@@ -42,6 +42,7 @@ import org.xdi.service.PythonService;
 @Name("registrationInterceptionService")
 @Scope(ScopeType.STATELESS)
 @AutoCreate
+@Deprecated
 public class RegistrationInterceptionService {
 
 	@Logger
