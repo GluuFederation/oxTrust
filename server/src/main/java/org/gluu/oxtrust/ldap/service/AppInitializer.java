@@ -196,9 +196,9 @@ public class AppInitializer {
 		}
 		log.debug("OxRegistrationConfiguration parsed: linksExpirationFrequency: " + linksExpirationFrequency + ", accountsExpirationServiceFrequency: " + accountsExpirationServiceFrequency + ", accountsTimeLimited: " + accountsTimeLimited);
 
-		RegistrationsExpirationService.instance().expireLinks(calendar.getTime(), linksExpirationFrequency);
+		RegistrationsExpirationService.instance().expireLinks(calendar.getTime(), linksExpirationFrequency * 1000L);
 		if(accountsTimeLimited){
-			RegistrationsExpirationService.instance().expireUsers(calendar.getTime(), accountsExpirationServiceFrequency);
+			RegistrationsExpirationService.instance().expireUsers(calendar.getTime(), accountsExpirationServiceFrequency * 1000L);
 		}
 
 	}
