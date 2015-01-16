@@ -29,11 +29,11 @@ import org.xdi.service.custom.script.ExternalScriptService;
 @Name("idGenerationService")
 @AutoCreate
 @Startup
-public class IdGenerationService extends ExternalScriptService {
+public class ExternalIdGenerationService extends ExternalScriptService {
 
 	private static final long serialVersionUID = 1727751544454591273L;
 
-	public IdGenerationService() {
+	public ExternalIdGenerationService() {
 		super(CustomScriptType.ID_GENERATION);
 	}
 
@@ -54,8 +54,8 @@ public class IdGenerationService extends ExternalScriptService {
 		return executeExternaGenerateIdMethod(this.defaultExternalCustomScript, appId, idType, idPrefix);
 	}
 
-	public static IdGenerationService instance() {
-		return (IdGenerationService) Component.getInstance(IdGenerationService.class);
+	public static ExternalIdGenerationService instance() {
+		return (ExternalIdGenerationService) Component.getInstance(ExternalIdGenerationService.class);
 	}
 
 }

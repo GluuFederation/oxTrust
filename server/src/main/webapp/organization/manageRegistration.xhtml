@@ -148,53 +148,6 @@ var changeTooltipPosition = function(event) {
 					        	</h:panelGrid>
 			                </h:panelGroup>
 
-							<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-			                    <ui:define name="label">Configure Registration Interception Scripts</ui:define>
-			                    <h:selectBooleanCheckbox value="#{registrationManagementAction.configureInterceptors}">
-				                    <a4j:ajax  event="click"  render="interceptors" />
-				                </h:selectBooleanCheckbox>
-			                </s:decorate>
-			                <h:panelGroup id="interceptors">
-				                <h:panelGroup rendered="#{registrationManagementAction.configureInterceptors}">
-					                <rich:dataGrid id="interceptorConfigsId" columns="1" value="#{registrationManagementAction.registrationInterceptors}" var="_registrationInterceptor" style="width: 100%;"> 
-						                <h:panelGrid	columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
-								        	<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
-					                            
-					                            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-								                    <ui:define name="label">Script Type</ui:define>
-								                    <h:selectOneMenu value="#{_registrationInterceptor.type}">
-								                        <s:selectItems value="#{registrationManagementAction.customScriptTypes}" var="_name" label="#{_name}"/>
-								                    </h:selectOneMenu>
-								                </s:decorate>
-					            
-					                        	<ox:simpleCustomPropertiesList label="Custom property (key/value)" labelAdd="custom registration property"
-					                            	properties="#{_registrationInterceptor.customAttributes}" propertiesAction="#{registrationManagementAction}" />
-					                
-					                            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-													<ui:define name="label">Script</ui:define>
-				                                    <h:inputTextarea value="#{_registrationInterceptor.customScript}" cols="100" rows="10" />
-					                            </s:decorate>
-					                            
-					                            <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-					                            	<ui:define name="label">Priority</ui:define>
-					                                <h:inputText value="#{_registrationInterceptor.priority}" />
-					                            </s:decorate>
-					                
-					                            <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-					                            	<ui:define name="label">Enabled</ui:define>
-					                                <h:selectBooleanCheckbox value="#{_registrationInterceptor.enabled}" />
-					                            </s:decorate>
-					                    	</h:panelGrid>
-					                    	<a4j:commandLink action="#{registrationManagementAction.removeCustomAuthenticationConfiguration(_registrationInterceptor)}" render="interceptorConfigsId">
-				                                <h:graphicImage value="/img/remove.gif" />
-				                            </a4j:commandLink>
-						                </h:panelGrid>
-						            </rich:dataGrid>
-						            <s:div styleClass="addConfig">
-				                        <a4j:commandLink value="Add registration script" action="#{registrationManagementAction.addRegistrationInterceptor}" render="interceptorConfigsId" />
-				                    </s:div>
-				                </h:panelGroup>
-			                </h:panelGroup>
 			                <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
 			                    <ui:define name="label">Disable Captcha for registration form</ui:define>
 			                    <h:selectBooleanCheckbox value="#{registrationManagementAction.captchaDisabled}">

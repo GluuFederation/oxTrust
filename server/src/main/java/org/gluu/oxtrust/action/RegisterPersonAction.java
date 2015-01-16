@@ -30,6 +30,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.OxLink;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
+import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.service.external.RegistrationInterceptionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.RecaptchaUtils;
@@ -112,6 +113,9 @@ public class RegisterPersonAction implements Serializable {
     @In
     private RegistrationInterceptionService registrationInterceptionService;
 
+    @In
+    private ExternalUserRegistrationService externalUserRegistrationService;
+
     private Map<String, String[]> requestParameters
         = new HashMap<String, String[]>();
 
@@ -174,9 +178,11 @@ public class RegisterPersonAction implements Serializable {
             }
         }
         initAttributes();
-        boolean result
-            = registrationInterceptionService.runInitRegistrationScripts(
-                                            this.person, requestParameters);
+//        boolean result
+//            = registrationInterceptionService.runInitRegistrationScripts(
+//                                            this.person, requestParameters);
+        
+        boolean result = externalUserRegistrationService.executeExternalInitRegistrationMethods(this.person, requestParameters);
         if(result){
             return OxTrustConstants.RESULT_SUCCESS;
         }else{
@@ -269,9 +275,10 @@ public class RegisterPersonAction implements Serializable {
 
             try {
 
-                boolean result = registrationInterceptionService
-                        .runPreRegistrationScripts(this.person,
-                                                   requestParameters);
+//                boolean result = registrationInterceptionService
+//                        .runPreRegistrationScripts(this.person,
+//                                                   requestParameters);
+                boolean result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
                 if(! result){
                     return OxTrustConstants.RESULT_FAILURE;
                 }
@@ -280,9 +287,10 @@ public class RegisterPersonAction implements Serializable {
                 }else{
                     personService.addPerson(this.person);
                 }
-                result = registrationInterceptionService
-                    .runPostRegistrationScripts(this.person,
-                                                requestParameters);
+//                result = registrationInterceptionService
+//                    .runPostRegistrationScripts(this.person,
+//                                                requestParameters);
+                result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person, requestParameters);
 
                 Events.instance().raiseEvent(
                             OxTrustConstants.EVENT_PERSON_SAVED,

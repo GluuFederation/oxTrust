@@ -42,6 +42,9 @@ import org.xdi.util.Util;
 @Scope(CONVERSATION)
 @Name("registrationManagementAction")
 @Restrict("#{identity.loggedIn}")
+
+//TODO: Remove configureInterceptors, registrationInterceptors, removeCustomAuthenticationConfiguration, addRegistrationInterceptor
+//TODO: Clean up LDAP OC
 public @Data class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
