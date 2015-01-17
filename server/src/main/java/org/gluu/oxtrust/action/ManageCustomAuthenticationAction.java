@@ -114,7 +114,7 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			this.customScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.CUSTOM_AUTHENTICATION), "name", "oxLevel");
+			this.customScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.CUSTOM_AUTHENTICATION), "displayName", "oxLevel");
 
 			List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
 			if (idpConfs != null) {
