@@ -104,7 +104,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 				List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(customScriptType);
 				
 				CustomScript typedCustomScript = customScript;
-				if (CustomScriptType.CUSTOM_AUTHENTICATION == customScriptType) {
+				if (CustomScriptType.PERSON_AUTHENTICATION == customScriptType) {
 					typedCustomScript = new AuthenticationCustomScript(customScript);
 				}
 
@@ -213,7 +213,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(scriptType);
 
 		CustomScript customScript;
-		if (CustomScriptType.CUSTOM_AUTHENTICATION == scriptType) {
+		if (CustomScriptType.PERSON_AUTHENTICATION == scriptType) {
 			AuthenticationCustomScript authenticationCustomScript = new AuthenticationCustomScript();
 			authenticationCustomScript.setUsageType(AuthenticationScriptUsageType.INTERACTIVE);
 

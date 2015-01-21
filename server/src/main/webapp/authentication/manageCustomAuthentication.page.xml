@@ -19,14 +19,14 @@
         <rule if-outcome="no_permissions">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">You don't have permissions to modify custom authentication configuration</message>
+                <message severity="ERROR">You don't have permissions to modify person authentication configuration</message>
             </redirect>
         </rule>
 
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to prepare for custom authentication configuration update</message>
+                <message severity="ERROR">Failed to prepare for person authentication configuration update</message>
             </redirect>
         </rule>
     </navigation>
@@ -34,7 +34,7 @@
     <navigation from-action="#{manageCustomAuthenticationAction.save}">
         <rule if-outcome="success">
             <redirect view-id="/authentication/manageCustomAuthentication.xhtml">
-                <message severity="INFO">Custom authentication configuration updated successfully</message>
+                <message severity="INFO">Person authentication configuration updated successfully</message>
             </redirect>
         </rule>
     </navigation>
@@ -42,7 +42,7 @@
     <navigation from-action="#{manageCustomAuthenticationAction.cancel}">
         <end-conversation />
         <redirect view-id="/home.xhtml">
-            <message severity="INFO">Custom authentication configuration not updated</message>
+            <message severity="INFO">Person authentication configuration not updated</message>
         </redirect>
     </navigation>
 
