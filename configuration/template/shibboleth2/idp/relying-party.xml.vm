@@ -125,7 +125,7 @@ $profileConfiguration
         maxRefreshDelay="$trustRelationship.maxRefreshDelay" >
 #end
 
-#if( $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
+#if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
             <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
 #foreach( $filter in $trustRelationship.getGluuSAMLMetaDataFilter() )
 $filter        
