@@ -267,6 +267,7 @@
 				<configuration>
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
+					<shortRevisionLength>5</shortRevisionLength>
 				</configuration>
 			</plugin>
 
