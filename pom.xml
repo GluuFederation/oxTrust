@@ -53,11 +53,11 @@
 		</repository>
 	</repositories>
 
-        <scm>
+	<scm>
 		<url>https://github.com/GluuFederation/oxTrust</url>
 		<connection>scm:git:https://github.com/GluuFederation/oxTrust.git</connection>
-		<developerConnection>scm:git:https://github.com:GluuFederation/oxTrust.git</developerConnection>
-        </scm>
+		<developerConnection>scm:git:https://github.com/GluuFederation/oxTrust.git</developerConnection>
+	</scm>
 
 	<modules>
 		<module>static</module>
