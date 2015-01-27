@@ -16,12 +16,12 @@
     <ui:define name="body">
         <div id="formArea">
             <ui:decorate template="/WEB-INF/incl/authentication/customAuthenticationForm.xhtml">
-                <ui:param name="_action" value="#{manageCustomAuthenticationAction}" />
+                <ui:param name="_action" value="#{managePersonAuthenticationAction}" />
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton value="Update" action="#{manageCustomAuthenticationAction.save}" />
-                        <h:commandButton value="Cancel" action="#{manageCustomAuthenticationAction.cancel}" immediate="true" />
+                        <h:commandButton value="Update" action="#{managePersonAuthenticationAction.save}" />
+                        <h:commandButton value="Cancel" action="#{managePersonAuthenticationAction.cancel}" immediate="true" />
                     </div>
                 </ui:define>
             </ui:decorate>

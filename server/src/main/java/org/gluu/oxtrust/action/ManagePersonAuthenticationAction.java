@@ -51,14 +51,14 @@ import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
- * Action class for configuring custom configuration
+ * Action class for configuring person authentication
  * 
- * @author Yuriy Movchan Date: 11.16.2010
+ * @author Yuriy Movchan Date: 16/11/2010
  */
-@Name("manageCustomAuthenticationAction")
+@Name("managePersonAuthenticationAction")
 @Scope(ScopeType.CONVERSATION)
 @Restrict("#{identity.loggedIn}")
-public class ManageCustomAuthenticationAction implements SimplePropertiesListModel, LdapConfigurationModel, Serializable {
+public class ManagePersonAuthenticationAction implements SimplePropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
 
@@ -221,30 +221,34 @@ public class ManageCustomAuthenticationAction implements SimplePropertiesListMod
 		return true;
 	}
 
-	public List<String> getCustomAuthenticationConfigurationNames() {
+	public List<String> getPersonAuthenticationConfigurationNames() {
 		if (this.customAuthenticationConfigNames == null) {
 			this.customAuthenticationConfigNames = new ArrayList<String>();
 			for (CustomScript customScript : this.customScripts) {
-				String name = customScript.getName();
-				if (StringHelper.isEmpty(name)) {
-					continue;
+				if (customScript.isEnabled()) {
+					String name = customScript.getName();
+					if (StringHelper.isEmpty(name)) {
+						continue;
+					}
+	
+					this.customAuthenticationConfigNames.add(customScript.getName());
 				}
-
-				this.customAuthenticationConfigNames.add(customScript.getName());
 			}
 		}
 
 		return this.customAuthenticationConfigNames;
 	}
 
-	public List<String> getCustomAuthenticationConfigurationLevels() {
+	public List<String> getPersonAuthenticationConfigurationLevels() {
 		if (this.customAuthenticationConfigLevels == null) {
 			this.customAuthenticationConfigLevels = new ArrayList<String>();
 			for (CustomScript customScript : this.customScripts) {
-				String level = Integer.toString(customScript.getLevel());
-
-				if (!this.customAuthenticationConfigLevels.contains(level)) {
-					this.customAuthenticationConfigLevels.add(level);
+				if (customScript.isEnabled()) {
+					String level = Integer.toString(customScript.getLevel());
+	
+					if (!this.customAuthenticationConfigLevels.contains(level)) {
+						this.customAuthenticationConfigLevels.add(level);
+					}
 				}
 			}
 		}

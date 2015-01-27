@@ -6,11 +6,11 @@
 
     <restrict>#{s:hasPermission('configuration', 'access')}</restrict>
 
-    <action execute="#{manageCustomAuthenticationAction.modify}" if="#{not manageCustomAuthenticationAction.initialized}" on-postback="false" />
+    <action execute="#{managePersonAuthenticationAction.modify}" if="#{not managePersonAuthenticationAction.initialized}" on-postback="false" />
 
     <rewrite pattern="/authentication/configuration" />
 
-    <navigation from-action="#{manageCustomAuthenticationAction.modify}">
+    <navigation from-action="#{managePersonAuthenticationAction.modify}">
         <rule if-outcome="success">
             <begin-conversation join="true" flush-mode="manual"/>
             <render view-id="/authentication/manageCustomAuthentication.xhtml" />
@@ -31,7 +31,7 @@
         </rule>
     </navigation>
 
-    <navigation from-action="#{manageCustomAuthenticationAction.save}">
+    <navigation from-action="#{managePersonAuthenticationAction.save}">
         <rule if-outcome="success">
             <redirect view-id="/authentication/manageCustomAuthentication.xhtml">
                 <message severity="INFO">Person authentication configuration updated successfully</message>
@@ -39,7 +39,7 @@
         </rule>
     </navigation>
 
-    <navigation from-action="#{manageCustomAuthenticationAction.cancel}">
+    <navigation from-action="#{managePersonAuthenticationAction.cancel}">
         <end-conversation />
         <redirect view-id="/home.xhtml">
             <message severity="INFO">Person authentication configuration not updated</message>

@@ -23,7 +23,7 @@
         }
     </h:outputStylesheet>
 
-    <ox:changePasswordDialog id="bindPassword" label="Change Bind Password" password="#{manageCustomAuthenticationAction.ldapConfig.bindPassword}" setPasswordMethod="#{manageCustomAuthenticationAction.updateLdapBindPassword}" />
+    <ox:changePasswordDialog id="bindPassword" label="Change Bind Password" password="#{managePersonAuthenticationAction.ldapConfig.bindPassword}" setPasswordMethod="#{managePersonAuthenticationAction.updateLdapBindPassword}" />
 
     <h:form id="customAuthenticationForm">
         <rich:collapsiblePanel switchType="client" opened="false" header="Manage LDAP Authentication" id="ldapManagement" rendered="true">
@@ -47,14 +47,14 @@
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                     <ui:define name="label">Authentication mode</ui:define>
                     <h:selectOneMenu value="#{_action.authenticationMode}">
-                        <s:selectItems value="#{_action.customAuthenticationConfigurationNames}" var="_name" label="#{_name}" noSelectionLabel="Default"/>
+                        <s:selectItems value="#{_action.personAuthenticationConfigurationNames}" var="_name" label="#{_name}" noSelectionLabel="Default"/>
                     </h:selectOneMenu>
                 </s:decorate>
 
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                     <ui:define name="label">Authentication level</ui:define>
                     <h:selectOneMenu value="#{_action.authenticationLevel}">
-                        <s:selectItems value="#{_action.customAuthenticationConfigurationLevels}" var="_level" label="#{_level}" noSelectionLabel="Default"/>
+                        <s:selectItems value="#{_action.personAuthenticationConfigurationLevels}" var="_level" label="#{_level}" noSelectionLabel="Default"/>
                     </h:selectOneMenu>
                 </s:decorate>
         	</h:panelGrid>
