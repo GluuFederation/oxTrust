@@ -81,16 +81,6 @@
                 </s:fragment>
              </s:decorate>
 
-             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="privacyLevel">
-                <ui:define name="label">Privacy Level</ui:define>
-                <h:selectOneMenu value="#{_attribute.privacyLevel}" required="true" id="privacyLevelId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{attributeService.privacyLevels}" noSelectionLabel="Privacy level"
-                              var="_type" label="#{_type.displayName}"/>
-                    <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
-                </h:selectOneMenu>
-                <h:outputText value="#{_attribute.privacyLevel.displayName}" rendered="#{not _attributeAction.canEdit()}"/>
-             </s:decorate>
-
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="usageType">
                 <ui:define name="label">Usage Type</ui:define>
                 <h:selectManyListbox value="#{_attribute.usageType}" required="false" id="usageTypeId" rendered="#{_attributeAction.canEdit()}">

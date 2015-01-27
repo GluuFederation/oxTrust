@@ -28,7 +28,6 @@ import org.jboss.seam.core.Events;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
-import org.xdi.model.GluuAttributePrivacyLevel;
 import org.xdi.model.GluuAttributeUsageType;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.OxMultivalued;
@@ -519,15 +518,6 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 */
 	public GluuAttributeUsageType[] getAttributeUsageTypes() {
 		return GluuAttributeUsageType.values();
-	}
-
-	/**
-	 * Get all available privacy levels
-	 * 
-	 * @return Array of Privacy levels
-	 */
-	public GluuAttributePrivacyLevel[] getPrivacyLevels() {
-		return GluuAttributePrivacyLevel.values();
 	}
 
 	/**

@@ -36,7 +36,6 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuAttributePrivacyLevel;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.TrustContact;
 import org.xdi.service.XmlService;
@@ -348,7 +347,7 @@ public class TrustService {
 
 		String mailMsg = "";
 		for (GluuCustomAttribute customAttribute : trustRelationship.getReleasedCustomAttributes()) {
-			if (customAttribute.isNew() && customAttribute.getMetadata().getPrivacyLevel() == GluuAttributePrivacyLevel.LEVEL_5) {
+			if (customAttribute.isNew()) {
 				mailMsg += "\nAttribute name: " + customAttribute.getName() + " Display name: "
 						+ customAttribute.getMetadata().getDisplayName() + " Attribute value: " + customAttribute.getValue();
 				customAttribute.setNew(false);
