@@ -190,12 +190,12 @@ public final class OxTrustConstants extends OxConstants {
 
 	public static final String INIT_REGISTRATION_SCRIPT = "InitRegistrationScript";
 
-	public static String getGluuSvnRevisionVersion() {
-		return Version.GLUU_SVN_REVISION_VERSION;
+	public static String getGluuRevisionVersion() {
+		return Version.GLUU_REVISION_VERSION;
 	}
 
-	public static String getGluuSvnRevisionDate() {
-		return Version.GLUU_SVN_REVISION_DATE;
+	public static String getGluuRevisionDate() {
+		return Version.GLUU_REVISION_DATE;
 	}
 
 	public static String getGluuBuildDate() {

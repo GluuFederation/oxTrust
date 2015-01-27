@@ -403,7 +403,7 @@ public class UpdateOrganizationAction implements Serializable {
 			return this.buildDate;
 		}
 
-		DateFormat formatter = new SimpleDateFormat("yyyyMMddhhmm");
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 		try {
 			final Date date = formatter.parse(Version.GLUU_BUILD_DATE);
 			this.buildDate = new SimpleDateFormat("hh:mm MMM dd yyyy").format(date) + " UTC";

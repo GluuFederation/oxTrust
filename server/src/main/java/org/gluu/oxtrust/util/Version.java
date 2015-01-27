@@ -13,8 +13,8 @@ package org.gluu.oxtrust.util;
  */
 public final class Version {
 
-	public static final String GLUU_SVN_REVISION_VERSION = "${buildNumber}";
-	public static final String GLUU_SVN_REVISION_DATE = "${timestamp}";
+	public static final String GLUU_REVISION_VERSION = "${buildNumber}";
+	public static final String GLUU_REVISION_DATE = "${git.commit.time}";
 	public static final String GLUU_BUILD_DATE = "${buildDate}";
 	public static final String GLUU_HUDSON_BUILDNO = "${env.BUILD_NUMBER}";
 

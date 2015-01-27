@@ -304,7 +304,7 @@ public class AppInitializer {
 
 	private void showBuildInfo() {
 		log.info("Build date {0}. Code revision {1} on {2}. Build {3}", OxTrustConstants.getGluuBuildDate(),
-				OxTrustConstants.getGluuSvnRevisionVersion(), OxTrustConstants.getGluuSvnRevisionDate(), Version.GLUU_HUDSON_BUILDNO);
+				OxTrustConstants.getGluuRevisionVersion(), OxTrustConstants.getGluuRevisionDate(), Version.GLUU_HUDSON_BUILDNO);
 	}
 
 	private void createConnectionProvider(FileConfiguration configuration, String configurationComponentName, String connectionProviderComponentName)
