@@ -17,7 +17,7 @@ import org.jboss.seam.annotations.Name;
  */
 @Name("buildVersion")
 public class BuildVersion implements Serializable {
-	
+
 	private static final long serialVersionUID = 3790281266924133197L;
 
 	private String revisionVersion;
@@ -28,24 +28,31 @@ public class BuildVersion implements Serializable {
 	public String getRevisionVersion() {
 		return revisionVersion;
 	}
+
 	public void setRevisionVersion(String revisionVersion) {
 		this.revisionVersion = revisionVersion;
 	}
+
 	public String getRevisionDate() {
 		return revisionDate;
 	}
+
 	public void setRevisionDate(String revisionDate) {
 		this.revisionDate = revisionDate;
 	}
+
 	public String getBuildDate() {
 		return buildDate;
 	}
+
 	public void setBuildDate(String buildDate) {
 		this.buildDate = buildDate;
 	}
+
 	public String getBuildNumber() {
 		return buildNumber;
 	}
+
 	public void setBuildNumber(String buildNumber) {
 		this.buildNumber = buildNumber;
 	}

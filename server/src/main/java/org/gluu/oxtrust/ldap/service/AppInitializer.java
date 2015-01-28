@@ -26,7 +26,6 @@ import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
