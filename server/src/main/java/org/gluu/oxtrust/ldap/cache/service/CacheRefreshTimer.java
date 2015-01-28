@@ -190,7 +190,7 @@ public class CacheRefreshTimer {
 		if (poolingInterval < 0) {
 			return false;
 		}
-//		currentAppliance.setCacheRefreshServerIpAddress("192.168.1.13")
+
 		String cacheRefreshServerIpAddress = currentAppliance.getCacheRefreshServerIpAddress();
 		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
 			log.debug("There is no master Cache Refresh server");
