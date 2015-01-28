@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.util;
 
+import java.io.Serializable;
+
 import org.jboss.seam.annotations.Name;
 
 /**
@@ -14,8 +16,10 @@ import org.jboss.seam.annotations.Name;
  * @author Yuriy Movchan Date: 12.17.2010
  */
 @Name("buildVersion")
-public final class BuildVersion {
+public class BuildVersion implements Serializable {
 	
+	private static final long serialVersionUID = 3790281266924133197L;
+
 	private String revisionVersion;
 	private String revisionDate;
 	private String buildDate;
