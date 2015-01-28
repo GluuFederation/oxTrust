@@ -83,13 +83,6 @@
                     <include>**/*.sql</include>
 				</includes>
 			</resource>
-			<resource>
-				<directory>src/main/java</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>org/gluu/oxtrust/util/Version.java</include>
-				</includes>
-			</resource>
 		</resources>
 
 		<testResources>

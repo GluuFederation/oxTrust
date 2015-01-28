@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.util;
 
 
+import org.jboss.seam.Component;
 import org.xdi.util.OxConstants;
 
 /**
@@ -191,15 +192,19 @@ public final class OxTrustConstants extends OxConstants {
 	public static final String INIT_REGISTRATION_SCRIPT = "InitRegistrationScript";
 
 	public static String getGluuRevisionVersion() {
-		return Version.GLUU_REVISION_VERSION;
+		return ((BuildVersion) Component.getInstance(BuildVersion.class)).getRevisionVersion();
 	}
 
 	public static String getGluuRevisionDate() {
-		return Version.GLUU_REVISION_DATE;
+		return ((BuildVersion) Component.getInstance(BuildVersion.class)).getRevisionDate();
 	}
 
 	public static String getGluuBuildDate() {
-		return Version.GLUU_BUILD_DATE;
+		return ((BuildVersion) Component.getInstance(BuildVersion.class)).getBuildDate();
+	}
+
+	public static String getGluuBuildNumber() {
+		return ((BuildVersion) Component.getInstance(BuildVersion.class)).getBuildNumber();
 	}
 
 }

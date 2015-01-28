@@ -25,7 +25,14 @@
                        http://jboss.org/schema/seam/components http://jboss.org/schema/seam/components-2.3.xsd">
 
 	<core:init debug="${oxTrust.debug}" jndi-pattern="${jndiPattern}" transaction-management-enabled="false"/>
-
+	
+	<component name="buildVersion" auto-create="true" scope="stateless" class="org.gluu.oxtrust.util.BuildVersion">
+	    <property name="revisionVersion">${buildNumber}</property>
+	    <property name="revisionDate">${git.commit.time}</property>
+	   	<property name="buildDate">${buildDate}</property>
+	    <property name="buildNumber">${env.BUILD_NUMBER}</property>
+	</component>
+	
 	<core:manager concurrent-request-timeout="500"
 		conversation-timeout="120000"
 		conversation-id-parameter="cid"

@@ -26,7 +26,7 @@ import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Version;
+import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
@@ -304,7 +304,7 @@ public class AppInitializer {
 
 	private void showBuildInfo() {
 		log.info("Build date {0}. Code revision {1} on {2}. Build {3}", OxTrustConstants.getGluuBuildDate(),
-				OxTrustConstants.getGluuRevisionVersion(), OxTrustConstants.getGluuRevisionDate(), Version.GLUU_HUDSON_BUILDNO);
+				OxTrustConstants.getGluuRevisionVersion(), OxTrustConstants.getGluuRevisionDate(), OxTrustConstants.getGluuBuildNumber());
 	}
 
 	private void createConnectionProvider(FileConfiguration configuration, String configurationComponentName, String connectionProviderComponentName)

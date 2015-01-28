@@ -28,8 +28,9 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Version;
+import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.annotations.In;
@@ -405,7 +406,8 @@ public class UpdateOrganizationAction implements Serializable {
 
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 		try {
-			final Date date = formatter.parse(Version.GLUU_BUILD_DATE);
+			String buildDate = OxTrustConstants.getGluuBuildDate();
+			final Date date = formatter.parse(buildDate);
 			this.buildDate = new SimpleDateFormat("hh:mm MMM dd yyyy").format(date) + " UTC";
 		} catch (ParseException e) {
 			log.error("Error formating date. Build process is invalid.", e);
@@ -420,7 +422,7 @@ public class UpdateOrganizationAction implements Serializable {
 			return this.buildNumber;
 		}
 
-		this.buildNumber = Version.GLUU_HUDSON_BUILDNO;
+		this.buildNumber = OxTrustConstants.getGluuBuildNumber();
 		return this.buildNumber;
 	}
 
