@@ -6,11 +6,14 @@
 
 package org.gluu.oxtrust.util;
 
+import org.jboss.seam.annotations.Name;
+
 /**
  * Constants with current build info
  * 
  * @author Yuriy Movchan Date: 12.17.2010
  */
+@Name("buildVersion")
 public final class BuildVersion {
 	
 	private String revisionVersion;

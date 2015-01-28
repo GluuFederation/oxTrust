@@ -26,7 +26,7 @@
 
 	<core:init debug="${oxTrust.debug}" jndi-pattern="${jndiPattern}" transaction-management-enabled="false"/>
 	
-	<component name="buildVersion" auto-create="true" scope="stateless" class="org.gluu.oxtrust.util.BuildVersion">
+	<component auto-create="true" scope="stateless" class="org.gluu.oxtrust.util.BuildVersion">
 	    <property name="revisionVersion">${buildNumber}</property>
 	    <property name="revisionDate">${git.commit.time}</property>
 	   	<property name="buildDate">${buildDate}</property>
