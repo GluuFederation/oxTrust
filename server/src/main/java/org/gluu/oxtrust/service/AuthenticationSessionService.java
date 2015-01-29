@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.service;
 
+import java.util.UUID;
+
 import org.gluu.oxtrust.security.OauthData;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -43,7 +45,9 @@ public class AuthenticationSessionService {
     	String userUid = oauthData.getUserUid();
     	log.debug("Calling oxAuth logout method at the end of HTTP session. User: '{0}'", userUid);
     	try {
-            EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), applicationConfiguration.getLogoutRedirectUrl());
+            String endSessionState = UUID.randomUUID().toString();
+
+            EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), applicationConfiguration.getLogoutRedirectUrl(), endSessionState);
             endSessionRequest.setSessionId(oauthData.getSessionId());
 
             EndSessionClient endSessionClient = new EndSessionClient(applicationConfiguration.getOxAuthEndSessionUrl());
