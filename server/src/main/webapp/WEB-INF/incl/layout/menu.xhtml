@@ -25,7 +25,9 @@
 
         <rich:dropDownMenu mode="server" label="Configuration" rendered="#{s:hasPermission('configuration', 'access') or s:hasPermission('scim', 'access') or s:hasPermission('attribute', 'access') or s:hasPermission('configuration', 'access')}">
             <rich:menuItem label="Organization Configuration" action="#{menuAction.endConversation('/organization/updateOrganization.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+<!--
             <rich:menuItem label="Manage Certificates" action="#{menuAction.endConversation('/cert/certificateManagement.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+-->
             <rich:menuItem label="Manage Authentication" action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuItem label="Manage Custom Scripts" action="#{menuAction.endConversation('/script/manageCustomScript.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuItem label="Manage Registration" action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
