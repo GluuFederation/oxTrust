@@ -583,7 +583,7 @@ public class AppInitializer {
 	public String getUmaConfigurationEndpoint() {
 		String umaIssuer = this.oxTrustConfiguration.getApplicationConfiguration().getUmaIssuer();
 		if (StringHelper.isEmpty(umaIssuer)) {
-			log.info("oxAuth UMA issuer isn't specified");
+			log.trace("oxAuth UMA issuer isn't specified");
 			return null;
 		}
 

@@ -190,7 +190,7 @@ public class AuthenticationFilter extends AbstractFilter {
 				UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
 				String username = null;
-				List<String> usernameValues = userInfoResponse.getClaims().get(JwtClaimName.SUBJECT_IDENTIFIER);
+				List<String> usernameValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
 				if ((usernameValues != null) && (usernameValues.size() > 0)) {
 					username = usernameValues.get(0);
 				}
