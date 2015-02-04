@@ -60,7 +60,7 @@
 		                                </s:decorate>
 		                                
 		                                <!-- Person Authentication specific parameters -->
-		                                <s:fragment rendered="#{_scriptType.value eq 'custom_authentication'}">
+		                                <s:fragment rendered="#{_scriptType.value eq 'person_authentication'}">
 			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 			                                    <ui:define name="label">Usage type</ui:define> 
 			                                    <h:selectOneMenu value="#{_customScript.usageType}" required="true">
