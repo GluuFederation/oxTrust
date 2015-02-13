@@ -68,7 +68,7 @@ public @Data class PasswordReminderAction implements Serializable {
 											+ "and follow instructions there.\n\n"
 											+ "If you have not requested password reset for %2$s identity server please ignore this email.\n\n"
 											+ "Kind regards,\n"
-											+ "%1$s Identity Server Support";
+											+ "%2$s Identity Server Support";
 	
 	@Logger
 	private Log log;
