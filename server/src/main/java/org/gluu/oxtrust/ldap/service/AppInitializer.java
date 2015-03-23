@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.net.URISyntaxException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,9 +116,7 @@ public class AppInitializer {
 	 */
 	@Create
 	public void createApplicationComponents() throws ConfigurationException {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
+		installBCProvider();
 
 		log.debug("Creating application components");
 		showBuildInfo();
@@ -164,6 +163,16 @@ public class AppInitializer {
 
 		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR );
         CustomScriptManager.instance().init(supportedCustomScriptTypes);
+	}
+
+	private void installBCProvider() {
+		Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
+		if (provider == null) {
+			log.info("Adding Bouncy Castle Provider");
+			Security.addProvider(new BouncyCastleProvider());
+		} else {
+			log.info("Bouncy Castle Provider was added already");
+		}
 	}
 
 	private void startInviteCodesExpirationService() {
