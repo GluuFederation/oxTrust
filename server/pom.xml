@@ -1122,12 +1122,8 @@
 		<profile>
 			<id>generate-configuration</id>
 			<activation>
-				<property>
-					<name>cfg</name>
-				</property>
 			</activation>
 			<properties>
-				<tomcat.home>D:/Development/tomcat/apache-tomcat-7.0.33</tomcat.home>
 			</properties>
 			<build>
 				<pluginManagement>
