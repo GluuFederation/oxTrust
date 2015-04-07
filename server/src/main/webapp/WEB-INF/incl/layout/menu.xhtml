@@ -52,7 +52,7 @@
             <rich:menuItem label="Trust Relationships" action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}" rendered="#{s:hasPermission('trust', 'access')}" />
         </rich:dropDownMenu>
 
-        <rich:dropDownMenu mode="server" label="OAuth2" rendered="#{s:hasPermission('oxauth', 'access')}">
+        <rich:dropDownMenu mode="server" label="OpenID Connect" rendered="#{s:hasPermission('oxauth', 'access')}">
             <rich:menuItem label="Scopes" action="#{menuAction.endConversation('/scope/scopeInventory.xhtml')}" rendered="#{s:hasPermission('oxauth', 'access')}" />
             <rich:menuItem label="Clients" action="#{menuAction.endConversation('/client/clientInventory.xhtml')}" rendered="#{s:hasPermission('oxauth', 'access')}" />
         </rich:dropDownMenu>
