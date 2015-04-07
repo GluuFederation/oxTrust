@@ -31,7 +31,8 @@
         <link type="text/css" rel="stylesheet" href="#{oxTrustConfigurationService.cssLocation}/../stylesheets/styles.css" />
 
         <script type="text/javascript" src="#{oxTrustConfigurationService.jsLocation}/gluuCommon.js"></script>
-        <script type="text/javascript" src="#{oxTrustConfigurationService.jsLocation}/bootstrap.js"></script>
+        <h:outputScript name="jquery.js"/>
+        <h:outputScript name="bootstrap.js"/>
         <ui:insert name="head"/>	
 
         <ui:param name="themeColor" value="#{organizationService.organization.themeColor}" />
