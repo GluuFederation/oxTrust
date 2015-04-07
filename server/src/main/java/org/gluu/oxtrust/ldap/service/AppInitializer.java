@@ -56,6 +56,7 @@ import org.xdi.oxauth.client.OpenIdConnectDiscoveryResponse;
 import org.xdi.oxauth.client.uma.MetaDataConfigurationService;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.model.uma.MetadataConfiguration;
+import org.xdi.oxauth.model.util.SecurityProviderUtility;
 import org.xdi.service.PythonService;
 import org.xdi.service.custom.script.CustomScriptManager;
 import org.xdi.service.ldap.LdapConnectionService;
@@ -116,7 +117,7 @@ public class AppInitializer {
 	 */
 	@Create
 	public void createApplicationComponents() throws ConfigurationException {
-		installBCProvider();
+    	SecurityProviderUtility.installBCProvider();
 
 		log.debug("Creating application components");
 		showBuildInfo();
@@ -163,16 +164,6 @@ public class AppInitializer {
 
 		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR );
         CustomScriptManager.instance().init(supportedCustomScriptTypes);
-	}
-
-	private void installBCProvider() {
-		Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
-		if (provider == null) {
-			log.info("Adding Bouncy Castle Provider");
-			Security.addProvider(new BouncyCastleProvider());
-		} else {
-			log.info("Bouncy Castle Provider was added already");
-		}
 	}
 
 	private void startInviteCodesExpirationService() {
