@@ -6,6 +6,18 @@
 
 package org.gluu.oxtrust.model;
 
+import lombok.Data;
+import org.gluu.oxtrust.ldap.service.TrustService;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.gluu.site.ldap.persistence.annotation.LdapEntry;
+import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.xdi.ldap.model.GluuStatus;
+import org.xdi.ldap.model.InumEntry;
+
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,20 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import lombok.Data;
-
-import org.gluu.oxtrust.ldap.service.TrustService;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.ldap.model.GluuStatus;
-import org.xdi.ldap.model.InumEntry;
 
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuSAMLconfig" })
@@ -190,4 +188,211 @@ public @Data class GluuSAMLTrustRelationship extends InumEntry implements Serial
 		return Boolean.parseBoolean(gluuSpecificRelyingPartyConfig);
 	}
 
+    public List<DeconstructedTrustRelationship> getDeconstructedTrustRelationships() {
+        return deconstructedTrustRelationships;
+    }
+
+    public void setDeconstructedTrustRelationships(List<DeconstructedTrustRelationship> deconstructedTrustRelationships) {
+        this.deconstructedTrustRelationships = deconstructedTrustRelationships;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getGluuContainerFederation() {
+        return gluuContainerFederation;
+    }
+
+    public void setGluuContainerFederation(String gluuContainerFederation) {
+        this.gluuContainerFederation = gluuContainerFederation;
+    }
+
+    public String getGluuIsFederation() {
+        return gluuIsFederation;
+    }
+
+    public void setGluuIsFederation(String gluuIsFederation) {
+        this.gluuIsFederation = gluuIsFederation;
+    }
+
+    public List<String> getGluuProfileConfiguration() {
+        return gluuProfileConfiguration;
+    }
+
+    public void setGluuProfileConfiguration(List<String> gluuProfileConfiguration) {
+        this.gluuProfileConfiguration = gluuProfileConfiguration;
+    }
+
+    public List<String> getGluuSAMLMetaDataFilter() {
+        return gluuSAMLMetaDataFilter;
+    }
+
+    public void setGluuSAMLMetaDataFilter(List<String> gluuSAMLMetaDataFilter) {
+        this.gluuSAMLMetaDataFilter = gluuSAMLMetaDataFilter;
+    }
+
+    public String getGluuSpecificRelyingPartyConfig() {
+        return gluuSpecificRelyingPartyConfig;
+    }
+
+    public void setGluuSpecificRelyingPartyConfig(String gluuSpecificRelyingPartyConfig) {
+        this.gluuSpecificRelyingPartyConfig = gluuSpecificRelyingPartyConfig;
+    }
+
+    public List<String> getGluuTrustContact() {
+        return gluuTrustContact;
+    }
+
+    public void setGluuTrustContact(List<String> gluuTrustContact) {
+        this.gluuTrustContact = gluuTrustContact;
+    }
+
+    public List<String> getGluuTrustDeconstruction() {
+        return gluuTrustDeconstruction;
+    }
+
+    public void setGluuTrustDeconstruction(List<String> gluuTrustDeconstruction) {
+        this.gluuTrustDeconstruction = gluuTrustDeconstruction;
+    }
+
+    public String getIname() {
+        return iname;
+    }
+
+    public void setIname(String iname) {
+        this.iname = iname;
+    }
+
+    public String getInum() {
+        return inum;
+    }
+
+    public void setInum(String inum) {
+        this.inum = inum;
+    }
+
+    public String getMaxRefreshDelay() {
+        return maxRefreshDelay;
+    }
+
+    public void setMaxRefreshDelay(String maxRefreshDelay) {
+        this.maxRefreshDelay = maxRefreshDelay;
+    }
+
+    public Map<String, MetadataFilter> getMetadataFilters() {
+        return metadataFilters;
+    }
+
+    public void setMetadataFilters(Map<String, MetadataFilter> metadataFilters) {
+        this.metadataFilters = metadataFilters;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public Map<String, ProfileConfiguration> getProfileConfigurations() {
+        return profileConfigurations;
+    }
+
+    public void setProfileConfigurations(Map<String, ProfileConfiguration> profileConfigurations) {
+        this.profileConfigurations = profileConfigurations;
+    }
+
+    public List<String> getReleasedAttributes() {
+        return releasedAttributes;
+    }
+
+    public void setReleasedAttributes(List<String> releasedAttributes) {
+        this.releasedAttributes = releasedAttributes;
+    }
+
+    public List<GluuCustomAttribute> getReleasedCustomAttributes() {
+        return releasedCustomAttributes;
+    }
+
+    public void setReleasedCustomAttributes(List<GluuCustomAttribute> releasedCustomAttributes) {
+        this.releasedCustomAttributes = releasedCustomAttributes;
+    }
+
+    public String getSpLogoutURL() {
+        return spLogoutURL;
+    }
+
+    public void setSpLogoutURL(String spLogoutURL) {
+        this.spLogoutURL = spLogoutURL;
+    }
+
+    public String getSpMetaDataFN() {
+        return spMetaDataFN;
+    }
+
+    public void setSpMetaDataFN(String spMetaDataFN) {
+        this.spMetaDataFN = spMetaDataFN;
+    }
+
+    public GluuMetadataSourceType getSpMetaDataSourceType() {
+        return spMetaDataSourceType;
+    }
+
+    public void setSpMetaDataSourceType(GluuMetadataSourceType spMetaDataSourceType) {
+        this.spMetaDataSourceType = spMetaDataSourceType;
+    }
+
+    public String getSpMetaDataURL() {
+        return spMetaDataURL;
+    }
+
+    public void setSpMetaDataURL(String spMetaDataURL) {
+        this.spMetaDataURL = spMetaDataURL;
+    }
+
+    public GluuStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(GluuStatus status) {
+        this.status = status;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public List<String> getValidationLog() {
+        return validationLog;
+    }
+
+    public void setValidationLog(List<String> validationLog) {
+        this.validationLog = validationLog;
+    }
+
+    public GluuValidationStatus getValidationStatus() {
+        return validationStatus;
+    }
+
+    public void setValidationStatus(GluuValidationStatus validationStatus) {
+        this.validationStatus = validationStatus;
+    }
 }

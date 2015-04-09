@@ -6,17 +6,7 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import java.net.URISyntaxException;
-import java.security.Provider;
-import java.security.Security;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.commons.configuration.ConfigurationException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
@@ -32,15 +22,7 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
+import org.jboss.seam.annotations.*;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
@@ -53,9 +35,9 @@ import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.OpenIdConnectDiscoveryClient;
 import org.xdi.oxauth.client.OpenIdConnectDiscoveryResponse;
-import org.xdi.oxauth.client.uma.MetaDataConfigurationService;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
-import org.xdi.oxauth.model.uma.MetadataConfiguration;
+import org.xdi.oxauth.client.uma.UmaConfigurationService;
+import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.util.SecurityProviderUtility;
 import org.xdi.service.PythonService;
 import org.xdi.service.custom.script.CustomScriptManager;
@@ -63,6 +45,13 @@ import org.xdi.service.ldap.LdapConnectionService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
+
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Perform startup time initialization. Provides factory methods for non Seam
@@ -564,14 +553,14 @@ public class AppInitializer {
 	}
 
 	@Factory(value ="umaMetadataConfiguration", scope=ScopeType.APPLICATION, autoCreate = true)
-	public MetadataConfiguration initUmaMetadataConfiguration() throws OxIntializationException {
+	public UmaConfiguration initUmaMetadataConfiguration() throws OxIntializationException {
 		String umaConfigurationEndpoint = getUmaConfigurationEndpoint();
 		if (StringHelper.isEmpty(umaConfigurationEndpoint)) {
 			return null;
 		}
 
-		MetaDataConfigurationService metaDataConfigurationService = UmaClientFactory.instance().createMetaDataConfigurationService(umaConfigurationEndpoint);
-		MetadataConfiguration metadataConfiguration = metaDataConfigurationService.getMetadataConfiguration();
+        UmaConfigurationService metaDataConfigurationService = UmaClientFactory.instance().createMetaDataConfigurationService(umaConfigurationEndpoint);
+		UmaConfiguration metadataConfiguration = metaDataConfigurationService.getMetadataConfiguration();
 
         if (metadataConfiguration == null) {
 			throw new OxIntializationException("UMA meta data configuration is invalid!");
