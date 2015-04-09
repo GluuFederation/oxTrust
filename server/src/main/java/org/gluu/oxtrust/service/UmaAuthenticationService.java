@@ -6,10 +6,6 @@
 
 package org.gluu.oxtrust.service;
 
-import java.io.Serializable;
-
-import javax.ws.rs.core.Response;
-
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -18,10 +14,13 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
-import org.xdi.oxauth.model.uma.RptStatusResponse;
+import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
+
+import javax.ws.rs.core.Response;
+import java.io.Serializable;
 
 /**
  * Authentication methods for UMA protection services
@@ -59,7 +58,7 @@ public class UmaAuthenticationService implements Serializable {
 			return authenticationFailure;
 		}
 
-		RptStatusResponse rptStatusResponse = umaProtectionService.getStatusResponse(patToken, rptToken);
+        RptIntrospectionResponse rptStatusResponse = umaProtectionService.getStatusResponse(patToken, rptToken);
 		if (rptStatusResponse == null) {
 			log.error("Status response for RPT token: '{0}' is invalid", rptToken);
 			return authenticationFailure;
