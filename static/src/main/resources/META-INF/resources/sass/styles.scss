@@ -2,6 +2,10 @@
 @import "bootstrap-variables";
 @import "bootstrap";
 
+$general-layout:diagonal;
+@import "sprite/*.png";
+@include all-sprite-sprites;
+
 nav {
   ul {
     margin: 0;
@@ -16,4 +20,221 @@ nav {
     padding: 6px 12px;
     text-decoration: none;
   }
+}
+
+.body{
+    padding-left:0;
+    padding-right:0;
+    
+    #formArea {
+        border:none;
+        @media (min-width: $screen-sm) {
+            border:1px solid #C0C0C0;
+            }
+        margin:0 auto;
+        padding:0;
+        width:100%;
+        input[type="text"], textarea{
+                @media (max-width: $screen-sm) {
+                    width:100%;
+                }
+            }
+        #organizationForm{
+            
+        }
+    }
+    .formColumn{
+        overflow:hidden;
+    }
+    #register{
+        margin:0 auto;
+        width:100%;
+        @media (min-width: $screen-sm) {
+            padding-left:25px;
+        }
+        .info{
+            height:285px;
+            padding: 10px;
+        }
+        h1{
+            color: #105259;
+            font-size: 24px;
+        }
+        
+    }
+    #personRegistrationForm {
+        width: 100% !important;
+        
+    }
+    
+    #addPerson{
+        
+        #captchaHolder {
+            margin-left:0;
+            @media (min-width: $screen-sm) {
+                margin-left: 118px;
+            }
+            margin-top: 10px;
+            //float: left;
+            float:none;
+            clear:both;
+            width:100%;
+        }
+    }
+    
+    #updateButtons{
+        padding-bottom:15px;
+    }
+}
+
+//main nav
+.fluid-container.rf-tb{
+    background:#166309;
+    height:35px;
+    .main-top-nav{
+        list-style:none; 
+        margin:0; 
+        padding:0;
+    }
+    li.rf-tb-itm{
+        display:inline-block;
+        float:left;
+        //line-height:33px;
+        padding-top:5px;
+        > span, > a, .rf-ddm-lbl-dec{
+            font-size:10px;
+            @media (min-width: $screen-md) {
+                font-size:11px;
+            }
+        }
+    }
+    
+}
+.fluid-container.rf-tb, .visible-xs.fluid-container{
+    >.row{
+        margin:0;
+    }
+}
+//hide logo for mobile
+#logo{
+    @media (max-width: $screen-sm) {
+        display:none;
+    }
+}
+
+//mobile nav
+    .navbar-header{
+        height:71px;
+        background-color:#fff;
+    }
+    
+.navbar{
+    .navbar-collapse{
+        border:none;
+        background-color:rgba(1,161,97,.96);
+        
+        ul{
+            padding-top:33px;
+            padding-bottom:25px;
+            float:none;
+        }
+        li{
+            float:none;
+            display:block;
+        }
+        a{
+          font-size:24px;
+          &:link, &:visited{
+              color:#fff;
+          }  
+        }
+        
+    }
+}
+
+.navbar-default{
+    background:none;
+    border:none;
+    margin-bottom:0;
+}
+
+.navbar{
+    .navbar-toggle{
+        margin-top:22px;
+        border:none;
+        background-color:#01a161;
+        .icon-bar{
+            background-color:#fff;
+        }
+        
+        &:hover, &:focus{
+            background:none;
+            background-color:rgba(1,161,97,.3);
+            
+            .icon-bar{
+            background-color:#01a161;
+            }
+        }
+        
+    }
+}
+
+.navbar-collapse .main-nav, .navbar-collapse .main-nav .dropdown-menu{
+    background:none;
+    border:none;
+    box-shadow:none;
+    position:relative;
+        a{
+        	display:block;
+        	line-height:1em;
+        	font-size:22px;
+        	text-transform:none;
+            	&:link, &:hover, &:active, &:visited{
+                	color:#fff;
+                	text-decoration:none;
+            	}
+            }
+        
+        div.rf-ddm-itm.rf-ddm-itm-unsel, div.rf-ddm-itm.rf-ddm-itm-sel{
+            border:none;
+            padding-top:5px;
+            padding-bottom:5px;
+            span.rf-ddm-itm-ic{
+                
+                span.rf-ddm-emptyIcon{
+                    
+                }
+            }
+            span.rf-ddm-itm-lbl{
+                color:#fff;
+                line-height:1em;
+                font-size:20px;
+            }
+        }
+        div.rf-ddm-itm.rf-ddm-itm-sel{
+            background:none;
+            background-color:rgba(0,0,0,.4);
+        }
+        .dropdown-menu{
+            
+            padding-top:10px;
+            padding-bottom:10px;
+            
+            li{
+                //background:#ccc;
+                //margin-top:5px;
+                &:first-child{
+                    margin-top:0;
+                }
+            }
+        }   
+        .dropdown, .dropdown.open{
+            a{
+                &:link, &:active, &:visited{
+                background:none;
+                color:#fff;
+                }
+            }
+        }
+        
 }

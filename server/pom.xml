@@ -81,6 +81,7 @@
 					<include>**/*.properties</include>
                     <include>**/*.drl</include>
                     <include>**/*.sql</include>
+                    <include>**/*.js</include>
 				</includes>
 			</resource>
 		</resources>

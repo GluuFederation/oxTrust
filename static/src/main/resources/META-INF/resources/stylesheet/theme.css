@@ -60,6 +60,7 @@ select {
 	padding: 5px;
 	list-style: none;
 	border: 0;
+	float: left;
 	background: none;
 	padding: 0;
 	color: #000000;
