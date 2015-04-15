@@ -210,6 +210,14 @@
 					<ui:define name="label">Maximum Log Size (MB)</ui:define>
 					<h:inputText value="#{_appliance.maxLogSize}" required="true" size="10" />
 				</s:decorate>
+				
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="profileManagment">
+					<ui:define name="label">User Can Edit Own Profile</ui:define>
+					<h:selectOneMenu value="#{_appliance.profileManagment}" id="profileManagmentStateId">
+						<s:selectItems value="#{organizationService.booleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
 			</h:panelGrid>
 		</rich:collapsiblePanel>
 
