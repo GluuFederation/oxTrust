@@ -203,7 +203,7 @@ public class ApplianceService {
 
 	public AuthenticationScriptUsageType[] getScriptUsageTypes() {
 		return new AuthenticationScriptUsageType[] { AuthenticationScriptUsageType.INTERACTIVE, AuthenticationScriptUsageType.SERVICE,
-				AuthenticationScriptUsageType.BOTH, AuthenticationScriptUsageType.LOGOUT };
+				AuthenticationScriptUsageType.BOTH };
 	}
 
 	public ProgrammingLanguage[] getProgrammingLanguages() {

@@ -48,16 +48,15 @@
             <rich:menuItem label="Manage Authentication" action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuItem label="Manage Custom Scripts" action="#{menuAction.endConversation('/script/manageCustomScript.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuItem label="Manage Registration" action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
-            <rich:menuItem label="Import People" action="#{menuAction.endConversation('/person/personImport.xhtml')}" rendered="#{s:hasPermission('import', 'person')}" />
+            <rich:menuSeparator rendered="#{s:hasPermission(organizationService.organization, 'linktrack')}"/>
+            <rich:menuItem label="Configure Linktrack API" action="#{menuAction.endConversation('/apis/linktrack.xhtml')}" rendered="#{s:hasPermission(organizationService.organization, 'linktrack')}" />
+            <rich:menuSeparator/>
             <rich:menuItem label="Attributes" action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}" rendered="#{s:hasPermission('attribute', 'access')}" />
             <rich:menuItem label="Cache refresh" action="#{menuAction.endConversation('/organization/cacheRefresh.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuSeparator/>
             <rich:menuItem label="Configure log viewer" action="#{menuAction.endConversation('/logviewer/configureLogViewer.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
             <rich:menuItem label="View log file" action="#{menuAction.endConversation('/logviewer/viewLogFile.xhtml')}" rendered="#{s:hasPermission('log', 'access')}" />
-            <rich:menuSeparator rendered="#{s:hasPermission(organizationService.organization, 'linktrack')}"/>
-            <rich:menuItem label="Configure Linktrack API" action="#{menuAction.endConversation('/apis/linktrack.xhtml')}" rendered="#{s:hasPermission(organizationService.organization, 'linktrack')}" />
-            <rich:menuSeparator/>
-            <rich:menuItem label="Status" action="#{menuAction.endConversation('/status/applianceStatus.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="Server Status" action="#{menuAction.endConversation('/status/applianceStatus.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
         </rich:dropDownMenu>
 					</li>
 					<li  class="rf-tb-itm">
@@ -73,20 +72,27 @@
         </rich:dropDownMenu>
 					</li>
 					<li  class="rf-tb-itm">
-        <rich:dropDownMenu mode="server" label="OAuth2" rendered="#{s:hasPermission('oxauth', 'access') or s:hasPermission('uma', 'access')}">
+        <rich:dropDownMenu mode="server" label="OpenID Connect" rendered="#{s:hasPermission('oxauth', 'access')}">
             <rich:menuItem label="Scopes" action="#{menuAction.endConversation('/scope/scopeInventory.xhtml')}" rendered="#{s:hasPermission('oxauth', 'access')}" />
             <rich:menuItem label="Clients" action="#{menuAction.endConversation('/client/clientInventory.xhtml')}" rendered="#{s:hasPermission('oxauth', 'access')}" />
-            <rich:menuSeparator/>
-            <rich:menuItem label="UMA" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{s:hasPermission('uma', 'access')}" />
-            <rich:menuSeparator/>
-            <rich:menuItem label="oxPush Applications" action="#{menuAction.endConversation('/push/application/applicationInventory.xhtml')}" rendered="#{s:hasPermission('oxpush', 'access')}" />
-            <rich:menuItem label="oxPush Devices" action="#{menuAction.endConversation('/push/device/deviceInventory.xhtml')}" rendered="#{s:hasPermission('oxpush', 'access')}" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="UMA" rendered="#{s:hasPermission('uma', 'access')}">
+            <rich:menuItem label="Scopes" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{s:hasPermission('uma', 'access')}" />
+            <rich:menuItem label="Resources" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{s:hasPermission('uma', 'access')}" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="oxPush" rendered="#{false and s:hasPermission('oxpush', 'access')}">
+            <rich:menuItem label="oxPush Applications" action="#{menuAction.endConversation('/push/application/applicationInventory.xhtml')}" rendered="#{s:hasPermission('oxpush', 'access')}" render="false"/>
+            <rich:menuItem label="oxPush Devices" action="#{menuAction.endConversation('/push/device/deviceInventory.xhtml')}" rendered="#{s:hasPermission('oxpush', 'access')}" render="false" />
         </rich:dropDownMenu>
 					</li>
 					<li  class="rf-tb-itm">
         <rich:dropDownMenu mode="server" label="Users" rendered="#{s:hasPermission('group', 'access') or s:hasPermission('person', 'access')}">
             <rich:menuItem label="Manage Groups" action="#{menuAction.endConversation('/group/groupInventory.xhtml')}" rendered="#{s:hasPermission('group', 'access')}" />
             <rich:menuItem label="Manage People" action="#{menuAction.endConversation('/person/personInventory.xhtml')}" rendered="#{s:hasPermission('person', 'access')}" />
+            <rich:menuItem label="Add person" action="#{menuAction.endConversation('/person/addPerson.xhtml')}" rendered="#{s:hasPermission('person', 'access')}" />
+            <rich:menuItem label="Import People" action="#{menuAction.endConversation('/person/personImport.xhtml')}" rendered="#{s:hasPermission('import', 'person')}" />
         </rich:dropDownMenu>
 					</li>
 					<li  class="rf-tb-itm">

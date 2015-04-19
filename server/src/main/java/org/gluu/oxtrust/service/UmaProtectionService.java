@@ -6,15 +6,6 @@
 
 package org.gluu.oxtrust.service;
 
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.ws.rs.core.Response;
-
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
@@ -32,21 +23,26 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.oxauth.client.uma.ResourceSetPermissionRegistrationService;
-import org.xdi.oxauth.client.uma.ResourceSetRegistrationService;
+import org.xdi.oxauth.client.uma.PermissionRegistrationService;
 import org.xdi.oxauth.client.uma.RptStatusService;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
-import org.xdi.oxauth.model.uma.MetadataConfiguration;
-import org.xdi.oxauth.model.uma.ResourceSetPermissionRequest;
+import org.xdi.oxauth.model.uma.RegisterPermissionRequest;
 import org.xdi.oxauth.model.uma.ResourceSetPermissionTicket;
-import org.xdi.oxauth.model.uma.RptStatusRequest;
-import org.xdi.oxauth.model.uma.RptStatusResponse;
-import org.xdi.oxauth.model.uma.VersionedResourceSet;
+import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
+import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.PropertiesDecrypter;
+
+import javax.ws.rs.core.Response;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provide methods to simplify work with UMA Rest services
@@ -64,7 +60,7 @@ public class UmaProtectionService implements Serializable {
 	private Log log;
 
 	@In(required = false)
-	private MetadataConfiguration umaMetadataConfiguration;
+	private UmaConfiguration umaMetadataConfiguration;
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
@@ -83,8 +79,7 @@ public class UmaProtectionService implements Serializable {
 
 	private final ReentrantLock lock = new ReentrantLock();
 
-	private ResourceSetPermissionRegistrationService resourceSetPermissionRegistrationService;
-	private ResourceSetRegistrationService resourceSetRegistrationService;
+	private PermissionRegistrationService resourceSetPermissionRegistrationService;
 	private RptStatusService rptStatusService;
 	
 	@Create
@@ -95,7 +90,6 @@ public class UmaProtectionService implements Serializable {
 	        final ApacheHttpClient4Executor clientExecutor = new ApacheHttpClient4Executor(defaultHttpClient);
 
 	        this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration, clientExecutor);
-	        this.resourceSetRegistrationService = UmaClientFactory.instance().createResourceSetRegistrationService(this.umaMetadataConfiguration, clientExecutor);
 			this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration, clientExecutor);
 		}
 	}
@@ -121,9 +115,7 @@ public class UmaProtectionService implements Serializable {
 	}
 
 	public boolean isEnabledUmaAuthentication() {
-		boolean enabled = (umaMetadataConfiguration != null) && isExistPatToken();
-		
-		return enabled;
+        return (umaMetadataConfiguration != null) && isExistPatToken();
 	}
 
 	public boolean isExistPatToken() {
@@ -136,22 +128,17 @@ public class UmaProtectionService implements Serializable {
 		return false;
 	}
 
-	public boolean isRptHasPermissions(RptStatusResponse umaRptStatusResponse) {
-		if ((umaRptStatusResponse.getPermissions() == null) || umaRptStatusResponse.getPermissions().isEmpty()) {
-			return false;
-		}
+	public boolean isRptHasPermissions(RptIntrospectionResponse umaRptStatusResponse) {
+        return !((umaRptStatusResponse.getPermissions() == null) || umaRptStatusResponse.getPermissions().isEmpty());
+    }
 
-		return true;
-	}
-
-	public RptStatusResponse getStatusResponse(Token patToken, String rptToken) {
+	public RptIntrospectionResponse getStatusResponse(Token patToken, String rptToken) {
 		String authorization = "Bearer " + patToken.getAccessToken();
 
 		// Determine RPT token to status
-		RptStatusResponse rptStatusResponse = null;
+        RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			RptStatusRequest tokenStatusRequest = new RptStatusRequest(rptToken);
-			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, tokenStatusRequest);
+			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
 		}
@@ -167,11 +154,8 @@ public class UmaProtectionService implements Serializable {
 	public String registerUmaPermissions(Token patToken, String resourceSetId, String umaScope) {
 		String authorization = "Bearer " + patToken.getAccessToken();
 
-		// Load resource set. The idea is to get proper scope from resource set. But currently there is no such information in resource set
-		VersionedResourceSet resourceSet = this.resourceSetRegistrationService.getResourceSet(authorization, resourceSetId);
-
 		// Register permissions for resource set
-        ResourceSetPermissionRequest resourceSetPermissionRequest = new ResourceSetPermissionRequest();
+        RegisterPermissionRequest resourceSetPermissionRequest = new RegisterPermissionRequest();
         resourceSetPermissionRequest.setResourceSetId(resourceSetId);
 
         resourceSetPermissionRequest.setScopes(Arrays.asList(umaScope));
@@ -181,7 +165,6 @@ public class UmaProtectionService implements Serializable {
         	resourceSetPermissionTicket = this.resourceSetPermissionRegistrationService.registerResourceSetPermission(
         			authorization,
                     getHost(umaMetadataConfiguration.getIssuer()),
-                    getHost(applicationConfiguration.getIdpUrl()),
                     resourceSetPermissionRequest);
 		} catch (MalformedURLException ex) {
         	log.error("Failed to determine host by URI", ex);

@@ -6,15 +6,8 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
@@ -24,6 +17,11 @@ import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * oxAuthClient
@@ -99,4 +97,131 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 		}
 	}
 
+    public List<String> getAssociatedPersons() {
+        return associatedPersons;
+    }
+
+    public void setAssociatedPersons(List<String> associatedPersons) {
+        this.associatedPersons = associatedPersons;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getEncodedClientSecret() {
+        return encodedClientSecret;
+    }
+
+    public void setEncodedClientSecret(String encodedClientSecret) {
+        this.encodedClientSecret = encodedClientSecret;
+    }
+
+    public String getIname() {
+        return iname;
+    }
+
+    public void setIname(String iname) {
+        this.iname = iname;
+    }
+
+    public String getInum() {
+        return inum;
+    }
+
+    public void setInum(String inum) {
+        this.inum = inum;
+    }
+
+    public OxAuthApplicationType getOxAuthAppType() {
+        return oxAuthAppType;
+    }
+
+    public void setOxAuthAppType(OxAuthApplicationType oxAuthAppType) {
+        this.oxAuthAppType = oxAuthAppType;
+    }
+
+    public List<String> getOxAuthClientUserGroups() {
+        return oxAuthClientUserGroups;
+    }
+
+    public void setOxAuthClientUserGroups(List<String> oxAuthClientUserGroups) {
+        this.oxAuthClientUserGroups = oxAuthClientUserGroups;
+    }
+
+    public TokenResponseAlgs getOxAuthIdTokenSignedResponseAlg() {
+        return oxAuthIdTokenSignedResponseAlg;
+    }
+
+    public void setOxAuthIdTokenSignedResponseAlg(TokenResponseAlgs oxAuthIdTokenSignedResponseAlg) {
+        this.oxAuthIdTokenSignedResponseAlg = oxAuthIdTokenSignedResponseAlg;
+    }
+
+    public List<String> getOxAuthPostLogoutRedirectURIs() {
+        return oxAuthPostLogoutRedirectURIs;
+    }
+
+    public void setOxAuthPostLogoutRedirectURIs(List<String> oxAuthPostLogoutRedirectURIs) {
+        this.oxAuthPostLogoutRedirectURIs = oxAuthPostLogoutRedirectURIs;
+    }
+
+    public List<String> getOxAuthRedirectURIs() {
+        return oxAuthRedirectURIs;
+    }
+
+    public void setOxAuthRedirectURIs(List<String> oxAuthRedirectURIs) {
+        this.oxAuthRedirectURIs = oxAuthRedirectURIs;
+    }
+
+    public List<String> getOxAuthScopes() {
+        return oxAuthScopes;
+    }
+
+    public void setOxAuthScopes(List<String> oxAuthScopes) {
+        this.oxAuthScopes = oxAuthScopes;
+    }
+
+    public OxAuthTrustedClientBox getOxAuthTrustedClient() {
+        return oxAuthTrustedClient;
+    }
+
+    public void setOxAuthTrustedClient(OxAuthTrustedClientBox oxAuthTrustedClient) {
+        this.oxAuthTrustedClient = oxAuthTrustedClient;
+    }
+
+    public String[] getPostLogoutRedirectUris() {
+        return postLogoutRedirectUris;
+    }
+
+    public void setPostLogoutRedirectUris(String[] postLogoutRedirectUris) {
+        this.postLogoutRedirectUris = postLogoutRedirectUris;
+    }
+
+    public ResponseType[] getResponseTypes() {
+        return responseTypes;
+    }
+
+    public void setResponseTypes(ResponseType[] responseTypes) {
+        this.responseTypes = responseTypes;
+    }
+
+    public OxAuthAuthenticationMethod getTokenEndpointAuthMethod() {
+        return tokenEndpointAuthMethod;
+    }
+
+    public void setTokenEndpointAuthMethod(OxAuthAuthenticationMethod tokenEndpointAuthMethod) {
+        this.tokenEndpointAuthMethod = tokenEndpointAuthMethod;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
 }
