@@ -1,0 +1,28 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                 xmlns:a4j="http://richfaces.org/a4j"
+                 xmlns:h="http://java.sun.com/jsf/html"
+                 xmlns:f="http://java.sun.com/jsf/core"
+                 xmlns:s="http://jboss.org/schema/seam/taglib">
+      
+      	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}"></h:inputHidden>
+        <div class="prop">
+            <div id="#{id}"></div>
+            <BUTTON id="save_#{id}" type="button">#{saveBtnLabel}</BUTTON>
+        </div>
+        <h:outputScript>        
+		  var container = document.getElementById("#{id}");
+		  var editor_#{id} = new JSONEditor(container);
+		  var jsonStr = #{json};
+		  editor_#{id}.set(jsonStr);
+		  document.getElementById('save_#{id}').onclick = function () {
+		  		var hiddenField = document.getElementById("#{parentId}:#{id}_hidden");
+		  		var action = document.getElementById("#{saveBtnId}");
+		  		var editedJson = editor_#{id}.get();			  	
+		  		hiddenField.value=JSON.stringify(editedJson);
+		  		//console.log(hiddenField.value); 
+		  		action.click();
+			  	return false;
+		  };
+	    </h:outputScript>
+</ui:composition>

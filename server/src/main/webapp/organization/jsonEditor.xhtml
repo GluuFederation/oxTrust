@@ -1,0 +1,50 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="head">
+        <link type="text/css" rel="stylesheet" href="#{oxTrustConfigurationService.cssLocation}/jsoneditor.css" />
+        <script type="text/javascript" src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.js"></script>
+    </ui:define>
+
+    <ui:define name="body">
+    	<rich:collapsiblePanel switchType="client" opened="false" header="OxTrust Configuration" id="oxTrustConfigs" rendered="true">
+			<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+			<h:form id="oxTrustConfigForm" prependId="false">
+		        <s:decorate template="/WEB-INF/incl/layout/jsoneditor.xhtml" id="oxTrust" prependId="false">
+					<ui:param name="id" value="oxTrustConfig" />
+					<ui:param name="parentId" value="oxTrust" />
+	                <ui:param name="json" value="#{jsonConfigAction.oxTrustConfigJson}" />
+	                <ui:param name="saveBtnId" value="saveOxTrustConfigBtn" />
+	                <ui:param name="saveBtnLabel" value="Save Configuration" />
+				</s:decorate>
+				<h:commandButton value="Save OxTrust Configuration" action="#{jsonConfigAction.saveOxTrustConfigJson}" prependId="false" id="saveOxTrustConfigBtn" style="display:none"/>
+			</h:form>
+			</h:panelGrid>
+			
+		</rich:collapsiblePanel>
+		
+		<rich:collapsiblePanel switchType="client" opened="false" header="OxAuth Configuration" id="oxAuthConfigs" rendered="true">
+			<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
+			<h:form id="oxAuthConfigForm" prependId="false">
+		        <s:decorate template="/WEB-INF/incl/layout/jsoneditor.xhtml" id="oxAuth">
+					<ui:param name="id" value="oxAuthConfig" />
+					<ui:param name="parentId" value="oxAuth" />
+	                <ui:param name="json" value="#{jsonConfigAction.oxAuthDynamicConfigJson}" />
+	                <ui:param name="saveBtnId" value="saveOxAuthConfigBtn" />
+	                <ui:param name="saveBtnLabel" value="Save Configuration" />
+				</s:decorate>
+				<h:commandButton value="Save OxAuth Configuration" action="#{jsonConfigAction.saveOxAuthDynamicConfigJson}" prependId="false" id="saveOxAuthConfigBtn" style="display:none"/>
+			</h:form>
+			</h:panelGrid>
+		</rich:collapsiblePanel>
+    </ui:define>
+
+</ui:composition>

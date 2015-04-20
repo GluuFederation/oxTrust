@@ -21,6 +21,7 @@ import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.ApplicationConfigurationFile;
+import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
@@ -54,6 +55,9 @@ public class OxTrustConfiguration {
 	private FileConfiguration ldapCentralConfiguration;
 	private CryptoConfigurationFile cryptoConfiguration;
 	private ApplicationConfiguration applicationConfiguration;
+	
+	private LdapOxTrustConfiguration ldapOxTrustConfig;
+	private LdapOxAuthConfiguration ldapOxAuthConfig;
 
 	@Create
 	public void create() {
@@ -99,9 +103,11 @@ public class OxTrustConfiguration {
 		LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
 
 		String configurationDn = getDnForConfiguration();
-		LdapOxTrustConfiguration conf = load(ldapEntryManager, configurationDn);
-		if (conf != null) {
-			initConfigurationFromLdap(conf);
+		ldapOxTrustConfig = load(ldapEntryManager, configurationDn);
+		ldapOxAuthConfig = loadOxAuthConfig(ldapEntryManager, configurationDn);
+		log.trace("ldapOxAuthConfig from LDAP...:"+ldapOxAuthConfig.getOxAuthConfigDynamic());
+		if (ldapOxTrustConfig != null) {
+			initConfigurationFromLdap(ldapOxTrustConfig);
 			return true;
 		}
 
@@ -119,10 +125,27 @@ public class OxTrustConfiguration {
 		return false;
 	}
 
+	public LdapOxTrustConfiguration getLdapOxTrustConfig() {
+		return ldapOxTrustConfig;
+	}
+
 	public LdapOxTrustConfiguration load(LdapEntryManager ldapEntryManager, String configurationDn) {
 		try {
 			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
 
+			return conf;
+		} catch (LdapMappingException ex) {
+			log.error("Failed to load configuration from LDAP");
+		}
+
+		return null;
+	}
+	
+	public LdapOxAuthConfiguration loadOxAuthConfig(LdapEntryManager ldapEntryManager, String configurationDn) {
+		try {
+			configurationDn = configurationDn.replace("ou=oxtrust", "ou=oxauth");
+			LdapOxAuthConfiguration conf = ldapEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
+//			ldapEntryManager.findEntries(LdapOxAuthConfiguration.class, 1);
 			return conf;
 		} catch (LdapMappingException ex) {
 			log.error("Failed to load configuration from LDAP");
@@ -146,7 +169,9 @@ public class OxTrustConfiguration {
 
 	private void initConfigurationFromLdap(LdapOxTrustConfiguration conf) {
 		try {
+			System.out.println("oxTrustConfig:"+conf.getApplication());
 			this.applicationConfiguration = jsonService.jsonToObject(conf.getApplication(), ApplicationConfiguration.class);
+			
 		} catch (Exception ex) {
 			log.error("Failed to initialize applicationConfiguration from JSON: {0}", ex, conf.getApplication());
 			throw new ConfigurationException("Failed to initialize applicationConfiguration from JSON", ex);
@@ -218,4 +243,11 @@ public class OxTrustConfiguration {
 		return (OxTrustConfiguration) Component.getInstance(OxTrustConfiguration.class);
 	}
 
+	public LdapOxAuthConfiguration getLdapOxAuthConfig() {
+		return ldapOxAuthConfig;
+	}
+
+	public void setLdapOxAuthConfig(LdapOxAuthConfiguration ldapOxAuthConfig) {
+		this.ldapOxAuthConfig = ldapOxAuthConfig;
+	}
 }
