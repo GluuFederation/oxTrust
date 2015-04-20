@@ -140,7 +140,7 @@
 										<a4j:outputPanel layout="block" styleClass="rf-ind-drag applianceSheet">
 											<rich:dragSource type="appliance" dragValue="#{appliance}"
 												rendered="#{not (appliance.inum eq updateOrganizationAction.appliance.inum)}" />
-											<h:outputText value="Display Name: #{appliance.displayName}"></h:outputText>
+											<h:outputText value="Display Name edit: #{appliance.displayName}"></h:outputText>
 											<br />
 											<h:outputText value="Iname: #{appliance.iname}"></h:outputText>
 											<br />
@@ -323,7 +323,7 @@
 				</s:decorate>
 
 				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-					<ui:define name="label">Display name</ui:define>
+					<ui:define name="label">Display name test</ui:define>
 					<h:inputText value="#{_organization.displayName}" size="100" />
 				</s:decorate>
 
