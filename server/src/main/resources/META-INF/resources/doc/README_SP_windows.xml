@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.0//EN"  "http://www.oasis-open.org/docbook/xml/4.0/docbookx.dtd">
+
+<!-- New document created with EditiX at Tue Jan 18 14:19:51 CST 2011 -->
+
+<article>
+		<articleinfo>
+				<title>Shibboleth SP Installation on Windows</title>
+				<subtitle>
+						<mediaobject>
+								<imageobject>
+										<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/gluu_logo_small.png" width="1.9in"/>
+								</imageobject>
+						</mediaobject>
+				</subtitle>
+				<subtitle>https://www.gluu.org/</subtitle>
+				<date>January 02,2012</date>
+		</articleinfo>
+		<section>
+				<title>Install Shibboleth-SP</title>
+				<orderedlist>
+						<listitem>
+								<para>Download MSI of Shibboleth-SP from:
+						</para>
+								<para>http://www.shibboleth.net/downloads/service-provider/latest/
+						</para>
+						</listitem>
+						<listitem>
+								<para>Start installation by double clicking
+						</para>
+						</listitem>
+						<listitem>
+								<para>License agreement
+						</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/Shib_install_start.png" width="4.5in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+						<listitem>
+								<para>Destination folder (by default it is: C:\opt\shibboleth-sp\)You can select any directory, but this is best to follow the tree \opt\shibboleth-sp\
+						</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/Shib_install_location.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+						<listitem>
+								<para>Select Shibboleth Daemon port: default is 1600, you can keep it for local testing
+						</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/Shibd_port.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+						<listitem>
+								<para>Now: there are two options here. And you have to follow anyone (not both) for your existing infrastructer.
+								</para>
+								<para>Option 1: If you are installing Shibboleth for Mirosoft IIS Web server
+								</para>
+								<para>Option 2: If you are installing Shibboleth for Apache Web server
+								</para>
+								<para>For Microsoft IIS Web Server, you have to:Check "Install ISAPI filter and configure IIS", remember to put the file Extension ".sso". this is necessary
+								</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/5.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+								<para>UAC of Windows 7 may block this program, so accept it
+								</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/6.png" width="4.7in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+								<para>For Apahce Web Server, you have to:UNCHECK "Install ISAPI filter and configure IIS".
+							    
+							    </para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/ISAPI_filter.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+				</orderedlist>
+		</section>
+		<section>
+				<title>Apache2 Installation</title>
+				<orderedlist>
+						<listitem>
+								<para>Download Apache HTTP server MSI Installer with OpenSSL:
+								</para>
+								<para>http://httpd.apache.org/download.cgi#apache22
+								</para>
+						</listitem>
+						<listitem>
+								<para>Start installation by double clicking
+								</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/Apache_install_1.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+						<listitem>
+								<para>Select Destination. You can keep the default destination for your local testing. But, be sure that there is no other "Apache Software Foundation" directory in your current "C:\Program Files\" location
+								</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/Apache_install_des.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+						<listitem>
+								<para>Insert Server Informations. For local testing, you can use "localdomain/localhost"
+					    		</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/Server_information.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+						<listitem>
+								<para>Test if Apache is installed or not. Open your web browser and use "localhost". If you see something like below image; you are done!
+					    		</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/Apache_testing.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+				</orderedlist>
+				<section>
+						<title>Shibboleth and Apache Confirguration
+						</title>
+						<orderedlist>
+								<listitem>
+										<para>
+						Change the permission of Apache Installation Directory, provice "write" access
+						</para>
+								</listitem>
+								<listitem>
+										<para>
+						httpd.conf configuration
+						</para>
+										<orderedlist>
+												<listitem>
+														<para>
+						Change: "ServerName localhost:80" ( for your local testing )
+						</para>
+												</listitem>
+												<listitem>
+														<para>
+						Copy apache22.conf from Shibboleth directory to ~/apache/conf/extra/
+						</para>
+												</listitem>
+										</orderedlist>
+								</listitem>
+								<listitem>
+										<para>
+						Shibboleth2.xml configuration
+						</para>
+										<orderedlist>
+												<listitem>
+														<para>
+						Change: Host name="localhost" ( for local testging )
+						</para>
+												</listitem>
+												<listitem>
+														<para>
+						Change: entityID="https://localhost/shibboleth" ( for local testing )
+						</para>
+												</listitem>
+												<listitem>
+														<para>
+						Change: ApplicationOverride id="admin" entityID="https://localhost/shibboleth/"
+						</para>
+												</listitem>
+										</orderedlist>
+								</listitem>
+								<listitem>
+										<para>
+						Reboot your Windows box
+						</para>
+								</listitem>
+						</orderedlist>
+				</section>
+				<para>
+		Test SP installation with Windows and Apache
+		
+		</para>
+				<para>
+		Open Web browser and insert the address: localhost/Shibboleth.sso/Status
+		</para>
+				<para>
+		If you can see some XML page like below, you are done with you SP installation in Windows through Apache2
+		</para>
+				<figure>
+						<mediaobject>
+								<imageobject>
+										<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/Shib_Apache_Test.png" width="5.0in"/>
+								</imageobject>
+						</mediaobject>
+				</figure>
+		</section>
+		<section>
+				<title>IIS7 Installation</title>
+				<orderedlist>
+						<listitem>
+								<para>Start-Control Panel-Programs-"Turn Windows features on or off"
+		</para>
+								<para>Select (i) IIS (ii) Web Management Tools (iii) II6 Management Compatibility (iv) IIS Management Console(v) IIS Management Scripts and Tools (vi) IIS Management Service
+        </para>
+								<para>Select (i) World Wide Web Services (ii) CGI (iii) ISAPI Filters (iv) ISAPI Extensions. Press OK.
+        </para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/1.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+						<listitem>
+								<para>Test IIS7 if it is installed in your system with: "127.0.0.1" in web browser.
+						</para>
+								<figure>
+										<mediaobject>
+												<imageobject>
+														<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/2.png" width="5.0in"/>
+												</imageobject>
+										</mediaobject>
+								</figure>
+						</listitem>
+						<listitem>Reboot your system
+								</listitem>
+				</orderedlist>
+				<section>
+						<title>ISAPI Filter Configuration</title>
+						<orderedlist>
+								<listitem>
+										<para>Open IIS Manager ( Start -- Administrative Tools -- Internet Information Service (IIS) Manager)
+										</para>
+								</listitem>
+								<listitem>
+										<para>Double click on "ISAPI and CGI Restrictions"
+										</para>
+										<figure>
+												<mediaobject>
+														<imageobject>
+																<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/7.png" width="4.5in"/>
+														</imageobject>
+												</mediaobject>
+										</figure>
+								</listitem>
+								<listitem>
+										<orderedlist>
+												<para>Add a new Filter
+										</para>
+												<listitem>
+														<orderedlist>
+																<listitem>
+																		<para>Click Actions -- Add ( upper right corner)
+										</para>
+																</listitem>
+																<listitem>
+																		<para>Select \opt\shibboleth-sp\lib\shibboleth\isapi_shib.dll
+										</para>
+																</listitem>
+																<listitem>
+																		<para>Description: "Shibboleth"
+										</para>
+																</listitem>
+																<listitem>
+																		<para>Click "Allow" (from right hand side)
+										</para>
+																		<figure>
+																				<mediaobject>
+																						<imageobject>
+																								<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/8.png" width="4.5in"/>
+																						</imageobject>
+																				</mediaobject>
+																		</figure>
+																</listitem>
+														</orderedlist>
+												</listitem>
+										</orderedlist>
+										<para>b. Back to IIS Manager -- ISAPI Filters
+										</para>
+										<figure>
+												<mediaobject>
+														<imageobject>
+																<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/9.png" width="5.0in"/>
+														</imageobject>
+												</mediaobject>
+										</figure>
+										<para>Click "Add" (upper right corner)
+										</para>
+										<para>Filter name: Shibboleth
+										</para>
+										<para>Executable: \opt\shibboleth-sp\lib\shibboleth\isapi_shib.dll
+										</para>
+										<figure>
+												<mediaobject>
+														<imageobject>
+																<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/10.png" width="6.0in"/>
+														</imageobject>
+												</mediaobject>
+										</figure>
+										<para>4. SSO file extension mapping
+										</para>
+										<orderedlist>
+												<listitem>
+														<para>2.4.1 Click on "Handler Mapping" from main page
+										</para>
+														<figure>
+																<mediaobject>
+																		<imageobject>
+																				<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/11.png" width="6.0in"/>
+																		</imageobject>
+																</mediaobject>
+														</figure>
+												</listitem>
+												<listitem>
+														<para> Click "Add Script Map" from Action
+										</para>
+														<figure>
+																<mediaobject>
+																		<imageobject>
+																				<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/12.png" width="6.0in"/>
+																		</imageobject>
+																</mediaobject>
+														</figure>
+												</listitem>
+												<listitem>
+														<para> Request Path: "*.sso"
+										</para>
+												</listitem>
+												<listitem>
+														<para> Executable should be pointed to "isapi_shib.dll"
+										</para>
+														<figure>
+																<mediaobject>
+																		<imageobject>
+																				<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/13.png" width="6.0in"/>
+																		</imageobject>
+																</mediaobject>
+														</figure>
+												</listitem>
+										</orderedlist>
+										<para>5. Restart IIS
+										</para>
+										<para>6. Check Status
+							</para>
+										<para>Check your status by "http://127.0.0.1/Shibboleth.sso/Status" in Web browser. If you see an XML document, then you are done with your Shibboleth SP Installation  in Windows IIS7
+							</para>
+										<figure>
+												<mediaobject>
+														<imageobject>
+																<imagedata align="center" fileref="/Users/mohibuzzamanzico/Desktop/Finally/sp_windows_images/14.png" width="6.0in"/>
+														</imageobject>
+												</mediaobject>
+										</figure>
+										<para>Further step: if you want to establish SSO with your site, you need an Identity Provider and their metadata and certificates.
+										</para>
+								</listitem>
+						</orderedlist>
+				</section>
+		</section>
+</article>
