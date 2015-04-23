@@ -43,7 +43,7 @@ public class OxTrustConfiguration {
 	@Logger
 	private Log log;
 
-	@In(create=true, value="jsonService")
+	@In(create=true)
 	private JsonService jsonService;
 
 	public static final String CONFIGURATION_FILE_LOCAL_LDAP_PROPERTIES_FILE = "oxTrustLdap.properties";
