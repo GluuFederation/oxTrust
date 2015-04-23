@@ -57,7 +57,8 @@ public class OxTrustConfiguration {
 	private ApplicationConfiguration applicationConfiguration;
 	
 	private LdapOxTrustConfiguration ldapOxTrustConfig;
-	private LdapOxAuthConfiguration ldapOxAuthConfig;
+
+	private String configurationDn;
 
 	@Create
 	public void create() {
@@ -102,10 +103,10 @@ public class OxTrustConfiguration {
 
 		LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
 
-		String configurationDn = getDnForConfiguration();
+		configurationDn = getDnForConfiguration();
 		ldapOxTrustConfig = load(ldapEntryManager, configurationDn);
-		ldapOxAuthConfig = loadOxAuthConfig(ldapEntryManager, configurationDn);
-		log.trace("ldapOxAuthConfig from LDAP...:"+ldapOxAuthConfig.getOxAuthConfigDynamic());
+//		ldapOxAuthConfig = loadOxAuthConfig(ldapEntryManager, configurationDn);
+//		log.trace("ldapOxAuthConfig from LDAP...:"+ldapOxAuthConfig.getOxAuthConfigDynamic());
 		if (ldapOxTrustConfig != null) {
 			initConfigurationFromLdap(ldapOxTrustConfig);
 			return true;
@@ -243,11 +244,12 @@ public class OxTrustConfiguration {
 		return (OxTrustConfiguration) Component.getInstance(OxTrustConfiguration.class);
 	}
 
-	public LdapOxAuthConfiguration getLdapOxAuthConfig() {
-		return ldapOxAuthConfig;
+	
+	public String getConfigurationDn() {
+		return configurationDn;
 	}
 
-	public void setLdapOxAuthConfig(LdapOxAuthConfiguration ldapOxAuthConfig) {
-		this.ldapOxAuthConfig = ldapOxAuthConfig;
+	public void setConfigurationDn(String configurationDn) {
+		this.configurationDn = configurationDn;
 	}
 }
