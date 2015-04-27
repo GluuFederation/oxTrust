@@ -79,8 +79,13 @@
 				<includes>
 					<include>**/*.xml</include>
 					<include>**/*.properties</include>
-                    <include>**/*.drl</include>
-                    <include>**/*.sql</include>
+					<include>**/*.drl</include>
+					<include>**/*.sql</include>
+					<include>**/*.pdf</include>
+					<include>**/*.js</include>
+					<include>**/*.png</include>
+					<include>**/*.gif</include>
+					<include>**/*.ico</include>
 				</includes>
 			</resource>
 		</resources>
