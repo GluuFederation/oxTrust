@@ -10,11 +10,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.gluu.oxtrust.model.OxAuthApplicationType;
+import org.gluu.oxtrust.model.OxAuthAuthenticationMethod;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthCustomClient;
 import org.gluu.oxtrust.model.OxAuthTrustedClientBox;
 import org.gluu.oxtrust.model.TokenResponseAlgs;
-import org.gluu.oxtrust.model.OxAuthAuthenticationMethod;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
@@ -26,7 +26,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.service.ldap.LdapEntryService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -55,9 +54,6 @@ public class ClientService implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
-	
-	@In
-	private LdapEntryService ldapEntryService;
 
 	public boolean contains(String clientDn) {
 		return ldapEntryManager.contains(OxAuthClient.class, clientDn);
