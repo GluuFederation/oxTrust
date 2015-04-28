@@ -26,6 +26,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.service.ldap.LdapEntryService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -54,6 +55,9 @@ public class ClientService implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+	
+	@In
+	private LdapEntryService ldapEntryService;
 
 	public boolean contains(String clientDn) {
 		return ldapEntryManager.contains(OxAuthClient.class, clientDn);
@@ -77,8 +81,7 @@ public class ClientService implements Serializable {
 	 *            Client
 	 */
 	public void removeClient(OxAuthClient client) {
-		ldapEntryManager.remove(client);
-
+		ldapEntryService.removeRecursively(client.getDn());
 	}
 
 	/**
