@@ -165,7 +165,7 @@ public class ImageRepository {
 		org.jboss.seam.ui.graphicImage.Image graphicsImage = new org.jboss.seam.ui.graphicImage.Image();
 
 		graphicsImage.setInput(image.getData());
-		graphicsImage.setContentType(Type.IMAGE_JPEG);
+		graphicsImage.setContentType(Type.IMAGE_PNG);
 
 		if (graphicsImage.getBufferedImage() == null) {
 			throw new IOException("The image data is empty");
