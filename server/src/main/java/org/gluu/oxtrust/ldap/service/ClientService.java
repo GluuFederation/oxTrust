@@ -81,7 +81,7 @@ public class ClientService implements Serializable {
 	 *            Client
 	 */
 	public void removeClient(OxAuthClient client) {
-		ldapEntryService.removeRecursively(client.getDn());
+        ldapEntryManager.removeWithSubtree(client.getDn());
 	}
 
 	/**
