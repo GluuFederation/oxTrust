@@ -293,5 +293,8 @@ public @Data class GluuCustomPerson extends User
 
         return result;
     }
-
+    
+    public GluuCustomPerson clone() throws CloneNotSupportedException{
+    	return (GluuCustomPerson) super.clone();
+    }
 }

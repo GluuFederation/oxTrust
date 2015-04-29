@@ -22,7 +22,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "gluuPerson" })
-public class User extends CustomEntry implements Serializable {
+public class User extends CustomEntry implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = -7779582184398161112L;
 
