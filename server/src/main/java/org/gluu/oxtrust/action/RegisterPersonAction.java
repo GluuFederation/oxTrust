@@ -55,7 +55,7 @@ import org.xdi.model.GluuUserRole;
 @Scope(ScopeType.CONVERSATION)
 @Name("registerPersonAction")
 @Data
-public class RegisterPersonAction implements Serializable {
+public class RegisterPersonAction implements Serializable{
 
     /**
      *
@@ -127,7 +127,38 @@ public class RegisterPersonAction implements Serializable {
      * @throws Exception
      */
     public String initPerson(){
-        if (this.person != null) {
+    	String result = sanityCheck();
+    	if(result.equals(OxTrustConstants.RESULT_SUCCESS)){
+    		this.person = (inum == null) 
+    							? new GluuCustomPerson()
+    							: personService.getPersonByInum(inum);
+    		
+    		boolean isPersonActiveOrDisabled = 
+    				GluuStatus.ACTIVE.equals(person.getStatus())
+    				|| GluuStatus.INACTIVE.equals(person.getStatus());
+    		
+    		if(isPersonActiveOrDisabled){
+    			result = OxTrustConstants.RESULT_NO_PERMISSIONS;
+    		}else{
+	            initAttributes();
+	            boolean initScriptResult = 
+	            		externalUserRegistrationService
+	            			.executeExternalInitRegistrationMethods(
+	            					this.person, requestParameters);
+	            result = initScriptResult 
+	            			? OxTrustConstants.RESULT_SUCCESS 
+	            			: OxTrustConstants.RESULT_FAILURE;
+    		}
+    	}
+    	return result;
+    }
+
+    /**
+ 	 * Checks if session is correct for person registration. 
+     * @return OxTrustConstants constant to be returned by action
+     */
+    private String sanityCheck() {
+    	if (this.person != null) {
             return OxTrustConstants.RESULT_SUCCESS;
         }
 
@@ -135,7 +166,7 @@ public class RegisterPersonAction implements Serializable {
             externalContext.getRequestParameterValuesMap());
         GluuOrganization organization = organizationService.getOrganization();
         RegistrationConfiguration config
-            = organization.getOxRegistrationConfiguration();
+        	= organization.getOxRegistrationConfiguration();
         boolean registrationCustomized = config != null;
         boolean inviteCodesActive
             = registrationCustomized
@@ -146,66 +177,58 @@ public class RegisterPersonAction implements Serializable {
                 && config.isUninvitedRegistrationAllowed();
         
         this.captchaDisabled
-        = registrationCustomized
-            && config.isCaptchaDisabled();
+        	= registrationCustomized
+            	&& config.isCaptchaDisabled();
 
-        if((! inviteCodesActive) && (invitationGuid != null)){
+        boolean unexpectedInvitationGuid = 	(! inviteCodesActive) 
+        									&& (invitationGuid != null);
+        if(unexpectedInvitationGuid){
             return OxTrustConstants.RESULT_DISABLED;
         }
-
-        if(inviteCodesActive
-            && (! inviteCodeOptional)
-            && invitationGuid == null){
+        boolean invitationCodeNotFound	 = 	inviteCodesActive
+        									&& (! inviteCodeOptional)
+        									&& invitationGuid == null;
+        if(invitationCodeNotFound){
             return OxTrustConstants.RESULT_NO_PERMISSIONS;
         }
 
-        if(inviteCodesActive && (invitationGuid != null)){
+        boolean invitationCodePresent 	= 	inviteCodesActive 
+        									&& (invitationGuid != null);
+        if(invitationCodePresent){
             OxLink invitationLink
                 = registrationLinkService.getLinkByGuid(invitationGuid);
             if(invitationLink == null){
                 return OxTrustConstants.RESULT_FAILURE;
             }
         }
+		return OxTrustConstants.RESULT_SUCCESS;
 
+	}
 
-        if(inum == null){
-            this.person = new GluuCustomPerson();
-        }else{
-            this.person = personService.getPersonByInum(inum);
-            if(GluuStatus.ACTIVE.equals(person.getStatus())
-                || GluuStatus.INACTIVE.equals(person.getStatus())){
-                return OxTrustConstants.RESULT_NO_PERMISSIONS;
-            }
-        }
-        initAttributes();
-//        boolean result
-//            = registrationInterceptionService.runInitRegistrationScripts(
-//                                            this.person, requestParameters);
-        
-        boolean result = externalUserRegistrationService.executeExternalInitRegistrationMethods(this.person, requestParameters);
-        if(result){
-            return OxTrustConstants.RESULT_SUCCESS;
-        }else{
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-    }
-
-    public String register() {
+	public String register() throws CloneNotSupportedException {
         GluuOrganization organization = organizationService.getOrganization();
         RegistrationConfiguration registrationConfig
             = organization.getOxRegistrationConfiguration();
         boolean registrationCustomized = registrationConfig != null;
         this.captchaDisabled
-            = registrationCustomized
-                && registrationConfig.isCaptchaDisabled();
+            = registrationCustomized 
+            	&& registrationConfig.isCaptchaDisabled();
         ReCaptchaResponse reCaptchaResponse = null;
+        
         if(! captchaDisabled){
             reCaptchaResponse
                 = RecaptchaUtils.getRecaptchaResponseFromServletContext();
         }
-        if (captchaDisabled || reCaptchaResponse != null && reCaptchaResponse.isValid() && password.equals(repeatPassword)) {
+        boolean registrationFormValid 
+        	= captchaDisabled
+        		|| reCaptchaResponse != null 
+        		&& reCaptchaResponse.isValid() 
+        		&& password.equals(repeatPassword);
+        
+        if (registrationFormValid) {
+        	GluuCustomPerson archivedPerson = (GluuCustomPerson) person.clone();
+        	
             String customObjectClass = attributeService.getCustomOrigin();
-
 
             this.person.setCustomObjectClasses(
                 new String[] { customObjectClass });
@@ -231,8 +254,6 @@ public class RegisterPersonAction implements Serializable {
 
             boolean invitationCodeAllowed = registrationCustomized
                     && registrationConfig.isInvitationCodesManagementEnabled();
-//          boolean invitationCodeOptional = registrationCustomized
-//                    && registrationConfig.isUninvitedRegistrationAllowed();
             boolean  invitationCodePresent = invitationGuid != null;
             OxLink invitationLink
                 = registrationLinkService.getLinkByGuid(invitationGuid);
@@ -278,8 +299,11 @@ public class RegisterPersonAction implements Serializable {
 //                boolean result = registrationInterceptionService
 //                        .runPreRegistrationScripts(this.person,
 //                                                   requestParameters);
-                boolean result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
+                boolean result = externalUserRegistrationService
+                					.executeExternalPreRegistrationMethods(
+                							this.person, requestParameters);
                 if(! result){
+                	this.person = archivedPerson;
                     return OxTrustConstants.RESULT_FAILURE;
                 }
                 if(this.inum != null){
@@ -290,12 +314,15 @@ public class RegisterPersonAction implements Serializable {
 //                result = registrationInterceptionService
 //                    .runPostRegistrationScripts(this.person,
 //                                                requestParameters);
-                result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person, requestParameters);
+                result = externalUserRegistrationService
+                			.executeExternalPostRegistrationMethods(
+                					this.person, requestParameters);
 
                 Events.instance().raiseEvent(
                             OxTrustConstants.EVENT_PERSON_SAVED,
                             this.person, null, null, null, null, true);
                 if(! result){
+                	this.person = archivedPerson;
                     return OxTrustConstants.RESULT_FAILURE;
                 }
             } catch (Exception ex) {
@@ -303,6 +330,7 @@ public class RegisterPersonAction implements Serializable {
                           this.person.getInum());
                 facesMessages.add(StatusMessage.Severity.ERROR,
                                   "Failed to add new person");
+                this.person = archivedPerson;
                 return OxTrustConstants.RESULT_FAILURE;
             }
 
@@ -321,47 +349,60 @@ public class RegisterPersonAction implements Serializable {
     }
 
     private void initAttributes(){
-        List<GluuAttribute> attributes
-            = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
-        List<String> origins
-            = attributeService.getAllAttributeOrigins(attributes);
-        GluuOrganization organization = organizationService.getOrganization();
+        List<GluuAttribute> allPersonAttributes 
+        	= attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+        
+        List<String> allAttributOrigins 
+        	= attributeService.getAllAttributeOrigins(allPersonAttributes);
+        
+        GluuOrganization organization 
+        	= organizationService.getOrganization();
 
         List<GluuCustomAttribute> customAttributes
-            = this.person.getCustomAttributes();
-        boolean newPerson = (customAttributes == null)
-                                || customAttributes.isEmpty();
-        if (newPerson) {
+           	= this.person.getCustomAttributes();
+ 
+        boolean isNewPerson 
+        	= 	(customAttributes == null) || customAttributes.isEmpty();
+        
+        if (isNewPerson) {
             customAttributes = new ArrayList<GluuCustomAttribute>();
             this.person.setCustomAttributes(customAttributes);
         }
-
-        customAttributeAction
-            .initCustomAttributes(attributes, customAttributes, origins,
-                applicationConfiguration.getPersonObjectClassTypes(),
-                applicationConfiguration.getPersonObjectClassDisplayNames());
+        
+        String[] personOCs 
+        	= applicationConfiguration.getPersonObjectClassTypes();
+        String[] personOCDisplayNames 
+        	= applicationConfiguration.getPersonObjectClassDisplayNames();
+        customAttributeAction.initCustomAttributes(
+        		allPersonAttributes,
+        		customAttributes, 
+        		allAttributOrigins, 
+        		personOCs, 
+        		personOCDisplayNames);
 
         List<GluuCustomAttribute> mandatoryAttributes
-                                        = new ArrayList<GluuCustomAttribute>();
+        	= new ArrayList<GluuCustomAttribute>();
 
         RegistrationConfiguration config
-                            = organization.getOxRegistrationConfiguration();
+        	= organization.getOxRegistrationConfiguration();
         boolean registrationCustomized = config != null;
         boolean registrationAttributesCustomized
-            = registrationCustomized
+            = 	registrationCustomized
                 && config.getAdditionalAttributes() !=null
                 && ! config.getAdditionalAttributes().isEmpty();
+        
         if(registrationAttributesCustomized){
             for(String attributeInum: config.getAdditionalAttributes()){
                 GluuAttribute attribute
                     = attributeService.getAttributeByInum(attributeInum);
-                mandatoryAttributes.add(
-                        new GluuCustomAttribute(attribute.getName(),
-                                                "", false, false));
+                GluuCustomAttribute customAttribute 
+                	= new GluuCustomAttribute(attribute.getName(),
+                								"", false, false);
+                mandatoryAttributes.add(customAttribute);
             }
         }
         for (GluuCustomAttribute attribute:
-                                    personService.getMandatoryAtributes()){
+        		personService.getMandatoryAtributes()){
             if(! mandatoryAttributes.contains(attribute)){
                 mandatoryAttributes.add(attribute);
             }
@@ -369,7 +410,7 @@ public class RegisterPersonAction implements Serializable {
         mandatoryAttributes.addAll(personService.getMandatoryAtributes());
 
 
-        if (newPerson) {
+        if (isNewPerson) {
             customAttributeAction.addCustomAttributes(mandatoryAttributes);
         }
 

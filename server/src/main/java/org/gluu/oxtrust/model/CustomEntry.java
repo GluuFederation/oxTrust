@@ -19,7 +19,7 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 07.05.2011
  */
-public abstract class CustomEntry extends Entry implements Serializable {
+public abstract class CustomEntry extends Entry implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 5079582184398161111L;
 
