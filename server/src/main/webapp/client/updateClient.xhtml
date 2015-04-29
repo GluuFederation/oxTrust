@@ -37,12 +37,6 @@
                 acceptMethod="#{updateClientAction.acceptSelectLogoutUri}" cancelMethod="#{updateClientAction.cancelSelectLogoutUri}"
                 maxLength="256" inputWidth="80" dialogWidth="600" render="selectedLogoutURIsId" queue="clientQueue"/>
 
-            <ox:selectGroupDialog id="group" searchPattern="#{updateClientAction.searchAvailableGroupPattern}"
-                searchMethod="#{updateClientAction.searchAvailableGroups}" searchResult="#{updateClientAction.availableGroups}"
-                updateSelectionMethod="#{updateClientAction.selectAddedGroups}"
-                acceptMethod="#{updateClientAction.acceptSelectGroups}" cancelMethod="#{updateClientAction.cancelSelectGroups}"
-                render="selectedGroupsId" queue="clientQueue"/>
-
             <ox:selectScopeDialog id="scope" searchPattern="#{updateClientAction.searchAvailableScopePattern}"
                 searchMethod="#{updateClientAction.searchAvailableScopes}" searchResult="#{updateClientAction.availableScopes}"
                 updateSelectionMethod="#{updateClientAction.selectAddedScopes}"

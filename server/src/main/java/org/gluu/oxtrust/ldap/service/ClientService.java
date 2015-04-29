@@ -10,11 +10,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.gluu.oxtrust.model.OxAuthApplicationType;
+import org.gluu.oxtrust.model.OxAuthAuthenticationMethod;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthCustomClient;
 import org.gluu.oxtrust.model.OxAuthTrustedClientBox;
 import org.gluu.oxtrust.model.TokenResponseAlgs;
-import org.gluu.oxtrust.model.OxAuthAuthenticationMethod;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
@@ -77,8 +77,7 @@ public class ClientService implements Serializable {
 	 *            Client
 	 */
 	public void removeClient(OxAuthClient client) {
-		ldapEntryManager.remove(client);
-
+        ldapEntryManager.removeWithSubtree(client.getDn());
 	}
 
 	/**

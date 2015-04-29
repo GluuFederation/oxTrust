@@ -16,7 +16,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.ClientService;
-import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
@@ -62,9 +61,6 @@ public class UpdateClientAction implements Serializable {
 	private ScopeService scopeService;
 
 	@In
-	private GroupService groupService;
-
-	@In
 	private LookupService lookupService;
 
 	@In
@@ -80,7 +76,6 @@ public class UpdateClientAction implements Serializable {
 	private List<String> logoutUris;
 
 	private List<DisplayNameEntry> scopes;
-	private List<DisplayNameEntry> groups;
 	private List<ResponseType> responseTypes;
 
 	// @NotNull
@@ -88,9 +83,6 @@ public class UpdateClientAction implements Serializable {
 	// "Length of search string should be between 2 and 30")
 	private String searchAvailableScopePattern;
 	private String oldSearchAvailableScopePattern;
-
-	private String searchAvailableGroupPattern;
-	private String oldSearchAvailableGroupPattern;
 
 	private String availableLoginUri = "http://";
 	private String availableLogoutUri = "http://";
@@ -113,7 +105,6 @@ public class UpdateClientAction implements Serializable {
 			this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
 
 			this.scopes = getInitialScopeDisplayNameEntiries();
-			this.groups = getInitialGroupDisplayNameEntiries();
 			this.responseTypes = getInitialResponseTypes();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
@@ -149,7 +140,6 @@ public class UpdateClientAction implements Serializable {
 			this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
 
 			this.scopes = getInitialScopeDisplayNameEntiries();
-			this.groups = getInitialGroupDisplayNameEntiries();
 			this.responseTypes = getInitialResponseTypes();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
@@ -176,7 +166,6 @@ public class UpdateClientAction implements Serializable {
 		updateLoginURIs();
 		updateLogoutURIs();
 		updateScopes();
-		updateGroups();
 		updateResponseTypes();
 
 		if (update) {
@@ -252,27 +241,6 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
-	private void addGroup(GluuGroup group) {
-		DisplayNameEntry oneGroup = new DisplayNameEntry(group.getDn(), group.getInum(), group.getDisplayName());
-		this.groups.add(oneGroup);
-	}
-
-	public void removeGroup(String inum) throws Exception {
-		if (StringHelper.isEmpty(inum)) {
-			return;
-		}
-
-		String removeGroupInum = groupService.getDnForGroup(inum);
-
-		for (Iterator<DisplayNameEntry> iterator = this.groups.iterator(); iterator.hasNext();) {
-			DisplayNameEntry oneGroup = iterator.next();
-			if (removeGroupInum.equals(oneGroup.getDn())) {
-				iterator.remove();
-				break;
-			}
-		}
-	}
-
 	private void addScope(OxAuthScope scope) {
 		DisplayNameEntry oneScope = new DisplayNameEntry(scope.getDn(), scope.getInum(), scope.getDisplayName());
 		this.scopes.add(oneScope);
@@ -335,23 +303,6 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
-	public void acceptSelectGroups() {
-		if (this.availableGroups == null) {
-			return;
-		}
-
-		Set<String> addedGroupInums = new HashSet<String>();
-		for (DisplayNameEntry group : groups) {
-			addedGroupInums.add(group.getInum());
-		}
-
-		for (GluuGroup aGroup : this.availableGroups) {
-			if (aGroup.isSelected() && !addedGroupInums.contains(aGroup.getInum())) {
-				addGroup(aGroup);
-			}
-		}
-	}
-
 	public void cancelSelectScopes() {
 	}
 
@@ -410,20 +361,6 @@ public class UpdateClientAction implements Serializable {
 		this.client.setOxAuthScopes(tmpScopes);
 	}
 
-	private void updateGroups() {
-		if (this.groups == null || this.groups.size() == 0) {
-			this.client.setOxAuthClientUserGroups(null);
-			return;
-		}
-
-		List<String> tmpGroups = new ArrayList<String>();
-		for (DisplayNameEntry group : this.groups) {
-			tmpGroups.add(group.getDn());
-		}
-
-		this.client.setOxAuthClientUserGroups(tmpGroups);
-	}
-
 	private void updateResponseTypes() {
 		List<ResponseType> currentResponseTypes = this.responseTypes;
 
@@ -450,21 +387,6 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
-	public void selectAddedGroups() {
-		if (this.availableGroups == null) {
-			return;
-		}
-
-		Set<String> addedGroupInums = new HashSet<String>();
-		for (DisplayNameEntry group : this.groups) {
-			addedGroupInums.add(group.getInum());
-		}
-
-		for (GluuGroup availableGroup : this.availableGroups) {
-			availableGroup.setSelected(addedGroupInums.contains(availableGroup.getInum()));
-		}
-	}
-
 	public void searchAvailableScopes() {
 		if (Util.equals(this.oldSearchAvailableScopePattern, this.searchAvailableScopePattern)) {
 			return;
@@ -480,21 +402,6 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
-	public void searchAvailableGroups() {
-		if (Util.equals(this.oldSearchAvailableGroupPattern, this.searchAvailableGroupPattern)) {
-			return;
-		}
-
-		try {
-
-			this.availableGroups = groupService.searchGroups(this.searchAvailableGroupPattern, OxTrustConstants.searchPersonsSizeLimit);
-			this.oldSearchAvailableGroupPattern = this.searchAvailableGroupPattern;
-			selectAddedGroups();
-		} catch (Exception ex) {
-			log.error("Failed to find groups", ex);
-		}
-	}
-
 	private List<DisplayNameEntry> getInitialScopeDisplayNameEntiries() throws Exception {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
 		if ((client.getOxAuthScopes() == null) || (client.getOxAuthScopes().size() == 0)) {
@@ -502,21 +409,6 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeService.getDnForScope(null), this.client.getOxAuthScopes());
-		if (tmp != null) {
-			result.addAll(tmp);
-		}
-
-		return result;
-	}
-
-	private List<DisplayNameEntry> getInitialGroupDisplayNameEntiries() throws Exception {
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		if ((client.getOxAuthClientUserGroups() == null) || (client.getOxAuthClientUserGroups().size() == 0)) {
-			return result;
-		}
-
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(groupService.getDnForGroup(null),
-				this.client.getOxAuthClientUserGroups());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -662,10 +554,6 @@ public class UpdateClientAction implements Serializable {
 		return this.scopes;
 	}
 
-	public List<DisplayNameEntry> getGroups() {
-		return this.groups;
-	}
-
 	public List<ResponseType> getResponseTypes() {
 		return responseTypes;
 	}
@@ -676,14 +564,6 @@ public class UpdateClientAction implements Serializable {
 
 	public void setSearchAvailableScopePattern(String searchAvailableScopePattern) {
 		this.searchAvailableScopePattern = searchAvailableScopePattern;
-	}
-
-	public String getSearchAvailableGroupPattern() {
-		return this.searchAvailableGroupPattern;
-	}
-
-	public void setSearchAvailableGroupPattern(String searchAvailableGroupPattern) {
-		this.searchAvailableGroupPattern = searchAvailableGroupPattern;
 	}
 
 }

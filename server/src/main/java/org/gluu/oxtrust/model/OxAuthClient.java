@@ -76,9 +76,6 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 	@LdapAttribute(name = "oxAuthTrustedClient")
 	private OxAuthTrustedClientBox oxAuthTrustedClient;
 
-	@LdapAttribute(name = "oxAuthClientUserGroup")
-	private List<String> oxAuthClientUserGroups;
-
 	@LdapAttribute(name = "oxAuthResponseType")
 	private ResponseType[] responseTypes;
 
@@ -143,14 +140,6 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 
     public void setOxAuthAppType(OxAuthApplicationType oxAuthAppType) {
         this.oxAuthAppType = oxAuthAppType;
-    }
-
-    public List<String> getOxAuthClientUserGroups() {
-        return oxAuthClientUserGroups;
-    }
-
-    public void setOxAuthClientUserGroups(List<String> oxAuthClientUserGroups) {
-        this.oxAuthClientUserGroups = oxAuthClientUserGroups;
     }
 
     public TokenResponseAlgs getOxAuthIdTokenSignedResponseAlg() {
