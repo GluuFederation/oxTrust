@@ -157,46 +157,72 @@ public class StatusCheckerTimer {
 	}
 
 	private void setCertificateExpiryAttributes(GluuAppliance appliance) {
-		if (!isLinux()) {
-			return;
-		}
-
-		String programPath = OxTrustConstants.PROGRAM_CHECK_SSL;
-
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
-		try {
-			boolean result = ProcessHelper.executeProgram(programPath, false, 0, bos);
-			if (!result) {
-				return;
+		if (isLinux()) {
+			String programPath = OxTrustConstants.PROGRAM_CHECK_SSL;
+	
+			String[] outputLines = runCheck(programPath);
+			int expiresAfter = -1;
+			if(outputLines != null 
+					&& ! outputLines[1].startsWith("SSL_CERT CRITICAL")){
+				try {
+					if (outputLines.length == 1) {
+						expiresAfter = Integer.parseInt(outputLines[0]);
+					} else {
+						String message 
+							= String.format("%s retuned an unexpected "
+												+ "number of lines",
+											programPath);
+						log.error(message);
+					}
+				} catch (NumberFormatException e) {
+					String message 
+						= String.format("%s retuned an unexpected value", 
+										programPath);
+					log.error(message);
+				}
 			}
+			appliance.setSslExpiry(toIntString(expiresAfter));
+		}
+	}
+
+	private String[] runCheck(String programPath) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
+		boolean result = false;
+		try {
+			result 
+				= ProcessHelper.executeProgram(programPath, false, 0, bos);
 		} catch (Exception e) {
-			log.error("Failed to run" + programPath + " : " + e.getMessage());
+			String message = String.format("Failed to run %s : %s", 
+											programPath, 
+											e.getMessage());
+			log.error(message);
 		} finally {
 			IOUtils.closeQuietly(bos);
 		}
-
-		String resultOutput = null;
-		try {
-			resultOutput = new String(bos.toByteArray(), "UTF-8");
-		} catch (UnsupportedEncodingException ex) {
-			log.error("Failed to parse program {0} output", ex, programPath);
-			return;
-		}
-
-		String[] outputLines = resultOutput.split("\\r?\\n");
-		int expiresAfter = -1;
-		// Update appliance attributes
-		try {
-			if (outputLines.length == 1) {
-				expiresAfter = Integer.parseInt(outputLines[0]);
-			} else {
-				log.error(String.format("%s retuned an unexpected number of lines", programPath));
+		
+		String[] outputLines = null;
+		if (result) {
+			String resultOutput = null;
+			try {
+				resultOutput = new String(bos.toByteArray(), "UTF-8");
+			} catch (UnsupportedEncodingException ex) {
+				String message 
+					= String.format("Failed to parse program %s output", 
+									programPath);
+				log.error(message, ex);
 			}
-		} catch (NumberFormatException e) {
-			log.error(String.format("%s retuned an unexpected value", programPath));
-		}
-		appliance.setSslExpiry(toIntString(expiresAfter));
 
+			if(resultOutput!=null){
+				outputLines = resultOutput.split("\\r?\\n");
+			}
+		}else{
+			String message 
+				= String.format("There was an error executing command %s", 
+							programPath);
+			log.error(message);			
+		}
+		return outputLines;
+		
 	}
 
 	private void setHttpdAttributes(GluuAppliance appliance) {
