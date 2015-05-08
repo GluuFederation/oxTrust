@@ -23,7 +23,7 @@ import org.xdi.model.SimpleCustomProperty;
  *
  */
 @JsonPropertyOrder({ "customAuthenticationScript", "enabled", "type", "priority", "customAuthenticationAttributes" })
-public @Data class RegistrationInterceptorScript implements Comparable<RegistrationInterceptorScript>{
+public class RegistrationInterceptorScript implements Comparable<RegistrationInterceptorScript>{
 	
 	public RegistrationInterceptorScript(){
 		this.customAttributes = new ArrayList<SimpleCustomProperty>();
@@ -48,4 +48,52 @@ public @Data class RegistrationInterceptorScript implements Comparable<Registrat
 	public int compareTo(RegistrationInterceptorScript o) {
 		return Integer.parseInt(priority) - Integer.parseInt(o.getPriority());
 	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getCustomScript() {
+		return customScript;
+	}
+
+	public void setCustomScript(String customScript) {
+		this.customScript = customScript;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getPriority() {
+		return priority;
+	}
+
+	public void setPriority(String priority) {
+		this.priority = priority;
+	}
+
+	public List<SimpleCustomProperty> getCustomAttributes() {
+		return customAttributes;
+	}
+
+	public void setCustomAttributes(List<SimpleCustomProperty> customAttributes) {
+		this.customAttributes = customAttributes;
+	}
+
+	@Override
+	public String toString() {
+		return String
+				.format("RegistrationInterceptorScript [enabled=%s, customScript=%s, type=%s, priority=%s, customAttributes=%s]",
+						enabled, customScript, type, priority, customAttributes);
+	}
+
 }

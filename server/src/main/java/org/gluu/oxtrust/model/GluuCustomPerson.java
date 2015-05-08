@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import lombok.Data;
-
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
@@ -29,7 +27,7 @@ import org.xdi.ldap.model.GluuStatus;
 
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "gluuPerson"})
-public @Data class GluuCustomPerson extends User 
+public class GluuCustomPerson extends User 
                                     implements Serializable {
 
     private static final long serialVersionUID = -1879582184398161112L;
@@ -281,7 +279,31 @@ public @Data class GluuCustomPerson extends User
     }
 
 
-    /* (non-Javadoc)
+    public String getPostRegistrationInformation() {
+		return postRegistrationInformation;
+	}
+
+	public void setPostRegistrationInformation(String postRegistrationInformation) {
+		this.postRegistrationInformation = postRegistrationInformation;
+	}
+
+	public Date getOxCreationTimestamp() {
+		return oxCreationTimestamp;
+	}
+
+	public void setOxCreationTimestamp(Date oxCreationTimestamp) {
+		this.oxCreationTimestamp = oxCreationTimestamp;
+	}
+
+	public String getOxInviteCode() {
+		return oxInviteCode;
+	}
+
+	public void setOxInviteCode(String oxInviteCode) {
+		this.oxInviteCode = oxInviteCode;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

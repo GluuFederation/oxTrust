@@ -28,15 +28,13 @@ import org.jboss.seam.annotations.Scope;
  */
 @Scope(CONVERSATION)
 @Name("applianceStatusAction")
-public @Data class ApplianceStatusAction implements Serializable {
+public class ApplianceStatusAction implements Serializable {
 
 	private static final long serialVersionUID = -7470520478553992898L;
 
 	@In
 	private ApplianceService applianceService;
-	
-	@Getter
-	@Setter
+
 	private String health;
 	
 	public String checkHealth(){
@@ -57,5 +55,12 @@ public @Data class ApplianceStatusAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
+	public String getHealth() {
+		return health;
+	}
+
+	public void setHealth(String health) {
+		this.health = health;
+	}
 	
 }

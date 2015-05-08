@@ -17,13 +17,18 @@ import org.xdi.ldap.model.Entry;
 
 @LdapEntry
 @LdapObjectClass(values = { "top", "organizationalunit" })
-public @Data class OrganizationalUnit extends Entry implements Serializable {
+public class OrganizationalUnit extends Entry implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1585717575485030550L;
+
 	@LdapAttribute
 	private String ou;
+
+	public String getOu() {
+		return ou;
+	}
+	public void setOu(String ou) {
+		this.ou = ou;
+	}
 
 }

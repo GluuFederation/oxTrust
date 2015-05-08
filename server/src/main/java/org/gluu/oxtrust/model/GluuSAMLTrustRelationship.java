@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import lombok.Data;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
@@ -28,7 +27,7 @@ import java.util.TreeSet;
 
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuSAMLconfig" })
-public @Data class GluuSAMLTrustRelationship extends InumEntry implements Serializable {
+public class GluuSAMLTrustRelationship extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = 5907443836820485369L;
 
@@ -147,6 +146,10 @@ public @Data class GluuSAMLTrustRelationship extends InumEntry implements Serial
 		}
 
 		return getInum().equals(((GluuSAMLTrustRelationship) o).getInum());
+	}
+
+	public List<String> getGluuEntityId() {
+		return gluuEntityId;
 	}
 
 	public void setGluuEntityId(Set<String> gluuEntityId) {
@@ -395,4 +398,5 @@ public @Data class GluuSAMLTrustRelationship extends InumEntry implements Serial
     public void setValidationStatus(GluuValidationStatus validationStatus) {
         this.validationStatus = validationStatus;
     }
+
 }

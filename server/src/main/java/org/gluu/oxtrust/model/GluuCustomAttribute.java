@@ -13,8 +13,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
-import lombok.Data;
-
 import org.xdi.model.GluuAttribute;
 
 import com.unboundid.util.StaticUtils;
@@ -24,7 +22,7 @@ import com.unboundid.util.StaticUtils;
  * 
  * @author Yuriy Movchan Date: 10.07.2010
  */
-public @Data class GluuCustomAttribute implements Serializable, Comparable<GluuCustomAttribute> {
+public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomAttribute> {
 
 	private static final long serialVersionUID = 1468440094325406153L;
 
@@ -194,6 +192,46 @@ public @Data class GluuCustomAttribute implements Serializable, Comparable<GluuC
 	// return (attribute instanceof GluuCustomAttribute) &&
 	// (((GluuCustomAttribute) attribute).getName().equals(getName()));
 	// }
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public GluuAttribute getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(GluuAttribute metadata) {
+		this.metadata = metadata;
+	}
+
+	public boolean isNewAttribute() {
+		return newAttribute;
+	}
+
+	public void setNewAttribute(boolean newAttribute) {
+		this.newAttribute = newAttribute;
+	}
+
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
+	}
 
 	@Override
 	public boolean equals(Object o) {

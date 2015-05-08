@@ -38,7 +38,6 @@ import java.util.List;
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuAppliance" })
 @EqualsAndHashCode(callSuper=false)
-@Data
 public class GluuAppliance extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = -1817003894646725601L;
@@ -287,6 +286,10 @@ public class GluuAppliance extends InumEntry implements Serializable {
 		this.smtpRequiresAuthentication = Boolean.toString(requiresAuthentication);
 	}
 
+	public String getSmtpPassword() {
+		return smtpPassword;
+	}
+
 	public void setSmtpPassword(String smtpPassword) {
 		if (smtpPassword != null && !smtpPassword.equals("")) {
 			this.smtpPassword = smtpPassword;
@@ -298,6 +301,10 @@ public class GluuAppliance extends InumEntry implements Serializable {
 				log.error("Failed to decrypt password: " + smtpPassword, ex);
 			}
 		}
+	}
+
+	public String getSmtpPasswordStr() {
+		return smtpPasswordStr;
 	}
 
 	public void setSmtpPasswordStr(String smtpPasswordStr) {
@@ -864,4 +871,5 @@ public class GluuAppliance extends InumEntry implements Serializable {
     public void setWhitePagesEnabled(GluuBoolean whitePagesEnabled) {
         this.whitePagesEnabled = whitePagesEnabled;
     }
+
 }
