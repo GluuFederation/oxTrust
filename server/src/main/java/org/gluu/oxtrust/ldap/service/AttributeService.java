@@ -75,10 +75,10 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getAllPersonAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST + "_" + gluuUserRole.getValue();
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) getCacheService().get(OxTrustConstants.CACHE_ATTRIBUTE_NAME, key);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxTrustConstants.CACHE_ATTRIBUTE_NAME, key);
 		if (attributeList == null) {
 			attributeList = getAllPersonAtributesImpl(gluuUserRole, getAllAttributes());
-			getCacheService().put(OxTrustConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
+			cacheService.put(OxTrustConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
 		}
 
 		return attributeList;
@@ -95,7 +95,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
 		String[] objectClassTypes = applicationConfiguration.getPersonObjectClassTypes();
-		getLog().debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
+		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
 		for (GluuAttribute attribute : attributes) {
 			for (String objectClassType : objectClassTypes) {
 				if (attribute.getOrigin().equals(objectClassType)
@@ -117,10 +117,10 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getAllContactAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_CONTACT_KEY_LIST + "_" + gluuUserRole.getValue();
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) getCacheService().get(OxTrustConstants.CACHE_ATTRIBUTE_NAME, key);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxTrustConstants.CACHE_ATTRIBUTE_NAME, key);
 		if (attributeList == null) {
 			attributeList = getAllContactAtributesImpl(gluuUserRole, getAllAttributes());
-			getCacheService().put(OxTrustConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
+			cacheService.put(OxTrustConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
 		}
 
 		return attributeList;
@@ -157,11 +157,11 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getAllAttributeOrigins() {
-		List<String> attributeOriginList = (List<String>) getCacheService().get(OxTrustConstants.CACHE_ATTRIBUTE_NAME,
+		List<String> attributeOriginList = (List<String>) cacheService.get(OxTrustConstants.CACHE_ATTRIBUTE_NAME,
 				OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
 		if (attributeOriginList == null) {
 			attributeOriginList = getAllAttributeOrigins(getAllAttributes());
-			getCacheService().put(OxTrustConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST, attributeOriginList);
+			cacheService.put(OxTrustConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST, attributeOriginList);
 		}
 
 		return attributeOriginList;
@@ -231,7 +231,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 */
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getCustomAttributes() {
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) getCacheService().get(OxTrustConstants.CACHE_ATTRIBUTE_NAME,
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxTrustConstants.CACHE_ATTRIBUTE_NAME,
 				OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST);
 		if (attributeList == null) {
 			attributeList = new ArrayList<GluuAttribute>();
@@ -241,7 +241,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 				}
 			}
 
-			getCacheService().put(OxTrustConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST, attributeList);
+			cacheService.put(OxTrustConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST, attributeList);
 		}
 
 		return attributeList;
@@ -340,7 +340,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 *            Attribute
 	 */
 	public void addAttribute(GluuAttribute attribute) {
-		getLdapEntryManager().persist(attribute);
+		ldapEntryManager.persist(attribute);
 
 		Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ATTRIBUTES);
 	}
@@ -365,25 +365,25 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 *            Attribute
 	 */
 	public boolean removeAttribute(GluuAttribute attribute) {
-		getLog().info("Attribute removal started");
-		getLog().trace("Getting attribute information");
+		log.info("Attribute removal started");
+		log.trace("Getting attribute information");
 		
 		String objectClassName = getCustomOrigin();
-		getLog().debug("objectClassName is " + objectClassName);
+		log.debug("objectClassName is " + objectClassName);
 		
 		String attributeName = attribute.getName();
-		getLog().debug("attributeName is " + attributeName);
+		log.debug("attributeName is " + attributeName);
 		
-		getLog().trace("Removing attribute from people");
+		log.trace("Removing attribute from people");
 		List<GluuCustomPerson> people = PersonService.instance().searchPersons("", OxTrustConstants.searchPersonsSizeLimit);
-		getLog().trace(String.format("Iterating %d people", people.size()));
+		log.trace(String.format("Iterating %d people", people.size()));
 		for (GluuCustomPerson person : people) {
-			getLog().trace(String.format("Analyzing %s.", person.getUid()));
+			log.trace(String.format("Analyzing %s.", person.getUid()));
 			List<GluuCustomAttribute> customAttrs = person.getCustomAttributes();
 			for (GluuCustomAttribute attr : customAttrs) {
-				getLog().trace(String.format("%s has custom attribute %s", person.getUid(), attr.getName()));
+				log.trace(String.format("%s has custom attribute %s", person.getUid(), attr.getName()));
 				if (attr.getName().equals(attributeName)) {
-					getLog().trace(String.format("%s matches %s .  deleting it.", attr.getName(), attributeName));
+					log.trace(String.format("%s matches %s .  deleting it.", attr.getName(), attributeName));
 					customAttrs.remove(attr);
 					person.setCustomAttributes(customAttrs);
 					PersonService.instance().updatePerson(person);
@@ -392,17 +392,17 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 			}
 		}
 
-		getLog().trace("Removing attribute from trustRelationships");
+		log.trace("Removing attribute from trustRelationships");
 		List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllTrustRelationships();
-		getLog().trace(String.format("Iterating %d trustRelationships", trustRelationships.size()));
+		log.trace(String.format("Iterating %d trustRelationships", trustRelationships.size()));
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			getLog().trace(String.format("Analyzing %s.", trustRelationship.getDisplayName()));
+			log.trace(String.format("Analyzing %s.", trustRelationship.getDisplayName()));
 			List<String> customAttrs = trustRelationship.getReleasedAttributes();
 			if (customAttrs != null) {
 				for (String attrDN : customAttrs) {
-					getLog().trace(String.format("%s has custom attribute %s", trustRelationship.getDisplayName(), attrDN));
+					log.trace(String.format("%s has custom attribute %s", trustRelationship.getDisplayName(), attrDN));
 					if (attrDN.equals(attribute.getDn())) {
-						getLog().trace(String.format("%s matches %s .  deleting it.", attrDN, attribute.getDn()));
+						log.trace(String.format("%s matches %s .  deleting it.", attrDN, attribute.getDn()));
 						List<String> updatedAttrs = new ArrayList<String>();
 						updatedAttrs.addAll(customAttrs);
 						updatedAttrs.remove(attrDN);
@@ -418,26 +418,26 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 				}
 			}
 		}
-		getLog().trace("Removing attribute from objectclass");
+		log.trace("Removing attribute from objectclass");
 		// Unregister new attribute type from custom object class
 		try {
 			schemaService.removeAttributeTypeFromObjectClass(objectClassName, attributeName);
 		} catch (Exception ex) {
-			getLog().error("Failed to remove attribute type from LDAP schema's object class", ex);
+			log.error("Failed to remove attribute type from LDAP schema's object class", ex);
 			return false;
 		}
 		
-		getLog().trace("Removing attribute from schema");
+		log.trace("Removing attribute from schema");
 		// Remove attribute type from LDAP schema
 		try {
 			schemaService.removeStringAttribute(attributeName);
 		} catch (Exception ex) {
-			getLog().error("Failed to remove attribute type from LDAP schema", ex);
+			log.error("Failed to remove attribute type from LDAP schema", ex);
 			return false;
 		}
 
-		getLog().trace("Removing attribute for good.");
-		getLdapEntryManager().remove(attribute);
+		log.trace("Removing attribute for good.");
+		ldapEntryManager.remove(attribute);
 		Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ATTRIBUTES);
 		return true;
 	}
@@ -449,7 +449,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 *            Attribute
 	 */
 	public void updateAttribute(GluuAttribute attribute) {
-		getLdapEntryManager().merge(attribute);
+		ldapEntryManager.merge(attribute);
 		Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ATTRIBUTES);
 	}
 
@@ -458,8 +458,8 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 */
 	@Observer(OxTrustConstants.EVENT_CLEAR_ATTRIBUTES)
 	public void clearAttributesCache() {
-		getLog().debug("Removing attributes from cache");
-		getCacheService().removeAll(OxTrustConstants.CACHE_ATTRIBUTE_NAME);
+		log.debug("Removing attributes from cache");
+		cacheService.removeAll(OxTrustConstants.CACHE_ATTRIBUTE_NAME);
 	}
 
 	/**
@@ -526,7 +526,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 * @return True if attribute with specified attributes exist
 	 */
 	public boolean containsAttribute(GluuAttribute attribute) {
-		return getLdapEntryManager().contains(attribute);
+		return ldapEntryManager.contains(attribute);
 	}
 
 	/**
@@ -582,7 +582,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 					continue;
 				}
 			} catch (Exception ex) {
-				getLog().error("Error generating inum: ", ex);
+				log.error("Error generating inum: ", ex);
 
 			}
 			break;
@@ -624,7 +624,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	
 	@Override
 	protected List<GluuAttribute> getAllAtributesImpl(String baseDn) {
-		List<GluuAttribute> attributeList = getLdapEntryManager().findEntries(baseDn, GluuAttribute.class, null);
+		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(baseDn, GluuAttribute.class, null);
 		String customOrigin = getCustomOrigin();
 		for (GluuAttribute attribute : attributeList) {
 			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
@@ -648,7 +648,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		for (GluuCustomAttribute personAttribute : customAttributes) {
 			GluuAttribute tmpAttribute = getAttributeByName(personAttribute.getName(), attributes);
 			if (tmpAttribute == null) {
-				getLog().error("Failed to find attribute '{0}' metadata", personAttribute.getName());
+				log.error("Failed to find attribute '{0}' metadata", personAttribute.getName());
 			}
 
 			personAttribute.setMetadata(tmpAttribute);
@@ -692,7 +692,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	}
 
 	public void sortCustomAttributes(List<GluuCustomAttribute> customAttributes, String sortByProperties) {
-		getLdapEntryManager().sortListByProperties(GluuCustomAttribute.class, customAttributes, sortByProperties);
+		ldapEntryManager.sortListByProperties(GluuCustomAttribute.class, customAttributes, sortByProperties);
 	}
 
 	public static AttributeService instance() {
@@ -722,7 +722,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 */
 	public List<GluuAttribute> getAllActivePersonAttributes(GluuUserRole admin) {
 		@SuppressWarnings("unchecked")
-		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) getCacheService().get(OxTrustConstants.CACHE_ACTIVE_ATTRIBUTE_NAME,
+		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) cacheService.get(OxTrustConstants.CACHE_ACTIVE_ATTRIBUTE_NAME,
 				OxTrustConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
 		if (activeAttributeList == null) {
 			try {
@@ -731,7 +731,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			getCacheService().put(OxTrustConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_KEY_LIST, activeAttributeList);
+			cacheService.put(OxTrustConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_KEY_LIST, activeAttributeList);
 		}
 
 		return activeAttributeList;
@@ -742,11 +742,11 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 * @throws LDAPException
 	 */
 	private List<GluuAttribute> getAllActiveAtributesImpl(GluuUserRole gluuUserRole) throws LDAPException {
-		List<GluuAttribute> attributeList = getLdapEntryManager().findEntries(getDnForAttribute(null), GluuAttribute.class,
+		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
 				Filter.create("gluuStatus=active"));
 		String customOrigin = getCustomOrigin();
 		String[] objectClassTypes = applicationConfiguration.getPersonObjectClassTypes();
-		getLog().debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
+		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 		for (GluuAttribute attribute : attributeList) {
 			for (String objectClassType : objectClassTypes) {
@@ -779,7 +779,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 
-		List<GluuAttribute> result = getLdapEntryManager().findEntries(getDnForAttribute(null), GluuAttribute.class, searchFilter, sizeLimit);
+		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, searchFilter, sizeLimit);
 		String customOrigin = getCustomOrigin();
 		for (GluuAttribute attribute : result) {
 			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
@@ -803,7 +803,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		Filter originFilter = Filter.createORFilter(originFilters.toArray(new Filter[0]));
 		Filter filter = Filter.createANDFilter(searchFilter, originFilter);
 
-		List<GluuAttribute> result = getLdapEntryManager().findEntries(getDnForAttribute(null), GluuAttribute.class, filter, sizeLimit);
+		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter, sizeLimit);
 
 		return result;
 	}

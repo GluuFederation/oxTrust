@@ -53,7 +53,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	 *            Organization
 	 */
 	public void updateOrganization(GluuOrganization organization) {
-		getLdapEntryManager().merge(organization);
+		ldapEntryManager.merge(organization);
 
 	}
 
@@ -72,7 +72,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	 * @return True if organization with specified attributes exist
 	 */
 	public boolean containsOrganization(GluuOrganization organization) {
-		return getLdapEntryManager().contains(organization);
+		return ldapEntryManager.contains(organization);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 		String key = OxTrustConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
 		GluuOrganization organization = (GluuOrganization) cacheService.get(OxTrustConstants.CACHE_APPLICATION_NAME, key);
 		if (organization == null) {
-			organization = getLdapEntryManager().find(GluuOrganization.class, getDnForOrganization(inum));
+			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
 			cacheService.put(OxTrustConstants.CACHE_APPLICATION_NAME, key, organization);
 		}
 
@@ -166,7 +166,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	 */
 	@Observer(OxTrustConstants.EVENT_CLEAR_ORGANIZATION)
 	public void clearOrganizationCache() throws Exception {
-		getLog().debug("Removing organization from cache");
+		log.debug("Removing organization from cache");
 		cacheService.removeAll(OxTrustConstants.CACHE_APPLICATION_NAME);
 	}
 
