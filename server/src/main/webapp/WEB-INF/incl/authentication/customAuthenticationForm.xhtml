@@ -50,13 +50,6 @@
                         <s:selectItems value="#{_action.personAuthenticationConfigurationNames}" var="_name" label="#{_name}" noSelectionLabel="Default"/>
                     </h:selectOneMenu>
                 </s:decorate>
-
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">Authentication level</ui:define>
-                    <h:selectOneMenu value="#{_action.authenticationLevel}">
-                        <s:selectItems value="#{_action.personAuthenticationConfigurationLevels}" var="_level" label="#{_level}" noSelectionLabel="Default"/>
-                    </h:selectOneMenu>
-                </s:decorate>
         	</h:panelGrid>
         </rich:collapsiblePanel>
 

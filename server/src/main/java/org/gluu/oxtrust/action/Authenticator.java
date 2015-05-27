@@ -434,11 +434,6 @@ public class Authenticator implements Serializable {
 		String authenticationMode = appliance.getAuthenticationMode();
 		if (StringHelper.isNotEmpty(authenticationMode)) {
 			clientRequest.queryParameter(OxTrustConstants.OXAUTH_AUTH_MODE, authenticationMode);
-		} else {
-			String authenticationLevel = appliance.getAuthenticationLevel();
-			if (StringHelper.isNotEmpty(authenticationLevel)) {
-				clientRequest.queryParameter(OxTrustConstants.OXAUTH_AUTH_LEVEL, authenticationLevel);
-			}
 		}
 
 		if (viewIdBeforeLoginRedirect != null) {

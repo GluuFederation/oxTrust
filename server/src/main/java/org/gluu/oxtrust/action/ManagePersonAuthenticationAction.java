@@ -88,10 +88,9 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	private List<CustomScript> customScripts;
 
-	private String authenticationLevel, authenticationMode;
+	private String authenticationMode;
 
 	private List<String> customAuthenticationConfigNames;
-	private List<String> customAuthenticationConfigLevels;
 
 	private boolean initialized;
 	
@@ -132,7 +131,6 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 				this.ldapConfig = new GluuLdapConfiguration();
 			}
 			
-			this.authenticationLevel = appliance.getAuthenticationLevel();
 			this.authenticationMode = appliance.getAuthenticationMode();
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
@@ -153,7 +151,6 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 			updateAuthConf(appliance);
 			
-			appliance.setAuthenticationLevel(this.authenticationLevel);
 			appliance.setAuthenticationMode(this.authenticationMode);
 			
 			applianceService.updateAppliance(appliance);
@@ -170,7 +167,6 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	private void reset() {
 		this.customAuthenticationConfigNames = null;
-		this.customAuthenticationConfigLevels = null;
 	}
 
 
@@ -237,23 +233,6 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 		}
 
 		return this.customAuthenticationConfigNames;
-	}
-
-	public List<String> getPersonAuthenticationConfigurationLevels() {
-		if (this.customAuthenticationConfigLevels == null) {
-			this.customAuthenticationConfigLevels = new ArrayList<String>();
-			for (CustomScript customScript : this.customScripts) {
-				if (customScript.isEnabled()) {
-					String level = Integer.toString(customScript.getLevel());
-	
-					if (!this.customAuthenticationConfigLevels.contains(level)) {
-						this.customAuthenticationConfigLevels.add(level);
-					}
-				}
-			}
-		}
-
-		return this.customAuthenticationConfigLevels;
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -349,14 +328,6 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 		if (simpleProperties != null) {
 			simpleProperties.remove(simpleProperty);
 		}
-	}
-
-	public String getAuthenticationLevel() {
-		return authenticationLevel;
-	}
-
-	public void setAuthenticationLevel(String authenticationLevel) {
-		this.authenticationLevel = authenticationLevel;
 	}
 
 	public String getAuthenticationMode() {

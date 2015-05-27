@@ -6,8 +6,15 @@
 
 package org.gluu.oxtrust.model;
 
-import lombok.Data;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+
 import lombok.EqualsAndHashCode;
+
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
@@ -22,12 +29,6 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.util.security.StringEncrypter;
-
-import javax.persistence.Transient;
-import javax.validation.constraints.Min;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * GluuAppliance
@@ -233,9 +234,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "oxAuthenticationMode")
 	private String authenticationMode;
 
-	@LdapAttribute(name = "oxAuthenticationLevel")
-	private String authenticationLevel;
-
 	@LdapAttribute(name = "oxClusteredServers")
 	private List<String> oxClusterPartners;
 
@@ -334,14 +332,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
     public void setApplianceDnsServer(String applianceDnsServer) {
         this.applianceDnsServer = applianceDnsServer;
-    }
-
-    public String getAuthenticationLevel() {
-        return authenticationLevel;
-    }
-
-    public void setAuthenticationLevel(String authenticationLevel) {
-        this.authenticationLevel = authenticationLevel;
     }
 
     public String getAuthenticationMode() {
