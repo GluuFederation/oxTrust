@@ -452,4 +452,13 @@ public class RegisterPersonAction implements Serializable{
     public GluuCustomPerson getPerson(){
     	return person;
     }
+
+	public String getInvitationGuid() {
+		return invitationGuid;
+	}
+
+	public String getInum() {
+		return inum;
+	}
+
 }

@@ -44,6 +44,7 @@ import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
@@ -230,6 +231,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 					this.customAuthenticationConfigNames.add(customScript.getName());
 				}
 			}
+			
+			this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
 		}
 
 		return this.customAuthenticationConfigNames;
