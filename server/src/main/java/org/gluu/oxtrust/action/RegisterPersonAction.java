@@ -461,4 +461,8 @@ public class RegisterPersonAction implements Serializable{
 		return inum;
 	}
 
+	public String getRedirectUri() {
+		return redirectUri;
+	}
+
 }
