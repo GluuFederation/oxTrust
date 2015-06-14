@@ -29,6 +29,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
@@ -166,8 +167,10 @@ public class CacheRefreshService implements Serializable {
 
 			GluuCustomAttribute gluuCustomAttribute = customAttributesMap.get(sourceKeyAttributeName);
 			if (gluuCustomAttribute != null) {
-				GluuCustomAttribute gluuCustomAttributeCopy = new GluuCustomAttribute(targetKeyAttributeName,
-						gluuCustomAttribute.getValues());
+				String[] values = gluuCustomAttribute.getValues();
+				String[] clonedValue = ArrayHelper.arrayClone(values);
+				
+				GluuCustomAttribute gluuCustomAttributeCopy = new GluuCustomAttribute(targetKeyAttributeName, clonedValue);
 				gluuCustomAttributeCopy.setName(targetKeyAttributeName);
 				resultAttributes.add(gluuCustomAttributeCopy);
 			}

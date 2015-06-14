@@ -55,8 +55,7 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	private String oAuthClientId;
 	private String oAuthClientScope;
 
-	private final Pattern authModePattern = Pattern.compile(".+/auth_mode/([\\d\\w]+)$");
-	private final Pattern authLevelPattern = Pattern.compile(".+/auth_level/([\\d]+)$");
+	private final Pattern authModePattern = Pattern.compile(".+/acr_values/([\\d\\w]+)$");
 
 	public final void init(final FilterConfig filterConfig) throws ServletException {
 		this.oAuthAuthorizeUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
@@ -147,16 +146,11 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 			log.debug("requestUri\"" + requestUri + "\"");
 	
 			String authenticationMode = determineAuthenticationMode(requestUri);
-			String authenticationLevel = determineAuthenticationLevel(requestUri);
 	
 			if (StringHelper.isNotEmpty(authenticationMode)) {
 				log.debug("auth_mode\"" + authenticationMode + "\"");
-				clientRequest.queryParameter("auth_mode", authenticationMode);
-				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/auth_mode/" + authenticationMode);
-			} else if (StringHelper.isNotEmpty(authenticationLevel)) {
-				log.debug("auth_level\"" + authenticationLevel + "\"");
-				clientRequest.queryParameter("auth_level", authenticationLevel);
-				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/auth_level/" + authenticationLevel);
+				clientRequest.queryParameter(Configuration.OAUTH_AUTH_MODE, authenticationMode);
+				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/" + Configuration.OAUTH_AUTH_MODE +"/" + authenticationMode);
 			}
 		}
 
@@ -231,10 +225,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 
 	private String determineAuthenticationMode(String requestUri) {
 		return determineAuthenticationParameter(requestUri, authModePattern);
-	}
-
-	private String determineAuthenticationLevel(String requestUri) {
-		return determineAuthenticationParameter(requestUri, authLevelPattern);
 	}
 
 	private String determineAuthenticationParameter(String requestUri, Pattern pattern) {

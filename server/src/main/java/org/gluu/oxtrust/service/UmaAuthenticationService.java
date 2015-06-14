@@ -75,10 +75,13 @@ public class UmaAuthenticationService implements Serializable {
         // and then respond with the HTTP 403 (Forbidden) status code,
         // along with providing the authorization server's URI in an "as_uri" property in the header,
         // and the permission ticket it just received from the AM in the body in a JSON-encoded "ticket" property.
+		
+		//TODO: START: Check if next blok do the same
         final String ticket = umaProtectionService.registerUmaPermissions(patToken, resourceSetId, scopeId);
         if (StringHelper.isEmpty(ticket)) {
         	return authenticationFailure;
         }
+		//TODO: END: Check if next blok do the same
         
         Response registerUmaPermissionsResponse = umaProtectionService.prepareRegisterUmaPermissionsResponse(patToken, resourceSetId, scopeId);
         if (registerUmaPermissionsResponse == null) {

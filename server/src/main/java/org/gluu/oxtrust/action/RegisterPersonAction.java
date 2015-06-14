@@ -458,4 +458,8 @@ public class RegisterPersonAction implements Serializable{
     public void setInvitationGuid(String invitationGuid) {
         this.invitationGuid = invitationGuid;
     }
+
+	public String getRedirectUri() {
+		return redirectUri;
+	}
 }

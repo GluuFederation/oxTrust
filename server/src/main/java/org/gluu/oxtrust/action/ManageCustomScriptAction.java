@@ -29,6 +29,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessages;
+import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
@@ -41,6 +42,7 @@ import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.custom.script.model.auth.AuthenticationCustomScript;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.util.INumGenerator;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 
 /**
@@ -140,6 +142,13 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 				List<CustomScript> customScripts = customScriptsByType.getValue();
 
 				for (CustomScript customScript : customScripts) {
+					
+					String configId = customScript.getName();
+					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
+						facesMessages.add(Severity.ERROR, "'{0}' is reserved script name", configId);
+						return OxTrustConstants.RESULT_FAILURE;
+					}
+
 					customScript.setRevision(customScript.getRevision() + 1);
 
 					boolean update = true;

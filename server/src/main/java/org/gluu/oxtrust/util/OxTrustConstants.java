@@ -136,8 +136,7 @@ public final class OxTrustConstants extends OxConstants {
 	public static final String OXAUTH_ERROR_DESCRIPTION = "error_description";
 	public static final String OXAUTH_ID_TOKEN_HINT = "id_token_hint";
 	public static final String OXAUTH_ACCESS_TOKEN = "access_token";
-	public static final String OXAUTH_AUTH_MODE = "auth_mode";
-	public static final String OXAUTH_AUTH_LEVEL = "auth_level";
+	public static final String OXAUTH_AUTH_MODE = "acr_values";
 
 	public static final String INUM_PERSON_OBJECTTYPE = "0000";
 	public static final String INUM_GROUP_OBJECTTYPE = "0003";
