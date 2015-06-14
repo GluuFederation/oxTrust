@@ -265,15 +265,19 @@ public class Shibboleth2ConfService implements Serializable {
 		Map<String, List<String>> trustEntityIds = new HashMap<String, List<String>>();
 		int id = 1;
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			boolean isPartOfFederation = !(trustRelationship.getSpMetaDataSourceType() == GluuMetadataSourceType.URI || trustRelationship
-					.getSpMetaDataSourceType() == GluuMetadataSourceType.FILE);
+			boolean isPartOfFederation = !(trustRelationship.getSpMetaDataSourceType() 
+			                                               == GluuMetadataSourceType.URI 
+			                               || trustRelationship.getSpMetaDataSourceType() 
+			                                               == GluuMetadataSourceType.FILE);
 			if (!isPartOfFederation) {
 				// Set Id
 				trustIds.put(trustRelationship.getInum(), String.valueOf(id++));
 
 				// Set entityId
-				String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator + SHIB2_IDP_METADATA_FOLDER
-						+ File.separator;
+				String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() 
+				                            + File.separator 
+				                            + SHIB2_IDP_METADATA_FOLDER
+				                            + File.separator;
 				File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 				List<String> entityIds = getEntityIdFromMetadataFile(metadataFile);
 				// if for some reason metadata is corrupted or missing - mark
@@ -600,7 +604,9 @@ public class Shibboleth2ConfService implements Serializable {
 	public String saveSpMetadataFile(String spMetadataFileName, InputStream input) {
 		if (applicationConfiguration.getShibboleth2IdpRootDir() == null) {
 			IOUtils.closeQuietly(input);
-			throw new InvalidConfigurationException("Failed to save SP meta-data file due to undefined IDP root folder");
+			String errorMessage = "Failed to save SP meta-data file due to undefined IDP root folder";
+			log.error(errorMessage);
+			throw new InvalidConfigurationException(errorMessage);
 		}
 
 		String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator + SHIB2_IDP_TEMPMETADATA_FOLDER + File.separator;
@@ -1227,7 +1233,6 @@ public class Shibboleth2ConfService implements Serializable {
 	 */
 	public synchronized GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException,
 			IOException {
-		// boolean isValid = false;
 		DocumentBuilderFactory newFactory = DocumentBuilderFactory.newInstance();
 		newFactory.setCoalescing(false);
 		newFactory.setExpandEntityReferences(true);
@@ -1236,23 +1241,17 @@ public class Shibboleth2ConfService implements Serializable {
 		newFactory.setIgnoringElementContentWhitespace(false);
 		newFactory.setNamespaceAware(true);
 		newFactory.setValidating(false);
-		// try {
 		DocumentBuilder xmlParser = newFactory.newDocumentBuilder();
 		Document xmlDoc = xmlParser.parse(stream);
-		String schemaDir = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2" + File.separator
-				+ "idp" + File.separator + "schema" + File.separator;
-		// System.out.println(schemaDir);
+		String schemaDir = System.getProperty("catalina.home") 
+		                        + File.separator + "conf" + File.separator + "shibboleth2" + File.separator
+		                        + "idp" + File.separator + "schema" + File.separator;
 		Schema schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
-		// System.out.println(schema);
 		Validator validator = schema.newValidator();
 		GluuErrorHandler handler = new GluuErrorHandler();
 		validator.setErrorHandler(handler);
 		validator.validate(new DOMSource(xmlDoc));
-		// isValid = handler.isValid();
-		// } catch (Exception e) {
-		// isValid=false;
-		// log.error("Validation of metadata failed", e);
-		// }
+
 
 		return handler;
 

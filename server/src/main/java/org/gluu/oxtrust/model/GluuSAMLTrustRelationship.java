@@ -71,7 +71,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	@LdapAttribute(name = "gluuSAMLmaxRefreshDelay")
 	private String maxRefreshDelay;
-
+	
 	@Transient
 	private transient List<GluuCustomAttribute> releasedCustomAttributes = new ArrayList<GluuCustomAttribute>();
 
@@ -115,6 +115,9 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	@LdapAttribute(name = "gluuValidationLog")
 	private List<String> validationLog;
+
+	@LdapAttribute(name = "researchAndScholarshipEnabled")
+	private String researchBundleEnabled;
 
 	
 
@@ -399,4 +402,19 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
         this.validationStatus = validationStatus;
     }
 
+    public String getResearchBundleEnabled() {
+        return researchBundleEnabled;
+    }
+
+    public void setResearchBundleEnabled(String researchBundleEnabled) {
+        this.researchBundleEnabled = researchBundleEnabled;
+    }
+
+    public boolean isResearchBundle() {
+        return Boolean.parseBoolean(researchBundleEnabled);
+    }
+    
+    public void setResearchBundle(boolean researchBundle) {
+        this.researchBundleEnabled = Boolean.toString(researchBundle);
+    }
 }

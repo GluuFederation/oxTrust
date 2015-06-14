@@ -90,7 +90,7 @@ public class InumGenerationWebServiceImpl implements InumGenerationWebService {
 			inumService.addInum(inumEntryManager, inum, prefix);
 
 			InumSqlEntry foundInum = inumService.findInum(inumEntryManager, "@!1111!0000!D4E7");
-			System.out.println("foundInum : " + foundInum.getInum());
+			log.info("foundInum : " + foundInum.getInum());
 
 			URI location = new URI("/InumGenerator/" + inum);
 

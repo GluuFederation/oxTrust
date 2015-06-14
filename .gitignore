@@ -9,3 +9,5 @@
 
 # Maven
 target
+
+server/.tern-project

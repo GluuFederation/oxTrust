@@ -300,6 +300,12 @@
                             <a4j:commandLink id="TRConfig" value="Configure RelyingParty" rendered="#{_trustRelationship.specificRelyingPartyConfig}"
                                 onclick="#{rich:component('TRConfigPanel')}.show();" execute="@this" />
                         </h:panelGrid>
+                        
+                        <h:panelGrid columns="2">
+                        	<h:outputText value="Enable InCommon R&amp;S" />
+                            <h:selectBooleanCheckbox value="#{_trustRelationship.researchBundle}">
+							</h:selectBooleanCheckbox>
+						</h:panelGrid>
 
                         <!-- Validation Log Start -->
 

@@ -6,8 +6,6 @@
     login-required="false" view-id="/register.xhtml">
     
     <param name="invitationGuid" value="#{registerPersonAction.invitationGuid}"/>
-    <param name="inum" value="#{registerPersonAction.inum}"/>
-	<param name="redirectUri" value="#{registerPersonAction.redirectUri}" />
     <action execute="#{registerPersonAction.initPerson}" if="#{registerPersonAction.person == null}" on-postback="false" />
 
     <rewrite pattern="/register" />

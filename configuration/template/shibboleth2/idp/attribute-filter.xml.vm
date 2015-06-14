@@ -13,6 +13,16 @@
 #if ($trustParams.trustIds.get($trustRelationship.inum))
     <afp:AttributeFilterPolicy id="SiteApp$trustParams.trustIds.get($trustRelationship.inum)">
 
+#if ($trustRelationship.isResearchBundle())
+
+	<afp:PolicyRequirementRule xsi:type="basic:AND">
+		<basic:Rule xsi:type="saml:AttributeRequesterEntityAttributeExactMatch"
+			attributeName="http://macedir.org/entity-category"
+			attributeValue="http://refeds.org/category/research-and-scholarship"/>
+		<basic:Rule xsi:type="saml:AttributeRequesterEntityAttributeExactMatch"
+			attributeName="http://macedir.org/entity-category"
+			attributeValue="http://id.incommon.org/category/registered-by-incommon"/>
+#end
 #set ($isFederation = ($trustParams.trustEntityIds.get($trustRelationship.inum).size() > 1))
 #if ($isFederation)
     <afp:PolicyRequirementRule xsi:type="basic:OR">
@@ -20,10 +30,14 @@
             <basic:Rule xsi:type="basic:AttributeRequesterString" value="$entityId" />
 #end
     </afp:PolicyRequirementRule>
-
 #else
     <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="$trustParams.trustEntityIds.get($trustRelationship.inum).get(0)" />
 #end
+
+#if ($trustRelationship.isResearchBundle())
+        </afp:PolicyRequirementRule>
+#end
+
 
 #foreach( $attribute in $trustRelationship.releasedCustomAttributes )
 

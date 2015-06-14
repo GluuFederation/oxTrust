@@ -46,9 +46,9 @@ public class AppliancePasswordAction implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
 	private CryptoConfigurationFile cryptoConfiguration;
-	
-	@Logger
-	private Log log;
+    
+    @Logger
+    private Log log;
 
 	public String validatePassword() {
 		String result;

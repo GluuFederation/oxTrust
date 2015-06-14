@@ -104,7 +104,7 @@ public class MailUtils {
 	}
 
 	public static void main(String args[]) {
-		System.out.println("Start....");
+		log.debug("Start....");
 		int active = 4;
 		MailUtils sendMail = null;
 		try {
@@ -130,12 +130,12 @@ public class MailUtils {
 			}
 
 		} catch (AuthenticationFailedException mex) {
-			System.out.println("Authentication failed, please check your user name and password");
-			System.out.println("send failed, exception: " + mex); // TODO: Log4J
+		    log.error("Authentication failed, please check your user name and password");
+		    log.error("send failed, exception: " + mex); // TODO: Log4J
 		} catch (MessagingException mex) {
-			System.out.println("Could not connect to SMTP host.");
-			System.out.println("send failed, exception: " + mex);
+		    log.error("Could not connect to SMTP host.");
+		    log.error("send failed, exception: " + mex);
 		}
-		System.out.println("...End");
+		log.debug("...End");
 	}
 }

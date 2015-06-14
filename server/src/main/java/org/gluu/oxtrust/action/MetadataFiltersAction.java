@@ -19,9 +19,11 @@ import org.gluu.oxtrust.model.MetadataFilter;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
+import org.jboss.seam.log.Log;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
 
@@ -46,7 +48,10 @@ public class MetadataFiltersAction implements Serializable {
 	private FilterService filterService;
 
 	private GluuSAMLTrustRelationship trustRelationship;
-
+   
+    @Logger
+    private Log log;
+    
 	public String initMetadataFilters(GluuSAMLTrustRelationship trustRelationship) {
 		if (metadataFilters != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -270,6 +275,6 @@ public class MetadataFiltersAction implements Serializable {
 	}
 
 	public void showFile() {
-		System.out.println();
+	    log.trace("\n");
 	}
 }

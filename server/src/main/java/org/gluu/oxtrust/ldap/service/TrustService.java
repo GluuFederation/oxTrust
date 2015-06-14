@@ -21,6 +21,7 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -91,6 +92,11 @@ public class TrustService {
 			tr.setDn(trustRelationship.getDn());
 			if(! containsTrustRelationship(tr)){
 				log.debug("Adding TR" + clusteredDN);
+				OrganizationalUnit ou = new OrganizationalUnit();
+				ou.setDn(getDnForTrustRelationShip(null));
+		        if(! ldapEntryManager.contains(ou)){
+		            ldapEntryManager.persist(ou);
+		        }
 				ldapEntryManager.persist(trustRelationship);
 			}else{
 				ldapEntryManager.merge(trustRelationship);
@@ -117,6 +123,11 @@ public class TrustService {
 				log.trace("Updating TR" + clusteredDN);
 				ldapEntryManager.merge(trustRelationship);
 			}else{
+			    OrganizationalUnit ou = new OrganizationalUnit();
+                ou.setDn(getDnForTrustRelationShip(null));
+                if(! ldapEntryManager.contains(ou)){
+                    ldapEntryManager.persist(ou);
+                }
 				ldapEntryManager.persist(trustRelationship);
 			}
 		}
@@ -388,6 +399,7 @@ public class TrustService {
 	 * @return
 	 */
 	public boolean isFederation(GluuSAMLTrustRelationship trustRelationship) {
+	    //TODO: optimize this method. should not take so long
 		return shibboleth2ConfService.isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	}
 

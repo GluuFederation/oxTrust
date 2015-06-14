@@ -170,7 +170,7 @@ public class OxTrustConfiguration {
 
 	private void initConfigurationFromLdap(LdapOxTrustConfiguration conf) {
 		try {
-			System.out.println("oxTrustConfig:"+conf.getApplication());
+			log.debug("oxTrustConfig:"+conf.getApplication());
 			this.applicationConfiguration = jsonService.jsonToObject(conf.getApplication(), ApplicationConfiguration.class);
 			
 		} catch (Exception ex) {
