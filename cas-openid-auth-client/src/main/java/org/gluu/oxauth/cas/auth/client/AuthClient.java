@@ -180,12 +180,13 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		init();
 
 		final String state = RandomStringUtils.randomAlphanumeric(10);
+		final String nonce = RandomStringUtils.randomAlphanumeric(10);
 
 		final AuthorizationRequest authorizationRequest = new AuthorizationRequest(Arrays.asList(ResponseType.CODE), this.clientId,
 				this.openIdScopes, this.redirectUri, null);
 
-		authorizationRequest.setNonce("none");
 		authorizationRequest.setState(state);
+		authorizationRequest.setNonce(nonce);
 
 		context.setSessionAttribute(getName() + STATE_PARAMETER, state);
 
