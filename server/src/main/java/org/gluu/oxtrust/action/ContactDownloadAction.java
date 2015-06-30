@@ -36,6 +36,7 @@ public class ContactDownloadAction implements Serializable {
 	@In(value = "#{facesContext.externalContext}")
 	private ExternalContext extCtx;
 
+	@SuppressWarnings("seam-unresolved-variable")
 	@In
 	protected GluuCustomPerson currentPerson;
 

@@ -12,8 +12,6 @@ package org.gluu.oxtrust.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Data;
-
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.xdi.model.SimpleCustomProperty;

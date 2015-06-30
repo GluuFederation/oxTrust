@@ -13,6 +13,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
@@ -21,6 +25,9 @@ import org.xdi.util.properties.FileConfiguration;
  * 
  * @author Yuriy Movchan Date: 07.13.2011
  */
+@Name("cacheRefreshConfiguration")
+@Scope(ScopeType.APPLICATION)
+@AutoCreate
 public class CacheRefreshConfiguration extends FileConfiguration {
 
 	public CacheRefreshConfiguration() {

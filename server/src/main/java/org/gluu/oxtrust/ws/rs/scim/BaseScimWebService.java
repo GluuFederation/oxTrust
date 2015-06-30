@@ -9,24 +9,18 @@ package org.gluu.oxtrust.ws.rs.scim;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.scim.Error;
 import org.gluu.oxtrust.model.scim.Errors;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
-import org.xdi.ldap.model.GluuStatus;
-import org.xdi.model.GluuUserRole;
 import org.xdi.util.Pair;
 
 /**
@@ -64,7 +58,6 @@ public class BaseScimWebService {
 				return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
 			}
 		}
-
 		return null;
 	}
 

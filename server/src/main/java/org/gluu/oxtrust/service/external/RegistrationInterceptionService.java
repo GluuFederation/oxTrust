@@ -31,7 +31,6 @@ import org.jboss.seam.log.Log;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.xdi.exception.PythonException;
-import org.xdi.model.SimpleCustomProperty;
 import org.xdi.oxauth.model.util.Util;
 import org.xdi.service.PythonService;
 

@@ -29,98 +29,96 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @Restrict("#{identity.loggedIn}")
 public class AppliancePasswordAction implements Serializable {
 
-	private static final long serialVersionUID = 6486111971437252913L;
+    private static final long serialVersionUID = 6486111971437252913L;
 
-	private String newPassword;
-	private String newPasswordConfirmation;
-	private String passwordMessage;
+    private String newPassword;
+    private String newPasswordConfirmation;
+    private String passwordMessage;
 
-	@In
-	private ApplianceService applianceService;
+    @In
+    private ApplianceService applianceService;
 
-	@In
-	private CentralLdapService centralLdapService;
+    @In
+    private CentralLdapService centralLdapService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+    private ApplicationConfiguration applicationConfiguration;
 
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
-    
+    @In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
+    private CryptoConfigurationFile cryptoConfiguration;
+
     @Logger
     private Log log;
 
-	public String validatePassword() {
-		String result;
-		if (newPasswordConfirmation == null || !newPasswordConfirmation.equals(newPassword)) {
-			this.passwordMessage = "Passwords Must be equal";
-			result = OxTrustConstants.RESULT_VALIDATION_ERROR;
-		} else {
-			this.passwordMessage = "";
-			result = OxTrustConstants.RESULT_SUCCESS;
-		}
+    public String validatePassword() {
+        String result;
+        if (newPasswordConfirmation == null || !newPasswordConfirmation.equals(newPassword)) {
+            this.passwordMessage = "Passwords Must be equal";
+            result = OxTrustConstants.RESULT_VALIDATION_ERROR;
+        } else {
+            this.passwordMessage = "";
+            result = OxTrustConstants.RESULT_SUCCESS;
+        }
 
-		return result;
+        return result;
 
-	}
+    }
 
-	@Restrict("#{s:hasPermission('profile', 'access')}")
-	public String update() {
-		String result;
-		if (true /* validatePassword().equals(Configuration.RESULT_SUCCESS) */) {
-			GluuAppliance appliance = applianceService.getAppliance();
-			try {
-				appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, cryptoConfiguration.getEncodeSalt()));
-			} catch (EncryptionException e) {
-				log.error("Failed to encrypt password", e);
-			}
-			appliance.setUserPassword(newPassword);
-			
-			if (centralLdapService.isUseCentralServer()) {
-				GluuAppliance tmpAppliance = new GluuAppliance();
-				tmpAppliance.setDn(appliance.getDn());
-				boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
-	
-				if (existAppliance) {
-					centralLdapService.updateAppliance(appliance);
-				} else {
-					centralLdapService.addAppliance(appliance);
-				}
-			}
+    @Restrict("#{s:hasPermission('profile', 'access')}")
+    public String update() {
+        String result;
 
-			applianceService.updateAppliance(appliance);
-			result = OxTrustConstants.RESULT_SUCCESS;
-		} else {
-			result = OxTrustConstants.RESULT_FAILURE;
-		}
-		return result;
-	}
+        GluuAppliance appliance = applianceService.getAppliance();
+        try {
+            appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword,
+                                                                                cryptoConfiguration.getEncodeSalt()));
+        } catch (EncryptionException e) {
+            log.error("Failed to encrypt password", e);
+        }
+        appliance.setUserPassword(newPassword);
 
-	public void cancel() {
-	}
+        if (centralLdapService.isUseCentralServer()) {
+            GluuAppliance tmpAppliance = new GluuAppliance();
+            tmpAppliance.setDn(appliance.getDn());
+            boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
 
-	public void setNewPasswordConfirmation(String newPasswordConfirmation) {
-		this.newPasswordConfirmation = newPasswordConfirmation;
-	}
+            if (existAppliance) {
+                centralLdapService.updateAppliance(appliance);
+            } else {
+                centralLdapService.addAppliance(appliance);
+            }
+        }
 
-	public String getNewPasswordConfirmation() {
-		return newPasswordConfirmation;
-	}
+        applianceService.updateAppliance(appliance);
+        result = OxTrustConstants.RESULT_SUCCESS;
+        return result;
+    }
 
-	public void setNewPassword(String newPassword) {
-		this.newPassword = newPassword;
-	}
+    public void cancel() {
+    }
 
-	public String getNewPassword() {
-		return newPassword;
-	}
+    public void setNewPasswordConfirmation(String newPasswordConfirmation) {
+        this.newPasswordConfirmation = newPasswordConfirmation;
+    }
 
-	public void setPasswordMessage(String passwordMessage) {
-		this.passwordMessage = passwordMessage;
-	}
+    public String getNewPasswordConfirmation() {
+        return newPasswordConfirmation;
+    }
 
-	public String getPasswordMessage() {
-		return passwordMessage;
-	}
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setPasswordMessage(String passwordMessage) {
+        this.passwordMessage = passwordMessage;
+    }
+
+    public String getPasswordMessage() {
+        return passwordMessage;
+    }
 
 }

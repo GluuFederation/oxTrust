@@ -30,7 +30,6 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.OxLink;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
-import org.gluu.oxtrust.service.external.RegistrationInterceptionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.jboss.seam.ScopeType;
@@ -107,9 +106,6 @@ public class RegisterPersonAction implements Serializable{
     private ApplicationConfiguration applicationConfiguration;
 
     private String redirectUri;
-
-    @In
-    private RegistrationInterceptionService registrationInterceptionService;
 
     @In
     private ExternalUserRegistrationService externalUserRegistrationService;

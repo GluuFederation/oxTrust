@@ -28,9 +28,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.annotations.In;
@@ -49,9 +47,7 @@ import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
-import org.xdi.util.FileUtil;
 import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
 
 /**
  * Action class for configuring application
@@ -71,6 +67,7 @@ public class UpdateOrganizationAction implements Serializable {
 	@In
 	private StatusMessages statusMessages;
 
+	@SuppressWarnings("seam-unresolved-variable")
 	@In
 	private GluuCustomPerson currentPerson;
 
@@ -173,25 +170,6 @@ public class UpdateOrganizationAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	/**
-	 * 
-	 */
-//	private void initClusterConfig() {
-//		clusterType = appliance.getClusterType();
-//		memcachedServerAddress = appliance.getMemcachedServerAddress();
-//		List<String> oxClusterPartners = appliance.getOxClusterPartners();
-//		clusterPartners = new ArrayList<SimpleCustomProperty>();
-//		if(oxClusterPartners != null && !oxClusterPartners.isEmpty()){
-//			for(String partner : oxClusterPartners){
-//				if(partner != null && ! partner.isEmpty()){
-//					SimpleCustomProperty partnerProperty = new SimpleCustomProperty(partner, "");
-//					clusterPartners.add(partnerProperty);
-//				}
-//			}
-//		}
-//		
-//	}
-
 	public String clusterUpdate(DropEvent event){
 		if("Cluster".equals(event.getDropValue()) && ! clusterPartners.contains((GluuAppliance) event.getDragValue())){
 			appliances.remove((GluuAppliance) event.getDragValue());
@@ -264,66 +242,6 @@ public class UpdateOrganizationAction implements Serializable {
 		smtpConfiguration.setPassword(appliance.getSmtpPassword());
 		
 		appliance.setSmtpConfiguration(smtpConfiguration);
-	}
-
-	/**
-	 * 
-	 */
-//	private void saveClusterConfiguration() {
-//		appliance.setClusterType(clusterType);
-//		appliance.setMemcachedServerAddress(memcachedServerAddress);
-//		List<String> applianceClusterPartners = new ArrayList<String>();
-//		if(! clusterPartners.isEmpty()){
-//			for(SimpleCustomProperty property: clusterPartners){
-//				if(property.getValue1() != null && ! property.getValue1().isEmpty()){
-//					applianceClusterPartners.add(property.getValue1());
-//				}
-//			}
-//		}
-//		appliance.setOxClusterPartners(applianceClusterPartners);
-//	}
-
-	// Resolv.conf file update will be handled by puppet.
-	private void saveDnsInformation() {
-		if (Util.empty(appliance.getApplianceDnsServer())) {
-			appliance.setApplianceDnsServer("");
-		}
-		String filePath = "/etc/resolv.conf";
-		FileUtil fileUtil = new FileUtil();
-		String startTag = "##CONFIGURED-FROM-APPLIANCE-START##";
-		String endTag = "##CONFIGURED-FROM-APPLIANCE-END##";
-		String fileContent = FileUtil.readFile(filePath).toString();
-
-		int startTagPositon = fileContent.indexOf(startTag);
-		int endTagPositon = fileContent.indexOf(endTag);
-
-		if (startTagPositon >= 0 && endTagPositon >= 0) {
-			String startContent = fileContent.substring(0, startTagPositon - 1);
-			String endContent = fileContent.substring(endTagPositon + endTag.length());
-			fileContent = startContent + endContent;
-		}
-
-		fileContent = fileContent.replace(startTag, "");
-		fileContent = fileContent.replace(endTag, "");
-
-		String[] entries = appliance.getApplianceDnsServer().split(",");
-		String servers = "";
-		if (entries != null && entries.length > 0) {
-			for (int i = 0; i < entries.length; i++) {
-				entries[i] = entries[i].trim();
-				servers += "\n" + entries[i];
-			}
-		}
-
-		fileContent += "\n" + startTag + servers + "\n" + endTag;
-
-		boolean success = fileUtil.writeLargeFile(filePath, 0, fileContent);
-		if (!success) {
-			log.error("Failed to update resolv.conf");
-			facesMessages
-					.add(Severity.ERROR,
-							"Failed to update DNS Server information in /etc/resolv.conf. Please make sure that you have the permission to modify that file.");
-		}
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -710,5 +628,10 @@ public class UpdateOrganizationAction implements Serializable {
 	 */
 	public void setAppliances(List<GluuAppliance> appliances) {
 		this.appliances = appliances;
+	}
+	
+	public String addNewCluster(){
+	    //TODO: implement
+	    return null;
 	}
 }

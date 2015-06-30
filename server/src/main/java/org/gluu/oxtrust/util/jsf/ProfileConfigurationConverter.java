@@ -7,13 +7,10 @@
 package org.gluu.oxtrust.util.jsf;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.gluu.oxtrust.ldap.service.ProfileConfigurationService;
-import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.faces.Converter;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;

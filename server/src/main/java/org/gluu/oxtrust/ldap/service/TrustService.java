@@ -289,13 +289,15 @@ public class TrustService {
 	 * @author �Oleksiy Tataryn�
 	 */
 	public void addGluuSP() {
-		GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
-		gluuSP.setInum(generateInumForNewTrustRelationship());
+	    String gluuSPInum = generateInumForNewTrustRelationship();
+	    String metadataFN = shibboleth2ConfService.getSpNewMetadataFileName(gluuSPInum);
+	    GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
+		gluuSP.setInum(gluuSPInum);
 		gluuSP.setDisplayName("gluu SP on appliance");
 		gluuSP.setDescription("Trust Relationship for the SP");
 		gluuSP.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
-		String spMetadataFileName = shibboleth2ConfService.getSpNewMetadataFileName(gluuSP);
-		gluuSP.setSpMetaDataFN(spMetadataFileName);
+		gluuSP.setSpMetaDataFN(metadataFN);
+		//TODO: 
 		gluuSP.setEntityId(StringHelper.removePunctuation(gluuSP.getInum()));
 		gluuSP.setUrl(applicationConfiguration.getApplianceUrl());
 

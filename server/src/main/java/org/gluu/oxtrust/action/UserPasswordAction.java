@@ -21,7 +21,6 @@ import org.jboss.seam.annotations.security.Restrict;
 /**
  * Serves for password updates on UI.
  * 
- * @author �Oleksiy Tataryn�
  */
 @Name("userPasswordAction")
 @Scope(ScopeType.CONVERSATION)

@@ -71,12 +71,10 @@ public @Data class PasswordResetAction implements Serializable {
 		}
 		GluuCustomPerson person = PersonService.instance().getPersonByInum(request.getPersonInum());
 		GluuCustomAttribute question = null;
-		GluuCustomAttribute answer = null;
 		if(person != null ){
 			question = person.getGluuCustomAttribute("secretQuestion");
-			answer = person.getGluuCustomAttribute("secretAnswer");
 		}
-		if(request!= null && requestCalendarExpiry.after(currentCalendar)/* && question != null && answer != null*/){	
+		if(request!= null && requestCalendarExpiry.after(currentCalendar)){	
 			if(question != null){
 				securityQuestion = question.getValue();
 			}

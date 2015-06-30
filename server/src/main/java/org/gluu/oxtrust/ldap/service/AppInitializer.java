@@ -6,10 +6,16 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
@@ -22,7 +28,15 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
+import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.Destroy;
+import org.jboss.seam.annotations.Factory;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
@@ -45,13 +59,6 @@ import org.xdi.service.ldap.LdapConnectionService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
-
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Perform startup time initialization. Provides factory methods for non Seam
@@ -147,8 +154,6 @@ public class AppInitializer {
 
 		createShibbolethConfiguration();
 
-		prepareConfigurations();
-
 		logSizeChecker();
 
 		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR );
@@ -240,16 +245,12 @@ public class AppInitializer {
 		metadataValidationTimer.scheduleValidation(calendar.getTime(), VALIDATION_INTERVAL);
 
 	}
-
-	private void prepareConfigurations() {
-		CacheRefreshConfiguration cacheRefreshConfiguration = new CacheRefreshConfiguration();
-		Contexts.getApplicationContext().set("cacheRefreshConfiguration", cacheRefreshConfiguration);
-	}
-
+	
 	private boolean createShibbolethConfiguration() {
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		boolean createConfig = applicationConfiguration.isConfigGeneration();
 		log.info("IDP config generation is set to " + createConfig);
+		
 		if (createConfig) {
 			String gluuSPInum = null;
 			GluuSAMLTrustRelationship gluuSP;
@@ -263,11 +264,11 @@ public class AppInitializer {
 			}
 
 			boolean servicesNeedRestarting = false;
-			if (gluuSPInum == null || gluuSP == null || ! TrustService.instance().containsTrustRelationship(gluuSP)) {
+			if (gluuSPInum == null || ! TrustService.instance().containsTrustRelationship(gluuSP)) {
 				log.info("No trust relationships exist in LDAP. Adding gluuSP");
-				GluuAppliance appliance = ApplianceService.instance().getAppliance();
-				appliance.setGluuSPTR(null);
-				ApplianceService.instance().updateAppliance(appliance);
+//				GluuAppliance appliance = ApplianceService.instance().getAppliance();
+//				appliance.setGluuSPTR(null);
+//				ApplianceService.instance().updateAppliance(appliance);
 				TrustService.instance().addGluuSP();
 				servicesNeedRestarting = true;
 			}
