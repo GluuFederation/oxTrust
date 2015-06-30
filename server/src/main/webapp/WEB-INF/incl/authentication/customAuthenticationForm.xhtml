@@ -42,8 +42,8 @@
 						<!-- System Configuration -->
 						<div class="tab-pane active" id="manage-ldap">
 						<div style="display: inline-block; width: 75% !important;">
-							<h:panelGroup>
-
+							<h:panelGroup id="ldapManagementGroupId">
+								
 								<ox:ldapConfig ldapConfig="#{_action.ldapConfig}"
 									ldapConfigAction="#{_action}" propertiesAction="#{_action}"
 									displayBaseDn="true" displayAnonymousBind="false"
@@ -51,6 +51,11 @@
 									displayLocalPrimaryKey="true"
 									changePasswordDialogId="bindPassword:changePasswordModalPanel"
 									rendered="#{_action.existLdapConfigIdpAuthConf}" />
+								 <a4j:commandButton value="Activate" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
+							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"/>
+				                <a4j:commandButton value="Deactivate" action="#{_action.setExistLdapConfigIdpAuthConf(false)}" rendered="#{_action.existLdapConfigIdpAuthConf}"
+			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/>
+			                    	
 								<h:commandButton styleClass="btn btn-success"
 									style="margin-left:4px" value="Test LDAP Connection"
 									action="#{_action.testLdapConnection}"
@@ -111,10 +116,6 @@
 
 			</div>
 		</div>
-
-
-
-
 
 
 		<richext:spacer height="16" />
