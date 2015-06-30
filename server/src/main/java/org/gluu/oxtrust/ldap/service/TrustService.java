@@ -340,9 +340,6 @@ public class TrustService {
 
 			appliance = ApplianceService.instance().getAppliance();
 			appliance.setGluuSPTR(gluuSP.getInum());
-
-			List<GluuSAMLTrustRelationship> trustRelationships = getAllActiveTrustRelationships();
-			result = shibboleth2ConfService.generateConfigurationFiles(trustRelationships);
 		}
 
 		if (result) {
