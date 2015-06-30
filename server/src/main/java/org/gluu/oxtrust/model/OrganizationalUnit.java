@@ -8,8 +8,6 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 
-import lombok.Data;
-
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;

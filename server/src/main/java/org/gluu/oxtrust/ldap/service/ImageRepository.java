@@ -294,10 +294,6 @@ public class ImageRepository {
 		deleteFile(sourceFile, true);
 	}
 
-	private boolean deleteFile(String path, boolean removeEmptyfoldersTree) {
-		return deleteFile(new File(path), removeEmptyfoldersTree);
-	}
-
 	private boolean deleteFile(File file, boolean removeEmptyfoldersTree) {
 		boolean result = true;
 

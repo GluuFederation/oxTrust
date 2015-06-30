@@ -19,7 +19,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.config.CryptoConfigurationFile;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @Name("clientPasswordAction")

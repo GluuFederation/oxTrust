@@ -12,13 +12,9 @@ import java.util.List;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.GroupService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.GluuOrganization;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.log.Logging;
 
 /**
  * User: Dejan Maric
@@ -29,7 +25,6 @@ public class Utils implements Serializable {
      *
      */
 	private static final long serialVersionUID = -2842459224631032594L;
-	private static Log log = Logging.getLog(Utils.class);
 
 	/**
 	 * Delete a Group from a Person

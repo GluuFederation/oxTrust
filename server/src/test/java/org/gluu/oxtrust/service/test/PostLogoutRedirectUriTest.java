@@ -7,38 +7,18 @@
 package org.gluu.oxtrust.service.test;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import org.gluu.oxtrust.action.test.AbstractAuthorizationTest;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.ldap.service.ClientService;
-import org.gluu.oxtrust.ldap.service.TrustService;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.gluu.oxtrust.model.OxAuthClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.mock.JUnitSeamTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.util.StringHelper;
 
-/**
- * User: Oleksiy Tataryn
- */
 @RunWith(Arquillian.class)
 public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 
-	private int random(int max){
-    	int maximum = max;
-    	int minimum = 0;
-    	Random rn = new Random();
-    	int n = maximum - minimum + 1;
-    	int i = rn.nextInt() % n;
-    	int randomNum =  Math.abs(minimum + i);
-    	return randomNum;
-	}
 	
 	@Test
 	public void testAddPostLogoutRedirectUri() throws Exception {

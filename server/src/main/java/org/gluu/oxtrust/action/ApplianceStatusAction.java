@@ -10,10 +10,6 @@ import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;

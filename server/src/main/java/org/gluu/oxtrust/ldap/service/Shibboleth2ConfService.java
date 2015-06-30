@@ -596,10 +596,15 @@ public class Shibboleth2ConfService implements Serializable {
 		return idpMetadataFolder + spMetaDataFN;
 	}
 
+
 	public String getSpNewMetadataFileName(GluuSAMLTrustRelationship trustRel) {
-		String relationshipInum = StringHelper.removePunctuation(trustRel.getInum());
-		return String.format(SHIB2_SP_METADATA_FILE_PATTERN, relationshipInum);
+	    return getSpNewMetadataFileName(trustRel.getInum());
 	}
+	
+    public String getSpNewMetadataFileName(String inum) {
+        String relationshipInum = StringHelper.removePunctuation(inum);
+        return String.format(SHIB2_SP_METADATA_FILE_PATTERN, relationshipInum);
+    }
 
 	public String saveSpMetadataFile(String spMetadataFileName, InputStream input) {
 		if (applicationConfiguration.getShibboleth2IdpRootDir() == null) {

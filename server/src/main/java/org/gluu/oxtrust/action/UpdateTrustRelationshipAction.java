@@ -595,7 +595,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(sslDirFN	+ shibboleth2ConfService.getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".crt")));
+			writer = new BufferedWriter(
+			            new FileWriter(
+			                       sslDirFN	
+			                       + shibboleth2ConfService
+			                           .getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".crt")));
 			writer.write(Shibboleth2ConfService.PUBLIC_CERTIFICATE_START_LINE + "\n" 
 						+ certificate
 						+ Shibboleth2ConfService.PUBLIC_CERTIFICATE_END_LINE);
