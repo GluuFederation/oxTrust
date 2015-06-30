@@ -11,7 +11,7 @@ function slideUpAndDown() {
 		}
 	});
 };
-
+/*
 Effect.BlindRight = function(element) {
 	element = $(element);
 	var elementDimensions = element.getDimensions();
@@ -54,4 +54,4 @@ Effect.BlindLeft = function(element) {
 			effect.element.hide().undoClipping();
 		}
 	}, arguments[1] || {}));
-};
+};*/
