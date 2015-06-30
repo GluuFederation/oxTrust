@@ -146,7 +146,7 @@ public class Shibboleth2ConfService implements Serializable {
 	
 	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
 	private CryptoConfigurationFile cryptoConfiguration;
-
+	
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
 	 */
@@ -155,8 +155,14 @@ public class Shibboleth2ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		String idpConfFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator + SHIB2_IDP_CONF_FOLDER + File.separator;
-		String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator + SHIB2_IDP_METADATA_FOLDER + File.separator;
+		String idpConfFolder      = applicationConfiguration.getShibboleth2IdpRootDir() 
+		                            + File.separator 
+		                            + SHIB2_IDP_CONF_FOLDER 
+		                            + File.separator;
+		String idpMetadataFolder  = applicationConfiguration.getShibboleth2IdpRootDir() 
+		                            + File.separator 
+		                            + SHIB2_IDP_METADATA_FOLDER 
+		                            + File.separator;
 
 		// Prepare data for files
 		initAttributes(trustRelationships);
