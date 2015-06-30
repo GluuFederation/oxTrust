@@ -74,7 +74,7 @@
     <ui:include src="/WEB-INF/incl/trustmanager/federationDeconstruction.xhtml" />
     <ui:include src="/WEB-INF/incl/trustmanager/entityIdSelector.xhtml" />
 
-    <h:form enctype="multipart/form-data">
+    <h:form enctype="multipart/form-data" id="trustForm">
         <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
         <input type='hidden' name='cid' value='#{conversation.id}' />
 
@@ -303,8 +303,6 @@
                         
                         <h:panelGrid columns="2">
                         	<h:outputText value="Enable InCommon R&amp;S" />
-                            <h:selectBooleanCheckbox value="#{_trustRelationship.researchBundle}">
-							</h:selectBooleanCheckbox>
 						</h:panelGrid>
 
                         <!-- Validation Log Start -->
@@ -341,13 +339,14 @@
                     </f:facet>
                 </rich:tab>
             </rich:tabPanel>
+            
         </h:panelGrid>
 
         <h:panelGrid columns="1" width="100%" columnClasses="alignLeft">
             <richext:spacer height="8" />
             <ui:insert name="configurationLink" />
         </h:panelGrid>
-
+				
         <ui:insert name="controlButttons" />
     </h:form>
 </ui:composition>

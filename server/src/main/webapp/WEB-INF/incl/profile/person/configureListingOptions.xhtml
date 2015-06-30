@@ -11,7 +11,6 @@
         <f:facet name="header">
             <h:outputText value="Configure White Pages Listing Options" />
         </f:facet>
-
         <h:form id="configureListingOptionsForm">
             <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <input type='hidden' name='cid' value='#{conversation.id}' />
@@ -21,7 +20,7 @@
                         Please note that you can not strike out Name" />
                 <h:panelGrid columns="2">
                     <a4j:ajax event="click" listener="#{userProfileAction.toggle('photo1')}" render="configureListingOptionsForm" execute="@this" limitRender="true" />
-                    <h:outputText value="Photo " styleClass="#{userProfileAction.released('photo1')? 'name' : 'striked name'}" />
+                    <h:outputText value="Photo" styleClass="#{userProfileAction.released('photo1')? 'name' : 'striked name'}" />
                     <s:graphicImage value="#{userProfileAction.getPhotoThumbData()}" width="50px" rendered="#{userProfileAction.released('photo1')}" />
                 </h:panelGrid>
                 <h:panelGrid columns="2">

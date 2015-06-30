@@ -8,9 +8,21 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			OpenID Connect<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Add Client</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/client/manage/add"> Add Client</a></li>
+		</ol>
+		</section>
+		<section class="content">
         <div id="formArea">
             <ui:decorate template="/WEB-INF/incl/client/clientForm.xhtml">
                 <ui:param name="_client" value="#{updateClientAction.client}" />
@@ -19,8 +31,8 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton value="Add" action="#{updateClientAction.save}" />
-                        <h:commandButton value="Cancel" action="#{updateClientAction.cancel}" immediate="true" />
+                        <h:commandButton styleClass="btn btn-primary" value="Add" action="#{updateClientAction.save}" />
+                        <h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="Cancel" action="#{updateClientAction.cancel}" immediate="true" />
                     </div>
                 </ui:define>
             </ui:decorate>
@@ -45,6 +57,6 @@
                 searchResult="#{updateClientAction.availableResponseTypes}" displaySearchForm="false"
                 acceptMethod="#{updateClientAction.acceptSelectResponseTypes}" cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
                 render="selectedResponseTypesId" nameProperty="entity.value" displayNameProperty="entity.displayName"/>
-        </div>
+        </div></section>
     </ui:define>
 </ui:composition>

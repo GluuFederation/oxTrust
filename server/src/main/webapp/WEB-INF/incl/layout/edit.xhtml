@@ -4,8 +4,9 @@
                  xmlns:f="http://java.sun.com/jsf/core"
                  xmlns:s="http://jboss.org/schema/seam/taglib">
 
-
-    <s:div rendered="#{not _hideLabel}">
+<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+    <s:div rendered="#{not _hideLabel}" styleClass="col-sm-2">
+    
         <s:label styleClass="name #{invalid?'errors':''}" rendered="#{not _labelAsText}">
             <ui:insert name="label"/>
             <s:span styleClass="required" rendered="#{required}">*</s:span>
@@ -16,7 +17,7 @@
         </s:span>
     </s:div>
 
-    <div class="prop">
+    <div class="col-sm-10 prop" style="padding-left:0px;">
             <span class="value #{invalid?'errors':''}">
                 <s:validateAll>
                     <ui:insert/>
@@ -28,5 +29,5 @@
                 <s:message styleClass="errors"/>
             </span>
     </div>
-
+</div>
 </ui:composition>

@@ -1,17 +1,17 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions">
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
-    <h:outputStylesheet>
+	<h:outputStylesheet>
         .addConfig {
             text-align: right;
             white-space: nowrap;
@@ -23,39 +23,103 @@
         }
     </h:outputStylesheet>
 
-    <ox:changePasswordDialog id="bindPassword" label="Change Bind Password" password="#{managePersonAuthenticationAction.ldapConfig.bindPassword}" setPasswordMethod="#{managePersonAuthenticationAction.updateLdapBindPassword}" />
+	<ox:changePasswordDialog id="bindPassword" label="Change Bind Password"
+		password="#{managePersonAuthenticationAction.ldapConfig.bindPassword}"
+		setPasswordMethod="#{managePersonAuthenticationAction.updateLdapBindPassword}" />
 
-    <h:form id="customAuthenticationForm">
-        <rich:collapsiblePanel switchType="client" opened="false" header="Manage LDAP Authentication" id="ldapManagement" rendered="true">
-            <h:panelGrid id="ldapManagementGroupId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
-                <a4j:commandButton value="Activate" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
-                    render="ldapManagementGroupId" limitRender="true" />
-                <a4j:commandButton value="Deactivate" action="#{_action.setExistLdapConfigIdpAuthConf(false)}" rendered="#{_action.existLdapConfigIdpAuthConf}"
-                    render="ldapManagementGroupId" limitRender="true" immediate="true"/>
+	<h:form id="customAuthenticationForm">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#manage-ldap" data-toggle="tab">Manage
+								LDAP Authentication</a></li>
+						<li><a href="#authentication-method" data-toggle="tab">Default
+								Authentication Method</a></li>
 
-                <ox:ldapConfig ldapConfig="#{_action.ldapConfig}" ldapConfigAction="#{_action}"
-                    propertiesAction="#{_action}" displayBaseDn="true" displayAnonymousBind="false"
-                    displayRemoveButton="false" displayPrimaryKey="true" displayLocalPrimaryKey="true"
-                    changePasswordDialogId="bindPassword:changePasswordModalPanel" rendered="#{_action.existLdapConfigIdpAuthConf}"/> 
+					</ul>
+					<div class="tab-content">
+						<!-- System Configuration -->
+						<div class="tab-pane active" id="manage-ldap">
+						<div style="display: inline-block; width: 75% !important;">
+							<h:panelGroup>
 
-                <h:commandButton value="Test LDAP Connection" action="#{_action.testLdapConnection}" rendered="#{_action.existLdapConfigIdpAuthConf}" />
-            </h:panelGrid>
-        </rich:collapsiblePanel>
+								<ox:ldapConfig ldapConfig="#{_action.ldapConfig}"
+									ldapConfigAction="#{_action}" propertiesAction="#{_action}"
+									displayBaseDn="true" displayAnonymousBind="false"
+									displayRemoveButton="false" displayPrimaryKey="true"
+									displayLocalPrimaryKey="true"
+									changePasswordDialogId="bindPassword:changePasswordModalPanel"
+									rendered="#{_action.existLdapConfigIdpAuthConf}" />
+								<h:commandButton styleClass="btn btn-success"
+									style="margin-left:4px" value="Test LDAP Connection"
+									action="#{_action.testLdapConnection}"
+									rendered="#{_action.existLdapConfigIdpAuthConf}" />
 
-        <rich:collapsiblePanel switchType="client" opened="false" header="Default Authentication Method">
-            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">Authentication mode</ui:define>
-                    <h:selectOneMenu value="#{_action.authenticationMode}">
-                        <s:selectItems value="#{_action.personAuthenticationConfigurationNames}" var="_name" label="#{_name}" noSelectionLabel="Default"/>
-                    </h:selectOneMenu>
-                </s:decorate>
-        	</h:panelGrid>
-        </rich:collapsiblePanel>
+							</h:panelGroup>
 
-        <richext:spacer height="16"/>       
+							
+							</div>
+						</div>
+						<div class="tab-pane" id="authentication-method">
+							<div style="display: inline-block; width: 75% !important;">
+								<h:panelGroup>
+									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+										id="auntheticationMode">
+										<ui:define name="label">Authentication mode</ui:define>
+										<h:selectOneMenu value="#{_action.authenticationMode}"
+											styleClass="form-control">
+											<s:selectItems
+												value="#{_action.personAuthenticationConfigurationNames}"
+												var="_name" label="#{_name}" noSelectionLabel="Default" />
+										</h:selectOneMenu>
+									</s:decorate>
 
-        <rich:notifyMessages stayTime="2000" nonblocking="true" />
-        <ui:insert name="controlButttons" />
-    </h:form>
+								</h:panelGroup>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="box-footer">
+
+
+					<ui:insert name="controlButttons" />
+					<div id="updateButtons">
+						<h:commandButton styleClass="btn btn-primary"
+							style="margin-left:4px" value="Update"
+							action="#{managePersonAuthenticationAction.save}" />
+						<h:commandButton styleClass="btn btn-primary" value="Cancel"
+							action="#{managePersonAuthenticationAction.cancel}"
+							immediate="true" style="margin-left:4px" />
+						<h:commandButton styleClass="btn btn-primary" value="Activate"
+							action="#{_action.setExistLdapConfigIdpAuthConf(true)}"
+							rendered="#{not _action.existLdapConfigIdpAuthConf}"
+							render="ldapManagementGroupId" limitRender="true"
+							style="margin-left:4px" />
+						<h:commandButton styleClass="btn btn-primary" value="Deactivate"
+							action="#{_action.setExistLdapConfigIdpAuthConf(false)}"
+							rendered="#{_action.existLdapConfigIdpAuthConf}"
+							render="ldapManagementGroupId" limitRender="true"
+							immediate="true" style="margin-left:4px" />
+
+					</div>
+
+				</div>
+
+
+
+			</div>
+		</div>
+
+
+
+
+
+
+		<richext:spacer height="16" />
+
+		<rich:notifyMessages stayTime="2000" nonblocking="true" />
+		<ui:insert name="controlButttons" />
+	</h:form>
 </ui:composition>

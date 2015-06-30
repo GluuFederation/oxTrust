@@ -35,7 +35,22 @@
             }
         }
     </h:outputScript>
-
+ <section class="content-header">
+		<h1 style="color: #333;">
+			Users<small><i class="fa fa-caret-right" style="color: #333 !important;"></i>Update User</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration">Add/Update User</li>
+		</ol>
+		</section>
+        <section class="content">
+            <div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+						<div class="box-header">
+						</div>
+                            <div style="display: inline-block; width: 100% !important;">
     <h:form>
         <input type='hidden' name='cid' value='#{conversation.id}'/> <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
 
@@ -72,19 +87,19 @@
                             <ui:param name="_aid" value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}" />
                             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_custAttr.adminCanEdit or _mustEnter}">
                                 <ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
-                                <rich:inplaceInput value="#{_custAttr.values[_valueIdx]}" defaultLabel="Click to enter #{_custAttr.metadata.displayName}" maxlength="60" inputWidth="180" id="custId" required="#{_mustEnter and empty param['sv']}"
+                             <div class="col-xs-10">   <rich:inplaceInput value="#{_custAttr.values[_valueIdx]}" defaultLabel="Click to enter #{_custAttr.metadata.displayName}" maxlength="60"  id="custId" required="#{_mustEnter and empty param['sv']}"
                                     rendered="#{_custAttr.adminCanEdit or _mustEnter}">
                                     <rich:validator event="blur" />
-                                </rich:inplaceInput>
+                                </rich:inplaceInput></div>
                                 <h:outputText value="&#160;" />
-                                <a4j:commandLink action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}" render="selectedCustomAttributesId"
-                                    onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);" rendered="#{_custAttr.adminCanEdit and not _mandatory}" eventsQueue="personQueue">
-                                    <h:graphicImage value="/img/remove.gif" />
+                              <div class="col-xs-2">  <a4j:commandLink action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}" render="selectedCustomAttributesId"
+                                    styleClass="glyphicon glyphicon-remove"  style="margin-top:-18px;margin-left:-44px;" onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);" rendered="#{_custAttr.adminCanEdit and not _mandatory}" eventsQueue="personQueue">
+                                   <!--   <h:graphicImage value="/img/remove.gif" />-->
                                     <f:param name="sv" value="1" />
-                                </a4j:commandLink>
+                                </a4j:commandLink></div>
                             </s:decorate>
 
-                            <s:decorate template="/WEB-INF/incl/layout/view.xhtml" rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}" >
+                            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}" >
                                 <ui:define name="label">
                                     <h:panelGroup>
                                         <h:outputText value="#{_custAttr.metadata.displayName}"/>
@@ -111,4 +126,9 @@
 
         <ui:insert name="controlButtons" />
     </h:form>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+    </section>
 </ui:composition>

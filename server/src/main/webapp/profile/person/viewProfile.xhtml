@@ -1,21 +1,22 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    xmlns:c="http://java.sun.com/jsp/jstl/core"
-    template="/WEB-INF/incl/layout/template.xhtml">
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
-    <ui:define name="body">
-        <div id="viewProfile">
-        	<script type="text/javascript" src="#{oxTrustConfigurationService.jsLocation}/attributesSlide.js"/>
-            <h:outputScript>
+	<ui:define name="body">
+		<div id="viewProfile">
+			<script type="text/javascript"
+				src="#{oxTrustConfigurationService.jsLocation}/attributesSlide.js" />
+			<h:outputScript>
                 function changeAttributeVisibility(attrId, show) {
                     var attr = $('a[id*=' + attrId + ']');
                     var currentState = attr.is(":visible");
@@ -27,120 +28,218 @@
                     }
                 }
             </h:outputScript>
+			<ox:changePasswordDialog id="appliancePassword"
+				label="Change Appliance Password"
+				password="#{appliancePasswordAction.newPassword}"
+				setPasswordMethod="#{appliancePasswordAction.update}" />
+			<section class="content-header">
+			<h1 style="color: #333;">
+				Personal<small><i class="fa fa-caret-right"
+					style="color: #333 !important;"></i> Profile</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"><i
+						class="fa fa-home"></i></a></li>
+				<li class="organization/configuration">Profile</li>
+			</ol>
+			</section>
+			<section class="content"> <ui:include
+				src="/WEB-INF/incl/profile/person/configureListingOptions.xhtml" />
 
-            <ui:include src="/WEB-INF/incl/profile/person/configureListingOptions.xhtml" />
+			<h:form id="personForm">
+				<!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
+				<input type='hidden' name='cid' value='#{conversation.id}' />
 
-            <h:form id="personForm">
-                <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-                <input type='hidden' name='cid' value='#{conversation.id}' />
 
-                <h:panelGrid columns="3" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop, , alignTop personasList">
 
-                    <ui:param name="_customAttributes" value="#{userProfileAction.person.customAttributes}" />
-                    <ui:param name="_new" value="false" />
-                    <h:panelGrid width="100%" border="0" cellpadding="0" cellspacing="0">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+							<div class="box-header"></div>
+							<div style="display: inline-block; width: 75% !important;">
+								<h:panelGroup columns="3" width="100%" border="0"
+									cellpadding="0" cellspacing="0"
+									columnClasses="alignTop, , alignTop personasList">
 
-                        <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" styleClass="formColumn" onclick="slideUpAndDown({duration:0.5})">
-                            <h:panelGrid columns="5">
-                                <h:outputText styleClass="headertext" value="My #{organizationService.organization.displayName} Profile" />
-                                <richext:spacer width="40" />
-                                <h:outputText value="I want to be listed in #{organizationService.organization.shortName} White Pages"
-                                    rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}" />
+									<ui:param name="_customAttributes"
+										value="#{userProfileAction.person.customAttributes}" />
+									<ui:param name="_new" value="false" />
+									<h:panelGroup width="100%" border="0" cellpadding="0"
+										cellspacing="0">
 
-                                <h:selectBooleanCheckbox value="#{userProfileAction.allowPublication}" rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}">
-                                    <a4j:ajax event="click" render="configureListing" execute="@this" limitRender="true" />
-                                </h:selectBooleanCheckbox>
+										<h:panelGroup columns="1" width="100%" border="0"
+											cellpadding="0" cellspacing="0" styleClass="formColumn"
+											onclick="slideUpAndDown({duration:0.5})">
+											<h:panelGroup columns="5">
+												<h:outputText styleClass="headertext"
+													style="margin-left: 2.3%;  font-size: 13pt;  font-weight: 700;  margin-bottom: 15px;  display: block;"
+													value="My #{organizationService.organization.displayName} Profile" />
+												<br></br>
+												<br></br>
+												<richext:spacer width="40" />
+												<h:outputText
+													value="I want to be listed in #{organizationService.organization.shortName} White Pages"
+													rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}" />
 
-                                <h:panelGroup id="configureListing">
-                                    <a4j:commandButton value="Configure Listing"
-                                        rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled') and  (userProfileAction.person.allowPublication)}" execute="@this" limitRender="true"
-                                        oncomplete="#{rich:component('configureListingOptions')}.show();" />
-                                </h:panelGroup>
-                            </h:panelGrid>
+												<h:selectBooleanCheckbox
+													value="#{userProfileAction.allowPublication}"
+													rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}">
+													<a4j:ajax event="click" render="configureListing"
+														execute="@this" limitRender="true" />
+												</h:selectBooleanCheckbox>
 
-                            <ui:param name="_mandatoryAttributes" value="#{userProfileAction.mandatoryAttributes}" />
+												<h:panelGroup id="configureListing">
+													<a4j:commandButton value="Configure Listing"
+														rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled') and  (userProfileAction.person.allowPublication)}"
+														execute="@this" limitRender="true"
+														oncomplete="#{rich:component('configureListingOptions')}.show();" />
+												</h:panelGroup>
+											</h:panelGroup>
 
-                            <h:panelGroup id="selectedCustomAttributesId">
-                                <a4j:repeat value="#{_customAttributes}" var="_custAttr" rowKeyVar="_custAttrIdx">
-                                    <ui:param name="_aid" value="#{customAttributeAction.attributeIds[_custAttr]}" />
-                                    <ui:param name="_mandatory" value="#{_mandatoryAttributes.contains(_custAttr)}" />
-                                    <s:decorate template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
-                                        rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo')}">
-                                        <ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
-                                        <rich:inplaceInput value="#{_custAttr.value}" defaultLabel="click to enter #{_custAttr.metadata.displayName}" maxlength="60" inputWidth="300" id="custId"
-                                            rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
-                                        <h:outputText value="#{_custAttr.value}" rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
-                                        <h:outputText value="&#160;" />
-                                        <a4j:commandLink action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
-                                            onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);" limitRender="true" render="selectedCustomAttributesId"
-                                            rendered="#{_custAttr.userCanEdit and (not _mandatory) and s:hasPermission(applianceService.appliance, 'profile_management')}">
-                                            <h:graphicImage value="/img/remove.gif" />
-                                            <f:param name="sv" value="1" />
-                                        </a4j:commandLink>
-                                    </s:decorate>
+											<ui:param name="_mandatoryAttributes"
+												value="#{userProfileAction.mandatoryAttributes}" />
 
-                                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml" rendered="#{_custAttr.userCanAccess and (_custAttr.metadata.dataType.value eq 'photo')}">
-                                        <ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
-                                        <h:panelGrid columns="2" columnClasses="alignLeftTop, alignLeftTop" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                            <h:panelGrid id="custImagePanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                                <rich:fileUpload id="custUploadId" fileUploadListener="#{customAttributeAction.uploadImage}" rendered="#{_custAttr.userCanEdit and (_custAttr.value eq null)}"
-                                                    acceptedTypes="jpg, jpeg, gif, png, bmp" ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
-                                                    maxFilesQuantity="1" immediateUpload="true" listHeight="60px" styleClass="uploadFile">
-                                                            <a4j:ajax event="uploadcomplete" listener="#{customAttributeAction.addPhoto(_custAttr.metadata.inum)}" execute="@this" render="custImagePanelId"/>
-                                                </rich:fileUpload>
-                                                <h:panelGrid columns="1" width="100%" cellspacing="0" cellpadding="0" border="0" columnClasses="alignCenter" rendered="#{_custAttr.value ne null}">
-                                                    <h:panelGroup layout="block">
-                                                        <s:graphicImage value="#{customAttributeAction.getPhotoThumbData(_custAttr.metadata.inum)}" fileName="#{customAttributeAction.getPhotoSourceName(_custAttr.metadata.inum)}" />
-                                                    </h:panelGroup>
-                    
-                                                    <richext:spacer height="8"/>
-                    
-                                                    <a4j:commandLink value="Remove" action="#{customAttributeAction.removePhoto(_custAttr.metadata.inum)}" rendered="#{_custAttr.userCanEdit}"
-                                                        onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-                                                        render="custImagePanelId" ajaxSingle="true" limitRender="true" execute="@this"/>
-                                                </h:panelGrid>
-                                            </h:panelGrid> 
-                                            <h:panelGroup>
-                                                <h:outputText value="&#160;&#160;&#160;" />
-                                                <a4j:commandLink action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}" limitRender="true" render="selectedCustomAttributesId"
-                                                    onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);" rendered="#{_custAttr.userCanEdit}">
-                                                    <h:graphicImage value="/img/remove.gif" />
-                                                    <f:param name="sv" value="1" />
-                                                </a4j:commandLink>
-                                            </h:panelGroup>
-                                        </h:panelGrid>
-                                    </s:decorate>
-                                </a4j:repeat>
-                            </h:panelGroup>
-                        </h:panelGrid>
+											<h:panelGroup id="selectedCustomAttributesId">
+												<a4j:repeat value="#{_customAttributes}" var="_custAttr"
+													rowKeyVar="_custAttrIdx">
+													<ui:param name="_aid"
+														value="#{customAttributeAction.attributeIds[_custAttr]}" />
+													<ui:param name="_mandatory"
+														value="#{_mandatoryAttributes.contains(_custAttr)}" />
 
-                        <richext:spacer height="16" />
+													<s:decorate
+														template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
+														rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo')}">
+														<ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
 
-                        <s:div id="updateButtons">
-                            <a4j:commandButton value="Change Password" onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
-                                rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}" />
-                            <h:commandButton value="Update" action="#{userProfileAction.update}" rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}" />
-                            <h:commandButton value="Cancel" action="#{userProfileAction.cancel}" immediate="true" rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}" />
-                        </s:div>
-                    </h:panelGrid>
+														<rich:inplaceInput value="#{_custAttr.value}"
+															defaultLabel="click to enter #{_custAttr.metadata.displayName}"
+															maxlength="60" inputWidth="300" id="custId"
+															rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
+														<h:outputText value="#{_custAttr.value}"
+															rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
+														<h:outputText value="&#160;" />
+														<a4j:commandLink
+															action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+															onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+															limitRender="true" render="selectedCustomAttributesId"
+															rendered="#{_custAttr.userCanEdit and (not _mandatory) and s:hasPermission(applianceService.appliance, 'profile_management')}">
+															<h:graphicImage value="/img/remove.gif" />
+															<f:param name="sv" value="1" />
+														</a4j:commandLink>
+													</s:decorate>
 
-                    <richext:spacer width="10" />
+													<s:decorate template="/WEB-INF/incl/layout/view.xhtml"
+														rendered="#{_custAttr.userCanAccess and (_custAttr.metadata.dataType.value eq 'photo')}">
+														<ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
+														<h:panelGroup columns="2"
+															columnClasses="alignLeftTop, alignLeftTop" width="100%"
+															border="0" cellpadding="0" cellspacing="0">
+															<h:panelGroup id="custImagePanelId" columns="1"
+																width="100%" border="0" cellpadding="0" cellspacing="0">
+																<rich:fileUpload id="custUploadId"
+																	fileUploadListener="#{customAttributeAction.uploadImage}"
+																	rendered="#{_custAttr.userCanEdit and (_custAttr.value eq null)}"
+																	acceptedTypes="jpg, jpeg, gif, png, bmp"
+																	ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+																	maxFilesQuantity="1" immediateUpload="true"
+																	listHeight="60px" styleClass="uploadFile">
+																	<a4j:ajax event="uploadcomplete"
+																		listener="#{customAttributeAction.addPhoto(_custAttr.metadata.inum)}"
+																		execute="@this" render="custImagePanelId" />
+																</rich:fileUpload>
+																<h:panelGroup columns="1" width="100%" cellspacing="0"
+																	cellpadding="0" border="0" columnClasses="alignCenter"
+																	rendered="#{_custAttr.value ne null}">
+																	<h:panelGroup layout="block">
+																		<s:graphicImage
+																			value="#{customAttributeAction.getPhotoThumbData(_custAttr.metadata.inum)}"
+																			fileName="#{customAttributeAction.getPhotoSourceName(_custAttr.metadata.inum)}" />
+																	</h:panelGroup>
 
-                    <h:panelGroup id="attributeTabPanelGroupId" rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}" style="{vertical-align:bottom;}">
-                        <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0">
-                            <c:forEach items="#{customAttributeAction.attributes}" var="attr">
-                                <ui:param name="_aid" value="#{customAttributeAction.attributeIds[attr]}" />
-                                <a4j:commandLink id="#{_aid}" value="#{attr.displayName}" action="#{customAttributeAction.addCustomAttribute(attr.inum)}" render="selectedCustomAttributesId"
-                                    oncomplete="changeAttributeVisibility('#{_aid}', false);" style="#{customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}">
-                                    <f:param name="sv" value="1" />
-                                </a4j:commandLink>
-                            </c:forEach>
-                        </h:panelGrid>
-                    </h:panelGroup>
-                </h:panelGrid>
-            </h:form>
+																	<richext:spacer height="8" />
 
-            <ox:changePasswordDialog id="personPassword" label="Change Password" password="#{userPasswordAction.newPassword}" verifyOldPassword="true" person="#{userProfileAction.person}" setPasswordMethod="#{userPasswordAction.update}" validatorBinding="#{passwordValidationAction.graphValidator}" />
-        </div>
-    </ui:define>
+																	<a4j:commandLink value="Remove"
+																		action="#{customAttributeAction.removePhoto(_custAttr.metadata.inum)}"
+																		rendered="#{_custAttr.userCanEdit}"
+																		onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+																		render="custImagePanelId" ajaxSingle="true"
+																		limitRender="true" execute="@this" />
+																</h:panelGroup>
+															</h:panelGroup>
+															<h:panelGroup>
+																<h:outputText value="&#160;&#160;&#160;" />
+																<a4j:commandLink
+																	action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+																	limitRender="true" render="selectedCustomAttributesId"
+																	onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+																	rendered="#{_custAttr.userCanEdit}">
+																	<h:graphicImage value="/img/remove.gif" />
+																	<f:param name="sv" value="1" />
+																</a4j:commandLink>
+															</h:panelGroup>
+														</h:panelGroup>
+													</s:decorate>
+												</a4j:repeat>
+											</h:panelGroup>
+										</h:panelGroup>
+
+										<richext:spacer height="16" />
+
+										<s:div id="updateButtons">
+											<a4j:commandButton value="Change Password"
+												onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
+												rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}" />
+											<h:commandButton value="Update"
+												action="#{userProfileAction.update}"
+												rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}" />
+											<h:commandButton value="Cancel"
+												action="#{userProfileAction.cancel}" immediate="true"
+												rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}" />
+										</s:div>
+									</h:panelGroup>
+
+									<richext:spacer width="10" />
+
+									<h:panelGroup id="attributeTabPanelGroupId"
+										rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}"
+										style="{vertical-align:bottom;}">
+										<h:panelGroup columns="1" border="0" cellpadding="0"
+											cellspacing="0">
+											<c:forEach items="#{customAttributeAction.attributes}"
+												var="attr">
+												<ui:param name="_aid"
+													value="#{customAttributeAction.attributeIds[attr]}" />
+												<a4j:commandLink id="#{_aid}" value="#{attr.displayName}"
+													action="#{customAttributeAction.addCustomAttribute(attr.inum)}"
+													render="selectedCustomAttributesId"
+													oncomplete="changeAttributeVisibility('#{_aid}', false);"
+													style="#{customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}">
+													<f:param name="sv" value="1" />
+												</a4j:commandLink>
+											</c:forEach>
+										</h:panelGroup>
+									</h:panelGroup>
+								</h:panelGroup>
+							</div>
+							<div class="box-footer">
+
+								<div id="updateButtons">
+									<a4j:commandButton value="Change Password"
+										styleClass="btn btn-success"
+										onclick="#{rich:component('appliancePassword:changePasswordModalPanel')}.show();" />
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</h:form></section>
+			<ox:changePasswordDialog id="personPassword" label="Change Password"
+				password="#{userPasswordAction.newPassword}"
+				verifyOldPassword="true" person="#{userProfileAction.person}"
+				setPasswordMethod="#{userPasswordAction.update}"
+				validatorBinding="#{passwordValidationAction.graphValidator}" />
+		</div>
+	</ui:define>
 </ui:composition>

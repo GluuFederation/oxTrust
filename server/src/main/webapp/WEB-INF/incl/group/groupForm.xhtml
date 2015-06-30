@@ -10,10 +10,28 @@
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
     xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
+<section class="content-header">
+		<h1 style="color: #333;">
+			Users<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Manage Groups</small>
+			<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Add Group</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/client/inventory"> Clients</a></li>
+		</ol>
+		</section>
+		<section class="content">
     <h:form>
+        <div class="row">
+            <div class="col-xs-12">
+              <div class="box box-primary">
+              <div class="box-header">
+               <div style="display: inline-block;width: 75% !important;">
+
         <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
             <ui:param name="_owner" value="#{gluufn:getDisplayNameEntry(_group.owner)}" />
-            <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="owner">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="owner">
                 <ui:define name="label">Owner</ui:define>
                 <s:link view="/person/updatePerson.xhtml" value="#{empty _owner.displayName ? _owner.uid : _owner.displayName}" propagation="none">
                     <f:param name="inum" value="#{_owner.inum}" />
@@ -21,19 +39,19 @@
             </s:decorate>
 
             <ui:param name="_organization" value="#{gluufn:getDisplayNameEntry(_group.organization)}" />
-            <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="organization">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="organization">
                 <ui:define name="label">Organization</ui:define>
                 <h:outputText value="#{_organization.displayName}" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
                 <ui:define name="label">Display Name</ui:define>
-                <rich:inplaceInput value="#{_group.displayName}" defaultLabel="click to enter Display Name" maxlength="60" inputWidth="180" required="true" id="displayNameId" />
+                <rich:inplaceInput value="#{_group.displayName}" defaultLabel="click to enter display name" maxlength="60"  required="true" id="displayNameId" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="visibility">
                 <ui:define name="label">Type</ui:define>
-                <h:selectOneMenu value="#{_group.visibility}" id="visibilityId">
+                <h:selectOneMenu value="#{_group.visibility}" id="visibilityId" styleClass="form-control">
                     <s:selectItems value="#{groupService.visibilityTypes}" noSelectionLabel="Visibility type" var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
@@ -42,30 +60,42 @@
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
                 <ui:define name="label">Description</ui:define>
-                <h:inputTextarea value="#{_group.description}" rows="3" size="40" maxlength="4000" id="descriptionId" />
+                <h:inputTextarea value="#{_group.description}" rows="3" size="40" maxlength="4000" id="descriptionId" styleClass="form-control" />
             </s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="members">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="members">
                 <ui:define name="label">Members</ui:define>
                 <h:panelGroup id="selectedMembersId">
                     <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                         <a4j:repeat value="#{_groupAction.members}" rowKeyVar="_memberIdx" var="_member">
                             <h:outputText value="#{empty _member.displayName ? _member.uid : _member.displayName}" />
                             <h:outputText value="&#160;" />
-                            <a4j:commandLink action="#{_groupAction.removeMember(_member.inum)}" render="selectedMembersId" execute="@this">
-                                <h:graphicImage value="/img/remove.gif" />
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{_groupAction.removeMember(_member.inum)}" render="selectedMembersId" execute="@this">
+                                <!--<h:graphicImage value="/img/remove.gif" />-->
                             </a4j:commandLink>
                             <br />
                         </a4j:repeat>
 
-                        <richext:spacer height="16" />
+                        
 
-                        <a4j:commandButton value="Add member" action="#{_groupAction.selectAddedMembers}" oncomplete="#{rich:component('member:selectMemberModalPanel')}.show();" execute="@this" />
+                        <a4j:commandButton style="margin-top:10px;" styleClass="btn btn-primary" value="Add member" action="#{_groupAction.selectAddedMembers}" oncomplete="#{rich:component('member:selectMemberModalPanel')}.show();" execute="@this" />
                     </h:panelGrid>
                 </h:panelGroup>
             </s:decorate>
         </h:panelGrid>
 
-        <ui:insert name="controlButttons" />
+                   
+
+                   </div>
+                  </div>
+                  <div class="box-footer">
+            <ui:insert name="controlButttons" />
+            </div>
+                  </div>
+                </div>
+            </div>
+        
+
     </h:form>
+    </section>
 </ui:composition>

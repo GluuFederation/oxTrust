@@ -1,31 +1,42 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/template.xhtml">
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
-    <ui:define name="head">
+	<ui:define name="head">
 
-    </ui:define>
+	</ui:define>
 
-    <ui:define name="body">
-        <div id="formArea">
-            <ui:decorate template="/WEB-INF/incl/authentication/customAuthenticationForm.xhtml">
-                <ui:param name="_action" value="#{managePersonAuthenticationAction}" />
+	<ui:define name="body">
+		<section class="content-header">
+		<h1 style="color: #333;">
+			Configuration<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Manage Authentication</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a href="#{request.contextPath}/authentication/configuration">Manage Authentication</a></li>
+		</ol>
+		</section>
+		<section class="content"> 
+		<div id="formArea">
+			<ui:decorate
+				template="/WEB-INF/incl/authentication/customAuthenticationForm.xhtml">
+				<ui:param name="_action" value="#{managePersonAuthenticationAction}" />
+				<ui:define name="controlButttons">
+					
+				</ui:define>
 
-                <ui:define name="controlButttons">
-                    <div id="updateButtons">
-                        <h:commandButton value="Update" action="#{managePersonAuthenticationAction.save}" />
-                        <h:commandButton value="Cancel" action="#{managePersonAuthenticationAction.cancel}" immediate="true" />
-                    </div>
-                </ui:define>
-            </ui:decorate>
-        </div>
-    </ui:define>
+			</ui:decorate>
+
+		</div>
+		</section>
+	</ui:define>
 
 </ui:composition>

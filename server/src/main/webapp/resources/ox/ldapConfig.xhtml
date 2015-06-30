@@ -1,96 +1,152 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions"
-    xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    xmlns:cc="http://java.sun.com/jsf/composite">
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
+	xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
-    <cc:attribute name="ldapConfig" required="true" type="org.xdi.model.ldap.GluuLdapConfiguration" />
-    <cc:attribute name="ldapConfigList" required="false" type="java.util.List" />
-    <cc:attribute name="displayAnonymousBind" required="false" default="true" type="java.lang.Boolean" />
-    <cc:attribute name="displayPrimaryKey" required="false" default="false" type="java.lang.Boolean" />
-    <cc:attribute name="displayLocalPrimaryKey" required="false" default="false" type="java.lang.Boolean" />
-    <cc:attribute name="displayBaseDn" required="false" default="true" type="java.lang.Boolean" />
-    <cc:attribute name="inputWidth" default="48" required="false" type="java.lang.Integer" />
-    <cc:attribute name="maxServerItems" type="java.lang.Integer" />
-    <cc:attribute name="maxBaseDnItems" type="java.lang.Integer" />
-    <cc:attribute name="propertiesAction" rerquired="true" type="org.gluu.oxtrust.model.SimplePropertiesListModel"/>
-    <cc:attribute name="displayRemoveButton" rerquired="true" default="true" type="java.lang.Boolean" />
-    <cc:attribute name="renderAfterRomoval" type="java.lang.String" />
-    <cc:attribute name="changePasswordDialogId" type="java.lang.String" />
-    <cc:attribute name="ldapConfigAction" rerquired="true" type="org.gluu.oxtrust.model.LdapConfigurationModel"/>
+	<cc:attribute name="ldapConfig" required="true"
+		type="org.xdi.model.ldap.GluuLdapConfiguration" />
+	<cc:attribute name="ldapConfigList" required="false"
+		type="java.util.List" />
+	<cc:attribute name="displayAnonymousBind" required="false"
+		default="true" type="java.lang.Boolean" />
+	<cc:attribute name="displayPrimaryKey" required="false" default="false"
+		type="java.lang.Boolean" />
+	<cc:attribute name="displayLocalPrimaryKey" required="false"
+		default="false" type="java.lang.Boolean" />
+	<cc:attribute name="displayBaseDn" required="false" default="true"
+		type="java.lang.Boolean" />
+	<cc:attribute name="inputWidth" default="48" required="false"
+		type="java.lang.Integer" />
+	<cc:attribute name="maxServerItems" type="java.lang.Integer" />
+	<cc:attribute name="maxBaseDnItems" type="java.lang.Integer" />
+	<cc:attribute name="propertiesAction" rerquired="true"
+		type="org.gluu.oxtrust.model.SimplePropertiesListModel" />
+	<cc:attribute name="displayRemoveButton" rerquired="true"
+		default="true" type="java.lang.Boolean" />
+	<cc:attribute name="renderAfterRomoval" type="java.lang.String" />
+	<cc:attribute name="changePasswordDialogId" type="java.lang.String" />
+	<cc:attribute name="ldapConfigAction" rerquired="true"
+		type="org.gluu.oxtrust.model.LdapConfigurationModel" />
 </cc:interface>
 
 <cc:implementation>
-    <h:panelGrid columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
-        <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="name">
-                <ui:define name="label">Name</ui:define>
-                <h:inputText value="#{cc.attrs.ldapConfig.configId}" size="#{cc.attrs.inputWidth}" required="true"/>
-            </s:decorate>
-            
-            
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="useAnonymousBind" rendered="#{cc.attrs.displayAnonymousBind}">
-                <ui:define name="label">Use Anonymous Bind</ui:define>
-                <h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.useAnonymousBind}">
-                    <a4j:ajax event="click" render="bindDnGroup" execute="@this"/>
-                </h:selectBooleanCheckbox>
-            </s:decorate>
+	
 
-            <h:panelGroup id="bindDnGroup">
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="bindDn" rendered="#{not cc.attrs.ldapConfig.useAnonymousBind}">
-                    <ui:define name="label">Bind DN</ui:define>
-                    <h:inputText value="#{cc.attrs.ldapConfig.bindDN}" size="46" required="#{not ldapConfig.useAnonymousBind}"/>
-                </s:decorate>
-            </h:panelGroup>
+				<h:panelGroup columns="2" columnClasses="alignLeft, removeConfig"
+					width="100%" border="0" cellpadding="0" cellspacing="0">
+					<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+						style="margin-left:1000px;margin-top:-21px;"
+						action="#{cc.attrs.ldapConfigAction.removeLdapConfig(cc.attrs.ldapConfigList, cc.attrs.ldapConfig)}"
+						rendered="#{cc.attrs.displayRemoveButton}"
+						render="#{cc.attrs.renderAfterRomoval}" execute="@this">
+						<!--  <h:graphicImage value="/img/remove.gif" />-->
+					</a4j:commandLink>
+					<h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+						cellspacing="0">
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="name">
+							<ui:define name="label">Name</ui:define>
+							<h:inputText styleClass="form-control"
+								value="#{cc.attrs.ldapConfig.configId}"
+								size="#{cc.attrs.inputWidth}" required="true" />
+						</s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="maxConnection">
-                <ui:define name="label">Use SSL</ui:define>
-                <h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.useSSL}" required="true"/>
-            </s:decorate>
-        
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="useSSL">
-                <ui:define name="label">Max connections</ui:define>
-                <h:inputText value="#{cc.attrs.ldapConfig.maxConnections}" size="5" required="true"/>
-            </s:decorate>
 
-            <ox:simplePropertiesList label="Server" labelAdd="server"
-                properties="#{cc.attrs.ldapConfig.servers}" propertiesAction="#{cc.attrs.propertiesAction}" inputWidth="#{cc.attrs.inputWidth}" required="true"
-                maxItems="#{cc.attrs.maxServerItems}" />
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+							id="useAnonymousBind" rendered="#{cc.attrs.displayAnonymousBind}">
+							<ui:define name="label">Use Anonymous Bind</ui:define>
+							<h:selectBooleanCheckbox
+								value="#{cc.attrs.ldapConfig.useAnonymousBind}">
+								<a4j:ajax event="click" render="bindDnGroup" execute="@this" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
 
-            <ox:simplePropertiesList label="Base DN" labelAdd="base DN" maxItems="#{cc.attrs.maxBaseDnItems}"
-                properties="#{cc.attrs.ldapConfig.baseDNs}" propertiesAction="#{cc.attrs.propertiesAction}" required="true" rendered="#{cc.attrs.displayBaseDn}"/>
+						<h:panelGroup id="bindDnGroup">
+							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+								id="bindDn"
+								rendered="#{not cc.attrs.ldapConfig.useAnonymousBind}">
+								<ui:define name="label">Bind DN</ui:define>
+								<h:inputText styleClass="form-control"
+									value="#{cc.attrs.ldapConfig.bindDN}" size="46"
+									required="#{not ldapConfig.useAnonymousBind}" />
+							</s:decorate>
+						</h:panelGroup>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{cc.attrs.displayPrimaryKey}">
-                <ui:define name="label">Primary key</ui:define>
-                <h:inputText value="#{cc.attrs.ldapConfig.primaryKey}" required="true" size="46" />
-            </s:decorate>
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="useSSL">
+							<ui:define name="label">Max connections</ui:define>
+							<h:inputText styleClass="form-control"
+								value="#{cc.attrs.ldapConfig.maxConnections}" size="5"
+								required="true" />
+						</s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{cc.attrs.displayLocalPrimaryKey}">
-                <ui:define name="label">Local primary key</ui:define>
-                <h:inputText value="#{cc.attrs.ldapConfig.localPrimaryKey}" required="true" size="46" />
-            </s:decorate>
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+							rendered="#{cc.attrs.displayPrimaryKey}">
+							<ui:define name="label">Primary key</ui:define>
+							<h:inputText styleClass="form-control"
+								value="#{cc.attrs.ldapConfig.primaryKey}" required="true"
+								size="46" />
+						</s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-                <ui:define name="label">Enabled</ui:define>
-                <h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}" />
-            </s:decorate>
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+							rendered="#{cc.attrs.displayLocalPrimaryKey}">
+							<ui:define name="label">Local primary key</ui:define>
+							<h:inputText styleClass="form-control"
+								value="#{cc.attrs.ldapConfig.localPrimaryKey}" required="true"
+								size="46" />
+						</s:decorate>
 
-            <a4j:commandButton value="Change Bind Password" oncomplete="#{rich:component(cc.attrs.changePasswordDialogId)}.show();" rendered="#{cc.attrs.changePasswordDialogId != null}"
-                 render="#{cc.attrs.changePasswordDialogId}:changePasswordForm" limitRender="true" action="#{cc.attrs.ldapConfigAction.setActiveLdapConfig(cc.attrs.ldapConfig)}" execute="@this" />
-        </h:panelGrid>
 
-        <a4j:commandLink action="#{cc.attrs.ldapConfigAction.removeLdapConfig(cc.attrs.ldapConfigList, cc.attrs.ldapConfig)}" rendered="#{cc.attrs.displayRemoveButton}" render="#{cc.attrs.renderAfterRomoval}" execute="@this">
-            <h:graphicImage value="/img/remove.gif" />
-        </a4j:commandLink>
-    </h:panelGrid>
+
+
+
+						<ox:simplePropertiesList label="Server" labelAdd="server"
+							properties="#{cc.attrs.ldapConfig.servers}"
+							propertiesAction="#{cc.attrs.propertiesAction}"
+							inputWidth="#{cc.attrs.inputWidth}" required="true"
+							maxItems="#{cc.attrs.maxServerItems}" />
+
+						<ox:simplePropertiesList label="Base DN" labelAdd="base DN"
+							maxItems="#{cc.attrs.maxBaseDnItems}"
+							properties="#{cc.attrs.ldapConfig.baseDNs}"
+							propertiesAction="#{cc.attrs.propertiesAction}" required="true"
+							rendered="#{cc.attrs.displayBaseDn}" />
+
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+							id="maxConnection">
+							<ui:define name="label">Use SSL</ui:define>
+							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.useSSL}"
+								required="true" />
+						</s:decorate>
+
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+							<ui:define name="label">Enabled</ui:define>
+							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}" />
+						</s:decorate>
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link"
+							value="Change Bind Password"
+							oncomplete="#{rich:component(cc.attrs.changePasswordDialogId)}.show();"
+							rendered="#{cc.attrs.changePasswordDialogId != null}"
+							render="#{cc.attrs.changePasswordDialogId}:changePasswordForm"
+							limitRender="true"
+							action="#{cc.attrs.ldapConfigAction.setActiveLdapConfig(cc.attrs.ldapConfig)}"
+							execute="@this" />
+							</s:decorate>
+					</h:panelGroup>
+					
+					
+					
+				</h:panelGroup>
+				
+		
 </cc:implementation>
 
 </html>

@@ -1,16 +1,19 @@
-<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
-                 xmlns:ui="http://java.sun.com/jsf/facelets"
-                 xmlns:a4j="http://richfaces.org/a4j"
-                 xmlns:h="http://java.sun.com/jsf/html"
-                 xmlns:f="http://java.sun.com/jsf/core"
-                 xmlns:s="http://jboss.org/schema/seam/taglib">
-      
-      	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}"></h:inputHidden>
-        <div class="prop">
-            <div id="#{id}"></div>
-            <BUTTON id="save_#{id}" type="button">#{saveBtnLabel}</BUTTON>
-        </div>
-        <h:outputScript>        
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:s="http://jboss.org/schema/seam/taglib">
+
+	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}"></h:inputHidden>
+	<div id="#{id}"></div>
+	
+					
+							<BUTTON id="save_#{id}" type="button" class="btn btn-primary" style="margin-bottom: 5px!important;  margin-top: 10px !important;">#{saveBtnLabel}</BUTTON>
+						
+					
+	
+	<h:outputScript>        
 		  var container = document.getElementById("#{id}");
 		  var editor_#{id} = new JSONEditor(container);
 		  var jsonStr = #{json};

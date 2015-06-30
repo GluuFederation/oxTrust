@@ -8,9 +8,21 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			OpenID Connect<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Update Scope</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/scope/manage/update"> Update Scope</a></li>
+		</ol>
+		</section>
+		<section class="content">
         <s:div id="formArea">
             <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
                 <ui:param name="_scope" value="#{updateScopeAction.scope}" />
@@ -19,9 +31,9 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton value="Update" action="#{updateScopeAction.save}" />
-                        <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" eventsQueue="scopeQueue" rendered="#{not _new}" />
-                        <h:commandButton value="Cancel" action="#{updateScopeAction.cancel}" immediate="true" />
+                        <h:commandButton styleClass="btn btn-primary" value="Update" action="#{updateScopeAction.save}" />
+                        <a4j:commandButton styleClass="btn btn-primary" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" eventsQueue="scopeQueue" rendered="#{not _new}" style="margin-left:3px;"/>
+                        <h:commandButton styleClass="btn btn-primary" value="Cancel" action="#{updateScopeAction.cancel}" immediate="true" style="margin-left:3px;" />
                     </div>
                 </ui:define>
             </ui:decorate>
@@ -34,5 +46,6 @@
 
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeAction.scope.displayName}" deleteMethod="#{updateScopeAction.delete}" queue="scopeQueue" />
         </s:div>
+        </section>
     </ui:define>
 </ui:composition>

@@ -2,9 +2,35 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/template.xhtml">
+    xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
+     <section class="content-header">
+		<h1 style="color: #333;">
+			UMA
+			<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Resources</small>
+			<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Update Resource</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/uma/inventory">Resources and Scopes
+					</a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/uma/inventory">Update Resource
+					</a></li>		
+		</ol>
+		</section>
+
+		<section class="content">
+            <div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+						<div class="box-header">
+						</div>
+                            <div style="display: inline-block; width: 100% !important;">
         <s:div id="formArea">
             <h:outputStylesheet>
                 .uploadFile {
@@ -23,12 +49,12 @@
 
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
                         <ui:define name="label">Name</ui:define>
-                        <rich:inplaceInput value="#{_resourceSet.name}" defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="180" required="true" id="displayNameId" />
+                        <rich:inplaceInput value="#{_resourceSet.name}" defaultLabel="Click to enter Display Name" maxlength="60"  required="true" id="displayNameId" />
                     </s:decorate>
 
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                         <ui:define name="label">Icon Uri</ui:define>
-                        <rich:inplaceInput value="#{_resourceSet.iconUri}" defaultLabel="Click to enter Icon Url" maxlength="60" inputWidth="180" required="true" id="iconUrlId" />
+                        <rich:inplaceInput value="#{_resourceSet.iconUri}" defaultLabel="Click to enter Icon Url" maxlength="60"  required="true" id="iconUrlId" />
                     </s:decorate>
 
                     <s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="scopes">
@@ -82,20 +108,22 @@
                         </h:panelGroup>
                     </s:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-                        <h:panelGroup>
-                            <a4j:commandButton value="Add Resource" onclick="#{rich:component('resource:inputText')}.show();" />
-                            <a4j:commandButton value="Add Scope" onclick="#{rich:component('scope:selectEntityModalPanel')}.show();" />
-                            <a4j:commandButton value="Add Client" onclick="#{rich:component('client:selectEntityModalPanel')}.show();" />
+                    <h:panelGroup>
+                            <a4j:commandButton value="Add Resource" onclick="#{rich:component('resource:inputText')}.show();" styleClass="btn btn-primary" style = "margin-left:20px;"/>
+                            <a4j:commandButton value="Add Scope" style = "margin-left:3px;" onclick="#{rich:component('scope:selectEntityModalPanel')}.show();" styleClass="btn btn-primary"/>
+                            <a4j:commandButton value="Add Client" style = "margin-left:3px;" onclick="#{rich:component('client:selectEntityModalPanel')}.show();" styleClass="btn btn-primary"/>
                         </h:panelGroup>
-                    </s:decorate>
                 </h:panelGrid>
-
-                <s:div id="updateButtons">
-                    <h:commandButton value="#{updateResourceSetAction.update ? 'Update' : 'Add'}" action="#{updateResourceSetAction.save}" />
-                    <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{updateResourceSetAction.update}" />
-                    <s:button value="Cancel" action="#{updateResourceSetAction.cancel}" immediate="true" propagation="end" />
+                <h:panelGroup>
+<div class = "box-footer" style = "margin-top:10px !important;">
+                <s:div id="updateButtons" style="margin-top:10px;margin-bottom: 10px;">
+                    <h:commandButton value="#{updateResourceSetAction.update ? 'Update' : 'Add'}" action="#{updateResourceSetAction.save}" styleClass="btn btn-primary" style = "margin-left:3px;"/>
+                    <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" style = "margin-left:3px;" rendered="#{updateResourceSetAction.update}" />
+                    <s:button value="Cancel" action="#{updateResourceSetAction.cancel}" immediate="true" propagation="end" styleClass="btn btn-primary" style = "margin-left:3px;"/>
                 </s:div>
+                        </div>
+                        </h:panelGroup>
+                
             </h:form>
         </s:div>
 
@@ -111,6 +139,12 @@
             render="selectedClientsId" nameProperty="entity.inum" displayNameProperty="entity.displayName" label="Add Client" />
 
         <ox:acceptRemovalDialog id="deleteConfirmation" subject="resource set" value="#{updateResourceSetAction.resourceSet.id}" deleteMethod="#{updateResourceSetAction.delete}" />
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+        </section>
     </ui:define>
 
 </ui:composition>

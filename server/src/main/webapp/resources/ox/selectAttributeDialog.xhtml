@@ -31,18 +31,20 @@
         </f:facet>
 
         <h:form>
-            <h:panelGrid id="attributePanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
+            <h:panelGroup id="attributePanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft" style="float:left !important;width:100% !important;">
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
                     <ui:param name="_hideLabel" value="true" />
-                    <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" styleClass="searchParameters" alt="Search parameters like Uid, Name, Display Name, E-mail" />
-                    <a4j:commandButton value="Search" action="#{cc.attrs.searchMethod}" render="attributePanelId" eventsQueue="#{cc.attrs.queue}" />
+                    <div class="row" style="float:left;margin-left:3px;">
+                    <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" styleClass="searchParameters form-control" alt="Search parameters like Uid, Name, Display Name, E-mail" /></div>
+                   <div class="row" style="float:left; margin-left: 20px;  margin-top: -5px;">
+                    <a4j:commandButton value="Search" style = "margin-top:5px;" styleClass="btn btn-primary" action="#{cc.attrs.searchMethod}" render="attributePanelId" eventsQueue="#{cc.attrs.queue}" /></div>
                 </s:decorate>
 
                 <h:panelGroup id="attributeNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
 
-                <h:panelGroup style="overflow:auto; width:640px;#{cc.attrs.searchResult.size gt 10 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                <h:panelGroup style="overflow-y:scroll; width:100%;#{cc.attrs.searchResult.size gt 10 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
                     <rich:dataTable sortMode="single" id="attributeListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">
                         <rich:column>
                             <f:facet name="header">X</f:facet>
@@ -68,15 +70,18 @@
                 </h:panelGroup>
 
                 <richext:spacer height="16" />
-
+<div class="box-footer" >
                 <h:panelGroup>
-                    <a4j:commandButton action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();" render="attributeListId #{cc.attrs.render}"
-                        eventsQueue="#{cc.attrs.queue}" />&nbsp;
-                        <a4j:commandButton action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectAttributeModalPanel')}.hide(); return false;" render="attributeListId"
+                <div class="row" style="margin-left:-4px !important">
+                    <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();" render="attributeListId #{cc.attrs.render}"
+                        eventsQueue="#{cc.attrs.queue}" style="min-width:70px;" />&nbsp;
+                        <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectAttributeModalPanel')}.hide(); return false;" render="attributeListId"
                         eventsQueue="#{cc.attrs.queue}" />&nbsp;
                         <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
+                        </div>
                 </h:panelGroup>
-            </h:panelGrid>
+                </div>
+            </h:panelGroup>
         </h:form>
     </rich:popupPanel>
 </cc:implementation>
