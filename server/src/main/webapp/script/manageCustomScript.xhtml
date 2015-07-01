@@ -7,24 +7,38 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="head">
     </ui:define>
 
     <ui:define name="body">
+    
+    <section class="content-header">
+		<h1 style="color: #333;">
+			Manage Custom Scripts<small><i class="fa fa-caret-right" style="color: #333 !important;"></i>Manage custom scripts</small>
+		</h1>
+		<ol class="breadcrumb">
+<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration">Manage Custom scripts</li>
+		</ol>
+		</section>
+        <section class="content">
         <div id="formArea">
             <ui:decorate template="/WEB-INF/incl/script/customScriptListForm.xhtml">
                 <ui:param name="_action" value="#{manageCustomScriptAction}" />
 
                 <ui:define name="controlButttons">
-                    <div id="updateButtons">
-                        <h:commandButton value="Update" action="#{manageCustomScriptAction.save}" />
-                        <h:commandButton value="Cancel" action="#{manageCustomScriptAction.cancel}" immediate="true" />
+                    <div id="updateButtons" style="margin-top:10px;">
+                        <h:commandButton value="Update" action="#{manageCustomScriptAction.save}" styleClass="btn btn-success" />
+                        <h:commandButton value="Cancel" action="#{manageCustomScriptAction.cancel}" immediate="true" styleClass="btn btn-success" style="margin-left:5px !important;" />
                     </div>
                 </ui:define>
             </ui:decorate>
         </div>
+        </section>
+
+        
     </ui:define>
 
 </ui:composition>

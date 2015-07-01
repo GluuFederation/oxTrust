@@ -31,12 +31,16 @@
         </f:facet>
 
         <h:form>
-            <h:panelGrid id="scopePanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
+        
+            <h:panelGroup>
+           
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
                     <ui:param name="_hideLabel" value="true" />
-                    <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" id="searchScopePatternId" styleClass="searchParameters"
+                    
+                    <h:inputText  value="#{cc.attrs.searchPattern}" size="20" maxlength="30" id="searchScopePatternId" styleClass="searchParameters form-control"
                         alt="Search parameters like iNum, Name, Display Name" />
-                    <a4j:commandButton value="Search" action="#{cc.attrs.searchMethod}" render="scopePanelId" />
+                       
+                    <a4j:commandButton style = "margin-top:5px;" styleClass = "btn btn-primary" value="Search" action="#{cc.attrs.searchMethod}" render="scopePanelId" />
                 </s:decorate>
 
                 <h:panelGroup id="scopeNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
@@ -48,34 +52,39 @@
                 </s:fragment>
 
                 <h:panelGroup style="overflow:auto; width:415px;#{cc.attrs.searchResult.size gt 10 ? ' height:300px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
-                    <rich:dataTable sortMode="single" id="scopeListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">
-                        <rich:column>
+                    <h:dataTable styleClass="table table-hover rt" sortMode="single" id="scopeListId" value="#{cc.attrs.searchResult}"  var="prs">
+                        <h:column>
                             <f:facet name="header">X</f:facet>
                             <h:selectBooleanCheckbox value="#{prs.selected}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.displayName}">
+                        </h:column>
+                        <h:column sortBy="#{prs.displayName}">
                             <f:facet name="header">Display Name</f:facet>
                             <h:outputText value="#{prs.displayName}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.description}">
+                        </h:column>
+                        <h:column sortBy="#{prs.description}">
                             <f:facet name="header">Description</f:facet>
                             <h:outputText value="#{prs.description}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.inum}">
+                        </h:column>
+                        <h:column sortBy="#{prs.inum}">
                             <f:facet name="header">iNum</f:facet>
                             <h:outputText value="#{prs.inum}" />
-                        </rich:column>
-                    </rich:dataTable>
+                        </h:column>
+                    </h:dataTable>
                 </h:panelGroup>
 
                 <richext:spacer height="16" />
-
-                <h:panelGroup>
-                    <a4j:commandButton action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectScopeModalPanel')}.hide();" render="scopeListId #{cc.attrs.render}"/>&nbsp;
-                        <a4j:commandButton action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectScopeModalPanel')}.hide(); return false;" render="scopeListId"/>&nbsp;
-                        <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
+<div class="box-footer" >
+					
+							 <h:panelGroup>
+							 <div class="row" style="margin-left:-4px !important">
+                    <a4j:commandButton  styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectScopeModalPanel')}.hide();" render="scopeListId #{cc.attrs.render}"/>&nbsp;
+                        <a4j:commandButton  styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectScopeModalPanel')}.hide(); return false;" render="scopeListId"/>&nbsp;
+                        <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" /></div>
                 </h:panelGroup>
-            </h:panelGrid>
+						
+					</div>
+               
+            </h:panelGroup>
         </h:form>
     </rich:popupPanel>
 </cc:implementation>

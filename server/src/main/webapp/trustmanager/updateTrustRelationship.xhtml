@@ -8,9 +8,25 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			SAML<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Update Trust Relationship</small>
+		</h1>
+		<ol class="breadcrumb">
+		
+			<li><a href="#{request.contextPath}/trustmanager/relationships"><i
+					class="fa fa-home"></i> Trust Relationships</a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/trustmanager/add">Update Trust
+					Relationships</a></li>
+		</ol>
+		</section>
+
+		<section class="content"> 
         <div id="formArea">
             <ui:decorate template="/WEB-INF/incl/trustmanager/trustRelationshipForm.xhtml">
                 <ui:param name="_trustRelationship" value="#{updateTrustRelationshipAction.trustRelationship}" />
@@ -19,15 +35,7 @@
                 <ui:param name="_trustRelationshipAction" value="#{updateTrustRelationshipAction}" />
                 <ui:param name="_new" value="false" />
     
-                <ui:define name="controlButttons">
-                <div id="updateButtons">
-                    <h:commandButton value="Update" action="#{updateTrustRelationshipAction.save}"/>
-                    <h:commandButton value="#{updateTrustRelationshipAction.isActive()?'Deactivate':'Activate'}" action="#{updateTrustRelationshipAction.activationToggle}"/>
-                    <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" eventsQueue="trustQueue" />
-                    <h:commandButton value="Cancel" action="#{updateTrustRelationshipAction.cancel}" immediate="true"/>
-                </div>
-                </ui:define>
-    
+              
                 <ui:define name="configurationLink">
                     <s:link value="Download Shibboleth2 configuration files" target="_blank" 
                         view="/trustmanager/trustRelationshipConfigurationFile.xhtml"    immediate="true" 
@@ -38,5 +46,6 @@
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="Trust Relationship" value="#{updateTrustRelationshipAction.trustRelationship.displayName}" deleteMethod="#{updateTrustRelationshipAction.delete}" queue="trustQueue" />
             
         </div>
+        </section>
     </ui:define>
 </ui:composition>

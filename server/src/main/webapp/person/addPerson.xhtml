@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
         <s:div id="formArea">
@@ -17,10 +17,12 @@
                 <ui:param name="_new" value="true" />
 
                 <ui:define name="controlButtons">
-                    <s:div id="updateButtons">
-                        <h:commandButton value="Add" action="#{updatePersonAction.save}" rendered="#{organizationService.instance().allowPersonModification}" />
-                        <h:commandButton value="Cancel" action="#{updatePersonAction.cancel}" immediate="true" />
+                <div class = "box-footer">
+                    <s:div id="updateButtons" style="margin-bottom:6px;">
+                        <h:commandButton value="Add" action="#{updatePersonAction.save}" rendered="#{organizationService.instance().allowPersonModification}" styleClass="btn btn-primary" />
+                        <h:commandButton value="Cancel" action="#{updatePersonAction.cancel}" immediate="true" styleClass="btn btn-primary" style = "margin-left:3px;"/>
                     </s:div>
+                    </div>
                 </ui:define>
             </ui:decorate>
         </s:div>

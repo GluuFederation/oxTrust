@@ -138,13 +138,13 @@
             </rich:tabPanel>
         </h:panelGrid>
         <div id="updateButtons">
-            <h:commandButton value="#{_new?'Add':'Update'}" action="#{joinFederationAction.save(_isFederation)}" />
+            <h:commandButton value="#{_new?'Add':'Update'}" action="#{joinFederationAction.save(_isFederation)}" styleClass="btn btn-success"/>
             <h:commandButton value="#{joinFederationAction.isActive()?'Refuse':'Accept'}" action="#{joinFederationAction.acceptToggle}"
-                rendered="#{s:hasPermission('trust', 'access') and (not _new) and (not _isFederation)}" />
+                rendered="#{s:hasPermission('trust', 'access') and (not _new) and (not _isFederation)}" styleClass="btn btn-success"/>
             <h:commandButton value="#{joinFederationAction.isActive()?'Deactivate':'Activate'}" action="#{joinFederationAction.acceptToggle}"
-                rendered="#{s:hasPermission('trust', 'access') and (not _new) and (_isFederation)}" />
-            <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" rendered="#{s:hasPermission('trust', 'access')}" />
-            <h:commandButton value="Cancel" action="#{joinFederationAction.cancel}" immediate="true" />
+                rendered="#{s:hasPermission('trust', 'access') and (not _new) and (_isFederation)}" styleClass="btn btn-success"/>
+            <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" rendered="#{s:hasPermission('trust', 'access')}" styleClass="btn btn-success"/>
+            <h:commandButton value="Cancel" action="#{joinFederationAction.cancel}" immediate="true" styleClass="btn btn-success"/>
         </div>
     </h:form>
 </ui:composition>

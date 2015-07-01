@@ -9,25 +9,29 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
         <div id="formArea">
-            <ui:decorate template="/WEB-INF/incl/group/groupForm.xhtml">
-                <ui:param name="_group" value="#{updateGroupAction.group}" />
-                <ui:param name="_groupAction" value="#{updateGroupAction}" />
-                <ui:param name="_new" value="false" />
+			<ui:decorate template="/WEB-INF/incl/group/groupForm.xhtml">
+				<ui:param name="_group" value="#{updateGroupAction.group}" />
+				<ui:param name="_groupAction" value="#{updateGroupAction}" />
+				<ui:param name="_new" value="false" />
 
-                <ui:define name="controlButttons">
-                    <div id="updateButtons">
-                        <h:commandButton value="Update" action="#{updateGroupAction.save}" />
-                        <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" eventsQueue="groupQueue" rendered="#{not _new}" />
-                        <h:commandButton value="Cancel" action="#{updateGroupAction.cancel}" immediate="true" />
-                    </div>
-                </ui:define>
-            </ui:decorate>
+				<ui:define name="controlButttons">
+					<div id="updateButtons">
+						<h:commandButton styleClass="btn btn-primary" value="Update"
+							action="#{updateGroupAction.save}" />
+						<a4j:commandButton styleClass="btn btn-primary" value="Delete"
+							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+							ajaxSingle="true" eventsQueue="groupQueue" rendered="#{not _new}" style = "margin-left:3px;" />
+						<h:commandButton styleClass="btn btn-primary" value="Cancel"
+							action="#{updateGroupAction.cancel}" immediate="true" style = "margin-left:3px;" />
+					</div>
+				</ui:define>
+			</ui:decorate>
 
-            <ox:selectMemberDialog id="member" searchPattern="#{updateGroupAction.searchAvailableMemberPattern}"
+			<ox:selectMemberDialog id="member" searchPattern="#{updateGroupAction.searchAvailableMemberPattern}"
                 searchMethod="#{updateGroupAction.searchAvailableMembers}" searchResult="#{updateGroupAction.availableMembers}"
                 acceptMethod="#{updateGroupAction.acceptSelectMembers}" cancelMethod="#{updateGroupAction.cancelSelectMembers}"
                 render="selectedMembersId" />

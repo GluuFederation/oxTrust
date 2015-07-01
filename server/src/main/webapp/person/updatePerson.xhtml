@@ -8,7 +8,7 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
         <s:div id="formArea">
@@ -19,10 +19,10 @@
 
                 <ui:define name="controlButtons">
                     <s:div id="updateButtons">
-                        <a4j:commandButton value="Change Password" onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"/>
-                        <h:commandButton value="Update" action="#{updatePersonAction.save}" rendered="#{organizationService.instance().allowPersonModification}" />
-                        <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" eventsQueue="personQueue" rendered="#{not _new and organizationService.instance().allowPersonModification}" />
-                        <h:commandButton value="#{organizationService.instance().allowPersonModification ? 'Cancel' : 'Back' }" action="#{updatePersonAction.cancel}" immediate="true" />
+                        <a4j:commandButton value="Change Password" onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();" styleClass="btn btn-primary"/>
+                        <h:commandButton value="Update" action="#{updatePersonAction.save}" rendered="#{organizationService.instance().allowPersonModification}"  styleClass="btn btn-primary"/>
+                        <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" eventsQueue="personQueue" rendered="#{not _new and organizationService.instance().allowPersonModification}" styleClass="btn btn-primary"/>
+                        <h:commandButton value="#{organizationService.instance().allowPersonModification ? 'Cancel' : 'Back' }" action="#{updatePersonAction.cancel}" immediate="true" styleClass="btn btn-primary"/>
                     </s:div>
                 </ui:define>
             </ui:decorate>

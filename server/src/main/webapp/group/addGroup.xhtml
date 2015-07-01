@@ -9,10 +9,13 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
         <div id="formArea">
+            
+
+
             <ui:decorate template="/WEB-INF/incl/group/groupForm.xhtml">
                 <ui:param name="_group" value="#{updateGroupAction.group}" />
                 <ui:param name="_groupAction" value="#{updateGroupAction}" />
@@ -20,8 +23,8 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton value="Add" action="#{updateGroupAction.save}" />
-                        <h:commandButton value="Cancel" action="#{updateGroupAction.cancel}" immediate="true" />
+                        <h:commandButton value="Add" action="#{updateGroupAction.save}" styleClass="btn btn-primary" />
+                        <h:commandButton value="Cancel" action="#{updateGroupAction.cancel}" immediate="true" styleClass="btn btn-primary" style="margin-left: 5px;" />
                     </div>
                 </ui:define>
             </ui:decorate>

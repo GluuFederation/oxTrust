@@ -8,9 +8,21 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			OpenID Connect<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Add Scope</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/scope/manage/add"> Add Scope</a></li>
+		</ol>
+		</section>
+		<section class="content">
         <s:div id="formArea">
             <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
 
@@ -20,8 +32,8 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton value="Add" action="#{updateScopeAction.save}" />
-                        <h:commandButton value="Cancel" action="#{updateScopeAction.cancel}" immediate="true" />
+                        <h:commandButton styleClass="btn btn-primary" value="Add" action="#{updateScopeAction.save}" />
+                        <h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="Cancel" action="#{updateScopeAction.cancel}" immediate="true" />
                     </div>
                 </ui:define>
             </ui:decorate>
@@ -31,5 +43,6 @@
                 acceptMethod="#{updateScopeAction.acceptSelectClaims}" cancelMethod="#{updateScopeAction.cancelSelectClaims}"
                 render="selectedClaimsId" queue="scopeQueue"/>
         </s:div>
+        </section>
     </ui:define>
 </ui:composition>

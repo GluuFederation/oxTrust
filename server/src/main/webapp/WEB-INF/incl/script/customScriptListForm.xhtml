@@ -14,18 +14,25 @@
 
     <h:outputStylesheet>
         .addConfig {
-            text-align: right;
+            
             white-space: nowrap;
+            margin-top:5px !important;
         }
 
         .removeConfig {
             text-align: left;
             vertical-align: top;
+            margin-top:5px !important;
         }
+
     </h:outputStylesheet>
 
     <h:form id="customScriptForm">
-	    <rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId">
+    <div class="row">
+			<div class="col-xs-12">
+			<h:panelGroup>
+								
+			<rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId" >
 	        <c:forEach items="#{applianceService.customScriptTypes}" var="_scriptType">
 	        	<ui:param name="_customScriptTypeId" value="#{_action.getId(_scriptType)}" />
 	        	<ui:param name="_customScripts" value="#{_action.customScriptsByTypes[_scriptType]}" />
@@ -38,17 +45,17 @@
 		                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 		                                    <ui:define name="label">Name</ui:define>
-		                                    <h:inputText value="#{_customScript.name}" size="90" required="true" />
+		                                    <h:inputText value="#{_customScript.name}" size="90" required="true" styleClass="form-control" />
 		                                </s:decorate>
 
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 		                                    <ui:define name="label">Description</ui:define>
-		                                    <h:inputText value="#{_customScript.description}" size="90" />
+		                                    <h:inputText value="#{_customScript.description}" size="90" styleClass="form-control" />
 		                                </s:decorate>
 
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 		                                    <ui:define name="label">Programming Language</ui:define>
-		                                    <h:selectOneMenu value="#{_customScript.programmingLanguage}" required="true" disabled="true">
+		                                    <h:selectOneMenu value="#{_customScript.programmingLanguage}" required="true" disabled="true" styleClass="form-control">
 		                                        <s:selectItems value="#{applianceService.programmingLanguages}" var="_type" label="#{_type.displayName}"/>
 		                                        <a4j:ajax event="change" render="#{_customScriptId}" limitRender="true" execute="@this" />
 		                                    </h:selectOneMenu>
@@ -63,7 +70,7 @@
 		                                <s:fragment rendered="#{_scriptType.value eq 'person_authentication'}">
 			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 			                                    <ui:define name="label">Usage type</ui:define> 
-			                                    <h:selectOneMenu value="#{_customScript.usageType}" required="true">
+			                                    <h:selectOneMenu value="#{_customScript.usageType}" required="true" styleClass="form-control">
 			                                        <s:selectItems value="#{applianceService.scriptUsageTypes}" var="_usageType" label="#{_usageType.displayName}"/>
 			                                        <a4j:ajax event="change" render="customScriptId" limitRender="true" execute="@this" />
 			                                    </h:selectOneMenu>
@@ -78,21 +85,22 @@
 		                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
 		                                </s:decorate>
 		                
-		                                <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 		                                    <ui:define name="label">Enabled</ui:define>
 		                                    <h:selectBooleanCheckbox value="#{_customScript.enabled}" />
 		                                </s:decorate>
 		                            </h:panelGrid>
 		    
-		                            <a4j:commandLink action="#{_action.removeCustomScript(_customScript)}" render="#{_customScriptTypeId}" execute="@region">
-		                                <h:graphicImage value="/img/remove.gif" />
+		                            <a4j:commandLink action="#{_action.removeCustomScript(_customScript)}" render="#{_customScriptTypeId}" execute="@region" styleClass="glyphicon glyphicon-remove" style="margin-top: -14px;
+  margin-left: -18px;">
+		                                
 		                                <f:param name="sv" value="1" />
 		                            </a4j:commandLink>
 		                        </h:panelGrid>
 		                    </rich:dataGrid>
 		    
 		                    <s:div styleClass="addConfig">
-		                        <a4j:commandLink value="Add custom script configuration" action="#{_action.addCustomScript(_scriptType)}" render="#{_customScriptTypeId}" execute="@region" />
+		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="Add custom script configuration" action="#{_action.addCustomScript(_scriptType)}" render="#{_customScriptTypeId}" execute="@region" />
 		                        <f:param name="sv" value="1" />
 		                    </s:div>
 		                </a4j:region>
@@ -100,10 +108,14 @@
     	        </rich:tab>
 	        </c:forEach>
         </rich:tabPanel>
-
-        <richext:spacer height="16"/>       
+							</h:panelGroup>	
+            
+            </div></div>
+        
 
         <rich:notifyMessages stayTime="2000" nonblocking="true" />
         <ui:insert name="controlButttons" />
     </h:form>
+    
+   
 </ui:composition>

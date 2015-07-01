@@ -39,9 +39,9 @@
                 <richext:spacer height="8" />
 
                 <h:panelGroup>
-                    <a4j:commandButton value="Ok" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide();" render="#{cc.attrs.render}" execute="@this" action="#{cc.attrs.deleteMethod}"/>&nbsp;
-                    <a4j:commandButton value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
-                    <a4j:commandButton value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
+                    <a4j:commandButton styleClass="btn btn-primary" value="Ok" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide();" render="#{cc.attrs.render}" execute="@this" action="#{cc.attrs.deleteMethod}"/>&nbsp;
+                    <a4j:commandButton styleClass="btn btn-primary" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
+                    <a4j:commandButton styleClass="btn btn-primary" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
                         action="#{cc.attrs.cancelMethod}"/>&nbsp;
                     <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
                 </h:panelGroup>

@@ -9,10 +9,21 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
-        <s:div id="formArea">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			Attributes<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Edit Attribute</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a href="#{request.contextPath}/attribute/update/{inum}">Edit Attributes</a></li>
+		</ol>
+		</section>
+		<section class="content">
+		<div id="formArea">
             <ui:decorate template="/WEB-INF/incl/attribute/attributeForm.xhtml">
                 <ui:param name="_attribute" value="#{updateAttributeAction.attribute}" />
                 <ui:param name="_attributeAction" value="#{updateAttributeAction}" />
@@ -20,14 +31,14 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton value="Update" action="#{updateAttributeAction.save}" rendered="#{_attribute.adminCanEdit}" />
-                        <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{not _new and _attribute.custom and _attribute.adminCanEdit}" />
-                        <h:commandButton value="Cancel" action="#{updateAttributeAction.cancel}" immediate="true" />
+                        <h:commandButton styleClass="btn btn-primary" value="Update" action="#{updateAttributeAction.save}" rendered="#{_attribute.adminCanEdit}" />
+                        <a4j:commandButton styleClass="btn btn-primary" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{not _new and _attribute.custom and _attribute.adminCanEdit}" />
+                        <h:commandButton styleClass="btn btn-primary" value="Cancel" action="#{updateAttributeAction.cancel}" immediate="true" style="margin-left:5px"/>
                     </div>
                 </ui:define>
             </ui:decorate>
 
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="attribute" value="#{updateAttributeAction.attribute.displayName}" deleteMethod="#{updateAttributeAction.delete}" />
-        </s:div>
+        </div></section>
     </ui:define>
 </ui:composition>

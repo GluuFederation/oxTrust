@@ -14,34 +14,86 @@
         <h:panelGrid columns="1" width="100%" id="trustContacts">
 
             <rich:dataGrid value="#{trustContactsAction.trustContacts}" columnClasses="half,half" var="_contact" columns="2" elements="#{trustContactsAction.trustContacts.size()}" width="100%">
-                <rich:panel bodyClass="pbody" styleClass="half">
+                <div class="col-sm-12 box box-primary" style="padding:0px !important;">
+                <rich:panel bodyClass="pbody"  >
                     <f:facet name="header">
                         <s:fragment>
                             <h:outputText value="#{_contact.title} #{_contact.name}" rendered="#{(not empty _contact.title) or (not empty _contact.name)}" />
                             <h:outputText value="New Contact" rendered="#{(empty _contact.title) and (empty _contact.name)}" />
 
-                            <a4j:commandLink action="#{trustContactsAction.removeContact(_contact)}" render="trustContacts" eventsQueue="trustQueue">
-                                <h:graphicImage value="/img/remove.gif" />
+                            <a4j:commandLink style="float:right;color:rgb(0, 190, 121) !important;" styleClass="glyphicon glyphicon-remove" action="#{trustContactsAction.removeContact(_contact)}" render="trustContacts" eventsQueue="trustQueue">
+                               <!--  <h:graphicImage value="/img/remove.gif" />  -->
                             </a4j:commandLink>
                         </s:fragment>
                     </f:facet>
 
-                    <h:panelGrid columns="2" columnClasses="contactLabels">
-                        <h:outputText value="Name" styleClass="label" />
-                        <rich:inplaceInput layout="block" value="#{_contact.name}" selectOnEdit="true" editEvent="click" defaultLabel="click to enter Name">
-                        </rich:inplaceInput>
-                        <h:outputText value="title" styleClass="label" />
-                        <rich:inplaceInput layout="block" value="#{_contact.title}" selectOnEdit="true" editEvent="click" defaultLabel="click to enter Title" />
-                        <h:outputText value="Telephone Number" styleClass="label" />
-                        <rich:inplaceInput layout="block" value="#{_contact.phone}" selectOnEdit="true" editEvent="click" defaultLabel="click to enter Phone" />
-                        <h:outputText value="mail" styleClass="label" />
-                        <rich:inplaceInput layout="block" value="#{_contact.mail}" selectOnEdit="true" editEvent="click" defaultLabel="click to enter E-Mail" />
-                    </h:panelGrid>
-                </rich:panel>
-            </rich:dataGrid>
 
-            <a4j:commandLink value="Add new contact" eventsQueue="trustQueue" action="#{trustContactsAction.addEmptyContact()}" render="trustContacts" limitRender="true" />
-        </h:panelGrid>
+                    <h:panelGroup columns="2" columnClasses="rf-iiii" style="height:200px;width:100%">
+                    <div class="col-sm-12" style="padding:0px !important;">
+                    
+                        <div class="row" style="margin-bottom: 8px;margin-left:0px">
+							<div class="col-sm-5">
+								<label>Name</label>
+							</div>
+
+							<div class="col-sm-7 prop" style="padding-left:0px;">
+									<span class="value ">
+										<h:inputText styleClass ="form-control" value="#{_contact.name}"  />
+									</span>
+							</div>
+						</div>
+												
+						
+						
+						<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+							<div class="col-sm-5">
+								<label>Title</label>
+							</div>
+
+							<div class="col-sm-7 prop" style="padding-left:0px;">
+									<span class="value ">
+										<h:inputText styleClass ="form-control" value="#{_contact.title}"  />
+									</span>
+							</div>
+						</div>
+						
+						<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+							<div class="col-sm-5">
+								<label>Telephone Number</label>
+							</div>
+
+							<div class="col-sm-7 prop" style="padding-left:0px;">
+									<span class="value ">
+										<h:inputText styleClass ="form-control" value="#{_contact.phone}"  />
+									</span>
+							</div>
+						</div>
+                        
+                        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+							<div class="col-sm-5">
+								<label>Mail</label>
+							</div>
+
+							<div class="col-sm-7 prop" style="padding-left:0px;">
+									<span class="value ">
+										<h:inputText styleClass ="form-control" value="#{_contact.mail}"  />
+									</span>
+							</div>
+						</div>
+						
+                        
+						
+						
+						
+                        
+                        </div>
+                    </h:panelGroup>
+                    
+                </rich:panel></div>
+            </rich:dataGrid>
+<div class="col-sm-12" style="margin-top:15px !important">
+            <a4j:commandLink style="margin-top:10px !important" styleClass="btn btn-success" value="Add new contact" eventsQueue="trustQueue" action="#{trustContactsAction.addEmptyContact()}" render="trustContacts" limitRender="true" />
+       </div> </h:panelGrid>
     </a4j:region>
 
 </ui:composition>

@@ -8,21 +8,42 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    template="/WEB-INF/incl/layout/template.xhtml">
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			Users<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Manage Groups</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/group/inventory"> Manage Groups</a></li>
+		</ol>
+		</section>
+		<section class="content">
+		<div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+						<div class="box-header">
+						</div>
+                            
+						
+						<div style="display: inline-block; width: 100% !important;">
         <div id="formArea">
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
-                <s:link view="/group/addGroup.xhtml" value="Add Group" styleClass="addGroup" propagation="none" />
-
+                
+                <s:link view="/group/addGroup.xhtml" value="Add Group" styleClass="addGroup btn btn-primary" propagation="none" style="margin-left:20px !important;" />
+                    
                 <richext:spacer height="16" />
 
                 <h:form>
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
                         <ui:param name="_hideLabel" value="true" />
-                        <h:inputText value="#{searchGroupAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters"
-                            alt="search parameters for group like uid,iname,email" />
-                        <h:commandButton value="Search" action="#{searchGroupAction.search}" />
+                        <h:inputText value="#{searchGroupAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters form-control"
+                            alt="search parameters for group like uid,iname,email" style="float: left;width: 50%;" />
+                        <h:commandButton value="Search" action="#{searchGroupAction.search}" style="float:left;" class="btn btn-primary" />
                     </s:decorate>
                 </h:form>
 
@@ -57,5 +78,10 @@
                 </h:form>
             </h:panelGrid>
         </div>
+      </div>
+      </div>
+                        </div>
+            </div>
+        </section>
     </ui:define>
 </ui:composition>
