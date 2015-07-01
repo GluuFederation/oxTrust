@@ -57,10 +57,12 @@
         <h:panelGrid columns="3" width="100%" columnClasses="attributeColumn, , formColumn" border="0" cellpadding="0" cellspacing="0">
 
             <h:panelGroup id="tabPanelGroupId">
+            
                 <rich:tabPanel switchType="client" id="attributeTabPanelId">
                     <c:forEach items="#{_customAttributeAction.attributeByOrigin.entrySet()}" var="origin">
                         <rich:tab header="#{_customAttributeAction.originDisplayNames[origin.key]}">
                             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0">
+                            <h4 style="font-size: 18px;text-decoration: underline;">Add attributes to person entry</h4>
                                 <c:forEach items="#{origin.value}" var="attr">
                                     <ui:param name="_aid" value="#{_customAttributeAction.attributeIds[attr]}" />
                                     <a4j:commandLink id="#{_aid}" value="#{attr.displayName}" action="#{_customAttributeAction.addCustomAttribute(attr.inum)}" render="selectedCustomAttributesId"
@@ -78,7 +80,8 @@
             <richext:spacer width="10" />
 
             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                <h:panelGroup id="selectedCustomAttributesId">
+                <h:panelGroup id="selectedCustomAttributesId" >
+               
                     <a4j:repeat value="#{_customAttributeAction.customAttributes}" var="_custAttr" rowKeyVar="_custAttrIdx" >
                     	<h:panelGroup rendered="#{_custAttr.metadata != null}">
                         <ui:param name="_mandatory" value="#{_custAttr.mandatory}" />
