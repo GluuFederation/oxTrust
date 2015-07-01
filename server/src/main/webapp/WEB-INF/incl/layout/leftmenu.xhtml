@@ -135,12 +135,12 @@
 						</ui:fragment>
 						<ui:fragment
 							rendered="#{identity.loggedIn and s:hasPermission(applianceService.appliance, 'federationHostingEnabled')}">
-							<li class="treeview"><a href="#"> <i
+							<li class="treeview" id="federation"><a href="#"> <i
 									class="fa fa-external-link"></i> <span>Federations</span> <i
 									class="fa fa-angle-left pull-right"></i>
 							</a>
-								<ul class="treeview-menu">
-									<li><h:commandLink value="Federations"
+								<ul class="treeview-menu" id="federationSub">
+									<li id="federationSubLink"><h:commandLink value="Federations"
 											action="#{menuAction.endConversation('/federation/proposal/proposalsInventory.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
@@ -387,59 +387,60 @@
 								}
 
 								//Menu Highlights - SAML
-								if (window.location.href
-										.indexOf("trustmanager/relationships") > -1) {
+								if (window.location.href.indexOf("trustmanager/relationships") > -1 || window.location.href.indexOf("trustmanager/add") > -1 || window.location.href.indexOf("trustmanager/update") > -1) {
 									$('#subMenuSAML').css('display', 'block');
 									$('#menuSAML').addClass('active');
 									$('#subMenuLinkSAML1').addClass('active');
 								}
 
 								//Menu Highlights - OpenID Connect
-								if (window.location.href
-										.indexOf("scope/inventory") > -1) {
+								if (window.location.href.indexOf("scope/inventory") > -1 || window.location.href.indexOf("scope/manage/add") > -1 || window.location.href.indexOf("scope/manage/update") > -1) {
 									$('#subMenuOpenID').css('display', 'block');
 									$('#menuOpenID').addClass('active');
 									$('#subMenuLinkOpenID1').addClass('active');
 								}
-
-								if (window.location.href
-										.indexOf("client/inventory") > -1) {
+								//Menu Highlights - Federation Connect
+								
+								if (window.location.href.indexOf("federation/proposal/inventory") > -1 || window.location.href.indexOf("federation/hosted/add") > -1 || window.location.href.indexOf("federation/proposal/view") > -1) {
+									$('#federationSub').css('display', 'block');
+									$('#federationSubLink').addClass('active');
+								}
+								
+								if (window.location.href.indexOf("client/inventory") > -1 || window.location.href.indexOf("client/manage/add") > -1 || window.location.href.indexOf("client/manage/update")>-1) {
 									$('#subMenuOpenID').css('display', 'block');
 									$('#menuOpenID').addClass('active');
 									$('#subMenuLinkOpenID2').addClass('active');
 								}
 
 								//Menu Highlights - UMA
-								if (window.location.href
-										.indexOf("uma/inventory") > -1) {
+								
+								if (window.location.href.indexOf("uma/inventory") > -1 || window.location.href.indexOf("uma/scope/add") > -1) {
 									$('#subMenuUMA').css('display', 'block');
-									$('#menuUMA').addClass('active');
+									$('#subMenuLinkUMA1').addClass('active');
 									//$('#subMenuLinkUMA1').addClass('active');
 								}
-
-								if (window.location.href
-										.indexOf("uma/inventory") > -1) {
+								
+								if (window.location.href.indexOf("uma/resource/add") > -1 || window.location.href.indexOf("uma/resource/modify") > -1) {
 									$('#subMenuUMA').css('display', 'block');
-									$('#menuUMA').addClass('active');
+									$('#subMenuLinkUMA2').addClass('active');
 									//$('#subMenuLinkUMA2').addClass('active');
 								}
 
 								//Menu Highlights - Users
-								if (window.location.href
-										.indexOf("group/inventory") > -1) {
+								
+								if (window.location.href.indexOf("group/inventory") > -1 || window.location.href.indexOf("group/manage/add")> -1 || window.location.href.indexOf("group/manage/update")> -1) {
 									$('#subMenuUsers').css('display', 'block');
 									$('#menuUsers').addClass('active');
 									$('#subMenuLinkUsers1').addClass('active');
 								}
-
-								if (window.location.href
-										.indexOf("person/inventory") > -1) {
+								
+								if (window.location.href.indexOf("person/inventory") > -1) {
 									$('#subMenuUsers').css('display', 'block');
 									$('#menuUsers').addClass('active');
 									$('#subMenuLinkUsers2').addClass('active');
 								}
 
-								if (window.location.href.indexOf("person/add") > -1) {
+								if (window.location.href.indexOf("person/add") > -1 || window.location.href.indexOf("person/update")>-1) {
 									$('#subMenuUsers').css('display', 'block');
 									$('#menuUsers').addClass('active');
 									$('#subMenuLinkUsers3').addClass('active');
@@ -462,13 +463,21 @@
 								}
 
 								//Menu Highlights - Personal
-								if (window.location.href
-										.indexOf("profile/person/view") > -1) {
+								if (window.location.href.indexOf("profile/person/view") > -1) {
 									$('#subMenuPersonal').css('display',
 											'block');
 									$('#menuPersonal').addClass('active');
 									$('#subMenuLinkPersonal1').addClass(
 											'active');
+									
+								}
+								
+								if (window.location.href.indexOf("whitePage/view") > -1) {
+									$('#subMenuPersonal').css('display','block');
+									$('#menuPersonal').addClass('active');
+									$('#subMenuLinkPersonal2').addClass(
+									'active');
+									
 								}
 
 								//Logo SubMenu
