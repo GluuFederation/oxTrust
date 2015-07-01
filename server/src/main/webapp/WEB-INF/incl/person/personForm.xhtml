@@ -109,8 +109,8 @@
                                         <!-- <h:outputText value="Undefined attribute" rendered="#{_custAttr.metadata == null}"/> -->
                                     </h:panelGroup>
                                 </ui:define> 
-                                <h:outputText value="#{_custAttr.values[_valueIdx]}" rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'memberOf')}"/>
-                                <h:outputText value="#{updatePersonAction.getGroupName(_custAttr.values[_valueIdx])}" rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'memberOf')}"/>
+                                <h:outputText style="margin-left:19px;" value="#{_custAttr.values[_valueIdx]}" rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'memberOf')}"/>
+                                <h:outputText style="margin-left:19px;" value="#{updatePersonAction.getGroupName(_custAttr.values[_valueIdx])}" rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'memberOf')}"/>
                                 <h:outputText value="&#160;" />
                                 <a4j:commandLink action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}" render="selectedCustomAttributesId"
                                     onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);" rendered="#{_custAttr.adminCanEdit and not _mandatory}" eventsQueue="personQueue">
