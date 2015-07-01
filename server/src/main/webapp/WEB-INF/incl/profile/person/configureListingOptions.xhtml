@@ -47,11 +47,11 @@
             </h:panelGrid>
 
             <h:panelGroup>
-                <a4j:commandButton action="#{userProfileAction.configureListingOptions()}" value="Change" onclick="#{rich:component('configureListingOptions')}.hide();" />
+                <a4j:commandButton action="#{userProfileAction.configureListingOptions()}" value="Change" onclick="#{rich:component('configureListingOptions')}.hide();" styleClass="btn btn-success"/>
                 &nbsp;
-               <a4j:commandButton value="Cancel" onclick="#{rich:component('configureListingOptions')}.hide(); return false;" />
+               <a4j:commandButton value="Cancel" onclick="#{rich:component('configureListingOptions')}.hide(); return false;" styleClass="btn btn-success"/>
                &nbsp;
-               <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
+               <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" styleClass="btn btn-success"/>
             </h:panelGroup>
         </h:form>
     </rich:popupPanel>
