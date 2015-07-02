@@ -79,7 +79,7 @@
 													value="I want to be listed in #{organizationService.organization.shortName} White Pages"
 													rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}" />
 </div>
-<div class="col-xs-3" style="margin-left:4px !important;">
+<div class="col-xs-3" style="margin-left:15px !important;">
 												<h:selectBooleanCheckbox style="margin-left:100px;"
 													value="#{userProfileAction.allowPublication}"
 													rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}">
@@ -110,22 +110,23 @@
 														template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
 														rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo')}">
 														<ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
-
+														<div class = "col-sm-11">
 														<rich:inplaceInput value="#{_custAttr.value}"
 															defaultLabel="click to enter #{_custAttr.metadata.displayName}"
 															maxlength="60" inputWidth="300" id="custId"
 															rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
 														<h:outputText value="#{_custAttr.value}"
 															rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
-														<h:outputText value="&#160;" />
-														<a4j:commandLink
+														<h:outputText value="&#160;" /></div>
+														<a4j:commandLink styleClass="glyphicon glyphicon-remove"
 															action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
 															onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
 															limitRender="true" render="selectedCustomAttributesId"
 															rendered="#{_custAttr.userCanEdit and (not _mandatory) and s:hasPermission(applianceService.appliance, 'profile_management')}">
-															<h:graphicImage value="/img/remove.gif" />
+														<!-- 	<h:graphicImage value="/img/remove.gif" />  -->
 															<f:param name="sv" value="1" />
 														</a4j:commandLink>
+														
 													</s:decorate>
 
 													<s:decorate template="/WEB-INF/incl/layout/view.xhtml"
