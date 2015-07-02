@@ -74,17 +74,19 @@
 												<br></br>
 												<br></br>
 												<richext:spacer width="40" />
+												<div class="col-xs-3" style="margin-left:4px !important;">
 												<h:outputText
 													value="I want to be listed in #{organizationService.organization.shortName} White Pages"
 													rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}" />
-
-												<h:selectBooleanCheckbox
+</div>
+<div class="col-xs-3" style="margin-left:4px !important;">
+												<h:selectBooleanCheckbox style="margin-left:100px;"
 													value="#{userProfileAction.allowPublication}"
 													rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}">
 													<a4j:ajax event="click" render="configureListing"
 														execute="@this" limitRender="true" />
 												</h:selectBooleanCheckbox>
-
+</div>
 												<h:panelGroup id="configureListing">
 													<a4j:commandButton value="Configure Listing"
 														rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled') and  (userProfileAction.person.allowPublication)}"
