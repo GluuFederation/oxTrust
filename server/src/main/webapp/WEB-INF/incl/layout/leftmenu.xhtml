@@ -130,6 +130,14 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
+									<li id="subMenuLinkSAML2">
+									<h:commandLink
+											value="Add Trust Relationships"
+											action="#{menuAction.endConversation('/trustmanager/addTrustRelationship.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>	
 
 								</ul></li>
 						</ui:fragment>
@@ -387,10 +395,15 @@
 								}
 
 								//Menu Highlights - SAML
-								if (window.location.href.indexOf("trustmanager/relationships") > -1 || window.location.href.indexOf("trustmanager/add") > -1 || window.location.href.indexOf("trustmanager/update") > -1) {
+								if (window.location.href.indexOf("trustmanager/relationships") > -1 || window.location.href.indexOf("trustmanager/update") > -1) {
 									$('#subMenuSAML').css('display', 'block');
 									$('#menuSAML').addClass('active');
 									$('#subMenuLinkSAML1').addClass('active');
+								}
+								if(window.location.href.indexOf("trustmanager/add") > -1){
+									$('#subMenuSAML').css('display', 'block');
+									$('#menuSAML').addClass('active');
+									$('#subMenuLinkSAML2').addClass('active');
 								}
 
 								//Menu Highlights - OpenID Connect
