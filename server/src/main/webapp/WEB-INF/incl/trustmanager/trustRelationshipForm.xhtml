@@ -204,11 +204,11 @@
 								<h:panelGroup id="FederationWizardEntitySelection">
 									<h:panelGroup
 										rendered="#{(_trustRelationship.containerFederation ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
-										<s:decorate template="/WEB-INF/incl/layout/view.xhtml"
+										<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 											id="spMetaDataSourceTypeFederationEntitySelection">
-											<ui:define name="label">Entity Id</ui:define>
+											<ui:define name="label">Entity ID</ui:define>
 
-											<a4j:commandLink
+											<a4j:commandLink style="margin-left:-90px;"
 												value="#{empty _trustRelationship.entityId? 
                                                                          'Click to select entity Id' 
                                                                        : _trustRelationship.entityId}"
