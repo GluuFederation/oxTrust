@@ -106,6 +106,12 @@
                 </h:selectOneMenu>
                 <h:outputText value="#{_attribute.oxMultivaluedAttribute.value}" rendered="#{not _attributeAction.canEdit()}"/>
              </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="claimName">
+                <ui:define name="label">oxAuth claim name</ui:define>
+                <h:inputText value="#{_attribute.oxAuthClaimName}" size="30" maxlength="60" required="true" id="claimNameId" rendered="#{_attributeAction.canEdit()}"/>
+                <h:outputText value="#{_attribute.oxAuthClaimName}" rendered="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
              
                 <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="scimattr">
                 <ui:define name="label">SCIM Atribute</ui:define>
