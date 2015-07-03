@@ -34,6 +34,14 @@
             </s:decorate>
   
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Scope Type</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
+                    <s:selectItems value="#{scopeService.scopeTypes}" noSelectionLabel="Default" var="_type" label="#{_type.displayName}" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+  
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                 <ui:define name="label">Default scope</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" noSelectionLabel="Select"/>

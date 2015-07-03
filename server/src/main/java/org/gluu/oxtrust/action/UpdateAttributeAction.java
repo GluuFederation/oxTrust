@@ -344,6 +344,28 @@ public @Data class UpdateAttributeAction implements Serializable {
 		return true;
 	}
 
+	public String getInum() {
+		return inum;
+	}
+	public void setInum(String inum) {
+		this.inum = inum;
+	}
+
+	public GluuAttribute getAttribute() {
+		return attribute;
+	}
+
+	public boolean isUpdate() {
+		return update;
+	}
+
+	public boolean isShowAttributeDeleteConfirmation() {
+		return showAttributeDeleteConfirmation;
+	}
+
+	public boolean isShowAttributeExistConfirmation() {
+		return showAttributeExistConfirmation;
+	}
 
 	public boolean canEdit() {
 		return canEdit;
@@ -352,4 +374,21 @@ public @Data class UpdateAttributeAction implements Serializable {
 	public boolean canEditUri() {
 		return attributeService.getCustomOrigin().equals(attribute.getOrigin());
 	}
+
+	public boolean isValidationToggle() {
+		return validationToggle;
+	}
+
+	public void setValidationToggle(boolean validationToggle) {
+		this.validationToggle = validationToggle;
+	}
+
+	public boolean isTooltipToggle() {
+		return tooltipToggle;
+	}
+
+	public void setTooltipToggle(boolean tooltipToggle) {
+		this.tooltipToggle = tooltipToggle;
+	}
+
 }

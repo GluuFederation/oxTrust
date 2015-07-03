@@ -190,6 +190,15 @@ public class ScopeService implements Serializable {
 	}
 
 	/**
+	 * Get all available scope types
+	 * 
+	 * @return Array of scope types
+	 */
+	public org.xdi.oxauth.model.common.ScopeType[] getScopeTypes() {
+		return org.xdi.oxauth.model.common.ScopeType.values();
+	}
+
+	/**
 	 * Get ScopeService instance
 	 * 
 	 * @return ScopeService instance

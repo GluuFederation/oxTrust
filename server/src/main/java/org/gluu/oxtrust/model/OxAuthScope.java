@@ -17,6 +17,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
 import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.oxauth.model.common.ScopeType;
 
 /**
  * oxAuth scope
@@ -43,6 +44,9 @@ public class OxAuthScope extends Entry implements Serializable {
 	@Size(min = 0, max = 4000, message = "Length of the Description should not exceed 4000")
 	@LdapAttribute
 	private String description;
+
+    @LdapAttribute(name = "oxScopeType")
+    private ScopeType scopeType;
 
 	@LdapAttribute(name = "oxAuthClaim")
 	private List<String> oxAuthClaims;
@@ -72,6 +76,14 @@ public class OxAuthScope extends Entry implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public ScopeType getScopeType() {
+		return scopeType;
+	}
+
+	public void setScopeType(ScopeType scopeType) {
+		this.scopeType = scopeType;
 	}
 
 	public List<String> getOxAuthClaims() {
