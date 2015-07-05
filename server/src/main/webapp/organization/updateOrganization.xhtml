@@ -25,7 +25,7 @@
 		</ol>
 		</section>
 		<section class="content"> <!-- Small boxes (Stat box) -->
-		<div id="formArea">
+		<s:div id="formArea">
 			<ui:decorate
 				template="/WEB-INF/incl/organization/organizationForm.xhtml">
 				<ui:param name="_organization"
@@ -38,17 +38,19 @@
 					value="#{manageCertificateAction}" />
 
 				<ui:define name="controlButttons">
-					<div id="updateButtons">
+				<div class = "box-footer" style="margin-top:-16px !important;">
+					<s:div id="updateButtons">
 						<a4j:commandButton value="Change Password" styleClass="btn btn-success"
 							onclick="#{rich:component('appliancePassword:changePasswordModalPanel')}.show();" />
 						<h:commandButton value="Update" styleClass="btn btn-primary" style="margin-left:5px"
 							action="#{updateOrganizationAction.save}" />
 						<h:commandButton value="Cancel" styleClass="btn btn-primary" style="margin-left:5px"
 							action="#{updateOrganizationAction.cancel}" immediate="true" />
+					</s:div>
 					</div>
 				</ui:define>
 			</ui:decorate>
-		</div>
+		</s:div>
 		</section>
 	</ui:define>
 

@@ -96,17 +96,7 @@
                
             </h:panelGroup>
             
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Keep external persons</ui:define>
-
-                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"/>
-            </s:decorate>
-
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Load source data with limited search</ui:define>
-
-                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.loadSourceUsingSearchLimit}"/>
-            </s:decorate>
+            
 
            
           
@@ -137,7 +127,20 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="snapshotCount">
                 <ui:define name="label">Snapshots count</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotsCount}" size="5" required="true" />
-            </s:decorate></h:panelGroup>
+            </s:decorate>
+            
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Keep external persons</ui:define>
+
+                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"/>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Load source data with limited search</ui:define>
+
+                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.loadSourceUsingSearchLimit}"/>
+            </s:decorate>
+            </h:panelGroup>
             
              <h:panelGroup id="vdsTogglePanelGroup">
                 

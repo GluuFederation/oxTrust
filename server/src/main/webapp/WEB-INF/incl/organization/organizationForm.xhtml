@@ -304,46 +304,46 @@
 							</h:panelGroup>
 						</div>
 						<div class="tab-pane" id="smtp-server">
-							<h:panelGroup layout="block" style="overflow:auto;width:80%;">
+							<h:panelGroup layout="block" style="width:80%;">
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">SMTP Host</ui:define>
 									<h:inputText value="#{_appliance.smtpHost}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">From Name</ui:define>
 									<h:inputText value="#{_appliance.smtpFromName}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">From Email Address</ui:define>
 									<h:inputText value="#{_appliance.smtpFromEmailAddress}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Requires Authentication</ui:define>
 									<h:selectBooleanCheckbox styleClass="form-control"
 										value="#{_appliance.requiresAuthentication}" />
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">SMTP User Name</ui:define>
 									<h:inputText value="#{_appliance.smtpUserName}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">SMTP Password</ui:define>
 									<h:inputSecret value="#{_appliance.smtpPasswordStr}" styleClass="form-control"
 										redisplay="true" />
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Requires SSL</ui:define>
 									<h:selectBooleanCheckbox value="#{_appliance.requiresSsl}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">SMTP Port</ui:define>
 									<h:inputText value="#{_appliance.smtpPort}" styleClass="form-control"/>
 								</s:decorate>
@@ -353,29 +353,29 @@
 							</h:panelGroup>
 						</div>
 						<div class="tab-pane" id="email-config">
-							<h:panelGroup layout="block" style="overflow:auto;width:80%;">
+							<h:panelGroup layout="block" style="width:80%;">
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Email for Centreon</ui:define>
 									<h:inputText value="#{_appliance.centreonEmail}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Email for Jira</ui:define>
 									<h:inputText value="#{_appliance.jiraEmail}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Email for Billing</ui:define>
 									<h:inputText value="#{_appliance.billingEmail}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Email for Privacy</ui:define>
 									<h:inputText value="#{_appliance.privacyEmail}" styleClass="form-control"/>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Email for SVN</ui:define>
 									<h:inputText value="#{_appliance.svnEmail}" styleClass="form-control"/>
 								</s:decorate>
@@ -480,14 +480,14 @@
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Organization Logo</ui:define>
-									<h:panelGrid id="custLogoImagePanelId" columns="1" width="100%"
+									<h:panelGroup id="custLogoImagePanelId" columns="1" width="100%"
 										border="0" cellpadding="0" cellspacing="0">
 										<rich:fileUpload id="custUploadId"
 											fileUploadListener="#{_organizationAction.setCustLogoImage}"
 											acceptedTypes="jpg, jpeg, gif, png, bmp"
 											ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
 											maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-											styleClass="uploadFile"
+											styleClass="uploadFile" style="width:80% !important;"
 											rendered="#{not _organizationAction.custLogoImageExist}">
 											<a4j:ajax event="uploadcomplete" execute="@none"
 												render="custLogoImagePanelId" />
@@ -507,7 +507,7 @@
 												render="custLogoImagePanelId"
 												eventsQueue="organizationQueue" />
 										</h:panelGrid>
-									</h:panelGrid>
+									</h:panelGroup>
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
@@ -519,7 +519,7 @@
 											acceptedTypes="ico"
 											ontyperejected="alert('Only ICO files are accepted');"
 											maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-											styleClass="uploadFile"
+											styleClass="uploadFile" style="width:80% !important;"
 											rendered="#{not _organizationAction.faviconImageExist}">
 											<a4j:ajax event="uploadcomplete" execute="@none"
 												render="custFaviconImagePanelId" />

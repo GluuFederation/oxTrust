@@ -70,8 +70,8 @@
 
 									<!-- general form elements -->
 									<div class="box box-primary"
-										style="width: 100%; margin-left: 22px;border-top-color: #337AB7;">
-										<div class="box-header" style="background-color: rgb(51, 122, 183);color:white !important;">
+										style="width: 100%; margin-left: 22px;">
+										<div class="box-header">
 											<h3 class="box-title">Search Results</h3>
 										</div>
 										<!-- /.box-header -->
@@ -92,7 +92,7 @@
 														rendered="#{searchScopeAction.scopeList.size gt 0}">
 														<h:column sortBy="#{clt.displayName}">
 															<f:facet name="header">
-																<div style="text-align: center;">Display Name</div>
+																<div style="text-align: left;">Display Name</div>
 															</f:facet>
 															<s:link view="/scope/updateScope.xhtml"
 																value="#{clt.displayName}" propagation="none">
@@ -103,7 +103,7 @@
 															<f:facet name="header">
 																<div style="text-align: center;">iNum</div>
 															</f:facet>
-															<h:outputText value="#{clt.inum}" class="col-xs-12" />
+															<h:outputText style="text-align: center;" value="#{clt.inum}" class="col-xs-12" />
 														</h:column>
 														<h:column>
 															<f:facet name="header">
@@ -114,7 +114,7 @@
 														</h:column>
 														<h:column>
 															<f:facet name="header">
-																<div style="text-align: center;">Default</div>
+																<div style="text-align: left;">Default</div>
 															</f:facet>
 															<h:outputText value="#{clt.defaultScope.displayName}"
 																class="col-xs-12" />

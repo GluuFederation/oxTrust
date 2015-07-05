@@ -119,17 +119,7 @@
 							propertiesAction="#{cc.attrs.propertiesAction}" required="true"
 							rendered="#{cc.attrs.displayBaseDn}" />
 
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-							id="maxConnection">
-							<ui:define name="label">Use SSL</ui:define>
-							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.useSSL}"
-								required="true" />
-						</s:decorate>
-
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-							<ui:define name="label">Enabled</ui:define>
-							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}" />
-						</s:decorate>
+						
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link"
 							value="Change Bind Password"
@@ -140,6 +130,18 @@
 							action="#{cc.attrs.ldapConfigAction.setActiveLdapConfig(cc.attrs.ldapConfig)}"
 							execute="@this" />
 							</s:decorate>
+							
+							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+							id="maxConnection">
+							<ui:define name="label">Use SSL</ui:define>
+							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.useSSL}"
+								required="true" />
+						</s:decorate>
+
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+							<ui:define name="label">Enabled</ui:define>
+							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}" />
+						</s:decorate>
 					</h:panelGroup>
 					
 					

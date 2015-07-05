@@ -339,23 +339,31 @@
 											<ui:param name="_metadata" value="#{_attr.metadata}" />
 											<ui:param name="_aid"
 												value="#{_customAttributeAction.attributeIds[_metadata]}" />
-											<h:outputText value="#{_metadata.displayName}"
+											<div class="col-sm-12">	
+												<div class="col-sm-1">
+												<h:outputText styleClass="glyphicon glyphicon-pushpin" style="margin-top:4px;color:#FF9409"></h:outputText></div>
+												<div class="col-sm-10">
+											<h:outputText value="#{_metadata.displayName}" 
 												styleClass="attributeTooltip"
 												title="SAML URI for this attribute: | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
 
-											<richext:spacer width="8" />
+											
 
-											<a4j:commandLink
+											</div>
+											<div class="col-sm-1">
+											<a4j:commandLink  styleClass="glyphicon glyphicon-remove"
 												action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
 												render="newTrustId"
 												onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
 												execute="@this">
-												<h:graphicImage value="/img/remove.gif" />
+												<!-- <h:graphicImage value="/img/remove.gif" /> -->
 												<f:param name="sv" value="1" />
 											</a4j:commandLink>
-
+											</div>
+</div>
 											<br />
 										</a4j:repeat>
+										
 									</rich:accordionItem>
 
 									<c:forEach items="#{_trustRelationshipAction.federatedSites}"
@@ -451,5 +459,7 @@
 		</h:panelGrid>
 
 		<ui:insert name="controlButttons" />
+		
 	</h:form>
+	
 </ui:composition>

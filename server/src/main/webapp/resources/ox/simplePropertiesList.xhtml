@@ -32,7 +32,7 @@
                                 <h:inputText styleClass="col-md-6 form-control" style ="margin-bottom:5px;"  value="#{_property.value}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.required and empty param['sv']}" /></div>
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
                                 
-                                <a4j:commandLink   style="margin-left:25px;margin-top:5px;font-size:23px !important;" styleClass="glyphicon glyphicon-remove" action="#{cc.attrs.propertiesAction.removeItemFromSimpleProperties(cc.attrs.properties, _property)}" render="propertiesList" execute="@region">
+                                <a4j:commandLink   style="margin-left:40px;margin-top:5px;font-size:23px !important;" styleClass="glyphicon glyphicon-remove" action="#{cc.attrs.propertiesAction.removeItemFromSimpleProperties(cc.attrs.properties, _property)}" render="propertiesList" execute="@region">
                                     <!--  <h:graphicImage value="/img/remove.gif" />-->
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink>
