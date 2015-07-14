@@ -304,8 +304,12 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	private CommonProfile retrieveUserProfileFromUserInfoResponse(final UserInfoResponse userInfoResponse) {
 		final CommonProfile profile = new CommonProfile();
 
-		profile.setId(getFirstClaim(userInfoResponse, JwtClaimName.SUBJECT_IDENTIFIER));
-		profile.setUserName(getFirstClaim(userInfoResponse, JwtClaimName.USER_NAME));
+		String id = getFirstClaim(userInfoResponse, JwtClaimName.USER_NAME);
+		if (StringHelper.isEmpty(id)) {
+			id = getFirstClaim(userInfoResponse, JwtClaimName.SUBJECT_IDENTIFIER);
+		}
+		profile.setId(id);
+		profile.setUserName(id);
 
 		profile.setEmail(getFirstClaim(userInfoResponse, JwtClaimName.EMAIL));
 
