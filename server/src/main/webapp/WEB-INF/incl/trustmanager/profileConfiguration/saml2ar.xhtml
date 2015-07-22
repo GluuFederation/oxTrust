@@ -1,0 +1,79 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:panelGrid columns="2" id="saml2ar" columnClasses="half,half" width="560"
+        rendered="#{_relyingPartyAction.isProfileConfigurationSelected('SAML2ArtifactResolution')}">
+
+        <ui:param name="_profileConfigurationSelected" value="#{_relyingPartyAction.getProfileConfiguration('SAML2ArtifactResolution')}" />
+
+        <rich:panel id="SAML2ArtifactResolutionDescription" bodyClass="inpanelBody">
+            <f:facet name="header">
+                <h:outputText value="SAML 2 Artifact Resolution Profile Help" />
+            </f:facet>
+This profile configuration enables and configures the SAML 2 artifact resolution profile.
+        </rich:panel>
+        <rich:panel id="SAML2ArtifactResolutionMenu" bodyClass="inpanelBody">
+            <f:facet name="header">
+                <h:outputText value="SAML 2 Artifact Resolution Profile Configuration" />
+            </f:facet>
+            <h:panelGrid columns="2">
+                <h:outputText value="signResponses: " />
+                <h:selectOneMenu value="#{_profileConfigurationSelected.signResponses}">
+                    <f:selectItem itemLabel="never" itemValue="never" />
+                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
+                    <f:selectItem itemLabel="always" itemValue="always" />
+                </h:selectOneMenu>
+                <h:outputText value="signAssertions: " />
+                <h:selectOneMenu value="#{_profileConfigurationSelected.signAssertions}">
+                    <f:selectItem itemLabel="never" itemValue="never" />
+                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
+                    <f:selectItem itemLabel="always" itemValue="always" />
+                </h:selectOneMenu>
+                <h:outputText value="signRequests: " />
+                <h:selectOneMenu value="#{_profileConfigurationSelected.signRequests}">
+                    <f:selectItem itemLabel="never" itemValue="never" />
+                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
+                    <f:selectItem itemLabel="always" itemValue="always" />
+                </h:selectOneMenu>
+                <h:outputText value="encryptAssertions: " />
+                <h:selectOneMenu value="#{_profileConfigurationSelected.encryptAssertions}">
+                    <f:selectItem itemLabel="never" itemValue="never" />
+                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
+                    <f:selectItem itemLabel="always" itemValue="always" />
+                </h:selectOneMenu>
+                <h:outputText value="encryptNameIds: " />
+                <h:selectOneMenu value="#{_profileConfigurationSelected.encryptNameIds}">
+                    <f:selectItem itemLabel="never" itemValue="never" />
+                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
+                    <f:selectItem itemLabel="always" itemValue="always" />
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <s:fileUpload id="SAML2ArtifactResolutionWrapperId" fileName="#{_relyingPartyAction.fileWrappers.get('SAML2ArtifactResolution').fileName}"
+                data="#{_relyingPartyAction.fileWrappers.get('SAML2ArtifactResolution').stream}" fileSize="#{_relyingPartyAction.fileWrappers.get('SAML2ArtifactResolution').fileSize}"
+                contentType="#{_relyingPartyAction.fileWrappers.get('SAML2ArtifactResolution').contentType}" maxlength="100"
+                rendered="#{empty _profileConfigurationSelected.profileConfigurationCertFileName}" immediate="true" style="width: 180px;">
+<!--                <a4j:ajax event="complete" action="#{_relyingPartyAction.showFile()}"/> -->
+            </s:fileUpload>
+
+            <h:panelGrid>
+                <h:outputText value="#{_profileConfigurationSelected.profileConfigurationCertFileName}"
+                    rendered="#{not empty _profileConfigurationSelected.profileConfigurationCertFileName}" />
+                <a4j:commandLink action="#{_profileConfigurationSelected.setProfileConfigurationCertFileName('')}" limitRender="true" render="SAML2ArtifactResolutionMenu"
+                    rendered="#{not empty _profileConfigurationSelected.profileConfigurationCertFileName}">
+                    <h:graphicImage value="/img/remove.gif" />
+                    <f:param name="sv" value="1" />
+                </a4j:commandLink>
+            </h:panelGrid>
+
+        </rich:panel>
+    </h:panelGrid>
+</ui:composition>

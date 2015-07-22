@@ -1,0 +1,66 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:define name="body">
+		<h:form id="waitForm" >
+			<rich:popupPanel modal="true" id="waitPanel" autosized="true" domElementAttachment="form" >
+			<h:outputText value="Verification in Progress..."/>
+			</rich:popupPanel>
+		</h:form>
+        <s:div id="formArea">
+            <ui:param name="_appliance" value="#{applianceService.appliance}" />
+            <h:form>
+	            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" id="statusTable">
+	                <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
+	                    <ui:define name="label">Configure Linktrack API</ui:define>
+	                    <h:selectBooleanCheckbox value="#{apisConfigurationAction.enableLinktrack}">
+		                    <a4j:ajax  event="click"  render="linktrackConfig, updateLinktrack" />                     
+		                </h:selectBooleanCheckbox>
+	                </s:decorate>
+	                <h:panelGroup id="linktrackConfig" >
+		                <h:panelGrid rendered="#{apisConfigurationAction.enableLinktrack}" width="100%" > 
+			                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+			                    <ui:define name="label">Linktrack API Login</ui:define>
+			                    <h:inputText id="username"
+			                              value="#{apisConfigurationAction.linktrackLogin}">
+			                              <a4j:ajax event="keyup" render="updateLinktrack" listener="#{apisConfigurationAction.invalidate}"/>
+			                    </h:inputText> 
+			                </s:decorate>
+			                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+			                    <ui:define name="label">Linktrack API Password</ui:define>
+			                    <h:inputText id="username"
+			                              value="#{apisConfigurationAction.linktrackPassword}">
+			                              <a4j:ajax  event="keyup"  render="updateLinktrack" listener="#{apisConfigurationAction.invalidate}"/>
+			                    </h:inputText> 
+			                </s:decorate>
+			                <a4j:commandButton value="Verify" 
+				            	action="#{apisConfigurationAction.verify}" 
+				                render="updateLinktrack" 
+				                execute="@form"
+				                onclick="#{rich:component('waitPanel')}.show();"
+				                oncomplete="#{rich:component('waitPanel')}.hide();" >	
+				            </a4j:commandButton>
+			                <div id="commandButtons" >
+				      
+
+
+			                </div>
+		                </h:panelGrid>
+	                </h:panelGroup>
+	                <a4j:outputPanel id="updateLinktrack">
+				        <h:commandButton value="Save" action="#{apisConfigurationAction.save}" disabled="#{apisConfigurationAction.enableLinktrack and not apisConfigurationAction.linktrackVerified}"/>
+				    </a4j:outputPanel> 
+	            </h:panelGrid>
+            </h:form>
+        </s:div>
+    </ui:define>
+
+</ui:composition>

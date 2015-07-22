@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://jboss.org/schema/arquillian"
+    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <engine>
+        <property name="deploymentExportPath">target</property>
+    </engine>
+
+    <container qualifier="tomcat" default="true">
+        <configuration>
+            <property name="tomcatHome">target/tomcat-embedded-7</property>
+            <property name="workDir">work</property>
+            <property name="appBase">webapps</property>
+            <property name="bindHttpPort">8889</property>
+            <property name="unpackArchive">false</property>
+        </configuration>
+    </container>
+</arquillian>

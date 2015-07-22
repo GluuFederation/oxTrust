@@ -1,0 +1,136 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+
+    <ui:define name="body">
+    <h:outputStylesheet>
+*.rf-pick-lst-dcrtn {
+	border-width: 0px !important;
+
+}
+
+.tooltip{
+	margin:8px;
+	padding:8px;
+	border:1px solid blue;
+	background: white;
+	position: absolute;
+	z-index: 2;
+}
+</h:outputStylesheet>
+    <h:outputScript>
+ 	function addTooltip() {
+	    jQuery(document).ready(function(){
+	    	
+	    	jQuery(".rf-pick-opt").bind({
+					mousemove : changeTooltipPosition,
+					mouseover : showTooltip,
+					mouseout: hideTooltip
+				});
+
+	    });
+	};
+	var hideTooltip = function() {
+	$('div.tooltip').remove();
+};
+
+var showTooltip = function(event) {
+	getText(jQuery(this).text())
+   changeTooltipPosition(event);
+};
+
+var updateTooltip = function(personData){
+   $('div.tooltip').remove();
+   $('<div class="tooltip">' +  personData + '</div>')
+     .appendTo('body');
+   $('.tooltip').css({top: tooltipY, left: tooltipX});
+}
+
+var changeTooltipPosition = function(event) {
+	tooltipX = event.pageX - 8;
+	tooltipY = event.pageY + 8;
+	$('.tooltip').css({top: tooltipY, left: tooltipX});
+};
+
+    </h:outputScript>
+    <h:form>
+        <div id="formArea">
+        	<h:panelGrid columns="1" width="100%">
+	         	<s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="guid">
+	                <ui:define name="label">GUID</ui:define>
+	                <h:outputText value="#{updateRegistrationLinkAction.link.guid}" />
+	        	</s:decorate>
+	 			<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="ExpirationDate">
+	                <ui:define name="label">Expiration Date</ui:define>
+	                <rich:calendar value="#{updateRegistrationLinkAction.link.linkExpirationDate}" id="calendar"
+	                    cellWidth="24px" cellHeight="22px" style="width:200px">
+	                </rich:calendar>
+	        	</s:decorate>
+	        	<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="Moderated">
+	                <ui:define name="label">Moderated</ui:define>
+	                <h:selectBooleanCheckbox value="#{updateRegistrationLinkAction.link.linkModerated}">
+	                	<a4j:ajax  event="click"  render="moderatorsSelection" limitRender="true" oncomplete="addTooltip();" execute="@this"/>
+	                </h:selectBooleanCheckbox>
+	        	</s:decorate>
+	        	<s:decorate template="/WEB-INF/incl/layout/view.xhtml" id="creator">
+	                <ui:define name="label">Creator</ui:define>
+	                <h:outputText value="#{updateRegistrationLinkAction.link.linkCreator}" />
+	        	</s:decorate>
+
+	           	<h:panelGroup   id="moderatorsSelection" >
+	           		<a4j:region rendered="#{updateRegistrationLinkAction.link.linkModerated}">
+	                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
+	                        <ui:define name="label">Users Filter</ui:define>
+	                        <h:inputText value="#{updateRegistrationLinkAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters" title="Enter at least two characters to search for moderators"
+	                            alt="search parameters for person like uid,iname,email">
+	                            
+	                            <a4j:ajax  event="keyup"  render="moderators" listener="#{updateRegistrationLinkAction.search}" limitRender="true" execute="@region" oncomplete="addTooltip();"/>
+	                        </h:inputText>
+	                    </s:decorate>
+	               
+		                <h:panelGroup id="moderators" >
+				        	<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+				                <ui:define name="label">Moderators</ui:define>
+				                <rich:pickList value="#{updateRegistrationLinkAction.moderators}"  rendered="#{not empty updateRegistrationLinkAction.people or not empty updateRegistrationLinkAction.moderators}">		           
+				                	<f:selectItems value="#{updateRegistrationLinkAction.people}" var="person" itemValue="#{person}" itemLabel="#{person.uid}"/>
+				                	<f:converter converterId="PeopleUidConverter" />
+				                </rich:pickList>
+	
+				        	</s:decorate>
+			        	</h:panelGroup>
+		        	</a4j:region>
+		        </h:panelGroup>
+				
+	        	<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
+	                <ui:define name="label">Description</ui:define>
+	                <h:inputText value="#{updateRegistrationLinkAction.link.description}">
+	                </h:inputText>
+	        	</s:decorate>
+         		<h:panelGrid columns="2"  id="updateButtons">
+                	<h:commandButton value="Add" action="#{updateRegistrationLinkAction.save}" />
+                    <h:commandButton value="Cancel" action="#{updateRegistrationLinkAction.cancel}" immediate="true" />
+                </h:panelGrid>
+        	</h:panelGrid>
+        		
+        </div>
+</h:form>
+    <h:form>
+
+        
+		<a4j:jsFunction name="getText" data="#{updateRegistrationLinkAction.personData}" action="#{updateRegistrationLinkAction.lookupPersonData()}" oncomplete="updateTooltip(event.data);">
+			<a4j:param name="uid"
+		    	assignTo="#{updateRegistrationLinkAction.personUid}" />
+		</a4j:jsFunction>
+    </h:form>
+
+    </ui:define>
+</ui:composition>

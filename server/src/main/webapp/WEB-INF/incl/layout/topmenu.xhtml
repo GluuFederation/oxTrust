@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich">
+
+<h:form>
+	<header class="main-header">
+		<!-- Logo -->
+		
+		<a href="#{request.contextPath}/home" class="logo"></a>
+		<!-- Header Navbar: style can be found in header.less -->
+		
+			<nav class="navbar navbar-static-top" role="navigation">
+				<!-- Sidebar toggle button-->
+				<!--                     <h:link value="" styleClass="sidebar-toggle" outcome="#" data-toggle="offcanvas" role="button"  rendered="#{s:hasPermission('configuration', 'access') or s:hasPermission('scim2', 'access') or s:hasPermission('attribute', 'access') or s:hasPermission('configuration', 'access')}" > -->
+				<!--                     	<span class="sr-only">Toggle navigation</span> -->
+				<!--                     </h:link> -->
+				
+				<a href="#" class="sidebar-toggle" data-toggle="offcanvas"
+					role="button"> <span class="sr-only">Toggle navigation</span>
+				</a>
+				<div class="navbar-custom-menu" style="margin-right:0px;">
+					<ul class="nav navbar-nav" style="margin-right:0px;">
+						
+						<!-- User Account: style can be found in dropdown.less -->
+						<li class="dropdown user user-menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 0px;  margin: 4px;">
+							<div class="glyphicon glyphicon-user" style="float: left;font-size: 34px;color: #00BE79;background: none repeat scroll 0% 0% #222D32;padding: 6px;"></div>
+						</a>
+							<ul class="dropdown-menu" style="background-color: transparent;  margin-top: 0px;  border: none;">
+								<!-- User image -->
+								<li class="user-header" style="background-color: #222D32 !important;">
+									<div class="glyphicon glyphicon-user" style="width: 50px;height: 50px;float: left;font-size: 70px;color: #00BE79;"></div>
+									<p style="font-size: 14px;  color: whitesmoke;">
+										#{credentials.username}
+									</p>
+									<p style="font-size: 12px;  color: whitesmoke;">
+										<br/>
+										Organization : #{organizationService.organization.displayName}
+									</p>
+									</li>
+
+								<!-- Menu Footer-->
+								<li class="user-footer" style="background-color: #181D20 !important;">
+									<div class="pull-left" style="margin-right:1px;">
+										<a href="#{request.contextPath}/profile/person/view" class="btn bg-green btn-flat">Profile</a>
+									</div>
+									
+									<div>
+                                        <s:link view="/logout.xhtml" value="Logout"
+									styleClass="btn bg-green btn-flat" propagation="none"
+									rendered="#{identity.loggedIn}" />
+										
+									</div>
+								</li>
+							</ul></li>
+					</ul>
+				</div>
+				
+				
+			</nav>
+		
+	</header>
+	</h:form>
+</ui:composition>

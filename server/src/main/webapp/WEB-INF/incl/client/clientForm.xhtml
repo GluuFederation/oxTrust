@@ -1,0 +1,173 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions">
+
+    <h:form id="clientForm">
+     <div class="row">
+            <div class="col-xs-12">
+              <div class="box box-primary">
+              <div class="box-header">
+              <div style="display: inline-block;width: 75% !important;">
+              
+        <h:panelGroup>
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="inum" rendered="#{not _new}">
+                <ui:define name="label">Inum</ui:define>
+                <h:outputText styleClass="form-control" value="#{_client.inum}" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
+                <ui:define name="label">Display Name</ui:define>
+                <rich:inplaceInput value="#{_client.displayName}" defaultLabel="click to enter Display Name" maxlength="60" inputWidth="695" required="true" id="displayNameId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clientSecret" rendered="#{_new}">
+                <ui:define name="label">Client Secret</ui:define>
+                <rich:inplaceInput value="#{_client.oxAuthClientSecret}" defaultLabel="click to enter Client Secret" maxlength="60" inputWidth="695" required="true" id="applicationTypeId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="applicatonType">
+                <ui:define name="label">Application Type</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthAppType}" id="applicationTypeId" required="true">
+                    <s:selectItems value="#{clientService.applicationType}" noSelectionLabel="Application type" var="_type" label="#{_type.displayName}" />
+                    <!-- <s:convertEnum/> -->
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenAlgorithm">
+                <ui:define name="label">Algorithm</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthIdTokenSignedResponseAlg}" id="idTokenAlgorithmId" required="true">
+                    <s:selectItems value="#{clientService.oxAuthIdTokenSignedResponseAlgs}" noSelectionLabel="Algorithm type" var="_type" label="#{_type.displayName}" />
+                    <!-- <s:convertEnum/> -->
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="oxAuthTrustedClientBox">
+                <ui:define name="label">Pre-Authorization</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthTrustedClient}" id="trustedClientId" required="true">
+                    <s:selectItems value="#{clientService.oxAuthTrustedClient}" noSelectionLabel="Trusted Client" var="_type" label="#{_type.displayName}" />
+                    <!-- <s:convertEnum/> -->
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenAuthMethod">
+                <ui:define name="label">Authentication method</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.tokenEndpointAuthMethod}" id="idTokenAuthMethodId" required="false">
+                    <s:selectItems value="#{clientService.authenticationMethods}" noSelectionLabel="Authentication method" var="_method" label="#{_method.displayName}" />
+                    <!-- <s:convertEnum/> -->
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="redirectLoginUrls">
+                <ui:define name="label">Redirect Login URIs</ui:define>
+                <h:panelGroup id="selectedLoginURIsId">
+                    <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <a4j:repeat value="#{_clientAction.loginUris}" rowKeyVar="_urisIdx" var="_uri">
+                            <h:outputText value="#{empty _uri ? _uri : _uri}" />
+                            <h:outputText value="&#160;" />
+                            <div class="row-fluid">
+     <div class="span6 pull-right" >
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_clientAction.removeLoginURI(_uri)}" execute="@this" render="selectedLoginURIsId" eventsQueue="clientQueue">
+                               <!--  <h:graphicImage value="/img/remove.gif" /> -->
+                            </a4j:commandLink></div></div>
+                            <br />
+                        </a4j:repeat>
+                        <richext:spacer height="16" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="redirectLogoutUrls">
+                <ui:define name="label">Redirect Logout URIs</ui:define>
+                <h:panelGroup id="selectedLogoutURIsId">
+                    <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <a4j:repeat value="#{_clientAction.logoutUris}" rowKeyVar="_urisIdx" var="_uri">
+                            <h:outputText value="#{empty _uri ? _uri : _uri}" />
+                            <h:outputText value="&#160;" />
+                              <div class="row-fluid">
+     <div class="span6 pull-right" >
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_clientAction.removeLogoutURI(_uri)}" execute="@this" render="selectedLogoutURIsId" eventsQueue="clientQueue">
+                                <!-- <h:graphicImage value="/img/remove.gif" /> -->
+                            </a4j:commandLink></div></div>
+                            <br />
+                        </a4j:repeat>
+                        <richext:spacer height="16" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scopes">
+                <ui:define name="label">Scopes</ui:define>
+                <h:panelGroup id="selectedScopesId">
+                    <h:panelGroup>
+                        <a4j:repeat value="#{_clientAction.scopes}" rowKeyVar="_scopeIdx" var="_scope">
+                            <h:outputText value="#{empty _scope.displayName ? _scope.displayName : _scope.displayName}" />
+                            <h:outputText value="&#160;" />
+                          
+     <div class="row-fluid">
+     <div class="span6 pull-right" >
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_clientAction.removeScope(_scope.inum)}" execute="@this" render="selectedScopesId" eventsQueue="clientQueue">
+                               <!--   <h:graphicImage value="/img/remove.gif" />-->
+                               
+                            </a4j:commandLink>	</div></div>
+                            <br />
+                        </a4j:repeat>
+                        <richext:spacer height="16" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="responseTypes">
+                <ui:define name="label">Response Type</ui:define>
+                <h:panelGroup id="selectedResponseTypesId">
+                    <h:panelGroup>
+                        <a4j:repeat value="#{_clientAction.responseTypes}" rowKeyVar="_responseTypeIdx" var="_responseType">
+                            <h:outputText value="#{_responseType.displayName}" />
+                            <h:outputText value="&#160;" />
+                             <div class="row-fluid">
+     <div class="span6 pull-right" >
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"  style="margin-top:-20px;" action="#{_clientAction.removeResponseType(_responseType.value)}" execute="@this" render="selectedResponseTypesId" eventsQueue="clientQueue">
+                              <!--  <h:graphicImage value="/img/remove.gif" />  -->
+                            </a4j:commandLink></div></div>
+                            <br />
+                        </a4j:repeat>
+                        <richext:spacer height="16" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="command">
+                <h:panelGroup>
+                <div class="btn-group" role="group" aria-label="..." style="margin-left:105px;">
+                
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Login URI" oncomplete="#{rich:component('loginRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary"  value="Add Logout URI" oncomplete="#{rich:component('logoutRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary"  value="Add Scope" oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary"  value="Add Response Type" oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();" execute="@this" />
+                </div></h:panelGroup>
+            </s:decorate>
+
+        </h:panelGroup>
+
+       </div>
+       <div class="box-footer">
+					
+							<rich:notifyMessages stayTime="2000" nonblocking="true" />
+							<ui:insert name="controlButttons" />
+						
+					</div>
+        </div></div></div></div>
+    </h:form>
+</ui:composition>

@@ -1,0 +1,44 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			Attributes<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Edit Attribute</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a href="#{request.contextPath}/attribute/update/{inum}">Edit Attributes</a></li>
+		</ol>
+		</section>
+		<section class="content">
+		<div id="formArea">
+            <ui:decorate template="/WEB-INF/incl/attribute/attributeForm.xhtml">
+                <ui:param name="_attribute" value="#{updateAttributeAction.attribute}" />
+                <ui:param name="_attributeAction" value="#{updateAttributeAction}" />
+                <ui:param name="_new" value="false" />
+
+                <ui:define name="controlButttons">
+                    <div id="updateButtons">
+                        <h:commandButton styleClass="btn btn-primary" value="Update" action="#{updateAttributeAction.save}" rendered="#{_attribute.adminCanEdit}" />
+                        <a4j:commandButton styleClass="btn btn-primary" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{not _new and _attribute.custom and _attribute.adminCanEdit}" />
+                        <h:commandButton styleClass="btn btn-primary" value="Cancel" action="#{updateAttributeAction.cancel}" immediate="true" style="margin-left:5px"/>
+                    </div>
+                </ui:define>
+            </ui:decorate>
+
+            <ox:acceptRemovalDialog id="deleteConfirmation" subject="attribute" value="#{updateAttributeAction.attribute.displayName}" deleteMethod="#{updateAttributeAction.delete}" />
+        </div></section>
+    </ui:define>
+</ui:composition>

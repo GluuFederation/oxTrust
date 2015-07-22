@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:cc="http://java.sun.com/jsf/composite">
+
+<cc:interface>
+    <cc:attribute name="title" required="true" type="java.lang.String" />
+    <cc:attribute name="message" required="true" type="java.lang.String" />
+    <cc:attribute name="show" required="true" type="java.lang.Boolean" />
+    <cc:attribute name="acceptMethod" required="true" method-signature="void action()" />
+    <cc:attribute name="cancelMethod" required="false" method-signature="void action()" />
+    <cc:attribute name="render" required="false" type="java.lang.String" />
+</cc:interface>
+
+<cc:implementation>
+    <rich:popupPanel id="showConfirmationModalPanel" onmaskclick="#{rich:component('showConfirmationModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" show="#{cc.attrs.show}">
+        <f:facet name="header">
+            <h:outputText value="#{cc.attrs.title}" />
+        </f:facet>
+        <f:facet name="controls">
+            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('showConfirmationModalPanel')}.hide(); return false;" />
+        </f:facet>
+
+        <h:form>
+            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
+                <h:panelGroup>
+                    <h:outputText value="Warning:&#160;" styleClass="bolded" />
+                    <h:outputText value="#{cc.attrs.message}" />
+                </h:panelGroup>
+
+                <richext:spacer height="8" />
+
+                <h:panelGroup>
+                    <a4j:commandButton value="Ok" oncomplete="#{rich:component('showConfirmationModalPanel')}.hide();" render="#{cc.attrs.render}" execute="@this" action="#{cc.attrs.acceptMethod}"/>&nbsp;
+                    <a4j:commandButton value="Cancel" oncomplete="#{rich:component('showConfirmationModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
+                    <a4j:commandButton value="Cancel" oncomplete="#{rich:component('showConfirmationModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
+                        action="#{cc.attrs.cancelMethod}"/>&nbsp;
+                    <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </rich:popupPanel>
+</cc:implementation>
+
+</html>

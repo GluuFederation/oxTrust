@@ -1,0 +1,135 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+	<ui:define name="body">
+		<section class="content-header">
+		<h1 style="color: #333;">
+			OpenID Connect<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Clients</small>
+		</h1>
+		<ol class="breadcrumb">
+<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/client/inventory"> Clients</a></li>
+		</ol>
+		</section>
+		<section class="content">
+		<div id="formArea">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="box box-primary">
+						<div class="box-header"></div>
+						<div style="display: inline-block; width: 75% !important;">
+
+							<h:panelGroup>
+								<div class="row">
+									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+										id="searchPattern">
+										<!--    <s:link view="/client/addClient.xhtml" value="Add Client" styleClass="addClient" propagation="none" /> -->
+										<ui:define name="label" style="margin-left:15px;">
+											<a class="btn btn-primary"
+												href="#{request.contextPath}/client/manage/add">Add
+												Client</a>
+										</ui:define>
+									</s:decorate>
+
+									<h:form>
+										<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+											id="searchPattern">
+											<ui:param name="_hideLabel" value="true" />
+											<div style="width: 100%; float: left;margin-left:17px;">
+												<h:inputText style="width:60%; float:left;"
+													styleClass="form-control"
+													value="#{searchClientAction.searchPattern}" size="30"
+													maxlength="30" id="searchPatternId"
+													alt="Search parameters for client like inum,iname,displayName" />
+												<h:commandButton style="float:left;margin-left :3px;"
+													styleClass="btn btn-primary" value="Search"
+													action="#{searchClientAction.search}" />
+											</div>
+										</s:decorate>
+									</h:form>
+								</div>
+
+								<div class="row">
+
+									<!-- general form elements -->
+									<div class="box box-primary"
+										style="width: 128%; margin-left: 22px;">
+										<div class="box-header">
+											<h3 class="box-title">Search Results</h3>
+										</div>
+										<!-- /.box-header -->
+										<!-- form start -->
+										<div class="box-body">
+											<div class="table-responsive" style="overflow: auto">
+												<h:form id="clientsFormId">
+													<s:fragment
+														rendered="#{searchClientAction.clientList.size eq 0}">
+														
+														<h:outputText value="No Search Result Found" />
+													</s:fragment>
+
+													<h:dataTable sortMode="single"
+														styleClass="table table-hover rt" id="clientsListId"
+														value="#{searchClientAction.clientList}" rows="20"
+														var="clt"
+														rendered="#{searchClientAction.clientList.size gt 0}">
+														<h:column sortBy="#{clt.displayName}">
+															<f:facet name="header">
+																Display Name
+															</f:facet>
+															<s:link view="/client/updateClient.xhtml"
+																value="#{clt.displayName}" propagation="none">
+																<f:param name="inum" value="#{clt.inum}" />
+															</s:link>
+														</h:column>
+														<h:column sortBy="#{clt.iname}">
+															<f:facet name="header">
+																<div style="margin-left:20px;">iNum</div>
+															</f:facet>
+															<h:outputText value="#{clt.inum}" class="col-xs-12" />
+														</h:column>
+														<h:column>
+															<f:facet name="header">
+														Application type
+															</f:facet>
+															<h:outputText value="#{clt.oxAuthAppType}"
+																class="col-xs-12" />
+														</h:column>
+														<f:facet name="footer">
+															<rich:dataScroller renderIfSinglePage="false"
+																rendered="#{searchClientAction.clientList.size > 0}"
+																for="clientsListId" maxPages="10" stepControls="auto"
+																align="left" />
+														</f:facet>
+													</h:dataTable>
+												</h:form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+							<div class="box-footer">
+
+								<rich:notifyMessages stayTime="2000" nonblocking="true" />
+								<ui:insert name="controlButttons" />
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</section>
+	</ui:define>
+</ui:composition>

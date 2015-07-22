@@ -1,0 +1,162 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <ui:define name="body">
+<h:form>
+           <section class="content-header">
+		<h1 style="color: #333;">
+			UMA
+			<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Scopes</small>
+			<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Update Scope</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/uma/inventory">Scopes
+					</a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/uma/scope/add">Update Scope
+					</a></li>		
+		</ol>
+		</section>
+
+		<section class="content">
+      
+        <s:div id="formArea">
+            <h:outputStylesheet>
+                .uploadFile {
+                     width: 300px;        
+                }
+            </h:outputStylesheet>
+ 
+ <div class="row">
+            <div class="col-xs-12">
+              <div class="box box-primary">
+                    <div class="box-header">
+                    </div>
+                      <div style="display: inline-block;width: 75% !important;">
+            <ui:param name="_scopeDescription" value="#{updateScopeDescriptionAction.scopeDescription}" />
+
+           
+                <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
+                        <ui:define name="label">Name</ui:define>
+                        <rich:inplaceInput style="width:100% !important" value="#{_scopeDescription.displayName}" defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="180"  required="true" id="displayNameId" />
+                    </s:decorate>
+
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="type">
+                        <ui:define name="label">Type</ui:define>
+                        <h:selectOneMenu styleClass="form-control" value="#{_scopeDescription.type}" id="typeId">
+                            <s:selectItems value="#{organizationService.internalExternalTypes}" var="_type" label="#{_type.displayName}"
+                                noSelectionLabel="Type"/>
+                            <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                            <a4j:ajax event="change" render="internalTypeGroupId, externalTypeGroupId" execute="@this" limitRender="true"/>
+                        </h:selectOneMenu>
+                    </s:decorate>
+
+                    <h:panelGroup id="internalTypeGroupId">
+                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scope" rendered="#{_scopeDescription.type.value eq 'internal'}">
+                            <ui:define name="label">Id</ui:define>
+                            <rich:inplaceInput value="#{_scopeDescription.id}" defaultLabel="Click to enter Scope Name" maxlength="300" inputWidth="180" required="true" id="scope" />
+                        </s:decorate>
+    
+                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'internal'}">
+                            <ui:define name="label">Icon</ui:define>
+    						
+                                 
+                            <h:panelGrid id="iconPanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <rich:fileUpload style="width:829px !important;" id="upload" fileUploadListener="#{updateScopeDescriptionAction.setIconImage}" acceptedTypes="jpg, jpeg, gif, png, bmp"
+                                    ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px" styleClass="uploadFile"
+                                    rendered="#{not updateScopeDescriptionAction.iconExist}">
+                                    <a4j:ajax event="uploadcomplete" execute="@none" render="iconPanelId" />
+                                </rich:fileUpload>
+                                
+                                <h:panelGrid columns="1" width="100%" cellspacing="0" cellpadding="0" border="0" columnClasses="alignCenter" rendered="#{updateScopeDescriptionAction.iconExist}">
+                                    <h:panelGroup layout="block">
+                                        <s:graphicImage value="#{updateScopeDescriptionAction.iconImageThumbData}" fileName="#{updateScopeDescriptionAction.iconImageSourceName}" />
+                                    </h:panelGroup>
+    
+                                    <richext:spacer height="8" />
+    
+                                    <a4j:commandLink value="Remove" action="#{updateScopeDescriptionAction.removeIconImage()}" execute="@this" render="iconPanelId" eventsQueue="scopeDescriptionQueue" />
+                                </h:panelGrid>
+                            </h:panelGrid>
+                            
+                            
+                        </s:decorate>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="externalTypeGroupId">
+                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
+                            <ui:define name="label">Icon Uri</ui:define>
+                            <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Icon Url" maxlength="60" inputWidth="180" required="true" id="iconUrlId" />
+                        </s:decorate>
+
+                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
+                            <ui:define name="label">Url</ui:define>
+                            <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Url" maxlength="60" inputWidth="180" required="true" id="urlId" />
+                        </s:decorate>
+                    </h:panelGroup>
+
+		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="responseTypes">
+		                <ui:define name="label">Authorization Policy</ui:define>
+		                <h:panelGroup id="selectedAuthorizationPolicyId">
+		                    <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+		                        <a4j:repeat value="#{updateScopeDescriptionAction.authorizationPolicies}" rowKeyVar="_authorizationPolicyIdx" var="_authorizationPolicy">
+		                             <div class = "col-sm-12">
+                                 <div class = "col-sm-6" >
+                                 <h:outputText value="#{_authorizationPolicy.name}" style="margin-left:-29px;"/>
+		                            <h:outputText value="&#160;" />
+		                            </div>
+		                            <div class = "col-sm-6" >
+		                            <a4j:commandLink styleClass="glyphicon glyphicon-remove " action="#{updateScopeDescriptionAction.removeAuthorizationPolicy(_authorizationPolicy)}" execute="@this" render="selectedAuthorizationPolicyId" eventsQueue="clientQueue">
+		                              <!--  <h:graphicImage value="/img/remove.gif" /> -->
+		                            </a4j:commandLink>
+		                            </div></div>
+		                            
+		                        </a4j:repeat>
+		                        <richext:spacer height="16" />
+		                    </h:panelGrid>
+		                </h:panelGroup>
+		            </s:decorate>
+
+		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="command">
+		                <h:panelGroup>
+		                    <a4j:commandButton value="Add Authorization Policy" oncomplete="#{rich:component('authorizationPolicy:selectEntityModalPanel')}.show();" execute="@this" styleClass="btn btn-primary" style="margin-left:-95px;"/>
+		                </h:panelGroup>
+		            </s:decorate>
+                </h:panelGrid>
+
+               
+                
+            </div>
+            <div class="box-footer">
+             <s:div id="updateButtons">
+                    <h:commandButton value="#{updateScopeDescriptionAction.update ? 'Update' : 'Add Scope'}" action="#{updateScopeDescriptionAction.save}" styleClass="btn btn-primary" />
+                    <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" styleClass="btn btn-primary" style="margin-left:3px;"
+                        rendered="#{updateScopeDescriptionAction.update}" />
+                    <s:button value="Cancel" action="#{updateScopeDescriptionAction.cancel}" immediate="true" propagation="end" styleClass="btn btn-primary" style="margin-left:3px;"/>
+                </s:div>
+            </div>
+            </div></div></div>
+
+            <ox:selectSelectableEntityDialog id="authorizationPolicy" searchMethod="#{updateScopeDescriptionAction.searchAvailableAuthorizationPolicies}"
+                searchResult="#{updateScopeDescriptionAction.availableAuthorizationPolicies}" displaySearchForm="false"
+                acceptMethod="#{updateScopeDescriptionAction.acceptSelectAuthorizationPolicies}" cancelMethod="#{updateScopeDescriptionAction.cancelSelectAuthorizationPolicies}"
+                render="selectedAuthorizationPolicyId" nameProperty="entity.name" displayNameProperty="entity.description"
+                label="Add Authorization Policy"/>
+
+            <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeDescriptionAction.scopeDescription.id}" deleteMethod="#{updateScopeDescriptionAction.delete}" />
+        </s:div>
+        
+        </section>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

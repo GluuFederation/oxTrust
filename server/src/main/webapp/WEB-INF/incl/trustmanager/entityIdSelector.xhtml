@@ -1,0 +1,60 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:outputStylesheet>
+.left {
+    text-align: left;
+}
+    </h:outputStylesheet>
+    <rich:popupPanel id="entityIdSelector" onmaskclick="#{rich:component('entityIdSelector')}.hide()" keepVisualState="true" autosized="true">
+        <f:facet name="header">
+            <h:outputText value="Select entityID of this Trust Relationship" />
+        </f:facet>
+
+        <f:facet name="controls">
+            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('entityIdSelector')}.hide(); return false;" />
+        </f:facet>
+
+        <h:panelGrid columns="1" id="entityIdSelectionMenu">
+            <h:form>
+                <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
+                <input type='hidden' name='cid' value='#{conversation.id}' />
+
+                <h:panelGrid columns="3">
+                    <h:outputText value="Filter: " />
+                    <h:inputText value="#{_trustRelationshipAction.filterString}">
+                    </h:inputText>
+                    <a4j:commandButton value="Filter" action="#{_trustRelationshipAction.filterEntities()}" eventsQueue="trustQueue" render="EntityIds">
+                        <s:defaultAction />
+                    </a4j:commandButton>
+                </h:panelGrid>
+            </h:form>
+            <h:form>
+                <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
+                <input type='hidden' name='cid' value='#{conversation.id}' />
+
+                <h:panelGroup id="EntityIds">
+                    <h:selectManyListbox value="#{_trustRelationshipAction.selectedEntities}" styleClass="width: 450px;" size="10">
+                        <f:selectItems value="#{_trustRelationshipAction.availableEntities}"/>
+                    </h:selectManyListbox>
+                </h:panelGroup>
+
+                <div id="EntityIdUpdate">
+                    <a4j:commandButton value="Done" onclick="#{rich:component('entityIdSelector')}.hide()" render="FederationWizardEntitySelection">
+                        <s:defaultAction />
+                    </a4j:commandButton>
+                </div>
+            </h:form>
+
+        </h:panelGrid>
+    </rich:popupPanel>
+</ui:composition>

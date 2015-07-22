@@ -1,0 +1,99 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <a4j:region>
+        <h:panelGrid columns="1" width="100%" id="trustContacts">
+
+            <rich:dataGrid value="#{trustContactsAction.trustContacts}" columnClasses="half,half" var="_contact" columns="2" elements="#{trustContactsAction.trustContacts.size()}" width="100%">
+                <div class="col-sm-12 box box-primary" style="padding:0px !important;">
+                <rich:panel bodyClass="pbody"  >
+                    <f:facet name="header">
+                        <s:fragment>
+                            <h:outputText value="#{_contact.title} #{_contact.name}" rendered="#{(not empty _contact.title) or (not empty _contact.name)}" />
+                            <h:outputText value="New Contact" rendered="#{(empty _contact.title) and (empty _contact.name)}" />
+
+                            <a4j:commandLink style="float:right;" styleClass="glyphicon glyphicon-remove" action="#{trustContactsAction.removeContact(_contact)}" render="trustContacts" eventsQueue="trustQueue">
+                               <!--  <h:graphicImage value="/img/remove.gif" />  -->
+                            </a4j:commandLink>
+                        </s:fragment>
+                    </f:facet>
+
+
+                    <h:panelGroup columns="2" columnClasses="rf-iiii" style="height:200px;width:100%">
+                    <div class="col-sm-12" style="padding:0px !important;">
+                    
+                        <div class="row" style="margin-bottom: 8px;margin-left:0px">
+							<div class="col-sm-5">
+								<label>Name</label>
+							</div>
+
+							<div class="col-sm-7 prop" style="padding-left:0px;">
+									<span class="value ">
+										<h:inputText styleClass ="form-control" value="#{_contact.name}"  />
+									</span>
+							</div>
+						</div>
+												
+						
+						
+						<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+							<div class="col-sm-5">
+								<label>Title</label>
+							</div>
+
+							<div class="col-sm-7 prop" style="padding-left:0px;">
+									<span class="value ">
+										<h:inputText styleClass ="form-control" value="#{_contact.title}"  />
+									</span>
+							</div>
+						</div>
+						
+						<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+							<div class="col-sm-5">
+								<label>Telephone Number</label>
+							</div>
+
+							<div class="col-sm-7 prop" style="padding-left:0px;">
+									<span class="value ">
+										<h:inputText styleClass ="form-control" value="#{_contact.phone}"  />
+									</span>
+							</div>
+						</div>
+                        
+                        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+							<div class="col-sm-5">
+								<label>Mail</label>
+							</div>
+
+							<div class="col-sm-7 prop" style="padding-left:0px;">
+									<span class="value ">
+										<h:inputText styleClass ="form-control" value="#{_contact.mail}"  />
+									</span>
+							</div>
+						</div>
+						
+                        
+						
+						
+						
+                        
+                        </div>
+                    </h:panelGroup>
+                    
+                </rich:panel></div>
+            </rich:dataGrid>
+<div class="col-sm-12" style="margin-top:15px !important">
+            <a4j:commandLink style="margin-top:10px !important" styleClass="btn btn-success" value="Add new contact" eventsQueue="trustQueue" action="#{trustContactsAction.addEmptyContact()}" render="trustContacts" limitRender="true" />
+       </div> </h:panelGrid>
+    </a4j:region>
+
+</ui:composition>

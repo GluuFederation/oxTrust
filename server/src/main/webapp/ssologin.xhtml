@@ -1,0 +1,42 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/WEB-INF/incl/layout/template.xhtml">
+
+<ui:param name="isLogin" value="#{true}" />
+<ui:define name="body">
+    <ui:param name="customPageMessage" value="#{organizationService.getOrganizationCustomMessage(identity.loggedIn ? 'welcomePage' : 'loginPage')}" />
+    <s:fragment rendered="#{not empty customPageMessage}">
+        <s:div>
+            <h:outputText value="#{customPageMessage}" escape="false"/>
+        </s:div>
+    </s:fragment>
+
+   <form id="loginForm" action="#{ssoLoginAction.actionUrl}" method="post">
+        <rich:panel>
+            <f:facet name="header">Login</f:facet>
+
+            <p class="info">Please login here</p>
+
+            <div class="dialog">
+                <h:panelGrid columns="2" rowClasses="prop" columnClasses="name,value">
+                    <h:outputLabel for="sso_username">Username</h:outputLabel>
+                    <input id="sso_username"  name="j_username" autocomplete="off" style="width:130px" />
+                    <h:outputLabel for="sso_password">Password</h:outputLabel>
+                    <input id="sso_password" name="j_password" type="password" style="width:130px" />
+                </h:panelGrid>
+            </div>
+
+                        <div class="actionButtons">
+                <h:commandButton id="submit" value="Login"/>
+                </div>
+        </rich:panel>
+    </form>
+
+ </ui:define>
+</ui:composition>

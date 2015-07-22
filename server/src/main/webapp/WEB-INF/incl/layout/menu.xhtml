@@ -1,0 +1,87 @@
+<rich:toolbar
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:rich="http://richfaces.org/rich"
+    contentClass="mainMenu">
+
+    <rich:toolbarGroup>
+        <h:graphicImage value="/img/white_icosahedron.gif" width="22" height="22" />
+        <s:link view="/home.xhtml" value="Home" style="color: white; text-decoration: none;" propagation="none" />
+        <a4j:status id="globalAjaxStatus">
+            <f:facet name="start">
+                <h:graphicImage value="/img/ajax_active.gif" width="22" height="22" />
+            </f:facet>
+        </a4j:status>
+    </rich:toolbarGroup>
+
+    <rich:toolbarGroup location="right">
+        <h:outputText id="menuWelcomeId" value="signed in as: #{credentials.username}" rendered="#{identity.loggedIn}" />
+        <s:link view="/login.xhtml" value="Login" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn and not isLogin}" propagation="none" />
+        <s:link view="/register.xhtml" value="Register" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn}" propagation="none" />
+
+        <rich:dropDownMenu mode="server" label="Configuration" rendered="#{s:hasPermission('configuration', 'access') or s:hasPermission('scim', 'access') or s:hasPermission('attribute', 'access') or s:hasPermission('configuration', 'access')}">
+            <rich:menuItem label="Organization Configuration" action="#{menuAction.endConversation('/organization/updateOrganization.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="JSON Configuration" action="#{menuAction.endConversation('/organization/jsonEditor.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+<!--
+            <rich:menuItem label="Manage Certificates" action="#{menuAction.endConversation('/cert/certificateManagement.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+-->
+            <rich:menuItem label="Manage Authentication" action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="Manage Custom Scripts" action="#{menuAction.endConversation('/script/manageCustomScript.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="Manage Registration" action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+            <rich:menuSeparator rendered="#{s:hasPermission(organizationService.organization, 'linktrack')}"/>
+            <rich:menuItem label="Configure Linktrack API" action="#{menuAction.endConversation('/apis/linktrack.xhtml')}" rendered="#{s:hasPermission(organizationService.organization, 'linktrack')}" />
+            <rich:menuSeparator/>
+            <rich:menuItem label="Attributes" action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}" rendered="#{s:hasPermission('attribute', 'access')}" />
+            <rich:menuItem label="Cache refresh" action="#{menuAction.endConversation('/organization/cacheRefresh.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+            <rich:menuSeparator/>
+            <rich:menuItem label="Configure log viewer" action="#{menuAction.endConversation('/logviewer/configureLogViewer.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="View log file" action="#{menuAction.endConversation('/logviewer/viewLogFile.xhtml')}" rendered="#{s:hasPermission('log', 'access')}" />
+            <rich:menuItem label="Server Status" action="#{menuAction.endConversation('/status/applianceStatus.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="Federations" rendered="#{identity.loggedIn and s:hasPermission(applianceService.appliance, 'federationHostingEnabled')}">
+            <rich:menuItem label="Federations" action="#{menuAction.endConversation('/federation/proposal/proposalsInventory.xhtml')}" rendered="#{s:hasPermission('trust', 'access')}" />
+            <rich:menuItem label="Hosted Federations" action="#{menuAction.endConversation('/federation/hosted/federationInventory.xhtml')}" rendered="#{not s:hasPermission('trust', 'access')}" />
+            <rich:menuItem label="Join Federation" action="#{menuAction.endConversation('/federation/proposal/addProposal.xhtml')}" rendered="#{not s:hasPermission('trust', 'access')}" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="SAML" rendered="#{s:hasPermission('trust', 'access')}">
+            <rich:menuItem label="Trust Relationships" action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}" rendered="#{s:hasPermission('trust', 'access')}" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="OpenID Connect" rendered="#{s:hasPermission('oxauth', 'access')}">
+            <rich:menuItem label="Scopes" action="#{menuAction.endConversation('/scope/scopeInventory.xhtml')}" rendered="#{s:hasPermission('oxauth', 'access')}" />
+            <rich:menuItem label="Clients" action="#{menuAction.endConversation('/client/clientInventory.xhtml')}" rendered="#{s:hasPermission('oxauth', 'access')}" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="UMA" rendered="#{s:hasPermission('uma', 'access')}">
+            <rich:menuItem label="Scopes" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{s:hasPermission('uma', 'access')}" />
+            <rich:menuItem label="Resources" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{s:hasPermission('uma', 'access')}" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="oxPush" rendered="#{false and s:hasPermission('oxpush', 'access')}">
+            <rich:menuItem label="oxPush Applications" action="#{menuAction.endConversation('/push/application/applicationInventory.xhtml')}" rendered="#{s:hasPermission('oxpush', 'access')}" render="false"/>
+            <rich:menuItem label="oxPush Devices" action="#{menuAction.endConversation('/push/device/deviceInventory.xhtml')}" rendered="#{s:hasPermission('oxpush', 'access')}" render="false" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="Users" rendered="#{s:hasPermission('group', 'access') or s:hasPermission('person', 'access')}">
+            <rich:menuItem label="Manage Groups" action="#{menuAction.endConversation('/group/groupInventory.xhtml')}" rendered="#{s:hasPermission('group', 'access')}" />
+            <rich:menuItem label="Manage People" action="#{menuAction.endConversation('/person/personInventory.xhtml')}" rendered="#{s:hasPermission('person', 'access')}" />
+            <rich:menuItem label="Add person" action="#{menuAction.endConversation('/person/addPerson.xhtml')}" rendered="#{s:hasPermission('person', 'access')}" />
+            <rich:menuItem label="Import People" action="#{menuAction.endConversation('/person/personImport.xhtml')}" rendered="#{s:hasPermission('import', 'person')}" />
+        </rich:dropDownMenu>
+
+        <rich:dropDownMenu mode="server" label="Personal" rendered="#{s:hasPermission('profile', 'access') or s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}">
+            <rich:menuItem label="Profile" action="#{menuAction.endConversation('/profile/person/viewProfile.xhtml')}" rendered="#{s:hasPermission('profile', 'access')}" />
+            <rich:menuItem label="White Pages" action="#{menuAction.endConversation('/whitePage/viewWhitePages.xhtml')}" rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}" />
+            <rich:menuItem label="Manage Registration Links" action="#{menuAction.endConversation('/profile/registrationLinks.xhtml')}" rendered="#{s:hasPermission(organizationService.organization, 'registrationLinksManagement')}" />
+            <rich:menuItem label="Registration Requests" action="#{menuAction.endConversation('/profile/pendingRegistrations.xhtml')}"  rendered="#{s:hasPermission(organizationService.organization, 'registrationLinksModeration')}"/>
+        </rich:dropDownMenu>
+
+        <s:link view="/logout.xhtml" value="Logout" style="color: white; text-decoration: none;" propagation="none" rendered="#{identity.loggedIn}" />
+    </rich:toolbarGroup>
+</rich:toolbar>

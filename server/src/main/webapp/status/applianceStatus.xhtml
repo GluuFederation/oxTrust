@@ -1,0 +1,92 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <ui:define name="body">
+     <section class="content-header">
+		<h1 style="color: #333;">
+			Configuration<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Server Status</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/status/appliance">Server Status</a></li>
+		</ol>
+		</section>
+		<section class="content">
+        <s:div id="formArea">
+        <div class="row">
+            <div class="col-xs-12">
+              <div class="box box-primary">
+              <div class="box-header">
+              </div>
+                      <div style="display: inline-block;width: 75% !important;">
+            <ui:param name="_appliance" value="#{applianceService.appliance}" />
+            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" id="statusTable">
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">Host name</ui:define>
+                    <h:outputText value="#{_appliance.hostname}" />
+                </s:decorate>
+    
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">IP address</ui:define>
+                    <h:outputText value="#{_appliance.ipAddress}" />
+                </s:decorate>
+    
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">System uptime</ui:define>
+                    <h:outputText value="#{_appliance.systemUptime}" converter="uptimeConverter"/>
+                </s:decorate>
+    
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">Last update</ui:define>
+                    <h:outputText value="#{_appliance.lastUpdateDate}">
+                        <s:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
+                    </h:outputText>
+                </s:decorate>
+    
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">Polling interval</ui:define>
+                    <h:outputText value="60 seconds" />
+                </s:decorate>
+    
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">Person count</ui:define>
+                    <h:outputText value="#{_appliance.personCount}" />
+                </s:decorate>
+    
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">Group count</ui:define>
+                    <h:outputText value="#{_appliance.groupCount}" />
+                </s:decorate>
+    
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">Free memory</ui:define>
+                    <h:outputText value="#{_appliance.freeMemory}" />
+                    <h:outputText value="%" />
+                </s:decorate>
+    
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                    <ui:define name="label">Free disk space</ui:define>
+                    <h:outputText value="#{_appliance.freeDiskSpace}" />
+                    <h:outputText value="%" />
+                </s:decorate>
+            </h:panelGrid><div class="box-footer">
+					
+							<rich:notifyMessages stayTime="2000" nonblocking="true" />
+							<ui:insert name="controlButttons" />
+						
+					</div></div></div></div>
+             </div>
+        </s:div>
+        </section>
+    </ui:define>
+
+</ui:composition>

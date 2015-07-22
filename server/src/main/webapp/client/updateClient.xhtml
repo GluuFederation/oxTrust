@@ -1,0 +1,69 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			OpenID Connect<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Update Client</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/client/manage/update"> Update Client</a></li>
+		</ol>
+		</section>
+        <div id="formArea">
+            <ui:decorate template="/WEB-INF/incl/client/clientForm.xhtml">
+                <ui:param name="_client" value="#{updateClientAction.client}" />
+                <ui:param name="_clientAction" value="#{updateClientAction}" />
+                <ui:param name="_new" value="false" />
+
+                <ui:define name="controlButttons">
+                    <div id="updateButtons">
+                        <h:commandButton styleClass="btn btn-primary" value="Update" action="#{updateClientAction.save}" />
+                        <a4j:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="Change Password" onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();" />
+                        <a4j:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" eventsQueue="clientQueue" rendered="#{not _new}" />
+                        <h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="Cancel" action="#{updateClientAction.cancel}" immediate="true" />
+                    </div>
+                </ui:define>
+            </ui:decorate>
+
+            <ox:inputTextDialog id="loginRedirect" label="Select Login Redirect URI" inputLabel="Login Redirect URI"
+            	text="#{updateClientAction.availableLoginUri}" textId="loginTextId"
+                acceptMethod="#{updateClientAction.acceptSelectLoginUri}" cancelMethod="#{updateClientAction.cancelSelectLoginUri}"
+                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedLoginURIsId" queue="clientQueue"/>
+
+            <ox:inputTextDialog id="logoutRedirect" label="Select Logout Redirect URI" inputLabel="Logout Redirect URI"
+            	text="#{updateClientAction.availableLogoutUri}" textId="logoutTextId"
+                acceptMethod="#{updateClientAction.acceptSelectLogoutUri}" cancelMethod="#{updateClientAction.cancelSelectLogoutUri}"
+                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedLogoutURIsId" queue="clientQueue"/>
+
+            <ox:selectScopeDialog id="scope" searchPattern="#{updateClientAction.searchAvailableScopePattern}"
+                searchMethod="#{updateClientAction.searchAvailableScopes}" searchResult="#{updateClientAction.availableScopes}"
+                updateSelectionMethod="#{updateClientAction.selectAddedScopes}"
+                acceptMethod="#{updateClientAction.acceptSelectScopes}" cancelMethod="#{updateClientAction.cancelSelectScopes}"
+                render="selectedScopesId" queue="clientQueue"/>
+
+            <ox:selectSelectableEntityDialog id="responseType" searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
+                searchResult="#{updateClientAction.availableResponseTypes}" displaySearchForm="false"
+                acceptMethod="#{updateClientAction.acceptSelectResponseTypes}" cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
+                render="selectedResponseTypesId" nameProperty="entity.value" displayNameProperty="entity.displayName"
+                label="Add Response Type"/>
+
+			<ox:changePasswordDialog id="clientPassword" label="Change Client Password" password="#{clientPasswordAction.newPassword}"
+				setPasswordMethod="#{clientPasswordAction.update}" />
+
+            <ox:acceptRemovalDialog id="deleteConfirmation" subject="client" value="#{updateClientAction.client.displayName}" deleteMethod="#{updateClientAction.delete}" queue="clientQueue" />
+        </div>
+    </ui:define>
+</ui:composition>

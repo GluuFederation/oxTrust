@@ -1,0 +1,82 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions">
+
+    <h:form id="scopeForm">
+     <div class="row">
+            <div class="col-xs-12">
+              <div class="box box-primary">
+              <div class="box-header">
+               <div style="display: inline-block;width: 75% !important;">
+        <h:panelGroup>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="inum" rendered="#{not _new}">
+                <ui:define name="label">Inum</ui:define>
+                <h:outputText styleClass="form-control" value="#{_scope.inum}" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
+                <ui:define name="label">Display Name</ui:define>
+                <rich:inplaceInput value="#{_scope.displayName}"  defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="704"  required="true" id="displayNameId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
+                <ui:define name="label">Description</ui:define>
+                <h:inputTextarea styleClass="form-control" value="#{_scope.description}" rows="3" cols="80" maxlength="4000" id="descriptionId" />
+            </s:decorate>
+  
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Scope Type</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
+                    <s:selectItems value="#{scopeService.scopeTypes}" noSelectionLabel="Default" var="_type" label="#{_type.displayName}" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+  
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Default scope</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
+                    <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" noSelectionLabel="Select"/>
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="claims">
+                <ui:define name="label">Claims</ui:define>
+                <h:panelGroup id="selectedClaimsId">
+                    <h:panelGroup>
+                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim">
+                            <h:outputText value="#{empty _claim.displayName ? _claim.displayName : _claim.displayName}" />
+                            <h:outputText value="&#160;" />
+                            <div class="row-fluid">
+                                 <div class="span6 pull-right" >
+                            
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_scopeAction.removeClaim(_claim.inum)}" execute="@this" render="selectedClaimsId" eventsQueue="scopeQueue">
+                               <!--   <h:graphicImage value="/img/remove.gif" />-->
+                            </a4j:commandLink></div></div>
+                            <br />
+                        </a4j:repeat>
+                      
+                        <a4j:commandButton styleClass="btn btn-primary" value="Add Claim" oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();" execute="@this" eventsQueue="scopeQueue" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+        </h:panelGroup>
+
+       
+        
+        </div></div><div class="box-footer">
+					
+							<rich:notifyMessages stayTime="2000" nonblocking="true" />
+							<ui:insert name="controlButttons" />
+						
+					</div></div></div></div>
+    </h:form>
+</ui:composition>

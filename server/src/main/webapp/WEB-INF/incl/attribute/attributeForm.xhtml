@@ -1,0 +1,196 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <h:form>
+    
+        <input type='hidden' name='cid' value='#{conversation.id}'/> <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
+<div class="row">
+			<div class="col-xs-12">
+				<div class="box box-primary">
+				<div class="box-header">
+				</div>
+						                      <div style="display: inline-block;width: 75% !important;">
+						
+        <h:panelGroup columns="1" width="100%">
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="name">
+                <ui:define name="label">Name</ui:define>
+                <h:inputText styleClass="form-control" value="#{_attribute.name}" size="30" maxlength="30" required="true" id="nameId" rendered="#{_new}"/>
+                <h:outputText value="#{_attribute.name}" rendered="#{not _new}"/>
+             </s:decorate>
+             
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="saml1Uri">
+                <ui:define name="label">SAML1 URI</ui:define>
+                <h:inputText styleClass="form-control" value="#{_attribute.saml1Uri}" size="30" maxlength="256" required="#{not _new}" id="saml1Id" rendered="#{_attributeAction.canEditUri()}"/>
+                <h:outputText value="#{_attribute.saml1Uri}" rendered="#{not _attributeAction.canEditUri()}"/>
+             </s:decorate>
+             
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="saml2Uri">
+                <ui:define name="label">SAML2 URI</ui:define>
+                <h:inputText styleClass="form-control" value="#{_attribute.saml2Uri}" size="30" maxlength="256" required="#{not _new}" id="saml2Id" rendered="#{_attributeAction.canEditUri()}"/>
+                <h:outputText value="#{_attribute.saml2Uri}" rendered="#{not _attributeAction.canEditUri()}"/>
+             </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
+                <ui:define name="label">Display Name</ui:define>
+                <h:inputText styleClass="form-control" value="#{_attribute.displayName}" size="30" maxlength="60" required="true" id="displayNameId" rendered="#{_attributeAction.canEdit()}"/>
+                <h:outputText value="#{_attribute.displayName}" rendered="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="dataType">
+                <ui:define name="label">Type</ui:define>
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.dataType}" required="true" id="dataTypeId" rendered="#{_attributeAction.canEdit()}">
+                    <s:selectItems value="#{attributeService.dataTypes}" noSelectionLabel="Data type"
+                              var="_type" label="#{_type.displayName}"/>
+                    <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                </h:selectOneMenu>
+                <h:outputText value="#{_attribute.dataType.value}" rendered="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="editType">
+                <ui:define name="label">Edit Type</ui:define>
+<!-- Remove noSelectionLabel="Not available for edit" due to issue in JSF -->
+                <h:selectManyListbox styleClass="form-control" value="#{_attribute.editType}" required="true" id="editTypeId" rendered="#{_attributeAction.canEdit()}">
+                    <s:selectItems value="#{attributeService.attributeUserRoles}"
+                              var="_type" label="#{_type.displayName}" />
+                    <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                </h:selectManyListbox>
+
+                <s:fragment rendered="#{not _attributeAction.canEdit()}">
+                    <a4j:repeat value="#{_attribute.editType}" var="_type" rowKeyVar="_idx">
+                        <h:outputText value="#{_type.displayName}"/>
+                        <h:outputText value=", " rendered="#{_idx lt fn:length(_attribute.editType) - 1}"/>
+                    </a4j:repeat>
+                </s:fragment>
+             </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="viewType">
+                <ui:define name="label">View Type</ui:define>
+<!-- Remove noSelectionLabel="Not available for view" due to issue in JSF -->
+                <h:selectManyListbox styleClass="form-control" value="#{_attribute.viewType}" required="true" id="viewTypeId" rendered="#{_attributeAction.canEdit()}">
+                    <s:selectItems value="#{attributeService.viewTypes}"
+                              var="_type" label="#{_type.displayName}"/>
+                    <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                </h:selectManyListbox>
+
+                <s:fragment rendered="#{not _attributeAction.canEdit()}">
+                    <a4j:repeat value="#{_attribute.viewType}" var="_type" rowKeyVar="_idx">
+                        <h:outputText value="#{_type.displayName}"/>
+                        <h:outputText value=", " rendered="#{_idx lt fn:length(_attribute.viewType) - 1}"/>
+                    </a4j:repeat>
+                </s:fragment>
+             </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="usageType">
+                <ui:define name="label">Usage Type</ui:define>
+                <h:selectManyListbox styleClass="form-control" value="#{_attribute.usageType}" required="false" id="usageTypeId" rendered="#{_attributeAction.canEdit()}">
+                    <s:selectItems value="#{attributeService.attributeUsageTypes}"
+                              var="_type" label="#{_type.displayName}" noSelectionLabel="Not defined"/>
+                    <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                </h:selectManyListbox>
+
+                <s:fragment rendered="#{not _attributeAction.canEdit()}">
+                    <a4j:repeat value="#{_attribute.usageType}" var="_type" rowKeyVar="_idx">
+                        <h:outputText value="#{_type.displayName}"/>
+                        <h:outputText value=", " rendered="#{_idx lt fn:length(_attribute.usageType) - 1}"/>
+                    </a4j:repeat>
+                </s:fragment>
+             </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="multivalued">
+                <ui:define name="label">Multivalued</ui:define>
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxMultivaluedAttribute}" required="true" id="multivaluedId" rendered="#{_attributeAction.canEdit()}">
+                    <s:selectItems value="#{attributeService.oxMultivalued}" noSelectionLabel="Multivalued"
+                              var="_custom" label="#{_custom.displayName}"/>
+                    <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                </h:selectOneMenu>
+                <h:outputText value="#{_attribute.oxMultivaluedAttribute.value}" rendered="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="claimName">
+                <ui:define name="label">oxAuth claim name</ui:define>
+                <h:inputText value="#{_attribute.oxAuthClaimName}" size="30" maxlength="60" required="true" id="claimNameId" rendered="#{_attributeAction.canEdit()}"/>
+                <h:outputText value="#{_attribute.oxAuthClaimName}" rendered="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
+             
+                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scimattr">
+                <ui:define name="label">SCIM Atribute</ui:define>
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxSCIMCustomAttribute}" required="true" id="scimAttrId" rendered="#{_attributeAction.canEdit()}">
+                    <s:selectItems value="#{attributeService.scimCustomAttribute}" noSelectionLabel="SCIM Attribute"
+                              var="_custom" label="#{_custom.displayName}"/>
+                    <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                </h:selectOneMenu>
+                <h:outputText value="#{_attribute.oxSCIMCustomAttribute.value}" rendered="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
+
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
+                <ui:define name="label">Description</ui:define>
+                <h:inputTextarea styleClass="form-control" value="#{_attribute.description}" rows="3" size="40" maxlength="4000" required="true" id="descriptionId" disabled="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
+            
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="validationToggle">
+                <ui:define name="label">Enable custom validation for this attribute </ui:define>
+                <h:selectBooleanCheckbox value="#{_attributeAction.validationToggle}"
+                	id="validationToggleId" disabled="#{not _attributeAction.canEdit()}">
+                	<a4j:ajax  event="click"  render="validation" />
+                </h:selectBooleanCheckbox>
+             </s:decorate>
+             
+             <h:panelGroup id="validation">
+             	 <h:panelGroup rendered="#{_attributeAction.validationToggle}">
+		             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="validationRE">
+		                 <ui:define name="label">Validation RegExp</ui:define>
+		                 <h:inputText styleClass="form-control" value="#{_attribute.regExp}"  size="30" maxlength="256" 
+		                     required="true" id="validationREId" disabled="#{not _attributeAction.canEdit()}"/>
+		             </s:decorate>
+	             </h:panelGroup>
+             </h:panelGroup>
+             
+             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="tooltipToggle">
+                <ui:define name="label">Enable tooltip for this attribute </ui:define>
+                <h:selectBooleanCheckbox value="#{_attributeAction.tooltipToggle}"
+                	id="tooltipToggleId" disabled="#{not _attributeAction.canEdit()}">
+                	<a4j:ajax  event="click"  render="tooltip" />
+                </h:selectBooleanCheckbox>
+             </s:decorate>
+             
+             <h:panelGroup id="tooltip">
+             	 <h:panelGroup rendered="#{_attributeAction.tooltipToggle}">
+		             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="tooltipText">
+		                 <ui:define name="label">Tooltip Text</ui:define>
+		                 <h:inputText styleClass="form-control" value="#{_attribute.gluuTooltip}"  size="30" maxlength="256" 
+		                     required="true" id="tooltipTextId" disabled="#{not _attributeAction.canEdit()}"/>
+		             </s:decorate>
+	             </h:panelGroup>
+             </h:panelGroup>
+             
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="status">
+                <ui:define name="label">Status</ui:define>
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.status}" required="true" id="statusId" rendered="#{_attributeAction.canEdit()}">
+                    <s:selectItems value="#{_attribute.status.values()}"
+                              var="_type" label="#{_type.displayName}"/>
+                    <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                </h:selectOneMenu>
+                <h:outputText value="#{_attribute.status}" rendered="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
+        </h:panelGroup></div>
+                    <div class="box-footer">
+					
+							<rich:notifyMessages stayTime="2000" nonblocking="true" />
+							<ui:insert name="controlButttons" />
+						
+					</div>
+         
+</div></div></div>
+  
+        
+        
+    </h:form>
+</ui:composition>

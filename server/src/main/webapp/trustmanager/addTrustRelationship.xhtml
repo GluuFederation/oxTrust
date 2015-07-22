@@ -1,0 +1,62 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+	<ui:define name="body">
+		<section class="content-header">
+		<h1 style="color: #333;">
+			SAML<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Add Trust Relationship</small>
+		</h1>
+		<ol class="breadcrumb">
+		
+			<li><a href="#{request.contextPath}/trustmanager/relationships"><i
+					class="fa fa-home"></i> Trust Relationships</a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/trustmanager/add">Add Trust
+					Relationships</a></li>
+		</ol>
+		</section>
+
+		<section class="content"> 
+		<ui:decorate
+			template="/WEB-INF/incl/trustmanager/trustRelationshipForm.xhtml">
+			<ui:param name="_trustRelationship"
+				value="#{updateTrustRelationshipAction.trustRelationship}" />
+			<ui:param name="_customAttributes"
+				value="#{updateTrustRelationshipAction.trustRelationship.releasedCustomAttributes}" />
+			<ui:param name="_customAttributeAction"
+				value="#{customAttributeAction}" />
+			<ui:param name="_trustRelationshipAction"
+				value="#{updateTrustRelationshipAction}" />
+			<ui:param name="_new" value="true" />
+
+
+			<ui:define name="controlButttons">
+			<div class = "box-footer">
+				<div  style="width: 100%;height: 30px;">
+					<div id="updateButtons" style="float: right;width: 150px;">
+						<h:commandButton styleClass="btn btn-primary" value="   Add   "
+							action="#{updateTrustRelationshipAction.save}" />
+						<h:commandButton value="   Cancel  " styleClass="btn btn-primary"
+							style="margin-left:5px;"
+							action="#{updateTrustRelationshipAction.cancel}" immediate="true" />
+					</div>
+				</div>
+				</div>
+			</ui:define>
+			
+
+		</ui:decorate> 
+		
+		</section>
+		<div class = "box-footer"></div>
+	</ui:define>
+</ui:composition>

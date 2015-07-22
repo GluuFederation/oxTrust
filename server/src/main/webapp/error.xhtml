@@ -1,0 +1,26 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
+
+    <ui:param name="showGlobalMessages" value="false"/>
+    
+	<ui:define name="body">
+     <div class="lockscreen-wrapper" style="text-align: center;">
+      <div class="lockscreen-logo" style="margin-bottom: 0px !important;margin-top: 60%;">
+        <b style="font-size: 1.7em !important;  color: darkred;">Oops</b>
+      </div>
+      <!-- User name -->
+      <div class="lockscreen-name" style="text-align: center;font-size: 1.2em !important;">Something wrong happened.<br></br><h:messages id="errorMessage" styleClass="message"/>
+	  <br></br><span style="font-size: 14px;">Return to the application using below button.</span></div>
+	  
+	  
+        <a href="#{request.contextPath}/home" class="btn btn-block btn-primary btn-lg" style="width: 60%;">Return</a>
+      
+    </div>
+    </ui:define>
+</ui:composition>

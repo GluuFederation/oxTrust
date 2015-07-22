@@ -1,0 +1,314 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+
+	<ui:define name="body">
+		<h:outputStylesheet>
+*.rf-pick-lst-dcrtn {
+	border-width: 0px !important;
+
+}
+
+.tooltip{
+	margin:8px;
+	padding:8px;
+	border:1px solid blue;
+	background: white;
+	position: absolute;
+	z-index: 2;
+}
+</h:outputStylesheet>
+
+		<h:outputScript>
+ 	function addTooltip() {
+	    jQuery(document).ready(function(){
+	    	
+	    	jQuery(".rf-pick-opt").bind({
+					mousemove : changeTooltipPosition,
+					mouseover : showTooltip,
+					mouseout: hideTooltip
+				});
+
+	    });
+	};
+	var hideTooltip = function() {
+	$('div.tooltip').remove();
+};
+
+var showTooltip = function(event) {
+	getText(jQuery(this).text())
+   changeTooltipPosition(event);
+};
+
+var updateTooltip = function(personData){
+   $('div.tooltip').remove();
+   $('<div class="tooltip">' + personData + '</div>')
+     .appendTo('body');
+   $('.tooltip').css({top: tooltipY, left: tooltipX});
+}
+
+var changeTooltipPosition = function(event) {
+	tooltipX = event.pageX - 8;
+	tooltipY = event.pageY + 8;
+	$('.tooltip').css({top: tooltipY, left: tooltipX});
+};
+
+        $( document ).ready(function() {
+               
+        
+        $('.checkbox1').on('ifChecked', function(event){
+		  $('.checkbox1Div').show();
+		});
+		
+		$('.checkbox1').on('ifUnchecked', function(event){
+		  $('.checkbox1Div').hide();
+		});
+		
+		$('.checkbox2').on('ifChecked', function(event){
+		  $('.checkbox2Div').show();
+		});
+		
+		$('.checkbox2').on('ifUnchecked', function(event){
+		  $('.checkbox2Div').hide();
+		});
+        
+            });          
+         
+           
+
+    </h:outputScript>
+
+		<section class="content-header">
+		<h1 style="color: #333;">
+			Configuration<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Manage Registration</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/configuration/registration">Manage
+					Registration</a></li>
+		</ol>
+		</section>
+
+		<div id="formArea">
+			<section class="content"> <h:form
+				id="customRegistrationForm">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+						<div class="box-header">
+						</div>
+							<div style="display: inline-block; width: 75% !important;">
+								<h:panelGroup>
+									<a4j:region>
+										<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+											<ui:define name="label">Activate Invitation Links Management</ui:define>
+											<h:selectBooleanCheckbox styleClass="checkbox checkbox1"
+												value="#{registrationManagementAction.enableInvitationCodes}">
+												<a4j:ajax event="click" render="invitesConfig" />
+											</h:selectBooleanCheckbox>
+										</s:decorate>
+
+										<h:panelGroup id="invitesConfig" styleClass="checkbox1Div" style="display:none;">
+											<h:panelGroup
+												
+												width="100%">
+
+												<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+													<ui:define name="label">Run invite codes expiration process every:</ui:define>
+													<h:panelGroup>
+														<h:panelGroup>
+															<h:inputText styleClass="form-control" 
+																value="#{registrationManagementAction.linksExpirationServicePeriod.value0}" />
+														</h:panelGroup>
+													</h:panelGroup>
+												</s:decorate>
+												<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+													<h:panelGroup>
+														<h:selectOneMenu styleClass="form-control"
+															style="float:left"
+															value="#{registrationManagementAction.linksExpirationServicePeriod.value1}">
+															<f:selectItem itemValue="0" itemLabel="Minutes" />
+															<f:selectItem itemValue="1" itemLabel="Hours" />
+															<f:selectItem itemValue="2" itemLabel="Days" />
+															<f:selectItem itemValue="3" itemLabel="Weeks" />
+														</h:selectOneMenu>
+													</h:panelGroup>
+												</s:decorate>
+
+
+												<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+													<ui:define name="label">Enable registration without invitation</ui:define>
+													<h:selectBooleanCheckbox styleClass="checkbox"
+														value="#{registrationManagementAction.enableRegistrationWithoutInvitation}" />
+												</s:decorate>
+
+												<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+													<ui:define name="label">Enable account expiration</ui:define>
+													<h:selectBooleanCheckbox styleClass="checkbox"
+														value="#{registrationManagementAction.accountsTimeLimited}">
+														<a4j:ajax event="click" render="accountExpirationConfig" />
+													</h:selectBooleanCheckbox>
+												</s:decorate>
+
+												<h:panelGroup id="accountExpirationConfig">
+													<h:panelGroup
+														rendered="#{registrationManagementAction.accountsTimeLimited}"
+														width="100%">
+														<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+															<ui:define name="label">Accounts expire after:</ui:define>
+															<h:panelGroup>
+																<h:panelGroup columns="2" border="0" cellpadding="0"
+																	cellspacing="0">
+																	<h:inputText styleClass="form-control"
+																		value="#{registrationManagementAction.accountsExpirationPeriod.value0}" />
+																</h:panelGroup>
+															</h:panelGroup>
+														</s:decorate>
+														<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+															<h:panelGroup>
+																<h:selectOneMenu styleClass="form-control"
+																	value="#{registrationManagementAction.accountsExpirationPeriod.value1}">
+																	<f:selectItem itemValue="0" itemLabel="Minutes" />
+																	<f:selectItem itemValue="1" itemLabel="Hours" />
+																	<f:selectItem itemValue="2" itemLabel="Days" />
+																	<f:selectItem itemValue="3" itemLabel="Weeks" />
+																	<f:selectItem itemValue="4" itemLabel="Months" />
+																</h:selectOneMenu>
+															</h:panelGroup>
+														</s:decorate>
+
+
+														<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+															<ui:define name="label">Run accounts expiration process every:</ui:define>
+															<h:panelGroup>
+																<h:panelGroup columns="2" border="0" cellpadding="0"
+																	cellspacing="0">
+																	<h:inputText styleClass="form-control"
+																		value="#{registrationManagementAction.accountsExpirationServicePeriod.value0}" />
+																</h:panelGroup>
+															</h:panelGroup>
+														</s:decorate>
+														<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+
+															<h:panelGroup>
+																<h:selectOneMenu styleClass="form-control"
+																	value="#{registrationManagementAction.accountsExpirationServicePeriod.value1}">
+																	<f:selectItem itemValue="0" itemLabel="Minutes" />
+																	<f:selectItem itemValue="1" itemLabel="Hours" />
+																	<f:selectItem itemValue="2" itemLabel="Days" />
+																	<f:selectItem itemValue="3" itemLabel="Weeks" />
+																	<f:selectItem itemValue="4" itemLabel="Months" />
+																</h:selectOneMenu>
+															</h:panelGroup>
+														</s:decorate>
+													</h:panelGroup>
+												</h:panelGroup>
+											</h:panelGroup>
+										</h:panelGroup>
+
+										<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+											<ui:define name="label">Disable Captcha for registration form</ui:define>
+											<h:selectBooleanCheckbox 
+												value="#{registrationManagementAction.captchaDisabled}">
+											</h:selectBooleanCheckbox>
+										</s:decorate>
+										<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
+											<ui:define name="label">Configure Registration Form Attributes</ui:define>
+											<h:selectBooleanCheckbox styleClass="checkbox checkbox2"
+												value="#{registrationManagementAction.configureRegistrationForm}">
+												<a4j:ajax event="click" render="attributes" />
+											</h:selectBooleanCheckbox>
+										</s:decorate>
+										<h:panelGroup id="attributes" styleClass="checkbox2Div" style="display:none;">
+											<h:panelGroup
+												>
+												<a4j:region>
+													<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml"
+														id="searchPattern">
+														<ui:define name="label">Attributes Filter</ui:define>
+														<h:inputText styleClass="form-control"
+															value="#{registrationManagementAction.searchPattern}"
+															size="30" maxlength="30" id="searchPatternId"
+															title="Enter at least two characters to search for attributes"
+															alt="search parameters for attribute like name,iname,description">
+
+															<a4j:ajax event="keyup" render="foundAttributes"
+																listener="#{registrationManagementAction.search}"
+																limitRender="true" execute="@region"
+																oncomplete="addTooltip();" />
+														</h:inputText>
+													</s:decorate>
+
+													<h:panelGroup id="foundAttributes">
+														<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+															<ui:define name="label">Attributes</ui:define>
+															<rich:pickList
+																value="#{registrationManagementAction.selectedAttributes}"
+																orderable="true"
+																rendered="#{not empty registrationManagementAction.selectedAttributes or not empty registrationManagementAction.attributes}">
+																<f:selectItems
+																	value="#{registrationManagementAction.attributes}"
+																	var="attribute" itemValue="#{attribute}"
+																	itemLabel="#{attribute.name}" />
+																<f:converter converterId="AttributeNameConverter" />
+															</rich:pickList>
+
+														</s:decorate>
+													</h:panelGroup>
+												</a4j:region>
+											</h:panelGroup>
+										</h:panelGroup>
+									</a4j:region>
+								</h:panelGroup>
+							</div>
+							<div class="box-footer">
+
+						<div id="updateButtons">
+							<h:commandButton value="Update"
+								action="#{registrationManagementAction.save}"
+								styleClass="btn btn-success" />
+							<h:commandButton value="Cancel"
+								action="#{registrationManagementAction.cancel}"
+								styleClass="btn btn-success" immediate="true"
+								style="margin-left:4px" />
+
+						</div>
+					</div>
+						</div>
+						
+						
+					</div>
+					
+				</div>
+
+
+
+
+			</h:form> </section>
+		</div>
+		<h:form>
+
+
+			<a4j:jsFunction name="getText"
+				data="#{registrationManagementAction.attributeData}"
+				action="#{registrationManagementAction.lookupAttributeData()}"
+				oncomplete="updateTooltip(event.data);">
+				<a4j:param name="name"
+					assignTo="#{registrationManagementAction.attributeName}" />
+			</a4j:jsFunction>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

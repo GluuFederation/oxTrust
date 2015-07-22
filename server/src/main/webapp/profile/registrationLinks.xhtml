@@ -1,0 +1,165 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/incl/layout/template.xhtml">
+
+
+
+	<ui:define name="body">
+
+<h:outputStylesheet>
+#shareForm\:recepientList{
+list-style-type: none;
+-webkit-padding-start: 2px;
+}
+</h:outputStylesheet>
+		<h:form id="waitForm">
+			<rich:popupPanel modal="true" id="waitPanel" autosized="true"
+				domElementAttachment="form">
+				<h:outputText value="Processing..." />
+			</rich:popupPanel>
+		</h:form>
+
+		<h:form id="shareForm">
+			<a4j:jsFunction name="add"
+				action="#{registrationLinkInventoryAction.addTo}"
+				reRender="sharePanel" />
+			<rich:popupPanel modal="true" id="sharePanel" autosized="true"
+				onmaskclick="#{rich:component('sharePanel')}.hide()"
+				domElementAttachment="form">
+				<rich:messages/>
+				<h:panelGrid columns="3" border="0" cellpadding="0" cellspacing="0"
+					width="100%" style="height: 100%;">
+					<h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0"
+						width="100%" style="height: 100%;">
+						<h:outputText value="Subject"></h:outputText>
+						<h:outputText value="From"></h:outputText>
+					</h:panelGrid>
+					<h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0"
+						width="100%">
+						<h:inputText id="subject" value="#{registrationLinkInventoryAction.subject}" required="true" requiredMessage="Subject value may not be empty"
+							style="width:97%;margin-left:2px;">
+						</h:inputText>
+						<h:inputText value="#{registrationLinkInventoryAction.from}" required="true" requiredMessage="From value may not be empty"
+							style="width:97%;margin-left:2px;">
+						</h:inputText>
+					</h:panelGrid>
+					<a4j:commandButton id="send" value="Send" style="width: 100%;height: 100%;" action="#{registrationLinkInventoryAction.sendShare}"></a4j:commandButton>
+
+					<h:outputText value="To"></h:outputText>
+
+					<h:inputText value="#{registrationLinkInventoryAction.to}"
+						style="width:97%;margin-left:2px;" id="to">
+					</h:inputText>
+					<a4j:commandButton value="Add"
+						action="#{registrationLinkInventoryAction.addTo}" render="recepientList">
+					</a4j:commandButton>
+					<richext:spacer width="1" />
+					<rich:list id="recepientList" var="recepient" value="#{registrationLinkInventoryAction.toList}" 
+						style="max-height: 100px; overflow-y: scroll; overflow-x: hidden;">
+						<h:outputText value="#{recepient}"/> 
+						<richext:spacer width="25" /> 
+						<a4j:commandLink value="(x)" action="#{registrationLinkInventoryAction.removeRecepient}" render="recepientList">
+							<a4j:param name="link" value="#{recepient}"
+								assignTo="#{registrationLinkInventoryAction.currentRecepient}" />
+						</a4j:commandLink>
+					</rich:list>
+					<a4j:commandButton value="Clear"
+						action="#{registrationLinkInventoryAction.clearTo}" render="recepientList">
+					</a4j:commandButton>
+				</h:panelGrid>
+				
+				<rich:editor id="body"
+					value="#{registrationLinkInventoryAction.body}" theme="advanced"
+					readonly="false" useSeamText="true">
+				</rich:editor>
+			</rich:popupPanel>
+		</h:form>
+
+		<div id="formArea">
+			<h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0"
+				width="100%">
+				<s:link view="/profile/addRegistrationLink.xhtml"
+					styleClass="addAttribute" value="Create Invitation Link"
+					propagation="none" />
+
+				<richext:spacer height="16" />
+
+				<s:fragment
+					rendered="#{registrationLinkInventoryAction.registrationLinks.size eq 0}">
+					<richext:spacer height="30" />
+					<h:outputText value="No Invitation Links Found" />
+				</s:fragment>
+				<h:form>
+					<a4j:outputPanel id="updateLinktrack">
+						<rich:dataTable sortMode="single" id="relationshipstable"
+							value="#{registrationLinkInventoryAction.registrationLinks}"
+							rows="20" styleClass="data sortable" var="tsps"
+							rendered="#{registrationLinkInventoryAction.registrationLinks.size gt 0}">
+							<rich:column>
+								<f:facet name="header">Description</f:facet>
+								<h:outputText value="#{tsps.description}" />
+							</rich:column>
+							<rich:column
+								rendered="#{registrationLinkInventoryAction.linktrackEnabled}">
+								<f:facet name="header">Linktrack Link</f:facet>
+								<h:outputText value="#{tsps.linktrackLink}" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">Guid</f:facet>
+								<h:outputText value="#{tsps.guid}" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">Expiration Date</f:facet>
+								<h:outputText value="#{tsps.linkExpirationDate}" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">Moderated?</f:facet>
+								<h:outputText value="#{tsps.linkModerated}" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">Pending accaunts</f:facet>
+								<h:outputText value="#{tsps.linkPending.size}" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">Actions</f:facet>
+								<a4j:commandButton value="Get new Linktrack link"
+									action="#{registrationLinkInventoryAction.updateLink}"
+									render="updateLinktrack"
+									onclick="#{rich:component('waitPanel')}.show();"
+									oncomplete="#{rich:component('waitPanel')}.hide();">
+									<a4j:param name="link" value="#{tsps.guid}"
+										assignTo="#{registrationLinkInventoryAction.currentLinkGuid}" />
+								</a4j:commandButton>
+								<a4j:commandButton value="Delete" 
+									action="#{registrationLinkInventoryAction.delete}" 
+									render="updateLinktrack"
+									onclick="#{rich:component('waitPanel')}.show();"
+									oncomplete="#{rich:component('waitPanel')}.hide();">
+									<a4j:param name="link" value="#{tsps.guid}"
+										assignTo="#{registrationLinkInventoryAction.currentLinkGuid}" />
+								</a4j:commandButton>
+								<a4j:commandButton value="Share" action="#{registrationLinkInventoryAction.initShareForm}"
+									onclick="#{rich:component('sharePanel')}.show();" render="body">
+									<a4j:param name="link" value="#{tsps.guid}"
+										assignTo="#{registrationLinkInventoryAction.currentLinkGuid}" />
+								</a4j:commandButton>
+							</rich:column>
+						</rich:dataTable>
+
+					</a4j:outputPanel>
+				</h:form>
+			</h:panelGrid>
+		</div>
+
+	</ui:define>
+</ui:composition>

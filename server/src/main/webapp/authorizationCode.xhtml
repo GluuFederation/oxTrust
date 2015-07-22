@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        contentType="text/html">
+<h:html>
+<h:head>
+    <h:outputScript>
+        //<![CDATA[
+        function generateQueryString()
+        {
+            var href = window.location.href;
+            var queryString = "";
+
+            var currentQueryString = "";
+            var hashQueryString = "";
+            if(href.indexOf('?') != -1){
+                if(href.indexOf('#') != -1){
+                    currentQueryString = href.slice(href.indexOf('?') + 1, href.indexOf('#'));
+                } else {
+                    currentQueryString = href.slice(href.indexOf('?') + 1);
+                }
+            }
+            if(href.indexOf('#') != -1){
+                hashQueryString = href.slice(href.indexOf('#') + 1);
+            }
+
+            if(currentQueryString != "" || hashQueryString != ""){
+                if(currentQueryString != ""){
+                    queryString = "?" + currentQueryString;
+                    if(hashQueryString != ""){
+                        queryString += "&" + hashQueryString;
+                    }
+                } else {
+                    queryString = "?" + hashQueryString;
+                }
+            }
+            return queryString;
+        }
+
+        function redirect(){
+            var loc = "#{request.contextPath}/authentication/getauthcode" + generateQueryString();
+            window.location = loc;
+        }
+
+        // ]]>
+    </h:outputScript>
+</h:head>
+    <h:body onload="redirect()"></h:body>
+</h:html>
+</f:view>

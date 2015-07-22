@@ -1,0 +1,51 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
+    xmlns:rich="http://richfaces.org/rich"
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			SAML<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> Update Trust Relationship</small>
+		</h1>
+		<ol class="breadcrumb">
+		
+			<li><a href="#{request.contextPath}/trustmanager/relationships"><i
+					class="fa fa-home"></i> Trust Relationships</a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/trustmanager/add">Update Trust
+					Relationships</a></li>
+		</ol>
+		</section>
+
+		<section class="content"> 
+        <div id="formArea">
+            <ui:decorate template="/WEB-INF/incl/trustmanager/trustRelationshipForm.xhtml">
+                <ui:param name="_trustRelationship" value="#{updateTrustRelationshipAction.trustRelationship}" />
+                <ui:param name="_customAttributes" value="#{updateTrustRelationshipAction.trustRelationship.releasedCustomAttributes}" />
+                <ui:param name="_customAttributeAction" value="#{customAttributeAction}" />
+                <ui:param name="_trustRelationshipAction" value="#{updateTrustRelationshipAction}" />
+                <ui:param name="_new" value="false" />
+    
+              
+                <ui:define name="configurationLink">
+                    <s:link value="Download Shibboleth2 configuration files" target="_blank" 
+                        view="/trustmanager/trustRelationshipConfigurationFile.xhtml"    immediate="true" 
+                        rendered="#{(not _trustRelationship.isFederation()) and
+                            (_trustRelationship.containerFederation eq null)}"/>
+                </ui:define>
+            </ui:decorate>
+            <ox:acceptRemovalDialog id="deleteConfirmation" subject="Trust Relationship" value="#{updateTrustRelationshipAction.trustRelationship.displayName}" deleteMethod="#{updateTrustRelationshipAction.delete}" queue="trustQueue" />
+            
+        </div>
+        </section>
+    </ui:define>
+</ui:composition>

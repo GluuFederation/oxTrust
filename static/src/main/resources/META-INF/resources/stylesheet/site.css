@@ -1,0 +1,361 @@
+.alignCenter {
+    text-align: center;
+}
+
+.alignRight {
+	text-align: right;
+}
+
+.alignLeft {
+	text-align: left;
+}
+
+.alignTop {
+	vertical-align: top;
+}
+
+.alignMiddle {
+    vertical-align: middle;
+}
+
+.alignLeftTop {
+    text-align: left;
+    vertical-align: top;
+}
+
+.alignBottom {
+    vertical-align: bottom;
+}
+
+.alignRightTop {
+    vertical-align: top;
+    text-align: right;
+    float: right;
+}
+
+.bolded {
+  font-weight: bold;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.width100 {
+	width: 100%;
+}
+
+.name {
+    vertical-align: top;
+    font-weight: bold;
+    min-width: 135px;
+    float: left;
+    padding-left: 0px;
+    clear: left;
+}
+
+.nameText {
+    vertical-align: top;
+    font-weight: bold;
+    min-width: 135px;
+    float: left;
+    padding-top: 5px;
+    padding-bottom: 5px;
+	padding-left: 0px;
+	clear: left;
+}
+
+.striked {
+    text-decoration: line-through;
+}
+
+
+.value {
+    float: left;
+    padding: 5px;
+}
+
+#loginForm{
+    margin:0 auto;
+    width:320px;
+}
+
+#loginForm .dr-pnl{
+    background-color: transparent;
+    border: none;
+
+}
+
+#loginForm .dr-pnl-b {
+    background-image: url("#{resource['images/loginbox_bg.jpg']}") !important;
+    border: 1px solid #819ea0 !important;
+}
+
+#loginForm .dr-pnl-h {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    color: #3b3b3b;
+    font-size: 24px;
+    margin-bottom:5px;
+}
+
+#trustRelationshipForm,
+#personForm{
+    width: 770px !important;
+    margin: 0 auto;
+}
+
+#personForm{
+    margin-top:15px;
+}
+
+#trustRelationshipForm .attributeColumn,
+#personForm .attributeColumn{
+    width:300px !important;
+}
+
+#formArea {
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:800px;
+}
+
+#updateOrganization {
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#modifyScopeDescription {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#updateCacheRefresh {
+    background-image:url("/gluu/img/seam2_bg.jpg");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#personImport {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#addGroup {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+
+#addClient {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#addScope {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#updateScope {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#updateClient {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#updateGroup {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#updatePerson {
+    background-image:url("#{resource['images/seam2_bg.jpg']}");
+    border:1px solid #C0C0C0;
+    margin:0 auto;
+    padding:15px;
+    width:650px;
+}
+
+#selectScopeModelPanelHeader{
+    background-image: url("#{resource['images/personinventorytable_bg.jpg']}");
+    height:20px;
+    padding:5px 0 0 10px;
+    border: 0;
+}
+
+#selectScopeModelPanelContainer #scopeFormId input[type="text"] {
+    margin-right:5px;
+    padding:3px;
+}
+
+#selectGroupModelPanelHeader{
+    background-image: url("#{resource['images/personinventorytable_bg.jpg']}");
+    height:20px;
+    padding:5px 0 0 10px;
+    border: 0;
+}
+
+#selectGroupModelPanelContainer #groupFormId input[type="text"] {
+    margin-right:5px;
+    padding:3px;
+}
+
+#selectURIModelPanelHeader{
+    background-image: url("#{resource['images/personinventorytable_bg.jpg']}");
+    height:20px;
+    padding:5px 0 0 10px;
+    border: 0;
+}
+
+#selectURIModelPanelContainer #URIFormId input[type="text"] {
+    margin-right:5px;
+    padding:3px;
+}
+
+#selectClaimModelPanelHeader{
+    background-image: url("#{resource['images/personinventorytable_bg.jpg']}");
+    height:20px;
+    padding:5px 0 0 10px;
+    border: 0;
+}
+
+#selectClaimModelPanelContainer #claimFormId input[type="text"] {
+    margin-right:5px;
+    padding:3px;
+}
+
+
+/* Add Group Panel Styling */
+
+#passwordPanelHeader,
+#selectMemberModelPanelHeader{
+    background-image: url("#{resource['images/personinventorytable_bg.jpg']}");
+    height:20px;
+    padding:5px 0 0 10px;
+    border: 0;
+}
+
+#selectMemberModelPanelContainer #memberFormId input[type="text"] {
+    margin-right:5px;
+    padding:3px;
+}
+
+.rich-mpnl-controls {
+    right:7px !important;
+    top:7px !important;
+}
+
+#detectPoken{
+    float:left;
+    margin:5px 5px 0 0;
+}
+
+#ContactsFormId{
+    text-align:right;
+    margin: 15px 0 0 0;
+}
+
+#ContactsFormId input{
+    margin-right:0 !important;
+    padding:3px !important;
+}
+
+#ContactsFormId table{
+    text-align:left;
+}
+
+.personCheckbox {
+    margin-left: 0px;
+}
+
+.personAddBtn {
+    margin-left: 5px !important;
+}
+
+#register{
+    margin:0 auto;
+    width:600px;
+}
+
+#personRegistrationForm {
+    width: 650px !important;
+    margin: 0 auto;
+    margin-top:15px;
+}
+
+#personRegistrationForm .attributeColumn{
+    width:300px !important;
+}
+
+#register .info{
+    height:285px;
+    padding: 10px;
+}
+
+#register h1{
+    color: #105259;
+    font-size: 24px;
+}
+
+/*#registrationFormHolder {*/
+/*float: left;*/
+/*}*/
+
+#captchaHolder {
+    margin-left: 118px;
+    margin-top: 10px;
+    float: left;
+}
+
+/* Logo */
+#logo {
+	margin: 10px
+}
+
+/* Toolbar */
+.rf-tb,.rf-tb-itm {
+/*	background-color: green;
+	background-image: url("#{resource['images/menu_bg.png']}") !important; */
+	height: 33px;
+	font-weight: bold;
+	font-size: 12px;
+	font-family: Verdana, Arial, sans-serif;
+}
+
+.half{
+	width: 50%;
+}
