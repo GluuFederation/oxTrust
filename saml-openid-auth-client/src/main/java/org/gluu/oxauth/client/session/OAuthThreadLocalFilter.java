@@ -21,7 +21,7 @@ import org.gluu.oxauth.client.util.Configuration;
 import org.gluu.oxauth.client.util.OAuthDataHolder;
 
 /**
- * Places the OAuth data in a ThreadLocal such that other resources can access it that do not have access to the web tier session
+ * Places the OAuth data in a ThreadLocal such that other model can access it that do not have access to the web tier session
  *
  * @author Yuriy Movchan
  * @version 0.1, 03/20/2013

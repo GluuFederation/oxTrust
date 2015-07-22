@@ -104,8 +104,8 @@ public class Shibboleth2ConfService implements Serializable {
 	public static final String SHIB2_IDP_SP_METADATA_FILE = "sp-metadata.xml";
 	public static final String SHIB2_SP_ATTRIBUTE_MAP = "attribute-map.xml";
 	public static final String SHIB2_SP_SHIBBOLETH2 = "shibboleth2.xml";
-	private static final String SHIB2_SP_READ_ME = "WEB-INF/resources/doc/README_SP.pdf";
-	private static final String SHIB2_SP_READ_ME_WINDOWS = "WEB-INF/resources/doc/README_SP_windows.pdf";
+	private static final String SHIB2_SP_READ_ME = "WEB-INF/model/doc/README_SP.pdf";
+	private static final String SHIB2_SP_READ_ME_WINDOWS = "WEB-INF/model/doc/README_SP_windows.pdf";
 
 	private static final String SHIB2_SP_METADATA_FILE_PATTERN = "%s-sp-metadata.xml";
 	private static final String SHIB2_IDP_METADATA_FILE_PATTERN = "%s-idp-metadata.xml";

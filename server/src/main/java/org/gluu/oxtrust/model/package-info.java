@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-@XmlSchema(namespace = "urn:scim:schemas:core:1.0", xmlns = { @XmlNs(prefix = "xs", namespaceURI = "http://www.w3.org/2001/XMLSchema") }, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "urn:scim2:schemas:core:1.0", xmlns = { @XmlNs(prefix = "xs", namespaceURI = "http://www.w3.org/2001/XMLSchema") }, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.gluu.oxtrust.model;
 
 /**
