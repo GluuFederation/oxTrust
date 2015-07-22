@@ -88,7 +88,7 @@
 												</h:selectBooleanCheckbox>
 </div>
 												<h:panelGroup id="configureListing">
-													<a4j:commandButton value="Configure Listing"
+													<a4j:commandButton value="Configure Listing" styleClass="btn btn-success"
 														rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled') and  (userProfileAction.person.allowPublication)}"
 														execute="@this" limitRender="true"
 														oncomplete="#{rich:component('configureListingOptions')}.show();" />

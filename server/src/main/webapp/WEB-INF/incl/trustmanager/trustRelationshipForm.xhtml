@@ -86,38 +86,56 @@
 			columnClasses="attributeColumn, , formColumn" border="0"
 			cellpadding="0" cellspacing="0">
 
-			<h:panelGroup id="attributeTabPanelGroupId">
-				<rich:tabPanel switchType="client" id="attributeTabPanelId">
-					<c:forEach
-						items="#{_customAttributeAction.attributeByOrigin.entrySet()}"
-						var="origin">
-						<rich:tab
-							header="#{_customAttributeAction.originDisplayNames[origin.key]}">
-							<h:panelGrid columns="1" border="0" cellpadding="0"
-								cellspacing="0">
-								<c:forEach items="#{origin.value}" var="attr">
-									<ui:param name="_aid"
-										value="#{_customAttributeAction.attributeIds[attr]}" />
-									<a4j:commandLink id="#{_aid}" value="#{attr.displayName}"
-										action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-										render="selectedCustomAttributesId"
-										oncomplete="changeAttributeVisibility('#{_aid}', false);"
-										style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-										execute="@this" limitRender="true">
-										<rich:tooltip styleClass="tooltip" layout="block">
-											<span style="white-space: nowrap"> SAML URI for this
-												attribute: <br />
-												#{_trustRelationshipAction.getSAML1URI(attr)} <br />
-												#{_trustRelationshipAction.getSAML2URI(attr)}
-											</span>
-										</rich:tooltip>
-										<f:param name="sv" value="1" />
-									</a4j:commandLink>
+			<h:panelGroup>
+				<h:panelGroup layout="block"
+					rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}"
+					style="{vertical-align:bottom;};border: 1px solid rgb(204, 204, 204);padding: 0px 0px 7px;padding-bottom: 7px;margin-bottom: 10px;">
+					<div
+						style="background: #1E282C; padding: 15px; color: white; font-weight: bold;">Release
+						additional attributes</div>
+					<div style="height: 500px; overflow-y: auto;">
+						
+
+							<rich:tabPanel switchType="client" id="attributeTabPanelId">
+								<c:forEach
+									items="#{_customAttributeAction.attributeByOrigin.entrySet()}"
+									var="origin">
+
+									<rich:tab
+										header="#{_customAttributeAction.originDisplayNames[origin.key]}">
+										
+											<ul class="sidebar-menu"> 
+											<c:forEach items="#{origin.value}" var="attr">												
+												<li class="treeview" id="#{_customAttributeAction.attributeIds[attr]}">
+												<ui:param name="_aid"
+													value="#{_customAttributeAction.attributeIds[attr]}" />
+												<a4j:commandLink id="#{_aid}" value="#{attr.displayName}"
+													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
+													render="selectedCustomAttributesId"
+													oncomplete="changeAttributeVisibility('#{_aid}', false);"
+													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
+													execute="@this" limitRender="true">
+													<rich:tooltip styleClass="tooltip" layout="block">
+														<span style="white-space: nowrap"> SAML URI for
+															this attribute: <br />
+															#{_trustRelationshipAction.getSAML1URI(attr)} <br />
+															#{_trustRelationshipAction.getSAML2URI(attr)}
+														</span>
+													</rich:tooltip>
+													<f:param name="sv" value="1" />
+												</a4j:commandLink>
+												</li> 
+											</c:forEach>
+											</ul> 
+										
+									</rich:tab>
 								</c:forEach>
-							</h:panelGrid>
-						</rich:tab>
-					</c:forEach>
-				</rich:tabPanel>
+							</rich:tabPanel>
+
+					</div>
+				</h:panelGroup>
+
+
 			</h:panelGroup>
 
 			<richext:spacer width="10" />
@@ -208,7 +226,7 @@
 											id="spMetaDataSourceTypeFederationEntitySelection">
 											<ui:define name="label">Entity ID</ui:define>
 
-											<a4j:commandLink style="margin-left:-90px;"
+											<a4j:commandLink
 												value="#{empty _trustRelationship.entityId? 
                                                                          'Click to select entity Id' 
                                                                        : _trustRelationship.entityId}"
@@ -294,7 +312,7 @@
 									id="spLogoutURLId" />
 							</s:decorate>
 						</h:panelGroup>
-<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 							id="configureSpecific">
 							<ui:define name="label">Configure specific RelyingParty</ui:define>
 							<h:panelGrid columns="2" width="100%" id="RelyingPartyConfig"
@@ -317,11 +335,11 @@
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 							id="enableInCommon">
 							<ui:define name="label">Enable InCommon R&amp;S</ui:define>
-						<h:panelGrid columns="2">
-							
-						</h:panelGrid>
+							<h:panelGrid columns="2">
+
+							</h:panelGrid>
 						</s:decorate>
-						
+
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 							id="attributes">
 							<ui:define name="label">Released </ui:define>
@@ -339,31 +357,33 @@
 											<ui:param name="_metadata" value="#{_attr.metadata}" />
 											<ui:param name="_aid"
 												value="#{_customAttributeAction.attributeIds[_metadata]}" />
-											<div class="col-sm-12">	
+											<div class="col-sm-12">
 												<div class="col-sm-1">
-												<h:outputText styleClass="glyphicon glyphicon-pushpin" style="margin-top:4px;color:#FF9409"></h:outputText></div>
+													<h:outputText styleClass="glyphicon glyphicon-pushpin"
+														style="margin-top:4px;color:#FF9409"></h:outputText>
+												</div>
 												<div class="col-sm-10">
-											<h:outputText value="#{_metadata.displayName}" 
-												styleClass="attributeTooltip"
-												title="SAML URI for this attribute: | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
+													<h:outputText value="#{_metadata.displayName}"
+														styleClass="attributeTooltip"
+														title="SAML URI for this attribute: | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
 
-											
 
+
+												</div>
+												<div class="col-sm-1">
+													<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+														action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
+														render="newTrustId"
+														onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+														execute="@this">
+														<!-- <h:graphicImage value="/img/remove.gif" /> -->
+														<f:param name="sv" value="1" />
+													</a4j:commandLink>
+												</div>
 											</div>
-											<div class="col-sm-1">
-											<a4j:commandLink  styleClass="glyphicon glyphicon-remove"
-												action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
-												render="newTrustId"
-												onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-												execute="@this">
-												<!-- <h:graphicImage value="/img/remove.gif" /> -->
-												<f:param name="sv" value="1" />
-											</a4j:commandLink>
-											</div>
-</div>
 											<br />
 										</a4j:repeat>
-										
+
 									</rich:accordionItem>
 
 									<c:forEach items="#{_trustRelationshipAction.federatedSites}"
@@ -407,7 +427,7 @@
 							rendered="#{(not _new) and (_trustRelationship.containerFederation eq null)}"
 							onclick="#{rich:component('additionalTRParamsPanel')}.show();"
 							execute="@this" />
-						
+
 
 						<!-- Validation Log Start -->
 
@@ -459,7 +479,7 @@
 		</h:panelGrid>
 
 		<ui:insert name="controlButttons" />
-		
+
 	</h:form>
-	
+
 </ui:composition>

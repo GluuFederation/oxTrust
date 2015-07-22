@@ -5,6 +5,7 @@
     xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
+<h:form>
            <section class="content-header">
 		<h1 style="color: #333;">
 			UMA
@@ -32,7 +33,7 @@
                      width: 300px;        
                 }
             </h:outputStylesheet>
-
+ 
  <div class="row">
             <div class="col-xs-12">
               <div class="box box-primary">
@@ -41,7 +42,7 @@
                       <div style="display: inline-block;width: 75% !important;">
             <ui:param name="_scopeDescription" value="#{updateScopeDescriptionAction.scopeDescription}" />
 
-            <h:form>
+           
                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
@@ -134,10 +135,10 @@
 
                
                 
-            </h:form></div>
+            </div>
             <div class="box-footer">
              <s:div id="updateButtons">
-                    <h:commandButton value="#{updateScopeDescriptionAction.update ? 'Update' : 'Add'}" action="#{updateScopeDescriptionAction.save}" styleClass="btn btn-primary" />
+                    <h:commandButton value="#{updateScopeDescriptionAction.update ? 'Update' : 'Add Scope'}" action="#{updateScopeDescriptionAction.save}" styleClass="btn btn-primary" />
                     <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" styleClass="btn btn-primary" style="margin-left:3px;"
                         rendered="#{updateScopeDescriptionAction.update}" />
                     <s:button value="Cancel" action="#{updateScopeDescriptionAction.cancel}" immediate="true" propagation="end" styleClass="btn btn-primary" style="margin-left:3px;"/>
@@ -155,6 +156,7 @@
         </s:div>
         
         </section>
+        </h:form>
     </ui:define>
 
 </ui:composition>

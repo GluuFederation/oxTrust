@@ -34,10 +34,16 @@
 
     <navigation from-action="#{updateTrustRelationshipAction.save}">
         <rule if-outcome="success">
-            <redirect view-id="/trustmanager/updateTrustRelationship.xhtml">
+            
+            <redirect view-id="/trustmanager/trustRelationships.xhtml">
                 <message severity="INFO">Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' added successfully</message>
                 <param name="inum" value="#{updateTrustRelationshipAction.inum}" />
             </redirect>
+            
+<!--             <redirect view-id="/trustmanager/updateTrustRelationship.xhtml">
+                <message severity="INFO">Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' added successfully</message>
+                <param name="inum" value="#{updateTrustRelationshipAction.inum}" />
+            </redirect> -->
         </rule>
 
         <rule if-outcome="unable_download_metadata">
