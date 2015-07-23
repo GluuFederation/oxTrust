@@ -5,7 +5,7 @@
 	<groupId>org.xdi</groupId>
 	<artifactId>oxtrust</artifactId>
 	<packaging>pom</packaging>
-	<version>2.3.1.Final</version>
+	<version>2.3.2.Final</version>
 	<name>oxTrust</name>
 	<url>http://ox.gluu.org</url>
 
@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.min-version>3.0.3</maven.min-version>
 
-		<seam.version>2.3.1.Final</seam.version>
+		<seam.version>2.3.2.Final</seam.version>
 		<richfaces.version>4.3.4.Final</richfaces.version>
 		<hibernate.version>4.1.8.Final</hibernate.version>
 		<jackson.version>1.9.11</jackson.version>
@@ -22,8 +22,8 @@
 		<drools.version>5.3.3.Final</drools.version>
 		<arquillian.version>1.1.2.Final</arquillian.version>
 		<shibboleth.version>1.1.0</shibboleth.version>
-		<oxcore.version>2.3.1.Final</oxcore.version>
-		<oxauth.version>2.3.1.Final</oxauth.version>
+		<oxcore.version>2.3.2.Final</oxcore.version>
+		<oxauth.version>2.3.2.Final</oxauth.version>
 	</properties>
 
 	<prerequisites>
