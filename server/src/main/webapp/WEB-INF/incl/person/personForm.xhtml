@@ -65,7 +65,7 @@
                             <h4 style="font-size: 18px;text-decoration: underline;">Add attributes to person entry</h4>
                                 <c:forEach items="#{origin.value}" var="attr">
                                     <ui:param name="_aid" value="#{_customAttributeAction.attributeIds[attr]}" />
-                                    <a4j:commandLink id="#{_aid}" value="#{attr.displayName}" action="#{_customAttributeAction.addCustomAttribute(attr.inum)}" render="selectedCustomAttributesId"
+                                    <a4j:commandLink styleClass="gluu-link" id="#{_aid}" value="#{attr.displayName}" action="#{_customAttributeAction.addCustomAttribute(attr.inum)}" render="selectedCustomAttributesId"
                                         oncomplete="changeAttributeVisibility('#{_aid}', false);" style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
                                         eventsQueue="personQueue">
                                         <f:param name="sv" value="1" />

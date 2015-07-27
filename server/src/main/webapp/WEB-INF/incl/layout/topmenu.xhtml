@@ -26,7 +26,7 @@
 						
 						<!-- User Account: style can be found in dropdown.less -->
 						<li class="dropdown user user-menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 0px;  margin: 4px;">
-							<div class="glyphicon glyphicon-user" style="float: left;font-size: 34px;color: #00BE79;background: none repeat scroll 0% 0% #222D32;padding: 6px;"></div>
+							<div class="glyphicon glyphicon-user userAvatar"></div>
 						</a>
 							<ul class="dropdown-menu" style="background-color: transparent;  margin-top: 0px;  border: none;">
 								<!-- User image -->
@@ -53,6 +53,12 @@
 									rendered="#{identity.loggedIn}" />
 										
 									</div>
+									<div style="float: left;margin-top: 5px;">
+                                        <a href="#" onclick="setActiveStyleSheet('custom')" class="btn">Custom</a>										
+									</div>
+									<div style="margin-top: 5px;">
+                                       <a href="#" onclick="setActiveStyleSheet('default')" class="btn" style="margin-left: 1px;">Default</a>
+									</div>
 								</li>
 							</ul></li>
 					</ul>
@@ -60,7 +66,26 @@
 				
 				
 			</nav>
+		<script type="text/javascript">
 		
+		function setActiveStyleSheet(title) {
+			
+			   var i, a, main;
+			   var elements=document.getElementsByTagName("link");
+			   for(i=0; elements.length; i++) {
+			     var a=elements[i];
+			     if(a.getAttribute("rel").indexOf("style") != -1) 
+				 {
+				   if(a.getAttribute("title"))
+				   {
+						a.disabled = true;
+						if(a.getAttribute("title") == title) a.disabled = false;
+				   }
+				 }
+			   }
+			}
+		
+		</script>
 	</header>
 	</h:form>
 </ui:composition>

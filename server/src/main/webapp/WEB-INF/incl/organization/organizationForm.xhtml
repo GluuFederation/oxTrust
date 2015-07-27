@@ -473,7 +473,7 @@
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="managerGroup">
 									<ui:define name="label">Manager group</ui:define>
-									<s:link view="/group/updateGroup.xhtml"
+									<s:link view="/group/updateGroup.xhtml" styleClass="gluu-link"
 										value="#{_managerGroup.displayName}" propagation="none">
 										<f:param name="inum" value="#{_managerGroup.inum}" />
 									</s:link>

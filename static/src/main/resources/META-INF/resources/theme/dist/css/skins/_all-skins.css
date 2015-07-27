@@ -874,3 +874,9 @@
   border-bottom-right-radius: 2px !important;
   border-bottom-left-radius: 0 !important;
 }
+
+.userAvatar
+{
+	float: left;font-size: 34px;color: #00BE79;background: none repeat scroll 0% 0% #222D32;padding: 6px;
+}
+

@@ -29,19 +29,19 @@
 			<h:panelGroup columns="1" border="0" cellpadding="0" cellspacing="0"
 				width="100%">
 				<s:link view="/attribute/addAttribute.xhtml"
-					styleClass="label label-success" value="Add Attribute" propagation="none" style="padding:6px;" />
+					styleClass="gluu-link" value="Add Attribute" propagation="none" style="padding:6px;" />
 
 				
 				<s:fragment rendered="#{attributeInventoryAction.showInactive}">
 					<a4j:commandLink value="Show only Active Attributes"
 						action="#{attributeInventoryAction.toggleShowInactive}"
-						render="attributesFormId" />
+						render="attributesFormId" styleClass="gluu-link" />
 				</s:fragment>
 
 				<s:fragment rendered="#{not attributeInventoryAction.showInactive}">
 					<a4j:commandLink value="Show All Attributes"
 						action="#{attributeInventoryAction.toggleShowInactive}"
-						render="attributesFormId" styleClass="label label-success" style="margin-left:5px;padding:6px;"/>
+						render="attributesFormId" styleClass="gluu-link" style="margin-left:5px;padding:6px;"/>
 				</s:fragment>
 
 
@@ -93,7 +93,7 @@
 																			<f:facet name="header" >  
               <div style="text-align: center;"> Display Name</div>  
             </f:facet>
-																			<s:link view="/attribute/updateAttribute.xhtml"
+																			<s:link view="/attribute/updateAttribute.xhtml" styleClass="gluu-link"
 																				value="#{attr.displayName}" propagation="none">
 																				<f:param name="inum" value="#{attr.inum}" />
 																			</s:link>
