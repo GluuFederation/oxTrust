@@ -118,7 +118,7 @@
 														<h:outputText value="#{_custAttr.value}"
 															rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
 														<h:outputText value="&#160;" /></div>
-														<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+														<a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button"
 															action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
 															onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
 															limitRender="true" render="selectedCustomAttributesId"

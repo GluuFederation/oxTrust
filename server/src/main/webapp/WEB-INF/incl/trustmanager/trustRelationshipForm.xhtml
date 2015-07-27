@@ -264,7 +264,7 @@
 										execute="@this" />
 
 									<a4j:commandLink style="margin-left:305px;"
-										styleClass="glyphicon glyphicon-remove"
+										styleClass="glyphicon glyphicon-remove gluu-remove-button"
 										action="#{_trustRelationship.setSpMetaDataFN('')}"
 										limitRender="true" render="MetadataOperations"
 										rendered="#{not empty _trustRelationship.spMetaDataFN}">
@@ -372,7 +372,7 @@
 
 												</div>
 												<div class="col-sm-1">
-													<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+													<a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button"
 														action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
 														render="newTrustId"
 														onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"

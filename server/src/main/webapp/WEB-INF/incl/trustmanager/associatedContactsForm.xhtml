@@ -21,7 +21,7 @@
                             <h:outputText value="#{_contact.title} #{_contact.name}" rendered="#{(not empty _contact.title) or (not empty _contact.name)}" />
                             <h:outputText value="New Contact" rendered="#{(empty _contact.title) and (empty _contact.name)}" />
 
-                            <a4j:commandLink style="float:right;" styleClass="glyphicon glyphicon-remove" action="#{trustContactsAction.removeContact(_contact)}" render="trustContacts" eventsQueue="trustQueue">
+                            <a4j:commandLink style="float:right;" styleClass="glyphicon glyphicon-remove gluu-remove-button" action="#{trustContactsAction.removeContact(_contact)}" render="trustContacts" eventsQueue="trustQueue">
                                <!--  <h:graphicImage value="/img/remove.gif" />  -->
                             </a4j:commandLink>
                         </s:fragment>

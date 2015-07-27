@@ -72,7 +72,7 @@
                                     <h:outputText value="&#160;" />
                                     </div>
                                     <div class = "col-sm-6" >
-                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceSetAction.removeScope(_scope.inum)}" render="selectedScopesId" eventsQueue="resourceSetQueue">
+                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button" action="#{updateResourceSetAction.removeScope(_scope.inum)}" render="selectedScopesId" eventsQueue="resourceSetQueue">
                                      <!--   <h:graphicImage value="/img/remove.gif" /> -->
                                     </a4j:commandLink>
                                     </div>
@@ -94,7 +94,7 @@
                                     <h:outputText value="&#160;" />
                                     </div>
                                     <div class = "col-sm-6" >
-                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceSetAction.removeResource(_resource)}" render="selectedResourcesId" eventsQueue="resourceSetQueue">
+                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button" action="#{updateResourceSetAction.removeResource(_resource)}" render="selectedResourcesId" eventsQueue="resourceSetQueue">
                                       <!--   <h:graphicImage value="/img/remove.gif" />  -->
                                     </a4j:commandLink>
                                     </div>
@@ -118,7 +118,7 @@
                                     <h:outputText value="&#160;" />
                                     </div>
                                      <div class = "col-sm-6">
-                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceSetAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
+                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button" action="#{updateResourceSetAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
                                        <!--  <h:graphicImage value="/img/remove.gif" />  -->
                                     </a4j:commandLink>
                                     </div>

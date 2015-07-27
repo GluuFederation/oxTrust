@@ -79,7 +79,7 @@
                             <h:outputText value="&#160;" />
                             <div class="row-fluid">
      <div class="span6 pull-right" >
-                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_clientAction.removeLoginURI(_uri)}" execute="@this" render="selectedLoginURIsId" eventsQueue="clientQueue">
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button" style="margin-top:-20px;" action="#{_clientAction.removeLoginURI(_uri)}" execute="@this" render="selectedLoginURIsId" eventsQueue="clientQueue">
                                <!--  <h:graphicImage value="/img/remove.gif" /> -->
                             </a4j:commandLink></div></div>
                             <br />
@@ -98,7 +98,7 @@
                             <h:outputText value="&#160;" />
                               <div class="row-fluid">
      <div class="span6 pull-right" >
-                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_clientAction.removeLogoutURI(_uri)}" execute="@this" render="selectedLogoutURIsId" eventsQueue="clientQueue">
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button" style="margin-top:-20px;" action="#{_clientAction.removeLogoutURI(_uri)}" execute="@this" render="selectedLogoutURIsId" eventsQueue="clientQueue">
                                 <!-- <h:graphicImage value="/img/remove.gif" /> -->
                             </a4j:commandLink></div></div>
                             <br />
@@ -118,7 +118,7 @@
                           
      <div class="row-fluid">
      <div class="span6 pull-right" >
-                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_clientAction.removeScope(_scope.inum)}" execute="@this" render="selectedScopesId" eventsQueue="clientQueue">
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button" style="margin-top:-20px;" action="#{_clientAction.removeScope(_scope.inum)}" execute="@this" render="selectedScopesId" eventsQueue="clientQueue">
                                <!--   <h:graphicImage value="/img/remove.gif" />-->
                                
                             </a4j:commandLink>	</div></div>
@@ -138,7 +138,7 @@
                             <h:outputText value="&#160;" />
                              <div class="row-fluid">
      <div class="span6 pull-right" >
-                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"  style="margin-top:-20px;" action="#{_clientAction.removeResponseType(_responseType.value)}" execute="@this" render="selectedResponseTypesId" eventsQueue="clientQueue">
+                            <a4j:commandLink styleClass="glyphicon glyphicon-remove gluu-remove-button"  style="margin-top:-20px;" action="#{_clientAction.removeResponseType(_responseType.value)}" execute="@this" render="selectedResponseTypesId" eventsQueue="clientQueue">
                               <!--  <h:graphicImage value="/img/remove.gif" />  -->
                             </a4j:commandLink></div></div>
                             <br />

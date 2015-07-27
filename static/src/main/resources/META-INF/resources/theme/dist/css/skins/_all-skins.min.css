@@ -814,7 +814,7 @@
 
 .gluu-remove-button
 {
-	color: #00BE79;
+	color: #00BE79 !important;
 }
 
 .icheckbox_square-grey, .iradio_square-grey
@@ -837,6 +837,16 @@
 }
 
 *.rf-fu-btn-add, *.rf-fu-btn-upl, *.rf-fu-btn-clr
+{
+	background-color: #00BE79 !important;
+}
+
+*.rf-pp-hdr
+{
+	background-color: #00BE79 !important;
+}
+
+*.rf-dt-shdr-c
 {
 	background-color: #00BE79 !important;
 }

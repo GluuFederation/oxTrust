@@ -96,7 +96,7 @@
                                 </rich:inplaceInput></div>
                                 <h:outputText value="&#160;" />
                               <div class="col-xs-2">  <a4j:commandLink action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}" render="selectedCustomAttributesId"
-                                    styleClass="glyphicon glyphicon-remove"  style="margin-top:-18px;margin-left:-44px;" onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);" rendered="#{_custAttr.adminCanEdit and not _mandatory}" eventsQueue="personQueue">
+                                    styleClass="glyphicon glyphicon-remove gluu-remove-button"  style="margin-top:-18px;margin-left:-44px;" onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);" rendered="#{_custAttr.adminCanEdit and not _mandatory}" eventsQueue="personQueue">
                                    <!--   <h:graphicImage value="/img/remove.gif" />-->
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink></div>
