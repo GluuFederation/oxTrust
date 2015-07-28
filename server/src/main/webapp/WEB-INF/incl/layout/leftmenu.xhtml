@@ -264,6 +264,13 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
+									<li id="subMenuLinkPersonal5"><h:commandLink
+											value="Customize"
+											action="#{menuAction.endConversation('/profile/person/customizeProfile.xhtml')}"
+											rendered="#{s:hasPermission('profile', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
 									<li id="subMenuLinkPersonal2"><h:commandLink
 											value="White Pages"
 											rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}"
