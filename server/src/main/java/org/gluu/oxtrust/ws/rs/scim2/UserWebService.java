@@ -41,8 +41,10 @@ import org.gluu.oxtrust.model.GluuCustomPersonList;
 import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
+import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.util.CopyUtils;
+import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.oxtrust.ws.rs.scim.BaseScimWebService;
@@ -135,7 +137,7 @@ public class UserWebService extends BaseScimWebService {
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			User person = CopyUtils2.copy(gluuPerson, null);
 
 			URI location = new URI("/Users/" + uid);
 
@@ -145,6 +147,7 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
+			System.out.println("UserWebService Ex: "+ex);
 			return getErrorResponse("Unexpected processing error, please check the input parameters",
 					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}

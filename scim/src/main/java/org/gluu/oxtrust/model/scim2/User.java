@@ -67,10 +67,10 @@ public class User extends Resource {
     /**
      * Default constructor for Jackson
      */
-    private User() {
+    public User() {
     }
 
-    private User(Builder builder) {
+    public User(Builder builder) {
         super(builder);
         this.userName = builder.userName;
         this.name = builder.name;
