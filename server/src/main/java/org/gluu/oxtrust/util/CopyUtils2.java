@@ -144,7 +144,7 @@ public class CopyUtils2 implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static GluuCustomPerson copy(ScimPerson source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
+	public static GluuCustomPerson copy(User source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
@@ -200,7 +200,7 @@ public class CopyUtils2 implements Serializable {
 			// getting emails
 			log.trace(" setting emails ");
 			if (source.getEmails() != null && source.getEmails().size() > 0) {
-				List<ScimPersonEmails> emails = source.getEmails();
+				List<Email> emails = source.getEmails();
 				StringWriter listOfEmails = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfEmails, emails);
@@ -212,7 +212,7 @@ public class CopyUtils2 implements Serializable {
 			// getting addresses
 			log.trace(" setting addresses ");
 			if (source.getAddresses() != null && source.getAddresses().size() > 0) {
-				List<ScimPersonAddresses> addresses = source.getAddresses();
+				List<Address> addresses = source.getAddresses();
 
 				StringWriter listOfAddresses = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
@@ -224,7 +224,7 @@ public class CopyUtils2 implements Serializable {
 			// getting phone numbers;
 			log.trace(" setting phoneNumbers ");
 			if (source.getPhoneNumbers() != null && source.getPhoneNumbers().size() > 0) {
-				List<ScimPersonPhones> phones = source.getPhoneNumbers();
+				List<PhoneNumber> phones = source.getPhoneNumbers();
 
 				StringWriter listOfPhones = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
@@ -237,7 +237,7 @@ public class CopyUtils2 implements Serializable {
 			log.trace(" setting ims ");
 			if (source.getIms() != null && source.getIms().size() > 0) {
 
-				List<ScimPersonIms> ims = source.getIms();
+				List<Im> ims = source.getIms();
 
 				StringWriter listOfIms = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
@@ -250,7 +250,7 @@ public class CopyUtils2 implements Serializable {
 			log.trace(" setting photos ");
 			if (source.getPhotos() != null && source.getPhotos().size() > 0) {
 
-				List<ScimPersonPhotos> photos = source.getPhotos();
+				List<Photo> photos = source.getPhotos();
 
 				StringWriter listOfPhotos = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
@@ -274,9 +274,11 @@ public class CopyUtils2 implements Serializable {
 			if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 				destination.setTimezone(source.getTimezone());
 			}
-			if (source.getActive() != null && source.getActive().length() > 0) {
-				destination.setAttribute("oxTrustActive", source.getActive());
+			
+			if (source.isActive() != null) {
+				destination.setAttribute("oxTrustActive", source.isActive().toString());
 			}
+			
 			if (source.getPassword() != null && source.getPassword().length() > 0) {
 				destination.setUserPassword(source.getPassword());
 			}
@@ -285,9 +287,9 @@ public class CopyUtils2 implements Serializable {
 			log.trace(" setting groups ");
 			if (source.getGroups() != null && source.getGroups().size() > 0) {
 				GroupService groupService = GroupService.instance();
-				List<ScimPersonGroups> listGroups = source.getGroups();
+				List<GroupRef> listGroups = source.getGroups();
 				List<String> members = new ArrayList<String>();
-				for (ScimPersonGroups group : listGroups) {
+				for (GroupRef group : listGroups) {
 
 					members.add(groupService.getDnForGroup(group.getValue()));
 				}
@@ -298,7 +300,7 @@ public class CopyUtils2 implements Serializable {
 
 			log.trace(" setting roles ");
 			if (source.getRoles() != null && source.getRoles().size() > 0) {
-				List<ScimRoles> roles = source.getRoles();
+				List<Role> roles = source.getRoles();
 
 				StringWriter listOfRoles = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
@@ -310,7 +312,7 @@ public class CopyUtils2 implements Serializable {
 			// getting entitlements
 			log.trace(" setting entilements ");
 			if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
-				List<ScimEntitlements> ents = source.getEntitlements();
+				List<Entitlement> ents = source.getEntitlements();
 
 				StringWriter listOfEnts = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
@@ -322,7 +324,7 @@ public class CopyUtils2 implements Serializable {
 			// getting x509Certificates
 			log.trace(" setting certs ");
 			if (source.getX509Certificates() != null && source.getX509Certificates().size() > 0) {
-				List<Scimx509Certificates> certs = source.getX509Certificates();
+				List<X509Certificate> certs = source.getX509Certificates();
 
 				StringWriter listOfCerts = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
@@ -334,11 +336,11 @@ public class CopyUtils2 implements Serializable {
 			// getting meta
 			log.trace(" setting meta ");
 
-			if (source.getMeta().getCreated() != null && source.getMeta().getCreated().length() > 0) {
-				destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated());
+			if (source.getMeta().getCreated() != null && source.getMeta().getCreated().toString().length() > 0) {
+				destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated().toString());
 			}
-			if (source.getMeta().getLastModified() != null && source.getMeta().getLastModified().length() > 0) {
-				destination.setAttribute("oxTrustMetaLastModified", source.getMeta().getLastModified());
+			if (source.getMeta().getLastModified() != null && source.getMeta().getLastModified().toString().length() > 0) {
+				destination.setAttribute("oxTrustMetaLastModified", source.getMeta().getLastModified().toString());
 			}
 			if (source.getMeta().getVersion() != null && source.getMeta().getVersion().length() > 0) {
 				destination.setAttribute("oxTrustMetaVersion", source.getMeta().getVersion());
@@ -350,18 +352,20 @@ public class CopyUtils2 implements Serializable {
 			// getting customAttributes
 			log.trace("getting custom attributes");
 
-			if (source.getCustomAttributes() != null) {
+			if (source.getMeta().getAttributes() != null) {
 				log.trace("source.getCustomAttributes() != null");
 				log.trace("getting a list of ScimCustomAttributes");
 
-				List<ScimCustomAttributes> customAttr = source.getCustomAttributes();
+				Set<String> customAttr = source.getMeta().getAttributes();
 				log.trace("checling every attribute in the request");
 
-				for (ScimCustomAttributes oneAttr : customAttr) {
+				for (String oneAttr : customAttr) {
 					if (oneAttr == null) {
 						continue;
 					}
-
+					destination.setAttribute(oneAttr.replaceAll(" ", ""), "");
+					
+					/* NOTE : WRITE CODE FOR THIS
 					int countValues = oneAttr.getValues().size();
 					if (countValues == 0) {
 						log.trace("setting a empty attribute");
@@ -386,6 +390,7 @@ public class CopyUtils2 implements Serializable {
 						log.trace("setting the list of multivalued attributes");
 						destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), AttrArray);
 					}
+					*/
 				}
 			}
 
@@ -439,7 +444,7 @@ public class CopyUtils2 implements Serializable {
 				// getting emails
 				log.trace(" setting emails ");
 				if (source.getEmails() != null && source.getEmails().size() > 0) {
-					List<ScimPersonEmails> emails = source.getEmails();
+					List<Email> emails = source.getEmails();
 					StringWriter listOfEmails = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfEmails, emails);
@@ -451,7 +456,7 @@ public class CopyUtils2 implements Serializable {
 				// getting addresses
 				log.trace(" setting addresses ");
 				if (source.getAddresses() != null && source.getAddresses().size() > 0) {
-					List<ScimPersonAddresses> addresses = source.getAddresses();
+					List<Address> addresses = source.getAddresses();
 
 					StringWriter listOfAddresses = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
@@ -463,7 +468,7 @@ public class CopyUtils2 implements Serializable {
 				// getting phone numbers;
 				log.trace(" setting phoneNumbers ");
 				if (source.getPhoneNumbers() != null && source.getPhoneNumbers().size() > 0) {
-					List<ScimPersonPhones> phones = source.getPhoneNumbers();
+					List<PhoneNumber> phones = source.getPhoneNumbers();
 
 					StringWriter listOfPhones = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
@@ -476,7 +481,7 @@ public class CopyUtils2 implements Serializable {
 				log.trace(" setting ims ");
 				if (source.getIms() != null && source.getIms().size() > 0) {
 
-					List<ScimPersonIms> ims = source.getIms();
+					List<Im> ims = source.getIms();
 
 					StringWriter listOfIms = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
@@ -489,7 +494,7 @@ public class CopyUtils2 implements Serializable {
 				log.trace(" setting photos ");
 				if (source.getPhotos() != null && source.getPhotos().size() > 0) {
 
-					List<ScimPersonPhotos> photos = source.getPhotos();
+					List<Photo> photos = source.getPhotos();
 
 					StringWriter listOfPhotos = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
@@ -513,8 +518,8 @@ public class CopyUtils2 implements Serializable {
 				if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 					destination.setTimezone(source.getTimezone());
 				}
-				if (source.getActive() != null && source.getActive().length() > 0) {
-					destination.setAttribute("oxTrustActive", source.getActive());
+				if (source.isActive() != null) {
+					destination.setAttribute("oxTrustActive", source.isActive().toString());
 				}
 				if (source.getPassword() != null && source.getPassword().length() > 0) {
 					destination.setUserPassword(source.getPassword());
@@ -524,9 +529,9 @@ public class CopyUtils2 implements Serializable {
 				log.trace(" setting groups ");
 				if (source.getGroups() != null && source.getGroups().size() > 0) {
 					GroupService groupService = GroupService.instance();
-					List<ScimPersonGroups> listGroups = source.getGroups();
+					List<GroupRef> listGroups = source.getGroups();
 					List<String> members = new ArrayList<String>();
-					for (ScimPersonGroups group : listGroups) {
+					for (GroupRef group : listGroups) {
 
 						members.add(groupService.getDnForGroup(group.getValue()));
 					}
@@ -537,7 +542,7 @@ public class CopyUtils2 implements Serializable {
 
 				log.trace(" setting roles ");
 				if (source.getRoles() != null && source.getRoles().size() > 0) {
-					List<ScimRoles> roles = source.getRoles();
+					List<Role> roles = source.getRoles();
 
 					StringWriter listOfRoles = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
@@ -549,7 +554,7 @@ public class CopyUtils2 implements Serializable {
 				// getting entitlements
 				log.trace(" setting entilements ");
 				if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
-					List<ScimEntitlements> ents = source.getEntitlements();
+					List<Entitlement> ents = source.getEntitlements();
 
 					StringWriter listOfEnts = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
@@ -561,7 +566,7 @@ public class CopyUtils2 implements Serializable {
 				// getting x509Certificates
 				log.trace(" setting certs ");
 				if (source.getX509Certificates() != null && source.getX509Certificates().size() > 0) {
-					List<Scimx509Certificates> certs = source.getX509Certificates();
+					List<X509Certificate> certs = source.getX509Certificates();
 
 					StringWriter listOfCerts = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
@@ -573,11 +578,11 @@ public class CopyUtils2 implements Serializable {
 				// getting meta
 				log.trace(" setting meta ");
 
-				if (source.getMeta().getCreated() != null && source.getMeta().getCreated().length() > 0) {
-					destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated());
+				if (source.getMeta().getCreated() != null && source.getMeta().getCreated().toString().length() > 0) {
+					destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated().toString());
 				}
-				if (source.getMeta().getLastModified() != null && source.getMeta().getLastModified().length() > 0) {
-					destination.setAttribute("oxTrustMetaLastModified", source.getMeta().getLastModified());
+				if (source.getMeta().getLastModified() != null && source.getMeta().getLastModified().toString().length() > 0) {
+					destination.setAttribute("oxTrustMetaLastModified", source.getMeta().getLastModified().toString());
 				}
 				if (source.getMeta().getVersion() != null && source.getMeta().getVersion().length() > 0) {
 					destination.setAttribute("oxTrustMetaVersion", source.getMeta().getVersion());
@@ -589,14 +594,17 @@ public class CopyUtils2 implements Serializable {
 				// getting customAttributes
 				log.trace("getting custom attributes");
 
-				if (source.getCustomAttributes() != null && source.getCustomAttributes().size() > 0) {
+				if (source.getMeta().getAttributes() != null && source.getMeta().getAttributes().size() > 0) {
 					log.trace("source.getCustomAttributes() != null");
 					log.trace("getting a list of ScimCustomAttributes");
 
-					List<ScimCustomAttributes> customAttr = source.getCustomAttributes();
+					Set<String> customAttr = source.getMeta().getAttributes();
 					log.trace("checling every attribute in the request");
 
-					for (ScimCustomAttributes oneAttr : customAttr) {
+					for (String oneAttr : customAttr) {
+						destination.setAttribute(oneAttr.replaceAll(" ", ""), "");
+						
+						/* NOTE : WRITE CODE FOR THIS
 						if (oneAttr != null && oneAttr.getValues().size() == 1) {
 							log.trace("setting a single attribute");
 							destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), oneAttr.getValues().get(0));
@@ -617,6 +625,7 @@ public class CopyUtils2 implements Serializable {
 							log.trace("setting the list of multivalued attributes");
 							destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), AttrArray);
 						}
+						*/
 					}
 
 				}
@@ -1130,7 +1139,7 @@ public class CopyUtils2 implements Serializable {
 		return true;
 	}
 
-	public static boolean isValidData(ScimPerson person, boolean isUpdate) {
+	public static boolean isValidData(User person, boolean isUpdate) {
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
 			// isEmpty(person.getDisplayName())

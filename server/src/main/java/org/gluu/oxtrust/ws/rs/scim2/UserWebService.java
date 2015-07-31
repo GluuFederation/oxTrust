@@ -157,7 +157,7 @@ public class UserWebService extends BaseScimWebService {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response createUser(@HeaderParam("Authorization") String authorization, ScimPerson person) throws WebApplicationException,
+	public Response createUser(@HeaderParam("Authorization") String authorization, User person) throws WebApplicationException,
 			JsonGenerationException, JsonMappingException, IOException, Exception {
 		personService = PersonService.instance();
 
@@ -169,7 +169,7 @@ public class UserWebService extends BaseScimWebService {
 		// Return HTTP response with status code 201 Created
 
 		log.debug(" copying gluuperson ");
-		GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
+		GluuCustomPerson gluuPerson = CopyUtils2.copy(person, null, false);
 		if (gluuPerson == null) {
 			return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
 		}
@@ -201,7 +201,7 @@ public class UserWebService extends BaseScimWebService {
 			log.debug("adding new GluuPerson");
 
 			personService.addPerson(gluuPerson);
-			ScimPerson newPerson = CopyUtils.copy(gluuPerson, null);
+			User newPerson = CopyUtils2.copy(gluuPerson, null);
 			String uri = "/Users/" + newPerson.getId();
 			return Response.created(URI.create(uri)).entity(newPerson).build();
 		} catch (Exception ex) {
@@ -215,7 +215,7 @@ public class UserWebService extends BaseScimWebService {
 	@PUT
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, ScimPerson person) throws Exception {
+	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, User person) throws Exception {
 		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
@@ -228,7 +228,7 @@ public class UserWebService extends BaseScimWebService {
 			if (gluuPerson == null) {
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
-			GluuCustomPerson newGluuPesron = CopyUtils.copy(person, gluuPerson, true);
+			GluuCustomPerson newGluuPesron = CopyUtils2.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
 				Utils.groupMemebersAdder(newGluuPesron, personService.getDnForPerson(uid));
@@ -291,7 +291,7 @@ public class UserWebService extends BaseScimWebService {
 
 	public Response createUserTestHelper(@HeaderParam("Authorization") String authorization, String person_data) throws Exception {
 		try {
-			ScimPerson person = (ScimPerson) xmlToObject(person_data);
+			User person = (User) xmlToObject(person_data);
 			return createUser(authorization, person);
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
@@ -303,7 +303,7 @@ public class UserWebService extends BaseScimWebService {
 	public Response updateUserTestHelper(@HeaderParam("Authorization") String authorization, @PathParam("inum") String inum, String person_data)
 			throws Exception {
 		try {
-			ScimPerson person_update = (ScimPerson) xmlToObject(person_data);
+			User person_update = (User) xmlToObject(person_data);
 			return updateUser(authorization, inum, person_update);
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
@@ -318,9 +318,9 @@ public class UserWebService extends BaseScimWebService {
 		DOMReader reader = new DOMReader();
 		Document doc = reader.read(document);
 
-		JAXBContext context = JAXBContext.newInstance(ScimPerson.class);
+		JAXBContext context = JAXBContext.newInstance(User.class);
 		DocumentSource source = new DocumentSource(doc);
-		context = JAXBContext.newInstance(ScimPerson.class);
+		context = JAXBContext.newInstance(User.class);
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		return unmarshaller.unmarshal(source);
 	}
