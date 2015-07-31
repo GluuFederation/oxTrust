@@ -38,6 +38,7 @@ import org.dom4j.io.DocumentSource;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuCustomPersonList;
+import org.gluu.oxtrust.model.GluuCustomPersonList2;
 import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
@@ -90,12 +91,12 @@ public class UserWebService extends BaseScimWebService {
 		try {
 			log.info(" getting a list of all users from LDAP ");
 			List<GluuCustomPerson> personList = personService.findAllPersons(null);
-			GluuCustomPersonList allPersonList = new GluuCustomPersonList();
+			GluuCustomPersonList2 allPersonList = new GluuCustomPersonList2();
 			if (personList != null) {
 				log.info(" LDAP person list is not empty ");
 				for (GluuCustomPerson gluuPerson : personList) {
 					log.info(" copying person from GluuPerson to ScimPerson ");
-					ScimPerson person = CopyUtils.copy(gluuPerson, null);
+					User person = CopyUtils2.copy(gluuPerson, null);
 					log.info(" adding ScimPerson to the AllPersonList ");
 					log.info(" person to be added userid : " + person.getUserName());
 					allPersonList.getResources().add(person);
@@ -104,10 +105,10 @@ public class UserWebService extends BaseScimWebService {
 
 			}
 			List<String> schema = new ArrayList<String>();
-			schema.add("urn:scim2:schemas:core:1.0");
+			schema.add("urn:ietf:params:scim:schemas:core:2.0:User");
 			log.info(" setting schema ");
 			allPersonList.setSchemas(schema);
-			List<ScimPerson> resources = allPersonList.getResources();
+			List<User> resources = allPersonList.getResources();
 			allPersonList.setTotalResults((long) resources.size());
 
 			URI location = new URI("/Users/");
