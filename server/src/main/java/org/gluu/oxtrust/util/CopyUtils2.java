@@ -580,23 +580,23 @@ public class CopyUtils2 implements Serializable {
 				// getting meta
 				log.trace(" setting meta ");
 
-				if (source.getMeta().getCreated() != null && source.getMeta().getCreated().toString().length() > 0) {
+				if (source.getMeta()!= null && source.getMeta().getCreated() != null && source.getMeta().getCreated().toString().length() > 0) {
 					destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated().toString());
 				}
-				if (source.getMeta().getLastModified() != null && source.getMeta().getLastModified().toString().length() > 0) {
+				if (source.getMeta()!= null && source.getMeta().getLastModified() != null && source.getMeta().getLastModified().toString().length() > 0) {
 					destination.setAttribute("oxTrustMetaLastModified", source.getMeta().getLastModified().toString());
 				}
-				if (source.getMeta().getVersion() != null && source.getMeta().getVersion().length() > 0) {
+				if (source.getMeta()!= null && source.getMeta().getVersion() != null && source.getMeta().getVersion().length() > 0) {
 					destination.setAttribute("oxTrustMetaVersion", source.getMeta().getVersion());
 				}
-				if (source.getMeta().getLocation() != null && source.getMeta().getLocation().length() > 0) {
+				if (source.getMeta()!= null && source.getMeta().getLocation() != null && source.getMeta().getLocation().length() > 0) {
 					destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
 				}
 
 				// getting customAttributes
 				log.trace("getting custom attributes");
 
-				if (source.getMeta().getAttributes() != null && source.getMeta().getAttributes().size() > 0) {
+				if (source.getMeta()!= null && source.getMeta().getAttributes() != null && source.getMeta().getAttributes().size() > 0) {
 					log.trace("source.getCustomAttributes() != null");
 					log.trace("getting a list of ScimCustomAttributes");
 
@@ -632,6 +632,7 @@ public class CopyUtils2 implements Serializable {
 
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				return null;
 			}
 		}

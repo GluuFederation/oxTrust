@@ -6,6 +6,10 @@
 
 package org.gluu.oxtrust.model.scim2;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Strings;
@@ -18,7 +22,7 @@ import com.google.common.base.Strings;
  * href="http://tools.ietf.org/html/draft-ietf-scim-core-schema-02#section-6">SCIM core schema 2.0, section 6</a>
  * </p>
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Name {
 
     private String formatted;
@@ -148,7 +152,8 @@ public class Name {
      *
      * @return true if all properties are null or empty, else false
      */
-    @JsonIgnore
+ /*   @JsonIgnore
+    @XmlTransient
     public boolean isEmpty() {
         if(!Strings.isNullOrEmpty(formatted)) {
             return false;
@@ -175,7 +180,7 @@ public class Name {
         }
 
         return true;
-    }
+    }*/
 
     @Override
     public String toString() {
