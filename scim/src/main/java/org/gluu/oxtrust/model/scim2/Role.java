@@ -20,13 +20,9 @@ public class Role extends MultiValuedAttribute {
     /**
      * Default constructor for Jackson
      */
-    private Role() {
+    public Role() {
     }
 
-    private Role(Builder builder) {
-        super(builder);
-        type = builder.type;
-    }
 
     @Override
     public String getOperation() {
@@ -64,75 +60,38 @@ public class Role extends MultiValuedAttribute {
         return type;
     }
 
-    @Override
+    public void setType(Type type) {
+		this.type = type;
+	}
+    
+    
+    public void setOperation(String operation) {
+        super.setOperation(operation);
+    }
+
+    
+    public void setDisplay(String display) {
+        super.setDisplay(display);
+    }
+
+    
+    public void setValue(String value) {
+        super.setValue(value);
+    }
+
+    
+    public void setPrimary(boolean primary) {
+        super.setPrimary(primary);
+    }
+
+   
+	@Override
     public String toString() {
         return "Role [value=" + getValue() + ", type=" + type + ", primary=" + isPrimary() 
                 + ", operation=" + getOperation() + "]";
     }
 
-    /**
-     * Builder class that is used to build {@link Role} instances
-     */
-    public static class Builder extends MultiValuedAttribute.Builder {
-
-        private Type type;
-
-        public Builder() {
-        }
-
-        /**
-         * builds an Builder based of the given Attribute
-         * 
-         * @param role
-         *        existing Attribute
-         */
-        public Builder(Role role) {
-            super(role);
-            type = role.type;
-        }
-
-        @Override
-        public Builder setOperation(String operation) {
-            super.setOperation(operation);
-            return this;
-        }
-
-        @Override
-        public Builder setDisplay(String display) {
-            super.setDisplay(display);
-            return this;
-
-        }
-
-        @Override
-        public Builder setValue(String value) {
-            super.setValue(value);
-            return this;
-        }
-
-        @Override
-        public Builder setPrimary(boolean primary) {
-            super.setPrimary(primary);
-            return this;
-        }
-
-        /**
-         * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
-         * 
-         * @param type
-         *        the type of the attribute
-         * @return the builder itself
-         */
-        public Builder setType(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public Role build() {
-            return new Role(this);
-        }
-    }
+    
 
     /**
      * Represents an Role type.

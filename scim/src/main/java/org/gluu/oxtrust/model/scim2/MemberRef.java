@@ -25,13 +25,10 @@ public class MemberRef extends MultiValuedAttribute { // NOSONAR - will be const
     /**
      * Default constructor for Jackson
      */
-    private MemberRef() {
+    public MemberRef() {
     }
 
-    private MemberRef(Builder builder) {
-        super(builder);
-        type = builder.type;
-    }
+    
 
     @Override
     public String getReference() {
@@ -69,7 +66,27 @@ public class MemberRef extends MultiValuedAttribute { // NOSONAR - will be const
         return type;
     }
 
-    @Override
+    public void setType(Type type) {
+		this.type = type;
+	}
+    
+    public void setReference(String reference) {
+        super.setReference(reference);
+    }
+
+    public void setValue(String value) {
+        super.setValue(value);
+    }
+    
+    public void setDisplay(String display) {
+        super.setDisplay(display);
+    }
+   
+    public void setOperation(String operation) {
+        super.setOperation(operation);
+    }
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -105,78 +122,7 @@ public class MemberRef extends MultiValuedAttribute { // NOSONAR - will be const
                 + ", operation=" + getOperation() + ", ref=" + getReference() + "]";
     }
 
-    /**
-     * The Builder class is used to construct instances of the {@link MemberRef}
-     */
-    public static class Builder extends MultiValuedAttribute.Builder {
-
-        private Type type;
-
-        public Builder() {
-        }
-
-        /**
-         * builds an Builder based of the given Attribute
-         * 
-         * @param member
-         *        existing Attribute
-         */
-        public Builder(MemberRef member) {
-            super(member);
-            type = member.type;
-        }
-        
-        /**
-         * builds an Builder based of the given {@link User} or {@link Group}
-         * 
-         * @param resource
-         *        existing {@link User} or {@link Group}
-         */
-        public Builder(Resource resource) {
-        	setValue(resource.getId());
-        }
-
-        @Override
-        public Builder setReference(String reference) {
-            super.setReference(reference);
-            return this;
-        }
-
-        @Override
-        public Builder setValue(String value) {
-            super.setValue(value);
-            return this;
-        }
-
-        @Override
-        public Builder setDisplay(String display) {
-            super.setDisplay(display);
-            return this;
-        }
-
-        /**
-         * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
-         * 
-         * @param type
-         *        the type of the attribute
-         * @return the builder itself
-         */
-        public Builder setType(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public Builder setOperation(String operation) {
-            super.setOperation(operation);
-            return this;
-        }
-
-        @Override
-        public MemberRef build() {
-            return new MemberRef(this);
-        }
-    }
+    
 
     /**
      * Represents an Member reference type.

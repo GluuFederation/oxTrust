@@ -31,19 +31,9 @@ public class Address extends MultiValuedAttribute { // NOSONAR - Builder constru
     /**
      * Default constructor for Jackson
      */
-    private Address() {
+    public Address() {
     }
 
-    private Address(Builder builder) {
-        super(builder);
-        this.formatted = builder.formatted;
-        this.streetAddress = builder.streetAddress;
-        this.locality = builder.locality;
-        this.region = builder.region;
-        this.postalCode = builder.postalCode;
-        this.country = builder.country;
-        this.type = builder.type;
-    }
 
     /**
      * Gets the full mailing address, formatted for display or use with a mailing label.
@@ -125,7 +115,35 @@ public class Address extends MultiValuedAttribute { // NOSONAR - Builder constru
         return super.isPrimary();
     }
 
-    @Override
+    public void setFormatted(String formatted) {
+		this.formatted = formatted;
+	}
+
+	public void setStreetAddress(String streetAddress) {
+		this.streetAddress = streetAddress;
+	}
+
+	public void setLocality(String locality) {
+		this.locality = locality;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -210,147 +228,7 @@ public class Address extends MultiValuedAttribute { // NOSONAR - Builder constru
                 + type + ", operation=" + getOperation() + ", primary=" + isPrimary() + "]";
     }
 
-    /**
-     * Builder class that is used to build {@link Address} instances
-     */
-    public static class Builder extends MultiValuedAttribute.Builder {
-
-        private String formatted;
-        private String streetAddress;
-        private String locality;
-        private String region;
-        private String postalCode;
-        private String country;
-        private Type type;
-
-        public Builder() {
-        }
-
-        /**
-         * builds an Builder based of the given Attribute
-         * 
-         * @param address
-         *        existing Attribute
-         */
-        public Builder(Address address) {
-            super(address);
-            formatted = address.formatted;
-            streetAddress = address.streetAddress;
-            locality = address.locality;
-            region = address.region;
-            postalCode = address.postalCode;
-            country = address.country;
-            type = address.type;
-        }
-
-        /**
-         * Sets the full mailing address (See {@link Address#getFormatted()}).
-         * 
-         * @param formatted
-         *        the formatted address
-         * 
-         * @return the builder itself
-         */
-        public Builder setFormatted(String formatted) {
-            this.formatted = formatted;
-            return this;
-        }
-
-        /**
-         * Sets the full street address component, (See {@link Address#getStreetAddress()}).
-         * 
-         * @param streetAddress
-         *        the street address
-         * 
-         * @return the builder itself
-         */
-        public Builder setStreetAddress(String streetAddress) {
-            this.streetAddress = streetAddress;
-            return this;
-        }
-
-        /**
-         * Sets the city or locality.
-         * 
-         * @param locality
-         *        the locality
-         * 
-         * @return the builder itself
-         */
-        public Builder setLocality(String locality) {
-            this.locality = locality;
-            return this;
-        }
-
-        /**
-         * Sets the state or region.
-         * 
-         * @param region
-         *        the region
-         * 
-         * @return the builder itself
-         */
-        public Builder setRegion(String region) {
-            this.region = region;
-            return this;
-        }
-
-        /**
-         * Sets the postal code
-         * 
-         * @param postalCode
-         *        the postal code
-         * 
-         * @return the builder itself
-         */
-        public Builder setPostalCode(String postalCode) {
-            this.postalCode = postalCode;
-            return this;
-        }
-
-        /**
-         * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
-         * 
-         * @param type
-         *        the type of the attribute
-         * @return the builder itself
-         */
-        public Builder setType(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        /**
-         * Sets the country name (See {@link Address#getCountry()}).
-         * 
-         * @param country
-         *        the country
-         * 
-         * @return the builder itself
-         */
-        public Builder setCountry(String country) {
-            this.country = country;
-            return this;
-        }
-
-        @Override
-        public Builder setPrimary(boolean primary) {
-            super.setPrimary(primary);
-            return this;
-        }
-
-        @Override
-        public Builder setOperation(String operation) {
-            super.setOperation(operation);
-            return this;
-        }
-
-        @Override
-        public Address build() {
-            return new Address(this);
-        }
-
-    }
+    
 
     /**
      * Represents an address type. Canonical values are available as static constants.

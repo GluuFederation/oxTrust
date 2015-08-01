@@ -34,13 +34,9 @@ public class Photo extends MultiValuedAttribute {
     /**
      * Default constructor for Jackson
      */
-    private Photo() {
+    public Photo() {
     }
 
-    private Photo(Builder builder) {
-        super(builder);
-        this.type = builder.type;
-    }
 
     @Override
     public String getOperation() {
@@ -121,7 +117,33 @@ public class Photo extends MultiValuedAttribute {
         return type;
     }
 
-    @Override
+    public void setType(Type type) {
+		this.type = type;
+	}
+    
+    
+    public void setOperation(String operation) {
+        super.setOperation(operation);
+    }
+
+    
+    public void setDisplay(String display) {
+        super.setDisplay(display);
+    }
+
+    public void setValue(URI uri) {
+        super.setValue(uri.toString());
+    }
+
+    
+
+    
+    
+    public void setPrimary(boolean primary) {
+        super.setPrimary(primary);
+    }
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -157,88 +179,7 @@ public class Photo extends MultiValuedAttribute {
                 + ", operation=" + getOperation() + "]";
     }
 
-    /**
-     * Builder class that is used to build {@link Photo} instances
-     */
-    public static class Builder extends MultiValuedAttribute.Builder {
-
-        private Type type;
-
-        public Builder() {
-        }
-
-        /**
-         * builds an Builder based of the given Attribute
-         * 
-         * @param photo
-         *        existing Attribute
-         */
-        public Builder(Photo photo) {
-            super(photo);
-            type = photo.type;
-        }
-
-        @Override
-        public Builder setOperation(String operation) {
-            super.setOperation(operation);
-            return this;
-        }
-
-        @Override
-        public Builder setDisplay(String display) {
-            super.setDisplay(display);
-            return this;
-
-        }
-
-        /**
-         * an URI pointing to an image
-         * 
-         * @param uri
-         *        a image URI
-         * @return the Builder itself
-         */
-        public Builder setValue(URI uri) {
-            super.setValue(uri.toString());
-            return this;
-        }
-
-        /**
-         * an imageDataURI which contains a small in data image. For performance issues it is recommend to to store big
-         * pictures as ImageDataURI
-         * 
-         * @param image
-         *        a image
-         * @return the Builder itself
-         */
-        public Builder setValue(ImageDataURI image) {
-            super.setValue(image.toString());
-            return this;
-        }
-
-        /**
-         * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
-         * 
-         * @param type
-         *        the type of the attribute
-         * @return the builder itself
-         */
-        public Builder setType(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public Builder setPrimary(boolean primary) {
-            super.setPrimary(primary);
-            return this;
-        }
-
-        @Override
-        public Photo build() {
-            return new Photo(this);
-        }
-    }
+    
 
     /**
      * Represents a photo type. Canonical values are available as static constants.

@@ -61,6 +61,8 @@ import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.GroupRef;
 import org.gluu.oxtrust.model.scim2.Im;
 import org.gluu.oxtrust.model.scim2.MemberRef;
+import org.gluu.oxtrust.model.scim2.Meta;
+
 import org.gluu.oxtrust.model.scim2.PhoneNumber;
 import org.gluu.oxtrust.model.scim2.Photo;
 import org.gluu.oxtrust.model.scim2.Role;
@@ -690,68 +692,69 @@ public class CopyUtils2 implements Serializable {
             log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new User();
 		}
-		User.Builder userBuilder = new User.Builder(source.getGivenName());
+		
 		
 		Set<String> schemas=new HashSet<String>();
 		schemas.add("urn:ietf:params:scim:schemas:core:2.0:User");
-		userBuilder.setSchemas(schemas);
+		destination.setSchemas(schemas);
 		
 		log.trace(" setting ID ");
 		if (source.getInum() != null) {
-			userBuilder.setId(source.getInum());
+			destination.setId(source.getInum());
 		}
 		log.trace(" setting userName ");
 		if (source.getUid() != null) {
-			userBuilder.setDisplayName(source.getUid());
+			destination.setDisplayName(source.getUid());
 		}
 		log.trace(" setting ExternalID ");
 		if (source.getAttribute("oxTrustExternalId") != null) {
-			userBuilder.setExternalId(source.getAttribute("oxTrustExternalId"));
+			destination.setExternalId(source.getAttribute("oxTrustExternalId"));
 		}
 		log.trace(" setting givenname ");
 		if (source.getGivenName() != null) {
-			org.gluu.oxtrust.model.scim2.Name.Builder nameBuilder = new org.gluu.oxtrust.model.scim2.Name.Builder();
-			nameBuilder.setGivenName(source.getGivenName());
-			userBuilder.setName(nameBuilder.build());
+			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
+			name.setGivenName(source.getGivenName());
+			destination.setName(name);
+			
 		}
 		log.trace(" getting family name ");
 		if (source.getSurname() != null) {
-			org.gluu.oxtrust.model.scim2.Name.Builder nameBuilder = new org.gluu.oxtrust.model.scim2.Name.Builder();
-			nameBuilder.setFamilyName(source.getSurname());
-			userBuilder.setName(nameBuilder.build());
+			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
+			name.setFamilyName(source.getSurname());
+			destination.setName(name);
 		}
 		log.trace(" getting middlename ");
 		if (source.getAttribute("oxTrustMiddleName") != null) {
-			org.gluu.oxtrust.model.scim2.Name.Builder nameBuilder = new org.gluu.oxtrust.model.scim2.Name.Builder();
-			nameBuilder.setMiddleName(source.getAttribute("oxTrustMiddleName"));
-			userBuilder.setName(nameBuilder.build());
+			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
+			name.setMiddleName(source.getAttribute("oxTrustMiddleName"));
+			destination.setName(name);
 		}
 		;
 		log.trace(" getting honorificPrefix ");
 		if (source.getAttribute("oxTrusthonorificPrefix") != null) {
-			org.gluu.oxtrust.model.scim2.Name.Builder nameBuilder = new org.gluu.oxtrust.model.scim2.Name.Builder();
-			nameBuilder.setHonorificPrefix(source.getAttribute("oxTrusthonorificPrefix"));
-			userBuilder.setName(nameBuilder.build());
+			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
+			name.setHonorificPrefix(source.getAttribute("oxTrusthonorificPrefix"));
+			destination.setName(name);
 		}
 		;
 		log.trace(" getting honorificSuffix ");
 		if (source.getAttribute("oxTrusthonorificSuffix") != null) {
-			org.gluu.oxtrust.model.scim2.Name.Builder nameBuilder = new org.gluu.oxtrust.model.scim2.Name.Builder();
-			nameBuilder.setHonorificSuffix(source.getAttribute("oxTrusthonorificSuffix"));
-			userBuilder.setName(nameBuilder.build());
+			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
+			name.setHonorificSuffix(source.getAttribute("oxTrusthonorificSuffix"));
+			destination.setName(name);
 		}
 		;
 		log.trace(" getting displayname ");
 		if (source.getDisplayName() != null) {
-			userBuilder.setDisplayName(source.getDisplayName());
+			destination.setDisplayName(source.getDisplayName());
 		}
 		log.trace(" getting nickname ");
 		if (source.getAttribute("oxTrustNickName") != null) {
-			userBuilder.setNickName(source.getAttribute("oxTrustNickName"));
+			destination.setNickName(source.getAttribute("oxTrustNickName"));
 		}
 		log.trace(" getting profileURL ");
 		if (source.getAttribute("oxTrustProfileURL") != null) {
-			userBuilder.setProfileUrl(source.getAttribute("oxTrustProfileURL"));
+			destination.setProfileUrl(source.getAttribute("oxTrustProfileURL"));
 		}
 
 		log.trace(" getting emails ");
@@ -773,7 +776,7 @@ public class CopyUtils2 implements Serializable {
 			 * oneEmail.setType(listEmailTyps[i]);
 			 * oneEmail.setPrimary(listEmailPrimary[i]); emails.add(oneEmail); }
 			 */
-			userBuilder.addEmails(listOfEmails);
+			destination.setEmails(listOfEmails);
 		}
 		log.trace(" getting addresses ");
 		// getting addresses
@@ -830,7 +833,7 @@ public class CopyUtils2 implements Serializable {
 			 * 
 			 * } }
 			 */
-			userBuilder.addAddresses(listOfAddresses);
+			destination.setAddresses(listOfAddresses);
 		}
 		log.trace(" setting phoneNumber ");
 		// getting user's PhoneNumber
@@ -857,7 +860,7 @@ public class CopyUtils2 implements Serializable {
 			 * } }
 			 */
 
-			userBuilder.addPhoneNumbers(listOfPhones);
+			destination.setPhoneNumbers(listOfPhones);
 		}
 
 		log.trace(" getting ims ");
@@ -878,7 +881,7 @@ public class CopyUtils2 implements Serializable {
 			 * ims.add(im); } }
 			 */
 			
-			userBuilder.addIms(listOfIms);
+			destination.setIms(listOfIms);
 		}
 		log.trace(" setting photos ");
 		// getting photos
@@ -903,34 +906,34 @@ public class CopyUtils2 implements Serializable {
 			 * null){photo.setValue(photoList[i]);photo.setType(photoTypes[i]);}
 			 * photos.add(photo); } }
 			 */
-			userBuilder.addPhotos(listOfPhotos);
+			destination.setPhotos(listOfPhotos);
 		}
 		log.trace(" setting userType ");
 		if (source.getAttribute("oxTrustUserType") != null) {
-			userBuilder.setUserType(source.getAttribute("oxTrustUserType"));
+			destination.setUserType(source.getAttribute("oxTrustUserType"));
 		}
 		log.trace(" setting title ");
 		if (source.getAttribute("oxTrustTitle") != null) {
-			userBuilder.setTitle(source.getAttribute("oxTrustTitle"));
+			destination.setTitle(source.getAttribute("oxTrustTitle"));
 		}
 		log.trace(" setting Locale ");
 		if (source.getAttribute("oxTrustLocale") != null) {
-			userBuilder.setLocale(source.getAttribute("oxTrustLocale"));
+			destination.setLocale(source.getAttribute("oxTrustLocale"));
 		}
 		log.trace(" setting preferredLanguage ");
 		if (source.getPreferredLanguage() != null) {
-			userBuilder.setPreferredLanguage(source.getPreferredLanguage());
+			destination.setPreferredLanguage(source.getPreferredLanguage());
 		}
 		log.trace(" setting timeZone ");
 		if (source.getTimezone() != null) {
-			userBuilder.setTimezone(source.getTimezone());
+			destination.setTimezone(source.getTimezone());
 		}
 		log.trace(" setting active ");
 		if (source.getAttribute("oxTrustActive") != null) {
-			userBuilder.setActive(Boolean.parseBoolean(source.getAttribute("oxTrustActive")));
+			destination.setActive(Boolean.parseBoolean(source.getAttribute("oxTrustActive")));
 		}
 		log.trace(" setting password ");
-		userBuilder.setPassword("Hidden for Privacy Reasons");
+		destination.setPassword("Hidden for Privacy Reasons");
 
 		// getting user groups
 		log.trace(" setting  groups ");
@@ -943,13 +946,13 @@ public class CopyUtils2 implements Serializable {
 			for (String groupDN : listOfGroups) {
 				GluuGroup gluuGroup = groupService.getGroupByDn(groupDN);
 				
-				org.gluu.oxtrust.model.scim2.GroupRef.Builder groupRefBuilder = new org.gluu.oxtrust.model.scim2.GroupRef.Builder();
-				groupRefBuilder.setDisplay(gluuGroup.getDisplayName());
-				groupRefBuilder.setValue(gluuGroup.getInum());
-				groupRefList.add(groupRefBuilder.build());
+				GroupRef groupRef = new GroupRef();
+				groupRef.setDisplay(gluuGroup.getDisplayName());
+				groupRef.setValue(gluuGroup.getInum());
+				groupRefList.add(groupRef);
 			}
 			
-			userBuilder.setGroups(groupRefList);
+			destination.setGroups(groupRefList);
 		}
 
 		// getting roles
@@ -966,7 +969,7 @@ public class CopyUtils2 implements Serializable {
 			 * null){role.setValue(listRoles[i]);} roles.add(role); } }
 			 */
 
-			userBuilder.addRoles(listOfRoles);
+			destination.setRoles(listOfRoles);
 		}
 		log.trace(" getting entilements ");
 		// getting entitlements
@@ -987,7 +990,7 @@ public class CopyUtils2 implements Serializable {
 			 * } }
 			 */
 
-			userBuilder.addEntitlements(listOfEnts);
+			destination.setEntitlements(listOfEnts);
 		}
 
 		// getting x509Certificates
@@ -1010,21 +1013,21 @@ public class CopyUtils2 implements Serializable {
 			 * } }
 			 */
 
-			userBuilder.addX509Certificates(listOfCerts);
+			destination.setX509Certificates(listOfCerts);
 		}
 		log.trace(" setting meta ");
 		
 		
 		if(source.getAttribute("oxTrustMetaCreated")!=null && source.getAttribute("oxTrustMetaCreated")!="" && source.getAttribute("oxTrustMetaLastModified")!=null && source.getAttribute("oxTrustMetaLastModified")!="")
 		{
-			org.gluu.oxtrust.model.scim2.Meta.Builder metaBuilder = new org.gluu.oxtrust.model.scim2.Meta.Builder(new Date(source.getAttribute("oxTrustMetaCreated")),new Date(source.getAttribute("oxTrustMetaLastModified")));	
+			Meta meta=new Meta();	
 			
 			// getting meta data
 			if (source.getAttribute("oxTrustMetaVersion") != null) {
-				metaBuilder.setVersion(source.getAttribute("oxTrustMetaVersion"));
+				meta.setVersion(source.getAttribute("oxTrustMetaVersion"));
 			}
 			if (source.getAttribute("oxTrustMetaLocation") != null) {
-				metaBuilder.setLocation(source.getAttribute("oxTrustMetaLocation"));
+				meta.setLocation(source.getAttribute("oxTrustMetaLocation"));
 			}
 			
 			
@@ -1054,8 +1057,8 @@ public class CopyUtils2 implements Serializable {
 					}
 				}
 				if (listOfCustomAttr.size() > 0) {
-					metaBuilder.setAttributes(listOfCustomAttr);
-					userBuilder.setMeta(metaBuilder.build());
+					meta.setAttributes(listOfCustomAttr);
+					destination.setMeta(meta);
 				}
 			}
 		}
@@ -1064,7 +1067,7 @@ public class CopyUtils2 implements Serializable {
 		
 		log.trace(" returning destination ");
 		System.out.println("CopyUtils2");
-		return userBuilder.build();
+		return destination;
 	}
 
 	/**

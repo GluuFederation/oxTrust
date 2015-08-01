@@ -22,19 +22,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Email extends MultiValuedAttribute {
 
+	public static final Pattern VALIDATION_PATTERN = Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@" +
+            "[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
+	
     @JsonProperty
     private Type type;
 
     /**
      * Default constructor for Jackson
      */
-    private Email() {
+    public Email() {
     }
 
-    private Email(Builder builder) {
-        super(builder);
-        this.type = builder.type;
-    }
 
     @Override
     public String getOperation() {
@@ -71,8 +70,48 @@ public class Email extends MultiValuedAttribute {
     public Type getType() {
         return type;
     }
+    
+    public void setOperation(String operation) {
+        super.setOperation(operation);
+    }
+    
+    public void setDisplay(String display) {
+        super.setDisplay(display);
+    }
 
-    @Override
+    /**
+     * Sets the email value.
+     *
+     * @param value
+     *        the email attribute
+     * @return the builder itself
+     * @throws SCIMDataValidationException in case the value is not a well-formed email
+     */
+
+    public void setValue(String value) {
+        Matcher matcher = VALIDATION_PATTERN.matcher(value);
+        if (!matcher.matches()) {
+            throw new SCIMDataValidationException("The value '" + value + "' is not a well-formed email.");
+        }
+        super.setValue(value);
+    }
+
+    /**
+     * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
+     *
+     * @param type
+     *        the type of the attribute
+     * @return the builder itself
+     */
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setPrimary(boolean primary) {
+        super.setPrimary(primary);
+    }
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -108,86 +147,7 @@ public class Email extends MultiValuedAttribute {
                 + ", operation=" + getOperation() + "]";
     }
 
-    /**
-     * Builder class that is used to build {@link Email} instances
-     */
-    public static class Builder extends MultiValuedAttribute.Builder {
-
-        /**
-         * Pattern comes from: http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
-         */
-        public static final Pattern VALIDATION_PATTERN = Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@" +
-                "[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
-
-        private Type type;
-
-        public Builder() {
-        }
-
-        /**
-         * builds an Builder based of the given Attribute
-         *
-         * @param email
-         *        existing Attribute
-         */
-        public Builder(Email email) {
-            super(email);
-            type = email.type;
-        }
-
-        @Override
-        public Builder setOperation(String operation) {
-            super.setOperation(operation);
-            return this;
-        }
-
-        @Override
-        public Builder setDisplay(String display) {
-            super.setDisplay(display);
-            return this;
-        }
-
-        /**
-         * Sets the email value.
-         *
-         * @param value
-         *        the email attribute
-         * @return the builder itself
-         * @throws SCIMDataValidationException in case the value is not a well-formed email
-         */
-        @Override
-        public Builder setValue(String value) {
-            Matcher matcher = VALIDATION_PATTERN.matcher(value);
-            if (!matcher.matches()) {
-                throw new SCIMDataValidationException("The value '" + value + "' is not a well-formed email.");
-            }
-            super.setValue(value);
-            return this;
-        }
-
-        /**
-         * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
-         *
-         * @param type
-         *        the type of the attribute
-         * @return the builder itself
-         */
-        public Builder setType(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public Builder setPrimary(boolean primary) {
-            super.setPrimary(primary);
-            return this;
-        }
-
-        @Override
-        public Email build() {
-            return new Email(this);
-        }
-    }
+    
 
     /**
      * Represents an email type. Canonical values are available as static constants.

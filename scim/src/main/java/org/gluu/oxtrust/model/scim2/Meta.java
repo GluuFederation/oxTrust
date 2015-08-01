@@ -37,17 +37,9 @@ public class Meta {
     /**
      * Default constructor for Jackson
      */
-    private Meta() {
+    public Meta() {
     }
 
-    private Meta(Builder builder) {
-        this.created = builder.created;
-        this.lastModified = builder.lastModified;
-        this.attributes = builder.attributes;
-        this.location = builder.location;
-        this.version = builder.version;
-        this.resourceType = builder.resourceType;
-    }
 
     /**
      * Gets the URI of the Resource being returned.
@@ -124,110 +116,31 @@ public class Meta {
         return resourceType;
     }
 
-    /**
-     * Builder class that is used to build {@link Meta} instances
-     */
-    public static class Builder {
-        private final Date created;
-        private final Date lastModified;
-        private String location;
-        private String version;
-        private Set<String> attributes = new HashSet<String>();
-        private String resourceType;
+    public void setCreated(Date created) {
+		this.created = created;
+	}
 
-        /**
-         * Constructs a new builder with the created and last modified time set to the current time
-         */
-        public Builder() {
-            this.created = new Date(System.currentTimeMillis());
-            this.lastModified = this.created;
-        }
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
 
-        /**
-         * Will set created to given value and lastModified to System.currentTime Only be used by the server. Will be
-         * ignored by PUT and PATCH operations
-         */
-        public Builder(Date created, Date lastModified) {
-            this.created = created != null ? new Date(created.getTime()) : null;
-            this.lastModified = lastModified != null ? new Date(lastModified.getTime()) : null;
-        }
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
-        /**
-         * Constructs a new builder with the created and last modified time set to the given values
-         * 
-         * @param meta
-         *            the meta object to copy from
-         */
-        public Builder(Meta meta) {
-            if (meta == null) {
-                throw new IllegalArgumentException("The given Meta can't be null");
-            }
-            this.created = meta.created;
-            this.lastModified = meta.lastModified;
-            this.location = meta.location;
-            this.version = meta.version;
-            this.attributes = meta.attributes;
-            this.resourceType = meta.resourceType;
-        }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-        /**
-         * Set the location (See {@link Meta#getLocation()}).
-         * 
-         * @param location
-         *            the resource uri
-         * @return the builder itself
-         */
-        public Builder setLocation(String location) {
-            this.location = location;
-            return this;
-        }
+	public void setAttributes(Set<String> attributes) {
+		this.attributes = attributes;
+	}
 
-        /**
-         * Sets the version of the Resource (See {@link Meta#getVersion()}).
-         * 
-         * @param version
-         *            the version of the resource
-         * @return the builder itself
-         */
-        public Builder setVersion(String version) {
-            this.version = version;
-            return this;
-        }
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
+	}
 
-        /**
-         * Sets the type of the Resource (See {@link Meta#getResourceType()}).
-         * 
-         * @param resourceType
-         *            the type
-         * @return the builder itself
-         */
-        public Builder setResourceType(String resourceType) {
-            this.resourceType = resourceType;
-            return this;
-        }
-
-        /**
-         * Sets the names of the attributes to be removed from the Resource.
-         * 
-         * @param attributes
-         *            name of attributes to be deleted
-         * @return the builder itself
-         */
-        public Builder setAttributes(Set<String> attributes) {
-            this.attributes = attributes;
-            return this;
-        }
-
-        /**
-         * Builds a Meta Object with the given parameters
-         * 
-         * @return a new Meta Object
-         */
-        public Meta build() {
-            return new Meta(this);
-        }
-    }
-
+	
     @Override
     public int hashCode() {
         final int prime = 31;

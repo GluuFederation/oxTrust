@@ -23,13 +23,9 @@ public class Entitlement extends MultiValuedAttribute {
     /**
      * Default constructor for Jackson
      */
-    private Entitlement() {
+    public Entitlement() {
     }
 
-    private Entitlement(Builder builder) {
-        super(builder);
-        type = builder.type;
-    }
 
     @Override
     public String getOperation() {
@@ -67,7 +63,32 @@ public class Entitlement extends MultiValuedAttribute {
         return type;
     }
 
+    public void setType(Type type) {
+		this.type = type;
+	}
+    
     @Override
+    public void setOperation(String operation) {
+        super.setOperation(operation);
+    }
+
+    @Override
+    public void setDisplay(String display) {
+        super.setDisplay(display);
+
+    }
+
+    @Override
+    public void setValue(String value) {
+        super.setValue(value);
+    }
+
+    @Override
+    public void setPrimary(boolean primary) {
+        super.setPrimary(primary);
+    }
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -103,69 +124,7 @@ public class Entitlement extends MultiValuedAttribute {
                 + ", operation=" + getOperation() + "]";
     }
 
-    /**
-     * Builder class that is used to build {@link Entitlement} instances
-     */
-    public static class Builder extends MultiValuedAttribute.Builder {
-
-        private Type type;
-
-        public Builder() {
-        }
-
-        /**
-         * builds an Builder based of the given Attribute
-         * 
-         * @param entitlement
-         *        existing Attribute
-         */
-        public Builder(Entitlement entitlement) {
-            super(entitlement);
-            type = entitlement.type;
-        }
-
-        @Override
-        public Builder setOperation(String operation) {
-            super.setOperation(operation);
-            return this;
-        }
-
-        @Override
-        public Builder setDisplay(String display) {
-            super.setDisplay(display);
-            return this;
-
-        }
-
-        @Override
-        public Builder setValue(String value) {
-            super.setValue(value);
-            return this;
-        }
-
-        /**
-         * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
-         * 
-         * @param type
-         *        the type of the attribute
-         * @return the builder itself
-         */
-        public Builder setType(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public Builder setPrimary(boolean primary) {
-            super.setPrimary(primary);
-            return this;
-        }
-
-        @Override
-        public Entitlement build() {
-            return new Entitlement(this);
-        }
-    }
+    
 
     /**
      * Represents an entitlement type.

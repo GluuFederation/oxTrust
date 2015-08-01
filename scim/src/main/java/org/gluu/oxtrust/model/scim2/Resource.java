@@ -28,12 +28,6 @@ public abstract class Resource {
     protected Resource() {
     }
 
-    protected Resource(Builder builder) {
-        this.id = builder.id;
-        this.externalId = builder.externalId;
-        this.meta = builder.meta;
-        this.schemas = builder.schemas;
-    }
 
     /**
      * Gets the Id of the resource.
@@ -78,101 +72,32 @@ public abstract class Resource {
         return schemas;
     }
 
-    /**
-     * The Builder class is used to construct instances of the {@link Resource}
-     */
-    public abstract static class Builder {
-        private String id;
-        private Meta meta;
-        private Set<String> schemas = new HashSet<String>(); // NOSONAR - fields are needed in child classes
-        protected String externalId; // NOSONAR - fields are needed in child classes
+    public void setId(String id) {
+		this.id = id;
+	}
 
-        public Builder(Resource resource) {
-            if (resource != null) {
-                this.id = resource.id;
-                this.externalId = resource.externalId;
-                this.meta = resource.meta;
-                this.schemas = resource.schemas;
-            }
-        }
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
 
-        /**
-         * sets the schemas of the Resource
-         * 
-         * @param schemas
-         *            actual schemas
-         * @return the builder itself
-         */
-        public Builder setSchemas(Set<String> schemas) {
-            this.schemas = schemas;
-            return this;
-        }
-        
-        protected void addSchema(String schema){
-            if(schemas == null){
-                schemas = new HashSet<String>();
-            }
-            schemas.add(schema);
-        }
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
 
-        /**
-         * Sets the id of the resource.
-         * 
-         * <p>
-         * client info: The id of a User will be created and set by the OSIAM server. 
-         * If a {@link User} or {@link Group} which is send to the OSIAM server has this value filled, 
-         * the value will be ignored or the action will be rejected.
-         * </p>
-         * 
-         * @param id
-         *            if of the resource
-         * @return the builder itself
-         */
-        public Builder setId(String id) {
-            this.id = id;
-            return this;
-        }
+	public void setSchemas(Set<String> schemas) {
+		this.schemas = schemas;
+	}
 
-        /**
-         * Sets the external id (See {@link Resource#getExternalId()}).
-         * 
-         * @param externalId
-         *            the external id
-         * 
-         * @return the builder itself
-         */
-        public Builder setExternalId(String externalId) {
-            this.externalId = externalId;
-            return this;
+    
+    protected void addSchema(String schema){
+        if(schemas == null){
+            schemas = new HashSet<String>();
         }
-
-        /**
-         * Sets the meta data
-         * 
-         * <p>
-         * client info: The meta information of a User will be created and set by the OSIAM server. 
-         * If a {@link User} or {@link Group} which is send to the OSIAM server has this value filled, 
-         * the value will be ignored or the action will be rejected. 
-         * For an update(PATCH) the attribute value can be set by the client. In normal case this 
-         * should be set by the {@link UpdateUser} or {@link UpdateGroup} and not by the client directly. 
-         * </p>
-         * 
-         * @param meta
-         *            the meta object
-         * @return the builder itself
-         */
-        public Builder setMeta(Meta meta) {
-            this.meta = meta;
-            return this;
-        }
-
-        /**
-         * Builds the Object of the Builder
-         * 
-         * @return a new main Object of the Builder
-         */
-        public abstract <T> T build();
+        schemas.add(schema);
     }
+
+
+	
 
     @Override
     public int hashCode() {

@@ -20,13 +20,9 @@ public class X509Certificate extends MultiValuedAttribute {
     /**
      * Default constructor for Jackson
      */
-    private X509Certificate() {
+    public X509Certificate() {
     }
 
-    private X509Certificate(Builder builder) {
-        super(builder);
-        type = builder.type;
-    }
 
     @Override
     public String getOperation() {
@@ -64,75 +60,38 @@ public class X509Certificate extends MultiValuedAttribute {
         return type;
     }
 
-    @Override
+    public void setType(Type type) {
+		this.type = type;
+	}
+    
+    
+    public void setOperation(String operation) {
+        super.setOperation(operation);
+    }
+
+    
+    public void setDisplay(String display) {
+        super.setDisplay(display);
+
+    }
+
+    
+    public void setValue(String value) {
+        super.setValue(value);
+    }
+
+   
+    public void setPrimary(boolean primary) {
+        super.setPrimary(primary);
+    }
+
+	@Override
     public String toString() {
         return "X509Certificate [value=" + getValue() + ", type=" + type + ", primary=" + isPrimary() 
                 + ", operation=" + getOperation() + "]";
     }
 
-    /**
-     * Builder class that is used to build {@link X509Certificate} instances
-     */
-    public static class Builder extends MultiValuedAttribute.Builder {
-
-        private Type type;
-
-        public Builder() {
-        }
-
-        /**
-         * builds an Builder based of the given Attribute
-         * 
-         * @param x509Certificate
-         *        existing Attribute
-         */
-        public Builder(X509Certificate x509Certificate) {
-            super(x509Certificate);
-            type = x509Certificate.type;
-        }
-
-        @Override
-        public Builder setOperation(String operation) {
-            super.setOperation(operation);
-            return this;
-        }
-
-        @Override
-        public Builder setDisplay(String display) {
-            super.setDisplay(display);
-            return this;
-
-        }
-
-        @Override
-        public Builder setValue(String value) {
-            super.setValue(value);
-            return this;
-        }
-
-        @Override
-        public Builder setPrimary(boolean primary) {
-            super.setPrimary(primary);
-            return this;
-        }
-
-        /**
-         * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute# getType()}).
-         * 
-         * @param type
-         *        the type of the attribute
-         * @return the builder itself
-         */
-        public Builder setType(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public X509Certificate build() {
-            return new X509Certificate(this);
-        }
-    }
+    
 
     /**
      * Represents an X509Certificate type.

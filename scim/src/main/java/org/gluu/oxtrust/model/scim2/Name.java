@@ -31,17 +31,9 @@ public class Name {
     /**
      * Default constructor for Jackson
      */
-    private Name() {
+    public Name() {
     }
 
-    private Name(Builder builder) {
-        formatted = builder.formatted;
-        familyName = builder.familyName;
-        givenName = builder.givenName;
-        middleName = builder.middleName;
-        honorificPrefix = builder.honorificPrefix;
-        honorificSuffix = builder.honorificSuffix;
-    }
 
     /**
      * Gets the full name, including all middle names, titles, and suffixes as appropriate, formatted for display.
@@ -127,7 +119,31 @@ public class Name {
         return honorificSuffix;
     }
 
-    /**
+    public void setFormatted(String formatted) {
+		this.formatted = formatted;
+	}
+
+	public void setFamilyName(String familyName) {
+		this.familyName = familyName;
+	}
+
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
+	public void setHonorificPrefix(String honorificPrefix) {
+		this.honorificPrefix = honorificPrefix;
+	}
+
+	public void setHonorificSuffix(String honorificSuffix) {
+		this.honorificSuffix = honorificSuffix;
+	}
+
+	/**
      * <p>Checks if this {@link Name} is empty, i.e. all properties are empty or null.</p>
      *
      * @return true if all properties are null or empty, else false
@@ -168,141 +184,5 @@ public class Name {
                 + honorificSuffix + "]";
     }
 
-    /**
-     * Builder class that is used to build {@link Name} instances
-     */
-    public static class Builder {
-        private String formatted;
-        private String familyName;
-        private String givenName;
-        private String middleName;
-        private String honorificPrefix;
-        private String honorificSuffix;
-
-        /**
-         * Sets the full name (See {@link Name#getFormatted()}).
-         *
-         * @param formatted
-         *            the formatted name
-         * @return the builder itself
-         */
-        public Builder setFormatted(String formatted) {
-            this.formatted = formatted;
-            return this;
-        }
-
-        /**
-         * Sets the family name of the User (See {@link Name#getFamilyName()}).
-         *
-         * @param familyName
-         *            the family name
-         * @return the builder itself
-         */
-        public Builder setFamilyName(String familyName) {
-            this.familyName = familyName;
-            return this;
-        }
-
-        /**
-         * Sets the given name of the User (See {@link Name#getGivenName()}).
-         *
-         * @param givenName
-         *            the given name
-         * @return the builder itself
-         */
-        public Builder setGivenName(String givenName) {
-            this.givenName = givenName;
-            return this;
-        }
-
-        /**
-         * Sets the middle name(s) of the User (See {@link Name#getMiddleName()}).
-         *
-         * @param middleName
-         *            the middle name
-         * @return the builder itself
-         */
-        public Builder setMiddleName(String middleName) {
-            this.middleName = middleName;
-            return this;
-        }
-
-        /**
-         * Sets the honorific prefix(es) of the User (See {@link Name#getHonorificPrefix()}).
-         *
-         * @param honorificPrefix
-         *            the honorific prefix
-         * @return the builder itself
-         */
-        public Builder setHonorificPrefix(String honorificPrefix) {
-            this.honorificPrefix = honorificPrefix;
-            return this;
-        }
-
-        /**
-         * Sets the honorific suffix(es) of the User (See {@link Name#getHonorificSuffix()}).
-         *
-         * @param honorificSuffix
-         *            the honorific suffix
-         * @return the builder itself
-         */
-        public Builder setHonorificSuffix(String honorificSuffix) {
-            this.honorificSuffix = honorificSuffix;
-            return this;
-        }
-
-        /**
-         * Builds a Name Object with the given parameters
-         *
-         * @return The complete Name Object
-         */
-        public Name build() {
-            return new Name(this);
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Name other = (Name) o;
-
-        if (familyName != null ? !familyName.equals(other.familyName) : other.familyName != null) {
-            return false;
-        }
-        if (formatted != null ? !formatted.equals(other.formatted) : other.formatted != null) {
-            return false;
-        }
-        if (givenName != null ? !givenName.equals(other.givenName) : other.givenName != null) {
-            return false;
-        }
-        if (honorificPrefix != null ? !honorificPrefix.equals(other.honorificPrefix) : other.honorificPrefix != null) {
-            return false;
-        }
-        if (honorificSuffix != null ? !honorificSuffix.equals(other.honorificSuffix) : other.honorificSuffix != null) {
-            return false;
-        }
-        if (middleName != null ? !middleName.equals(other.middleName) : other.middleName != null) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (familyName == null ? 0 : familyName.hashCode());
-        result = prime * result + (formatted == null ? 0 : formatted.hashCode());
-        result = prime * result + (givenName == null ? 0 : givenName.hashCode());
-        result = prime * result + (honorificPrefix == null ? 0 : honorificPrefix.hashCode());
-        result = prime * result + (honorificSuffix == null ? 0 : honorificSuffix.hashCode());
-        result = prime * result + (middleName == null ? 0 : middleName.hashCode());
-        return result;
-    }
+    
 }

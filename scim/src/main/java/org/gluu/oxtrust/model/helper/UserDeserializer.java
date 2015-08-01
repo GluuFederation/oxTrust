@@ -51,7 +51,7 @@ public class UserDeserializer extends StdDeserializer<User> {
             return user;
         }
 
-        User.Builder builder = new User.Builder(user);
+        User userObj = new User();
 
         for (String urn : user.getSchemas()) {
             if (urn.equals(Constants.USER_CORE_SCHEMA)) {
@@ -65,10 +65,10 @@ public class UserDeserializer extends StdDeserializer<User> {
 
             deserializer.setUrn(urn);
             Extension extension = mapper.readValue(extensionNode.toString(), Extension.class);
-            builder.addExtension(extension);
+            userObj.addExtension(extension);
 
         }
-        return builder.build();
+        return userObj;
     }
 
 }

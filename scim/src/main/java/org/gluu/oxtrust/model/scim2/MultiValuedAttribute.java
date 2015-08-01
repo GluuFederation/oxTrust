@@ -37,13 +37,6 @@ public abstract class MultiValuedAttribute {
     protected MultiValuedAttribute() {
     }
 
-    protected MultiValuedAttribute(Builder builder) {
-        this.value = builder.value;
-        this.display = builder.display;
-        this.primary = builder.primary;
-        this.operation = builder.operation;
-        this.reference = builder.reference;
-    }
 
     /**
      * Gets the attribute's significant value; e.g., the e-mail address, phone number etc.
@@ -115,7 +108,30 @@ public abstract class MultiValuedAttribute {
         return reference;
     }
 
-    @Override
+    public void setOperation(String operation) {
+		this.operation = operation;
+	}
+
+	public void setValue(String value) {
+		if(Strings.isNullOrEmpty(value)){
+            throw new SCIMDataValidationException("The given value can't be null or empty.");
+        }
+        this.value = value;
+	}
+
+	public void setDisplay(String display) {
+		this.display = display;
+	}
+
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -177,113 +193,5 @@ public abstract class MultiValuedAttribute {
     public String toString() {
         return "MultiValuedAttribute [operation=" + operation + ", value=" + value + ", display=" + display
                 + ", primary=" + primary + ", reference=" + reference + "]";
-    }
-
-    /**
-     * Builder class that is used to build {@link MultiValuedAttribute} instances
-     */
-    public abstract static class Builder {
-
-        private String operation;
-        private String value;
-        private String display;
-        private boolean primary;
-        private String reference;
-
-        protected Builder() {
-        }
-
-        protected Builder(MultiValuedAttribute multiValuedAttribute) {
-            if (multiValuedAttribute == null) {
-                throw new IllegalArgumentException("The given attribute can't be null.");
-            }
-            this.operation = multiValuedAttribute.getOperation();
-            this.value = multiValuedAttribute.value;
-            this.display = multiValuedAttribute.display;
-            this.primary = multiValuedAttribute.primary;
-        }
-
-        /**
-         * Sets the attribute's significant value (See {@link MultiValuedAttribute#getValue()}).
-         * 
-         * @param value
-         *        the value attribute
-         * @return the builder itself
-         */
-        protected Builder setValue(String value) {
-            if(Strings.isNullOrEmpty(value)){
-                throw new SCIMDataValidationException("The given value can't be null or empty.");
-            }
-            this.value = value;
-            return this;
-        }
-
-        /**
-         * Sets the human readable name (See {@link MultiValuedAttribute#getDisplay()}).
-         * 
-         * <p>
-         * client info: the Display value is set by the OSIAM server.
-         * If a MultiValuedAttribute which is send to the OSIAM server has this value filled, 
-         * the value will be ignored or the action will be rejected. 
-         * </p>
-         * @param display
-         *        a human readable name
-         * @return the builder itself
-         */
-        protected Builder setDisplay(String display) {
-            this.display = display;
-            return this;
-        }
-
-        /**
-         * Sets the primary attribute (See {@link MultiValuedAttribute#isPrimary()}).
-         * 
-         * @param the
-         *        primary attribute
-         * @return the builder itself
-         */
-        protected Builder setPrimary(boolean primary) {
-            this.primary = primary;
-            return this;
-        }
-
-        /**
-         * Sets the operation (See {@link MultiValuedAttribute#getOperation()}).
-         * 
-         * Will be automatically set by the {@link UpdateUser}
-         * 
-         * @param operation
-         *        only "delete" is supported at the moment
-         * @return the builder itself
-         */
-        protected Builder setOperation(String operation) {
-            this.operation = operation;
-            return this;
-        }
-
-        /**
-         * Sets the reference (See {@link MemberRef#getReference()}).
-         * 
-         * <p>
-         * client info: the Reference value is set by the OSIAM server.
-         * If a MultiValuedAttribute which is send to the OSIAM server has this value filled, 
-         * the value will be ignored or the action will be rejected. 
-         * </p>
-         * 
-         * @param reference
-         *        the scim2 conform reference to the member
-         * @return the builder itself
-         */
-        protected Builder setReference(String reference) {
-            this.reference = reference;
-            return this;
-        }
-
-        /**
-         * Builds a new Attribute with the given parameters
-         * 
-         * @return a new MultiValuedAttribute Object
-         */
-        protected abstract MultiValuedAttribute build();
     }
 }
