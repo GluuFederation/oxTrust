@@ -236,7 +236,7 @@ public class UserWebService extends BaseScimWebService {
 
 			personService.updatePerson(newGluuPesron);
 			log.debug(" person updated ");
-			ScimPerson newPerson = CopyUtils.copy(newGluuPesron, null);
+			User newPerson = CopyUtils2.copy(newGluuPesron, null);
 
 			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
 			URI location = new URI("/Users/" + uid);
