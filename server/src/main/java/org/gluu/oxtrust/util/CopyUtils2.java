@@ -31,7 +31,7 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.Person;
 import org.gluu.oxtrust.model.PersonAttribute;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
-import org.gluu.oxtrust.model.scim.ScimData;
+import org.gluu.oxtrust.model.scim2.ScimData;
 import org.gluu.oxtrust.model.scim.ScimEntitlements;
 import org.gluu.oxtrust.model.scim.ScimEntitlementsPatch;
 import org.gluu.oxtrust.model.scim.ScimGroup;
@@ -1746,12 +1746,12 @@ public class CopyUtils2 implements Serializable {
 	 * @return ScimGroup
 	 * @throws Exception
 	 */
-	public static ScimGroup copy(ScimData source, ScimGroup destination) {
+	public static Group copy(ScimData source, Group destination) {
 		if (source == null) {
 			return null;
 		}
 		if (destination == null) {
-			destination = new ScimGroup();
+			destination = new Group();
 		}
 
 		if (source.getId() != null && source.getId().length() > 0) {
