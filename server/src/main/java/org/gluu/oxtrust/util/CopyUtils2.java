@@ -1177,26 +1177,26 @@ public class CopyUtils2 implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static ScimGroup copy(GluuGroup source, ScimGroup destination) throws Exception {
+	public static Group copy(GluuGroup source, Group destination) throws Exception {
 		if (source == null) {
 			return null;
 		}
 		if (destination == null) {
-			destination = new ScimGroup();
+			destination = new Group();
 		}
 		PersonService personService = PersonService.instance();
 
-		List<String> schemas = new ArrayList<String>();
-		schemas.add("urn:scim2:schemas:core:1.0");
+		Set<String> schemas = new HashSet<String>();
+		schemas.add("urn:scim:schemas:core:2.0:Group");
 		destination.setSchemas(schemas);
 		destination.setDisplayName(source.getDisplayName());
 		destination.setId(source.getInum());
 		if (source.getMembers() != null) {
 			if (source.getMembers().size() != 0) {
-				List<ScimGroupMembers> members = new ArrayList<ScimGroupMembers>();
+				Set<MemberRef> members = new HashSet<MemberRef>();
 				List<String> membersList = source.getMembers();
 				for (String oneMember : membersList) {
-					ScimGroupMembers member = new ScimGroupMembers();
+					MemberRef member = new MemberRef();
 					GluuCustomPerson person = personService.getPersonByDn(oneMember);
 					member.setValue(person.getInum());
 					member.setDisplay(person.getDisplayName());
@@ -1662,7 +1662,7 @@ public class CopyUtils2 implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static GluuGroup copy(ScimGroup source, GluuGroup destination, boolean isUpdate) throws Exception {
+	public static GluuGroup copy(Group source, GluuGroup destination, boolean isUpdate) throws Exception {
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
@@ -1678,9 +1678,9 @@ public class CopyUtils2 implements Serializable {
 			}
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
 				PersonService personService = PersonService.instance();
-				List<ScimGroupMembers> members = source.getMembers();
+				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
-				for (ScimGroupMembers member : members) {
+				for (MemberRef member : members) {
 					listMembers.add(personService.getDnForPerson(member.getValue()));
 				}
 
@@ -1706,9 +1706,9 @@ public class CopyUtils2 implements Serializable {
 
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
 				PersonService personService = PersonService.instance();
-				List<ScimGroupMembers> members = source.getMembers();
+				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
-				for (ScimGroupMembers member : members) {
+				for (MemberRef member : members) {
 					listMembers.add(personService.getDnForPerson(member.getValue()));
 				}
 
@@ -1729,7 +1729,7 @@ public class CopyUtils2 implements Serializable {
 
 	}
 
-	public static boolean isValidData(ScimGroup group, boolean isUpdate) {
+	public static boolean isValidData(Group group, boolean isUpdate) {
 		if (isUpdate) {
 
 		} else if (isEmpty(group.getDisplayName())) {

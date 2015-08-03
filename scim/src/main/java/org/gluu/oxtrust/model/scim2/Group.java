@@ -39,7 +39,7 @@ public class Group extends Resource {
     /**
      * Default constructor for Jackson
      */
-    private Group() {
+    public Group() {
     }
 
 
