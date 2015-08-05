@@ -9,6 +9,7 @@ package org.gluu.oxtrust.model.scim2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -63,6 +64,12 @@ public class User extends Resource {
      * Default constructor for Jackson
      */
     public User() {
+    	Meta userMeta = new Meta();
+    	userMeta.setResourceType("User");
+    	setMeta(userMeta);
+    	Set<String> userSchemas = new HashSet<String>();
+    	userSchemas.add("urn:ietf:params:scim:schemas:core:2.0:User");    	
+		setSchemas(userSchemas );
     }
 
     /**

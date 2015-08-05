@@ -10,13 +10,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import jxl.write.DateTime;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -30,16 +26,12 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.Person;
 import org.gluu.oxtrust.model.PersonAttribute;
-import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
-import org.gluu.oxtrust.model.scim2.ScimData;
 import org.gluu.oxtrust.model.scim.ScimEntitlements;
 import org.gluu.oxtrust.model.scim.ScimEntitlementsPatch;
 import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim.ScimGroupMembers;
 import org.gluu.oxtrust.model.scim.ScimPerson;
-import org.gluu.oxtrust.model.scim.ScimPersonAddresses;
 import org.gluu.oxtrust.model.scim.ScimPersonAddressesPatch;
-import org.gluu.oxtrust.model.scim.ScimPersonEmails;
 import org.gluu.oxtrust.model.scim.ScimPersonEmailsPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonGroups;
 import org.gluu.oxtrust.model.scim.ScimPersonGroupsPatch;
@@ -62,10 +54,10 @@ import org.gluu.oxtrust.model.scim2.GroupRef;
 import org.gluu.oxtrust.model.scim2.Im;
 import org.gluu.oxtrust.model.scim2.MemberRef;
 import org.gluu.oxtrust.model.scim2.Meta;
-
 import org.gluu.oxtrust.model.scim2.PhoneNumber;
 import org.gluu.oxtrust.model.scim2.Photo;
 import org.gluu.oxtrust.model.scim2.Role;
+import org.gluu.oxtrust.model.scim2.ScimData;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.jboss.seam.annotations.Logger;
@@ -695,11 +687,6 @@ public class CopyUtils2 implements Serializable {
 			destination = new User();
 		}
 		
-		
-		Set<String> schemas=new HashSet<String>();
-		schemas.add("urn:ietf:params:scim:schemas:core:2.0:User");
-		destination.setSchemas(schemas);
-		
 		log.trace(" setting ID ");
 		if (source.getInum() != null) {
 			destination.setId(source.getInum());
@@ -765,19 +752,8 @@ public class CopyUtils2 implements Serializable {
 			ObjectMapper mapper = new ObjectMapper();
 			List<Email> listOfEmails = mapper.readValue(source.getAttribute("oxTrustEmail"),
 					new TypeReference<List<Email>>() {
-					});
-			/*
-			 * List<ScimPersonEmails> emails = new
-			 * ArrayList<ScimPersonEmails>(); String[] listEmails =
-			 * source.getAttributes("oxTrustEmail"); String[] listEmailTyps =
-			 * source.getAttributes("oxTrustEmailType"); String[]
-			 * listEmailPrimary = source.getAttributes("oxTrustEmailPrimary");
-			 * for(int i = 0 ; i<listEmails.length ; i++ ){ ScimPersonEmails
-			 * oneEmail = new ScimPersonEmails();
-			 * oneEmail.setValue(listEmails[i]);
-			 * oneEmail.setType(listEmailTyps[i]);
-			 * oneEmail.setPrimary(listEmailPrimary[i]); emails.add(oneEmail); }
-			 */
+			});
+			
 			destination.setEmails(listOfEmails);
 		}
 		log.trace(" getting addresses ");
@@ -789,52 +765,6 @@ public class CopyUtils2 implements Serializable {
 					new TypeReference<List<Address>>() {
 					});
 
-			/*
-			 * List<ScimPersonAddresses> addresses = new
-			 * ArrayList<ScimPersonAddresses>(); String[] listStreets =
-			 * source.getAttributes("oxTrustStreet"); String[] listAddressTypes
-			 * = source.getAttributes("oxTrustAddressType"); String[]
-			 * listLocalities = source.getAttributes("oxTrustLocality");
-			 * String[] listRegions = source.getAttributes("oxTrustRegion");
-			 * String[] listPostalCodes =
-			 * source.getAttributes("oxTrustPostalCode"); String[] listCountries
-			 * = source.getAttributes("oxTrustCountry"); String[]
-			 * listAddressFormatted =
-			 * source.getAttributes("oxTrustAddressFormatted"); String[]
-			 * listAddressPrimary =
-			 * source.getAttributes("oxTrustAddressPrimary");
-			 * if(listStreets.length > 0){ for(int i = 0 ; i <
-			 * listStreets.length ; i++ ){ ScimPersonAddresses address = new
-			 * ScimPersonAddresses();
-			 * 
-			 * if(!listAddressFormatted[i].equalsIgnoreCase("empty")){address.
-			 * setFormatted
-			 * (listAddressFormatted[i]);}else{address.setFormatted("");}
-			 * if(!listStreets
-			 * [i].equalsIgnoreCase("empty")){address.setStreetAddress
-			 * (listStreets[i]);}else{address.setStreetAddress("");}
-			 * if(!listAddressTypes
-			 * [i].equalsIgnoreCase("empty")){address.setType
-			 * (listAddressTypes[i]);}else{address.setType("");}
-			 * if(!listLocalities
-			 * [i].equalsIgnoreCase("empty")){address.setLocality
-			 * (listLocalities[i]);}else{address.setLocality("");}
-			 * if(!listRegions
-			 * [i].equalsIgnoreCase("empty")){address.setRegion(listRegions
-			 * [i]);}else{address.setRegion("");}
-			 * if(!listPostalCodes[i].equalsIgnoreCase
-			 * ("empty")){address.setPostalCode
-			 * (listPostalCodes[i]);}else{address.setPostalCode("");}
-			 * if(!listCountries
-			 * [i].equalsIgnoreCase("empty")){address.setCountry
-			 * (listCountries[i]);}else{address.setCountry("");}
-			 * if(!listAddressPrimary
-			 * [i].equalsIgnoreCase("empty")){address.setPrimary
-			 * (listAddressPrimary[i]);}else{address.setPrimary("");}
-			 * addresses.add(address);
-			 * 
-			 * } }
-			 */
 			destination.setAddresses(listOfAddresses);
 		}
 		log.trace(" setting phoneNumber ");
@@ -844,24 +774,6 @@ public class CopyUtils2 implements Serializable {
 			List<PhoneNumber> listOfPhones = mapper.readValue(source.getAttribute("oxTrustPhoneValue"),
 					new TypeReference<List<PhoneNumber>>() {
 					});
-
-			/*
-			 * List<ScimPersonPhones> phones = new
-			 * ArrayList<ScimPersonPhones>(); String[] listNumbers =
-			 * source.getAttributes("oxTrustPhoneValue"); String[]
-			 * listPhoneTypes = source.getAttributes("oxTrustPhoneType");
-			 * if(listNumbers.length > 0){ for(int i = 0 ; i <
-			 * listNumbers.length ; i++){ ScimPersonPhones phone = new
-			 * ScimPersonPhones();
-			 * if(!listNumbers[i].equalsIgnoreCase("empty")){
-			 * phone.setValue(listNumbers[i]);}else{phone.setValue("");}
-			 * if(!listPhoneTypes
-			 * [i].equalsIgnoreCase("empty")){phone.setType(listPhoneTypes
-			 * [i]);}else{phone.setType("");} phones.add(phone);
-			 * 
-			 * } }
-			 */
-
 			destination.setPhoneNumbers(listOfPhones);
 		}
 
@@ -872,17 +784,6 @@ public class CopyUtils2 implements Serializable {
 			List<Im> listOfIms = mapper.readValue(source.getAttribute("oxTrustImsValue"),
 					new TypeReference<List<Im>>() {
 					});
-
-			/*
-			 * List<ScimPersonIms> ims = new ArrayList<ScimPersonIms>();
-			 * String[] imValues = source.getAttributes("oxTrustImsValue");
-			 * String[] imTypes = source.getAttributes("oxTrustImsType");
-			 * if(imValues.length > 0){ for(int i = 0 ; i < imValues.length ;
-			 * i++){ ScimPersonIms im = new ScimPersonIms(); if(imValues[i] !=
-			 * null){im.setValue(imValues[i]);im.setType(imTypes[i]);}
-			 * ims.add(im); } }
-			 */
-			
 			destination.setIms(listOfIms);
 		}
 		log.trace(" setting photos ");
@@ -893,21 +794,6 @@ public class CopyUtils2 implements Serializable {
 			List<Photo> listOfPhotos = mapper.readValue(source.getAttribute("oxTrustPhotos"),
 					new TypeReference<List<Photo>>() {
 					});
-
-			/*
-			 * List<ScimPersonPhotos> photos = new
-			 * ArrayList<ScimPersonPhotos>(); String[] photoList =
-			 * source.getAttributes("oxTrustPhotos"); String[] photoTypes =
-			 * source.getAttributes("oxTrustPhotosType");
-			 * 
-			 * if(photoList.length > 0){ for(int i = 0 ; i < photoList.length ;
-			 * i++){
-			 * 
-			 * ScimPersonPhotos photo = new ScimPersonPhotos(); if(photoList[i]
-			 * !=
-			 * null){photo.setValue(photoList[i]);photo.setType(photoTypes[i]);}
-			 * photos.add(photo); } }
-			 */
 			destination.setPhotos(listOfPhotos);
 		}
 		log.trace(" setting userType ");
@@ -962,15 +848,6 @@ public class CopyUtils2 implements Serializable {
 			ObjectMapper mapper = new ObjectMapper();
 			List<Role> listOfRoles = mapper.readValue(source.getAttribute("oxTrustRole"), new TypeReference<List<Role>>() {
 			});
-
-			/*
-			 * List<ScimRoles> roles = new ArrayList<ScimRoles>(); String[]
-			 * listRoles = source.getAttributes("oxTrustRole");
-			 * if(listRoles.length > 0){ for(int i = 0 ; i < listRoles.length
-			 * ;i++){ ScimRoles role = new ScimRoles(); if(listRoles[i] !=
-			 * null){role.setValue(listRoles[i]);} roles.add(role); } }
-			 */
-
 			destination.setRoles(listOfRoles);
 		}
 		log.trace(" getting entilements ");
@@ -980,18 +857,6 @@ public class CopyUtils2 implements Serializable {
 			List<Entitlement> listOfEnts = mapper.readValue(source.getAttribute("oxTrustEntitlements"),
 					new TypeReference<List<Entitlement>>() {
 					});
-
-			/*
-			 * List<ScimEntitlements> entitlements = new
-			 * ArrayList<ScimEntitlements>(); String[] listEntitlements =
-			 * source.getAttributes("oxTrustEntitlements");
-			 * if(listEntitlements.length > 0){ for(int i = 0 ; i <
-			 * listEntitlements.length ; i++ ){ ScimEntitlements ent = new
-			 * ScimEntitlements(); if(listEntitlements[i] !=
-			 * null){ent.setValue(listEntitlements[i]);} entitlements.add(ent);
-			 * } }
-			 */
-
 			destination.setEntitlements(listOfEnts);
 		}
 
@@ -1002,19 +867,6 @@ public class CopyUtils2 implements Serializable {
 			List<X509Certificate> listOfCerts = mapper.readValue(source.getAttribute("oxTrustx509Certificate"),
 					new TypeReference<List<X509Certificate>>() {
 					});
-
-			/*
-			 * List<Scimx509Certificates> certificates = new
-			 * ArrayList<Scimx509Certificates>(); String[] listCertif =
-			 * source.getAttributes("oxTrustx509Certificate");
-			 * if(listCertif.length > 0){ for(int i = 0 ; i < listCertif.length
-			 * ; i++){ Scimx509Certificates cert = new Scimx509Certificates();
-			 * if(listCertif[i] != null){cert.setValue(listCertif[i]);}
-			 * certificates.add(cert);
-			 * 
-			 * } }
-			 */
-
 			destination.setX509Certificates(listOfCerts);
 		}
 		log.trace(" setting meta ");
@@ -1022,7 +874,7 @@ public class CopyUtils2 implements Serializable {
 		
 		if(source.getAttribute("oxTrustMetaCreated")!=null && source.getAttribute("oxTrustMetaCreated")!="" && source.getAttribute("oxTrustMetaLastModified")!=null && source.getAttribute("oxTrustMetaLastModified")!="")
 		{
-			Meta meta=new Meta();	
+			Meta meta=destination.getMeta()!=null?destination.getMeta():new Meta();	
 			
 			// getting meta data
 			if (source.getAttribute("oxTrustMetaVersion") != null) {
@@ -1032,14 +884,10 @@ public class CopyUtils2 implements Serializable {
 				meta.setLocation(source.getAttribute("oxTrustMetaLocation"));
 			}
 			
-			
 			log.trace(" getting custom Attributes ");
 			// getting custom Attributes
-
 			AttributeService attributeService = AttributeService.instance();
-
 			List<GluuAttribute> listOfAttr = attributeService.getSCIMRelatedAttributes();
-
 			if (listOfAttr != null && listOfAttr.size() > 0) {
 				//List<ScimCustomAttributes> listOfCustomAttr = new ArrayList<ScimCustomAttributes>();
 				Set<String> listOfCustomAttr=new HashSet<String>();
@@ -1064,11 +912,8 @@ public class CopyUtils2 implements Serializable {
 				}
 			}
 		}
-		
-
-		
 		log.trace(" returning destination ");
-		System.out.println("CopyUtils2");
+		destination.getMeta().setLocation("/v2/Users/"+destination.getId());
 		return destination;
 	}
 
@@ -1185,10 +1030,6 @@ public class CopyUtils2 implements Serializable {
 			destination = new Group();
 		}
 		PersonService personService = PersonService.instance();
-
-		Set<String> schemas = new HashSet<String>();
-		schemas.add("urn:scim:schemas:core:2.0:Group");
-		destination.setSchemas(schemas);
 		destination.setDisplayName(source.getDisplayName());
 		destination.setId(source.getInum());
 		if (source.getMembers() != null) {
@@ -1202,13 +1043,10 @@ public class CopyUtils2 implements Serializable {
 					member.setDisplay(person.getDisplayName());
 					members.add(member);
 				}
-
 				destination.setMembers(members);
 			}
 		}
-
 		return destination;
-
 	}
 
 	public static GluuGroup copy(ScimGroup source, GluuGroup destination, List<GluuGroup> attributes) throws Exception {
@@ -1232,7 +1070,6 @@ public class CopyUtils2 implements Serializable {
 			member.setValue(gluuPerson.getInum());
 			mapMembers.add(member);
 		}
-
 		destination.setMembers(listMembers);
 		return destination;
 	}

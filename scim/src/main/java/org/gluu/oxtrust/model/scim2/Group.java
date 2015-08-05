@@ -40,6 +40,12 @@ public class Group extends Resource {
      * Default constructor for Jackson
      */
     public Group() {
+    	Meta userMeta = new Meta();
+    	userMeta.setResourceType("Group");
+    	setMeta(userMeta);
+    	Set<String> userSchemas = new HashSet<String>();
+    	userSchemas.add("urn:scim:schemas:core:2.0:Group");    	
+		setSchemas(userSchemas );
     }
 
 

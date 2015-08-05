@@ -25,7 +25,7 @@ public class ScimBulkResponse {
 
 	private List<String> schemas;
 	@JsonProperty
-	private List<BulkResponses> Operations;
+	private List<BulkResponse> Operations;
 
 	public List<String> getSchemas() {
 
@@ -39,12 +39,12 @@ public class ScimBulkResponse {
 	@XmlElementWrapper(name = "Operations")
 	@XmlElement(name = "operation")
 	@JsonIgnore
-	public List<BulkResponses> getOperations() {
+	public List<BulkResponse> getOperations() {
 
 		return this.Operations;
 	}
 
-	public void setOperations(List<BulkResponses> Operations) {
+	public void setOperations(List<BulkResponse> Operations) {
 		this.Operations = Operations;
 	}
 

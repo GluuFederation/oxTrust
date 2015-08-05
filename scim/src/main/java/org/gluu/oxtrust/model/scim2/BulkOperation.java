@@ -6,52 +6,78 @@
 
 package org.gluu.oxtrust.model.scim2;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-
-import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * SCIM Bulk operation
+ * SCIM 2.0 Bulk operation
  * 
- * @author Reda Zerrad Date: 04.18.2012
+ * @author Rahat Ali Date: 05.08.2015
  */
 
-@XmlRootElement(name = "Bulk")
+@XmlRootElement(name = "BulkOperation")
 @XmlAccessorType(XmlAccessType.NONE)
-@JsonPropertyOrder({ "schemas", "Operations" })
 public class BulkOperation {
-
-	private List<String> schemas;
-	@JsonProperty
-	private List<BulkRequests> Operations;
-
+	
+	private String bulkId;
+	private String version;
+	private String method;
+	private String path;
+	private String location;
+	private Object data;
+	private String status;
+	private Object response;
 	public BulkOperation() {
-		schemas = new ArrayList<String>();
-		Operations = new ArrayList<BulkRequests>();
+		
+	}
+	public String getBulkId() {
+		return bulkId;
+	}
+	public void setBulkId(String bulkId) {
+		this.bulkId = bulkId;
+	}
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
+	}
+	public String getMethod() {
+		return method;
+	}
+	public void setMethod(String method) {
+		this.method = method;
+	}
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	public Object getData() {
+		return data;
+	}
+	public void setData(Object data) {
+		this.data = data;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public Object getResponse() {
+		return response;
+	}
+	public void setResponse(Object response) {
+		this.response = response;
 	}
 
-	public List<String> getSchemas() {
-
-		return this.schemas;
-	}
-
-	public void setSchemas(List<String> schemas) {
-		this.schemas = schemas;
-	}
-
-	@JsonIgnore
-	@XmlElementWrapper(name = "Operations")
-	@XmlElement(name = "operation")
-	public List<BulkRequests> getOperations() {
-
-		return this.Operations;
-	}
-
-	public void setOperations(List<BulkRequests> Operations) {
-		this.Operations = Operations;
-	}
 }

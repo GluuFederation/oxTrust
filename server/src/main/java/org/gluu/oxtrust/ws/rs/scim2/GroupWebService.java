@@ -25,11 +25,8 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.model.GluuGroup;
-
-import org.gluu.oxtrust.model.GluuGroupList2;
-import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.util.CopyUtils;
+import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -41,9 +38,9 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 
 /**
- * @author Reda Zerrad Date: 04.13.2012
+ * @author Rahat Ali Date: 05.08.2015
  */
-@Name("GroupWebService2")
+@Name("scim2GroupEndpoint")
 @Path("/v2/Groups")
 public class GroupWebService extends BaseScimWebService {
 
@@ -69,7 +66,7 @@ public class GroupWebService extends BaseScimWebService {
 
 		try {
 			List<GluuGroup> groupList = groupService.getAllGroupsList();
-			GluuGroupList2 allGroupList = new GluuGroupList2();
+			ListResponse allGroupList = new ListResponse();
 			if (groupList != null) {
 				for (GluuGroup gluuGroup : groupList) {
 					Group group = CopyUtils2.copy(gluuGroup, null);
@@ -77,12 +74,11 @@ public class GroupWebService extends BaseScimWebService {
 				}
 			}
 			List<String> schema = new ArrayList<String>();
-			schema.add("urn:scim:schemas:core:2.0:Group");
+			schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
 			allGroupList.setSchemas(schema);
-			List<Group> resources = allGroupList.getResources();
-			allGroupList.setTotalResults((long) resources.size());
+			allGroupList.setTotalResults(allGroupList.getResources().size());
 
-			URI location = new URI("/Groups/");
+			URI location = new URI("/v2/Groups/");
 			return Response.ok(allGroupList).location(location).build();
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);

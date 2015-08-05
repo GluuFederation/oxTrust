@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,23 +24,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.dom4j.Document;
-import org.dom4j.io.DOMReader;
-import org.dom4j.io.DocumentSource;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuCustomPersonList;
-import org.gluu.oxtrust.model.GluuCustomPersonList2;
 import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
+import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.util.CopyUtils;
@@ -55,14 +46,13 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
-import org.xml.sax.InputSource;
 
 /**
- * SCIM UserWebService Implementation
+ * scim2UserEndpoint Implementation
  * 
- * @author Reda Zerrad Date: 04.03.2012
+ * @author Rahat Ali Date: 05.08.2015
  */
-@Name("userWebService2")
+@Name("scim2UserEndpoint")
 @Path("/v2/Users")
 public class UserWebService extends BaseScimWebService {
 
@@ -91,28 +81,27 @@ public class UserWebService extends BaseScimWebService {
 		try {
 			log.info(" getting a list of all users from LDAP ");
 			List<GluuCustomPerson> personList = personService.findAllPersons(null);
-			GluuCustomPersonList2 allPersonList = new GluuCustomPersonList2();
+			ListResponse personsListResponse = new ListResponse();
 			if (personList != null) {
 				log.info(" LDAP person list is not empty ");
 				for (GluuCustomPerson gluuPerson : personList) {
 					log.info(" copying person from GluuPerson to ScimPerson ");
 					User person = CopyUtils2.copy(gluuPerson, null);
+					
 					log.info(" adding ScimPerson to the AllPersonList ");
 					log.info(" person to be added userid : " + person.getUserName());
-					allPersonList.getResources().add(person);
-					log.info(" person added? : " + allPersonList.getResources().contains(person));
+					personsListResponse.getResources().add(person);
+					log.info(" person added? : " + personsListResponse.getResources().contains(person));
 				}
 
 			}
 			List<String> schema = new ArrayList<String>();
-			schema.add("urn:ietf:params:scim:schemas:core:2.0:User");
-			log.info(" setting schema ");
-			allPersonList.setSchemas(schema);
-			List<User> resources = allPersonList.getResources();
-			allPersonList.setTotalResults((long) resources.size());
-
-			URI location = new URI("/Users/");
-			return Response.ok(allPersonList).location(location).build();
+			schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+			log.info("setting schema");
+			personsListResponse.setSchemas(schema);			
+			personsListResponse.setTotalResults(personsListResponse.getResources().size());
+			URI location = new URI("/v2/Users/");
+			return Response.ok(personsListResponse).location(location).build();
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			return getErrorResponse("Unexpected processing error, please check the input parameters",
@@ -139,9 +128,7 @@ public class UserWebService extends BaseScimWebService {
 			}
 
 			User person = CopyUtils2.copy(gluuPerson, null);
-
-			URI location = new URI("/Users/" + uid);
-
+			URI location = new URI("/v2/Users/" + uid);
 			return Response.ok(person).location(location).build();
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
@@ -202,7 +189,7 @@ public class UserWebService extends BaseScimWebService {
 
 			personService.addPerson(gluuPerson);
 			User newPerson = CopyUtils2.copy(gluuPerson, null);
-			String uri = "/Users/" + newPerson.getId();
+			String uri = "/v2/Users/" + newPerson.getId();
 			return Response.created(URI.create(uri)).entity(newPerson).build();
 		} catch (Exception ex) {
 			log.error("Failed to add user", ex);
@@ -289,42 +276,6 @@ public class UserWebService extends BaseScimWebService {
 		}
 	}
 
-	public Response createUserTestHelper(@HeaderParam("Authorization") String authorization, String person_data) throws Exception {
-		try {
-			User person = (User) xmlToObject(person_data);
-			return createUser(authorization, person);
-		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			ex.printStackTrace();
-			return getErrorResponse("Data parsing error.", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-		}
-	}
-
-	public Response updateUserTestHelper(@HeaderParam("Authorization") String authorization, @PathParam("inum") String inum, String person_data)
-			throws Exception {
-		try {
-			User person_update = (User) xmlToObject(person_data);
-			return updateUser(authorization, inum, person_update);
-		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Data parsing error.", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-		}
-	}
-
-	private Object xmlToObject(String xml) throws Exception {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		org.w3c.dom.Document document = builder.parse(new InputSource(new StringReader(xml)));
-		DOMReader reader = new DOMReader();
-		Document doc = reader.read(document);
-
-		JAXBContext context = JAXBContext.newInstance(User.class);
-		DocumentSource source = new DocumentSource(doc);
-		context = JAXBContext.newInstance(User.class);
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		return unmarshaller.unmarshal(source);
-	}
-
 	@Path("{uid}")
 	@PATCH
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -334,8 +285,7 @@ public class UserWebService extends BaseScimWebService {
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
-
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -370,43 +320,4 @@ public class UserWebService extends BaseScimWebService {
 					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
-
-	// todo - Update Password is OPTIONAL and should use PATCH method
-	// (http://www.simplecloud.info/specs/draft-scim-api-00.html, 3.3.2.
-	// Modifying with PATCH)
-	// @Path("{inum}/password")
-	// @PUT
-	// @Consumes(MediaType.APPLICATION_XML)
-	// public Response changePassword(@HeaderParam("Authorization") String authorization,
-	// @PathParam("inum") String inum, String password);
-	//
-	// @PUT
-	// @Consumes(MediaType.APPLICATION_XML)
-	// @Produces(MediaType.APPLICATION_XML)
-	// @Path("{id}/updatePassword")
-	// Response changeLoginPassword(@PathParam("id") String uid, String
-	// accessToken);
-	//
-	// ///////////
-	// // Additional Methods
-	// @Path("{inum}/passwordpost")
-	// @POST
-	// @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	// public Response changePasswordTestHelper(@Context HttpServletRequest
-	// request, @PathParam("inum") String inum, @FormParam("password") String
-	// password);
-	//
-	// @Path("{inum}/updatepost")
-	// @POST
-	// @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	// public Response updateUserTestHelper(@HeaderParam("Authorization") String authorization,
-	// @PathParam("inum") String inum, @FormParam("person_data") String
-	// person_data);
-	//
-	// @Path("{inum}/createpost")
-	// @POST
-	// @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	// public Response createUserTestHelper(@HeaderParam("Authorization") String authorization,
-	// @FormParam("person_data") String person);
-	// /////////
 }
