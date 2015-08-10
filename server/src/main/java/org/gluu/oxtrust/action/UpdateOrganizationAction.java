@@ -19,6 +19,7 @@ import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -80,8 +81,8 @@ public class UpdateOrganizationAction implements Serializable {
 	@In
 	private ApplianceService applianceService;
 
-	@In(required = false)
-	private CacheRefreshConfiguration cacheRefreshConfiguration;
+	@In
+	private OxTrustConfiguration oxTrustConfiguration;
 
 	@In
 	private FacesMessages facesMessages;
@@ -155,6 +156,7 @@ public class UpdateOrganizationAction implements Serializable {
 		this.welcomePageCustomMessage = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_WELCOME_PAGE);
 		this.welcomeTitleText = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_TITLE_TEXT);
 
+		CacheRefreshConfiguration cacheRefreshConfiguration = oxTrustConfiguration.getCacheRefreshConfiguration();
 		this.cacheRefreshEnabled = applicationConfiguration.isCacheRefreshEnabled() && (cacheRefreshConfiguration != null);
 
 		appliances = new ArrayList<GluuAppliance>();

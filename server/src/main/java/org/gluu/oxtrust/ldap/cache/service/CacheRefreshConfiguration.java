@@ -12,11 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
@@ -25,53 +20,52 @@ import org.xdi.util.properties.FileConfiguration;
  * 
  * @author Yuriy Movchan Date: 07.13.2011
  */
-@Name("cacheRefreshConfiguration")
-@Scope(ScopeType.APPLICATION)
-@AutoCreate
-public class CacheRefreshConfiguration extends FileConfiguration {
+public class CacheRefreshConfiguration {
+	
+	private FileConfiguration fileConfiguration;
 
-	public CacheRefreshConfiguration() {
-		super(OxTrustConstants.CONFIGURATION_FILE_CACHE_PROPERTIES_FILE);
+	public CacheRefreshConfiguration(FileConfiguration fileConfiguration) {
+		this.fileConfiguration = fileConfiguration;
 	}
 
 	public String[] getSourceServerConfigs() {
-		return getStringArray("server.source.configs", null);
+		return fileConfiguration.getStringArray("server.source.configs", null);
 	}
 
 	public String getInumDbServerConfig() {
-		return getString("server.inum.config", null);
+		return fileConfiguration.getString("server.inum.config", null);
 	}
 
 	public String getDestinationServerConfig() {
-		return getString("server.target.config", null);
+		return fileConfiguration.getString("server.target.config", null);
 	}
 
 	public Properties getServerConfigProperties(String serverConfig) {
-		return getPropertiesByPrefix(String.format("ldap.conf.%s.", serverConfig));
+		return fileConfiguration.getPropertiesByPrefix(String.format("ldap.conf.%s.", serverConfig));
 	}
 
 	public String getSnapshotFolder() {
-		return getString("snapshot.folder", null);
+		return fileConfiguration.getString("snapshot.folder", null);
 	}
 
 	public int getSnapshotMaxCount() {
-		return getInt("snapshot.max.count", 10);
+		return fileConfiguration.getInt("snapshot.max.count", 10);
 	}
 
 	public int getSizeLimit() {
-		return getInt("cache.config.sizelimit", 0);
+		return fileConfiguration.getInt("cache.config.sizelimit", 0);
 	}
 
 	public String[] getCompoundKeyAttributes() {
-		return getStringArray("ldap.conf.source.compoundKey.attr");
+		return fileConfiguration.getStringArray("ldap.conf.source.compoundKey.attr");
 	}
 
 	public List<String> getCompoundKeyAttributesList() {
-		return getStringList("ldap.conf.source.compoundKey.attr");
+		return fileConfiguration.getStringList("ldap.conf.source.compoundKey.attr");
 	}
 
 	public String[] getCompoundKeyObjectClasses() {
-		return getStringArray("ldap.conf.source.compoundKey.objectClasses");
+		return fileConfiguration.getStringArray("ldap.conf.source.compoundKey.objectClasses");
 	}
 
 	public String[] getCompoundKeyAttributesWithoutValues() {
@@ -87,15 +81,15 @@ public class CacheRefreshConfiguration extends FileConfiguration {
 	}
 
 	public String[] getSourceAttributes() {
-		return getStringArray("ldap.conf.source.attrs");
+		return fileConfiguration.getStringArray("ldap.conf.source.attrs");
 	}
 
 	public String getCustomLdapFilter() {
-		return getString("ldap.conf.source.custom.filter", null);
+		return fileConfiguration.getString("ldap.conf.source.custom.filter", null);
 	}
 
 	public CacheRefreshUpdateMethod getUpdateMethod() {
-		String updateMethod = getString("target.server.update.method", CacheRefreshUpdateMethod.VDS.getValue());
+		String updateMethod = fileConfiguration.getString("target.server.update.method", CacheRefreshUpdateMethod.VDS.getValue());
 		if (StringHelper.isEmpty(updateMethod)) {
 			return CacheRefreshUpdateMethod.VDS;
 		}
@@ -109,16 +103,16 @@ public class CacheRefreshConfiguration extends FileConfiguration {
 	}
 
 	public boolean isKeepExternalPerson() {
-		return getBoolean("target.keep.external.person", false);
+		return fileConfiguration.getBoolean("target.keep.external.person", false);
 	}
 
 	public boolean isLoadSourceUsingSearchLimit() {
-		return getBoolean("source.load.use.search.limit", true);
+		return fileConfiguration.getBoolean("source.load.use.search.limit", true);
 	}
 
 	public Map<String, String> getTargetServerAttributesMapping() {
 		String attributePrefix = "ldap.conf.target.attr.mapping.";
-		Properties mappingProperties = getPropertiesByPrefix(attributePrefix);
+		Properties mappingProperties = fileConfiguration.getPropertiesByPrefix(attributePrefix);
 
 		Map<String, String> result = new HashMap<String, String>();
 		for (Entry<Object, Object> entry : mappingProperties.entrySet()) {
@@ -132,7 +126,39 @@ public class CacheRefreshConfiguration extends FileConfiguration {
 	}
 
 	public String getInterceptorScriptFileName() {
-		return getString("interceptor.script.fileName", null);
+		return fileConfiguration.getString("interceptor.script.fileName", null);
+	}
+
+	public String getString(String key) {
+		return fileConfiguration.getString(key);
+	}
+
+	public String[] getStringArray(String key) {
+		return fileConfiguration.getStringArray(key);
+	}
+
+	public List<String> getStringList(String key) {
+		return fileConfiguration.getStringList(key);
+	}
+
+	public int getInt(String key, int defaultValue) {
+		return fileConfiguration.getInt(key, defaultValue);
+	}
+
+	public boolean getBoolean(String key, boolean defaultValue) {
+		return fileConfiguration.getBoolean(key, defaultValue);
+	}
+
+	public Properties getPropertiesByPrefix(String propertiesPrefix) {
+		return fileConfiguration.getPropertiesByPrefix(propertiesPrefix);
+	}
+
+	public boolean isLoaded() {
+		return fileConfiguration.isLoaded();
+	}
+
+	public void reload() {
+		fileConfiguration.reload();
 	}
 
 }

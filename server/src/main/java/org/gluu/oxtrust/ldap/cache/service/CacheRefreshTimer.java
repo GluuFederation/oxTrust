@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.io.FilenameUtils;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
@@ -78,7 +79,7 @@ import com.unboundid.ldap.sdk.Filter;
 @Name("cacheRefreshTimer")
 @Scope(ScopeType.APPLICATION)
 @AutoCreate
-@Startup(depends = { "appInitializer", "cacheRefreshSnapshotFileService" })
+@Startup(depends = { "appInitializer", "oxTrustConfiguration", "cacheRefreshSnapshotFileService" })
 public class CacheRefreshTimer {
 
 	@Logger
@@ -90,8 +91,8 @@ public class CacheRefreshTimer {
 	@In
 	protected AttributeService attributeService;
 
-	@In
-	private CacheRefreshConfiguration cacheRefreshConfiguration;
+	@In(value = "oxTrustConfiguration")
+	private OxTrustConfiguration oxTrustConfiguration;
 
 	@In
 	private CacheRefreshService cacheRefreshService;
@@ -128,7 +129,6 @@ public class CacheRefreshTimer {
 
 	private AtomicBoolean isActive;
 	private long lastFinishedTime;
-	private String inumCachePath;
 
 	@Observer("org.jboss.seam.postInitialization")
 	public void init() {
@@ -137,11 +137,12 @@ public class CacheRefreshTimer {
 		this.lastFinishedTime = System.currentTimeMillis();
 		
 		// Clean up previous Inum cache
-		if (cacheRefreshConfiguration.isLoaded()) {
+		CacheRefreshConfiguration cacheRefreshConfiguration = oxTrustConfiguration.getCacheRefreshConfiguration();
+		if ((cacheRefreshConfiguration != null) && cacheRefreshConfiguration.isLoaded()) {
 			String snapshotFolder = cacheRefreshConfiguration.getSnapshotFolder();
 			if (StringHelper.isNotEmpty(snapshotFolder)) {
-				this.inumCachePath = FilenameUtils.concat(cacheRefreshConfiguration.getSnapshotFolder(), "inum_cache.dat");
-				objectSerializationService.cleanup(this.inumCachePath);
+				String inumCachePath = getInumCachePath(cacheRefreshConfiguration);
+				objectSerializationService.cleanup(inumCachePath);
 			}
 		}
 
@@ -157,6 +158,8 @@ public class CacheRefreshTimer {
 			return;
 		}
 
+		CacheRefreshConfiguration cacheRefreshConfiguration = oxTrustConfiguration.getCacheRefreshConfiguration();
+
 		if (!this.isActive.compareAndSet(false, true)) {
 			log.debug("Failed to start process exclusively");
 			return;
@@ -164,12 +167,12 @@ public class CacheRefreshTimer {
 
 		try {
 			GluuAppliance currentAppliance = applianceService.getAppliance();
-			if (!isStartCacheRefresh(currentAppliance)) {
+			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentAppliance)) {
 				log.debug("Starting conditions aren't reached");
 				return;
 			}
 
-			processImpl(currentAppliance);
+			processImpl(cacheRefreshConfiguration, currentAppliance);
 			updateApplianceStatus(currentAppliance, System.currentTimeMillis());
 
 			this.lastFinishedTime = System.currentTimeMillis();
@@ -181,7 +184,7 @@ public class CacheRefreshTimer {
 		}
 	}
 
-	private boolean isStartCacheRefresh(GluuAppliance currentAppliance) {
+	private boolean isStartCacheRefresh(CacheRefreshConfiguration cacheRefreshConfiguration, GluuAppliance currentAppliance) {
 		if (!GluuBoolean.ENABLED.equals(currentAppliance.getVdsCacheRefreshEnabled())) {
 			return false;
 		}
@@ -223,10 +226,8 @@ public class CacheRefreshTimer {
 			return false;
         }
 
-		this.cacheRefreshConfiguration.reloadProperties();
-
 		// Check if cache refresh specific configuration was loaded
-		if (!this.cacheRefreshConfiguration.isLoaded()) {
+		if ((cacheRefreshConfiguration == null) || !cacheRefreshConfiguration.isLoaded()) {
 			log.info("Failed to start cache refresh. Can't loading configuration from oxTrustCacheRefresh.properties");
 			return false;
 		}
@@ -236,24 +237,24 @@ public class CacheRefreshTimer {
 		return timeDiffrence >= poolingInterval;
 	}
 
-	private void processImpl(GluuAppliance currentAppliance) {
+	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuAppliance currentAppliance) {
 		CacheRefreshUpdateMethod updateMethod = cacheRefreshConfiguration.getUpdateMethod();
 
 		// Prepare and check connections to LDAP servers
-		LdapServerConnection[] sourceServerConnections = prepareLdapServerConnections(cacheRefreshConfiguration.getSourceServerConfigs());
-		LdapServerConnection inumDbServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration.getInumDbServerConfig());
+		LdapServerConnection[] sourceServerConnections = prepareLdapServerConnections(cacheRefreshConfiguration, cacheRefreshConfiguration.getSourceServerConfigs());
+		LdapServerConnection inumDbServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration, cacheRefreshConfiguration.getInumDbServerConfig());
 
 		boolean isVdsUpdate = CacheRefreshUpdateMethod.VDS.equals(updateMethod);
 		LdapServerConnection targetServerConnection = null;
 		if (isVdsUpdate) {
-			targetServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration.getDestinationServerConfig());
+			targetServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration, cacheRefreshConfiguration.getDestinationServerConfig());
 		}
 
 		try {
 			if ((sourceServerConnections == null) || (inumDbServerConnection == null) || (isVdsUpdate && (targetServerConnection == null))) {
 				log.error("Skipping cache refresh due to invalid server configuration");
 			} else {
-				detectChangedEntries(currentAppliance, sourceServerConnections, inumDbServerConnection, targetServerConnection,
+				detectChangedEntries(cacheRefreshConfiguration, currentAppliance, sourceServerConnections, inumDbServerConnection, targetServerConnection,
 						updateMethod);
 			}
 		} finally {
@@ -281,7 +282,7 @@ public class CacheRefreshTimer {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean detectChangedEntries(GluuAppliance currentAppliance, LdapServerConnection[] sourceServerConnections,
+	private boolean detectChangedEntries(CacheRefreshConfiguration cacheRefreshConfiguration, GluuAppliance currentAppliance, LdapServerConnection[] sourceServerConnections,
 			LdapServerConnection inumDbServerConnection, LdapServerConnection targetServerConnection, CacheRefreshUpdateMethod updateMethod) {
 		boolean isVDSMode = CacheRefreshUpdateMethod.VDS.equals(updateMethod);
 
@@ -290,41 +291,42 @@ public class CacheRefreshTimer {
 		List<GluuSimplePerson> sourcePersons;
 		
 		if (cacheRefreshConfiguration.isLoadSourceUsingSearchLimit()) {
-			sourcePersons = loadSourceServerEntries(sourceServerConnections);
+			sourcePersons = loadSourceServerEntries(cacheRefreshConfiguration, sourceServerConnections);
 		} else {
-			sourcePersons = loadSourceServerEntriesWithoutLimits(sourceServerConnections);
+			sourcePersons = loadSourceServerEntriesWithoutLimits(cacheRefreshConfiguration, sourceServerConnections);
 		}
 
 		log.info("Found '{0}' entries in source server", sourcePersons.size());
 
-		Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap = getSourcePersonCompoundKeyMap(sourcePersons);
+		Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap = getSourcePersonCompoundKeyMap(cacheRefreshConfiguration, sourcePersons);
 		log.info("Found '{0}' unique entries in source server", sourcePersonCacheCompoundKeyMap.size());
 
 		// Load all inum entries
 		List<GluuInumMap> inumMaps = null;
 
 		// Load all inum entries from local disk cache
-		Object loadedObject = objectSerializationService.loadObject(this.inumCachePath);
+		String inumCachePath = getInumCachePath(cacheRefreshConfiguration);
+		Object loadedObject = objectSerializationService.loadObject(inumCachePath);
 		if (loadedObject != null) {
 			try {
 				inumMaps = (List<GluuInumMap>) loadedObject;
 				log.debug("Found '{0}' entries in inum objects disk cache", inumMaps.size());
 			} catch (Exception ex) {
 				log.error("Failed to convert to GluuInumMap list", ex);
-				objectSerializationService.cleanup(this.inumCachePath);
+				objectSerializationService.cleanup(inumCachePath);
 			}
 		}
 
 		if (inumMaps == null) {
 			// Load all inum entries from LDAP
-			inumMaps = loadInumServerEntries(inumDbServerConnection);
+			inumMaps = loadInumServerEntries(cacheRefreshConfiguration, inumDbServerConnection);
 			log.info("Found '{0}' entries in inum server", inumMaps.size());
 		}
 
 		HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap = getPrimaryKeyAttrValueInumMap(inumMaps);
 
 		// Go through Source entries and create new InumMap entries if needed
-		HashMap<CacheCompoundKey, GluuInumMap> addedPrimaryKeyAttrValueInumMap = addNewInumServerEntries(inumDbServerConnection,
+		HashMap<CacheCompoundKey, GluuInumMap> addedPrimaryKeyAttrValueInumMap = addNewInumServerEntries(cacheRefreshConfiguration, inumDbServerConnection,
 				sourcePersonCacheCompoundKeyMap, primaryKeyAttrValueInumMap);
 
 		HashMap<CacheCompoundKey, GluuInumMap> allPrimaryKeyAttrValueInumMap = getAllInumServerEntries(primaryKeyAttrValueInumMap,
@@ -336,20 +338,20 @@ public class CacheRefreshTimer {
 		log.debug("Count actual source entries '{0}' after calculating hash code", currInumWithEntryHashCodeMap.size());
 
 		// Create snapshots cache folder if needed
-		boolean result = cacheRefreshSnapshotFileService.prepareSnapshotsFolder();
+		boolean result = cacheRefreshSnapshotFileService.prepareSnapshotsFolder(cacheRefreshConfiguration);
 		if (!result) {
 			return false;
 		}
 
 		// Load last snapshot into memory
-		Map<String, Integer> prevInumWithEntryHashCodeMap = cacheRefreshSnapshotFileService.readLastSnapshot();
+		Map<String, Integer> prevInumWithEntryHashCodeMap = cacheRefreshSnapshotFileService.readLastSnapshot(cacheRefreshConfiguration);
 
 		// Compare 2 snapshot and invoke update if needed
 		Set<String> changedInums = getChangedInums(currInumWithEntryHashCodeMap, prevInumWithEntryHashCodeMap, isVDSMode);
 		log.info("Found '{0}' changed entries", changedInums.size());
 
 		// Load problem list from disk and add to changedInums
-		List<String> problemInums = cacheRefreshSnapshotFileService.readProblemList();
+		List<String> problemInums = cacheRefreshSnapshotFileService.readProblemList(cacheRefreshConfiguration);
 		if (problemInums != null) {
 			log.info("Loaded '{0}' problem entries from problem file", problemInums.size());
 			// Process inums from problem list too
@@ -359,9 +361,9 @@ public class CacheRefreshTimer {
 		List<String> updatedInums = null;
 		if (isVDSMode) {
 			// Update request to VDS to update entries on target server
-			updatedInums = updateTargetEntriesViaVDS(targetServerConnection, changedInums);
+			updatedInums = updateTargetEntriesViaVDS(cacheRefreshConfiguration, targetServerConnection, changedInums);
 		} else {
-			updatedInums = updateTargetEntriesViaCopy(sourcePersonCacheCompoundKeyMap, allPrimaryKeyAttrValueInumMap, changedInums);
+			updatedInums = updateTargetEntriesViaCopy(cacheRefreshConfiguration, sourcePersonCacheCompoundKeyMap, allPrimaryKeyAttrValueInumMap, changedInums);
 		}
 
 		log.info("Updated '{0}' entries", updatedInums.size());
@@ -369,22 +371,22 @@ public class CacheRefreshTimer {
 		log.info("Failed to update '{0}' entries", changedInums.size());
 
 		// Persist snapshot to cache folder
-		result = cacheRefreshSnapshotFileService.createSnapshot(currInumWithEntryHashCodeMap);
+		result = cacheRefreshSnapshotFileService.createSnapshot(cacheRefreshConfiguration, currInumWithEntryHashCodeMap);
 		if (!result) {
 			return false;
 		}
 
 		// Retain only specified number of snapshots
-		cacheRefreshSnapshotFileService.retainSnapshots(cacheRefreshConfiguration.getSnapshotMaxCount());
+		cacheRefreshSnapshotFileService.retainSnapshots(cacheRefreshConfiguration, cacheRefreshConfiguration.getSnapshotMaxCount());
 
 		// Save changedInums as problem list to disk
 		currentAppliance.setVdsCacheRefreshProblemCount(String.valueOf(changedInums.size()));
-		cacheRefreshSnapshotFileService.writeProblemList(changedInums);
+		cacheRefreshSnapshotFileService.writeProblemList(cacheRefreshConfiguration, changedInums);
 
 		// Prepare list of persons for removal
 		List<GluuSimplePerson> personsForRemoval = null;
 
-		boolean keepExternalPerson = this.cacheRefreshConfiguration.isKeepExternalPerson();
+		boolean keepExternalPerson = cacheRefreshConfiguration.isKeepExternalPerson();
 		log.debug("Keep external persons: '{0}'", keepExternalPerson);
 		if (keepExternalPerson) {
 			// Determine entries which need to remove
@@ -393,7 +395,7 @@ public class CacheRefreshTimer {
 			// Process entries which don't exist in source server
 	
 			// Load all entries from Target server
-			List<GluuSimplePerson> targetPersons = loadTargetServerEntries(ldapEntryManager);
+			List<GluuSimplePerson> targetPersons = loadTargetServerEntries(cacheRefreshConfiguration, ldapEntryManager);
 			log.info("Found '{0}' entries in target server", targetPersons.size());
 	
 			// Detect entries which need to remove
@@ -412,7 +414,7 @@ public class CacheRefreshTimer {
 		ArrayList<GluuInumMap> currentInumMaps = applyChangesToInumMap(inumInumMap, addedPrimaryKeyAttrValueInumMap, removedGluuInumMaps);
 
 		// Strore all inum entries into local disk cache
-		objectSerializationService.saveObject(this.inumCachePath, currentInumMaps);
+		objectSerializationService.saveObject(inumCachePath, currentInumMaps);
 
 		currentAppliance.setVdsCacheRefreshLastUpdateCount(String.valueOf(updatedInums.size() + removedPersonInums.size()));
 
@@ -496,7 +498,7 @@ public class CacheRefreshTimer {
 		return deletedPersons;
 	}
 
-	private List<String> updateTargetEntriesViaVDS(LdapServerConnection targetServerConnection, Set<String> changedInums) {
+	private List<String> updateTargetEntriesViaVDS(CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection targetServerConnection, Set<String> changedInums) {
 		List<String> result = new ArrayList<String>();
 
 		LdapEntryManager targetLdapEntryManager = targetServerConnection.getLdapEntryManager();
@@ -515,7 +517,7 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private List<String> updateTargetEntriesViaCopy(Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap,
+	private List<String> updateTargetEntriesViaCopy(CacheRefreshConfiguration cacheRefreshConfiguration, Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap,
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap, Set<String> changedInums) {
 		HashMap<String, CacheCompoundKey> inumCacheCompoundKeyMap = getInumCacheCompoundKeyMap(primaryKeyAttrValueInumMap);
 		Map<String, String> targetServerAttributesMapping = cacheRefreshConfiguration.getTargetServerAttributesMapping();
@@ -523,7 +525,7 @@ public class CacheRefreshTimer {
 
 		List<String> result = new ArrayList<String>();
 
-		if (!validateTargetServerSchema(targetServerAttributesMapping, customObjectClasses)) {
+		if (!validateTargetServerSchema(cacheRefreshConfiguration, targetServerAttributesMapping, customObjectClasses)) {
 			return result;
 		}
 
@@ -546,7 +548,7 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private boolean validateTargetServerSchema(Map<String, String> targetServerAttributesMapping, String[] customObjectClasses) {
+	private boolean validateTargetServerSchema(CacheRefreshConfiguration cacheRefreshConfiguration, Map<String, String> targetServerAttributesMapping, String[] customObjectClasses) {
 		// Get list of return attributes
 		String[] keyAttributesWithoutValues = cacheRefreshConfiguration.getCompoundKeyAttributesWithoutValues();
 		String[] sourceAttributes = cacheRefreshConfiguration.getSourceAttributes();
@@ -754,7 +756,7 @@ public class CacheRefreshTimer {
 		}
 	}
 
-	private List<GluuInumMap> loadInumServerEntries(LdapServerConnection inumDbServerConnection) {
+	private List<GluuInumMap> loadInumServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection inumDbServerConnection) {
 		LdapEntryManager inumDbldapEntryManager = inumDbServerConnection.getLdapEntryManager();
 		String inumbaseDn = inumDbServerConnection.getBaseDns()[0];
 
@@ -765,7 +767,7 @@ public class CacheRefreshTimer {
 		return inumDbldapEntryManager.findEntries(inumbaseDn, GluuInumMap.class, filter, null, cacheRefreshConfiguration.getSizeLimit());
 	}
 
-	private List<GluuSimplePerson> loadSourceServerEntriesWithoutLimits(LdapServerConnection[] sourceServerConnections) {
+	private List<GluuSimplePerson> loadSourceServerEntriesWithoutLimits(CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections) {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
 		String[] keyAttributes = cacheRefreshConfiguration.getCompoundKeyAttributes();
 		String[] keyAttributesWithoutValues = cacheRefreshConfiguration.getCompoundKeyAttributesWithoutValues();
@@ -809,7 +811,7 @@ public class CacheRefreshTimer {
 		return sourcePersons;
 	}
 
-	private List<GluuSimplePerson> loadSourceServerEntries(LdapServerConnection[] sourceServerConnections) {
+	private List<GluuSimplePerson> loadSourceServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections) {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
 		String[] keyAttributes = cacheRefreshConfiguration.getCompoundKeyAttributes();
 		String[] keyAttributesWithoutValues = cacheRefreshConfiguration.getCompoundKeyAttributesWithoutValues();
@@ -856,7 +858,7 @@ public class CacheRefreshTimer {
 		return sourcePersons;
 	}
 
-	private List<GluuSimplePerson> loadTargetServerEntries(LdapEntryManager targetLdapEntryManager) {
+	private List<GluuSimplePerson> loadTargetServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration, LdapEntryManager targetLdapEntryManager) {
 		Filter filter = Filter.createEqualityFilter(OxTrustConstants.objectClass, OxTrustConstants.objectClassPerson);
 
 		return targetLdapEntryManager.findEntries(personService.getDnForPerson(null), GluuSimplePerson.class, filter,
@@ -887,7 +889,7 @@ public class CacheRefreshTimer {
 		return inumMap;
 	}
 
-	private HashMap<CacheCompoundKey, GluuInumMap> addNewInumServerEntries(LdapServerConnection inumDbServerConnection,
+	private HashMap<CacheCompoundKey, GluuInumMap> addNewInumServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection inumDbServerConnection,
 			Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap,
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap) {
 		LdapEntryManager inumDbLdapEntryManager = inumDbServerConnection.getLdapEntryManager();
@@ -985,7 +987,7 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private Map<CacheCompoundKey, GluuSimplePerson> getSourcePersonCompoundKeyMap(List<GluuSimplePerson> sourcePersons) {
+	private Map<CacheCompoundKey, GluuSimplePerson> getSourcePersonCompoundKeyMap(CacheRefreshConfiguration cacheRefreshConfiguration, List<GluuSimplePerson> sourcePersons) {
 		Map<CacheCompoundKey, GluuSimplePerson> result = new HashMap<CacheCompoundKey, GluuSimplePerson>();
 		Set<CacheCompoundKey> duplicateKeys = new HashSet<CacheCompoundKey>();
 
@@ -1009,10 +1011,10 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private LdapServerConnection[] prepareLdapServerConnections(String... ldapConfigs) {
+	private LdapServerConnection[] prepareLdapServerConnections(CacheRefreshConfiguration cacheRefreshConfiguration, String... ldapConfigs) {
 		LdapServerConnection[] ldapServerConnections = new LdapServerConnection[ldapConfigs.length];
 		for (int i = 0; i < ldapConfigs.length; i++) {
-			ldapServerConnections[i] = prepareLdapServerConnection(ldapConfigs[i]);
+			ldapServerConnections[i] = prepareLdapServerConnection(cacheRefreshConfiguration, ldapConfigs[i]);
 			if (ldapServerConnections[i] == null) {
 				return null;
 			}
@@ -1021,7 +1023,7 @@ public class CacheRefreshTimer {
 		return ldapServerConnections;
 	}
 
-	private LdapServerConnection prepareLdapServerConnection(String ldapConfig) {
+	private LdapServerConnection prepareLdapServerConnection(CacheRefreshConfiguration cacheRefreshConfiguration, String ldapConfig) {
 		String prefix = String.format("ldap.conf.%s.", ldapConfig);
 		Properties ldapProperties = cacheRefreshConfiguration.getPropertiesByPrefix(prefix);
 
@@ -1078,6 +1080,10 @@ public class CacheRefreshTimer {
 
 	private String toIntString(Number number) {
 		return (number == null) ? null : String.valueOf(number.intValue());
+	}
+
+	private String getInumCachePath(CacheRefreshConfiguration cacheRefreshConfiguration) {
+		return FilenameUtils.concat(cacheRefreshConfiguration.getSnapshotFolder(), "inum_cache.dat");
 	}
 
 	private class LdapServerConnection {

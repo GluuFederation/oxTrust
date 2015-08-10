@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.DOMReader;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.FileData;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -97,10 +98,10 @@ public class LogFileSizeChecker {
 			if (tomcatHome != null) {
 				log.debug("Setting the tomcat home directory");
 				filePath = System.getProperty("catalina.home") + File.separator + "conf" + File.separator
-						+ OxTrustConstants.CONFIGURATION_FILE_FOR_LOG_ROTATION;
+						+ OxTrustConfiguration.LOG_ROTATION_CONFIGURATION;
 				log.debug("FilePath: " + filePath);
 			} else {
-				log.error(OxTrustConstants.CONFIGURATION_FILE_FOR_LOG_ROTATION + " file not found");
+				log.error(OxTrustConfiguration.LOG_ROTATION_CONFIGURATION + " file not found");
 				return;
 			}
 

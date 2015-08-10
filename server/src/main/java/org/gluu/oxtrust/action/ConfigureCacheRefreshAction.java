@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.velocity.VelocityContext;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.cache.model.GluuCacheRefreshConfiguration;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
@@ -75,7 +76,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private Log log;
 
 	@In
-	private CacheRefreshConfiguration cacheRefreshConfiguration;
+	private OxTrustConfiguration oxTrustConfiguration;
 
 	@In
 	private TemplateService templateService;
@@ -104,6 +105,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
 	private CryptoConfigurationFile cryptoConfiguration;
 
+	private CacheRefreshConfiguration cacheRefreshConfiguration;
+
 	private boolean cacheRefreshEnabled;
 	private int cacheRefreshEnabledIntervalMinutes;
 
@@ -121,7 +124,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private String interceptorValidationMessage;
 
 	private boolean initialized;
-
+	
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		if ((this.sourceConfigs != null) && (this.inumConfig != null) && (this.targetConfig != null)) {
@@ -132,8 +135,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		this.appliance = ApplianceService.instance().getAppliance();
 
-		// Make sure that we modify up to date properties
-		this.cacheRefreshConfiguration.reloadProperties();
 		initConfigurations();
 
 		this.initialized = true;
@@ -142,8 +143,10 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 
 	private void initConfigurations() {
+		this.cacheRefreshConfiguration = oxTrustConfiguration.getCacheRefreshConfiguration();
+
 		this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
-		if (!this.cacheRefreshConfiguration.isLoaded()) {
+		if ((this.cacheRefreshConfiguration == null) || !this.cacheRefreshConfiguration.isLoaded()) {
 			this.inumConfig = new GluuLdapConfiguration();
 			this.targetConfig = new GluuLdapConfiguration();
 
@@ -409,9 +412,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		// Reinit dialog
 		init();
-
-		// Reload current configuration
-		cacheRefreshConfiguration.reloadProperties();
 
 		if (StringHelper.isEmpty(cacheRefreshConfiguration.getInterceptorScriptFileName())) {
 			return;
