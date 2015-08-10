@@ -177,10 +177,11 @@ public @Data class UpdateAttributeAction implements Serializable {
 			return null;
 		}
 
-		if(! validationToggle){
+		if(!validationToggle){
 			attribute.setRegExp(null);
 		}
-		if(! tooltipToggle){
+
+		if(!tooltipToggle){
 			attribute.setGluuTooltip(null);
 		}
 		

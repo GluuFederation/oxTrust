@@ -17,6 +17,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -242,7 +243,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 	public String testLdapConnection() {
 
 		try {
-			FileConfiguration configuration = new FileConfiguration(OxTrustConstants.CONFIGURATION_FILE_LOCAL_LDAP_PROPERTIES_FILE);
+			FileConfiguration configuration = new FileConfiguration(OxTrustConfiguration.LDAP_PROPERTIES_FILE);
 			Properties properties = configuration.getProperties();
 			properties.setProperty("bindDN", this.ldapConfig.getBindDN());
 			properties.setProperty("bindPassword", this.ldapConfig.getBindPassword());

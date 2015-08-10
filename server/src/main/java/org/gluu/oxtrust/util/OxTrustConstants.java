@@ -91,11 +91,6 @@ public final class OxTrustConstants extends OxConstants {
 	public static final String FACTER_SYSTEM_UP_TIME = "uptime_seconds";
 	public static final String FACTER_BANDWIDTH_USAGE = "bandwidth_usage";
 	public static final String FACTER_LOAD_AVERAGE = "load_average";
-	public static final String CONFIGURATION_FILE_APPLICATION_CONFIGURATION = "oxTrust.properties";
-	public static final String CONFIGURATION_FILE_LOCAL_LDAP_PROPERTIES_FILE = "oxTrustLdap.properties";
-	public static final String CONFIGURATION_FILE_CENTRAL_LDAP_PROPERTIES_FILE = "oxTrustCentralLdap.properties";
-	public static final String CONFIGURATION_FILE_CACHE_PROPERTIES_FILE = "oxTrustCacheRefresh.properties";
-	public static final String CONFIGURATION_FILE_FOR_LOG_ROTATION = "oxTrustLogRotationConfiguration.xml";
 
 	public static final String HTTPD_TEST_PAGE_NAME = "/index.html";
 
