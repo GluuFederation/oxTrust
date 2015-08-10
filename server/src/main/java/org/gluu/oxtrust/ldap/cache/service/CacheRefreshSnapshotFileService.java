@@ -29,7 +29,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -49,16 +48,13 @@ import org.xdi.util.ArrayHelper;
 public class CacheRefreshSnapshotFileService {
 
 	@Logger
-	Log log;
+	private Log log;
 
 	private static final String SNAPSHOT_FILE_NAME_PATTERN = "inum-snapshot-%s.txt";
 	private static final String PROBLEM_LIST_FILE_NAME = "problem-inum-list.txt";
 	private static final String SNAPSHOT_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd-HH-mm";
 
-	@In(required = false)
-	private CacheRefreshConfiguration cacheRefreshConfiguration;
-
-	public boolean prepareSnapshotsFolder() {
+	public boolean prepareSnapshotsFolder(CacheRefreshConfiguration cacheRefreshConfiguration) {
 		String snapshotFolder = cacheRefreshConfiguration.getSnapshotFolder();
 
 		try {
@@ -74,8 +70,8 @@ public class CacheRefreshSnapshotFileService {
 		return true;
 	}
 
-	public boolean createSnapshot(Map<String, Integer> inumWithEntryHashCodeMap) {
-		if (!prepareSnapshotsFolder()) {
+	public boolean createSnapshot(CacheRefreshConfiguration cacheRefreshConfiguration, Map<String, Integer> inumWithEntryHashCodeMap) {
+		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return false;
 		}
 
@@ -106,8 +102,8 @@ public class CacheRefreshSnapshotFileService {
 		return true;
 	}
 
-	public Map<String, Integer> readSnapshot(String snapshotFileName) {
-		if (!prepareSnapshotsFolder()) {
+	public Map<String, Integer> readSnapshot(CacheRefreshConfiguration cacheRefreshConfiguration, String snapshotFileName) {
+		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return null;
 		}
 
@@ -151,20 +147,20 @@ public class CacheRefreshSnapshotFileService {
 		return result;
 	}
 
-	public Map<String, Integer> readLastSnapshot() {
-		if (!prepareSnapshotsFolder()) {
+	public Map<String, Integer> readLastSnapshot(CacheRefreshConfiguration cacheRefreshConfiguration) {
+		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return null;
 		}
 
-		String[] snapshots = getSnapshotsList();
+		String[] snapshots = getSnapshotsList(cacheRefreshConfiguration);
 		if (ArrayHelper.isEmpty(snapshots)) {
 			return null;
 		}
 
-		return readSnapshot(snapshots[snapshots.length - 1]);
+		return readSnapshot(cacheRefreshConfiguration, snapshots[snapshots.length - 1]);
 	}
 
-	private String[] getSnapshotsList() {
+	private String[] getSnapshotsList(CacheRefreshConfiguration cacheRefreshConfiguration) {
 		File file = new File(cacheRefreshConfiguration.getSnapshotFolder());
 		String[] files = file.list(new WildcardFileFilter(String.format(SNAPSHOT_FILE_NAME_PATTERN, "*")));
 		Arrays.sort(files);
@@ -172,12 +168,12 @@ public class CacheRefreshSnapshotFileService {
 		return files;
 	}
 
-	public boolean retainSnapshots(int count) {
-		if (!prepareSnapshotsFolder()) {
+	public boolean retainSnapshots(CacheRefreshConfiguration cacheRefreshConfiguration, int count) {
+		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return false;
 		}
 
-		String[] snapshots = getSnapshotsList();
+		String[] snapshots = getSnapshotsList(cacheRefreshConfiguration);
 		if (ArrayHelper.isEmpty(snapshots)) {
 			return true;
 		}
@@ -192,8 +188,8 @@ public class CacheRefreshSnapshotFileService {
 		return true;
 	}
 
-	public List<String> readProblemList() {
-		if (!prepareSnapshotsFolder()) {
+	public List<String> readProblemList(CacheRefreshConfiguration cacheRefreshConfiguration) {
+		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return null;
 		}
 
@@ -226,8 +222,8 @@ public class CacheRefreshSnapshotFileService {
 		return result;
 	}
 
-	public boolean writeProblemList(Set<String> changedInums) {
-		if (!prepareSnapshotsFolder()) {
+	public boolean writeProblemList(CacheRefreshConfiguration cacheRefreshConfiguration, Set<String> changedInums) {
+		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return false;
 		}
 
