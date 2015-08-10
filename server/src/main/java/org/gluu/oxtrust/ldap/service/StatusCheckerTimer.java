@@ -159,27 +159,24 @@ public class StatusCheckerTimer {
 	private void setCertificateExpiryAttributes(GluuAppliance appliance) {
 		if (isLinux()) {
 			String programPath = OxTrustConstants.PROGRAM_CHECK_SSL;
-	
+
 			String[] outputLines = runCheck(programPath);
 			int expiresAfter = -1;
-			if(outputLines != null 
-					&& ! outputLines[1].startsWith("SSL_CERT CRITICAL")){
+			if (outputLines != null && (outputLines.length > 0) && !outputLines[1].startsWith("SSL_CERT CRITICAL")) {
 				try {
 					if (outputLines.length == 1) {
 						expiresAfter = Integer.parseInt(outputLines[0]);
 					} else {
-						String message 
-							= String.format("%s retuned an unexpected "
-												+ "number of lines",
-											programPath);
+						String message = String.format("%s retuned an unexpected " + "number of lines", programPath);
 						log.error(message);
 					}
 				} catch (NumberFormatException e) {
-					String message 
-						= String.format("%s retuned an unexpected value", 
-										programPath);
+					String message = String.format("%s retuned an unexpected value", programPath);
 					log.error(message);
 				}
+			} else {
+				String message = String.format("%s retuned an unexpected result", programPath);
+				log.error(message);
 			}
 			appliance.setSslExpiry(toIntString(expiresAfter));
 		}
