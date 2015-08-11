@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.action.test;
 
+import java.io.File;
+
 import org.gluu.oxtrust.ldap.service.util.TestFileConfiguration;
 import org.jboss.seam.mock.JUnitSeamTest;
 import org.junit.Before;
@@ -27,7 +29,7 @@ public abstract class ConfigurableTest extends JUnitSeamTest {
 	@Before
 	public void initTest() {
 		super.begin();
-		this.testData = new TestFileConfiguration("oxTrustLdapTest.properties");
+		this.testData = new TestFileConfiguration(System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "oxTrustLdapTest.properties");
 	}
 
 	/**
