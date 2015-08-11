@@ -26,7 +26,7 @@
 
         <rule if-outcome="failure">
             <end-conversation />
-            <redirect view-id="/uma/inventory.xhtml">
+            <redirect view-id="/uma/scope.xhtml">
                 <message severity="ERROR">Failed to #{updateScopeDescriptionAction.update ? "update" : "add"} UMA scope description#{updateScopeDescriptionAction.update ? " " + "\"" + updateScopeDescriptionAction.scopeDescription.displayName + "\"" : ""}</message>
             </redirect>
         </rule>
@@ -48,7 +48,7 @@
 
         <rule if-outcome="failure">
             <end-conversation />
-            <redirect view-id="/uma/inventory.xhtml">
+            <redirect view-id="/uma/scope.xhtml">
                 <message severity="ERROR">Failed to #{updateScopeDescriptionAction.update ? "update" : "add"} UMA scope description#{updateScopeDescriptionAction.update ? " " + "\"" + updateScopeDescriptionAction.scopeDescription.displayName + "\"" : ""}</message>
             </redirect>
         </rule>
@@ -56,7 +56,7 @@
 
     <navigation from-action="#{updateScopeDescriptionAction.cancel}">
         <end-conversation />
-        <redirect view-id="/uma/inventory.xhtml">
+        <redirect view-id="/uma/scope.xhtml">
             <message severity="INFO">UMA scope description #{updateScopeDescriptionAction.update ? " " + "\"" + updateScopeDescriptionAction.scopeDescription.displayName + "\"" : ""} not #{updateScopeDescriptionAction.update ? "updated" : "added"}</message>
         </redirect>
     </navigation>
@@ -64,14 +64,14 @@
     <navigation from-action="#{cc.attrs.deleteMethod}">
         <rule if-outcome="success">
             <end-conversation />
-            <redirect view-id="/uma/inventory.xhtml">
+            <redirect view-id="/uma/scope.xhtml">
                 <message severity="INFO">UMA scope description '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully</message>
             </redirect>
         </rule>
 
         <rule if-outcome="failure">
             <end-conversation />
-            <redirect view-id="/uma/inventory.xhtml">
+            <redirect view-id="/uma/scope.xhtml">
                 <message severity="INFO">Failed to remove UMA scope description '#{updateScopeDescriptionAction.scopeDescription.displayName}'</message>
             </redirect>
         </rule>

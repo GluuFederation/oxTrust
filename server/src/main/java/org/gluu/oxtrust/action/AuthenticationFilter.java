@@ -196,7 +196,6 @@ public class AuthenticationFilter extends AbstractFilter {
 				}
 
 				return authenticateUserSilently(identity, credentials, username);
-//				return true;
 			}
 		} catch (Exception ex) {
 			log.warn("Could not validate accessToken." + ex.getMessage());

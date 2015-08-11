@@ -1,0 +1,115 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <ui:define name="body">
+    <section class="content-header">
+		<h1 style="color: #333;">
+			UMA<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> scopes</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration"><a
+				href="#{request.contextPath}/uma/scopehome">Scopes
+					</a></li>
+		</ol>
+		</section>
+
+		<section class="content">
+            <div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+						<div class="box-header">
+						</div>
+                            <div style="display: inline-block; width: 100% !important;">
+                                <h:form>
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern" style="height:60px;">
+                        
+                        	<ui:define name="label">Search Key:</ui:define>
+                       
+                        
+                        	<h:inputText value="#{umaInventoryAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="form-control"
+                            		alt="Search parameters for UMA resource set like Inum, Display Name" placeholder="Search Key" style="width:50%;float: left;"/>
+                            <a4j:commandButton value="Search" action="#{umaInventoryAction.search}" render="resourcesListId, scopesListId" styleClass="btn btn-primary" style="float: left;margin-left:5px;"/>
+                        
+
+
+                    </s:decorate>
+              
+		<div class="nav-tabs-custom" style="margin-bottom: 0px;">
+                
+               
+                  
+                  <div class="tab-pane" id="scopeTab">
+                  		<h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <s:button view="/uma/scope/modifyScopeDescription.xhtml" value="Add Scope Description" propagation="none" styleClass="btn btn-primary">
+                                    <f:param name="scope" value="#{null}" />
+                                </s:button>
+
+                                <richext:spacer height="8" />
+                                <s:fragment rendered="#{umaInventoryAction.scopesList.size eq 0}">
+                                    <richext:spacer height="30" />
+                                    <h:outputText value="No Search Result Found" />
+                                </s:fragment>
+
+                                <rich:dataTable sortMode="single" id="scopesListId" value="#{umaInventoryAction.scopesList}" rows="20" styleClass="data sortable" var="_row"
+                                    rendered="#{umaInventoryAction.scopesList.size gt 0}" style="width: 750px;">
+                                    <rich:column sortBy="#{_row.displayName}">
+                                        <f:facet name="header">Name</f:facet>
+                                        <s:link value="#{_row.displayName}" view="/uma/scope/modifyScopeDescription.xhtml" propagation="none">
+                                            <f:param name="scope" value="#{_row.inum}" />
+                                        </s:link>
+                                    </rich:column>
+
+                                    <rich:column sortBy="#{_row.type.displayName}">
+                                        <f:facet name="header">Type</f:facet>
+                                        <h:outputText value="#{_row.type.displayName}" />
+                                    </rich:column>
+
+                                    <rich:column sortBy="#{_row.url}">
+                                        <f:facet name="header">Reference</f:facet>
+                                        <h:outputText value="#{_row.url}" />
+                                    </rich:column>
+
+                                    <rich:column>
+                                        <f:facet name="header">Action</f:facet>
+                                        <s:fragment rendered="#{_row.id != null}">
+                                            <s:link value="Download" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
+                                                <f:param name="scope" value="#{_row.id}" />
+                                                <f:param name="dl" value="#{true}" />
+                                            </s:link>
+                                            <h:outputText value="/" />
+                                            <s:link value="Link" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
+                                                <f:param name="scope" value="#{_row.id}" />
+                                            </s:link>
+                                        </s:fragment>
+                                    </rich:column>
+
+                                    <f:facet name="footer">
+                                        <rich:dataScroller renderIfSinglePage="false" rendered="#{umaInventoryAction.scopesList.size > 0}" for="scopesListId" maxPages="10" stepControls="auto"
+                                            align="left" />
+                                    </f:facet>
+                                </rich:dataTable>
+                            </h:panelGrid>
+                  </div>
+                
+        </div>
+        </h:form>
+
+
+                                </div>
+                            
+                            </div>
+                        </div>
+                </div>
+
+			
+
+         
+
+        </section>
+    </ui:define>
+</ui:composition>

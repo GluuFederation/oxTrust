@@ -198,19 +198,20 @@
 							</a>
 								<ul class="treeview-menu" id="subMenuUMA">
 									<li id="subMenuLinkUMA1"><h:commandLink value="Scopes"
-											action="#{menuAction.endConversation('/uma/inventory.xhtml?scopes=1')}"
+											action="#{menuAction.endConversation('/uma/scope.xhtml?scopes=1')}"
 											rendered="#{s:hasPermission('uma', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkUMA2"><h:commandLink value="Resources"
-											action="#{menuAction.endConversation('/uma/inventory.xhtml?resources=1')}"
+											action="#{menuAction.endConversation('/uma/resource.xhtml?resources=1')}"
 											rendered="#{s:hasPermission('uma', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 								</ul></li>
 						</ui:fragment>
+						
 						<ui:fragment
 							rendered="#{s:hasPermission('group', 'access') or s:hasPermission('person', 'access')}">
 							<li class="treeview" id="menuUsers"><a href="#"> <i
@@ -424,10 +425,11 @@
 									$('#menuOpenID').addClass('active');
 									$('#subMenuLinkOpenID2').addClass('active');
 								}
-
+								
+								
 								//Menu Highlights - UMA
 								
-								if (window.location.href.indexOf("uma/inventory?scopes") > -1 || window.location.href.indexOf("uma/scope/add") > -1) {
+								/*if (window.location.href.indexOf("uma/inventory?scopes") > -1 || window.location.href.indexOf("uma/scope/add") > -1) {
 									$('#subMenuUMA').css('display', 'block');
 									$('#subMenuLinkUMA1').addClass('active');
 									//$('#subMenuLinkUMA1').addClass('active');
@@ -438,8 +440,28 @@
 									$('#subMenuUMA').css('display', 'block');
 									$('#subMenuLinkUMA2').addClass('active');
 									//$('#subMenuLinkUMA2').addClass('active');
+								}*/
+
+								//Menu Highlights - UMA
+								
+								if (window.location.href.indexOf("uma/scopehome?scopes") > -1 || window.location.href.indexOf("uma/scope/add") > -1) {
+									$('#subMenuUMA').css('display', 'block');
+									$('#subMenuLinkUMA1').addClass('active');
+								//	$('#subMenuLinkUMA1').addClass('active');
+								}
+								
+								
+								if (window.location.href.indexOf("uma/resourcehome?resources") > -1 || window.location.href.indexOf("uma/resource/add") > -1) {
+									$('#subMenuUMA').css('display', 'block');
+									$('#subMenuLinkUMA2').addClass('active');
+									//$('#subMenuLinkUMA1').addClass('active');
 								}
 
+								
+								
+								
+
+								
 								//Menu Highlights - Users
 								
 								if (window.location.href.indexOf("group/inventory") > -1 || window.location.href.indexOf("group/manage/add")> -1 || window.location.href.indexOf("group/manage/update")> -1) {

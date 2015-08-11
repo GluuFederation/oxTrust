@@ -39,5 +39,5 @@
                 <message severity="ERROR">Failed to find scopes</message>
             </redirect>
         </rule>
-    </navigation>
+		</navigation>
 </page>
