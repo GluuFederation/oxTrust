@@ -55,15 +55,18 @@ public class ImportPersonConfiguration {
 	@Create
 	public void create() {
 		this.importConfiguration = new FileConfiguration(oxTrustConfiguration.confDir() + File.separator + GLUU_IMPORT_PERSON_PROPERTIES_FILE, true);
-	}
-
-	@Observer("org.jboss.seam.postInitialization")
-	public void init() throws Exception {
-		this.attributes = prepareAttributes();
+		try {
+			this.attributes = prepareAttributes();
+		} catch (Exception ex) {
+			log.error("Failed to load import configuration", ex);
+		}
 	}
 
 	private List<GluuAttribute> prepareAttributes() throws Exception {
 		List<GluuAttribute> result = new ArrayList<GluuAttribute>();
+		if (!this.importConfiguration.isLoaded()) {
+			return result;
+		}
 
 		Iterator<?> keys = importConfiguration.getProperties().keySet().iterator();
 		while (keys.hasNext()) {
