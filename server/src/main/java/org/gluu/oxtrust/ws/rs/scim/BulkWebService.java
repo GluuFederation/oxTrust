@@ -325,7 +325,7 @@ public class BulkWebService extends BaseScimWebService {
 
 		}
 		List<String> schemas = new ArrayList<String>();
-		schemas.add("urn:scim:schemas:core:1.0");
+		schemas.add("urn:scim2:schemas:core:1.0");
 		scimBulkResponse.setSchemas(schemas);
 		scimBulkResponse.setOperations(listResponses);
 

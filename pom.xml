@@ -63,6 +63,7 @@
 		<module>static</module>
 		<module>configuration</module>
 		<module>server</module>
+		<module>scim</module>
 		<module>saml-openid-auth-client</module>
 		<module>cas-openid-auth-client</module>
 	</modules>
@@ -110,6 +111,11 @@
 			<dependency>
 				<groupId>org.xdi</groupId>
 				<artifactId>oxtrust-static</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xdi</groupId>
+				<artifactId>oxtrust-scim</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
