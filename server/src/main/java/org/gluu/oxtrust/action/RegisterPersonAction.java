@@ -123,27 +123,18 @@ public class RegisterPersonAction implements Serializable{
     public String initPerson(){
     	String result = sanityCheck();
     	if(result.equals(OxTrustConstants.RESULT_SUCCESS)){
-//    		this.person = (inum == null) 
-//    							? new GluuCustomPerson()
-//    							: personService.getPersonByInum(inum);
+    		this.person = new GluuCustomPerson();
     		
-    		boolean isPersonActiveOrDisabled = 
-    				GluuStatus.ACTIVE.equals(person.getStatus())
-    				|| GluuStatus.INACTIVE.equals(person.getStatus());
-    		
-    		if(isPersonActiveOrDisabled){
-    			result = OxTrustConstants.RESULT_NO_PERMISSIONS;
-    		}else{
-	            initAttributes();
-	            boolean initScriptResult = 
-	            		externalUserRegistrationService
-	            			.executeExternalInitRegistrationMethods(
-	            					this.person, requestParameters);
-	            result = initScriptResult 
-	            			? OxTrustConstants.RESULT_SUCCESS 
-	            			: OxTrustConstants.RESULT_FAILURE;
-    		}
-    	}
+            initAttributes();
+            boolean initScriptResult = 
+            		externalUserRegistrationService
+            			.executeExternalInitRegistrationMethods(
+            					this.person, requestParameters);
+            result = initScriptResult 
+            			? OxTrustConstants.RESULT_SUCCESS 
+            			: OxTrustConstants.RESULT_FAILURE;
+		}
+
     	return result;
     }
 
@@ -458,4 +449,29 @@ public class RegisterPersonAction implements Serializable{
 	public String getRedirectUri() {
 		return redirectUri;
 	}
+
+	public List<String> getHiddenAttributes() {
+		return hiddenAttributes;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRepeatPassword() {
+		return repeatPassword;
+	}
+
+	public void setRepeatPassword(String repeatPassword) {
+		this.repeatPassword = repeatPassword;
+	}
+
+	public boolean isCaptchaDisabled() {
+		return captchaDisabled;
+	}
+
 }
