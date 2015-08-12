@@ -261,7 +261,7 @@ public class OxTrustConfiguration {
 		return false;
 	}
 
-    private String confDir() {
+    public String confDir() {
         final String confDir = getLdapConfiguration().getString("confDir");
         if (StringUtils.isNotBlank(confDir)) {
             return confDir;

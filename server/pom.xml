@@ -343,6 +343,10 @@
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-static</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxtrust-scim</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.xdi</groupId>
@@ -1098,7 +1102,7 @@
 						<version>1.0</version>
 						<configuration>
 							<!-- <catalogs> -->
-							<!-- <catalog>src/main/resources/org/jboss/seam/catalog.xml</catalog> -->
+							<!-- <catalog>src/main/model/org/jboss/seam/catalog.xml</catalog> -->
 							<!-- </catalogs> -->
 							<validationSets>
 								<validationSet>
