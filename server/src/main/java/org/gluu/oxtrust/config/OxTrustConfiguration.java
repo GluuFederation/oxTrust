@@ -177,6 +177,9 @@ public class OxTrustConfiguration {
                 	// We don't store this configuration in LDAP yet
 //                    isAnyChanged = true;
                 }
+            } else if (this.cacheRefreshConfiguration != null) {
+            	// Allow to remove not mandatory configuration file
+	        	this.cacheRefreshConfiguration = null;
             }
 
             if (isAnyChanged) {
@@ -203,6 +206,10 @@ public class OxTrustConfiguration {
                     Events.instance().raiseAsynchronousEvent(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
                     isAnyChanged = true;
                 }
+            } else if (this.ldapCentralConfiguration != null) {
+            	// Allow to remove not mandatory configuration file
+        		this.ldapCentralConfiguration = null;
+                Events.instance().raiseAsynchronousEvent(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
             }
         }
     }
@@ -358,6 +365,7 @@ public class OxTrustConfiguration {
 	        	log.info("Reloaded configuration from file: " + cacheRefreshFilePath);
 	        } else {
 	        	log.error("Failed to load configuration from file: " + cacheRefreshFilePath);
+	        	this.cacheRefreshConfiguration = null;
 	        	return;
 	        }
 
