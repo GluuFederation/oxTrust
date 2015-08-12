@@ -151,20 +151,21 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 			this.targetConfig = new GluuLdapConfiguration();
 
 			this.cacheRefreshConfig = new GluuCacheRefreshConfiguration();
+			this.cacheRefreshConfig.setUpdateMethod(CacheRefreshUpdateMethod.COPY);
 			return;
 		}
 
 		String[] sourceConfigurationIds = this.cacheRefreshConfiguration.getSourceServerConfigs();
 		if (ArrayHelper.isNotEmpty(sourceConfigurationIds)) {
 			for (String sourceConfigurationId : sourceConfigurationIds) {
-				this.sourceConfigs.add(prepareLdapConfig(sourceConfigurationId));
+				this.sourceConfigs.add(prepareLdapConfig(this.cacheRefreshConfiguration, sourceConfigurationId));
 			}
 		}
 
-		this.inumConfig = prepareLdapConfig(this.cacheRefreshConfiguration.getInumDbServerConfig());
-		this.targetConfig = prepareLdapConfig(this.cacheRefreshConfiguration.getDestinationServerConfig());
+		this.inumConfig = prepareLdapConfig(this.cacheRefreshConfiguration, this.cacheRefreshConfiguration.getInumDbServerConfig());
+		this.targetConfig = prepareLdapConfig(this.cacheRefreshConfiguration, this.cacheRefreshConfiguration.getDestinationServerConfig());
 
-		this.cacheRefreshConfig = prepareCacheRefreshConfig();
+		this.cacheRefreshConfig = prepareCacheRefreshConfig(this.cacheRefreshConfiguration);
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -275,7 +276,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return cacheRefreshEnabledIntervalMinutes;
 	}
 
-	private GluuLdapConfiguration prepareLdapConfig(String ldapConfigId) {
+	private GluuLdapConfiguration prepareLdapConfig(CacheRefreshConfiguration cacheRefreshConfiguration, String ldapConfigId) {
 		if (StringHelper.isEmpty(ldapConfigId)) {
 			return new GluuLdapConfiguration();
 		}
@@ -296,7 +297,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 						prefix + "useAnonymousBind", false));
 	}
 
-	private GluuCacheRefreshConfiguration prepareCacheRefreshConfig() {
+	private GluuCacheRefreshConfiguration prepareCacheRefreshConfig(CacheRefreshConfiguration cacheRefreshConfiguration) {
 		return new GluuCacheRefreshConfiguration(toSimpleProperties(cacheRefreshConfiguration.getCompoundKeyAttributes()),
 				toSimpleProperties(cacheRefreshConfiguration.getCompoundKeyObjectClasses()),
 				toSimpleProperties(cacheRefreshConfiguration.getSourceAttributes()), cacheRefreshConfiguration.getCustomLdapFilter(),

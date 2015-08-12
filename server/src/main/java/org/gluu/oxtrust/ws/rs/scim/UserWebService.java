@@ -100,7 +100,7 @@ public class UserWebService extends BaseScimWebService {
 
 			}
 			List<String> schema = new ArrayList<String>();
-			schema.add("urn:scim:schemas:core:1.0");
+			schema.add("urn:scim2:schemas:core:1.0");
 			log.info(" setting schema ");
 			allPersonList.setSchemas(schema);
 			List<ScimPerson> resources = allPersonList.getResources();
