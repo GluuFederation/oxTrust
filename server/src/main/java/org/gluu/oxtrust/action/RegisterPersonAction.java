@@ -48,406 +48,333 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 
 /**
- * User: Dejan Maric
+ * @author Dejan Maric
+ * @author Yuriy Movchan Date: 08.14.2015
  */
 @Scope(ScopeType.CONVERSATION)
 @Name("registerPersonAction")
-public class RegisterPersonAction implements Serializable{
+public class RegisterPersonAction implements Serializable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6002737004324917338L;
 
-    @Logger
-    private Log log;
+	@Logger
+	private Log log;
 
-    private String invitationGuid;
+	private String invitationGuid;
 
-    @In(value = "#{facesContext.externalContext}")
-    private ExternalContext externalContext;
+	@In(value = "#{facesContext.externalContext}")
+	private ExternalContext externalContext;
 
-    @In
-    private RegistrationLinkService registrationLinkService;
+	@In
+	private RegistrationLinkService registrationLinkService;
 
-    @In
-    private AttributeService attributeService;
+	@In
+	private AttributeService attributeService;
 
-    @In
-    private OrganizationService organizationService;
+	@In
+	private OrganizationService organizationService;
 
-    @In(create = true)
-    @Out(scope = ScopeType.CONVERSATION)
-    private CustomAttributeAction customAttributeAction;
+	@In(create = true)
+	@Out(scope = ScopeType.CONVERSATION)
+	private CustomAttributeAction customAttributeAction;
 
-    private GluuCustomPerson person;
+	@In
+	private FacesMessages facesMessages;
 
-    @In
-    private PersonService personService;
+	@In
+	private ExternalUserRegistrationService externalUserRegistrationService;
 
-    private List<String> hiddenAttributes;
+	private GluuCustomPerson person;
 
-//    private String inum;
+	@In
+	private PersonService personService;
 
-    @NotNull
-    @Size(min = 2, max = 30,
-                    message = "Length of password should be between 2 and 30")
-    private String password;
+	@NotNull
+	@Size(min = 2, max = 30, message = "Length of password should be between 2 and 30")
+	private String password;
 
-    @NotNull
-    @Size(min = 2, max = 30,
-                    message = "Length of password should be between 2 and 30")
-    private String repeatPassword;
+	@NotNull
+	@Size(min = 2, max = 30, message = "Length of password should be between 2 and 30")
+	private String repeatPassword;
 
-    @In
-    private FacesMessages facesMessages;
+	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	private ApplicationConfiguration applicationConfiguration;
 
-    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+	private List<String> hiddenAttributes;
 
-    private String redirectUri;
+	private String inum;
 
-    @In
-    private ExternalUserRegistrationService externalUserRegistrationService;
+	private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
 
-    private Map<String, String[]> requestParameters
-        = new HashMap<String, String[]>();
+	private boolean captchaDisabled = false;
 
-    private boolean captchaDisabled = false;
-    /**
-     * Initializes attributes for registering new person
-     *
-     * @return String describing success of the operation
-     * @throws Exception
-     */
-    public String initPerson(){
-    	String result = sanityCheck();
-    	if(result.equals(OxTrustConstants.RESULT_SUCCESS)){
-    		this.person = new GluuCustomPerson();
-    		
-            initAttributes();
-            boolean initScriptResult = 
-            		externalUserRegistrationService
-            			.executeExternalInitRegistrationMethods(
-            					this.person, requestParameters);
-            result = initScriptResult 
-            			? OxTrustConstants.RESULT_SUCCESS 
-            			: OxTrustConstants.RESULT_FAILURE;
+    private String postRegistrationInformation;
+
+	/**
+	 * Initializes attributes for registering new person
+	 *
+	 * @return String describing success of the operation
+	 * @throws Exception
+	 */
+	public String initPerson() {
+		String result = sanityCheck();
+		if (result.equals(OxTrustConstants.RESULT_SUCCESS)) {
+			this.person = (inum == null) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
+
+			boolean isPersonActiveOrDisabled = GluuStatus.ACTIVE.equals(person.getStatus()) || GluuStatus.INACTIVE.equals(person.getStatus());
+
+			if (isPersonActiveOrDisabled) {
+				result = OxTrustConstants.RESULT_NO_PERMISSIONS;
+			} else {
+				initAttributes();
+				boolean initScriptResult = externalUserRegistrationService.executeExternalInitRegistrationMethods(this.person, requestParameters);
+				result = initScriptResult ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
+			}
 		}
 
-    	return result;
-    }
+		return result;
+	}
 
-    /**
- 	 * Checks if session is correct for person registration. 
-     * @return OxTrustConstants constant to be returned by action
-     */
-    private String sanityCheck() {
-    	if (this.person != null) {
-            return OxTrustConstants.RESULT_SUCCESS;
-        }
+	/**
+	 * Checks if session is correct for person registration.
+	 * 
+	 * @return OxTrustConstants constant to be returned by action
+	 */
+	private String sanityCheck() {
+		if (this.person != null) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
 
-        requestParameters.putAll(
-            externalContext.getRequestParameterValuesMap());
-        GluuOrganization organization = organizationService.getOrganization();
-        RegistrationConfiguration config
-        	= organization.getOxRegistrationConfiguration();
-        boolean registrationCustomized = config != null;
-        boolean inviteCodesActive
-            = registrationCustomized
-                && config.isInvitationCodesManagementEnabled();
-        boolean inviteCodeOptional
-            = registrationCustomized
-                && inviteCodesActive
-                && config.isUninvitedRegistrationAllowed();
-        
-        this.captchaDisabled
-        	= registrationCustomized
-            	&& config.isCaptchaDisabled();
+		requestParameters.putAll(externalContext.getRequestParameterValuesMap());
+		GluuOrganization organization = organizationService.getOrganization();
+		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
+		boolean registrationCustomized = config != null;
+		boolean inviteCodesActive = registrationCustomized && config.isInvitationCodesManagementEnabled();
+		boolean inviteCodeOptional = registrationCustomized && inviteCodesActive && config.isUninvitedRegistrationAllowed();
 
-        boolean unexpectedInvitationGuid = 	(! inviteCodesActive) 
-        									&& (getInvitationGuid() != null);
-        if(unexpectedInvitationGuid){
-            return OxTrustConstants.RESULT_DISABLED;
-        }
-        boolean invitationCodeNotFound	 = 	inviteCodesActive
-        									&& (! inviteCodeOptional)
-        									&& getInvitationGuid() == null;
-        if(invitationCodeNotFound){
-            return OxTrustConstants.RESULT_NO_PERMISSIONS;
-        }
+		this.captchaDisabled = registrationCustomized && config.isCaptchaDisabled();
 
-        boolean invitationCodePresent 	= 	inviteCodesActive 
-        									&& (getInvitationGuid() != null);
-        if(invitationCodePresent){
-            OxLink invitationLink
-                = registrationLinkService.getLinkByGuid(getInvitationGuid());
-            if(invitationLink == null){
-                return OxTrustConstants.RESULT_FAILURE;
-            }
-        }
+		boolean unexpectedInvitationGuid = (!inviteCodesActive) && (getInvitationGuid() != null);
+		if (unexpectedInvitationGuid) {
+			return OxTrustConstants.RESULT_DISABLED;
+		}
+		boolean invitationCodeNotFound = inviteCodesActive && (!inviteCodeOptional) && getInvitationGuid() == null;
+		if (invitationCodeNotFound) {
+			return OxTrustConstants.RESULT_NO_PERMISSIONS;
+		}
+
+		boolean invitationCodePresent = inviteCodesActive && (getInvitationGuid() != null);
+		if (invitationCodePresent) {
+			OxLink invitationLink = registrationLinkService.getLinkByGuid(getInvitationGuid());
+			if (invitationLink == null) {
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+		}
 		return OxTrustConstants.RESULT_SUCCESS;
 
 	}
 
 	public String register() throws CloneNotSupportedException {
-        GluuOrganization organization = organizationService.getOrganization();
-        RegistrationConfiguration registrationConfig
-            = organization.getOxRegistrationConfiguration();
-        boolean registrationCustomized = registrationConfig != null;
-        this.captchaDisabled
-            = registrationCustomized 
-            	&& registrationConfig.isCaptchaDisabled();
-        ReCaptchaResponse reCaptchaResponse = null;
-        
-        if(! captchaDisabled){
-            reCaptchaResponse
-                = RecaptchaUtils.getRecaptchaResponseFromServletContext();
-        }
-        boolean registrationFormValid 
-        	= captchaDisabled
-        		|| reCaptchaResponse != null 
-        		&& reCaptchaResponse.isValid() 
-        		&& password.equals(repeatPassword);
-        
-        if (registrationFormValid) {
-        	GluuCustomPerson archivedPerson = (GluuCustomPerson) person.clone();
-        	
-            String customObjectClass = attributeService.getCustomOrigin();
+		GluuOrganization organization = organizationService.getOrganization();
+		RegistrationConfiguration registrationConfig = organization.getOxRegistrationConfiguration();
+		boolean registrationCustomized = registrationConfig != null;
+		this.captchaDisabled = registrationCustomized && registrationConfig.isCaptchaDisabled();
+		ReCaptchaResponse reCaptchaResponse = null;
 
-            this.person.setCustomObjectClasses(
-                new String[] { customObjectClass });
+		if (!captchaDisabled) {
+			reCaptchaResponse = RecaptchaUtils.getRecaptchaResponseFromServletContext();
+		}
+		boolean registrationFormValid = captchaDisabled || reCaptchaResponse != null && reCaptchaResponse.isValid() && password.equals(repeatPassword);
 
-            // Save person
-            if(person.getInum() == null){
-                String inum = personService.generateInumForNewPerson();
-                this.person.setInum(inum);
-            }
+		if (registrationFormValid) {
+			GluuCustomPerson archivedPerson = (GluuCustomPerson) person.clone();
 
-            if(person.getIname() == null){
-                String iname
-                    = personService.generateInameForNewPerson(
-                                                this.person.getUid());
-                this.person.setIname(iname);
-            }
+			String customObjectClass = attributeService.getCustomOrigin();
 
-            if(person.getDn() == null){
-                String dn = personService.getDnForPerson(this.person.getInum());
-                this.person.setDn(dn);
-            }
+			this.person.setCustomObjectClasses(new String[] { customObjectClass });
 
+			// Save person
+			if (person.getInum() == null) {
+				String inum = personService.generateInumForNewPerson();
+				this.person.setInum(inum);
+			}
 
-            boolean invitationCodeAllowed = registrationCustomized
-                    && registrationConfig.isInvitationCodesManagementEnabled();
-            boolean  invitationCodePresent = getInvitationGuid() != null;
-            OxLink invitationLink
-                = registrationLinkService.getLinkByGuid(getInvitationGuid());
-            boolean invitationCodeModerated
-                = invitationCodePresent && invitationLink != null
-                    && invitationLink.getLinkModerated();
+			if (person.getIname() == null) {
+				String iname = personService.generateInameForNewPerson(this.person.getUid());
+				this.person.setIname(iname);
+			}
 
-            if(invitationCodePresent && invitationCodeAllowed){
-                this.person.setOxInviteCode(getInvitationGuid());
-                registrationLinkService.addPendingUser(invitationLink,
-                                                       this.person.getInum());
-            }
+			if (person.getDn() == null) {
+				String dn = personService.getDnForPerson(this.person.getInum());
+				this.person.setDn(dn);
+			}
 
-            if( invitationCodeModerated ){
-                this.person.setStatus(GluuStatus.INACTIVE);
-            } else {
-                this.person.setStatus(GluuStatus.ACTIVE);
-            }
+			boolean invitationCodeAllowed = registrationCustomized && registrationConfig.isInvitationCodesManagementEnabled();
+			boolean invitationCodePresent = getInvitationGuid() != null;
+			OxLink invitationLink = registrationLinkService.getLinkByGuid(getInvitationGuid());
+			boolean invitationCodeModerated = invitationCodePresent && invitationLink != null && invitationLink.getLinkModerated();
 
-            List<GluuCustomAttribute> personAttributes
-                = this.person.getCustomAttributes();
-            if (!personAttributes.contains(
-                                    new GluuCustomAttribute("cn", ""))) {
-                List<GluuCustomAttribute> changedAttributes
-                                    = new ArrayList<GluuCustomAttribute>();
-                changedAttributes.addAll(personAttributes);
-                changedAttributes.add(
-                        new GluuCustomAttribute("cn",
-                                    this.person.getGivenName()
-                                        + " "
-                                        + this.person.getSurname()));
-                this.person.setCustomAttributes(changedAttributes);
-            } else {
-                this.person.setCommonName(this.person.getCommonName());
-            }
+			if (invitationCodePresent && invitationCodeAllowed) {
+				this.person.setOxInviteCode(getInvitationGuid());
+				registrationLinkService.addPendingUser(invitationLink, this.person.getInum());
+			}
 
-            // save password
-            this.person.setUserPassword(password);
-            this.person.setOxCreationTimestamp(new Date());
+			if (invitationCodeModerated) {
+				this.person.setStatus(GluuStatus.INACTIVE);
+			} else {
+				this.person.setStatus(GluuStatus.ACTIVE);
+			}
 
-            try {
+			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
+			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
+				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
+				changedAttributes.addAll(personAttributes);
+				changedAttributes.add(new GluuCustomAttribute("cn", this.person.getGivenName() + " " + this.person.getSurname()));
+				this.person.setCustomAttributes(changedAttributes);
+			} else {
+				this.person.setCommonName(this.person.getCommonName());
+			}
 
-//                boolean result = registrationInterceptionService
-//                        .runPreRegistrationScripts(this.person,
-//                                                   requestParameters);
-                boolean result = externalUserRegistrationService
-                					.executeExternalPreRegistrationMethods(
-                							this.person, requestParameters);
-                if(! result){
-                	this.person = archivedPerson;
-                    return OxTrustConstants.RESULT_FAILURE;
-                }
-//                if(this.inum != null){
-//                    personService.updatePerson(this.person);
-//                }else{
-                    personService.addPerson(this.person);
-//                }
-//                result = registrationInterceptionService
-//                    .runPostRegistrationScripts(this.person,
-//                                                requestParameters);
-                result = externalUserRegistrationService
-                			.executeExternalPostRegistrationMethods(
-                					this.person, requestParameters);
+			// save password
+			this.person.setUserPassword(password);
+			this.person.setOxCreationTimestamp(new Date());
 
-                Events.instance().raiseEvent(
-                            OxTrustConstants.EVENT_PERSON_SAVED,
-                            this.person, null, null, null, null, true);
-                if(! result){
-                	this.person = archivedPerson;
-                    return OxTrustConstants.RESULT_FAILURE;
-                }
-            } catch (Exception ex) {
-                log.error("Failed to add new person {0}", ex,
-                          this.person.getInum());
-                facesMessages.add(StatusMessage.Severity.ERROR,
-                                  "Failed to add new person");
-                this.person = archivedPerson;
-                return OxTrustConstants.RESULT_FAILURE;
-            }
+			try {
+				// Set default message
+				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
 
-            if(redirectUri == null){
-                redirectUri = applicationConfiguration.getApplianceUrl()
-                                + externalContext.getRequestContextPath()
-                                + "/postRegister.htm";
-            }
+				boolean result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
+				if (!result) {
+					this.person = archivedPerson;
+					return OxTrustConstants.RESULT_FAILURE;
+				}
+				if (this.inum != null) {
+					personService.updatePerson(this.person);
+				} else {
+					personService.addPerson(this.person);
+				}
+				
+				result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person, requestParameters);
 
-            return OxTrustConstants.RESULT_SUCCESS;
-        }
-        return OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED;
-    }
+				Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_SAVED, this.person, null, null, null, null, true);
+				if (!result) {
+					this.person = archivedPerson;
+					return OxTrustConstants.RESULT_FAILURE;
+				}
+			} catch (Exception ex) {
+				log.error("Failed to add new person {0}", ex, this.person.getInum());
+				facesMessages.add(StatusMessage.Severity.ERROR, "Failed to add new person");
+				this.person = archivedPerson;
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 
-    public void cancel() {
-    }
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
+		return OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED;
+	}
 
-    private void initAttributes(){
-        List<GluuAttribute> allPersonAttributes 
-        	= attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
-        
-        List<String> allAttributOrigins 
-        	= attributeService.getAllAttributeOrigins(allPersonAttributes);
-        
-        GluuOrganization organization 
-        	= organizationService.getOrganization();
+	public void cancel() {
+	}
 
-        List<GluuCustomAttribute> customAttributes
-           	= this.person.getCustomAttributes();
- 
-        boolean isNewPerson 
-        	= 	(customAttributes == null) || customAttributes.isEmpty();
-        
-        if (isNewPerson) {
-            customAttributes = new ArrayList<GluuCustomAttribute>();
-            this.person.setCustomAttributes(customAttributes);
-        }
-        
-        String[] personOCs 
-        	= applicationConfiguration.getPersonObjectClassTypes();
-        String[] personOCDisplayNames 
-        	= applicationConfiguration.getPersonObjectClassDisplayNames();
-        customAttributeAction.initCustomAttributes(
-        		allPersonAttributes,
-        		customAttributes, 
-        		allAttributOrigins, 
-        		personOCs, 
-        		personOCDisplayNames);
+	private void initAttributes() {
+		List<GluuAttribute> allPersonAttributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 
-        List<GluuCustomAttribute> mandatoryAttributes
-        	= new ArrayList<GluuCustomAttribute>();
+		List<String> allAttributOrigins = attributeService.getAllAttributeOrigins(allPersonAttributes);
 
-        RegistrationConfiguration config
-        	= organization.getOxRegistrationConfiguration();
-        boolean registrationCustomized = config != null;
-        boolean registrationAttributesCustomized
-            = 	registrationCustomized
-                && config.getAdditionalAttributes() !=null
-                && ! config.getAdditionalAttributes().isEmpty();
-        
-        if(registrationAttributesCustomized){
-            for(String attributeInum: config.getAdditionalAttributes()){
-                GluuAttribute attribute
-                    = attributeService.getAttributeByInum(attributeInum);
-                GluuCustomAttribute customAttribute 
-                	= new GluuCustomAttribute(attribute.getName(),
-                								"", false, false);
-                mandatoryAttributes.add(customAttribute);
-            }
-        }
-        for (GluuCustomAttribute attribute:
-        		personService.getMandatoryAtributes()){
-            if(! mandatoryAttributes.contains(attribute)){
-                mandatoryAttributes.add(attribute);
-            }
-        }
-        mandatoryAttributes.addAll(personService.getMandatoryAtributes());
+		GluuOrganization organization = organizationService.getOrganization();
 
+		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
 
-        if (isNewPerson) {
-            customAttributeAction.addCustomAttributes(mandatoryAttributes);
-        }
+		boolean isNewPerson = (customAttributes == null) || customAttributes.isEmpty();
 
-        hiddenAttributes = new ArrayList<String>();
-        hiddenAttributes.add("inum");
-        hiddenAttributes.add("iname");
-        hiddenAttributes.add("userPassword");
-        hiddenAttributes.add("gluuStatus");
-        hiddenAttributes.add("oxExternalUid");
-    }
+		if (isNewPerson) {
+			customAttributes = new ArrayList<GluuCustomAttribute>();
+			this.person.setCustomAttributes(customAttributes);
+		}
 
-    /**
-     * Returns list of mandatory attributes
-     *
-     * @return list of person's mandatory attributes
-     * @throws Exception
-     */
-    public List<GluuCustomAttribute> getMandatoryAttributes() {
-        return personService.getMandatoryAtributes();
-    }
+		String[] personOCs = applicationConfiguration.getPersonObjectClassTypes();
+		String[] personOCDisplayNames = applicationConfiguration.getPersonObjectClassDisplayNames();
+		customAttributeAction.initCustomAttributes(allPersonAttributes, customAttributes, allAttributOrigins, personOCs, personOCDisplayNames);
 
-    protected String getActionName() {
-        return "registerPersonAction";
-    }
+		List<GluuCustomAttribute> mandatoryAttributes = new ArrayList<GluuCustomAttribute>();
 
-    /**
-     * Returns person's attributes
-     *
-     * @return list of person's attributes
-     */
-    public List<GluuCustomAttribute> getCustomAttributes() {
-        return this.person.getCustomAttributes();
-    }
+		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
+		boolean registrationCustomized = config != null;
+		boolean registrationAttributesCustomized = registrationCustomized && config.getAdditionalAttributes() != null
+				&& !config.getAdditionalAttributes().isEmpty();
 
-    protected String getEventQueue() {
-        return "personQueue";
-    }
-    
-    public GluuCustomPerson getPerson(){
-    	return person;
-    }
+		if (registrationAttributesCustomized) {
+			for (String attributeInum : config.getAdditionalAttributes()) {
+				GluuAttribute attribute = attributeService.getAttributeByInum(attributeInum);
+				GluuCustomAttribute customAttribute = new GluuCustomAttribute(attribute.getName(), "", false, false);
+				mandatoryAttributes.add(customAttribute);
+			}
+		}
+		for (GluuCustomAttribute attribute : personService.getMandatoryAtributes()) {
+			if (!mandatoryAttributes.contains(attribute)) {
+				mandatoryAttributes.add(attribute);
+			}
+		}
+		mandatoryAttributes.addAll(personService.getMandatoryAtributes());
 
-    public String getInvitationGuid() {
-        return invitationGuid;
-    }
+		if (isNewPerson) {
+			customAttributeAction.addCustomAttributes(mandatoryAttributes);
+		}
 
-    public void setInvitationGuid(String invitationGuid) {
-        this.invitationGuid = invitationGuid;
-    }
+		hiddenAttributes = new ArrayList<String>();
+		hiddenAttributes.add("inum");
+		hiddenAttributes.add("iname");
+		hiddenAttributes.add("userPassword");
+		hiddenAttributes.add("gluuStatus");
+		hiddenAttributes.add("oxExternalUid");
+		hiddenAttributes.add("oxLastLogonTime");
+	}
 
-	public String getRedirectUri() {
-		return redirectUri;
+	/**
+	 * Returns list of mandatory attributes
+	 *
+	 * @return list of person's mandatory attributes
+	 * @throws Exception
+	 */
+	public List<GluuCustomAttribute> getMandatoryAttributes() {
+		return personService.getMandatoryAtributes();
+	}
+
+	protected String getActionName() {
+		return "registerPersonAction";
+	}
+
+	/**
+	 * Returns person's attributes
+	 *
+	 * @return list of person's attributes
+	 */
+	public List<GluuCustomAttribute> getCustomAttributes() {
+		return this.person.getCustomAttributes();
+	}
+
+	protected String getEventQueue() {
+		return "personQueue";
+	}
+
+	public GluuCustomPerson getPerson() {
+		return person;
+	}
+
+	public String getInvitationGuid() {
+		return invitationGuid;
+	}
+
+	public void setInvitationGuid(String invitationGuid) {
+		this.invitationGuid = invitationGuid;
+	}
+
+	public String getInum() {
+		return inum;
+	}
+
+	public void setInum(String inum) {
+		this.inum = inum;
 	}
 
 	public List<String> getHiddenAttributes() {
@@ -472,6 +399,10 @@ public class RegisterPersonAction implements Serializable{
 
 	public boolean isCaptchaDisabled() {
 		return captchaDisabled;
+	}
+
+    public String getPostRegistrationInformation() {
+		return postRegistrationInformation;
 	}
 
 }

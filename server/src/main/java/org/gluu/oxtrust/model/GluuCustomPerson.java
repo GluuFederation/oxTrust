@@ -34,8 +34,6 @@ public class GluuCustomPerson extends User
 
     private transient boolean selected;
 
-    private transient String postRegistrationInformation;
-
     private String sourceServerName;
 
     @LdapAttribute(name = "gluuWhitePagesListed")
@@ -278,16 +276,7 @@ public class GluuCustomPerson extends User
         this.sourceServerName = sourceServerName;
     }
 
-
-    public String getPostRegistrationInformation() {
-		return postRegistrationInformation;
-	}
-
-	public void setPostRegistrationInformation(String postRegistrationInformation) {
-		this.postRegistrationInformation = postRegistrationInformation;
-	}
-
-	public Date getOxCreationTimestamp() {
+    public Date getOxCreationTimestamp() {
 		return oxCreationTimestamp;
 	}
 
