@@ -7,7 +7,7 @@
     
     <param name="invitationGuid" value="#{registerPersonAction.invitationGuid}"/>
     <param name="inum" value="#{registerPersonAction.inum}"/>
-	<param name="redirectUri" value="#{registerPersonAction.redirectUri}" />
+
     <action execute="#{registerPersonAction.initPerson}" if="#{registerPersonAction.person == null}" on-postback="false" />
 
     <rewrite pattern="/register" />
@@ -40,10 +40,8 @@
 
     <navigation from-action="#{registerPersonAction.register}">
         <rule if-outcome="success">
-            <render view-id="/postRegister.xhtml" />
-            <!-- <redirect url="#{registerPersonAction.redirectUri}">
-                <message severity="INFO">You have successfully registered with oxTrust. Login to begin your session.</message>
-            </redirect> -->
+            <redirect view-id="/postRegister.xhtml">
+             </redirect>
         </rule>
         <rule if-outcome="captcha_validation_failed">
             <redirect view-id="/register.xhtml">
