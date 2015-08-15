@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @author Rahat Ali Date: 07/30/2015
  */
-@Scope(ScopeType.APPLICATION)
+@Scope(ScopeType.SESSION)
 @Name(MetricService.METRIC_SERVICE_COMPONENT_NAME)
 @Startup
 public class MetricService extends org.xdi.service.metric.MetricService {
@@ -93,6 +93,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			authenticationChartDto.setLabels(labels);
 			authenticationChartDto.setSuccess(values);
 			Map<String, Integer> failureStats = calculateStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
+			values = new Integer[7];
 			values = failureStats.values().toArray(values);
 			authenticationChartDto.setFailure(values);			
 			authenticationChartJson = mapper.writeValueAsString(authenticationChartDto);
@@ -112,15 +113,16 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			calendar.add(Calendar.DATE ,  -1);	
 			
 		}
-		for (MetricEntry metricEntry : success) {
-			Date date = metricEntry.getCreationDate();
-			String dateString =df.format(date);
-			Integer count = stats.get(dateString);
-			if(count!=null)
-				stats.put(dateString,(count+1));
-			else
-				stats.put(dateString,1);
-		}
+		if(success!=null)
+			for (MetricEntry metricEntry : success) {
+				Date date = metricEntry.getCreationDate();
+				String dateString =df.format(date);
+				Integer count = stats.get(dateString);
+				if(count!=null)
+					stats.put(dateString,(count+1));
+				else
+					stats.put(dateString,1);
+			}
 		return stats;
 	}
 	

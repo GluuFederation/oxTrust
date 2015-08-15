@@ -19,26 +19,28 @@ $(function () {
   var authenticationRequestsChartData = {
       labels: authChartData.labels,
       datasets: [
+    
+{
+    label: "Successful Login",
+    fillColor: "#00BE79",
+    strokeColor: "rgba(60,141,188,0.8)",
+    pointColor: "#3b8bba",
+    pointStrokeColor: "rgba(60,141,188,1)",
+    pointHighlightFill: "#fff",
+    pointHighlightStroke: "rgba(60,141,188,1)",
+    data: authChartData.success
+},
     {
-        label: "Successful Login",
-        fillColor: "rgb(210, 214, 222)",
+        label: "Failed Attempts",
+        fillColor: "#F39C12",
         strokeColor: "rgb(210, 214, 222)",
         pointColor: "rgb(210, 214, 222)",
         pointStrokeColor: "#c1c7d1",
         pointHighlightFill: "#fff",
         pointHighlightStroke: "rgb(220,220,220)",
-        data: authChartData.success
-    },
-    {
-        label: "Failed Attempts",
-        fillColor: "rgba(60,141,188,0.9)",
-        strokeColor: "rgba(60,141,188,0.8)",
-        pointColor: "#3b8bba",
-        pointStrokeColor: "rgba(60,141,188,1)",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(60,141,188,1)",
         data: authChartData.failure
     }
+    
   ]
   };
 
