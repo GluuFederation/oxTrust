@@ -37,36 +37,45 @@ import org.xdi.model.metric.ldap.OxAuthMetricType;
 @Name(MetricService.METRIC_SERVICE_COMPONENT_NAME)
 @Startup
 public class MetricService extends org.xdi.service.metric.MetricService {
-	
+
 	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
 
 	private static final long serialVersionUID = 7875838160379126796L;
 
 	@Logger
-    private Log log;
+	private Log log;
 
 	@In
-    private ApplianceService applianceService;
+	private ApplianceService applianceService;
 
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
-	
+
 	Map<MetricType, List<MetricEntry>> entries;
-	
-    @Create
-    public void create() {
-    	init(3000);
-    	List<MetricType> metricTypes = new ArrayList<MetricType>();
-    	metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
-    	metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
-    	metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_RATE);
-    	
-		Date endDate = Calendar.getInstance().getTime();
-		
-		Date startDate = new Date();
-		entries = findMetricEntry(ApplicationType.OX_AUTH, oxTrustConfiguration.getApplicationConfiguration().getApplianceInum(), metricTypes, startDate, endDate, null);
+
+	@Create
+	public void create() {
+		init(3000);
+		List<MetricType> metricTypes = new ArrayList<MetricType>();
+		metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
+		metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
+		metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_RATE);
+
+		Date endDate = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.add( Calendar.MONTH ,  -1 );
+
+		Date startDate = calendar.getTime();
+		try {
+			entries = findMetricEntry(ApplicationType.OX_AUTH,
+					oxTrustConfiguration.getApplicationConfiguration()
+							.getApplianceInum(), metricTypes, startDate,
+					endDate, null);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		System.out.println(entries);
-    }
+	}
 
 	@Override
 	public String baseDn() {
@@ -83,7 +92,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return METRIC_SERVICE_COMPONENT_NAME;
 	}
 
-    public Map<MetricType, List<MetricEntry>> getEntries() {
+	public Map<MetricType, List<MetricEntry>> getEntries() {
 		return entries;
 	}
 
@@ -92,7 +101,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	}
 
 	public static MetricService instance() {
-        return (MetricService) Component.getInstance(MetricService.class);
-    }
+		return (MetricService) Component.getInstance(MetricService.class);
+	}
 
 }
