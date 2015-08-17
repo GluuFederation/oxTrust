@@ -26,7 +26,6 @@ import org.jboss.seam.log.Log;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.ldap.MetricEntry;
-import org.xdi.model.metric.ldap.OxAuthMetricType;
 
 /**
  * Store and retrieve metric
@@ -55,11 +54,11 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Create
 	public void create() {
-		init(3000);
+//		init(3000);
 		List<MetricType> metricTypes = new ArrayList<MetricType>();
-		metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
-		metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
-		metricTypes.add(OxAuthMetricType.OXAUTH_USER_AUTHENTICATION_RATE);
+		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
+		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
+		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_RATE);
 
 		Date endDate = new Date();
 		Calendar calendar = Calendar.getInstance();
