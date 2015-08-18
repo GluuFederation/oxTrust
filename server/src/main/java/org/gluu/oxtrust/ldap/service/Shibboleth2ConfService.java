@@ -530,7 +530,11 @@ public class Shibboleth2ConfService implements Serializable {
 		context.put("mysqlUser", applicationConfiguration.getMysqlUser());
 
 		try {
-			context.put("mysqlPass", StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getMysqlPassword(), cryptoConfiguration.getEncodeSalt()));
+			String mysqlPassword = applicationConfiguration.getMysqlPassword();
+			if (StringHelper.isNotEmpty(mysqlPassword)) {
+				mysqlPassword = StringEncrypter.defaultInstance().decrypt(mysqlPassword, cryptoConfiguration.getEncodeSalt());
+			}
+			context.put("mysqlPass", mysqlPassword);
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt mysqlPassword", e);
 		}
