@@ -27,6 +27,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.ldap.MetricEntry;
+import org.xdi.util.StringHelper;
 
 /**
  * Store and retrieve metric
@@ -82,7 +83,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Override
 	public String baseDn() {
-		return organizationService.getDnForOrganization();
+		String orgDn = OrganizationService.instance().getDnForOrganization();
+		return String.format("ou=metric,%s", orgDn);
 	}
 
 	@Override
