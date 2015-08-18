@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -46,6 +47,9 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@In
 	private ApplianceService applianceService;
+	
+	@In
+	private OrganizationService organizationService;
 
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
@@ -78,7 +82,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Override
 	public String baseDn() {
-		return oxTrustConfiguration.getApplicationConfiguration().getBaseDN();
+		return organizationService.getDnForOrganization();
 	}
 
 	@Override
