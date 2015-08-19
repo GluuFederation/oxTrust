@@ -30,6 +30,8 @@ import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.ldap.MetricEntry;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Store and retrieve metric
  *
@@ -57,9 +59,9 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private OxTrustConfiguration oxTrustConfiguration;
 
 	Map<MetricType, List<MetricEntry>> entries;
-	Map<String,Integer> successStats;
-	Map<String,Integer> failureStats;
-	
+	String successJson;
+	String failureJson;
+	ObjectMapper mapper = new ObjectMapper();
 	@Create
 	public void create() {
 //		init(3000);
@@ -78,9 +80,11 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 					oxTrustConfiguration.getApplicationConfiguration()
 							.getApplianceInum(), metricTypes, startDate,
 					endDate, null);
-			System.out.println(entries);
-			successStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
-			failureStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
+			System.out.println(entries);		
+			Map<String,Integer> successStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
+			Map<String,Integer> failureStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
+			successJson = mapper.writeValueAsString(successStats);
+			failureJson = mapper.writeValueAsString(failureStats);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -96,7 +100,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			String dateString =df.format(date);
 			Integer count = stats.get(dateString);
 			if(count!=null)
-				stats.put(dateString,count++);
+				stats.put(dateString,(count+1));
 			else
 				stats.put(dateString,1);
 		}
@@ -132,20 +136,21 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return (MetricService) Component.getInstance(MetricService.class);
 	}
 
-	public Map<String, Integer> getSuccessStats() {
-		return successStats;
+	public String getSuccessJson() {
+		return successJson;
 	}
 
-	public void setSuccessStats(Map<String, Integer> successStats) {
-		this.successStats = successStats;
+	public void setSuccessJson(String successJson) {
+		this.successJson = successJson;
 	}
 
-	public Map<String, Integer> getFailureStats() {
-		return failureStats;
+	public String getFailureJson() {
+		return failureJson;
 	}
 
-	public void setFailureStats(Map<String, Integer> failureStats) {
-		this.failureStats = failureStats;
+	public void setFailureJson(String failureJson) {
+		this.failureJson = failureJson;
 	}
+
 
 }
