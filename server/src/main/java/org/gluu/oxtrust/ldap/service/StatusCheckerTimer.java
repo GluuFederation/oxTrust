@@ -47,6 +47,7 @@ import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.process.ProcessHelper;
 
@@ -162,7 +163,10 @@ public class StatusCheckerTimer {
 
 			String[] outputLines = runCheck(programPath);
 			int expiresAfter = -1;
-			if (outputLines != null && (outputLines.length > 0) && !outputLines[1].startsWith("SSL_CERT CRITICAL")) {
+			if (ArrayHelper.isEmpty(outputLines) || outputLines[1].startsWith("SSL_CERT CRITICAL")) {
+				String message = String.format("%s retuned an unexpected value", programPath);
+				log.error(message);
+			} else {
 				try {
 					if (outputLines.length == 1) {
 						expiresAfter = Integer.parseInt(outputLines[0]);
@@ -174,9 +178,6 @@ public class StatusCheckerTimer {
 					String message = String.format("%s retuned an unexpected value", programPath);
 					log.error(message);
 				}
-			} else {
-				String message = String.format("%s retuned an unexpected result", programPath);
-				log.error(message);
 			}
 			appliance.setSslExpiry(toIntString(expiresAfter));
 		}
