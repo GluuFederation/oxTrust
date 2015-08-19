@@ -6,9 +6,11 @@
 
 package org.gluu.oxtrust.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,6 @@ import org.jboss.seam.log.Log;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.ldap.MetricEntry;
-import org.xdi.util.StringHelper;
 
 /**
  * Store and retrieve metric
@@ -56,7 +57,9 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private OxTrustConfiguration oxTrustConfiguration;
 
 	Map<MetricType, List<MetricEntry>> entries;
-
+	Map<String,Integer> successStats;
+	Map<String,Integer> failureStats;
+	
 	@Create
 	public void create() {
 //		init(3000);
@@ -75,16 +78,36 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 					oxTrustConfiguration.getApplicationConfiguration()
 							.getApplianceInum(), metricTypes, startDate,
 					endDate, null);
+			System.out.println(entries);
+			successStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
+			failureStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		System.out.println(entries);
+		
+	}
+
+	private Map<String, Integer> calculateMonthlyStatistics(
+			List<MetricEntry> success) {
+		Map<String, Integer> stats = new HashMap<String, Integer>();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		for (MetricEntry metricEntry : success) {
+			Date date = metricEntry.getCreationDate();
+			String dateString =df.format(date);
+			Integer count = stats.get(dateString);
+			if(count!=null)
+				stats.put(dateString,count++);
+			else
+				stats.put(dateString,1);
+		}
+		return stats;
 	}
 
 	@Override
 	public String baseDn() {
 		String orgDn = OrganizationService.instance().getDnForOrganization();
-		return String.format("ou=metric,%s", orgDn);
+		String baseDn = String.format("ou=metric,%s", orgDn);
+		return baseDn;
 	}
 
 	@Override
@@ -107,6 +130,22 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	public static MetricService instance() {
 		return (MetricService) Component.getInstance(MetricService.class);
+	}
+
+	public Map<String, Integer> getSuccessStats() {
+		return successStats;
+	}
+
+	public void setSuccessStats(Map<String, Integer> successStats) {
+		this.successStats = successStats;
+	}
+
+	public Map<String, Integer> getFailureStats() {
+		return failureStats;
+	}
+
+	public void setFailureStats(Map<String, Integer> failureStats) {
+		this.failureStats = failureStats;
 	}
 
 }
