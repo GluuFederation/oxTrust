@@ -61,6 +61,13 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	Map<MetricType, List<MetricEntry>> entries;
 	String successJson;
 	String failureJson;
+	int totalRequests=0;
+	int totalSuccessfulRequests=0;
+	int totalFailedRequests=0;
+	String totalWeeklyRequests;
+	String totalWeeklySuccessfulRequests;
+	String totalWeeklyFailedRequests;
+	
 	ObjectMapper mapper = new ObjectMapper();
 	@Create
 	public void create() {
@@ -83,8 +90,10 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			System.out.println(entries);		
 			Map<String,Integer> successStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
 			Map<String,Integer> failureStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
-			successJson = mapper.writeValueAsString(successStats);
-			failureJson = mapper.writeValueAsString(failureStats);
+			Map<String,Integer> weeklySuccessStats=filterWeeklyStatistics(successStats,MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
+			Map<String,Integer> weeklyFailureStats=filterWeeklyStatistics(failureStats,MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
+			successJson = mapper.writeValueAsString(weeklySuccessStats);
+			failureJson = mapper.writeValueAsString(weeklyFailureStats);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -105,6 +114,45 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 				stats.put(dateString,1);
 		}
 		return stats;
+	}
+	
+	private Map<String, Integer> filterWeeklyStatistics(Map<String, Integer> list,MetricType type) {
+		
+		Map<String, Integer> weeklyStats = new HashMap<String, Integer>();
+		Date today=new Date();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		
+		for(int d=0;d<7;d++)
+		{
+			String date=df.format(today);
+			boolean exists=list.containsKey(date);
+			if(exists)
+			{
+				Integer count=list.get(date);
+				weeklyStats.put(date, count);
+				if(type==MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS)
+				{
+					totalSuccessfulRequests+=count;
+					totalRequests+=count;
+				}
+				else if(type==MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES)
+				{
+					totalFailedRequests+=count;
+					totalRequests+=count;
+				}
+			}
+			else
+			{
+				weeklyStats.put(date, 0);
+			}
+			
+			today = new Date(today.getTime() - 1 * 24 * 3600 * 1000  ); 
+		}
+		
+		int abc=123;
+		
+		
+		return weeklyStats;
 	}
 
 	@Override
