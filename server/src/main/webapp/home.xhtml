@@ -82,13 +82,13 @@
 			</div>
 			
 		</div>
-		<div style="display: none;">
-		         <h2>Successful login</h2>
+		<div style="display: block;">					
+					<h:inputTextarea value="#{metricService.authenticationChartJson}" id="authenticationChartJson"></h:inputTextarea>
+		<!--          <h2>Successful login</h2>
 		         <h:inputTextarea value="#{metricService.successJson}" id="successJson"></h:inputTextarea>								
 		
 		         <h2>failed login</h2>
-		         <h:inputTextarea value="#{metricService.failureJson}" id="failedJson"></h:inputTextarea>
-				
+		         <h:inputTextarea value="#{metricService.failureJson}" id="failedJson"></h:inputTextarea> -->				
 				
 		</div>
 		
@@ -160,37 +160,38 @@
 					<!-- ./box-body -->
 					<div class="box-footer">
 						<div class="row">
-							<div class="col-sm-3 col-xs-6">
-								<div class="description-block border-right">
-									<h5 class="description-header">3215</h5>
-									<span class="description-text">Total LDAP Requests</span>
-								</div>
-								
-							</div>
-							
-							<div class="col-sm-3 col-xs-6">
-								<div class="description-block border-right">
-									<h5 class="description-header">16</h5>
-									<span class="description-text">Total API Policies</span>
-								</div>
-								
-							</div>
-							
-							<div class="col-sm-3 col-xs-6">
-								<div class="description-block border-right">
-									<h5 class="description-header">215</h5>
-									<span class="description-text">Failed DB Requests</span>
-								</div>
-								
-							</div>
-							
+						
 							<div class="col-sm-3 col-xs-6">
 								<div class="description-block">
-									<h5 class="description-header">68</h5>
-									<span class="description-text">DB Connections Open</span>
+									<h5 class="description-header">Last 7 days statistics</h5>
+									<span class="description-text"></span>
 								</div>
 								
 							</div>
+							<div class="col-sm-3 col-xs-6">
+								<div class="description-block border-right">
+									<h5 class="description-header">#{metricService.authenticationChartDto.totalRequest}</h5>
+									<span class="description-text">Total Authentication Requests</span>
+								</div>
+								
+							</div>
+							
+							<div class="col-sm-3 col-xs-6">
+								<div class="description-block border-right">
+									<h5 class="description-header">#{metricService.authenticationChartDto.totalSuccess}</h5>
+									<span class="description-text">Total Successful Login</span>
+								</div>
+								
+							</div>
+							
+							<div class="col-sm-3 col-xs-6">
+								<div class="description-block border-right">
+									<h5 class="description-header">#{metricService.authenticationChartDto.totalFailure}</h5>
+									<span class="description-text">Total Failed Login</span>
+								</div>
+								
+							</div>
+							
 						</div>
 						
 					</div>

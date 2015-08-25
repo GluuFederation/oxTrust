@@ -11,28 +11,13 @@ $(function () {
   var authenticationRequestsChartCanvas = $("#authenticationRequestsChart").get(0).getContext("2d");
   // This will get the first returned node in the jQuery collection.
   var authenticationRequestsChart = new Chart(authenticationRequestsChartCanvas);
-  
-  var successJson = JSON.parse($("#successJson").val());
-  var failedJson = JSON.parse($("#failedJson").val());
-  console.log(failedJson);
-  console.log(successJson);
-  var successLabels = [];
-  var successValue = [];
-  for (var field in successJson) {
-      console.log("field:"+field+",value:"+successJson[field]);
-      successLabels.push(field);
-      successValue.push(successJson[field]);
-  }
-  
-  var failedLabels = [];
-  var failedValue = [];
-  for (var field in failedJson) {
-      console.log("field:"+field+",value:"+failedJson[field]);
-      failedLabels.push(field);
-      failedValue.push(failedJson[field]);
-  }
+
+  var authChartData = JSON.parse($("#authenticationChartJson").val());  
+  console.log("authentication chart data");
+  console.log(authChartData);
+
   var authenticationRequestsChartData = {
-      labels: successLabels,
+      labels: authChartData.labels,
       datasets: [
     {
         label: "Successful Login",
@@ -42,7 +27,7 @@ $(function () {
         pointStrokeColor: "#c1c7d1",
         pointHighlightFill: "#fff",
         pointHighlightStroke: "rgb(220,220,220)",
-        data: successValue
+        data: authChartData.success
     },
     {
         label: "Failed Attempts",
@@ -52,7 +37,7 @@ $(function () {
         pointStrokeColor: "rgba(60,141,188,1)",
         pointHighlightFill: "#fff",
         pointHighlightStroke: "rgba(60,141,188,1)",
-        data: failedValue
+        data: authChartData.failure
     }
   ]
   };

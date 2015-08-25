@@ -10,13 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -59,16 +60,11 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private OxTrustConfiguration oxTrustConfiguration;
 
 	Map<MetricType, List<MetricEntry>> entries;
-	String successJson;
-	String failureJson;
-	int totalRequests=0;
-	int totalSuccessfulRequests=0;
-	int totalFailedRequests=0;
-	String totalWeeklyRequests;
-	String totalWeeklySuccessfulRequests;
-	String totalWeeklyFailedRequests;
-	
+	String authenticationChartJson;
+	AuthenticationChartDto authenticationChartDto = new AuthenticationChartDto();
 	ObjectMapper mapper = new ObjectMapper();
+	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	
 	@Create
 	public void create() {
 //		init(3000);
@@ -79,7 +75,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date endDate = new Date();
 		Calendar calendar = Calendar.getInstance();
-		calendar.add( Calendar.MONTH ,  -1 );
+		calendar.add( Calendar.DATE ,  -7 );
 
 		Date startDate = calendar.getTime();
 		try {
@@ -87,23 +83,35 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 					oxTrustConfiguration.getApplicationConfiguration()
 							.getApplianceInum(), metricTypes, startDate,
 					endDate, null);
-			System.out.println(entries);		
-			Map<String,Integer> successStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
-			Map<String,Integer> failureStats = calculateMonthlyStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
-			Map<String,Integer> weeklySuccessStats=filterWeeklyStatistics(successStats,MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
-			Map<String,Integer> weeklyFailureStats=filterWeeklyStatistics(failureStats,MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
-			successJson = mapper.writeValueAsString(weeklySuccessStats);
-			failureJson = mapper.writeValueAsString(weeklyFailureStats);
+			System.out.println(entries);
+			
+			String []labels = new String[7];
+			Map<String, Integer> successStats = calculateStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
+			labels = successStats.keySet().toArray(labels);
+			Integer []values = new Integer[7];
+			values = successStats.values().toArray(values);
+			authenticationChartDto.setLabels(labels);
+			authenticationChartDto.setSuccess(values);
+			Map<String, Integer> failureStats = calculateStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
+			values = failureStats.values().toArray(values);
+			authenticationChartDto.setFailure(values);			
+			authenticationChartJson = mapper.writeValueAsString(authenticationChartDto);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		
 	}
 
-	private Map<String, Integer> calculateMonthlyStatistics(
+	private Map<String, Integer> calculateStatistics(
 			List<MetricEntry> success) {
-		Map<String, Integer> stats = new HashMap<String, Integer>();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		Map<String, Integer> stats = new TreeMap<String, Integer>();
+		Calendar calendar = Calendar.getInstance();
+		for(int i=0;i<7;i++){
+			String dateString =df.format(calendar.getTime());
+			stats.put(dateString,0);
+			calendar.add(Calendar.DATE ,  -1);	
+			
+		}
 		for (MetricEntry metricEntry : success) {
 			Date date = metricEntry.getCreationDate();
 			String dateString =df.format(date);
@@ -116,52 +124,6 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return stats;
 	}
 	
-	private Map<String, Integer> filterWeeklyStatistics(Map<String, Integer> list,MetricType type) {
-		
-		Map<String, Integer> weeklyStats = new HashMap<String, Integer>();
-		Date today=new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		
-		for(int d=0;d<7;d++)
-		{
-			String date=df.format(today);
-			boolean exists=list.containsKey(date);
-			if(exists)
-			{
-				Integer count=list.get(date);
-				weeklyStats.put(date, count);
-				if(type==MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS)
-				{
-					totalSuccessfulRequests+=count;
-					totalRequests+=count;
-				}
-				else if(type==MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES)
-				{
-					totalFailedRequests+=count;
-					totalRequests+=count;
-				}
-			}
-			else
-			{
-				weeklyStats.put(date, 0);
-			}
-			
-			today = new Date(today.getTime() - 1 * 24 * 3600 * 1000  ); 
-		}
-		
-		int abc=123;
-		
-		
-		return weeklyStats;
-	}
-
-	@Override
-	public String baseDn() {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
-		String baseDn = String.format("ou=metric,%s", orgDn);
-		return baseDn;
-	}
-
 	@Override
 	public String applianceInum() {
 		return applianceService.getApplianceInum();
@@ -184,21 +146,27 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return (MetricService) Component.getInstance(MetricService.class);
 	}
 
-	public String getSuccessJson() {
-		return successJson;
+	@Override
+	public String baseDn() {
+		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String baseDn = String.format("ou=metric,%s", orgDn);
+		return baseDn;
 	}
 
-	public void setSuccessJson(String successJson) {
-		this.successJson = successJson;
+	public String getAuthenticationChartJson() {
+		return authenticationChartJson;
 	}
 
-	public String getFailureJson() {
-		return failureJson;
+	public void setAuthenticationChartJson(String authenticationChartJson) {
+		this.authenticationChartJson = authenticationChartJson;
 	}
 
-	public void setFailureJson(String failureJson) {
-		this.failureJson = failureJson;
+	public AuthenticationChartDto getAuthenticationChartDto() {
+		return authenticationChartDto;
 	}
 
-
+	public void setAuthenticationChartDto(
+			AuthenticationChartDto authenticationChartDto) {
+		this.authenticationChartDto = authenticationChartDto;
+	}
 }
