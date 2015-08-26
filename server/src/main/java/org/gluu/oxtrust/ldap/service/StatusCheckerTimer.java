@@ -84,6 +84,7 @@ public class StatusCheckerTimer {
 	@Create
 	public void create() {
 		this.numberFormat = NumberFormat.getNumberInstance();
+		this.numberFormat.setParseIntegerOnly(true);
 	}
 
 	@Asynchronous
@@ -472,6 +473,7 @@ public class StatusCheckerTimer {
 
 	private String getFacterResult(String[] lines, String param) {
 		log.debug("Setting facter param: " + param);
+		String paramPattern = param + OxTrustConstants.FACTER_PARAM_VALUE_DIVIDER;
 		boolean valueStarted = false;
 		String value = "";
 		List<String> facterLines = Arrays.asList(lines);
@@ -480,7 +482,7 @@ public class StatusCheckerTimer {
 			String line = lineIterator.next();
 
 			if (!valueStarted) { // start searching for the line with param
-				if (line.startsWith(param)) {
+				if (line.startsWith(paramPattern)) {
 					valueStarted = true;
 					int index = line.indexOf(OxTrustConstants.FACTER_PARAM_VALUE_DIVIDER);
 					if (index > -1) {
@@ -523,8 +525,17 @@ public class StatusCheckerTimer {
 	}
 
 	private Number getNumber(String value) {
+		int multiplier = 1;
+		if (value.contains("KB")) {
+			multiplier = 1024;
+		} else if (value.contains("MB")) {
+			multiplier = 1024 * 1024;
+		} else if (value.contains("GB")) {
+			multiplier = 1024 * 1024 * 1024;
+		}
+
 		try {
-			return numberFormat.parse(value);
+			return multiplier * numberFormat.parse(value).doubleValue();
 		} catch (ParseException ex) {
 		}
 
