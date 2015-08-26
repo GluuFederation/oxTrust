@@ -163,7 +163,7 @@ public class StatusCheckerTimer {
 
 			String[] outputLines = runCheck(programPath);
 			int expiresAfter = -1;
-			if (ArrayHelper.isEmpty(outputLines) || outputLines[1].startsWith("SSL_CERT CRITICAL")) {
+			if (ArrayHelper.isEmpty(outputLines) || (outputLines.length < 1) || outputLines[1].startsWith("SSL_CERT CRITICAL")) {
 				String message = String.format("%s retuned an unexpected value", programPath);
 				log.error(message);
 			} else {
