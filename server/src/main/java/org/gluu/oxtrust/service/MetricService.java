@@ -20,12 +20,10 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.log.Log;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
@@ -38,9 +36,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @author Rahat Ali Date: 07/30/2015
  */
-@Scope(ScopeType.SESSION)
+@Scope(ScopeType.CONVERSATION)
 @Name(MetricService.METRIC_SERVICE_COMPONENT_NAME)
-@Startup
+
 public class MetricService extends org.xdi.service.metric.MetricService {
 
 	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
@@ -65,9 +63,9 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	ObjectMapper mapper = new ObjectMapper();
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 	
-	@Create
+
 	public void create() {
-//		init(3000);
+
 		List<MetricType> metricTypes = new ArrayList<MetricType>();
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
