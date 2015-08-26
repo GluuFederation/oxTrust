@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,7 +85,7 @@ public class StatusCheckerTimer {
 
 	@Create
 	public void create() {
-		this.numberFormat = NumberFormat.getNumberInstance();
+		this.numberFormat = NumberFormat.getNumberInstance(Locale.US);
 		this.numberFormat.setParseIntegerOnly(true);
 	}
 
