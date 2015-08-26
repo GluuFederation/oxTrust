@@ -124,7 +124,11 @@ public class StatusCheckerTimer {
 		// Set HTTPD attributes
 		setHttpdAttributes(appliance);
 
-		setCertificateExpiryAttributes(appliance);
+		try {
+			setCertificateExpiryAttributes(appliance);
+		} catch (Exception ex) {
+			log.error("Failed to check certificate expiration", ex);
+		}
 
 //		setVDSAttributes(appliance);
 
@@ -163,7 +167,7 @@ public class StatusCheckerTimer {
 
 			String[] outputLines = runCheck(programPath);
 			int expiresAfter = -1;
-			if (ArrayHelper.isEmpty(outputLines) || (outputLines.length < 1) || StringHelper.isEmpty(outputLines[1]) || outputLines[1].startsWith("SSL_CERT CRITICAL")) {
+			if (ArrayHelper.isEmpty(outputLines) || (outputLines.length < 1) || StringHelper.isEmpty(outputLines[0]) || outputLines[0].startsWith("SSL_CERT CRITICAL")) {
 				String message = String.format("%s retuned an unexpected value", programPath);
 				log.error(message);
 			} else {
