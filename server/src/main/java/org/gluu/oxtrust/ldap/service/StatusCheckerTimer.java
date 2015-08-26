@@ -86,7 +86,6 @@ public class StatusCheckerTimer {
 	@Create
 	public void create() {
 		this.numberFormat = NumberFormat.getNumberInstance(Locale.US);
-		this.numberFormat.setParseIntegerOnly(true);
 	}
 
 	@Asynchronous
