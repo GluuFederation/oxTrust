@@ -26,8 +26,7 @@
 					<div class="info-box-content">
 					 	<ui:param name="_appliance" value="#{applianceService.appliance}" />
 						<span class="info-box-text">Free Memory</span>
-						<!--  <span
-							class="info-box-number">84</span> -->
+								<h:outputText styleClass="info-box-number" value="#{_appliance.freeMemory}%" />
 							<span> 
 							</span>
 					</div>
@@ -42,7 +41,7 @@
 						<span class="info-box-text">Free Disk Space</span>
 						<!--  <span
 							class="info-box-number">20%</span> -->
-							 <h:outputText styleClass="info-box-number" value="#{_appliance.freeDiskSpace}" />
+							 <h:outputText styleClass="info-box-number" value="#{_appliance.freeDiskSpace}%" />
 							
 					</div>
 					
