@@ -20,6 +20,7 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -29,21 +30,20 @@ import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.ldap.MetricEntry;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * Store and retrieve metric
  *
  * @author Rahat Ali Date: 07/30/2015
+ * @author Yuriy Movchan Date: 08/28/2015
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.STATELESS)
 @Name(MetricService.METRIC_SERVICE_COMPONENT_NAME)
-
+@AutoCreate
 public class MetricService extends org.xdi.service.metric.MetricService {
 
-	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
-
 	private static final long serialVersionUID = 7875838160379126796L;
+	
+	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
 
 	@Logger
 	private Log log;
@@ -57,15 +57,32 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
 
-	Map<MetricType, List<MetricEntry>> entries;
-	String authenticationChartJson;
-	AuthenticationChartDto authenticationChartDto = new AuthenticationChartDto();
-	ObjectMapper mapper = new ObjectMapper();
-	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-	
+	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void create() {
+	public AuthenticationChartDto genereateAuthenticationChartDto(int countDays) {
+		AuthenticationChartDto authenticationChartDto = new AuthenticationChartDto();
 
+		Map<MetricType, List<MetricEntry>> entries = findAuthenticationMetrics(-countDays);
+			
+		String []labels = new String[countDays];
+		Map<String, Integer> successStats = calculateStatistics(countDays, entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
+		labels = successStats.keySet().toArray(labels);
+
+		Integer []values = new Integer[countDays];
+		values = successStats.values().toArray(values);
+
+		authenticationChartDto.setLabels(labels);
+		authenticationChartDto.setSuccess(values);
+
+		Map<String, Integer> failureStats = calculateStatistics(countDays, entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
+		values = new Integer[countDays];
+		values = failureStats.values().toArray(values);
+		authenticationChartDto.setFailure(values);			
+
+		return authenticationChartDto;
+	}
+
+	private Map<MetricType, List<MetricEntry>> findAuthenticationMetrics(int countDays) {
 		List<MetricType> metricTypes = new ArrayList<MetricType>();
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
@@ -73,53 +90,34 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date endDate = new Date();
 		Calendar calendar = Calendar.getInstance();
-		calendar.add( Calendar.DATE ,  -7 );
+		calendar.add(Calendar.DATE, countDays);
 
 		Date startDate = calendar.getTime();
-		try {
-			entries = findMetricEntry(ApplicationType.OX_AUTH,
-					oxTrustConfiguration.getApplicationConfiguration()
-							.getApplianceInum(), metricTypes, startDate,
-					endDate, null);
-			System.out.println(entries);
-			
-			String []labels = new String[7];
-			Map<String, Integer> successStats = calculateStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
-			labels = successStats.keySet().toArray(labels);
-			Integer []values = new Integer[7];
-			values = successStats.values().toArray(values);
-			authenticationChartDto.setLabels(labels);
-			authenticationChartDto.setSuccess(values);
-			Map<String, Integer> failureStats = calculateStatistics(entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
-			values = new Integer[7];
-			values = failureStats.values().toArray(values);
-			authenticationChartDto.setFailure(values);			
-			authenticationChartJson = mapper.writeValueAsString(authenticationChartDto);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
+
+		Map<MetricType, List<MetricEntry>> entries = findMetricEntry(ApplicationType.OX_AUTH, oxTrustConfiguration.getApplicationConfiguration()
+				.getApplianceInum(), metricTypes, startDate, endDate, null);
+
+		return entries;
 	}
 
-	private Map<String, Integer> calculateStatistics(
-			List<MetricEntry> success) {
+	private Map<String, Integer> calculateStatistics(int countDays, List<MetricEntry> success) {
 		Map<String, Integer> stats = new TreeMap<String, Integer>();
 		Calendar calendar = Calendar.getInstance();
-		for(int i=0;i<7;i++){
-			String dateString =df.format(calendar.getTime());
-			stats.put(dateString,0);
-			calendar.add(Calendar.DATE ,  -1);	
-			
+		for (int i = 0; i < countDays; i++) {
+			String dateString = df.format(calendar.getTime());
+			stats.put(dateString, 0);
+			calendar.add(Calendar.DATE, -1);
+
 		}
-		if(success!=null)
+		if (success != null)
 			for (MetricEntry metricEntry : success) {
 				Date date = metricEntry.getCreationDate();
-				String dateString =df.format(date);
+				String dateString = df.format(date);
 				Integer count = stats.get(dateString);
-				if(count!=null)
-					stats.put(dateString,(count+1));
+				if (count != null)
+					stats.put(dateString, (count + 1));
 				else
-					stats.put(dateString,1);
+					stats.put(dateString, 1);
 			}
 		return stats;
 	}
@@ -134,14 +132,6 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return METRIC_SERVICE_COMPONENT_NAME;
 	}
 
-	public Map<MetricType, List<MetricEntry>> getEntries() {
-		return entries;
-	}
-
-	public void setEntries(Map<MetricType, List<MetricEntry>> entries) {
-		this.entries = entries;
-	}
-
 	public static MetricService instance() {
 		return (MetricService) Component.getInstance(MetricService.class);
 	}
@@ -153,20 +143,4 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return baseDn;
 	}
 
-	public String getAuthenticationChartJson() {
-		return authenticationChartJson;
-	}
-
-	public void setAuthenticationChartJson(String authenticationChartJson) {
-		this.authenticationChartJson = authenticationChartJson;
-	}
-
-	public AuthenticationChartDto getAuthenticationChartDto() {
-		return authenticationChartDto;
-	}
-
-	public void setAuthenticationChartDto(
-			AuthenticationChartDto authenticationChartDto) {
-		this.authenticationChartDto = authenticationChartDto;
-	}
 }
