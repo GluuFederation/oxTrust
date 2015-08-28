@@ -44,6 +44,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private static final long serialVersionUID = 7875838160379126796L;
 	
 	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
+	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Logger
 	private Log log;
@@ -56,8 +57,6 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
-
-	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 	public AuthenticationChartDto genereateAuthenticationChartDto(int countDays) {
 		AuthenticationChartDto authenticationChartDto = new AuthenticationChartDto();
