@@ -91,10 +91,10 @@ public final class Configuration {
 	private Configuration() {
 		FileConfiguration ldapConfiguration = new FileConfiguration(LDAP_PROPERTIES_FILE);
 
-	    String confDir = ldapConfiguration.getString("confDir");
-	    if (StringUtils.isBlank(confDir)) {
-	    	confDir = DIR;
-	    }
+		String confDir = DIR;
+		if (ldapConfiguration.isLoaded()) {
+			confDir = ldapConfiguration.getString("confDir");
+		}
 
 		applicationConfiguration = new FileConfiguration(confDir + CONFIGURATION_FILE_APPLICATION_CONFIGURATION);
 	    cryptoConfiguration = new FileConfiguration(confDir + CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE);
