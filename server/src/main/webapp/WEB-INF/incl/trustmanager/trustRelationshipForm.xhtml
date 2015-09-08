@@ -185,7 +185,7 @@
 								<h:panelGroup id="urlId">
 									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="url"
 										required="true"
-										rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url))}">
+										rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) or (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}">
 										<ui:define name="label">URL</ui:define>
 										<h:inputText styleClass="form-control"
 											value="#{_trustRelationship.url}" rows="3" size="40"
@@ -316,7 +316,7 @@
 							id="configureSpecific">
 							<ui:define name="label">Configure specific RelyingParty</ui:define>
 							<h:panelGrid columns="2" width="100%" id="RelyingPartyConfig"
-								rendered="#{not (_new or _trustRelationship.isFederation())}">
+								>
 								<h:panelGrid columns="2">
 
 									<h:selectBooleanCheckbox
