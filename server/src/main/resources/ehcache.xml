@@ -122,4 +122,11 @@
            timeToLiveSeconds="60"
            memoryStoreEvictionPolicy="LRU"/>
 
+ <cache name="metricsCache"
+           maxElementsInMemory="1000"
+           eternal="false"
+           overflowToDisk="false"
+           timeToIdleSeconds="60"
+           timeToLiveSeconds="14400"
+           memoryStoreEvictionPolicy="LRU"/>
 </ehcache>

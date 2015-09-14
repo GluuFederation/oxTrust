@@ -18,6 +18,8 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
+import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -29,6 +31,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.ldap.MetricEntry;
+import org.xdi.service.CacheService;
 
 /**
  * Store and retrieve metric
@@ -48,7 +51,10 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Logger
 	private Log log;
-
+	
+	@In
+	private CacheService cacheService;
+	
 	@In
 	private ApplianceService applianceService;
 	
@@ -60,8 +66,12 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	public AuthenticationChartDto genereateAuthenticationChartDto(int countDays) {
 		AuthenticationChartDto authenticationChartDto = new AuthenticationChartDto();
-
-		Map<MetricType, List<MetricEntry>> entries = findAuthenticationMetrics(-countDays);
+		String key = OxTrustConstants.CACHE_METRICS_KEY;
+		Map<MetricType, List<MetricEntry>> entries = (Map<MetricType, List<MetricEntry>>) cacheService.get(OxTrustConstants.CACHE_METRICS_NAME, key);
+		if (entries== null) {
+			entries = findAuthenticationMetrics(-countDays);
+			cacheService.put(OxTrustConstants.CACHE_METRICS_NAME, key, entries);
+		}
 			
 		String []labels = new String[countDays];
 		Map<String, Integer> successStats = calculateStatistics(countDays, entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
