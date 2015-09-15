@@ -9,6 +9,7 @@ package org.gluu.oxauth.client.util;
 import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
+import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 /**
@@ -93,7 +94,10 @@ public final class Configuration {
 
 		String confDir = DIR;
 		if (ldapConfiguration.isLoaded()) {
-			confDir = ldapConfiguration.getString("confDir");
+			String ldapConfDir = ldapConfiguration.getString("confDir");
+			if (StringHelper.isNotEmpty(ldapConfDir)) {
+				confDir = ldapConfDir;
+			}
 		}
 
 		applicationConfiguration = new FileConfiguration(confDir + CONFIGURATION_FILE_APPLICATION_CONFIGURATION);
