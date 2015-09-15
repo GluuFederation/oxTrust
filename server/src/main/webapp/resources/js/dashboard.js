@@ -6,11 +6,13 @@ $(function () {
 //-----------------------
   //- Dashboard > Authentication Requests Chart -
   //-----------------------
+	try{
 
   // Get context with jQuery - using jQuery's .get() method.
   var authenticationRequestsChartCanvas = $("#authenticationRequestsChart").get(0).getContext("2d");
   // This will get the first returned node in the jQuery collection.
   var authenticationRequestsChart = new Chart(authenticationRequestsChartCanvas);
+	
 
   var authChartData = JSON.parse($("#authenticationChartJson").val());  
   console.log("authentication chart data");
@@ -86,5 +88,8 @@ $(function () {
   //Create the line chart
   authenticationRequestsChart.Line(authenticationRequestsChartData, authenticationRequestsChartOptions);
   
-  
+	}catch(error){
+		console.log(error);
+	}
+
 });

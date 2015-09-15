@@ -55,8 +55,8 @@
             </h:panelGrid>
 
             <div id="filtersUpdate">
-                <a4j:commandButton value="Save" action="#{metadataFiltersAction.saveFilters}" oncomplete="#{rich:component('additionalTRParamsPanel')}.hide()" render="MetadataFilterMenu" />
-                <a4j:commandButton value="Back" onclick="#{rich:component('additionalTRParamsPanel')}.hide()" immediate="true" />
+                <a4j:commandButton styleClass="btn btn-primary" value="Save" action="#{metadataFiltersAction.saveFilters}" oncomplete="#{rich:component('additionalTRParamsPanel')}.hide()" render="MetadataFilterMenu" />
+                <a4j:commandButton styleClass="btn btn-primary" value="Back" onclick="#{rich:component('additionalTRParamsPanel')}.hide()" immediate="true" />
             </div>
         </h:form>
     </rich:popupPanel>

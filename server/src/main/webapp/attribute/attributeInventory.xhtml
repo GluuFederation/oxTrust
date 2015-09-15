@@ -28,6 +28,7 @@
 		<div id="formArea">
 			<h:panelGroup columns="1" border="0" cellpadding="0" cellspacing="0"
 				width="100%">
+				<h:form id="attributesFormId">
 				<s:link view="/attribute/addAttribute.xhtml"
 					styleClass="label label-success" value="Add Attribute" propagation="none" style="padding:6px;" />
 
@@ -35,7 +36,7 @@
 				<s:fragment rendered="#{attributeInventoryAction.showInactive}">
 					<a4j:commandLink value="Show only Active Attributes"
 						action="#{attributeInventoryAction.toggleShowInactive}"
-						render="attributesFormId" />
+						styleClass="label label-success" render="attributesFormId" style="margin-left:5px;padding:6px;" />
 				</s:fragment>
 
 				<s:fragment rendered="#{not attributeInventoryAction.showInactive}">
@@ -45,7 +46,7 @@
 				</s:fragment>
 
 
-				<h:form id="attributesFormId">
+				
 					<div class="row" style="padding-top:20px">
 						<div class="col-xs-12">
 							<div class="nav-tabs-custom" style="margin-bottom: 0px;">
