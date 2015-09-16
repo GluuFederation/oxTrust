@@ -507,8 +507,21 @@ public class Shibboleth2ConfService implements Serializable {
 		String gluuSPInum = ApplianceService.instance().getAppliance().getGluuSPTR();
 		String gluuSPEntityId = TrustService.instance().getRelationshipByInum(gluuSPInum).getEntityId();
 		context.put("gluuSPEntityId", gluuSPEntityId);
-
-		context.put("ldapUrl", applicationConfiguration.getIdpLdapProtocol() + "://" + applicationConfiguration.getIdpLdapServer());
+		String regx = "\\s*(=>|,|\\s)\\s*";// white spaces or comma		
+		String ldapUrls[] =  applicationConfiguration.getIdpLdapServer().split(regx);
+		String ldapUrl = "";
+		if(ldapUrls!=null){
+			for (String ldapServer : ldapUrls) {
+				if(ldapUrl.length()>1)
+					ldapUrl = ldapUrl+" ";
+				ldapUrl = ldapUrl + applicationConfiguration.getIdpLdapProtocol() + "://" + ldapServer;
+				
+			}
+		}
+		else
+			ldapUrl = applicationConfiguration.getIdpLdapProtocol() + "://" + applicationConfiguration.getIdpLdapServer();
+		
+		context.put("ldapUrl", ldapUrl);
 		context.put("bindDN", applicationConfiguration.getIdpBindDn());
 
 		try {
@@ -931,7 +944,20 @@ public class Shibboleth2ConfService implements Serializable {
 
 		// Prepare data for files
 		VelocityContext context = new VelocityContext();
-		String host = applicationConfiguration.getIdpLdapProtocol() + "://" + applicationConfiguration.getIdpLdapServer();
+		String regx = "\\s*(=>|,|\\s)\\s*";// white spaces or comma		
+		String ldapUrls[] =  applicationConfiguration.getIdpLdapServer().split(regx);
+		String ldapUrl = "";
+		if(ldapUrls!=null){
+			for (String ldapServer : ldapUrls) {
+				if(ldapUrl.length()>1)
+					ldapUrl = ldapUrl+" ";
+				ldapUrl = ldapUrl + applicationConfiguration.getIdpLdapProtocol() + "://" + ldapServer;
+				
+			}
+		}
+		else
+			ldapUrl = applicationConfiguration.getIdpLdapProtocol() + "://" + applicationConfiguration.getIdpLdapServer();
+		String host = ldapUrl;
 		String base = applicationConfiguration.getBaseDN();
 		String serviceUser = applicationConfiguration.getIdpBindDn();
 		String serviceCredential = "";
