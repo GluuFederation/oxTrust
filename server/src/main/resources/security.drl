@@ -89,18 +89,6 @@ then
   check.grant();
 end
 
-rule AccessFederationHosting
-  no-loop
-  activation-group "permissions"
-when
-
-  org: GluuAppliance()
-  check: PermissionCheck(target == org, action == "federationHostingEnabled", granted == false)
-  (GluuAppliance((federationHostingEnabled != null) && (federationHostingEnabled.booleanValue == true)))
-then
-  check.grant();
-end
-
 rule AccessProfileManagement
   no-loop
   activation-group "permissions"

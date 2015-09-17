@@ -144,9 +144,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "gluuWhitePagesEnabled")
 	private GluuBoolean whitePagesEnabled;
 
-	@LdapAttribute(name = "gluuFederationHostingEnabled")
-	private GluuBoolean federationHostingEnabled;
-
 	@LdapAttribute(name = "gluuManageIdentityPermission")
 	private GluuBoolean manageIdentityPermission;
 
@@ -406,13 +403,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.displayName = displayName;
     }
 
-    public GluuBoolean getFederationHostingEnabled() {
-        return federationHostingEnabled;
-    }
-
-    public void setFederationHostingEnabled(GluuBoolean federationHostingEnabled) {
-        this.federationHostingEnabled = federationHostingEnabled;
-    }
 
     public String getFreeDiskSpace() {
         return freeDiskSpace;

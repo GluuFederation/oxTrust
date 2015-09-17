@@ -42,13 +42,7 @@
             <rich:menuItem label="View log file" action="#{menuAction.endConversation('/logviewer/viewLogFile.xhtml')}" rendered="#{s:hasPermission('log', 'access')}" />
             <rich:menuItem label="Server Status" action="#{menuAction.endConversation('/status/applianceStatus.xhtml')}" rendered="#{s:hasPermission('configuration', 'access')}" />
         </rich:dropDownMenu>
-
-        <rich:dropDownMenu mode="server" label="Federations" rendered="#{identity.loggedIn and s:hasPermission(applianceService.appliance, 'federationHostingEnabled')}">
-            <rich:menuItem label="Federations" action="#{menuAction.endConversation('/federation/proposal/proposalsInventory.xhtml')}" rendered="#{s:hasPermission('trust', 'access')}" />
-            <rich:menuItem label="Hosted Federations" action="#{menuAction.endConversation('/federation/hosted/federationInventory.xhtml')}" rendered="#{not s:hasPermission('trust', 'access')}" />
-            <rich:menuItem label="Join Federation" action="#{menuAction.endConversation('/federation/proposal/addProposal.xhtml')}" rendered="#{not s:hasPermission('trust', 'access')}" />
-        </rich:dropDownMenu>
-
+        
         <rich:dropDownMenu mode="server" label="SAML" rendered="#{s:hasPermission('trust', 'access')}">
             <rich:menuItem label="Trust Relationships" action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}" rendered="#{s:hasPermission('trust', 'access')}" />
         </rich:dropDownMenu>
