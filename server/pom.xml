@@ -193,7 +193,6 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 			</plugin>
 
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -283,6 +282,55 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>com.github.kongchen</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<apiSources>
+						<apiSource>
+							<springmvc>false</springmvc>
+							<locations>org.gluu.oxtrust.ws.rs.scim2</locations>
+							<schemes>http,https</schemes>
+							<host>gluu.org</host>
+							<basePath>/api</basePath>
+							<info>
+								<title>Gluu SCIM 2.0 Apis Documentation</title>
+								<version>v2</version>
+								<description>SCIM API documentation for Gluu. For more details please visit https://tools.ietf.org/html/draft-ietf-scim-api-19</description>
+								<termsOfService>
+									https://github.com/GluuFederation/
+								</termsOfService>
+								<contact>
+									<email>rahat@gluu.com</email>
+									<name>Rahat Ali</name>
+									<url>http://gluu.org</url>
+								</contact>
+<!--								<license>
+									<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+									<name>Apache 2.0</name>
+								</license>-->
+							</info>
+							<!-- Support classpath or file absolute path here.
+                            1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"
+                            2) file e.g: "${basedir}/src/main/resources/markdown.hbs",
+                                "${basedir}/src/main/resources/template/hello.html" -->
+							<templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
+							<outputPath>${basedir}/docs/index.html</outputPath>
+							<swaggerDirectory>docs/swagger-ui</swaggerDirectory>
+						</apiSource>
+					</apiSources>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 
@@ -297,6 +345,17 @@
 	</reporting>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.wordnik</groupId>
+			<artifactId>swagger-core</artifactId>
+			<version>1.5.1-M2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.ws.rs</groupId>
+					<artifactId>jsr311-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -351,6 +410,12 @@
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>oxauth-model</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.wordnik</groupId>
+					<artifactId>swagger-jaxrs_2.10</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>

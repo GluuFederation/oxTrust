@@ -24,6 +24,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.Authorization;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -31,11 +35,7 @@ import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim2.BulkOperation;
-import org.gluu.oxtrust.model.scim2.BulkRequest;
-import org.gluu.oxtrust.model.scim2.BulkResponse;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
@@ -51,6 +51,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Name("scim2BulkEndpoint")
 @Path("/v2/Bulk")
+@Api(value = "/v2/Bulk", description = "SCIM2 Bulk Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
+		authorizations = {
+				@Authorization(value = "Authorization", type = "oauth2")})
 public class BulkWebService extends BaseScimWebService {
 
 	private static final Logger log = Logger.getLogger(BulkWebService.class);
@@ -64,9 +67,12 @@ public class BulkWebService extends BaseScimWebService {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response bulkOperation(@Context HttpServletRequest request, @HeaderParam("Authorization") String authorization, BulkRequest bulkRequest) throws WebApplicationException,
+	@ApiOperation(value = "Bulk Operation",
+			notes = "SCIM Bulk Operation (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
+			response = BulkResponse.class
+	)
+	public Response bulkOperation(@Context HttpServletRequest request, @HeaderParam("Authorization") String authorization, @ApiParam(value = "BulkRequest", required = true)BulkRequest bulkRequest) throws WebApplicationException,
 			MalformedURLException, URISyntaxException, JsonGenerationException, JsonMappingException, IOException, Exception {
-
 		personService = PersonService.instance();
 		groupService = GroupService.instance();
 		Response authorizationResponse = processAuthorization(authorization);
