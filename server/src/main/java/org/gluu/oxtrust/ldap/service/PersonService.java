@@ -16,6 +16,7 @@ import java.util.Map;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.AttributeData;
@@ -508,6 +509,30 @@ public class PersonService implements Serializable {
 		
 		List<GluuCustomPerson> people = ldapEntryManager.findEntries(getDnForPerson(null),  GluuCustomPerson.class, searchFilter);
 		return people;
+	}
+
+
+	/**
+	 * Get user by uid
+	 * 
+	 * @param uid
+	 *            Uid
+	 * @return User
+	 */
+	public User getUserByUid(String uid) {
+
+		User user = new User();
+
+		user.setBaseDn(getDnForPerson(null));
+		user.setUid(uid);
+
+		List<User> users = ldapEntryManager.findEntries(user);// getLdapEntryManagerInstance().findEntries(person);
+		if ((users != null) && (users.size() > 0)) {
+
+			return users.get(0);
+		}
+
+		return null;
 	}
 
 }
