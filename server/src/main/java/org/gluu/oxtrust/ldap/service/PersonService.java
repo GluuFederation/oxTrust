@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -59,10 +60,32 @@ public class PersonService implements Serializable {
 	@In
 	private GroupService groupService;
 
+	@In
+	private AttributeService attributeService;
+
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	private List<GluuCustomAttribute> mandatoryAttributes;
+
+	public void addCustomObjectClass(GluuCustomPerson person) {
+		String customObjectClass = attributeService.getCustomOrigin();
+		String[] customObjectClassesArray = person.getCustomObjectClasses();
+		if (ArrayHelper.isNotEmpty(customObjectClassesArray)) {
+			List<String> customObjectClassesList = Arrays.asList(customObjectClassesArray);
+			if (!customObjectClassesList.contains(customObjectClass)) {
+				List<String> customObjectClassesListUpdated = new ArrayList<String>();
+				customObjectClassesListUpdated.addAll(customObjectClassesList);
+				customObjectClassesListUpdated.add(customObjectClass);
+				customObjectClassesList = customObjectClassesListUpdated;
+			}
+
+			person.setCustomObjectClasses(customObjectClassesList.toArray(new String[0]));
+
+		} else {
+			person.setCustomObjectClasses(new String[] { customObjectClass });
+		}
+	}
 
 	/**
 	 * Add new person
