@@ -143,6 +143,9 @@ public class CopyUtils2 implements Serializable {
 			return null;
 		}
 
+		PersonService personService1 = PersonService.instance();
+
+
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new GluuCustomPerson();
@@ -150,6 +153,7 @@ public class CopyUtils2 implements Serializable {
 		}
 
 		if (isUpdate) {
+			personService1.addCustomObjectClass(destination);
 
 			log.trace(" setting userName ");
 			if (source.getUserName() != null && source.getUserName().length() > 0) {
@@ -391,11 +395,12 @@ public class CopyUtils2 implements Serializable {
 
 		} else {
 			try {
-				PersonService personService1 = PersonService.instance();
-
 				if (personService1.getPersonByUid(source.getUserName()) != null) {
 					return null;
 				}
+
+				personService1.addCustomObjectClass(destination);
+
 				log.trace(" setting userName ");
 				if (source.getUserName() != null && source.getUserName().length() > 0) {
 					destination.setUid(source.getUserName());
