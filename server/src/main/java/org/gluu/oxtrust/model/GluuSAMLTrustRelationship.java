@@ -414,6 +414,11 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
         return Boolean.parseBoolean(researchBundleEnabled);
     }
     
+    public boolean getResearchBundle() {
+        return Boolean.parseBoolean(researchBundleEnabled);
+    }
+    
+    
     public void setResearchBundle(boolean researchBundle) {
         this.researchBundleEnabled = Boolean.toString(researchBundle);
     }

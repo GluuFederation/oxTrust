@@ -82,8 +82,8 @@
 		<input type='hidden' name='cid' value='#{conversation.id}' />
 
 		<!--a4j:queue onrequestqueue="changeButtonsAvailability('updateButtons',false);" onrequestdequeue="changeButtonsAvailability('updateButtons',true);" /-->
-		<h:panelGrid columns="3" width="100%"
-			columnClasses="attributeColumn, , formColumn" border="0"
+		<h:panelGrid columns="2" width="100%"
+			columnClasses=" , formColumn" border="0"
 			cellpadding="0" cellspacing="0">
 
 			<h:panelGroup>
@@ -138,7 +138,7 @@
 
 			</h:panelGroup>
 
-			<richext:spacer width="10" />
+			
 
 			<rich:tabPanel switchType="client">
 				<rich:tab header="Trust Agreement">
@@ -336,8 +336,12 @@
 							id="enableInCommon">
 							<ui:define name="label">Enable InCommon R&amp;S</ui:define>
 							<h:panelGrid columns="2">
-
-							</h:panelGrid>
+							<h:selectBooleanCheckbox
+										value="#{_trustRelationship.researchBundle}">
+										
+									</h:selectBooleanCheckbox>
+									
+								</h:panelGrid>
 						</s:decorate>
 
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
@@ -472,13 +476,14 @@
 			</rich:tabPanel>
 
 		</h:panelGrid>
-
+		<ui:insert name="controlButttons" />
+		
 		<h:panelGrid columns="1" width="100%" columnClasses="alignLeft">
 			<richext:spacer height="8" />
 			<ui:insert name="configurationLink" />
 		</h:panelGrid>
 
-		<ui:insert name="controlButttons" />
+		
 
 	</h:form>
 
