@@ -34,6 +34,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
+import org.xdi.util.ArrayHelper;
 
 /**
  * Action class for updating person's attributes
@@ -145,22 +146,8 @@ public class UpdatePersonAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		String customObjectClass = attributeService.getCustomOrigin();
+		personService.addCustomObjectClass(this.person);
 		this.person.setStatus(GluuStatus.ACTIVE);
-		String[] customObjectClassesArray = this.person.getCustomObjectClasses();
-		if(customObjectClassesArray != null && customObjectClassesArray.length != 0){
-			List<String> customObjectClassesList = Arrays.asList(customObjectClassesArray);
-			if(! customObjectClassesList.contains(customObjectClass)){
-				List<String> customObjectClassesListUpdated = new ArrayList<String>();
-				customObjectClassesListUpdated.addAll(customObjectClassesList);
-				customObjectClassesListUpdated.add(customObjectClass);
-				customObjectClassesList = customObjectClassesListUpdated;
-			}
-			this.person.setCustomObjectClasses(customObjectClassesList.toArray(new String[0]));
-			
-		}else{
-			this.person.setCustomObjectClasses(new String[] { customObjectClass });
-		}
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
 
 		if (update) {
