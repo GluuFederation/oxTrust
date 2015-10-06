@@ -60,10 +60,12 @@ import org.gluu.oxtrust.model.scim2.Role;
 import org.gluu.oxtrust.model.scim2.ScimData;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.X509Certificate;
+import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -634,6 +636,8 @@ public class CopyUtils2 implements Serializable {
 				return null;
 			}
 		}
+
+		setGluuStatus(source, destination);
 
 		return destination;
 	}
@@ -1470,6 +1474,8 @@ public class CopyUtils2 implements Serializable {
 			destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
 		}
 
+		setGluuStatus(source, destination);
+
 		return destination;
 	}
 
@@ -1611,6 +1617,27 @@ public class CopyUtils2 implements Serializable {
 
 		return destination;
 
+	}
+
+	private static void setGluuStatus(User source, GluuCustomPerson destination) {
+		Boolean active = source.isActive();
+		if (active != null) {
+			setGluuStatus(destination, active.toString());
+		}
+	}
+
+	private static void setGluuStatus(ScimPersonPatch source, GluuCustomPerson destination) {
+		String active = source.getActive();
+		setGluuStatus(destination, active);
+	}
+
+	private static void setGluuStatus(GluuCustomPerson destination, String active) {
+		if (StringHelper.isNotEmpty(active) && (destination.getAttribute("gluuStatus") == null)) {
+			GluuBoolean gluuStatus = GluuBoolean.getByValue(org.xdi.util.StringHelper.toLowerCase(active));
+			if (gluuStatus != null) {
+				destination.setAttribute("gluuStatus", gluuStatus.getValue());
+			}
+		}
 	}
 
 }

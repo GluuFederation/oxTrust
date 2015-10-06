@@ -49,10 +49,12 @@ import org.gluu.oxtrust.model.scim.ScimRoles;
 import org.gluu.oxtrust.model.scim.ScimRolesPatch;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
+import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -139,6 +141,7 @@ public class CopyUtils implements Serializable {
 			destination = new GluuCustomPerson();
 
 		}
+		
 		if (isUpdate) {
 			personService1.addCustomObjectClass(destination);
 
@@ -610,6 +613,8 @@ public class CopyUtils implements Serializable {
 				return null;
 			}
 		}
+		
+		setGluuStatus(source, destination);
 
 		return destination;
 	}
@@ -1585,6 +1590,8 @@ public class CopyUtils implements Serializable {
 		if (source.getMeta().getLocation() != null && source.getMeta().getLocation().length() > 0) {
 			destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
 		}
+		
+		setGluuStatus(source, destination);
 
 		return destination;
 	}
@@ -1727,6 +1734,25 @@ public class CopyUtils implements Serializable {
 
 		return destination;
 
+	}
+
+	private static void setGluuStatus(ScimPerson source, GluuCustomPerson destination) {
+		String active = source.getActive();
+		setGluuStatus(destination, active);
+	}
+
+	private static void setGluuStatus(ScimPersonPatch source, GluuCustomPerson destination) {
+		String active = source.getActive();
+		setGluuStatus(destination, active);
+	}
+
+	private static void setGluuStatus(GluuCustomPerson destination, String active) {
+		if (StringHelper.isNotEmpty(active) && (destination.getAttribute("gluuStatus") == null)) {
+			GluuBoolean gluuStatus = GluuBoolean.getByValue(org.xdi.util.StringHelper.toLowerCase(active));
+			if (gluuStatus != null) {
+				destination.setAttribute("gluuStatus", gluuStatus.getValue());
+			}
+		}
 	}
 
 }
