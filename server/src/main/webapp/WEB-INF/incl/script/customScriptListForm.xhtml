@@ -38,7 +38,7 @@
 	        	<ui:param name="_customScripts" value="#{_action.customScriptsByTypes[_scriptType]}" />
 	            <rich:tab header="#{_scriptType.displayName}">
 		            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
-		                <a4j:region >
+		                <a4j:region>
 		                    <rich:dataGrid id="#{_customScriptTypeId}" columns="1" value="#{_customScripts}" var="_customScript" style="width: 100%;">            
 					        	<ui:param name="_customScriptId" value="#{_action.getId(_customScript)}" />
 		                        <h:panelGrid id="#{_customScriptId}" columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -57,7 +57,6 @@
 		                                    <ui:define name="label">Programming Language</ui:define>
 		                                    <h:selectOneMenu value="#{_customScript.programmingLanguage}" required="true" disabled="true" styleClass="form-control">
 		                                        <s:selectItems value="#{applianceService.programmingLanguages}" var="_type" label="#{_type.displayName}"/>
-		                                        <a4j:ajax event="change" render="#{_customScriptId}" limitRender="true" execute="@this" />
 		                                    </h:selectOneMenu>
 		                                </s:decorate>
 		            
@@ -65,14 +64,22 @@
 		                                    <ui:define name="label">Level</ui:define>
 		                                    <rich:inputNumberSpinner value="#{_customScript.level}" inputSize="2" minValue="0" maxValue="100"/>
 		                                </s:decorate>
-		                                
+
+		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+		                                    <ui:define name="label">Location Type</ui:define>
+		                                    <h:selectOneMenu value="#{_customScript.locationType}" required="false" styleClass="form-control">
+		                                        <s:selectItems value="#{applianceService.locationTypes}" var="_type" label="#{_type.displayName}"/>
+		                                        <a4j:ajax event="change" render="scriptAreaId, scriptPathId" limitRender="true" execute="@this">
+		                                        </a4j:ajax>
+		                                    </h:selectOneMenu>
+		                                </s:decorate>
+
 		                                <!-- Person Authentication specific parameters -->
 		                                <s:fragment rendered="#{_scriptType.value eq 'person_authentication'}">
 			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 			                                    <ui:define name="label">Usage type</ui:define> 
 			                                    <h:selectOneMenu value="#{_customScript.usageType}" required="true" styleClass="form-control">
 			                                        <s:selectItems value="#{applianceService.scriptUsageTypes}" var="_usageType" label="#{_usageType.displayName}"/>
-			                                        <a4j:ajax event="change" render="customScriptId" limitRender="true" execute="@this" />
 			                                    </h:selectOneMenu>
 			                                </s:decorate>
 		                                </s:fragment>
@@ -80,10 +87,19 @@
 		                                <ox:simpleCustomPropertiesList label="Custom property (key/value)" labelAdd="custom property"
 		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" />
 		                
-		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="customScriptScript">
-		                                    <ui:define name="label">Custom Script</ui:define>
-		                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
-		                                </s:decorate>
+		                                <h:panelGroup id="scriptAreaId">
+			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_customScript.locationType.value ne 'file'}">
+			                                    <ui:define name="label">Script</ui:define>
+			                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
+			                                </s:decorate>
+			                            </h:panelGroup>
+		                
+		                                <h:panelGroup id="scriptPathId">
+			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_customScript.locationType.value eq 'file'}">
+			                                    <ui:define name="label">Script Path</ui:define>
+			                                    <h:inputText value="#{_customScript.locationPath}" size="90" styleClass="form-control" />
+			                                </s:decorate>
+			                            </h:panelGroup>
 		                
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 		                                    <ui:define name="label">Enabled</ui:define>

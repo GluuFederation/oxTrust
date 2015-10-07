@@ -35,6 +35,7 @@ import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.ProgrammingLanguage;
+import org.xdi.model.ScriptLocationType;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
@@ -166,6 +167,10 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 					customScript.setDn(dn);
 					customScript.setInum(customScriptId);
+					
+					if (ScriptLocationType.LDAP == customScript.getLocationType()) {
+						customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
+					}
 					
 					if (customScript.getConfigurationProperties().size() == 0) {
 						customScript.setConfigurationProperties(null);

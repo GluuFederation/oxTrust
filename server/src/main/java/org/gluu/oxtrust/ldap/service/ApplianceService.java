@@ -22,6 +22,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.ProgrammingLanguage;
+import org.xdi.model.ScriptLocationType;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.util.StringHelper;
 
@@ -208,6 +209,10 @@ public class ApplianceService {
 
 	public ProgrammingLanguage[] getProgrammingLanguages() {
 		return new ProgrammingLanguage[] { ProgrammingLanguage.PYTHON };
+	}
+
+	public ScriptLocationType[] getLocationTypes() {
+		return new ScriptLocationType[] { ScriptLocationType.LDAP,  ScriptLocationType.FILE };
 	}
 
 	public CustomScriptType[] getCustomScriptTypes() {
