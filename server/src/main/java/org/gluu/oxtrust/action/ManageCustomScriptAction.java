@@ -229,17 +229,19 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		CustomScript customScript;
 		if (CustomScriptType.PERSON_AUTHENTICATION == scriptType) {
 			AuthenticationCustomScript authenticationCustomScript = new AuthenticationCustomScript();
+			authenticationCustomScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
 			authenticationCustomScript.setUsageType(AuthenticationScriptUsageType.INTERACTIVE);
 
 			customScript = authenticationCustomScript;
 		} else {
 			customScript = new CustomScript();
+			customScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
 		}
 
+		customScript.setLocationType(ScriptLocationType.LDAP);
 		customScript.setScriptType(scriptType);
 		customScript.setProgrammingLanguage(ProgrammingLanguage.PYTHON);
 		customScript.setConfigurationProperties(new ArrayList<SimpleCustomProperty>());
-		customScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
 
 		customScriptsByType.add(customScript);
 	}
