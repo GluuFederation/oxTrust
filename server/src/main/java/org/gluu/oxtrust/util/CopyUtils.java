@@ -71,56 +71,6 @@ public class CopyUtils implements Serializable {
 	private static Log log;
 
 	/**
-	 * Copy data from Person object to GluuCustomPerson object
-	 * 
-	 * @param source
-	 * @param destination
-	 * @return
-	 * @throws Exception
-	 */
-	public static GluuCustomPerson copy(Person source, GluuCustomPerson destination, List<GluuAttribute> attributes, GluuUserRole role,
-			boolean isUpdate) {
-		if (source == null || !isValidData(source, isUpdate)) {
-			return null;
-		}
-		if (destination == null) {
-			destination = new GluuCustomPerson();
-		}
-
-		if (source.getPersonAttrList() != null) {
-			for (PersonAttribute personAttr : source.getPersonAttrList()) {
-				GluuAttribute attribute = getAttribute(attributes, personAttr.getName());
-				if (attribute == null || attribute.getEditType() == null || !containsRole(attribute.getEditType(), role))
-					continue;
-				destination.setAttribute(personAttr.getName(), personAttr.getValue());
-			}
-		}
-
-		if (!isUpdate) {
-			destination.setUid(source.getUserId());
-			destination.setUserPassword(source.getPassword());
-			destination.setGivenName(source.getFirstName());
-			destination.setDisplayName(source.getDisplayName());
-			destination.setSurname(source.getLastName());
-			destination.setMail(source.getEmail());
-			destination.setCommonName(source.getFirstName() + " " + source.getDisplayName());
-		} else {
-			if (!isEmpty(source.getFirstName()))
-				destination.setGivenName(source.getFirstName());
-			if (!isEmpty(source.getDisplayName()))
-				destination.setDisplayName(source.getDisplayName());
-			if (!isEmpty(source.getLastName()))
-				destination.setSurname(source.getLastName());
-			if (!isEmpty(source.getEmail()))
-				destination.setMail(source.getEmail());
-			if (!isEmpty(source.getFirstName()) && !isEmpty(source.getDisplayName()))
-				destination.setCommonName(source.getFirstName() + " " + source.getDisplayName());
-		}
-
-		return destination;
-	}
-
-	/**
 	 * Copy data from ScimPerson object to GluuCustomPerson object "Reda"
 	 * 
 	 * @param source
@@ -620,43 +570,6 @@ public class CopyUtils implements Serializable {
 	}
 
 	/**
-	 * Copy data from GluuCustomPerson object to Person object
-	 * 
-	 * @param source
-	 * @param destination
-	 * @return
-	 * @throws Exception
-	 */
-	public static Person copy(GluuCustomPerson source, Person destination, List<GluuAttribute> attributes) {
-		if (source == null) {
-			return null;
-		}
-		if (destination == null) {
-			destination = new Person();
-		}
-		destination.setInum(source.getInum());
-		destination.setIname(source.getIname());
-		destination.setUserId(source.getUid());
-		destination.setFirstName(source.getGivenName());
-		destination.setDisplayName(source.getDisplayName());
-		destination.setLastName(source.getSurname());
-		destination.setEmail(source.getMail());
-		destination.setPassword(source.getUserPassword());
-		destination.setCommonName(source.getGivenName() + " " + source.getDisplayName());
-
-		List<PersonAttribute> personAttrList = new ArrayList<PersonAttribute>();
-		for (GluuAttribute attribute : attributes) {
-			PersonAttribute personAttr = new PersonAttribute(attribute.getName(), source.getAttribute(attribute.getName()),
-					attribute.getDisplayName());
-			personAttrList.add(personAttr);
-		}
-
-		destination.setPersonAttrList(personAttrList);
-
-		return destination;
-	}
-
-	/**
 	 * Copy data from GluuCustomPerson object to ScimPerson object "Reda"
 	 * 
 	 * @param source
@@ -1035,78 +948,6 @@ public class CopyUtils implements Serializable {
 		return destination;
 	}
 
-	/**
-	 * Copy data from ScimPerson object to GluuCustomPerson object
-	 * 
-	 * @param source
-	 * @param destination
-	 * @return
-	 * @throws Exception
-	 */
-	public static GluuCustomPerson copyChangePassword(ScimPerson source, GluuCustomPerson destination) {
-		if (source == null) {
-			return null;
-		}
-		if (destination == null) {
-			return null;
-		}
-		// only update password
-		destination.setUserPassword(source.getPassword());
-		return destination;
-	}
-
-	/**
-	 * Copy the User Password
-	 * 
-	 * @param person
-	 * @param password
-	 * @return
-	 */
-	public static GluuCustomPerson updatePassword(GluuCustomPerson person, String password) {
-		try {
-			person.setUserPassword(password);
-		} catch (Exception ex) {
-			return null;
-		}
-		return person;
-	}
-
-	// -
-
-	public static GluuAttribute getAttribute(List<GluuAttribute> attributes, String attributeName) {
-		GluuAttribute gluuAttribute = null;
-		for (GluuAttribute gluuAttr : attributes) {
-			if (attributeName.equalsIgnoreCase(gluuAttr.getName())) {
-				gluuAttribute = gluuAttr;
-				break;
-			}
-		}
-		return gluuAttribute;
-	}
-
-	public static boolean containsRole(GluuUserRole[] roles, GluuUserRole role) {
-		for (int i = 0; i < roles.length; i++) {
-			if (roles[i] == role)
-				return true;
-		}
-		return false;
-	}
-
-	public static boolean isValidData(Person person, boolean isUpdate) {
-		if (isUpdate) {
-			// if (isEmpty(person.getFirstName()) ||
-			// isEmpty(person.getDisplayName())
-			// || isEmpty(person.getLastName())
-			// || isEmpty(person.getEmail())) {
-			// return false;
-			// }
-		} else if (isEmpty(person.getUserId()) || isEmpty(person.getFirstName()) || isEmpty(person.getDisplayName())
-				|| isEmpty(person.getLastName()) || isEmpty(person.getEmail()) || isEmpty(person.getPassword())) {
-			return false;
-		}
-		return true;
-	}
-
 	public static boolean isValidData(ScimPerson person, boolean isUpdate) {
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
@@ -1172,32 +1013,6 @@ public class CopyUtils implements Serializable {
 
 		return destination;
 
-	}
-
-	public static GluuGroup copy(ScimGroup source, GluuGroup destination, List<GluuGroup> attributes) throws Exception {
-		if (source == null) {
-			return null;
-		}
-		if (destination == null) {
-			destination = new GluuGroup();
-		}
-		destination.setInum(source.getId());
-		destination.setDisplayName(source.getDisplayName());
-		List<ScimGroupMembers> mapMembers = source.getMembers();
-		List<String> listMembers = new ArrayList<String>();
-		// mapMembers.
-
-		PersonService personservice = PersonService.instance();
-		for (String dn : listMembers) {
-			GluuCustomPerson gluuPerson = personservice.getPersonByDn(dn);
-			ScimGroupMembers member = new ScimGroupMembers();
-			member.setDisplay(gluuPerson.getDisplayName());
-			member.setValue(gluuPerson.getInum());
-			mapMembers.add(member);
-		}
-
-		destination.setMembers(listMembers);
-		return destination;
 	}
 
 	public static GluuCustomPerson patch(ScimPersonPatch source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
