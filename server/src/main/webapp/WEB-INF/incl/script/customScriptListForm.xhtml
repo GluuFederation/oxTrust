@@ -45,7 +45,7 @@
 		                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop" style="margin-bottom:10px;">
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 		                                    <ui:define name="label">Name</ui:define>
-		                                    <h:inputText value="#{_customScript.name}" size="90" required="true" styleClass="form-control" />
+		                                    <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" styleClass="form-control" />
 		                                </s:decorate>
 
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
@@ -109,8 +109,7 @@
 		                            </h:panelGrid>
 
 		    
-		                            <a4j:commandLink action="#{_action.removeCustomScript(_customScript)}" render="#{_customScriptTypeId}" execute="@region" styleClass="glyphicon glyphicon-remove" style="margin-top: -14px;
-  margin-left: -18px;">
+		                            <a4j:commandLink action="#{_action.removeCustomScript(_customScript)}" render="#{_customScriptTypeId}" execute="@region" styleClass="glyphicon glyphicon-remove" style="margin-top: -14px; margin-left: -18px;">
 		                                
 		                                <f:param name="sv" value="1" />
 		                            </a4j:commandLink>
