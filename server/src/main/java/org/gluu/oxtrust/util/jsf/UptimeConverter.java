@@ -8,12 +8,12 @@ package org.gluu.oxtrust.util.jsf;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
 
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.faces.Converter;
@@ -46,13 +46,22 @@ public class UptimeConverter implements javax.faces.convert.Converter, Serializa
 	public String getAsString(FacesContext context, UIComponent component, Object object) throws ConverterException {
 		if (object instanceof String) {
 			try {
-				return DateFormatUtils.formatUTC(Long.valueOf((String) object), dateFormats[0]);
+				return getSecondsAsString(Long.valueOf((String) object));
 			} catch (NumberFormatException ex) {
 				throw new ConverterException("Unable to convert " + object + " to date!");
 			}
 		}
 
 		return null;
+	}
+	
+	private String getSecondsAsString(long seconds) {
+		int days = (int) TimeUnit.SECONDS.toDays(seconds);
+		long hours = TimeUnit.SECONDS.toHours(seconds) - (days * 24);
+		long mins = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds) * 60);
+		long secondsInMinute = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60);
+
+		return days + " days " + hours + " hours " + mins + " mins " + secondsInMinute + " seconds";
 	}
 
 }
