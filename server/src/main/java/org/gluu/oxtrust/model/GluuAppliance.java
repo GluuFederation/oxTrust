@@ -231,15 +231,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "oxAuthenticationMode")
 	private String authenticationMode;
 
-	@LdapAttribute(name = "oxClusteredServers")
-	private List<String> oxClusterPartners;
-
-	@LdapAttribute(name = "oxClusterType")
-	private String clusterType;
-
-	@LdapAttribute(name = "oxMemcachedServerAddress")	
-	private String memcachedServerAddress;
-
 	@LdapAttribute(name = "oxLogViewerConfig")
 	private String oxLogViewerConfig;
 
@@ -369,14 +360,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
     public void setCentreonEmail(String centreonEmail) {
         this.centreonEmail = centreonEmail;
-    }
-
-    public String getClusterType() {
-        return clusterType;
-    }
-
-    public void setClusterType(String clusterType) {
-        this.clusterType = clusterType;
     }
 
     public String getCountry() {
@@ -564,28 +547,12 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.maxLogSize = maxLogSize;
     }
 
-    public String getMemcachedServerAddress() {
-        return memcachedServerAddress;
-    }
-
-    public void setMemcachedServerAddress(String memcachedServerAddress) {
-        this.memcachedServerAddress = memcachedServerAddress;
-    }
-
     public String getOwner() {
         return owner;
     }
 
     public void setOwner(String owner) {
         this.owner = owner;
-    }
-
-    public List<String> getOxClusterPartners() {
-        return oxClusterPartners;
-    }
-
-    public void setOxClusterPartners(List<String> oxClusterPartners) {
-        this.oxClusterPartners = oxClusterPartners;
     }
 
     public List<OxIDPAuthConf> getOxIDPAuthentication() {

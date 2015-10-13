@@ -42,7 +42,6 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
-import org.richfaces.event.DropEvent;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
@@ -68,7 +67,6 @@ public class UpdateOrganizationAction implements Serializable {
 	@In
 	private StatusMessages statusMessages;
 
-	@SuppressWarnings("seam-unresolved-variable")
 	@In
 	private GluuCustomPerson currentPerson;
 
@@ -105,10 +103,6 @@ public class UpdateOrganizationAction implements Serializable {
 	private GluuAppliance appliance;
 
 	private boolean cacheRefreshEnabled;
-	
-	private List<GluuAppliance> clusterPartners;
-	private String clusterType;
-	private String memcachedServerAddress;
 	
 	private List<GluuAppliance> appliances;
 
@@ -166,22 +160,11 @@ public class UpdateOrganizationAction implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		clusterPartners = new ArrayList<GluuAppliance>();
 		
 		
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String clusterUpdate(DropEvent event){
-		if("Cluster".equals(event.getDropValue()) && ! clusterPartners.contains((GluuAppliance) event.getDragValue())){
-			appliances.remove((GluuAppliance) event.getDragValue());
-			clusterPartners.add((GluuAppliance) event.getDragValue());
-		}else if("Standalone".equals(event.getDropValue()) && ! appliances.contains((GluuAppliance) event.getDragValue())){
-			clusterPartners.remove((GluuAppliance) event.getDragValue());
-			appliances.add((GluuAppliance) event.getDragValue());
-		}
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
 	private void initLogoImage() {
 		this.oldLogoImage = imageService.getGluuImageFromXML(this.organization.getLogoImage());
 		if (this.oldLogoImage != null) {
@@ -203,16 +186,7 @@ public class UpdateOrganizationAction implements Serializable {
 			saveFaviconImage();
 
 			setCustomMessages();
-//			saveClusterConfiguration();
 			organizationService.updateOrganization(this.organization);
-
-			appliance.setClusterType(clusterType);
-			List<String> oxClusterPartners = new ArrayList<String>();
-			for(GluuAppliance partner: clusterPartners){
-				oxClusterPartners.add(partner.getInum());
-			}
-			appliance.setOxClusterPartners(oxClusterPartners);
-			appliance.setMemcachedServerAddress(memcachedServerAddress);
 			
 			updateSmptConfiguration(this.appliance);
 			
@@ -275,25 +249,10 @@ public class UpdateOrganizationAction implements Serializable {
 		}
 		try {
 			this.appliance = applianceService.getAppliance();
-
 			if (this.appliance == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
-//			initClusterConfig();
-			clusterType = appliance.getClusterType();
-			memcachedServerAddress = appliance.getMemcachedServerAddress();
-			clusterPartners = new ArrayList<GluuAppliance>();
-			List<String> oxClusterPartners = appliance.getOxClusterPartners();
-			if(oxClusterPartners != null){
-				for(String partner: oxClusterPartners){
-					clusterPartners.add(applianceService.getApplianceByInum(partner));
-				}
-			}else{
-				clusterPartners.add(appliance);
-			}
  
-			appliances.removeAll(clusterPartners);
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("an error occured", ex);
@@ -577,48 +536,6 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	/**
-	 * @return the clusterPartners
-	 */
-	public List<GluuAppliance> getClusterPartners() {
-		return clusterPartners;
-	}
-
-	/**
-	 * @param clusterPartners the clusterPartners to set
-	 */
-	public void setClusterPartners(List<GluuAppliance> clusterPartners) {
-		this.clusterPartners = clusterPartners;
-	}
-
-	/**
-	 * @return the clusterType
-	 */
-	public String getClusterType() {
-		return clusterType;
-	}
-
-	/**
-	 * @param clusterType the clusterType to set
-	 */
-	public void setClusterType(String clusterType) {
-		this.clusterType = clusterType;
-	}
-
-	/**
-	 * @return the memcachedServerAddress
-	 */
-	public String getMemcachedServerAddress() {
-		return memcachedServerAddress;
-	}
-
-	/**
-	 * @param memcachedServerAddress the memcachedServerAddress to set
-	 */
-	public void setMemcachedServerAddress(String memcachedServerAddress) {
-		this.memcachedServerAddress = memcachedServerAddress;
-	}
-
-	/**
 	 * @return the appliances
 	 */
 	public List<GluuAppliance> getAppliances() {
@@ -631,9 +548,5 @@ public class UpdateOrganizationAction implements Serializable {
 	public void setAppliances(List<GluuAppliance> appliances) {
 		this.appliances = appliances;
 	}
-	
-	public String addNewCluster(){
-	    //TODO: implement
-	    return null;
-	}
+
 }

@@ -93,9 +93,6 @@
 			<div class="col-xs-12">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs">
-						<li class="active" style="display: none;"><a
-							href="#cluster-config" data-toggle="tab">Configure cluster
-								partners</a></li>
 						<li class="active"><a href="#sys-config" data-toggle="tab">System
 								Configuration</a></li>
 						<li><a href="#email-config" data-toggle="tab">Manage
@@ -184,111 +181,6 @@
 									</h:selectOneMenu>
 								</s:decorate>
 
-							</h:panelGroup>
-						</div>
-						<div class="tab-pane" id="cluster-config">
-							<h:panelGroup layout="block" rendered="false">
-								<a4j:region>
-									<h:panelGrid columns="1" width="100%" border="0"
-										cellpadding="0" cellspacing="0" columnClasses="alignTop">
-										<h:panelGrid columns="2" width="100%" border="0"
-											cellpadding="0" cellspacing="0" columnClasses="alignTop">
-											<h:selectOneMenu
-												value="#{updateOrganizationAction.clusterType}"
-												required="true" id="clusterTypeSelectId">
-												<f:selectItem id="clusterDisabledId" itemLabel="Disabled"
-													itemValue="Disabled" />
-												<f:selectItem id="clusterMemcachedId" itemLabel="Memcached"
-													itemValue="Memcached" />
-												<a4j:ajax event="change" render="clusterManagement"
-													limitRender="true" execute="@this" />
-											</h:selectOneMenu>
-											<h:panelGroup id="MemcachedGroupId"
-												rendered="#{updateOrganizationAction.clusterType ne 'Disabled' and not empty updateOrganizationAction.clusterType}">
-												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-													id="name">
-													<ui:define name="label">Memcached server address</ui:define>
-													<h:inputText
-														value="#{updateOrganizationAction.memcachedServerAddress}"
-														required="true" />
-												</s:decorate>
-												<!--                <ox:stringPropertiesList label="Add cluster partner" labelAdd="cluster partner" maxItems="4" 
-			                	properties="#{updateOrganizationAction.clusterPartners}" 
-			                	propertiesAction="#{updateOrganizationAction}" 
-			                	required="false"/> -->
-											</h:panelGroup>
-										</h:panelGrid>
-										<a4j:region>
-											<h:panelGrid columns="2" width="100%" border="0"
-												cellpadding="0" cellspacing="0" columnClasses="half,half"
-												rendered="#{updateOrganizationAction.clusterType ne 'Disabled' and not empty updateOrganizationAction.clusterType}">
-												<rich:panel style="height: 100%;">
-													<f:facet name="header">
-														<h:outputText value="Standalone Servers" />
-													</f:facet>
-													<rich:dropTarget acceptedTypes="appliance"
-														dropValue="Standalone"
-														dropListener="#{updateOrganizationAction.clusterUpdate}"
-														render="clustertable, src" />
-													<h:dataTable id="src" columns="1"
-														value="#{updateOrganizationAction.appliances}"
-														var="appliance">
-														<h:column>
-															<a4j:outputPanel layout="block"
-																styleClass="rf-ind-drag applianceSheet">
-																<rich:dragSource type="appliance"
-																	dragValue="#{appliance}" />
-																<h:outputText
-																	value="Display Name: #{appliance.displayName}"></h:outputText>
-																<br />
-																<h:outputText value="Iname: #{appliance.iname}"></h:outputText>
-																<br />
-																<h:outputText value="Inum: #{appliance.inum}"></h:outputText>
-																<br />
-																<h:outputText
-																	value="Description: #{appliance.description}"></h:outputText>
-															</a4j:outputPanel>
-														</h:column>
-													</h:dataTable>
-												</rich:panel>
-												<rich:panel style="height: 100%;">
-													<f:facet name="header">
-														<h:outputText value="Cluster" />
-													</f:facet>
-													<rich:dropTarget acceptedTypes="appliance"
-														dropValue="Cluster"
-														dropListener="#{updateOrganizationAction.clusterUpdate}"
-														render="clustertable, src" />
-													<h:dataTable id="clustertable" columns="1"
-														value="#{updateOrganizationAction.clusterPartners}"
-														var="appliance">
-														<h:column>
-															<a4j:outputPanel layout="block"
-																styleClass="rf-ind-drag applianceSheet">
-																<rich:dragSource type="appliance"
-																	dragValue="#{appliance}"
-																	rendered="#{not (appliance.inum eq updateOrganizationAction.appliance.inum)}" />
-																<h:outputText
-																	value="Display Name edit: #{appliance.displayName}"></h:outputText>
-																<br />
-																<h:outputText value="Iname: #{appliance.iname}"></h:outputText>
-																<br />
-																<h:outputText value="Inum: #{appliance.inum}"></h:outputText>
-																<br />
-																<h:outputText
-																	value="Description: #{appliance.description}"></h:outputText>
-															</a4j:outputPanel>
-														</h:column>
-													</h:dataTable>
-												</rich:panel>
-											</h:panelGrid>
-										</a4j:region>
-									</h:panelGrid>
-									<a4j:commandLink value="Add new cluster"
-										eventsQueue="trustQueue"
-										action="#{updateOrganizationAction.addNewCluster()}"
-										render="clusterManagement" limitRender="true" />
-								</a4j:region>
 							</h:panelGroup>
 						</div>
 						<div class="tab-pane" id="smtp-server">
