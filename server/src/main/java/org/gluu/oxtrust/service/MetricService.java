@@ -45,19 +45,19 @@ import org.xdi.service.CacheService;
 public class MetricService extends org.xdi.service.metric.MetricService {
 
 	private static final long serialVersionUID = 7875838160379126796L;
-	
+
 	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
 	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Logger
 	private Log log;
-	
+
 	@In
 	private CacheService cacheService;
-	
+
 	@In
 	private ApplianceService applianceService;
-	
+
 	@In
 	private OrganizationService organizationService;
 
@@ -65,20 +65,22 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private OxTrustConfiguration oxTrustConfiguration;
 
 	public AuthenticationChartDto genereateAuthenticationChartDto(int countDays) {
-		AuthenticationChartDto authenticationChartDto = new AuthenticationChartDto();
-		String key = OxTrustConstants.CACHE_METRICS_KEY;
-		Map<MetricType, List<MetricEntry>> entries = (Map<MetricType, List<MetricEntry>>) cacheService.get(OxTrustConstants.CACHE_METRICS_NAME, key);
-		if (entries== null) {
-			entries = findAuthenticationMetrics(-countDays);
-			cacheService.put(OxTrustConstants.CACHE_METRICS_NAME, key, entries);
+		String key = OxTrustConstants.CACHE_METRICS_KEY + "#home";
+		AuthenticationChartDto authenticationChartDto = (AuthenticationChartDto) cacheService.get(OxTrustConstants.CACHE_METRICS_NAME, key);
+		if (authenticationChartDto != null) {
+			return authenticationChartDto;
 		}
-			
-		String []labels = new String[countDays];
+		
+		Map<MetricType, List<MetricEntry>> entries = findAuthenticationMetrics(-countDays);
+
+		String[] labels = new String[countDays];
 		Map<String, Integer> successStats = calculateStatistics(countDays, entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
 		labels = successStats.keySet().toArray(labels);
 
-		Integer []values = new Integer[countDays];
+		Integer[] values = new Integer[countDays];
 		values = successStats.values().toArray(values);
+
+		authenticationChartDto = new AuthenticationChartDto();
 
 		authenticationChartDto.setLabels(labels);
 		authenticationChartDto.setSuccess(values);
@@ -86,7 +88,9 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		Map<String, Integer> failureStats = calculateStatistics(countDays, entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
 		values = new Integer[countDays];
 		values = failureStats.values().toArray(values);
-		authenticationChartDto.setFailure(values);			
+		authenticationChartDto.setFailure(values);
+
+		cacheService.put(OxTrustConstants.CACHE_METRICS_NAME, key, authenticationChartDto);
 
 		return authenticationChartDto;
 	}
@@ -130,7 +134,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			}
 		return stats;
 	}
-	
+
 	@Override
 	public String applianceInum() {
 		return applianceService.getApplianceInum();
