@@ -28,7 +28,7 @@ public class User extends CustomEntry implements Serializable, Cloneable {
 
 	@LdapAttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
 			@LdapAttribute(name = "iname", ignoreDuringUpdate = true), @LdapAttribute(name = "inum", ignoreDuringUpdate = true),
-			@LdapAttribute(name = "uid", ignoreDuringUpdate = true), @LdapAttribute(name = "userPassword", ignoreDuringRead = true) })
+			@LdapAttribute(name = "uid", ignoreDuringUpdate = false), @LdapAttribute(name = "userPassword", ignoreDuringRead = true) })
 	protected List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
 
 	public List<GluuCustomAttribute> getCustomAttributes() {
