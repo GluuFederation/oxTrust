@@ -5,26 +5,45 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:s="http://jboss.org/schema/seam/taglib">
 
-	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}"></h:inputHidden>
+	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}" />
 	<div id="#{id}"></div>
-	
-					
-							<BUTTON id="save_#{id}" type="button" class="btn btn-primary" style="margin-bottom: 5px!important;  margin-top: 10px !important;">#{saveBtnLabel}</BUTTON>
-						
-					
-	
+
+	<button id="save_#{id}" type="button" class="btn btn-primary"
+		style="margin-bottom: 5px !important; margin-top: 10px !important;">#{saveBtnLabel}</button>
+
 	<h:outputScript>        
 		  var container = document.getElementById("#{id}");
-		  var editor_#{id} = new JSONEditor(container);
-		  var jsonStr = #{json};
-		  editor_#{id}.set(jsonStr);
+		        
+		  var editor_#{id} = new JSONEditor(container, {
+		        // Enable fetching schemas via ajax
+		        ajax: true,
+		        
+		        // The schema for the editor
+		        schema: {
+		          $ref: "#{jsonSchema}",
+		          format: "tabs"
+				},
+
+		        // Seed the form with a starting value
+		        startval: #{json},
+		        
+		        // Disable additional properties
+		        no_additional_properties: true,
+		        
+		        // Require all properties by default
+		        required_by_default: true,
+		        
+		        disable_properties: true
+    		  });
+		  
+
 		  document.getElementById('save_#{id}').onclick = function () {
 		  		var hiddenField = document.getElementById("#{parentId}:#{id}_hidden");
 		  		var action = document.getElementById("#{saveBtnId}");
-		  		var editedJson = editor_#{id}.get();			  	
+		  		var editedJson = editor_#{id}.getValue();			  	
 		  		hiddenField.value=JSON.stringify(editedJson);
-		  		//console.log(hiddenField.value); 
 		  		action.click();
+
 			  	return false;
 		  };
 	    </h:outputScript>

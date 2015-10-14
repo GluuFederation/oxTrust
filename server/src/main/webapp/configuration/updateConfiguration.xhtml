@@ -10,11 +10,14 @@
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
 	<ui:define name="head">
-		<link type="text/css" rel="stylesheet"
-			href="#{oxTrustConfigurationService.cssLocation}/jsoneditor.css" />
 		<script type="text/javascript"
-			src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.js"></script>
-	</ui:define>
+			src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.min.js"></script>
+	    <script>
+		    // Set the default CSS theme and icon library globally
+		    JSONEditor.defaults.theme = 'bootstrap3';
+		    JSONEditor.defaults.iconlib = 'bootstrap3';
+	    </script>
+    	</ui:define>
 
 	<ui:define name="body">
 	
@@ -54,6 +57,8 @@
 										<ui:param name="parentId" value="oxTrust" />
 										<ui:param name="json"
 											value="#{jsonConfigAction.oxTrustConfigJson}" />
+										<ui:param name="jsonSchema"
+											value="#{request.contextPath}/schema/oxtrust.properties.json" />
 										<ui:param name="saveBtnId" value="saveOxTrustConfigBtn" />
 										<ui:param name="saveBtnLabel" value="Save Configuration" />
 									</s:decorate>
@@ -65,6 +70,7 @@
 							</h:panelGrid>
 
 						</div>
+
 						<div class="tab-pane" id="manage-email">
 							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
 								cellspacing="0" columnClasses="alignTop">
@@ -75,6 +81,8 @@
 										<ui:param name="parentId" value="oxAuth" />
 										<ui:param name="json"
 											value="#{jsonConfigAction.oxAuthDynamicConfigJson}" />
+										<ui:param name="jsonSchema"
+											value="#{request.contextPath}/schema/oxauth-config.xml.json" />
 										<ui:param name="saveBtnId" value="saveOxAuthConfigBtn" />
 										<ui:param name="saveBtnLabel" value="Save Configuration" />
 									</s:decorate>
@@ -85,7 +93,7 @@
 								</h:form>
 							</h:panelGrid>
 						</div>
-					</div>
+ 					</div>
 				</div>
 				
 				

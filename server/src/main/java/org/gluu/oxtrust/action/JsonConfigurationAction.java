@@ -28,7 +28,7 @@ import org.jboss.seam.log.Log;
 
 /**
  * Action class for json configuring 
- * This class loads the JSON configurations e.g. oxTrustConfig from OpenDJ and serves to front end (organization/jsonEditor.xhtml)
+ * This class loads the JSON configurations e.g. oxTrustConfig from OpenDJ and serves to front end (configuration/update.xhtml)
  * front end uses this JSON String to render JSON editor
  * When edited JSON is submitted back 
  * This action class will take care of saving the edited JSON back to OpenDJ
