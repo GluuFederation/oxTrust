@@ -7,6 +7,8 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Data;
@@ -60,7 +62,6 @@ public @Data class UpdateAttributeAction implements Serializable {
 
 	private String inum;
 	private GluuAttribute attribute;
-	private GluuUserRole[] editTypeBeforeUpdate = new GluuUserRole[0];
 	private boolean update;
 	private boolean showAttributeDeleteConfirmation;
 	private boolean showAttributeExistConfirmation;
@@ -86,9 +87,7 @@ public @Data class UpdateAttributeAction implements Serializable {
 		this.attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
 		this.attribute.setOrigin(attributeService.getCustomOrigin());
 
-		this.editTypeBeforeUpdate = this.attribute.getEditType();
-
-		canEdit = true;
+		this.canEdit = true;
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -131,13 +130,20 @@ public @Data class UpdateAttributeAction implements Serializable {
 
 		initAttribute();
 
-		this.canEdit = this.attribute.isAdminCanEdit();
+		this.canEdit = isAllowEdit();
 
 		return true;
 	}
 
+	private boolean isAllowEdit() {
+		if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass())) {
+			return true;
+		}
+
+		return this.attribute.isAdminCanEdit();
+	}
+
 	private void initAttribute() {
-		this.editTypeBeforeUpdate = attribute.getEditType();
 		if (StringHelper.isEmpty(this.attribute.getSaml1Uri())) {
 			String namespace;
 			if (attribute.isCustom() || StringHelper.isEmpty(attribute.getUrn())
@@ -168,21 +174,20 @@ public @Data class UpdateAttributeAction implements Serializable {
 		boolean currentShowAttributeExistConfirmation = this.showAttributeExistConfirmation;
 		this.showAttributeExistConfirmation = false;
 
-		if (!GluuUserRole.containsRole(this.editTypeBeforeUpdate, GluuUserRole.ADMIN)) {
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
-
-		if (!validateEditType()) {
-			attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
-			return null;
-		}
-
 		if(!validationToggle){
 			attribute.setRegExp(null);
 		}
 
 		if(!tooltipToggle){
 			attribute.setGluuTooltip(null);
+		}
+		
+		if (attribute.getEditType().length == 0) {
+			attribute.setEditType(null);
+		}
+
+		if (attribute.getViewType().length == 0) {
+			attribute.setViewType(null);
 		}
 		
 		if (this.update) {

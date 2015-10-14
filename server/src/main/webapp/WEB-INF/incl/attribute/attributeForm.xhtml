@@ -57,9 +57,9 @@
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="editType">
                 <ui:define name="label">Edit Type</ui:define>
 <!-- Remove noSelectionLabel="Not available for edit" due to issue in JSF -->
-                <h:selectManyListbox styleClass="form-control" value="#{_attribute.editType}" required="true" id="editTypeId" rendered="#{_attributeAction.canEdit()}">
+                <h:selectManyListbox styleClass="form-control" value="#{_attribute.editType}" id="editTypeId" rendered="#{_attributeAction.canEdit()}">
                     <s:selectItems value="#{attributeService.attributeUserRoles}"
-                              var="_type" label="#{_type.displayName}" />
+                              var="_type" label="#{_type.displayName}"/>
                     <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
                 </h:selectManyListbox>
 
@@ -74,7 +74,7 @@
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="viewType">
                 <ui:define name="label">View Type</ui:define>
 <!-- Remove noSelectionLabel="Not available for view" due to issue in JSF -->
-                <h:selectManyListbox styleClass="form-control" value="#{_attribute.viewType}" required="true" id="viewTypeId" rendered="#{_attributeAction.canEdit()}">
+                <h:selectManyListbox styleClass="form-control" value="#{_attribute.viewType}" id="viewTypeId" rendered="#{_attributeAction.canEdit()}">
                     <s:selectItems value="#{attributeService.viewTypes}"
                               var="_type" label="#{_type.displayName}"/>
                     <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
@@ -116,13 +116,13 @@
 
              <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="claimName">
                 <ui:define name="label">oxAuth claim name</ui:define>
-                <h:inputText value="#{_attribute.oxAuthClaimName}" size="30" maxlength="60" required="true" id="claimNameId" rendered="#{_attributeAction.canEdit()}"/>
+                <h:inputText value="#{_attribute.oxAuthClaimName}" size="30" maxlength="60" id="claimNameId" rendered="#{_attributeAction.canEdit()}"/>
                 <h:outputText value="#{_attribute.oxAuthClaimName}" rendered="#{not _attributeAction.canEdit()}"/>
              </s:decorate>
              
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scimattr">
                 <ui:define name="label">SCIM Atribute</ui:define>
-                <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxSCIMCustomAttribute}" required="true" id="scimAttrId" rendered="#{_attributeAction.canEdit()}">
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxSCIMCustomAttribute}" id="scimAttrId" rendered="#{_attributeAction.canEdit()}">
                     <s:selectItems value="#{attributeService.scimCustomAttribute}" noSelectionLabel="SCIM Attribute"
                               var="_custom" label="#{_custom.displayName}"/>
                     <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>

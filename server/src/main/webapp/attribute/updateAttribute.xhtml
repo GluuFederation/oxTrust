@@ -31,8 +31,8 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="Update" action="#{updateAttributeAction.save}" rendered="#{_attribute.adminCanEdit}" />
-                        <a4j:commandButton styleClass="btn btn-primary" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{not _new and _attribute.custom and _attribute.adminCanEdit}" />
+                        <h:commandButton styleClass="btn btn-primary" value="Update" action="#{updateAttributeAction.save}" rendered="#{updateAttributeAction.canEdit()}" />
+                        <a4j:commandButton styleClass="btn btn-primary" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{updateAttributeAction.canEdit()}" />
                         <h:commandButton styleClass="btn btn-primary" value="Cancel" action="#{updateAttributeAction.cancel}" immediate="true" style="margin-left:5px"/>
                     </div>
                 </ui:define>

@@ -19,13 +19,6 @@
             <render view-id="/attribute/updateAttribute.xhtml" />
         </rule>
 
-        <rule if-outcome="no_permissions">
-            <end-conversation />
-            <redirect view-id="/home.xhtml">
-                <message severity="ERROR">You don't have permissions to modify attribute</message>
-            </redirect>
-        </rule>
-
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/attribute/attributeInventory.xhtml">

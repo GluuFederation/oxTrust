@@ -98,6 +98,12 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
 		for (GluuAttribute attribute : attributes) {
 			for (String objectClassType : objectClassTypes) {
+				if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass()) &&
+					(GluuUserRole.ADMIN == gluuUserRole)) {
+					attribute.setCustom(true);
+					returnAttributeList.add(attribute);
+					continue;
+				}
 				if (attribute.getOrigin().equals(objectClassType)
 						&& ((attribute.allowViewBy(gluuUserRole) || attribute.allowEditBy(gluuUserRole)))) {
 					returnAttributeList.add(attribute);
@@ -139,6 +145,12 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		String[] objectClassTypes = applicationConfiguration.getContactObjectClassTypes();
 		for (GluuAttribute attribute : attributes) {
 			for (String objectClassType : objectClassTypes) {
+				if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass()) &&
+					(GluuUserRole.ADMIN == gluuUserRole)) {
+					attribute.setCustom(true);
+					returnAttributeList.add(attribute);
+					continue;
+				}
 				if (attribute.getOrigin().equals(objectClassType)
 						&& (attribute.allowViewBy(gluuUserRole) || attribute.allowEditBy(gluuUserRole))) {
 					returnAttributeList.add(attribute);
@@ -749,6 +761,13 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 		for (GluuAttribute attribute : attributeList) {
+			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass()) &&
+				(GluuUserRole.ADMIN == gluuUserRole)) {
+				attribute.setCustom(true);
+				returnAttributeList.add(attribute);
+				continue;
+			}
+
 			for (String objectClassType : objectClassTypes) {
 				if (attribute.getOrigin().equals(objectClassType)
 						&& ((attribute.allowViewBy(gluuUserRole) || attribute.allowEditBy(gluuUserRole)))) {
