@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,7 @@ import org.xdi.oxauth.client.ValidateTokenClient;
 import org.xdi.oxauth.client.ValidateTokenResponse;
 import org.xdi.oxauth.model.common.Parameters;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
+import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
@@ -243,6 +245,11 @@ public class Authenticator implements Serializable {
 
 		// Set user roles
 		GluuUserRole[] userRoles = securityService.getUserRoles(user);
+		if (ArrayHelper.isNotEmpty(userRoles)) {
+			log.debug("Get '{0}' user roles", Arrays.toString(userRoles));
+		} else {
+			log.debug("Get 0 user roles");
+		}
 		for (GluuUserRole userRole : userRoles) {
 			identity.addRole(userRole.getRoleName());
 		}
