@@ -9,7 +9,11 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
@@ -31,10 +35,12 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.CustomAttribute;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.util.ArrayHelper;
+import org.xdi.util.StringHelper;
 
 /**
  * Action class for updating person's attributes
@@ -148,7 +154,12 @@ public class UpdatePersonAction implements Serializable {
 
 		personService.addCustomObjectClass(this.person);
 		this.person.setStatus(GluuStatus.ACTIVE);
+
+		List<GluuCustomAttribute> removedAttributes = customAttributeAction.detectRemovedAttributes();
+		customAttributeAction.updateOriginCustomAttributes();
+
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
+		this.person.getCustomAttributes().addAll(removedAttributes);
 
 		if (update) {
 			try {
@@ -196,8 +207,6 @@ public class UpdatePersonAction implements Serializable {
 			}
 
 			this.update = true;
-
-			userPasswordAction.setPerson(this.person);
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;

@@ -11,10 +11,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -71,6 +73,7 @@ public class CustomAttributeAction implements Serializable {
 	private List<GluuImage> removedPhotos;
 
 	private List<GluuCustomAttribute> customAttributes;
+	private ArrayList<GluuCustomAttribute> origCustomAttributes;
 
 	@Create
 	public void init() {
@@ -82,6 +85,7 @@ public class CustomAttributeAction implements Serializable {
 			String[] objectClassTypes, String[] objectClassDisplayNames) {
 		this.attributes = new ArrayList<GluuAttribute>(attributes);
 		this.customAttributes = customAttributes;
+		this.origCustomAttributes = new ArrayList<GluuCustomAttribute>(customAttributes);
 
 		// Set meta-data and sort by metadata.displayName
 		attributeService.setAttributeMetadata(customAttributes, this.attributes);
@@ -271,6 +275,32 @@ public class CustomAttributeAction implements Serializable {
 		return null;
 	}
 
+	public List<GluuCustomAttribute> detectRemovedAttributes() {
+		Set<String> origCustomAttributesSet = new HashSet<String>();
+		
+		for (GluuCustomAttribute origCustomAttribute : origCustomAttributes) {
+			String attributeName = StringHelper.toLowerCase(origCustomAttribute.getName());
+			origCustomAttributesSet.add(attributeName);
+		}
+		
+		for (GluuCustomAttribute currentCustomAttribute : customAttributes) {
+			String attributeName = StringHelper.toLowerCase(currentCustomAttribute.getName());
+			origCustomAttributesSet.remove(attributeName);
+		}
+
+		List<GluuCustomAttribute> removedCustomAttributes = new ArrayList<GluuCustomAttribute>(origCustomAttributesSet.size());
+		for (String removeCustomAttribute : origCustomAttributesSet) {
+			removedCustomAttributes.add(new GluuCustomAttribute(removeCustomAttribute, new String[0]));
+		}
+		
+		return removedCustomAttributes;
+	}
+
+	public void updateOriginCustomAttributes() {
+		this.origCustomAttributes = new ArrayList<GluuCustomAttribute>(customAttributes);
+		
+	}
+
 	public List<GluuAttribute> getAttributes() {
 		return attributes;
 	}
@@ -296,7 +326,7 @@ public class CustomAttributeAction implements Serializable {
 	}
 
 	public List<GluuCustomAttribute> getCustomAttributes() {
-		return customAttributes;
+		return new ArrayList<GluuCustomAttribute>(customAttributes);
 	}
 
 	public String getActiveOrigin() {
