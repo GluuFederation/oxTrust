@@ -6,7 +6,5 @@
 
 	<action execute="#{homeAction.init}" on-postback="false" />
 
-	<restrict>#{s:hasPermission('configuration', 'access')}</restrict>
-
     <rewrite pattern="/home" />
 </page>

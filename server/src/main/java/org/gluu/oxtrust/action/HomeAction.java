@@ -17,6 +17,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
+import org.jboss.seam.security.Identity;
 import org.xdi.service.JsonService;
 
 /**
@@ -40,13 +41,18 @@ public class HomeAction implements Serializable {
 	@In
 	private JsonService jsonService;
 
+	@In
+	private Identity identity;
+
 	private AuthenticationChartDto authenticationChartDto;
 
 	private String authenticationChartJson;
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void init() {
-		generateAuthenticationChart();
+		boolean hasConfigurationAccess = identity.hasPermission("configuration", "access");
+		if (hasConfigurationAccess) {
+			generateAuthenticationChart();
+		}
 	}
 
 	private boolean generateAuthenticationChart() {

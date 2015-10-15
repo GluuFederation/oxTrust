@@ -86,8 +86,7 @@
 	</h:head>
 	<h:body styleClass="skin-green">
 		<div class="wrapper">
-			<h:panelGroup layout="block"
-				rendered="#{s:hasPermission('configuration', 'access') or s:hasPermission('scim', 'access') or s:hasPermission('attribute', 'access') or s:hasPermission('configuration', 'access')}">
+			<h:panelGroup layout="block">
 				<ui:include src="topmenu.xhtml">
 					<ui:param name="projectName" value="oxTrust" />
 				</ui:include>

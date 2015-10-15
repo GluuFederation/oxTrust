@@ -11,13 +11,21 @@
 	<ui:define name="body">
 
 		<section class="content-header">
-		<h1 style="color: #646464;">
-			<!--Welcome to your Gluu Identity Appliance! <small></small>-->
-		</h1>
+        <ui:param name="welcomeTitle" value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}" />
+
+        <s:fragment rendered="#{not empty welcomeTitle and not s:hasPermission('configuration', 'access')}">
+            <s:div>
+                <h:outputText value="#{welcomeTitle}" escape="false"/>
+            </s:div>
+           </s:fragment>
+           <s:fragment rendered="#{empty welcomeTitle}">
+               <h1>Welcome to your Gluu Identity Appliance!</h1>
+        </s:fragment>
 		
 		</section>
 
 		<section class="content"> 
+        <s:fragment rendered="#{s:hasPermission('configuration', 'access')}">
 		<div class="row">
 			<div class="col-md-3 col-sm-6 col-xs-12">
 				<div class="info-box">
@@ -194,6 +202,7 @@
 			</div>
 			
 		</div>
+		</s:fragment>
 	
 		</section>
 
