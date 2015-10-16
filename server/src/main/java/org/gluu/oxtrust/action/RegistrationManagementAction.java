@@ -13,8 +13,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Data;
-
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -44,7 +42,7 @@ import org.xdi.util.Util;
 
 //TODO: Remove configureInterceptors, registrationInterceptors, removeCustomAuthenticationConfiguration, addRegistrationInterceptor
 //TODO: Clean up LDAP OC
-public @Data class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {
+public class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
 	
@@ -273,6 +271,62 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 		attributeData += "<br/>Origin:\t" +  attribute.getOrigin();
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public boolean isCaptchaDisabled() {
+		return captchaDisabled;
+	}
+
+	public void setCaptchaDisabled(boolean captchaDisabled) {
+		this.captchaDisabled = captchaDisabled;
+	}
+
+	public String getSearchPattern() {
+		return searchPattern;
+	}
+
+	public void setSearchPattern(String searchPattern) {
+		this.searchPattern = searchPattern;
+	}
+
+	public boolean isConfigureRegistrationForm() {
+		return configureRegistrationForm;
+	}
+
+	public void setConfigureRegistrationForm(boolean configureRegistrationForm) {
+		this.configureRegistrationForm = configureRegistrationForm;
+	}
+
+	public List<GluuAttribute> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(List<GluuAttribute> attributes) {
+		this.attributes = attributes;
+	}
+
+	public List<GluuAttribute> getSelectedAttributes() {
+		return selectedAttributes;
+	}
+
+	public void setSelectedAttributes(List<GluuAttribute> selectedAttributes) {
+		this.selectedAttributes = selectedAttributes;
+	}
+
+	public String getAttributeData() {
+		return attributeData;
+	}
+
+	public void setAttributeData(String attributeData) {
+		this.attributeData = attributeData;
+	}
+
+	public String getAttributeName() {
+		return attributeName;
+	}
+
+	public void setAttributeName(String attributeName) {
+		this.attributeName = attributeName;
 	}
 
 }
