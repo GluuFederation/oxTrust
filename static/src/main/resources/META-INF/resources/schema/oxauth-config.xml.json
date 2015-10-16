@@ -113,7 +113,8 @@
     },
     "openidSubAttribute": {
       "id": "openidSubAttribute",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "responseTypesSupported": {
       "id": "responseTypesSupported",
@@ -185,7 +186,8 @@
     },
     "acrValuesSupported": {
       "id": "acrValuesSupported",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "subjectTypesSupported": {
       "id": "subjectTypesSupported",
@@ -946,7 +948,8 @@
             },
             "bindPasswordAttribute": {
               "id": "bindPasswordAttribute",
-              "type": "null"
+              "type": "string",
+              "minLength": 1
             },
             "baseDn": {
               "id": "baseDn",
@@ -1001,11 +1004,13 @@
           },
           "bind": {
             "id": "bind",
-            "type": "null"
+            "type": "string",
+            "minLength": 1
           },
           "bindPasswordAttribute": {
             "id": "bindPasswordAttribute",
-            "type": "null"
+            "type": "string",
+            "minLength": 1
           },
           "baseDn": {
             "id": "baseDn",
@@ -1017,7 +1022,7 @@
     },
     "externalAuthenticatorEnabled": {
       "id": "externalAuthenticatorEnabled",
-      "type": "null"
+      "type": "boolean"
     },
     "applianceInum": {
       "id": "applianceInum",
@@ -1061,15 +1066,18 @@
     },
     "cssLocation": {
       "id": "cssLocation",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "jsLocation": {
       "id": "jsLocation",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "imgLocation": {
       "id": "imgLocation",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "metricReporterInterval": {
       "id": "metricReporterInterval",

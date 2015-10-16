@@ -17,7 +17,8 @@
     },
     "orgIname": {
       "id": "orgIname",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "orgDisplayName": {
       "id": "orgDisplayName",
@@ -36,7 +37,8 @@
     },
     "applianceIname": {
       "id": "applianceIname",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "applianceInum": {
       "id": "applianceInum",
@@ -134,7 +136,7 @@
       "additionalItems": true,
       "items": {
         "id": "0",
-        "type": "null"
+        "type": "string"
       }
     },
     "contactObjectClassDisplayNames": {
@@ -145,7 +147,7 @@
       "additionalItems": true,
       "items": {
         "id": "0",
-        "type": "null"
+        "type": "string"
       }
     },
     "photoRepositoryRootDir": {
@@ -211,7 +213,7 @@
     },
     "pokenApplicationSecret": {
       "id": "pokenApplicationSecret",
-      "type": "null"
+      "type": "string"
     },
     "updateApplianceStatus": {
       "id": "updateApplianceStatus",
@@ -253,7 +255,8 @@
     },
     "spMetadataPath": {
       "id": "spMetadataPath",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "logoLocation": {
       "id": "logoLocation",
@@ -283,7 +286,7 @@
       "additionalItems": true,
       "items": {
         "id": "0",
-        "type": "null"
+        "type": "string"
       }
     },
     "configGeneration": {
@@ -312,7 +315,7 @@
     },
     "idpUserFields": {
       "id": "idpUserFields",
-      "type": "null"
+      "type": "string"
     },
     "gluuSpCert": {
       "id": "gluuSpCert",
@@ -321,15 +324,15 @@
     },
     "mysqlUrl": {
       "id": "mysqlUrl",
-      "type": "null"
+      "type": "string"
     },
     "mysqlUser": {
       "id": "mysqlUser",
-      "type": "null"
+      "type": "string"
     },
     "mysqlPassword": {
       "id": "mysqlPassword",
-      "type": "null"
+      "type": "string"
     },
     "shibboleth2FederationRootDir": {
       "id": "shibboleth2FederationRootDir",
@@ -356,7 +359,7 @@
     },
     "caCertsPassphrase": {
       "id": "caCertsPassphrase",
-      "type": "null"
+      "type": "string"
     },
     "tempCertDir": {
       "id": "tempCertDir",
@@ -394,7 +397,7 @@
     },
     "oxAuthEndSessionUrl": {
       "id": "oxAuthEndSessionUrl",
-      "type": "null"
+      "type": "string"
     },
     "oxAuthLogoutUrl": {
       "id": "oxAuthLogoutUrl",
@@ -444,7 +447,7 @@
       "additionalItems": true,
       "items": {
         "id": "0",
-        "type": "null"
+        "type": "string"
       }
     },
     "clientAssociationAttribute": {
@@ -454,7 +457,7 @@
     },
     "oxAuthIssuer": {
       "id": "oxAuthIssuer",
-      "type": "null"
+      "type": "string"
     },
     "ignoreValidation": {
       "id": "ignoreValidation",
@@ -487,11 +490,13 @@
     },
     "cssLocation": {
       "id": "cssLocation",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     },
     "jsLocation": {
       "id": "jsLocation",
-      "type": "null"
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [
