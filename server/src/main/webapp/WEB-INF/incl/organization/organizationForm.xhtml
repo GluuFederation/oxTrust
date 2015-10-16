@@ -95,8 +95,6 @@
 					<ul class="nav nav-tabs">
 						<li class="active"><a href="#sys-config" data-toggle="tab">System
 								Configuration</a></li>
-						<li><a href="#email-config" data-toggle="tab">Manage
-								Email Addresses</a></li>
 						<li><a href="#smtp-server" data-toggle="tab">SMTP Server
 								Configuration</a></li>
 						<li><a href="#ox-trust" data-toggle="tab">OxTrust
@@ -181,6 +179,11 @@
 									</h:selectOneMenu>
 								</s:decorate>
 
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+									<ui:define name="label">Contact Email</ui:define>
+									<h:inputText value="#{_appliance.contactEmail}" styleClass="form-control"/>
+								</s:decorate>
+
 							</h:panelGroup>
 						</div>
 						<div class="tab-pane" id="smtp-server">
@@ -232,36 +235,7 @@
 
 							</h:panelGroup>
 						</div>
-						<div class="tab-pane" id="email-config">
-							<h:panelGroup layout="block" style="width:80%;">
 
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Email for Centreon</ui:define>
-									<h:inputText value="#{_appliance.centreonEmail}" styleClass="form-control"/>
-								</s:decorate>
-
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Email for Jira</ui:define>
-									<h:inputText value="#{_appliance.jiraEmail}" styleClass="form-control"/>
-								</s:decorate>
-
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Email for Billing</ui:define>
-									<h:inputText value="#{_appliance.billingEmail}" styleClass="form-control"/>
-								</s:decorate>
-
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Email for Privacy</ui:define>
-									<h:inputText value="#{_appliance.privacyEmail}" styleClass="form-control"/>
-								</s:decorate>
-
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Email for SVN</ui:define>
-									<h:inputText value="#{_appliance.svnEmail}" styleClass="form-control"/>
-								</s:decorate>
-
-							</h:panelGroup>
-						</div>
 						<div class="tab-pane" id="ox-trust">
 							<h:panelGroup layout="block" style="overflow-y:auto;overflow-x:hidden;">
 								<!-- 

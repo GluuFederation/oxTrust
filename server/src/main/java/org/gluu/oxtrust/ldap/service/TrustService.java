@@ -373,7 +373,7 @@ public class TrustService {
 				String subj = "Attributes with Privacy level 5 are released in a Trust Relationaship";
 				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
 						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), appliance.getSmtpPasswordStr());
-				mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", appliance.getPrivacyEmail(),
+				mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", appliance.getContactEmail(),
 						subj, preMsg + mailMsg);
 			} catch (AuthenticationFailedException ex) {
 				log.error("SMTP Authentication Error: ", ex);

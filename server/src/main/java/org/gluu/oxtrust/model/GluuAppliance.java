@@ -168,20 +168,8 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "gluuScimEnabled")
 	private GluuBoolean scimEnabled;
 
-	@LdapAttribute(name = "gluuCentreonEmail")
-	private String centreonEmail;
-
-	@LdapAttribute(name = "gluuJiraEmail")
-	private String jiraEmail;
-
-	@LdapAttribute(name = "gluuBillingEmail")
-	private String billingEmail;
-
-	@LdapAttribute(name = "gluuPrivacyEmail")
-	private String privacyEmail;
-
-	@LdapAttribute(name = "gluuSvnEmail")
-	private String svnEmail;
+	@LdapAttribute(name = "oxTrustEmail")
+	private String contactEmail;
 
 	@LdapAttribute(name = "gluuSmtpHost")
 	private String smtpHost;
@@ -330,14 +318,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.authenticationMode = authenticationMode;
     }
 
-    public String getBillingEmail() {
-        return billingEmail;
-    }
-
-    public void setBillingEmail(String billingEmail) {
-        this.billingEmail = billingEmail;
-    }
-
     public String getBlowfishPassword() {
         return blowfishPassword;
     }
@@ -352,14 +332,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
     public void setCacheRefreshServerIpAddress(String cacheRefreshServerIpAddress) {
         this.cacheRefreshServerIpAddress = cacheRefreshServerIpAddress;
-    }
-
-    public String getCentreonEmail() {
-        return centreonEmail;
-    }
-
-    public void setCentreonEmail(String centreonEmail) {
-        this.centreonEmail = centreonEmail;
     }
 
     public String getCountry() {
@@ -507,14 +479,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.ipAddress = ipAddress;
     }
 
-    public String getJiraEmail() {
-        return jiraEmail;
-    }
-
-    public void setJiraEmail(String jiraEmail) {
-        this.jiraEmail = jiraEmail;
-    }
-
     public String getLastUpdate() {
         return lastUpdate;
     }
@@ -595,12 +559,12 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.pollingInterval = pollingInterval;
     }
 
-    public String getPrivacyEmail() {
-        return privacyEmail;
+    public String getContactEmail() {
+        return contactEmail;
     }
 
-    public void setPrivacyEmail(String privacyEmail) {
-        this.privacyEmail = privacyEmail;
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 
     public GluuBoolean getProfileManagment() {
@@ -729,14 +693,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
     public void setStatus(GluuStatus status) {
         this.status = status;
-    }
-
-    public String getSvnEmail() {
-        return svnEmail;
-    }
-
-    public void setSvnEmail(String svnEmail) {
-        this.svnEmail = svnEmail;
     }
 
     public String getSystemUptime() {
