@@ -188,36 +188,3 @@ when
 then
   check.grant();
 end
-
-rule AccessLinktrackConfiguration
-  no-loop
-  activation-group "permissions"
-when
-  org: GluuOrganization()
-  check: PermissionCheck(target == org, action == "linktrack", granted == false)
-  (GluuOrganization((oxRegistrationConfiguration != null) && (oxRegistrationConfiguration.invitationCodesManagementEnabled == true)) && Role((name == "owner") || (name == "manager")))
-then
-  check.grant();
-end
-
-rule RegistrationLinksModeration
-  no-loop
-  activation-group "permissions"
-when
-  org: GluuOrganization()
-  check: PermissionCheck(target == org, action == "registrationLinksModeration", granted == false)
-  (GluuOrganization((oxRegistrationConfiguration != null) && (oxRegistrationConfiguration.invitationCodesManagementEnabled == true)))
-then
-  check.grant();
-end
-
-rule RegistrationLinksManagement
-  no-loop
-  activation-group "permissions"
-when
-  org: GluuOrganization()
-  check: PermissionCheck(target == org, action == "registrationLinksManagement", granted == false)
-  (GluuOrganization((oxRegistrationConfiguration != null) && (oxRegistrationConfiguration.invitationCodesManagementEnabled == true)) && Role((name == "owner") || (name == "manager")))
-then
-  check.grant();
-end

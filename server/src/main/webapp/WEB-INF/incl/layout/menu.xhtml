@@ -72,8 +72,6 @@
         <rich:dropDownMenu mode="server" label="Personal" rendered="#{s:hasPermission('profile', 'access') or s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}">
             <rich:menuItem label="Profile" action="#{menuAction.endConversation('/profile/person/viewProfile.xhtml')}" rendered="#{s:hasPermission('profile', 'access')}" />
             <rich:menuItem label="White Pages" action="#{menuAction.endConversation('/whitePage/viewWhitePages.xhtml')}" rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}" />
-            <rich:menuItem label="Manage Registration Links" action="#{menuAction.endConversation('/profile/registrationLinks.xhtml')}" rendered="#{s:hasPermission(organizationService.organization, 'registrationLinksManagement')}" />
-            <rich:menuItem label="Registration Requests" action="#{menuAction.endConversation('/profile/pendingRegistrations.xhtml')}"  rendered="#{s:hasPermission(organizationService.organization, 'registrationLinksModeration')}"/>
         </rich:dropDownMenu>
 
         <s:link view="/logout.xhtml" value="Logout" style="color: white; text-decoration: none;" propagation="none" rendered="#{identity.loggedIn}" />

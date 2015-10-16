@@ -17,7 +17,6 @@ import lombok.Data;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.RegistrationsExpirationService;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.RegistrationInterceptorScript;
@@ -48,31 +47,18 @@ import org.xdi.util.Util;
 public @Data class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
-
-	private boolean enableInvitationCodes;
 	
 	private boolean configureInterceptors;
-	
-	private boolean enableRegistrationWithoutInvitation;
-	
-	private boolean enableInboundSAMLRegistration;
 
 	private boolean captchaDisabled;
 	
 	private List<RegistrationInterceptorScript> registrationInterceptors;
-	
-	private Tuple<String, String> linksExpirationServicePeriod;
-	
-	private Tuple<String, String> accountsExpirationServicePeriod;
-	
-	private Tuple<String, String> accountsExpirationPeriod;
 	
 	private boolean configureRegistrationForm;
 	
 	@In
 	private AttributeService attributeService;
 	
-	private boolean accountsTimeLimited;
 	private List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
 	private List<GluuAttribute> selectedAttributes = new ArrayList<GluuAttribute>();
 	
@@ -87,9 +73,6 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 	private Log log;
 
 	private List<String> customScriptTypes;
-	
-	@In 
-	private RegistrationsExpirationService registrationsExpirationService;
 
 	private String attributeName;
 
@@ -137,14 +120,8 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 			if(scripts != null && !scripts.isEmpty()){
 				newScripts.addAll(scripts);
 			}
-			enableInvitationCodes = config.isInvitationCodesManagementEnabled();
 			configureInterceptors = config.isRegistrationInterceptorsConfigured();
-			enableRegistrationWithoutInvitation = config.isUninvitedRegistrationAllowed();
 			captchaDisabled = config.isCaptchaDisabled();
-			accountsTimeLimited = config.isAccountsTimeLimited();
-			configLinksExpirationFrequency = config.getLinksExpirationFrequency();
-			configAccountsExpirationServiceFrequency = config.getAccountsExpirationServiceFrequency();
-			configAccountsExpirationPeriod = config.getAccountsExpirationPeriod();
 			
 			List<String> attributeList = config.getAdditionalAttributes();
 			if(attributeList != null && ! attributeList.isEmpty()){
@@ -157,23 +134,6 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 			}
 
 		}
-		
-		if(configLinksExpirationFrequency == null || configLinksExpirationFrequency.isEmpty()){
-			configLinksExpirationFrequency = Integer.toString(registrationsExpirationService.getDefaultLinksExpirationFrequency());
-		}
-		linksExpirationServicePeriod = getPeriod(new BigInteger(configLinksExpirationFrequency));
-		
-		if(configAccountsExpirationServiceFrequency == null || configAccountsExpirationServiceFrequency.isEmpty() ){
-			configAccountsExpirationServiceFrequency = Integer.toString(registrationsExpirationService.getDefaultAccountsExpirationServiceFrequency());
-		}
-		accountsExpirationServicePeriod = getPeriod(new BigInteger(configAccountsExpirationServiceFrequency));
-		
-		if(configAccountsExpirationPeriod == null || configAccountsExpirationServiceFrequency.isEmpty()){
-			configAccountsExpirationPeriod = Integer.toString(registrationsExpirationService.getDefaultAccountsExpirationPeriod());
-		}
-		accountsExpirationPeriod = getPeriod(new BigInteger(configAccountsExpirationPeriod));
-		
-		
 		
 		registrationInterceptors = newScripts;
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -229,24 +189,6 @@ public @Data class RegistrationManagementAction implements SimpleCustomPropertie
 			config.setRegistrationInterceptorScripts(registrationInterceptors);
 		}else{
 			config.setRegistrationInterceptorScripts(null);
-		}
-		config.setInvitationCodesManagementEnabled(enableInvitationCodes);
-		if(enableInvitationCodes){
-			config.setUninvitedRegistrationAllowed(enableRegistrationWithoutInvitation);
-			config.setAccountsTimeLimited(accountsTimeLimited);
-		}else{
-			config.setUninvitedRegistrationAllowed(true);
-			config.setAccountsTimeLimited(false);
-		}
-		
-		if(config.isAccountsTimeLimited()){
-			config.setLinksExpirationFrequency(getPeriod(linksExpirationServicePeriod));
-			config.setAccountsExpirationServiceFrequency(getPeriod(accountsExpirationServicePeriod));
-			config.setAccountsExpirationPeriod(getPeriod(accountsExpirationPeriod));
-		}else{
-			config.setLinksExpirationFrequency(null);
-			config.setAccountsExpirationServiceFrequency(null);
-			config.setAccountsExpirationPeriod(null);
 		}
 		
         config.setCaptchaDisabled(captchaDisabled);

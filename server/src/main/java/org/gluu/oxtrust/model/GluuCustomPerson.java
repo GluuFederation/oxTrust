@@ -48,10 +48,6 @@ public class GluuCustomPerson extends User
     @LdapAttribute
     private Date oxCreationTimestamp;
 
-    @LdapAttribute
-    private String oxInviteCode;
-
-
     public String getIname() {
         return getAttribute("iname");
     }
@@ -282,14 +278,6 @@ public class GluuCustomPerson extends User
 
 	public void setOxCreationTimestamp(Date oxCreationTimestamp) {
 		this.oxCreationTimestamp = oxCreationTimestamp;
-	}
-
-	public String getOxInviteCode() {
-		return oxInviteCode;
-	}
-
-	public void setOxInviteCode(String oxInviteCode) {
-		this.oxInviteCode = oxInviteCode;
 	}
 
 	/* (non-Javadoc)

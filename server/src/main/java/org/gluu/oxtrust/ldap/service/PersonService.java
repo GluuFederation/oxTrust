@@ -521,21 +521,6 @@ public class PersonService implements Serializable {
 	}
 
 	/**
-	 * @param time
-	 * @return
-	 */
-	public List<GluuCustomPerson> findPersonsForExpiration(Date time) {
-		Filter timeFilter = Filter.createLessOrEqualFilter("oxCreationTimestamp", StaticUtils.encodeGeneralizedTime(time));
-		Filter linkFilter = Filter.createPresenceFilter("oxInviteCode");
-		Filter statusFilter = Filter.createEqualityFilter("gluuStatus", GluuStatus.ACTIVE.getValue());
-		Filter searchFilter = Filter.createANDFilter(timeFilter, linkFilter, statusFilter);
-		
-		List<GluuCustomPerson> people = ldapEntryManager.findEntries(getDnForPerson(null),  GluuCustomPerson.class, searchFilter);
-		return people;
-	}
-
-
-	/**
 	 * Get user by uid
 	 * 
 	 * @param uid

@@ -5,24 +5,16 @@
     xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
     login-required="false" view-id="/register.xhtml">
     
-    <param name="invitationGuid" value="#{registerPersonAction.invitationGuid}"/>
     <param name="inum" value="#{registerPersonAction.inum}"/>
 
     <action execute="#{registerPersonAction.initPerson}" if="#{registerPersonAction.person == null}" on-postback="false" />
 
     <rewrite pattern="/register" />
-    <rewrite pattern="/register/{invitationGuid}" />
 
     <navigation from-action="#{registerPersonAction.initPerson}">
         <rule if-outcome="success">
             <begin-conversation join="true" flush-mode="manual" />
             <render view-id="/register.xhtml" />
-        </rule>
-        <rule if-outcome="disabled">
-            <end-conversation />
-            <redirect view-id="/login.xhtml">
-                <message severity="ERROR">You cannot use  invitation code now. Please contact site administration.</message>
-            </redirect>
         </rule>
         <rule if-outcome="no_permissions">
             <end-conversation />
@@ -33,7 +25,7 @@
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/login.xhtml">
-                <message severity="ERROR">You cannot use this invitation code now. Please contact site administration.</message>
+                <message severity="ERROR">Failed to execute registration script. Please contact site administration.</message>
             </redirect>
         </rule>
     </navigation>

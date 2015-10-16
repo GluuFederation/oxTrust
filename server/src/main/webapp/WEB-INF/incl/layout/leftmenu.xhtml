@@ -239,21 +239,6 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-									<li id="subMenuLinkPersonal3"><h:commandLink
-											value="Manage Registration Links"
-											action="#{menuAction.endConversation('/profile/registrationLinks.xhtml')}"
-											rendered="#{s:hasPermission(organizationService.organization, 'registrationLinksManagement')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
-									<li id="subMenuLinkPersonal4"><h:commandLink
-											value="Registration Requests"
-											action="#{menuAction.endConversation('/profile/pendingRegistrations.xhtml')}"
-											rendered="#{s:hasPermission(organizationService.organization, 'registrationLinksModeration')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
-
 								</ul></li>
 						</ui:fragment>
 					</ul>

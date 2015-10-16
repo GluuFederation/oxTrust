@@ -23,11 +23,9 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.ldap.service.RegistrationLinkService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
-import org.gluu.oxtrust.model.OxLink;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -60,13 +58,8 @@ public class RegisterPersonAction implements Serializable {
 	@Logger
 	private Log log;
 
-	private String invitationGuid;
-
 	@In(value = "#{facesContext.externalContext}")
 	private ExternalContext externalContext;
-
-	@In
-	private RegistrationLinkService registrationLinkService;
 
 	@In
 	private AttributeService attributeService;
@@ -149,27 +142,9 @@ public class RegisterPersonAction implements Serializable {
 		GluuOrganization organization = organizationService.getOrganization();
 		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
 		boolean registrationCustomized = config != null;
-		boolean inviteCodesActive = registrationCustomized && config.isInvitationCodesManagementEnabled();
-		boolean inviteCodeOptional = registrationCustomized && inviteCodesActive && config.isUninvitedRegistrationAllowed();
 
 		this.captchaDisabled = registrationCustomized && config.isCaptchaDisabled();
 
-		boolean unexpectedInvitationGuid = (!inviteCodesActive) && (getInvitationGuid() != null);
-		if (unexpectedInvitationGuid) {
-			return OxTrustConstants.RESULT_DISABLED;
-		}
-		boolean invitationCodeNotFound = inviteCodesActive && (!inviteCodeOptional) && getInvitationGuid() == null;
-		if (invitationCodeNotFound) {
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
-
-		boolean invitationCodePresent = inviteCodesActive && (getInvitationGuid() != null);
-		if (invitationCodePresent) {
-			OxLink invitationLink = registrationLinkService.getLinkByGuid(getInvitationGuid());
-			if (invitationLink == null) {
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-		}
 		return OxTrustConstants.RESULT_SUCCESS;
 
 	}
@@ -207,22 +182,6 @@ public class RegisterPersonAction implements Serializable {
 			if (person.getDn() == null) {
 				String dn = personService.getDnForPerson(this.person.getInum());
 				this.person.setDn(dn);
-			}
-
-			boolean invitationCodeAllowed = registrationCustomized && registrationConfig.isInvitationCodesManagementEnabled();
-			boolean invitationCodePresent = getInvitationGuid() != null;
-			OxLink invitationLink = registrationLinkService.getLinkByGuid(getInvitationGuid());
-			boolean invitationCodeModerated = invitationCodePresent && invitationLink != null && invitationLink.getLinkModerated();
-
-			if (invitationCodePresent && invitationCodeAllowed) {
-				this.person.setOxInviteCode(getInvitationGuid());
-				registrationLinkService.addPendingUser(invitationLink, this.person.getInum());
-			}
-
-			if (invitationCodeModerated) {
-				this.person.setStatus(GluuStatus.INACTIVE);
-			} else {
-				this.person.setStatus(GluuStatus.ACTIVE);
 			}
 
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
@@ -359,14 +318,6 @@ public class RegisterPersonAction implements Serializable {
 
 	public GluuCustomPerson getPerson() {
 		return person;
-	}
-
-	public String getInvitationGuid() {
-		return invitationGuid;
-	}
-
-	public void setInvitationGuid(String invitationGuid) {
-		this.invitationGuid = invitationGuid;
 	}
 
 	public String getInum() {
