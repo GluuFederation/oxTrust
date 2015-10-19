@@ -120,6 +120,21 @@
 			type="text/javascript"></script>
 
 		<rich:notifyMessages stayTime="2000" nonblocking="true" />
+
+	    <div class="footer">
+			<s:fragment rendered="#{init.debug}">
+				<a:log hotkey="D"/>
+				<p style="margin-top: -0.5em;">
+				   Conversation: id = #{conversation.id}, #{conversation.longRunning ? 'long running' : 'temporary'}#{conversation.nested ? ', nested, parent id = '.concat(conversation.parentId) : ''}
+				   #{' - '}
+				   Ajax4jsf Log (Ctrl+Shift+D)
+				   #{' - '}
+				   <s:link id="debugConsole" view="/debug.xhtml" value="Debug console" target="debugConsole"/>
+				   #{' - '}
+				   <s:link id="resetSession" view="/home.xhtml" action="#{org.jboss.seam.web.session.invalidate()}" propagation="none" value="Terminate session"/>
+				</p>
+			</s:fragment>
+	    </div>
 	</h:body>
 </f:view>
 </html>

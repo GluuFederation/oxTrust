@@ -107,4 +107,15 @@
             </redirect>
         </rule>
     </navigation>
+
+    <navigation from-action="#{metadataFiltersAction.saveFilters}">
+        <rule if-outcome="success">
+        </rule>
+    </navigation>
+
+    <navigation from-action="#{relyingPartyAction.saveFilters}">
+        <rule if-outcome="success">
+        </rule>
+    </navigation>
+
 </page>
