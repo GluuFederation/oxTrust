@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
+import java.security.acl.Group;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
@@ -253,6 +254,15 @@ public class Authenticator implements Serializable {
 		for (GluuUserRole userRole : userRoles) {
 			identity.addRole(userRole.getRoleName());
 		}
+		
+		if (log.isDebugEnabled()) {
+			for (Group sg : identity.getSubject().getPrincipals(java.security.acl.Group.class)) {
+				if ("Roles".equals(sg.getName())) {
+					log.debug("Using next user roles: '{0}'", sg.members());
+					break;
+				}
+			}
+		}
 	}
 
 	private User findUserByUserName(String userName) {
@@ -437,8 +447,8 @@ public class Authenticator implements Serializable {
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SCOPE, scope);
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_NONCE, nonce);
 
-		GluuAppliance appliance = applianceService.getAppliance(new String[] {"oxAuthenticationMode", "oxAuthenticationLevel"});
-		String authenticationMode = appliance.getAuthenticationMode();
+		GluuAppliance appliance = applianceService.getAppliance(new String[] {"oxTrustAuthenticationMode"});
+		String authenticationMode = appliance.getOxTrustAuthenticationMode();
 		if (StringHelper.isNotEmpty(authenticationMode)) {
 			clientRequest.queryParameter(OxTrustConstants.OXAUTH_AUTH_MODE, authenticationMode);
 		}

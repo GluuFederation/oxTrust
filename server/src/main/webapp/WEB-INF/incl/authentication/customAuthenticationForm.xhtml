@@ -80,6 +80,16 @@
 										</h:selectOneMenu>
 									</s:decorate>
 
+									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+										id="oxTrustAuntheticationMode">
+										<ui:define name="label">oxTrust authentication mode</ui:define>
+										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
+											styleClass="form-control">
+											<s:selectItems
+												value="#{_action.personAuthenticationConfigurationNames}"
+												var="_name" label="#{_name}" noSelectionLabel="Default" />
+										</h:selectOneMenu>
+									</s:decorate>
 								</h:panelGroup>
 							</div>
 						</div>

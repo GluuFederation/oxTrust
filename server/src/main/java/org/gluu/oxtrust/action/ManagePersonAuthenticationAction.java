@@ -90,7 +90,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	private List<CustomScript> customScripts;
 
-	private String authenticationMode;
+	private String authenticationMode, oxTrustAuthenticationMode;
 
 	private List<String> customAuthenticationConfigNames;
 
@@ -134,6 +134,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			}
 			
 			this.authenticationMode = appliance.getAuthenticationMode();
+			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -154,6 +155,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			updateAuthConf(appliance);
 			
 			appliance.setAuthenticationMode(this.authenticationMode);
+			appliance.setOxTrustAuthenticationMode(this.oxTrustAuthenticationMode);
 			
 			applianceService.updateAppliance(appliance);
 		} catch (LdapMappingException ex) {
@@ -340,6 +342,14 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	public void setAuthenticationMode(String authenticationMode) {
 		this.authenticationMode = authenticationMode;
+	}
+
+	public String getOxTrustAuthenticationMode() {
+		return oxTrustAuthenticationMode;
+	}
+
+	public void setOxTrustAuthenticationMode(String oxTrustAuthenticationMode) {
+		this.oxTrustAuthenticationMode = oxTrustAuthenticationMode;
 	}
 
 	public boolean isInitialized() {
