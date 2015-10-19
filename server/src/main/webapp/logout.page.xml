@@ -8,7 +8,7 @@
 
     <rewrite pattern="/logout" />
 
-    <navigation from-action="#{identity.logout}">
+    <navigation from-action="#{authenticator.processLogout}">
         <end-conversation/>
         <redirect view-id="/home.xhtml">
             <message severity="INFO">You have logged out from oxTrust</message>
