@@ -29,7 +29,7 @@
 
     <navigation from-action="#{updateAttributeAction.save}">
         <rule if-outcome="success">
-            <redirect view-id="/attribute/updateAttribute.xhtml">
+            <redirect view-id="/attribute/attributeInventory.xhtml">
                 <message severity="INFO">Attribute '#{updateAttributeAction.attribute.displayName}' updated successfully</message>
             </redirect>
         </rule>
