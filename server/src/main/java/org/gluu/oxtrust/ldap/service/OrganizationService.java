@@ -22,6 +22,7 @@ import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.oxauth.model.uma.persistence.InternalExternal;
 import org.xdi.service.CacheService;
@@ -220,6 +221,10 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 
 	public GluuBoolean[] getJavaBooleanSelectionTypes() {
 		return new GluuBoolean[] { GluuBoolean.TRUE, GluuBoolean.FALSE };
+	}
+
+	public GluuStatus[] getActiveInactiveStatuses() {
+		return new GluuStatus[] { GluuStatus.ACTIVE, GluuStatus.INACTIVE };
 	}
 
 	public ProgrammingLanguage[] getProgrammingLanguageTypes() {

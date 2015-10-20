@@ -174,7 +174,7 @@
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="status">
                 <ui:define name="label">Status</ui:define>
                 <h:selectOneMenu styleClass="form-control" value="#{_attribute.status}" required="true" id="statusId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{_attribute.status.values()}"
+                    <s:selectItems value="#{organizationService.activeInactiveStatuses}"
                               var="_type" label="#{_type.displayName}"/>
                     <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
                 </h:selectOneMenu>
