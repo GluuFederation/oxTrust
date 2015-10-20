@@ -45,7 +45,9 @@
 		                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop" style="margin-bottom:10px;">
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 		                                    <ui:define name="label">Name</ui:define>
-		                                    <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" styleClass="form-control" />
+		                                    <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" validatorMessage="Script Name cannot contain space(s)." styleClass="form-control">
+												<f:validateRegex pattern="^[a-zA-Z0-9]+$"/>						    
+											</h:inputText>
 		                                </s:decorate>
 
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">

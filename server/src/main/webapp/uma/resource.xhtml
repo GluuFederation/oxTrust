@@ -79,12 +79,12 @@
                                         <f:facet name="header">Icon URI</f:facet>
                                         <h:outputText value="#{_row.iconUri}" />
                                     </rich:column>
-
+									<!-- 
                                     <rich:column>
                                         <f:facet name="header">Clients</f:facet>
                                         <ox:displayNameEntryList value="#{umaInventoryAction.getClientDisplayNameEntries(_row.getClients())}" />
                                     </rich:column>
-
+ 									-->
                                     <f:facet name="footer">
                                         <rich:dataScroller renderIfSinglePage="false" rendered="#{umaInventoryAction.resourcesList.size > 0}" for="resourcesListId" maxPages="10" stepControls="auto"
                                             align="left" />
