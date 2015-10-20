@@ -42,6 +42,10 @@
         <rule if-outcome="confirm">
             <render view-id="/attribute/addAttribute.xhtml"/>
         </rule>
+
+        <rule if-outcome="exists">
+            <render view-id="/attribute/addAttribute.xhtml"/>
+        </rule>
         
         <rule if-outcome="no_permissions">
             <end-conversation />

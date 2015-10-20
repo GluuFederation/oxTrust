@@ -236,7 +236,7 @@ public class RegisterPersonAction implements Serializable {
 	}
 
 	private void initAttributes() {
-		List<GluuAttribute> allPersonAttributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+		List<GluuAttribute> allPersonAttributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
 
 		List<String> allAttributOrigins = attributeService.getAllAttributeOrigins(allPersonAttributes);
 

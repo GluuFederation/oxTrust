@@ -51,6 +51,7 @@ public final class OxTrustConstants extends OxConstants {
 	public static final String RESULT_NO_PERMISSIONS = "no_permissions";
 	public static final String RESULT_VALIDATION_ERROR = "validation_error";
 	public static final String RESULT_CONFIRM = "confirm";
+	public static final String RESULT_EXISTS = "exists";
 	public static final String RESULT_LOGOUT = "logout";
 
 

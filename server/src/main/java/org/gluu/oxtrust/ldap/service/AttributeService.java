@@ -379,6 +379,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 *            Attribute
 	 */
 	public boolean removeAttribute(GluuAttribute attribute) {
+		PersonService personService = PersonService.instance();
 		log.info("Attribute removal started");
 		log.trace("Getting attribute information");
 		
@@ -389,7 +390,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		log.debug("attributeName is " + attributeName);
 		
 		log.trace("Removing attribute from people");
-		List<GluuCustomPerson> people = PersonService.instance().searchPersons("", OxTrustConstants.searchPersonsSizeLimit);
+		List<GluuCustomPerson> people = personService.searchPersons("", OxTrustConstants.searchPersonsSizeLimit);
 		log.trace(String.format("Iterating %d people", people.size()));
 		for (GluuCustomPerson person : people) {
 			log.trace(String.format("Analyzing %s.", person.getUid()));
@@ -400,7 +401,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 					log.trace(String.format("%s matches %s .  deleting it.", attr.getName(), attributeName));
 					customAttrs.remove(attr);
 					person.setCustomAttributes(customAttrs);
-					PersonService.instance().updatePerson(person);
+					personService.updatePerson(person);
 					break;
 				}
 			}
@@ -739,12 +740,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) cacheService.get(OxTrustConstants.CACHE_ACTIVE_ATTRIBUTE_NAME,
 				OxTrustConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
 		if (activeAttributeList == null) {
-			try {
-				activeAttributeList = getAllActiveAtributesImpl(admin);
-			} catch (LDAPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			activeAttributeList = getAllActiveAtributesImpl(admin);
 			cacheService.put(OxTrustConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_KEY_LIST, activeAttributeList);
 		}
 
@@ -755,9 +751,9 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 * @return
 	 * @throws LDAPException
 	 */
-	private List<GluuAttribute> getAllActiveAtributesImpl(GluuUserRole gluuUserRole) throws LDAPException {
-		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
-				Filter.create("gluuStatus=active"));
+	private List<GluuAttribute> getAllActiveAtributesImpl(GluuUserRole gluuUserRole) {
+		Filter filter = Filter.createEqualityFilter("gluuStatus", "active");
+		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter);
 		String customOrigin = getCustomOrigin();
 		String[] objectClassTypes = applicationConfiguration.getPersonObjectClassTypes();
 		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
