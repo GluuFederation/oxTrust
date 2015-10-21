@@ -70,6 +70,14 @@
                 </h:selectOneMenu>
             </s:decorate>
 
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="persistClientAuthorizations">
+                <ui:define name="label">Persist Client Authorizations</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthPersistClientAuthorizations}" required="true">
+                    <f:selectItem itemLabel="True" itemValue="true" />
+                    <f:selectItem itemLabel="False" itemValue="false" />
+                </h:selectOneMenu>
+            </s:decorate>
+
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="redirectLoginUrls">
                 <ui:define name="label">Redirect Login URIs</ui:define>
                 <h:panelGroup id="selectedLoginURIsId">
