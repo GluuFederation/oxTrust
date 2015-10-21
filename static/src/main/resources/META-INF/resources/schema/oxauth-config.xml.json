@@ -880,6 +880,10 @@
       "exclusiveMaximum": false,
       "exclusiveMinimum": false
     },
+    "dynamicRegistrationPersistClientAuthorizations": {
+      "id": "dynamicRegistrationPersistClientAuthorizations",
+      "type": "boolean"
+    },
     "trustedClientEnabled": {
       "id": "trustedClientEnabled",
       "type": "boolean"

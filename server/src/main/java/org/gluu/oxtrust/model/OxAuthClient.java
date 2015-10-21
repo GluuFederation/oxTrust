@@ -28,6 +28,8 @@ import java.util.List;
  * 
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
+ * @author Javier Rojas Blum
+ * @version October 21, 2015
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "oxAuthClient" })
@@ -84,6 +86,9 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 	
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
     private String[] postLogoutRedirectUris;
+
+    @LdapAttribute(name = "oxPersistClientAuthorizations")
+    private Boolean oxAuthPersistClientAuthorizations;
 
 	private String oxAuthClientSecret;
 
@@ -212,5 +217,13 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
+    }
+
+    public Boolean getOxAuthPersistClientAuthorizations() {
+        return oxAuthPersistClientAuthorizations;
+    }
+
+    public void setOxAuthPersistClientAuthorizations(Boolean oxAuthPersistClientAuthorizations) {
+        this.oxAuthPersistClientAuthorizations = oxAuthPersistClientAuthorizations;
     }
 }
