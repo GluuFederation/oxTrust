@@ -1,0 +1,137 @@
+{
+    "orgDisplayName":"${config.organization.displayName}",
+    "orgInum":"${config.organization.inum}",
+    "orgIname":"${config.organization.iname}",
+    "orgShortName":"${config.organization.shortName}",
+    "orgSupportEmail":"${config.organization.supportEmail}",
+
+    "applianceIname":"${config.appliance.iname}",
+    "applianceInum":"${config.appliance.inum}",
+
+    "baseDN":"o=gluu",
+    "authMode":"oxAuth",
+
+    "idpUrl":"${config.host.schema}://${config.host.idp_name}",
+    "applianceUrl":"${config.host.schema}://${config.host.idp_name}",
+
+    "keystorePath":"${base.root}/etc/certs/${config.organization.inum-fn}-java.jks",
+    "keystorePassword":"${config.host.keystore_password}",
+
+    "personObjectClassTypes":[
+        "inetOrgPerson",
+        "eduPerson",
+        "gluuPerson",
+        "${config.organization.inum-fn}"
+    ],
+    "personObjectClassDisplayNames":[
+        "inetOrgPerson",
+        "eduPerson",
+        "gluuPerson",
+        "Custom"
+    ],
+
+    "svnConfigurationStoreRoot":"${svn.configuration.base_path}/${config.appliance.inum-fn}",
+    "svnConfigurationStorePassword":"${config.appliance.svn_base64_encoded_password}",
+    "persistSVN":false,
+
+    "allowPersonModification":true,
+    "updateApplianceStatus":true,
+
+    "schemaAddAttributeDefinition":"( %s-oid NAME '%s' EQUALITY caseIgnoreMatch ORDERING caseIgnoreOrderingMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 USAGE userApplications X-SCHEMA-FILE '100-user.ldif' X-ORIGIN 'gluu' )",
+    "schemaAddObjectClassWithoutAttributeTypesDefinition":"( %s-oid NAME '%s' SUP top STRUCTURAL MUST objectClass X-SCHEMA-FILE '100-user.ldif' X-ORIGIN 'gluu' )",
+    "schemaAddObjectClassWithAttributeTypesDefinition":"( %s-oid NAME '%s' SUP top STRUCTURAL MUST objectClass MAY ( %s ) X-SCHEMA-FILE '100-user.ldif' X-ORIGIN 'gluu' )",
+
+    "clientAssociationAttribute":"inum",
+
+    "personCustomObjectClass":"oxCustomAttributes",
+
+    "contactObjectClassTypes":[
+        "gluuBasicPersona",
+        "gluuExtraPersona",
+        "gluuPersona"
+    ],
+    "contactObjectClassDisplayNames":[
+        "Basic",
+        "Extended",
+        "Network"
+    ],
+
+    "photoRepositoryRootDir":"${base.root}/var/photos",
+    "photoRepositoryThumbWidth":300,
+    "photoRepositoryThumbHeight":300,
+    "photoRepositoryCountLeveles":3,
+    "photoRepositoryCountFoldersPerLevel":20,
+
+    "shibboleth2IdpRootDir":"${base.root}/opt/idp",
+    "shibboleth2SpConfDir":"${base.root}/etc/shibboleth",
+    "shibboleth2FederationRootDir":"${base.root}/opt/shibboleth-federation",
+
+    "velocityLog":"${base.root}/opt/tomcat/logs/velocity.log",
+
+    "spMetadataPath":"${base.root}/opt/idp/metadata",
+
+    "logoLocation":"${base.root}/var/photos",
+
+    "gluuSpAttributes":[
+        "uid",
+        "mail",
+        "sn",
+        "givenName"
+    ],
+
+    "configGeneration":true,
+    "ignoreValidation":false,
+
+    "idpSecurityCert":"${base.root}/etc/certs/${config.organization.inum-fn}-shib.crt",
+    "idpSecurityKey":"${base.root}/etc/certs/${config.organization.inum-fn}-shib.key",
+    "idpSecurityKeyPassword":"${config.host.keystore_password}",
+    "gluuSpCert":"${base.root}/etc/certs/${config.organization.inum-fn}-shib.crt",
+
+    "idpBindDn":"inum=${config.appliance.inum},ou=appliances,o=gluu",
+    "idpBindPassword":"${config.host.idp.ldap_base64_encoded_password}",
+    "idpLdapProtocol":"ldaps",
+    "idpLdapServer":"localhost:1636",
+    "idpUserFields":"uid,mail",
+
+    "mysqlUrl":"jdbc:mysql:///${config.host.idp_mysql_db}",
+    "mysqlUser":"${config.host.idp_mysql_user}",
+    "mysqlPassword":"${config.host.idp_mysql_base64_encoded_password}",
+
+    "ldifStore":"${base.root}/var/removedldif/",
+
+    "caCertsLocation":"${base.root}/usr/java/latest/jre/lib/security/cacerts",
+    "caCertsPassphrase":null,
+
+    "certDir":"${base.root}/etc/certs/",
+    "tempCertDir":"${base.root}/etc/certs/temp",
+
+    "clusteredInums":[
+
+    ],
+
+    "servicesRestartTrigger":"${base.root}/opt/gluu/essential_files/trigger_restart_of_services_delete_me_to_do_so",
+
+    "oxAuthIssuer":"${config.host.schema}://${config.host.idp_name}",
+    "oxAuthAuthorizeUrl":"${config.host.schema}://${config.host.idp_name}/oxauth/authorize",
+    "oxAuthTokenUrl":"${config.host.schema}://${config.host.idp_name}/oxauth/seam/resource/restv1/oxauth/token",
+    "oxAuthTokenValidationUrl":"${config.host.schema}://${config.host.idp_name}/oxauth/seam/resource/restv1/oxauth/validate",
+    "oxAuthEndSessionUrl":"${config.host.schema}://${config.host.idp_name}/oxauth/seam/resource/restv1/oxauth/end_session",
+    "oxAuthUserInfo":"${config.host.schema}://${config.host.idp_name}/oxauth/seam/resource/restv1/oxauth/userinfo",
+    "oxAuthLogoutUrl":"${config.host.schema}://${config.host.idp_name}/oxauth/logout",
+
+    "oxAuthClientId":"${config.host.oxauth_client_id}",
+    "oxAuthClientPassword":"${config.host.oxauth_client_password}",
+    "oxAuthClientScope":"openid+profile+address+email+user_name",
+
+    "loginRedirectUrl":"${config.host.schema}://${config.host.idp_name}${config.oxtrust.web_context}/authentication/authcode",
+    "logoutRedirectUrl":"${config.host.schema}://${config.host.idp_name}${config.oxtrust.web_context}/authentication/finishlogout",
+
+    "umaIssuer":"${config.uma.issuer}",
+    "umaClientId":"${config.uma.client_id}",
+    "umaClientPassword":"${config.uma.client_password}",
+    "umaResourceId":"${config.uma.resource_id}",
+    "umaScope":"${config.uma.scope}",
+
+    "cssLocation":"/identity/stylesheet",
+    "jsLocation":"/identity/js"
+}

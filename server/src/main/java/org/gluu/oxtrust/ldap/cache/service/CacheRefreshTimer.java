@@ -121,8 +121,8 @@ public class CacheRefreshTimer {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;
 	
 	@In
 	private ObjectSerializationService objectSerializationService;
@@ -1027,7 +1027,7 @@ public class CacheRefreshTimer {
 		String prefix = String.format("ldap.conf.%s.", ldapConfig);
 		Properties ldapProperties = cacheRefreshConfiguration.getPropertiesByPrefix(prefix);
 
-		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties, cryptoConfiguration.getEncodeSalt()));
+		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties, cryptoConfigurationSalt));
 
 		if (!ldapConnectionProvider.isConnected()) {
 			log.error("Failed to connect to LDAP server using configuration {0}", ldapConfig);

@@ -102,8 +102,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;
 
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 
@@ -285,7 +285,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		String bindPassword = "";
 		try {
-			bindPassword = StringEncrypter.defaultInstance().decrypt(cacheRefreshConfiguration.getString(prefix + "bindPassword"), cryptoConfiguration.getEncodeSalt());
+			bindPassword = StringEncrypter.defaultInstance().decrypt(cacheRefreshConfiguration.getString(prefix + "bindPassword"), cryptoConfigurationSalt);
 		} catch (Exception ex) {
 			log.error("Failed to decrypt password for property: {0}", ex, prefix + "bindPassword");
 		}

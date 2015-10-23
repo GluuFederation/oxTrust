@@ -272,8 +272,8 @@ public class GluuAppliance extends InumEntry implements Serializable {
 			this.smtpPassword = smtpPassword;
 			smtpPasswordStr = smtpPassword;
 			try {
-				CryptoConfigurationFile cryptoConfiguration = OxTrustConfiguration.instance().getCryptoConfiguration();
-				smtpPasswordStr = StringEncrypter.defaultInstance().decrypt(smtpPasswordStr, cryptoConfiguration.getEncodeSalt());
+				String cryptoConfigurationSalt = OxTrustConfiguration.instance().getCryptoConfigurationSalt();
+				smtpPasswordStr = StringEncrypter.defaultInstance().decrypt(smtpPasswordStr, cryptoConfigurationSalt);
 			} catch (Exception ex) {
 				log.error("Failed to decrypt password: " + smtpPassword, ex);
 			}
@@ -289,8 +289,8 @@ public class GluuAppliance extends InumEntry implements Serializable {
 			this.smtpPasswordStr = smtpPasswordStr;
 			smtpPassword = smtpPasswordStr;
 			try {
-				CryptoConfigurationFile cryptoConfiguration = OxTrustConfiguration.instance().getCryptoConfiguration();
-				smtpPassword = StringEncrypter.defaultInstance().encrypt(smtpPassword, cryptoConfiguration.getEncodeSalt());
+				String cryptoConfigurationSalt = OxTrustConfiguration.instance().getCryptoConfigurationSalt();
+				smtpPassword = StringEncrypter.defaultInstance().encrypt(smtpPassword, cryptoConfigurationSalt);
 			} catch (Exception ex) {
 				log.error("Failed to encrypt password: " + smtpPassword, ex);
 			}

@@ -98,7 +98,7 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 	public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
 		this.oxAuthClientSecret = oxAuthClientSecret;
 		if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
-			setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfiguration().getEncodeSalt()));
+			setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfigurationSalt()));
 		}
 	}
 

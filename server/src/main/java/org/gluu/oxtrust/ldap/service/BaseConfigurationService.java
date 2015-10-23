@@ -62,8 +62,8 @@ public class BaseConfigurationService implements Serializable {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;
 	
 	public boolean checkAndUpdateLdapbaseConfiguration() {
 		try {
@@ -140,7 +140,7 @@ public class BaseConfigurationService implements Serializable {
 					appliance.setIname(confApplianceIname);
 					appliance.setInumFN(StringHelper.removePunctuation(appliance.getInum()));
 					String newPassword = RandomStringUtils.randomAlphanumeric(8);
-					appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, cryptoConfiguration.getEncodeSalt()));
+					appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, cryptoConfigurationSalt));
 
 					if (centralLdapService.isUseCentralServer()) {
 						GluuAppliance tmpAppliance = new GluuAppliance();

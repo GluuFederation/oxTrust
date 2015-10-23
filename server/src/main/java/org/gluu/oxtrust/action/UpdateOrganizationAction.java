@@ -20,7 +20,6 @@ import javax.mail.MessagingException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -101,8 +100,6 @@ public class UpdateOrganizationAction implements Serializable {
 	private GluuImage curFaviconImage, oldFaviconImage;
 
 	private GluuAppliance appliance;
-
-	private boolean cacheRefreshEnabled;
 	
 	private List<GluuAppliance> appliances;
 
@@ -149,9 +146,6 @@ public class UpdateOrganizationAction implements Serializable {
 		this.loginPageCustomMessage = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_LOGIN_PAGE);
 		this.welcomePageCustomMessage = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_WELCOME_PAGE);
 		this.welcomeTitleText = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_TITLE_TEXT);
-
-		CacheRefreshConfiguration cacheRefreshConfiguration = oxTrustConfiguration.getCacheRefreshConfiguration();
-		this.cacheRefreshEnabled = applicationConfiguration.isCacheRefreshEnabled() && (cacheRefreshConfiguration != null);
 
 		appliances = new ArrayList<GluuAppliance>();
 		try {
@@ -271,10 +265,6 @@ public class UpdateOrganizationAction implements Serializable {
 		} else {
 			this.organization.setCustomMessages(null);
 		}
-	}
-
-	public boolean isCacheRefreshEnabled() {
-		return cacheRefreshEnabled;
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")

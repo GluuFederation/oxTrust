@@ -28,10 +28,9 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.ProgrammingLanguage;
@@ -82,9 +81,6 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
-
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
 	
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify() {

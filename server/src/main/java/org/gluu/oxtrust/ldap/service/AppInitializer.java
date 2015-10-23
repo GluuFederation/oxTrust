@@ -227,7 +227,7 @@ public class AppInitializer {
 		}
 		//
 
-		LdapConnectionService connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(properties, oxTrustConfiguration.getCryptoConfiguration().getEncodeSalt()));
+		LdapConnectionService connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(properties, oxTrustConfiguration.getCryptoConfigurationSalt()));
 		Contexts.getApplicationContext().set(connectionProviderComponentName, connectionProvider);
 	}
 
@@ -317,7 +317,7 @@ public class AppInitializer {
 		LdapConnectionService connectionProvider = null;
 		if (configuration != null) {
 			connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(configuration
-				.getProperties(), oxTrustConfiguration.getCryptoConfiguration().getEncodeSalt()));
+				.getProperties(), oxTrustConfiguration.getCryptoConfigurationSalt()));
 		}
 		Contexts.getApplicationContext().set(connectionProviderComponentName, connectionProvider);
 	}
