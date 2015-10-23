@@ -27,7 +27,7 @@ import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.service.JsonService;
 
 /**
- * Provides operations with velocity templates
+ * Provides operations with JSON oxAuth/oxTrust configuration
  * 
  * @author Yuriy Movchan Date: 12.15.2010
  */
@@ -37,49 +37,50 @@ import org.xdi.service.JsonService;
 public class JsonConfigurationService implements Serializable {
 
 	private static final long serialVersionUID = -3840968275007784641L;
+
 	@Logger
 	private Log log;
+
 	@In
 	private LdapEntryManager ldapEntryManager;
+
 	@In
 	private JsonService jsonService;
-	
+
 	private LdapOxTrustConfiguration ldapOxTrustConfiguration;
-	
+
 	private LdapOxAuthConfiguration ldapOxAuthConfiguration;
-		
+
 	@In(value = "#{oxTrustConfiguration.configurationDn}")
 	private String configurationDn;
-	
-	public String getOxTrustConfigJson() throws JsonGenerationException, JsonMappingException, IOException{
+
+	public String getOxTrustConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
 		ldapOxTrustConfiguration = loadOxTrustConfig(ldapEntryManager, configurationDn);
 		return ldapOxTrustConfiguration.getApplication();
 	}
-	
-	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException{
-		ldapOxAuthConfiguration= loadOxAuthConfig(ldapEntryManager, configurationDn);
+
+	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
+		ldapOxAuthConfiguration = loadOxAuthConfig(ldapEntryManager, configurationDn);
 		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
 	}
-	
-	public boolean saveOxTrustConfigJson(String oxTrustConfigJson) throws JsonParseException, JsonMappingException, IOException{
+
+	public boolean saveOxTrustConfigJson(String oxTrustConfigJson) throws JsonParseException, JsonMappingException, IOException {
 		ldapOxTrustConfiguration = loadOxTrustConfig(ldapEntryManager, configurationDn);
 		ldapOxTrustConfiguration.setApplication(oxTrustConfigJson);
+		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
 		ldapEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
 	}
-	
-	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws JsonParseException, JsonMappingException, IOException{
-		ldapOxAuthConfiguration= loadOxAuthConfig(ldapEntryManager, configurationDn);
+
+	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws JsonParseException, JsonMappingException, IOException {
+		ldapOxAuthConfiguration = loadOxAuthConfig(ldapEntryManager, configurationDn);
 		ldapOxAuthConfiguration.setOxAuthConfigDynamic(oxAuthDynamicConfigJson);
+		ldapOxAuthConfiguration.setRevision(ldapOxAuthConfiguration.getRevision() + 1);
 		ldapEntryManager.merge(ldapOxAuthConfiguration);
 		return true;
 	}
-	
-	public static JsonConfigurationService instance() {
-		return (JsonConfigurationService) Component.getInstance(JsonConfigurationService.class);
-	}
-	
-	public LdapOxTrustConfiguration loadOxTrustConfig(LdapEntryManager ldapEntryManager, String configurationDn) {
+
+	private LdapOxTrustConfiguration loadOxTrustConfig(LdapEntryManager ldapEntryManager, String configurationDn) {
 		try {
 			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
 
@@ -91,16 +92,19 @@ public class JsonConfigurationService implements Serializable {
 		return null;
 	}
 
-	public LdapOxAuthConfiguration loadOxAuthConfig(LdapEntryManager ldapEntryManager, String configurationDn) {
+	private LdapOxAuthConfiguration loadOxAuthConfig(LdapEntryManager ldapEntryManager, String configurationDn) {
 		try {
 			configurationDn = configurationDn.replace("ou=oxtrust", "ou=oxauth");
 			LdapOxAuthConfiguration conf = ldapEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
-//			ldapEntryManager.findEntries(LdapOxAuthConfiguration.class, 1);
 			return conf;
 		} catch (LdapMappingException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
 
 		return null;
+	}
+
+	public static JsonConfigurationService instance() {
+		return (JsonConfigurationService) Component.getInstance(JsonConfigurationService.class);
 	}
 }

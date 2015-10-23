@@ -16,7 +16,6 @@ import org.apache.commons.httpclient.HttpClientError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.In;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.EasySSLProtocolSocketFactory;
 import org.xdi.util.EasyX509TrustManager;
