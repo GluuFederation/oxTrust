@@ -34,7 +34,7 @@ public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory
 			String password = applicationConfiguration.getCaCertsPassphrase();
 			char[] passphrase = null;
 			if (password != null) {
-				passphrase = StringEncrypter.defaultInstance().decrypt(password, cryptoConfigurationSalt.getEncodeSalt()).toCharArray();
+				passphrase = StringEncrypter.defaultInstance().decrypt(password, cryptoConfigurationSalt).toCharArray();
 			}
 			KeyStore cacerts = null;
 			String cacertsFN = applicationConfiguration.getCaCertsLocation();
