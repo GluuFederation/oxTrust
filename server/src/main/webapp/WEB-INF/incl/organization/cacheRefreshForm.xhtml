@@ -103,22 +103,22 @@
                 validateCollapsiblePanel("cacheRefreshForm\\:copyTogglePanel");
            </h:outputScript>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="vdsCacheRefreshPollingInterval">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                 <ui:define name="label">Pooling interval (minutes)</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshPollingInterval}" id="vdsCacheRefreshPollingIntervalId" size="5" />
             </s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="cacheRefreshServerIpAddress">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                 <ui:define name="label">Server IP Address</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.appliance.cacheRefreshServerIpAddress}" id="cacheRefreshServerIpAddressId" size="16" />
             </s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="snapshotFolder">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                 <ui:define name="label">Snapshot Folder</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotFolder}" size="48" required="true" />
             </s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="snapshotCount">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                 <ui:define name="label">Snapshots count</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotMaxCount}" size="5" required="true" />
             </s:decorate>
@@ -134,6 +134,12 @@
 
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.useSearchLimit}"/>
             </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Search size limit </ui:define>
+                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.ldapSearchSizeLimit}" size="6" required="false" />
+            </s:decorate>
+
             </h:panelGroup>
             
              <h:panelGroup id="vdsTogglePanelGroup">
