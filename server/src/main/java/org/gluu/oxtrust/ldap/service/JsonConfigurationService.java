@@ -24,7 +24,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
-import org.xdi.service.JsonService;
 
 /**
  * Provides operations with JSON oxAuth/oxTrust configuration
@@ -44,36 +43,47 @@ public class JsonConfigurationService implements Serializable {
 	@In
 	private LdapEntryManager ldapEntryManager;
 
-	@In
-	private JsonService jsonService;
-
-	private LdapOxTrustConfiguration ldapOxTrustConfiguration;
-
-	private LdapOxAuthConfiguration ldapOxAuthConfiguration;
-
 	@In(value = "#{oxTrustConfiguration.configurationDn}")
 	private String configurationDn;
 
 	public String getOxTrustConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
-		ldapOxTrustConfiguration = loadOxTrustConfig(ldapEntryManager, configurationDn);
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		return ldapOxTrustConfiguration.getApplication();
 	}
 
+	public String getOxTrustCacheRefreshConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		return ldapOxTrustConfiguration.getCacheRefresh();
+	}
+
+	private LdapOxTrustConfiguration getOxTrustConfiguration() {
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = loadOxTrustConfig(ldapEntryManager, configurationDn);
+		return ldapOxTrustConfiguration;
+	}
+
 	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
-		ldapOxAuthConfiguration = loadOxAuthConfig(ldapEntryManager, configurationDn);
+		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(ldapEntryManager, configurationDn);
 		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
 	}
 
 	public boolean saveOxTrustConfigJson(String oxTrustConfigJson) throws JsonParseException, JsonMappingException, IOException {
-		ldapOxTrustConfiguration = loadOxTrustConfig(ldapEntryManager, configurationDn);
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		ldapOxTrustConfiguration.setApplication(oxTrustConfigJson);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
 		ldapEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
 	}
 
+	public boolean saveOxTrustCacheRefreshConfigJson(String oxTrustConfigCacheRefreshJson) throws JsonParseException, JsonMappingException, IOException {
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		ldapOxTrustConfiguration.setCacheRefresh(oxTrustConfigCacheRefreshJson);
+		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
+		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		return true;
+	}
+
 	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws JsonParseException, JsonMappingException, IOException {
-		ldapOxAuthConfiguration = loadOxAuthConfig(ldapEntryManager, configurationDn);
+		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(ldapEntryManager, configurationDn);
 		ldapOxAuthConfiguration.setOxAuthConfigDynamic(oxAuthDynamicConfigJson);
 		ldapOxAuthConfiguration.setRevision(ldapOxAuthConfiguration.getRevision() + 1);
 		ldapEntryManager.merge(ldapOxAuthConfiguration);

@@ -31,6 +31,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
+import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 /**
@@ -239,6 +240,7 @@ public class OxTrustConfiguration {
 
 	private void init(LdapOxTrustConfiguration conf) {
 		initApplicationConfigurationFromJson(conf.getApplication());
+		initCacheRefreshConfigurationFromJson(conf.getCacheRefresh());
 		this.loadedRevision = conf.getRevision();
 	}
 
@@ -250,6 +252,23 @@ public class OxTrustConfiguration {
             }
         } catch (Exception ex) {
             log.error("Failed to initialize applicationConfiguration from JSON", ex);
+        }
+    }
+
+    private void initCacheRefreshConfigurationFromJson(String cacheRefreshConfigurationJson) {
+    	if (StringHelper.isEmpty(cacheRefreshConfigurationJson)) {
+            log.trace("Skipping empty Cache Refresh configuration");
+            this.cacheRefreshConfiguration = null;
+            return;
+    	}
+
+    	try {
+			final CacheRefreshConfiguration cacheRefreshConfiguration = jsonService.jsonToObject(cacheRefreshConfigurationJson, CacheRefreshConfiguration.class);
+            if (cacheRefreshConfiguration != null) {
+            	this.cacheRefreshConfiguration = cacheRefreshConfiguration;
+            }
+        } catch (Exception ex) {
+            log.error("Failed to initialize Cache Refresh configuration from JSON", ex);
         }
     }
 
@@ -318,26 +337,6 @@ public class OxTrustConfiguration {
 
 		return null;
 	}
-/*
-	private void reloadCacheRefreshConfigurationFromFile() {
-		try {
-			FileConfiguration fileConfiguration = createFileConfiguration(cacheRefreshFilePath);
-	        if (fileConfiguration != null) {
-	        	log.info("Reloaded configuration from file: " + cacheRefreshFilePath);
-	        } else {
-	        	log.error("Failed to load configuration from file: " + cacheRefreshFilePath);
-	        	this.cacheRefreshConfiguration = null;
-	        	return;
-	        }
-
-	        CacheRefreshConfiguration cacheRefreshConfiguration = new CacheRefreshConfiguration(fileConfiguration);
-			this.cacheRefreshConfiguration = cacheRefreshConfiguration;
-		} catch (Exception ex) {
-			log.error("Failed to load configuration from {0}", ex, cacheRefreshFilePath);
-			throw new ConfigurationException("Failed to load configuration from " + cacheRefreshFilePath, ex);
-		}
-	}
-*/
 
     public void loadCryptoConfigurationSalt() {
         try {

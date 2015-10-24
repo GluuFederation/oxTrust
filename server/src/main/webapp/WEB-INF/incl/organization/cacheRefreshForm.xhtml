@@ -79,8 +79,7 @@
                 <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshProblemCount}" />
             </s:decorate> <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="editType">
                 <ui:define name="label">Refresh Method</ui:define>
-                <h:selectOneMenu styleClass="form-control"  value="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod}" required="true" id="refreshMethodId">
-                    
+                <h:selectOneMenu styleClass="form-control"  value="#{_configureCacheRefreshAction.updateMethod}" required="true" id="refreshMethodId">
                     <s:selectItems value="#{_configureCacheRefreshAction.allCacheRefreshUpdateMethods}" var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
@@ -90,16 +89,11 @@
 			  <h:panelGroup id="copyTogglePanelGroup">
                
                     <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                        <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod.value eq 'copy'}" label="Source attribute to destination attribute mapping" labelAdd="source attribute to destination attribute mapping"
-                            properties="#{_configureCacheRefreshAction.cacheRefreshConfig.attrsMapping}" propertiesAction="#{_configureCacheRefreshAction}" />
+                        <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod eq 'copy'}" label="Source attribute to destination attribute mapping" labelAdd="source attribute to destination attribute mapping"
+                            properties="#{_configureCacheRefreshAction.attributeMapping}" propertiesAction="#{_configureCacheRefreshAction}" />
                     </h:panelGroup>
                
             </h:panelGroup>
-            
-            
-
-           
-          
 
             <h:outputScript>
                 validateCollapsiblePanel("cacheRefreshForm\\:sourceAttributesPanel");
@@ -121,12 +115,12 @@
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="snapshotFolder">
                 <ui:define name="label">Snapshot Folder</ui:define>
-                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotsFolder}" size="48" required="true" />
+                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotFolder}" size="48" required="true" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="snapshotCount">
                 <ui:define name="label">Snapshots count</ui:define>
-                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotsCount}" size="5" required="true" />
+                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotMaxCount}" size="5" required="true" />
             </s:decorate>
             
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
@@ -138,7 +132,7 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                 <ui:define name="label">Load source data with limited search</ui:define>
 
-                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.loadSourceUsingSearchLimit}"/>
+                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.useSearchLimit}"/>
             </s:decorate>
             </h:panelGroup>
             
@@ -146,7 +140,7 @@
                 
                     <ox:ldapConfig ldapConfig="#{_configureCacheRefreshAction.targetConfig}" ldapConfigAction="#{configureCacheRefreshAction}"
                         propertiesAction="#{_configureCacheRefreshAction}" displayBaseDn="false" displayAnonymousBind="false"
-                        displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel"  rendered="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod.value eq 'vds'}" /> 
+                        displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" rendered="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod eq 'vds'}" /> 
                
             </h:panelGroup>
             
@@ -155,13 +149,13 @@
                <div class="tab-pane" id="key-attributes">
                 <div style="display: inline-block;width: 75% !important;">
                 <h:panelGroup >
-                    <ox:simplePropertiesList label="Key attribute" labelAdd="key attribute" maxItems="3" properties="#{_configureCacheRefreshAction.cacheRefreshConfig.attrs}"
+                    <ox:simplePropertiesList label="Key attribute" labelAdd="key attribute" maxItems="3" properties="#{_configureCacheRefreshAction.keyAttributes}"
                         propertiesAction="#{_configureCacheRefreshAction}" required="true" />
 
-                    <ox:simplePropertiesList label="Object class" labelAdd="object class" properties="#{_configureCacheRefreshAction.cacheRefreshConfig.objectClasses}"
+                    <ox:simplePropertiesList label="Object class" labelAdd="object class" properties="#{_configureCacheRefreshAction.keyObjectClasses}"
                         propertiesAction="#{_configureCacheRefreshAction}" required="true" />
 
-                    <ox:simplePropertiesList label="Source attribute" labelAdd="source attribute" properties="#{_configureCacheRefreshAction.cacheRefreshConfig.sourceAttributes}"
+                    <ox:simplePropertiesList label="Source attribute" labelAdd="source attribute" properties="#{_configureCacheRefreshAction.sourceAttributes}"
                         propertiesAction="#{_configureCacheRefreshAction}" required="true" />
 
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="customLdapFilter">

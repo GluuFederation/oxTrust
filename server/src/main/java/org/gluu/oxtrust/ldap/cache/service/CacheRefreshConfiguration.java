@@ -6,159 +6,152 @@
 
 package org.gluu.oxtrust.ldap.cache.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
-import org.xdi.util.StringHelper;
-import org.xdi.util.properties.FileConfiguration;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.xdi.model.ldap.GluuLdapConfiguration;
 
 /**
- * Provides methods to access cache configuration
+ * Cache refresh configuration
  * 
  * @author Yuriy Movchan Date: 07.13.2011
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CacheRefreshConfiguration {
-	
-	private FileConfiguration fileConfiguration;
 
-	public CacheRefreshConfiguration(FileConfiguration fileConfiguration) {
-		this.fileConfiguration = fileConfiguration;
+	private List<GluuLdapConfiguration> sourceConfigs;
+	private GluuLdapConfiguration inumConfig;
+	private GluuLdapConfiguration targetConfig;
+
+	private int ldapSearchSizeLimit;
+
+	private List<String> keyAttributes;
+	private List<String> keyObjectClasses;
+	private List<String> sourceAttributes;
+
+	private String customLdapFilter;
+
+	private String updateMethod;
+
+	private boolean keepExternalPerson;
+
+	private boolean useSearchLimit;
+
+	private List<CacheRefreshAttributeMapping> attributeMapping;
+
+	private String snapshotFolder;
+	private int snapshotMaxCount;
+
+	public List<GluuLdapConfiguration> getSourceConfigs() {
+		return sourceConfigs;
 	}
 
-	public String[] getSourceServerConfigs() {
-		return fileConfiguration.getStringArray("server.source.configs", null);
+	public void setSourceConfigs(List<GluuLdapConfiguration> sourceConfigs) {
+		this.sourceConfigs = sourceConfigs;
 	}
 
-	public String getInumDbServerConfig() {
-		return fileConfiguration.getString("server.inum.config", null);
+	public GluuLdapConfiguration getInumConfig() {
+		return inumConfig;
 	}
 
-	public String getDestinationServerConfig() {
-		return fileConfiguration.getString("server.target.config", null);
+	public void setInumConfig(GluuLdapConfiguration inumConfig) {
+		this.inumConfig = inumConfig;
 	}
 
-	public Properties getServerConfigProperties(String serverConfig) {
-		return fileConfiguration.getPropertiesByPrefix(String.format("ldap.conf.%s.", serverConfig));
+	public GluuLdapConfiguration getTargetConfig() {
+		return targetConfig;
 	}
 
-	public String getSnapshotFolder() {
-		return fileConfiguration.getString("snapshot.folder", null);
+	public void setTargetConfig(GluuLdapConfiguration targetConfig) {
+		this.targetConfig = targetConfig;
 	}
 
-	public int getSnapshotMaxCount() {
-		return fileConfiguration.getInt("snapshot.max.count", 10);
+	public int getLdapSearchSizeLimit() {
+		return ldapSearchSizeLimit;
 	}
 
-	public int getSizeLimit() {
-		return fileConfiguration.getInt("cache.config.sizelimit", 0);
+	public void setLdapSearchSizeLimit(int ldapSearchSizeLimit) {
+		this.ldapSearchSizeLimit = ldapSearchSizeLimit;
 	}
 
-	public String[] getCompoundKeyAttributes() {
-		return fileConfiguration.getStringArray("ldap.conf.source.compoundKey.attr");
+	public List<String> getKeyAttributes() {
+		return keyAttributes;
 	}
 
-	public List<String> getCompoundKeyAttributesList() {
-		return fileConfiguration.getStringList("ldap.conf.source.compoundKey.attr");
+	public void setKeyAttributes(List<String> keyAttributes) {
+		this.keyAttributes = keyAttributes;
 	}
 
-	public String[] getCompoundKeyObjectClasses() {
-		return fileConfiguration.getStringArray("ldap.conf.source.compoundKey.objectClasses");
+	public List<String> getKeyObjectClasses() {
+		return keyObjectClasses;
 	}
 
-	public String[] getCompoundKeyAttributesWithoutValues() {
-		String[] result = getCompoundKeyAttributes();
-		for (int i = 0; i < result.length; i++) {
-			int index = result[i].indexOf('=');
-			if (index != -1) {
-				result[i] = result[i].substring(0, index);
-			}
-		}
-
-		return result;
+	public void setKeyObjectClasses(List<String> keyObjectClasses) {
+		this.keyObjectClasses = keyObjectClasses;
 	}
 
-	public String[] getSourceAttributes() {
-		return fileConfiguration.getStringArray("ldap.conf.source.attrs");
+	public List<String> getSourceAttributes() {
+		return sourceAttributes;
+	}
+
+	public void setSourceAttributes(List<String> sourceAttributes) {
+		this.sourceAttributes = sourceAttributes;
 	}
 
 	public String getCustomLdapFilter() {
-		return fileConfiguration.getString("ldap.conf.source.custom.filter", null);
+		return customLdapFilter;
 	}
 
-	public CacheRefreshUpdateMethod getUpdateMethod() {
-		String updateMethod = fileConfiguration.getString("target.server.update.method", CacheRefreshUpdateMethod.VDS.getValue());
-		if (StringHelper.isEmpty(updateMethod)) {
-			return CacheRefreshUpdateMethod.VDS;
-		}
+	public void setCustomLdapFilter(String customLdapFilter) {
+		this.customLdapFilter = customLdapFilter;
+	}
 
-		CacheRefreshUpdateMethod result = CacheRefreshUpdateMethod.getByValue(updateMethod.toLowerCase());
-		if (result == null) {
-			return CacheRefreshUpdateMethod.VDS;
-		}
+	public String getUpdateMethod() {
+		return updateMethod;
+	}
 
-		return result;
+	public void setUpdateMethod(String updateMethod) {
+		this.updateMethod = updateMethod;
 	}
 
 	public boolean isKeepExternalPerson() {
-		return fileConfiguration.getBoolean("target.keep.external.person", false);
+		return keepExternalPerson;
 	}
 
-	public boolean isLoadSourceUsingSearchLimit() {
-		return fileConfiguration.getBoolean("source.load.use.search.limit", true);
+	public void setKeepExternalPerson(boolean keepExternalPerson) {
+		this.keepExternalPerson = keepExternalPerson;
 	}
 
-	public Map<String, String> getTargetServerAttributesMapping() {
-		String attributePrefix = "ldap.conf.target.attr.mapping.";
-		Properties mappingProperties = fileConfiguration.getPropertiesByPrefix(attributePrefix);
-
-		Map<String, String> result = new HashMap<String, String>();
-		for (Entry<Object, Object> entry : mappingProperties.entrySet()) {
-			String destinationAttribute = StringHelper.toLowerCase((String) entry.getKey());
-			String sourceAttribute = StringHelper.toLowerCase((String) entry.getValue());
-
-			result.put(destinationAttribute, sourceAttribute);
-		}
-
-		return result;
+	public boolean isUseSearchLimit() {
+		return useSearchLimit;
 	}
 
-	public String getInterceptorScriptFileName() {
-		return fileConfiguration.getString("interceptor.script.fileName", null);
+	public void setUseSearchLimit(boolean useSearchLimit) {
+		this.useSearchLimit = useSearchLimit;
 	}
 
-	public String getString(String key) {
-		return fileConfiguration.getString(key);
+	public List<CacheRefreshAttributeMapping> getAttributeMapping() {
+		return attributeMapping;
 	}
 
-	public String[] getStringArray(String key) {
-		return fileConfiguration.getStringArray(key);
+	public void setAttributeMapping(List<CacheRefreshAttributeMapping> attributeMapping) {
+		this.attributeMapping = attributeMapping;
 	}
 
-	public List<String> getStringList(String key) {
-		return fileConfiguration.getStringList(key);
+	public String getSnapshotFolder() {
+		return snapshotFolder;
 	}
 
-	public int getInt(String key, int defaultValue) {
-		return fileConfiguration.getInt(key, defaultValue);
+	public void setSnapshotFolder(String snapshotFolder) {
+		this.snapshotFolder = snapshotFolder;
 	}
 
-	public boolean getBoolean(String key, boolean defaultValue) {
-		return fileConfiguration.getBoolean(key, defaultValue);
+	public int getSnapshotMaxCount() {
+		return snapshotMaxCount;
 	}
 
-	public Properties getPropertiesByPrefix(String propertiesPrefix) {
-		return fileConfiguration.getPropertiesByPrefix(propertiesPrefix);
-	}
-
-	public boolean isLoaded() {
-		return fileConfiguration.isLoaded();
-	}
-
-	public void reload() {
-		fileConfiguration.reload();
+	public void setSnapshotMaxCount(int snapshotMaxCount) {
+		this.snapshotMaxCount = snapshotMaxCount;
 	}
 
 }

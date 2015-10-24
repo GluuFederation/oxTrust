@@ -29,6 +29,7 @@ import org.jboss.seam.log.Log;
  * saving the edited JSON back to OpenDJ
  * 
  * @author Rahat Ali Date: 12/04/2015
+ * @author Yuriy Movchan Date: 10/23/2015
  */
 @Name("jsonConfigAction")
 @Scope(ScopeType.CONVERSATION)
@@ -39,6 +40,7 @@ public class JsonConfigurationAction implements Serializable {
 
 	@In
 	private StatusMessages statusMessages;
+
 	@In
 	private FacesMessages facesMessages;
 
@@ -46,7 +48,7 @@ public class JsonConfigurationAction implements Serializable {
 	private Log log;
 
 	@In
-	JsonConfigurationService jsonConfigurationService;
+	private JsonConfigurationService jsonConfigurationService;
 
 	private String oxTrustConfigJson;
 

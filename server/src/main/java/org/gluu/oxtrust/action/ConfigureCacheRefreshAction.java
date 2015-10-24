@@ -9,23 +9,23 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.velocity.VelocityContext;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.ldap.cache.model.GluuCacheRefreshConfiguration;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
+import org.gluu.oxtrust.ldap.cache.service.CacheRefreshAttributeMapping;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.InumService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.TemplateService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -33,11 +33,9 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
-import org.gluu.oxtrust.model.SimpleDoubleProperty;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.PropertyUtil;
 import org.gluu.oxtrust.util.jsf.ValidationUtil;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -48,15 +46,13 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
-import org.xdi.util.ArrayHelper;
+import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 
 /**
  * Action class for configuring cache refresh
@@ -69,8 +65,6 @@ import org.xdi.util.security.StringEncrypter;
 public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -5210460481895022468L;
-	private static final String CACHE_REFRESH_CONFIGURATION_FILE = "oxTrustCacheRefresh.properties";
-	private static final String CACHE_REFRESH_TEMPLATE_FILE = "oxTrustCacheRefresh-template.properties";
 
 	@Logger
 	private Log log;
@@ -97,6 +91,12 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private CacheRefreshService cacheRefreshService;
 
 	@In
+	private JsonConfigurationService jsonConfigurationService;
+
+	@In
+	private JsonService jsonService;
+
+	@In
 	private FacesMessages facesMessages;
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
@@ -110,24 +110,25 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean cacheRefreshEnabled;
 	private int cacheRefreshEnabledIntervalMinutes;
 
-	private List<GluuLdapConfiguration> sourceConfigs;
-	private GluuLdapConfiguration inumConfig;
-	private GluuLdapConfiguration targetConfig;
-
 	private GluuLdapConfiguration activeLdapConfig;
 
 	private GluuAppliance appliance;
 
-	private GluuCacheRefreshConfiguration cacheRefreshConfig;
+	private List<SimpleProperty> keyAttributes;
+	private List<SimpleProperty> keyObjectClasses;
+	private List<SimpleProperty> sourceAttributes;
+	private List<SimpleCustomProperty> attributeMapping;
 
 	private boolean showInterceptorValidationDialog;
 	private String interceptorValidationMessage;
 
 	private boolean initialized;
+
+	private CacheRefreshUpdateMethod updateMethod;
 	
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
-		if ((this.sourceConfigs != null) && (this.inumConfig != null) && (this.targetConfig != null)) {
+		if (this.cacheRefreshConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
@@ -135,37 +136,44 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		this.appliance = ApplianceService.instance().getAppliance();
 
-		initConfigurations();
+		this.cacheRefreshConfiguration = getOxTrustCacheRefreshConfig();
 
 		this.initialized = true;
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	private void initConfigurations() {
-		this.cacheRefreshConfiguration = oxTrustConfiguration.getCacheRefreshConfiguration();
+	private CacheRefreshConfiguration getOxTrustCacheRefreshConfig() {
+		CacheRefreshConfiguration cacheRefreshConfigurationuration = null;
 
-		this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
-		if ((this.cacheRefreshConfiguration == null) || !this.cacheRefreshConfiguration.isLoaded()) {
-			this.inumConfig = new GluuLdapConfiguration();
-			this.targetConfig = new GluuLdapConfiguration();
-
-			this.cacheRefreshConfig = new GluuCacheRefreshConfiguration();
-			this.cacheRefreshConfig.setUpdateMethod(CacheRefreshUpdateMethod.COPY);
-			return;
-		}
-
-		String[] sourceConfigurationIds = this.cacheRefreshConfiguration.getSourceServerConfigs();
-		if (ArrayHelper.isNotEmpty(sourceConfigurationIds)) {
-			for (String sourceConfigurationId : sourceConfigurationIds) {
-				this.sourceConfigs.add(prepareLdapConfig(this.cacheRefreshConfiguration, sourceConfigurationId));
+		try {
+			String cacheRefreshConfigurationJson = jsonConfigurationService.getOxTrustCacheRefreshConfigJson();
+			if (StringHelper.isNotEmpty(cacheRefreshConfigurationJson)) {
+				cacheRefreshConfigurationuration = jsonService.jsonToObject(cacheRefreshConfigurationJson, CacheRefreshConfiguration.class);
 			}
+		} catch (Exception ex) {
+			log.error("Failed to load Cache Refresh configuration from LDAP", ex);
 		}
+		
+		if (cacheRefreshConfigurationuration == null) {
+			cacheRefreshConfigurationuration = new CacheRefreshConfiguration();
+			cacheRefreshConfigurationuration.setUpdateMethod(CacheRefreshUpdateMethod.COPY.getValue());
+			cacheRefreshConfigurationuration.setSourceConfigs(new ArrayList<GluuLdapConfiguration>());
+			cacheRefreshConfigurationuration.setInumConfig(new GluuLdapConfiguration());
+			cacheRefreshConfigurationuration.setTargetConfig(new GluuLdapConfiguration());
+			cacheRefreshConfigurationuration.setKeyAttributes(new ArrayList<String>(0));
+			cacheRefreshConfigurationuration.setKeyObjectClasses(new ArrayList<String>());
+			cacheRefreshConfigurationuration.setSourceAttributes(new ArrayList<String>());
+			cacheRefreshConfigurationuration.setAttributeMapping(new ArrayList<CacheRefreshAttributeMapping>());
+		}
+		
+		this.updateMethod = CacheRefreshUpdateMethod.getByValue(cacheRefreshConfigurationuration.getUpdateMethod());
+		this.keyAttributes = toSimpleProperties(cacheRefreshConfigurationuration.getKeyAttributes());
+		this.keyObjectClasses = toSimpleProperties(cacheRefreshConfigurationuration.getKeyObjectClasses());
+		this.sourceAttributes = toSimpleProperties(cacheRefreshConfigurationuration.getSourceAttributes());
+		this.attributeMapping = toSimpleCustomProperties(cacheRefreshConfigurationuration.getAttributeMapping());
 
-		this.inumConfig = prepareLdapConfig(this.cacheRefreshConfiguration, this.cacheRefreshConfiguration.getInumDbServerConfig());
-		this.targetConfig = prepareLdapConfig(this.cacheRefreshConfiguration, this.cacheRefreshConfiguration.getDestinationServerConfig());
-
-		this.cacheRefreshConfig = prepareCacheRefreshConfig(this.cacheRefreshConfiguration);
+		return cacheRefreshConfigurationuration;
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -174,17 +182,35 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
+		updateLists();
+
 		if (!validateLists()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		if (!generateCacheConfigurationFile()) {
+		fixLdapConfigurations(this.cacheRefreshConfiguration.getSourceConfigs());
+		fixLdapConfiguration(this.cacheRefreshConfiguration.getInumConfig());
+		fixLdapConfiguration(this.cacheRefreshConfiguration.getTargetConfig());
+		
+		try {
+			String oxTrustConfigJson = jsonService.objectToJson(this.cacheRefreshConfiguration);
+			jsonConfigurationService.saveOxTrustCacheRefreshConfigJson(oxTrustConfigJson);
+
+			updateAppliance();
+		} catch (Exception ex) {
+			log.error("Failed to save Cache Refresh configuration", ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		updateAppliance();
-
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private void updateLists() {
+		cacheRefreshConfiguration.setUpdateMethod(this.updateMethod.getValue());
+		cacheRefreshConfiguration.setKeyAttributes(toStringList(this.keyAttributes));
+		cacheRefreshConfiguration.setKeyObjectClasses(toStringList(this.keyObjectClasses));
+		cacheRefreshConfiguration.setSourceAttributes(toStringList(this.sourceAttributes));
+		cacheRefreshConfiguration.setAttributeMapping(toAttributeMappingList(this.attributeMapping));
 	}
 
 	private void updateAppliance() {
@@ -218,19 +244,19 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private boolean validateLists() {
 		boolean result = true;
-		for (GluuLdapConfiguration sourceConfig : this.sourceConfigs) {
+		for (GluuLdapConfiguration sourceConfig : this.cacheRefreshConfiguration.getSourceConfigs()) {
 			result &= validateList(sourceConfig, "Source", true);
 		}
 
-		result &= validateList(inumConfig, "Inum", true);
+		result &= validateList(this.cacheRefreshConfiguration.getInumConfig(), "Inum", true);
 
-		if (CacheRefreshUpdateMethod.VDS.equals(cacheRefreshConfig.getUpdateMethod())) {
-			result &= validateList(targetConfig, "Target", false);
+		if (CacheRefreshUpdateMethod.VDS.equals(cacheRefreshConfiguration.getUpdateMethod())) {
+			result &= validateList(this.cacheRefreshConfiguration.getTargetConfig(), "Target", false);
 		}
 
-		result &= validateList(cacheRefreshConfig.getAttrs(), "Key attribute");
-		result &= validateList(cacheRefreshConfig.getObjectClasses(), "Object class");
-		result &= validateList(cacheRefreshConfig.getSourceAttributes(), "Source attribute");
+		result &= validateList(this.cacheRefreshConfiguration.getKeyAttributes(), "Key attribute");
+		result &= validateList(this.cacheRefreshConfiguration.getKeyObjectClasses(), "Object class");
+		result &= validateList(this.cacheRefreshConfiguration.getSourceAttributes(), "Source attribute");
 
 		return result;
 	}
@@ -254,7 +280,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return result;
 	}
 
-	private boolean validateList(List<SimpleProperty> values, String attributeName) {
+	private boolean validateList(List<String> values, String attributeName) {
 		if (values.size() == 0) {
 			log.error("{0} should contains at least one {0}", attributeName);
 			facesMessages.add(Severity.ERROR, "{0} should contains at least one {0}", attributeName);
@@ -276,37 +302,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return cacheRefreshEnabledIntervalMinutes;
 	}
 
-	private GluuLdapConfiguration prepareLdapConfig(CacheRefreshConfiguration cacheRefreshConfiguration, String ldapConfigId) {
-		if (StringHelper.isEmpty(ldapConfigId)) {
-			return new GluuLdapConfiguration();
-		}
-
-		String prefix = String.format("ldap.conf.%s.", ldapConfigId);
-
-		String bindPassword = "";
-		try {
-			bindPassword = StringEncrypter.defaultInstance().decrypt(cacheRefreshConfiguration.getString(prefix + "bindPassword"), cryptoConfigurationSalt);
-		} catch (Exception ex) {
-			log.error("Failed to decrypt password for property: {0}", ex, prefix + "bindPassword");
-		}
-
-		return new GluuLdapConfiguration(ldapConfigId, cacheRefreshConfiguration.getString(prefix + "bindDN"), bindPassword,
-				toSimpleProperties(cacheRefreshConfiguration.getStringList(prefix + "servers")), cacheRefreshConfiguration.getInt(prefix
-						+ "maxconnections", 2), cacheRefreshConfiguration.getBoolean(prefix + "useSSL", false),
-				toSimpleProperties(cacheRefreshConfiguration.getStringList(prefix + "baseDNs")), null, null, cacheRefreshConfiguration.getBoolean(
-						prefix + "useAnonymousBind", false));
-	}
-
-	private GluuCacheRefreshConfiguration prepareCacheRefreshConfig(CacheRefreshConfiguration cacheRefreshConfiguration) {
-		return new GluuCacheRefreshConfiguration(toSimpleProperties(cacheRefreshConfiguration.getCompoundKeyAttributes()),
-				toSimpleProperties(cacheRefreshConfiguration.getCompoundKeyObjectClasses()),
-				toSimpleProperties(cacheRefreshConfiguration.getSourceAttributes()), cacheRefreshConfiguration.getCustomLdapFilter(),
-				cacheRefreshConfiguration.getSnapshotFolder(), cacheRefreshConfiguration.getSnapshotMaxCount(),
-				cacheRefreshConfiguration.getSizeLimit(), cacheRefreshConfiguration.getUpdateMethod(),
-				cacheRefreshConfiguration.isKeepExternalPerson(), cacheRefreshConfiguration.isLoadSourceUsingSearchLimit(),
-				toSimpleDoubleProperties(cacheRefreshConfiguration.getTargetServerAttributesMapping()));
-	}
-
 	private List<SimpleProperty> toSimpleProperties(List<String> values) {
 		List<SimpleProperty> result = new ArrayList<SimpleProperty>();
 
@@ -317,72 +312,58 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return result;
 	}
 
-	private List<SimpleDoubleProperty> toSimpleDoubleProperties(Map<String, String> valuesMapping) {
-		List<SimpleDoubleProperty> result = new ArrayList<SimpleDoubleProperty>();
+	private List<SimpleCustomProperty> toSimpleCustomProperties(List<CacheRefreshAttributeMapping> attributeMappings) {
+		List<SimpleCustomProperty> result = new ArrayList<SimpleCustomProperty>();
 
-		for (Entry<String, String> valueMapEntry : valuesMapping.entrySet()) {
-			result.add(new SimpleDoubleProperty(valueMapEntry.getValue(), valueMapEntry.getKey()));
+		for (CacheRefreshAttributeMapping attributeMapping : attributeMappings) {
+			result.add(new SimpleCustomProperty(attributeMapping.getSource(), attributeMapping.getDestination()));
 		}
 
 		return result;
 	}
 
-	private List<SimpleProperty> toSimpleProperties(String[] values) {
-		List<SimpleProperty> result = new ArrayList<SimpleProperty>();
+	private List<String> toStringList(List<SimpleProperty> simpleProperties) {
+		List<String> result = new ArrayList<String>();
 
-		for (String value : values) {
-			result.add(new SimpleProperty(value));
+		for (SimpleProperty simpleProperty : simpleProperties) {
+			result.add(simpleProperty.getValue());
 		}
 
 		return result;
 	}
 
-	public void addItemToSimpleDoubleProperties(List<SimpleDoubleProperty> items) {
-		items.add(new SimpleDoubleProperty("", ""));
-	}
+	private List<CacheRefreshAttributeMapping> toAttributeMappingList(List<SimpleCustomProperty> simpleCustomProperties) {
+		List<CacheRefreshAttributeMapping> result = new ArrayList<CacheRefreshAttributeMapping>();
 
-	public void removeItemFromSimpleDoubleProperties(List<SimpleDoubleProperty> items, SimpleDoubleProperty item) {
-		items.remove(item);
+		for (SimpleCustomProperty simpleCustomProperty : simpleCustomProperties) {
+			result.add(new CacheRefreshAttributeMapping(simpleCustomProperty.getValue1(), simpleCustomProperty.getValue2()));
+		}
+
+		return result;
 	}
 
 	public void addSourceConfig() {
-		addLdapConfig(this.sourceConfigs);
+		addLdapConfig(this.cacheRefreshConfiguration.getSourceConfigs());
 	}
 
 	public List<GluuLdapConfiguration> getSourceConfigs() {
-		return sourceConfigs;
+		return this.cacheRefreshConfiguration.getSourceConfigs();
 	}
 
 	public GluuLdapConfiguration getInumConfig() {
-		return inumConfig;
+		return this.cacheRefreshConfiguration.getInumConfig();
 	}
 
 	public GluuLdapConfiguration getTargetConfig() {
-		return targetConfig;
+		return this.cacheRefreshConfiguration.getTargetConfig();
 	}
 
-	public GluuCacheRefreshConfiguration getCacheRefreshConfig() {
-		return cacheRefreshConfig;
+	public CacheRefreshConfiguration getCacheRefreshConfig() {
+		return this.cacheRefreshConfiguration;
 	}
 
 	public GluuAppliance getAppliance() {
 		return appliance;
-	}
-
-	private boolean generateCacheConfigurationFile() {
-		VelocityContext context = new VelocityContext();
-		context.put("propUtil", new PropertyUtil());
-		context.put("sourceConfigs", fixLdapConfigurations(sourceConfigs));
-		context.put("inumConfig", fixLdapConfiguration(inumConfig));
-		context.put("targetConfig", fixLdapConfiguration(targetConfig));
-		context.put("cacheRefreshConfig", cacheRefreshConfig);
-
-		String conf = templateService.generateConfFile(CACHE_REFRESH_TEMPLATE_FILE, context);
-		if (conf == null) {
-			return false;
-		}
-
-		return templateService.writeApplicationConfFile(CACHE_REFRESH_CONFIGURATION_FILE, conf);
 	}
 	
 	private GluuLdapConfiguration fixLdapConfiguration(GluuLdapConfiguration ldapConfig) {
@@ -414,10 +395,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		// Reinit dialog
 		init();
 
-		if (StringHelper.isEmpty(cacheRefreshConfiguration.getInterceptorScriptFileName())) {
-			return;
-		}
-
 		this.showInterceptorValidationDialog = true;
 
 		boolean loadedScripts = externalCacheRefreshService.getCustomScriptConfigurations().size() > 0;
@@ -435,8 +412,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		String[] targetCustomObjectClasses = applicationConfiguration.getPersonObjectClassTypes();
 
 		// Collect all attributes
-		String[] keyAttributesWithoutValues = cacheRefreshConfiguration.getCompoundKeyAttributesWithoutValues();
-		String[] sourceAttributes = cacheRefreshConfiguration.getSourceAttributes();
+		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);
+		String[] sourceAttributes = getSourceAttributes(cacheRefreshConfiguration);
 
 		// Merge all attributes into one set
 		Set<String> allAttributes = new HashSet<String>();
@@ -463,7 +440,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		targetPerson.setCustomObjectClasses(targetCustomObjectClasses);
 
 		// Execute mapping according to configuration
-		Map<String, String> targetServerAttributesMapping = cacheRefreshConfiguration.getTargetServerAttributesMapping();
+		Map<String, String> targetServerAttributesMapping = getTargetServerAttributesMapping(cacheRefreshConfiguration);
 		cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
 
 		// Execute interceptor script
@@ -600,6 +577,55 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 				return;
 			}
 		}
+	}
+
+	private String[] getSourceAttributes(CacheRefreshConfiguration cacheRefreshConfigurationuration) {
+		return cacheRefreshConfigurationuration.getSourceAttributes().toArray(new String[0]);
+	}
+
+	private String[] getCompoundKeyAttributesWithoutValues(CacheRefreshConfiguration cacheRefreshConfigurationuration) {
+		String[] result = cacheRefreshConfigurationuration.getKeyAttributes().toArray(new String[0]);
+		for (int i = 0; i < result.length; i++) {
+			int index = result[i].indexOf('=');
+			if (index != -1) {
+				result[i] = result[i].substring(0, index);
+			}
+		}
+
+		return result;
+	}
+
+	private Map<String, String> getTargetServerAttributesMapping(CacheRefreshConfiguration cacheRefreshConfigurationuration) {
+		Map<String, String> result = new HashMap<String, String>();
+		for (CacheRefreshAttributeMapping attributeMapping : cacheRefreshConfigurationuration.getAttributeMapping()) {
+			result.put(attributeMapping.getSource(), attributeMapping.getDestination());
+		}
+
+		return result;
+	}
+
+	public CacheRefreshUpdateMethod getUpdateMethod() {
+		return updateMethod;
+	}
+
+	public void setUpdateMethod(CacheRefreshUpdateMethod updateMethod) {
+		this.updateMethod = updateMethod;
+	}
+
+	public List<SimpleProperty> getKeyAttributes() {
+		return keyAttributes;
+	}
+
+	public List<SimpleProperty> getKeyObjectClasses() {
+		return keyObjectClasses;
+	}
+
+	public List<SimpleProperty> getSourceAttributes() {
+		return sourceAttributes;
+	}
+
+	public List<SimpleCustomProperty> getAttributeMapping() {
+		return attributeMapping;
 	}
 
 }
