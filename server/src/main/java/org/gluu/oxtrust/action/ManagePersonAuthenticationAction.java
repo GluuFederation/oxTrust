@@ -152,6 +152,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			// Reload entry to include latest changes
 			GluuAppliance appliance = applianceService.getAppliance();
 
+			this.ldapConfig.updateStringsLists();
+
 			updateAuthConf(appliance);
 			
 			appliance.setAuthenticationMode(this.authenticationMode);

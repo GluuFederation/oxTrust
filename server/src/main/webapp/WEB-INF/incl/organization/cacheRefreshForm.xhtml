@@ -87,12 +87,10 @@
                 </h:selectOneMenu>
             </s:decorate>
 			  <h:panelGroup id="copyTogglePanelGroup">
-               
                     <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                        <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod eq 'copy'}" label="Source attribute to destination attribute mapping" labelAdd="source attribute to destination attribute mapping"
+                        <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'copy'}" label="Source attribute to destination attribute mapping" labelAdd="source attribute to destination attribute mapping"
                             properties="#{_configureCacheRefreshAction.attributeMapping}" propertiesAction="#{_configureCacheRefreshAction}" />
                     </h:panelGroup>
-               
             </h:panelGroup>
 
             <h:outputScript>
@@ -143,11 +141,9 @@
             </h:panelGroup>
             
              <h:panelGroup id="vdsTogglePanelGroup">
-                
                     <ox:ldapConfig ldapConfig="#{_configureCacheRefreshAction.targetConfig}" ldapConfigAction="#{configureCacheRefreshAction}"
-                        propertiesAction="#{_configureCacheRefreshAction}" displayBaseDn="false" displayAnonymousBind="false"
-                        displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" rendered="#{_configureCacheRefreshAction.cacheRefreshConfig.updateMethod eq 'vds'}" /> 
-               
+                        propertiesAction="#{_configureCacheRefreshAction}" displayBaseDn="false" displayAnonymousBind="false" displayEnable="false"
+                        displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'vds'}" /> 
             </h:panelGroup>
             
 </div></div>
@@ -185,7 +181,7 @@
                 <h:panelGroup>
                     <rich:dataGrid id="sourceConfigsId" value="#{_configureCacheRefreshAction.sourceConfigs}" var="_ldapConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
                         <ox:ldapConfig ldapConfig="#{_ldapConfig}" ldapConfigList="#{_configureCacheRefreshAction.sourceConfigs}"
-                            ldapConfigAction="#{configureCacheRefreshAction}" propertiesAction="#{_configureCacheRefreshAction}"
+                            ldapConfigAction="#{configureCacheRefreshAction}" propertiesAction="#{_configureCacheRefreshAction}"  displayEnable="false"
                             renderAfterRomoval="sourceConfigsId" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" /> 
                     </rich:dataGrid>
 
@@ -199,7 +195,7 @@
                 <h:panelGroup>
            
                 <ox:ldapConfig ldapConfig="#{_configureCacheRefreshAction.inumConfig}" ldapConfigAction="#{configureCacheRefreshAction}"
-                    propertiesAction="#{_configureCacheRefreshAction}" maxBaseDnItems="1" displayAnonymousBind="false"
+                    propertiesAction="#{_configureCacheRefreshAction}" maxBaseDnItems="1" displayAnonymousBind="false" displayEnable="false"
                     displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" /> 
           </h:panelGroup></div></div>
 
