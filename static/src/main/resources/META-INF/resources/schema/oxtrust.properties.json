@@ -20,23 +20,8 @@
       "type": "string",
       "minLength": 1
     },
-    "orgDisplayName": {
-      "id": "orgDisplayName",
-      "type": "string",
-      "minLength": 1
-    },
-    "orgShortName": {
-      "id": "orgShortName",
-      "type": "string",
-      "minLength": 1
-    },
     "orgSupportEmail": {
       "id": "orgSupportEmail",
-      "type": "string",
-      "minLength": 1
-    },
-    "applianceIname": {
-      "id": "applianceIname",
       "type": "string",
       "minLength": 1
     },
