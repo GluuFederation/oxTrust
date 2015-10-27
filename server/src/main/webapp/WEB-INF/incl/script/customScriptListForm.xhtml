@@ -46,7 +46,7 @@
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 		                                    <ui:define name="label">Name</ui:define>
 		                                    <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" validatorMessage="Script Name cannot contain space(s)." styleClass="form-control">
-												<f:validateRegex pattern="^[a-zA-Z0-9]+$"/>						    
+												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>						    
 											</h:inputText>
 		                                </s:decorate>
 
