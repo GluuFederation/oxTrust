@@ -1,1198 +1,919 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "/",
-  "title": "oxauth-config.xml",
-  "type": "object",
-  "additionalProperties": true,
-  "properties": {
-    "mode": {
-      "id": "mode",
-      "type": "string",
-      "minLength": 1
-    },
-    "issuer": {
-      "id": "issuer",
-      "title": "Issuer",
-      "type": "string",
-      "minLength": 1
-    },
-    "loginPage": {
-      "id": "loginPage",
-      "type": "string",
-      "minLength": 1
-    },
-    "authorizationPage": {
-      "id": "authorizationPage",
-      "type": "string",
-      "minLength": 1
-    },
-    "baseEndpoint": {
-      "id": "baseEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "authorizationEndpoint": {
-      "id": "authorizationEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "tokenEndpoint": {
-      "id": "tokenEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "userInfoEndpoint": {
-      "id": "userInfoEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "clientInfoEndpoint": {
-      "id": "clientInfoEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "checkSessionIFrame": {
-      "id": "checkSessionIFrame",
-      "type": "string",
-      "minLength": 1
-    },
-    "endSessionEndpoint": {
-      "id": "endSessionEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "jwksUri": {
-      "id": "jwksUri",
-      "type": "string",
-      "minLength": 1
-    },
-    "registrationEndpoint": {
-      "id": "registrationEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "validateTokenEndpoint": {
-      "id": "validateTokenEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "federationMetadataEndpoint": {
-      "id": "federationMetadataEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "federationEndpoint": {
-      "id": "federationEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "openIdDiscoveryEndpoint": {
-      "id": "openIdDiscoveryEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "openIdConfigurationEndpoint": {
-      "id": "openIdConfigurationEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "idGenerationEndpoint": {
-      "id": "idGenerationEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "introspectionEndpoint": {
-      "id": "introspectionEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "umaConfigurationEndpoint": {
-      "id": "umaConfigurationEndpoint",
-      "type": "string",
-      "minLength": 1
-    },
-    "openidSubAttribute": {
-      "id": "openidSubAttribute",
-      "type": "string",
-      "minLength": 1
-    },
-    "responseTypesSupported": {
-      "id": "responseTypesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "4",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "5",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "6",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "grantTypesSupported": {
-      "id": "grantTypesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "acrValuesSupported": {
-      "id": "acrValuesSupported",
-      "type": "string",
-      "minLength": 1
-    },
-    "subjectTypesSupported": {
-      "id": "subjectTypesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "userInfoSigningAlgValuesSupported": {
-      "id": "userInfoSigningAlgValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "4",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "5",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "6",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "7",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "8",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "userInfoEncryptionAlgValuesSupported": {
-      "id": "userInfoEncryptionAlgValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "userInfoEncryptionEncValuesSupported": {
-      "id": "userInfoEncryptionEncValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "idTokenSigningAlgValuesSupported": {
-      "id": "idTokenSigningAlgValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "4",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "5",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "6",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "7",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "8",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "9",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "idTokenEncryptionAlgValuesSupported": {
-      "id": "idTokenEncryptionAlgValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "idTokenEncryptionEncValuesSupported": {
-      "id": "idTokenEncryptionEncValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "requestObjectSigningAlgValuesSupported": {
-      "id": "requestObjectSigningAlgValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "4",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "5",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "6",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "7",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "8",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "9",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "requestObjectEncryptionAlgValuesSupported": {
-      "id": "requestObjectEncryptionAlgValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "requestObjectEncryptionEncValuesSupported": {
-      "id": "requestObjectEncryptionEncValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "tokenEndpointAuthMethodsSupported": {
-      "id": "tokenEndpointAuthMethodsSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "tokenEndpointAuthSigningAlgValuesSupported": {
-      "id": "tokenEndpointAuthSigningAlgValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "3",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "4",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "5",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "6",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "7",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "8",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "dynamicRegistrationCustomAttributes": {
-      "id": "dynamicRegistrationCustomAttributes",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "displayValuesSupported": {
-      "id": "displayValuesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "claimTypesSupported": {
-      "id": "claimTypesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": {
-        "id": "0",
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "serviceDocumentation": {
-      "id": "serviceDocumentation",
-      "type": "string",
-      "minLength": 1
-    },
-    "claimsLocalesSupported": {
-      "id": "claimsLocalesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": {
-        "id": "0",
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "uiLocalesSupported": {
-      "id": "uiLocalesSupported",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "claimsParameterSupported": {
-      "id": "claimsParameterSupported",
-      "type": "boolean"
-    },
-    "requestParameterSupported": {
-      "id": "requestParameterSupported",
-      "type": "boolean"
-    },
-    "requestUriParameterSupported": {
-      "id": "requestUriParameterSupported",
-      "type": "boolean"
-    },
-    "requireRequestUriRegistration": {
-      "id": "requireRequestUriRegistration",
-      "type": "boolean"
-    },
-    "opPolicyUri": {
-      "id": "opPolicyUri",
-      "type": "string",
-      "minLength": 1
-    },
-    "opTosUri": {
-      "id": "opTosUri",
-      "type": "string",
-      "minLength": 1
-    },
-    "authorizationCodeLifetime": {
-      "id": "authorizationCodeLifetime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "refreshTokenLifetime": {
-      "id": "refreshTokenLifetime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "idTokenLifetime": {
-      "id": "idTokenLifetime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "shortLivedAccessTokenLifetime": {
-      "id": "shortLivedAccessTokenLifetime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "longLivedAccessTokenLifetime": {
-      "id": "longLivedAccessTokenLifetime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "umaRequesterPermissionTokenLifetime": {
-      "id": "umaRequesterPermissionTokenLifetime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "umaAddScopesAutomatically": {
-      "id": "umaAddScopesAutomatically",
-      "type": "boolean"
-    },
-    "umaKeepClientDuringResourceSetRegistration": {
-      "id": "umaKeepClientDuringResourceSetRegistration",
-      "type": "boolean"
-    },
-    "cleanServiceInterval": {
-      "id": "cleanServiceInterval",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "federationCheckInterval": {
-      "id": "federationCheckInterval",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "keyRegenerationEnabled": {
-      "id": "keyRegenerationEnabled",
-      "type": "boolean"
-    },
-    "keyRegenerationInterval": {
-      "id": "keyRegenerationInterval",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "defaultSignatureAlgorithm": {
-      "id": "defaultSignatureAlgorithm",
-      "type": "string",
-      "minLength": 1
-    },
-    "oxOpenIdConnectVersion": {
-      "id": "oxOpenIdConnectVersion",
-      "type": "string",
-      "minLength": 1
-    },
-    "organizationInum": {
-      "id": "organizationInum",
-      "type": "string",
-      "minLength": 1
-    },
-    "oxId": {
-      "id": "oxId",
-      "type": "string",
-      "minLength": 1
-    },
-    "dynamicRegistrationEnabled": {
-      "id": "dynamicRegistrationEnabled",
-      "type": "boolean"
-    },
-    "dynamicRegistrationExpirationTime": {
-      "id": "dynamicRegistrationExpirationTime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "dynamicRegistrationPersistClientAuthorizations": {
-      "id": "dynamicRegistrationPersistClientAuthorizations",
-      "type": "boolean"
-    },
-    "trustedClientEnabled": {
-      "id": "trustedClientEnabled",
-      "type": "boolean"
-    },
-    "dynamicRegistrationScopesParamEnabled": {
-      "id": "dynamicRegistrationScopesParamEnabled",
-      "type": "boolean"
-    },
-    "dynamicRegistrationCustomObjectClass": {
-      "id": "dynamicRegistrationCustomObjectClass",
-      "type": "string",
-      "minLength": 1
-    },
-    "federationEnabled": {
-      "id": "federationEnabled",
-      "type": "boolean"
-    },
-    "federationSkipPolicy": {
-      "id": "federationSkipPolicy",
-      "type": "string",
-      "minLength": 1
-    },
-    "federationScopePolicy": {
-      "id": "federationScopePolicy",
-      "type": "string",
-      "minLength": 1
-    },
-    "federationSigningAlg": {
-      "id": "federationSigningAlg",
-      "type": "string",
-      "minLength": 1
-    },
-    "federationSigningKid": {
-      "id": "federationSigningKid",
-      "type": "string",
-      "minLength": 1
-    },
-    "authenticationFiltersEnabled": {
-      "id": "authenticationFiltersEnabled",
-      "type": "boolean"
-    },
-    "clientAuthenticationFiltersEnabled": {
-      "id": "clientAuthenticationFiltersEnabled",
-      "type": "boolean"
-    },
-    "authenticationFilters": {
-      "id": "authenticationFilters",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": [
-        {
-          "id": "0",
-          "type": "object",
-          "additionalProperties": true,
-          "properties": {
-            "filter": {
-              "id": "filter",
-              "type": "string",
-              "minLength": 1
-            },
-            "bind": {
-              "id": "bind",
-              "type": "boolean"
-            },
-            "bindPasswordAttribute": {
-              "id": "bindPasswordAttribute",
-              "type": "string",
-              "minLength": 1
-            },
-            "baseDn": {
-              "id": "baseDn",
-              "type": "string",
-              "minLength": 1
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "/",
+    "title": "oxauth-config.xml",
+    "type": "object",
+    "additionalProperties": true,
+    "properties": {
+        "mode": {
+            "id": "mode",
+            "type": "string",
+            "enum": [
+                "memory",
+                "ldap"
+            ]
+        },
+        "issuer": {
+            "id": "issuer",
+            "title": "Issuer",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "loginPage": {
+            "id": "loginPage",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "authorizationPage": {
+            "id": "authorizationPage",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "baseEndpoint": {
+            "id": "baseEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "authorizationEndpoint": {
+            "id": "authorizationEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "tokenEndpoint": {
+            "id": "tokenEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "userInfoEndpoint": {
+            "id": "userInfoEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "clientInfoEndpoint": {
+            "id": "clientInfoEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "checkSessionIFrame": {
+            "id": "checkSessionIFrame",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "endSessionEndpoint": {
+            "id": "endSessionEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "jwksUri": {
+            "id": "jwksUri",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "registrationEndpoint": {
+            "id": "registrationEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "validateTokenEndpoint": {
+            "id": "validateTokenEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "federationMetadataEndpoint": {
+            "id": "federationMetadataEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "federationEndpoint": {
+            "id": "federationEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "openIdDiscoveryEndpoint": {
+            "id": "openIdDiscoveryEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "openIdConfigurationEndpoint": {
+            "id": "openIdConfigurationEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "idGenerationEndpoint": {
+            "id": "idGenerationEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "introspectionEndpoint": {
+            "id": "introspectionEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "umaConfigurationEndpoint": {
+            "id": "umaConfigurationEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "openidSubAttribute": {
+            "id": "openidSubAttribute",
+            "type": "string",
+            "minLength": 1
+        },
+        "responseTypesSupported": {
+            "id": "responseTypesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "code",
+                    "code id_token",
+                    "token",
+                    "token id_token",
+                    "code token",
+                    "code token id_token",
+                    "id_token"
+                ]
             }
-          }
         },
-        {
-          "id": "1",
-          "type": "object",
-          "additionalProperties": true,
-          "properties": {
-            "filter": {
-              "id": "filter",
-              "type": "string",
-              "minLength": 1
-            },
-            "bind": {
-              "id": "bind",
-              "type": "boolean"
-            },
-            "bindPasswordAttribute": {
-              "id": "bindPasswordAttribute",
-              "type": "string",
-              "minLength": 1
-            },
-            "baseDn": {
-              "id": "baseDn",
-              "type": "string",
-              "minLength": 1
+        "grantTypesSupported": {
+            "id": "grantTypesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "authorization_code",
+                    "implicit",
+                    "urn:ietf:params:oauth:grant-type:jwt-bearer"
+                ]
             }
-          }
+        },
+        "subjectTypesSupported": {
+            "id": "subjectTypesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "public",
+                    "pairwise"
+                ]
+            }
+        },
+        "userInfoSigningAlgValuesSupported": {
+            "id": "userInfoSigningAlgValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "HS256",
+                    "HS384",
+                    "HS512",
+                    "RS256",
+                    "RS384",
+                    "RS512",
+                    "ES256",
+                    "ES384",
+                    "ES512"
+                ]
+            }
+        },
+        "userInfoEncryptionAlgValuesSupported": {
+            "id": "userInfoEncryptionAlgValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "RSA1_5",
+                    "RSA-OAEP",
+                    "A128KW",
+                    "A256KW"
+                ]
+            }
+        },
+        "userInfoEncryptionEncValuesSupported": {
+            "id": "userInfoEncryptionEncValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "A128CBC+HS256",
+                    "A256CBC+HS512",
+                    "A128GCM",
+                    "A256GCM"
+                ]
+            }
+        },
+        "idTokenSigningAlgValuesSupported": {
+            "id": "idTokenSigningAlgValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "none",
+                    "HS256",
+                    "HS384",
+                    "HS512",
+                    "RS256",
+                    "RS384",
+                    "RS512",
+                    "ES256",
+                    "ES384",
+                    "ES512"
+                ]
+            }
+        },
+        "idTokenEncryptionAlgValuesSupported": {
+            "id": "idTokenEncryptionAlgValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "RSA1_5",
+                    "RSA-OAEP",
+                    "A128KW",
+                    "A256KW"
+                ]
+            }
+        },
+        "idTokenEncryptionEncValuesSupported": {
+            "id": "idTokenEncryptionEncValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "A128CBC+HS256",
+                    "A256CBC+HS512",
+                    "A128GCM",
+                    "A256GCM"
+                ]
+            }
+        },
+        "requestObjectSigningAlgValuesSupported": {
+            "id": "requestObjectSigningAlgValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "none",
+                    "HS256",
+                    "HS384",
+                    "HS512",
+                    "RS256",
+                    "RS384",
+                    "RS512",
+                    "ES256",
+                    "ES384",
+                    "ES512"
+                ]
+            }
+        },
+        "requestObjectEncryptionAlgValuesSupported": {
+            "id": "requestObjectEncryptionAlgValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "RSA1_5",
+                    "RSA-OAEP",
+                    "A128KW",
+                    "A256KW"
+                ]
+            }
+        },
+        "requestObjectEncryptionEncValuesSupported": {
+            "id": "requestObjectEncryptionEncValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "A128CBC+HS256",
+                    "A256CBC+HS512",
+                    "A128GCM",
+                    "A256GCM"
+                ]
+            }
+        },
+        "tokenEndpointAuthMethodsSupported": {
+            "id": "tokenEndpointAuthMethodsSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "client_secret_basic",
+                    "client_secret_post",
+                    "client_secret_jwt",
+                    "private_key_jwt"
+                ]
+            }
+        },
+        "tokenEndpointAuthSigningAlgValuesSupported": {
+            "id": "tokenEndpointAuthSigningAlgValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "HS256",
+                    "HS384",
+                    "HS512",
+                    "RS256",
+                    "RS384",
+                    "RS512",
+                    "ES256",
+                    "ES384",
+                    "ES512"
+                ]
+            }
+        },
+        "dynamicRegistrationCustomAttributes": {
+            "id": "dynamicRegistrationCustomAttributes",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "displayValuesSupported": {
+            "id": "displayValuesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "page",
+                    "popup"
+                ]
+            }
+        },
+        "claimTypesSupported": {
+            "id": "claimTypesSupported",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "normal"
+                ]
+            }
+        },
+        "serviceDocumentation": {
+            "id": "serviceDocumentation",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "claimsLocalesSupported": {
+            "id": "claimsLocalesSupported",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "uiLocalesSupported": {
+            "id": "uiLocalesSupported",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "claimsParameterSupported": {
+            "id": "claimsParameterSupported",
+            "type": "boolean"
+        },
+        "requestParameterSupported": {
+            "id": "requestParameterSupported",
+            "type": "boolean"
+        },
+        "requestUriParameterSupported": {
+            "id": "requestUriParameterSupported",
+            "type": "boolean"
+        },
+        "requireRequestUriRegistration": {
+            "id": "requireRequestUriRegistration",
+            "type": "boolean"
+        },
+        "opPolicyUri": {
+            "id": "opPolicyUri",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "opTosUri": {
+            "id": "opTosUri",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "authorizationCodeLifetime": {
+            "id": "authorizationCodeLifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "refreshTokenLifetime": {
+            "id": "refreshTokenLifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "idTokenLifetime": {
+            "id": "idTokenLifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "shortLivedAccessTokenLifetime": {
+            "id": "shortLivedAccessTokenLifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "longLivedAccessTokenLifetime": {
+            "id": "longLivedAccessTokenLifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "umaRequesterPermissionTokenLifetime": {
+            "id": "umaRequesterPermissionTokenLifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "umaAddScopesAutomatically": {
+            "id": "umaAddScopesAutomatically",
+            "type": "boolean"
+        },
+        "umaKeepClientDuringResourceSetRegistration": {
+            "id": "umaKeepClientDuringResourceSetRegistration",
+            "type": "boolean"
+        },
+        "cleanServiceInterval": {
+            "id": "cleanServiceInterval",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "federationCheckInterval": {
+            "id": "federationCheckInterval",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "keyRegenerationEnabled": {
+            "id": "keyRegenerationEnabled",
+            "type": "boolean"
+        },
+        "keyRegenerationInterval": {
+            "id": "keyRegenerationInterval",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "defaultSignatureAlgorithm": {
+            "id": "defaultSignatureAlgorithm",
+            "type": "string",
+            "enum": [
+                "HS256",
+                "HS384",
+                "HS512",
+                "RS256",
+                "RS384",
+                "RS512",
+                "ES256",
+                "ES384",
+                "ES512"
+            ]
+        },
+        "oxOpenIdConnectVersion": {
+            "id": "oxOpenIdConnectVersion",
+            "type": "string",
+            "minLength": 1
+        },
+        "organizationInum": {
+            "id": "organizationInum",
+            "type": "string",
+            "minLength": 1
+        },
+        "oxId": {
+            "id": "oxId",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "dynamicRegistrationEnabled": {
+            "id": "dynamicRegistrationEnabled",
+            "type": "boolean"
+        },
+        "dynamicRegistrationExpirationTime": {
+            "id": "dynamicRegistrationExpirationTime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "dynamicRegistrationPersistClientAuthorizations": {
+            "id": "dynamicRegistrationPersistClientAuthorizations",
+            "type": "boolean"
+        },
+        "trustedClientEnabled": {
+            "id": "trustedClientEnabled",
+            "type": "boolean"
+        },
+        "dynamicRegistrationScopesParamEnabled": {
+            "id": "dynamicRegistrationScopesParamEnabled",
+            "type": "boolean"
+        },
+        "dynamicRegistrationCustomObjectClass": {
+            "id": "dynamicRegistrationCustomObjectClass",
+            "type": "string",
+            "minLength": 1
+        },
+        "federationEnabled": {
+            "id": "federationEnabled",
+            "type": "boolean"
+        },
+        "federationSkipPolicy": {
+            "id": "federationSkipPolicy",
+            "type": "string",
+            "enum": [
+                "OR",
+                "AND"
+            ]
+        },
+        "federationScopePolicy": {
+            "id": "federationScopePolicy",
+            "type": "string",
+            "enum": [
+                "join"
+            ]
+        },
+        "federationSigningAlg": {
+            "id": "federationSigningAlg",
+            "type": "string",
+            "enum": [
+                "HS256",
+                "HS384",
+                "HS512",
+                "RS256",
+                "RS384",
+                "RS512",
+                "ES256",
+                "ES384",
+                "ES512"
+            ]
+        },
+        "federationSigningKid": {
+            "id": "federationSigningKid",
+            "type": "string",
+            "minLength": 1
+        },
+        "authenticationFiltersEnabled": {
+            "id": "authenticationFiltersEnabled",
+            "type": "boolean"
+        },
+        "clientAuthenticationFiltersEnabled": {
+            "id": "clientAuthenticationFiltersEnabled",
+            "type": "boolean"
+        },
+        "authenticationFilters": {
+            "id": "authenticationFilters",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": false,
+            "additionalItems": true,
+            "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                    "filter": {
+                        "id": "filter",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "bind": {
+                        "id": "bind",
+                        "type": "boolean"
+                    },
+                    "bindPasswordAttribute": {
+                        "id": "bindPasswordAttribute",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "baseDn": {
+                        "id": "baseDn",
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            }
+        },
+        "clientAuthenticationFilters": {
+            "id": "clientAuthenticationFilters",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": false,
+            "additionalItems": true,
+            "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                    "filter": {
+                        "id": "filter",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "bind": {
+                        "id": "bind",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "bindPasswordAttribute": {
+                        "id": "bindPasswordAttribute",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "baseDn": {
+                        "id": "baseDn",
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            }
+        },
+        "externalAuthenticatorEnabled": {
+            "id": "externalAuthenticatorEnabled",
+            "type": "boolean"
+        },
+        "applianceInum": {
+            "id": "applianceInum",
+            "type": "string",
+            "minLength": 1
+        },
+        "sessionIdUnusedLifetime": {
+            "id": "sessionIdUnusedLifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "sessionIdUnauthenticatedUnusedLifetime": {
+            "id": "sessionIdUnauthenticatedUnusedLifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "sessionIdEnabled": {
+            "id": "sessionIdEnabled",
+            "type": "boolean"
+        },
+        "sessionIdPersistOnPromptNone": {
+            "id": "sessionIdPersistOnPromptNone",
+            "type": "boolean"
+        },
+        "configurationUpdateInterval": {
+            "id": "configurationUpdateInterval",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "cssLocation": {
+            "id": "cssLocation",
+            "type": "string",
+            "minLength": 1
+        },
+        "jsLocation": {
+            "id": "jsLocation",
+            "type": "string",
+            "minLength": 1
+        },
+        "imgLocation": {
+            "id": "imgLocation",
+            "type": "string",
+            "minLength": 1
+        },
+        "metricReporterInterval": {
+            "id": "metricReporterInterval",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "metricReporterKeepDataDays": {
+            "id": "metricReporterKeepDataDays",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
         }
-      ]
     },
-    "clientAuthenticationFilters": {
-      "id": "clientAuthenticationFilters",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": false,
-      "additionalItems": true,
-      "items": {
-        "id": "0",
-        "type": "object",
-        "additionalProperties": true,
-        "properties": {
-          "filter": {
-            "id": "filter",
-            "type": "string",
-            "minLength": 1
-          },
-          "bind": {
-            "id": "bind",
-            "type": "string",
-            "minLength": 1
-          },
-          "bindPasswordAttribute": {
-            "id": "bindPasswordAttribute",
-            "type": "string",
-            "minLength": 1
-          },
-          "baseDn": {
-            "id": "baseDn",
-            "type": "string",
-            "minLength": 1
-          }
-        }
-      }
-    },
-    "externalAuthenticatorEnabled": {
-      "id": "externalAuthenticatorEnabled",
-      "type": "boolean"
-    },
-    "applianceInum": {
-      "id": "applianceInum",
-      "type": "string",
-      "minLength": 1
-    },
-    "sessionIdUnusedLifetime": {
-      "id": "sessionIdUnusedLifetime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "sessionIdUnauthenticatedUnusedLifetime": {
-      "id": "sessionIdUnauthenticatedUnusedLifetime",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "sessionIdEnabled": {
-      "id": "sessionIdEnabled",
-      "type": "boolean"
-    },
-    "sessionIdPersistOnPromptNone": {
-      "id": "sessionIdPersistOnPromptNone",
-      "type": "boolean"
-    },
-    "configurationUpdateInterval": {
-      "id": "configurationUpdateInterval",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "cssLocation": {
-      "id": "cssLocation",
-      "type": "string",
-      "minLength": 1
-    },
-    "jsLocation": {
-      "id": "jsLocation",
-      "type": "string",
-      "minLength": 1
-    },
-    "imgLocation": {
-      "id": "imgLocation",
-      "type": "string",
-      "minLength": 1
-    },
-    "metricReporterInterval": {
-      "id": "metricReporterInterval",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    },
-    "metricReporterKeepDataDays": {
-      "id": "metricReporterKeepDataDays",
-      "type": "integer",
-      "multipleOf": 1,
-      "maximum": 100,
-      "minimum": 1,
-      "exclusiveMaximum": false,
-      "exclusiveMinimum": false
-    }
-  },
-  "required": [
-    "mode",
-    "issuer",
-    "loginPage",
-    "authorizationPage",
-    "baseEndpoint",
-    "authorizationEndpoint",
-    "tokenEndpoint",
-    "userInfoEndpoint",
-    "clientInfoEndpoint",
-    "checkSessionIFrame",
-    "endSessionEndpoint",
-    "jwksUri",
-    "registrationEndpoint",
-    "validateTokenEndpoint",
-    "federationMetadataEndpoint",
-    "federationEndpoint",
-    "openIdDiscoveryEndpoint",
-    "openIdConfigurationEndpoint",
-    "idGenerationEndpoint",
-    "introspectionEndpoint",
-    "umaConfigurationEndpoint",
-    "openidSubAttribute",
-    "responseTypesSupported",
-    "grantTypesSupported",
-    "acrValuesSupported",
-    "subjectTypesSupported",
-    "userInfoSigningAlgValuesSupported",
-    "userInfoEncryptionAlgValuesSupported",
-    "userInfoEncryptionEncValuesSupported",
-    "idTokenSigningAlgValuesSupported",
-    "idTokenEncryptionAlgValuesSupported",
-    "idTokenEncryptionEncValuesSupported",
-    "requestObjectSigningAlgValuesSupported",
-    "requestObjectEncryptionAlgValuesSupported",
-    "requestObjectEncryptionEncValuesSupported",
-    "tokenEndpointAuthMethodsSupported",
-    "tokenEndpointAuthSigningAlgValuesSupported",
-    "dynamicRegistrationCustomAttributes",
-    "displayValuesSupported",
-    "claimTypesSupported",
-    "serviceDocumentation",
-    "claimsLocalesSupported",
-    "uiLocalesSupported",
-    "claimsParameterSupported",
-    "requestParameterSupported",
-    "requestUriParameterSupported",
-    "requireRequestUriRegistration",
-    "opPolicyUri",
-    "opTosUri",
-    "authorizationCodeLifetime",
-    "refreshTokenLifetime",
-    "idTokenLifetime",
-    "shortLivedAccessTokenLifetime",
-    "longLivedAccessTokenLifetime",
-    "umaRequesterPermissionTokenLifetime",
-    "umaAddScopesAutomatically",
-    "umaKeepClientDuringResourceSetRegistration",
-    "cleanServiceInterval",
-    "federationCheckInterval",
-    "keyRegenerationEnabled",
-    "keyRegenerationInterval",
-    "defaultSignatureAlgorithm",
-    "oxOpenIdConnectVersion",
-    "organizationInum",
-    "oxId",
-    "dynamicRegistrationEnabled",
-    "dynamicRegistrationExpirationTime",
-    "trustedClientEnabled",
-    "dynamicRegistrationScopesParamEnabled",
-    "dynamicRegistrationCustomObjectClass",
-    "federationEnabled",
-    "federationSkipPolicy",
-    "federationScopePolicy",
-    "federationSigningAlg",
-    "federationSigningKid",
-    "authenticationFiltersEnabled",
-    "clientAuthenticationFiltersEnabled",
-    "authenticationFilters",
-    "clientAuthenticationFilters",
-    "externalAuthenticatorEnabled",
-    "applianceInum",
-    "sessionIdUnusedLifetime",
-    "sessionIdUnauthenticatedUnusedLifetime",
-    "sessionIdEnabled",
-    "sessionIdPersistOnPromptNone",
-    "configurationUpdateInterval",
-    "cssLocation",
-    "jsLocation",
-    "imgLocation",
-    "metricReporterInterval",
-    "metricReporterKeepDataDays"
-  ]
+    "required": [
+        "mode",
+        "issuer",
+        "loginPage",
+        "authorizationPage",
+        "baseEndpoint",
+        "authorizationEndpoint",
+        "tokenEndpoint",
+        "userInfoEndpoint",
+        "clientInfoEndpoint",
+        "checkSessionIFrame",
+        "endSessionEndpoint",
+        "jwksUri",
+        "registrationEndpoint",
+        "validateTokenEndpoint",
+        "federationMetadataEndpoint",
+        "federationEndpoint",
+        "openIdDiscoveryEndpoint",
+        "openIdConfigurationEndpoint",
+        "idGenerationEndpoint",
+        "introspectionEndpoint",
+        "umaConfigurationEndpoint",
+        "openidSubAttribute",
+        "responseTypesSupported",
+        "grantTypesSupported",
+        "subjectTypesSupported",
+        "userInfoSigningAlgValuesSupported",
+        "userInfoEncryptionAlgValuesSupported",
+        "userInfoEncryptionEncValuesSupported",
+        "idTokenSigningAlgValuesSupported",
+        "idTokenEncryptionAlgValuesSupported",
+        "idTokenEncryptionEncValuesSupported",
+        "requestObjectSigningAlgValuesSupported",
+        "requestObjectEncryptionAlgValuesSupported",
+        "requestObjectEncryptionEncValuesSupported",
+        "tokenEndpointAuthMethodsSupported",
+        "tokenEndpointAuthSigningAlgValuesSupported",
+        "dynamicRegistrationCustomAttributes",
+        "displayValuesSupported",
+        "claimTypesSupported",
+        "serviceDocumentation",
+        "claimsLocalesSupported",
+        "uiLocalesSupported",
+        "claimsParameterSupported",
+        "requestParameterSupported",
+        "requestUriParameterSupported",
+        "requireRequestUriRegistration",
+        "opPolicyUri",
+        "opTosUri",
+        "authorizationCodeLifetime",
+        "refreshTokenLifetime",
+        "idTokenLifetime",
+        "shortLivedAccessTokenLifetime",
+        "longLivedAccessTokenLifetime",
+        "umaRequesterPermissionTokenLifetime",
+        "umaAddScopesAutomatically",
+        "umaKeepClientDuringResourceSetRegistration",
+        "cleanServiceInterval",
+        "federationCheckInterval",
+        "keyRegenerationEnabled",
+        "keyRegenerationInterval",
+        "defaultSignatureAlgorithm",
+        "oxOpenIdConnectVersion",
+        "organizationInum",
+        "oxId",
+        "dynamicRegistrationEnabled",
+        "dynamicRegistrationExpirationTime",
+        "dynamicRegistrationPersistClientAuthorizations",
+        "trustedClientEnabled",
+        "dynamicRegistrationScopesParamEnabled",
+        "dynamicRegistrationCustomObjectClass",
+        "federationEnabled",
+        "federationSkipPolicy",
+        "federationScopePolicy",
+        "federationSigningAlg",
+        "federationSigningKid",
+        "authenticationFiltersEnabled",
+        "clientAuthenticationFiltersEnabled",
+        "authenticationFilters",
+        "clientAuthenticationFilters",
+        "externalAuthenticatorEnabled",
+        "applianceInum",
+        "sessionIdUnusedLifetime",
+        "sessionIdUnauthenticatedUnusedLifetime",
+        "sessionIdEnabled",
+        "sessionIdPersistOnPromptNone",
+        "configurationUpdateInterval",
+        "cssLocation",
+        "jsLocation",
+        "imgLocation",
+        "metricReporterInterval",
+        "metricReporterKeepDataDays"
+    ]
 }
