@@ -184,11 +184,6 @@
         }
       ]
     },
-    "acrValuesSupported": {
-      "id": "acrValuesSupported",
-      "type": "string",
-      "minLength": 1
-    },
     "subjectTypesSupported": {
       "id": "subjectTypesSupported",
       "type": "array",
