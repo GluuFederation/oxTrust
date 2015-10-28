@@ -477,15 +477,16 @@
 								$('.logo').bind(
 										'mouseleave',
 										function(e) {
-											var element=e.toElement;
-											if(element)
+											
+											var element=e.toElement || e.relatedTarget;
+											if(element!=null)
 											{
 												var parent=element.parentElement;
-												if(parent)
+												if(parent!=null)
 												{
 													var parentParent=parent.parentElement;
 													var className=$(parentParent).attr('class');
-													if(className)
+													if(className!=null)
 													{
 														if(className!='logoSubMenu')
 														{
@@ -500,11 +501,11 @@
 								$('.logoSubMenu').bind(
 										'mouseleave',
 										function(e) {
-											var element=e.toElement;
-											if(element)
+											var element=e.toElement || e.relatedTarget;
+											if(element!=null)
 											{
 												var className=$(element).attr('class');
-												if(className)
+												if(className!=null)
 												{
 													if(className!='logo')
 													{
