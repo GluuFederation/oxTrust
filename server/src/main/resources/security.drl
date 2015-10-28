@@ -13,7 +13,7 @@ rule AccessAttributeInventory
   activation-group "permissions"
 when
   check: PermissionCheck(target == "attribute", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -23,7 +23,7 @@ rule AccessPersonInventory
   activation-group "permissions"
 when
   check: PermissionCheck(target == "person", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -33,7 +33,7 @@ rule AccessGroupInventory
   activation-group "permissions"
 when
   check: PermissionCheck(target == "group", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -43,7 +43,7 @@ rule AccessTrustManagement
   activation-group "permissions"
 when
   check: PermissionCheck(target == "trust", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -53,7 +53,7 @@ rule AccessConfiguration
   activation-group "permissions"
 when
   check: PermissionCheck(target == "configuration", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -63,7 +63,7 @@ rule AccessLogFile
   activation-group "permissions"
 when
   check: PermissionCheck(target == "log", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -73,7 +73,7 @@ rule AccessImportPerson
   activation-group "permissions"
 when
   check: PermissionCheck(target == "import", action == "person", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -84,7 +84,7 @@ rule AccessWhitePagesProfile
 when
   org: GluuAppliance()
   check: PermissionCheck(target == org, action == "whitePagesEnabled", granted == false)
-  (GluuAppliance((whitePagesEnabled != null) && (whitePagesEnabled.booleanValue == true)) && Role((name == "owner") || (name == "manager") || (name == "user")))
+  (GluuAppliance((whitePagesEnabled != null) && (whitePagesEnabled.booleanValue == true)) && Role((name == "manager") || (name == "user")))
 then
   check.grant();
 end
@@ -95,7 +95,7 @@ rule AccessProfileManagement
 when
   org: GluuAppliance()
   check: PermissionCheck(target == org, action == "profile_management", granted == false)
-  (GluuAppliance((profileManagment != null) && (profileManagment.booleanValue == true)) && Role((name == "owner") || (name == "manager") || (name == "user")))
+  (GluuAppliance((profileManagment != null) && (profileManagment.booleanValue == true)) && Role((name == "manager") || (name == "user")))
 then
   check.grant();
 end
@@ -105,7 +105,7 @@ rule AccessPersonProfile
   activation-group "permissions"
 when
   check: PermissionCheck(target == "profile", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager") || (name == "user"))
+  Role((name == "manager") || (name == "user"))
 then
   check.grant();
 end
@@ -115,7 +115,7 @@ rule AccessRegistrationLinks
   activation-group "permissions"
 when
   check: PermissionCheck(target == "registrationLinks", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -124,7 +124,7 @@ rule AccessSelfTest
   activation-group "permissions"
 when
   check: PermissionCheck(target == "scim_test", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -134,7 +134,7 @@ rule AccessScimConfiguration
   activation-group "permissions"
 when
   check: PermissionCheck(target == "scim", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -144,7 +144,7 @@ rule AccessClientInventory
   activation-group "permissions"
 when
   check: PermissionCheck(target == "client", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -154,7 +154,7 @@ rule AccessScopeInventory
   activation-group "permissions"
 when
   check: PermissionCheck(target == "scope", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -164,7 +164,7 @@ rule AccessOxAuthManagement
   activation-group "permissions"
 when
   check: PermissionCheck(target == "oxauth", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -174,7 +174,7 @@ rule AccessUmaConfiguration
   activation-group "permissions"
 when
   check: PermissionCheck(target == "uma", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
@@ -184,7 +184,7 @@ rule AccessOxPushInventory
   activation-group "permissions"
 when
   check: PermissionCheck(target == "oxpush", action == "access", granted == false)
-  Role((name == "owner") || (name == "manager"))
+  Role((name == "manager"))
 then
   check.grant();
 end
