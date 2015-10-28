@@ -25,21 +25,21 @@ $(function () {
 {
     label: "Successful Login",
     fillColor: "#00BE79",
-    strokeColor: "rgba(60,141,188,0.8)",
-    pointColor: "#3b8bba",
-    pointStrokeColor: "rgba(60,141,188,1)",
+    strokeColor: "#00BE79",
+    pointColor: "#00BE79",
+    pointStrokeColor: "#00BE79",
     pointHighlightFill: "#fff",
-    pointHighlightStroke: "rgba(60,141,188,1)",
+    pointHighlightStroke: "#00BE79",
     data: authChartData.success
 },
     {
         label: "Failed Attempts",
         fillColor: "#F39C12",
-        strokeColor: "rgb(210, 214, 222)",
-        pointColor: "rgb(210, 214, 222)",
-        pointStrokeColor: "#c1c7d1",
+        strokeColor: "#F39C12",
+        pointColor: "#F39C12",
+        pointStrokeColor: "#F39C12",
         pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgb(220,220,220)",
+        pointHighlightStroke: "#F39C12",
         data: authChartData.failure
     }
     
