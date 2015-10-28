@@ -38,9 +38,10 @@
     <ui:define name="controlButttons">
 			<div class = "box-footer">
 				<div  style="width: 100%;height: 30px;">
-					<div id="updateButtons" style="float: right;width: 230px;">
+					<div id="updateButtons" style="float: right;width: 320px;">
 						<h:commandButton styleClass="btn btn-primary" value="   Update   " 
 							action="#{updateTrustRelationshipAction.save}" />
+							<h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="#{updateTrustRelationshipAction.isActive()?'Deactivate':'Activate'}" action="#{updateTrustRelationshipAction.activationToggle}"/>
 							<a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" styleClass="btn btn-primary" style="margin-left:3px;"
                         rendered="#{updateTrustRelationshipAction.update}" />
 						<h:commandButton value="   Cancel  " styleClass="btn btn-primary" 
