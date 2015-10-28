@@ -30,14 +30,6 @@
                <div style="display: inline-block;width: 75% !important;">
 
         <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-            <ui:param name="_owner" value="#{gluufn:getDisplayNameEntry(_group.owner)}" />
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="owner">
-                <ui:define name="label">Owner</ui:define>
-                <s:link view="/person/updatePerson.xhtml" value="#{empty _owner.displayName ? _owner.uid : _owner.displayName}" propagation="none">
-                    <f:param name="inum" value="#{_owner.inum}" />
-                </s:link>
-            </s:decorate>
-
             <ui:param name="_organization" value="#{gluufn:getDisplayNameEntry(_group.organization)}" />
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="organization">
                 <ui:define name="label">Organization</ui:define>
