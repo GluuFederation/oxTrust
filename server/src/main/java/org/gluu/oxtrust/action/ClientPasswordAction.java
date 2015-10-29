@@ -18,7 +18,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @Name("clientPasswordAction")
@@ -37,9 +36,6 @@ public class ClientPasswordAction implements Serializable {
 
 	@In
 	private ClientService clientService;
-
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
 	
 	@Logger
 	private Log log;

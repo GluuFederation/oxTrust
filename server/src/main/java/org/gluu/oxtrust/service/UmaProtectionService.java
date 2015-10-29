@@ -65,8 +65,8 @@ public class UmaProtectionService implements Serializable {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;
 		
 	@In
 	private JsonService jsonService;
@@ -225,7 +225,7 @@ public class UmaProtectionService implements Serializable {
 			return;
 		}
 
-		String umaClientPassword = PropertiesDecrypter.decryptProperty(applicationConfiguration.getUmaClientPassword(), true, cryptoConfiguration.getEncodeSalt());
+		String umaClientPassword = PropertiesDecrypter.decryptProperty(applicationConfiguration.getUmaClientPassword(), true, cryptoConfigurationSalt);
 		try {
 			this.umaPat = UmaClient.requestPat(umaMetadataConfiguration.getTokenEndpoint(),
 					applicationConfiguration.getUmaClientId(), umaClientPassword);

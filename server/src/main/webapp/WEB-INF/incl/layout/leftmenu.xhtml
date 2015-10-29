@@ -472,13 +472,47 @@
 								$(".logo").hover(
 										function() {
 											$('.logoSubMenu').show(1000,
-													"easeOutElastic");
+													"easeOutQuart");
 										});
+								$('.logo').bind(
+										'mouseleave',
+										function(e) {
+											var element=e.toElement;
+											if(element)
+											{
+												var parent=element.parentElement;
+												if(parent)
+												{
+													var parentParent=parent.parentElement;
+													var className=$(parentParent).attr('class');
+													if(className)
+													{
+														if(className!='logoSubMenu')
+														{
+															$('.logoSubMenu').hide(1000,"easeOutQuart");
+														}
+													}
+													
+												}
+											}
+										});
+								
 								$('.logoSubMenu').bind(
 										'mouseleave',
-										function() {
-											$('.logoSubMenu').hide(1000,
-													"easeOutElastic");
+										function(e) {
+											var element=e.toElement;
+											if(element)
+											{
+												var className=$(element).attr('class');
+												if(className)
+												{
+													if(className!='logo')
+													{
+														$('.logoSubMenu').hide(1000,"easeOutQuart");
+													}
+												}
+											}
+											
 										});
 							});
 		</script>

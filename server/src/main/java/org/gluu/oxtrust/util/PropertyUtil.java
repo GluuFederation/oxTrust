@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.model.SimpleProperty;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
@@ -26,16 +25,16 @@ public class PropertyUtil {
 
 	private static final Logger log = Logger.getLogger(PropertyUtil.class);
 
-	private CryptoConfigurationFile cryptoConfiguration;
+	private String cryptoConfigurationSalt;
 	
 	public PropertyUtil() {
 		// Init variable because velocity call method encryptString without AOP interceptor
-		this.cryptoConfiguration = OxTrustConfiguration.instance().getCryptoConfiguration();
+		this.cryptoConfigurationSalt = OxTrustConfiguration.instance().getCryptoConfigurationSalt();
 	}
 	
 	public String encryptString(String value) {
 		try {
-			return StringEncrypter.defaultInstance().encrypt(value, cryptoConfiguration.getEncodeSalt());
+			return StringEncrypter.defaultInstance().encrypt(value, cryptoConfigurationSalt);
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt string: " + value, ex);
 		}

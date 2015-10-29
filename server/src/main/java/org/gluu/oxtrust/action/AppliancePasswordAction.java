@@ -44,8 +44,8 @@ public class AppliancePasswordAction implements Serializable {
     @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
     private ApplicationConfiguration applicationConfiguration;
 
-    @In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-    private CryptoConfigurationFile cryptoConfiguration;
+    @In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+    private String cryptoConfigurationSalt;
 
     @Logger
     private Log log;
@@ -70,8 +70,7 @@ public class AppliancePasswordAction implements Serializable {
 
         GluuAppliance appliance = applianceService.getAppliance();
         try {
-            appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword,
-                                                                                cryptoConfiguration.getEncodeSalt()));
+			appliance.setBlowfishPassword(StringEncrypter.defaultInstance().encrypt(newPassword, cryptoConfigurationSalt));
         } catch (EncryptionException e) {
             log.error("Failed to encrypt password", e);
         }

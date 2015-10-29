@@ -24,6 +24,8 @@
 		default="false" type="java.lang.Boolean" />
 	<cc:attribute name="displayBaseDn" required="false" default="true"
 		type="java.lang.Boolean" />
+	<cc:attribute name="displayEnable" required="false" default="true"
+		type="java.lang.Boolean" />
 	<cc:attribute name="inputWidth" default="48" required="false"
 		type="java.lang.Integer" />
 	<cc:attribute name="maxServerItems" type="java.lang.Integer" />
@@ -138,7 +140,7 @@
 								required="true" />
 						</s:decorate>
 
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{cc.attrs.displayEnable}">
 							<ui:define name="label">Enabled</ui:define>
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}" />
 						</s:decorate>

@@ -124,8 +124,8 @@ public class Authenticator implements Serializable {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;	
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;	
 	
 	public boolean preAuthenticate() throws IOException, Exception {
 		boolean result = true;
@@ -522,7 +522,7 @@ public class Authenticator implements Serializable {
 		String clientPassword = applicationConfiguration.getOxAuthClientPassword();
 		if (clientPassword != null) {
 			try {
-				clientPassword = StringEncrypter.defaultInstance().decrypt(clientPassword, cryptoConfiguration.getEncodeSalt());
+				clientPassword = StringEncrypter.defaultInstance().decrypt(clientPassword, cryptoConfigurationSalt);
 			} catch (EncryptionException ex) {
 				log.error("Failed to decrypt client password", ex);
 			}

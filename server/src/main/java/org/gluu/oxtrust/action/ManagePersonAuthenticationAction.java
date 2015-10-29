@@ -99,8 +99,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;
 	
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify() {
@@ -151,6 +151,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 		try {
 			// Reload entry to include latest changes
 			GluuAppliance appliance = applianceService.getAppliance();
+
+			this.ldapConfig.updateStringsLists();
 
 			updateAuthConf(appliance);
 			
@@ -251,7 +253,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			properties.setProperty("bindPassword", this.ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(this.ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(this.ldapConfig.isUseSSL()));
-			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(properties, cryptoConfiguration.getEncodeSalt()));
+			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(properties, cryptoConfigurationSalt));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -290,7 +292,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 	public void updateLdapBindPassword() {
 		String encryptedLdapBindPassword = null;
 		try {
-			encryptedLdapBindPassword = StringEncrypter.defaultInstance().encrypt(this.ldapConfig.getBindPassword(), cryptoConfiguration.getEncodeSalt());
+			encryptedLdapBindPassword = StringEncrypter.defaultInstance().encrypt(this.ldapConfig.getBindPassword(), cryptoConfigurationSalt);
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt LDAP bind password", ex);
 		}

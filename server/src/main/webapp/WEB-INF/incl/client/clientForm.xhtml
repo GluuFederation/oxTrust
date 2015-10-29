@@ -73,8 +73,9 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="persistClientAuthorizations">
                 <ui:define name="label">Persist Client Authorizations</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthPersistClientAuthorizations}" required="true">
-                    <f:selectItem itemLabel="True" itemValue="true" />
-                    <f:selectItem itemLabel="False" itemValue="false" />
+                    <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
+                    <!-- <s:convertEnum/> -->
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
             </s:decorate>
 

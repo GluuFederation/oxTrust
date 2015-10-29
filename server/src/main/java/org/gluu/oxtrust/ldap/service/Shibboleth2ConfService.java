@@ -58,7 +58,6 @@ import org.jboss.seam.log.Log;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.w3c.dom.Document;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
@@ -144,8 +143,8 @@ public class Shibboleth2ConfService implements Serializable {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;
 	
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
@@ -525,7 +524,7 @@ public class Shibboleth2ConfService implements Serializable {
 		context.put("bindDN", applicationConfiguration.getIdpBindDn());
 
 		try {
-			context.put("ldapPass", StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword(), cryptoConfiguration.getEncodeSalt()));
+			context.put("ldapPass", StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword(), cryptoConfigurationSalt));
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt bindPassword", e);
 		}
@@ -534,7 +533,7 @@ public class Shibboleth2ConfService implements Serializable {
 		context.put("securityCert", applicationConfiguration.getIdpSecurityCert());
 		try {
 			context.put("securityKeyPassword",
-					StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpSecurityKeyPassword(), cryptoConfiguration.getEncodeSalt()));
+					StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpSecurityKeyPassword(), cryptoConfigurationSalt));
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt idp.securityKeyPassword", e);
 		}
@@ -545,7 +544,7 @@ public class Shibboleth2ConfService implements Serializable {
 		try {
 			String mysqlPassword = applicationConfiguration.getMysqlPassword();
 			if (StringHelper.isNotEmpty(mysqlPassword)) {
-				mysqlPassword = StringEncrypter.defaultInstance().decrypt(mysqlPassword, cryptoConfiguration.getEncodeSalt());
+				mysqlPassword = StringEncrypter.defaultInstance().decrypt(mysqlPassword, cryptoConfigurationSalt);
 			}
 			context.put("mysqlPass", mysqlPassword);
 		} catch (EncryptionException e) {
@@ -962,7 +961,7 @@ public class Shibboleth2ConfService implements Serializable {
 		String serviceUser = applicationConfiguration.getIdpBindDn();
 		String serviceCredential = "";
 		try {
-			serviceCredential = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword(), cryptoConfiguration.getEncodeSalt());
+			serviceCredential = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getIdpBindPassword(), cryptoConfigurationSalt);
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt bindPassword", e);
 		}

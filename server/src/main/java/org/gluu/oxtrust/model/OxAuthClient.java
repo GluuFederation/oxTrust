@@ -8,11 +8,13 @@ package org.gluu.oxtrust.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
@@ -20,6 +22,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -88,14 +91,14 @@ public @Data class OxAuthClient extends Entry implements Serializable {
     private String[] postLogoutRedirectUris;
 
     @LdapAttribute(name = "oxPersistClientAuthorizations")
-    private Boolean oxAuthPersistClientAuthorizations;
+    private GluuBoolean oxAuthPersistClientAuthorizations;
 
 	private String oxAuthClientSecret;
 
 	public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
 		this.oxAuthClientSecret = oxAuthClientSecret;
 		if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
-			setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfiguration().getEncodeSalt()));
+			setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfigurationSalt()));
 		}
 	}
 
@@ -219,11 +222,11 @@ public @Data class OxAuthClient extends Entry implements Serializable {
         this.userPassword = userPassword;
     }
 
-    public Boolean getOxAuthPersistClientAuthorizations() {
+    public GluuBoolean getOxAuthPersistClientAuthorizations() {
         return oxAuthPersistClientAuthorizations;
     }
 
-    public void setOxAuthPersistClientAuthorizations(Boolean oxAuthPersistClientAuthorizations) {
+    public void setOxAuthPersistClientAuthorizations(GluuBoolean oxAuthPersistClientAuthorizations) {
         this.oxAuthPersistClientAuthorizations = oxAuthPersistClientAuthorizations;
     }
 }

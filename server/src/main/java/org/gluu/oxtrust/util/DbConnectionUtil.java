@@ -30,13 +30,13 @@ public class DbConnectionUtil {
 	 */
 	private DbConnectionUtil() {
 		ApplicationConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
-		CryptoConfigurationFile cryptoConfiguration = OxTrustConfiguration.instance().getCryptoConfiguration();
+		String cryptoConfigurationSalt = OxTrustConfiguration.instance().getCryptoConfigurationSalt();
 		
 		this.dbUrl = applicationConfiguration.getMysqlUrl();
 		this.userName = applicationConfiguration.getMysqlUser();
 		try {
 			String password = applicationConfiguration.getMysqlPassword();
-			this.password = StringEncrypter.defaultInstance().decrypt(password, cryptoConfiguration.getEncodeSalt());
+			this.password = StringEncrypter.defaultInstance().decrypt(password, cryptoConfigurationSalt);
 			log.debug("Url::: " + dbUrl + " User: " + userName + " Password: " + password);
 		} catch (Exception ex) {
 			log.error("Error while decrypting MySql connection password: " + applicationConfiguration.getMysqlPassword() + " Msg: "

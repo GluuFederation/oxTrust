@@ -9,7 +9,7 @@ package org.gluu.oxtrust.config;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.beanutils.BeanUtilsBean2;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -27,12 +27,11 @@ import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.config.oxtrust.ApplicationConfigurationFile;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
+import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 /**
@@ -67,12 +66,10 @@ public class OxTrustConfiguration {
     private static final String BASE_DIR;
     private static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
-    private static final String CONFIG_RELOAD_MARKER_FILE_PATH = DIR + "oxtrust.config.reload";
+	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
+	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxtrust-central-ldap.properties";
 
-	public static final String LDAP_PROPERTIES_FILE = DIR + "oxTrustLdap.properties";
-	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxTrustCentralLdap.properties";
-
-	public static final String APPLICATION_CONFIGURATION = "oxTrust.properties";
+	public static final String APPLICATION_CONFIGURATION = "oxtrust-config.json";
 	public static final String CACHE_PROPERTIES_FILE = "oxTrustCacheRefresh.properties";
 	public static final String LOG_ROTATION_CONFIGURATION = "oxTrustLogRotationConfiguration.xml";
 	public static final String SALT_FILE_NAME = "salt";
@@ -89,43 +86,48 @@ public class OxTrustConfiguration {
 	private FileConfiguration ldapCentralConfiguration;
 	private ApplicationConfiguration applicationConfiguration;
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
-	private CryptoConfigurationFile cryptoConfiguration;
-	
-	private LdapOxTrustConfiguration ldapOxTrustConfig;
+	private String cryptoConfigurationSalt;
 
     private AtomicBoolean isActive;
 
     private long ldapFileLastModifiedTime = -1;
     private long ldapCentralFileLastModifiedTime = -1;
-    private long confFileLastModifiedTime = -1;
-    private long cacheRefreshFileLastModifiedTime = -1;
 
+    private long loadedRevision = -1;
+    private boolean loadedFromLdap = true;
+	
 	@Create
 	public void init() {
-		log.info("Creating oxTrustConfiguration");
-		this.ldapConfiguration = createFileConfiguration(LDAP_PROPERTIES_FILE);
-		this.ldapCentralConfiguration = createFileConfiguration(LDAP_CENTRAL_PROPERTIES_FILE, false);
-    	this.confDir = confDir();
-
-    	this.configFilePath = confDir + APPLICATION_CONFIGURATION;
-    	this.cacheRefreshFilePath = confDir + CACHE_PROPERTIES_FILE;
-    	this.logRotationFilePath = confDir + LOG_ROTATION_CONFIGURATION;
-    	this.saltFilePath = confDir + SALT_FILE_NAME;
-    	
-    	loadCryptoConfigurationFromFile();
+        this.isActive = new AtomicBoolean(true);
+    	try {
+			log.info("Creating oxTrustConfiguration");
+			loadLdapConfiguration();
+			loadLdapCentralConfiguration();
+	    	this.confDir = confDir();
+	
+	    	this.configFilePath = confDir + APPLICATION_CONFIGURATION;
+	    	this.cacheRefreshFilePath = confDir + CACHE_PROPERTIES_FILE;
+	    	this.logRotationFilePath = confDir + LOG_ROTATION_CONFIGURATION;
+	    	this.saltFilePath = confDir + SALT_FILE_NAME;
+	    	
+	    	loadCryptoConfigurationSalt();
+    	} finally {
+	    	this.isActive.set(false);
+	    }
 	}
 
 	public void create() {
-		createConfigurationFromLdap(true);
-		reloadCacheRefreshConfigurationFromFile();
-    	determineConfigurationLastModificationTime();
+        if (!createFromLdap(true)) {
+            log.error("Failed to load configuration from LDAP. Please fix it!!!.");
+            throw new ConfigurationException("Failed to load configuration from LDAP.");
+        } else {
+        	log.info("Configuration loaded successfully.");
+        }
 	}
 
     @Observer("org.jboss.seam.postInitialization")
     public void initReloadTimer() {
-        this.isActive = new AtomicBoolean(false);
-
-        final long delayBeforeFirstRun = 60 * 1000L;
+        final long delayBeforeFirstRun = 30 * 1000L;
         Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(delayBeforeFirstRun, DEFAULT_INTERVAL * 1000L));
     }
 
@@ -150,116 +152,82 @@ public class OxTrustConfiguration {
     }
 
     private void reloadConfiguration() {
-        File reloadMarker = new File(CONFIG_RELOAD_MARKER_FILE_PATH);
-
-        if (reloadMarker.exists()) {
-            boolean isAnyChanged = false;
-
-            File ldapFile = new File(LDAP_PROPERTIES_FILE);
-            File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
-            File configFile = new File(configFilePath);
-            File cacheRefreshFile = new File(cacheRefreshFilePath);
-
-            if (configFile.exists()) {
-                final long lastModified = configFile.lastModified();
-                if (lastModified > confFileLastModifiedTime) { // reload configuration only if it was modified
-                	reloadConfigurationFromFile();
-                    confFileLastModifiedTime = lastModified;
-                    isAnyChanged = true;
-                }
-            }
-
-            if (cacheRefreshFile.exists()) {
-                final long lastModified = cacheRefreshFile.lastModified();
-                if (lastModified > cacheRefreshFileLastModifiedTime) { // reload configuration only if it was modified
-                	reloadCacheRefreshConfigurationFromFile();
-                	cacheRefreshFileLastModifiedTime = lastModified;
-                	// We don't store this configuration in LDAP yet
-//                    isAnyChanged = true;
-                }
-            } else if (this.cacheRefreshConfiguration != null) {
-            	// Allow to remove not mandatory configuration file
-	        	this.cacheRefreshConfiguration = null;
-            }
-
-            if (isAnyChanged) {
-                persistToLdap();
-            }
-
-            // Reload LDAP configuration after persisting configuration updates
-            if (ldapFile.exists()) {
-                final long lastModified = ldapFile.lastModified();
-                if (lastModified > ldapFileLastModifiedTime) { // reload configuration only if it was modified
-                	this.ldapConfiguration = createFileConfiguration(LDAP_PROPERTIES_FILE);
-                	ldapFileLastModifiedTime = lastModified;
-                    Events.instance().raiseAsynchronousEvent(LDAP_CONFIGUARION_RELOAD_EVENT_TYPE);
-                    isAnyChanged = true;
-                }
-            }
-
-            // Reload central LDAP configuration after persisting configuration updates
-            if (ldapCentralFile.exists()) {
-                final long lastModified = ldapCentralFile.lastModified();
-                if (lastModified > ldapCentralFileLastModifiedTime) { // reload configuration only if it was modified
-            		this.ldapCentralConfiguration = createFileConfiguration(LDAP_CENTRAL_PROPERTIES_FILE, false);
-                	ldapCentralFileLastModifiedTime = lastModified;
-                    Events.instance().raiseAsynchronousEvent(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
-                    isAnyChanged = true;
-                }
-            } else if (this.ldapCentralConfiguration != null) {
-            	// Allow to remove not mandatory configuration file
-        		this.ldapCentralConfiguration = null;
-                Events.instance().raiseAsynchronousEvent(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+        // Reload LDAP configuration if needed
+        File ldapFile = new File(LDAP_PROPERTIES_FILE);
+        if (ldapFile.exists()) {
+            final long lastModified = ldapFile.lastModified();
+            if (lastModified > ldapFileLastModifiedTime) { // reload configuration only if it was modified
+            	loadLdapConfiguration();
+                Events.instance().raiseAsynchronousEvent(LDAP_CONFIGUARION_RELOAD_EVENT_TYPE);
             }
         }
-    }
 
-    private void determineConfigurationLastModificationTime() {
-        File ldapFile = new File(LDAP_PROPERTIES_FILE);
+        // Reload LDAP central configuration if needed
         File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
-        File configFile = new File(configFilePath);
-        File cacheRefreshFile = new File(cacheRefreshFilePath);
+        if (ldapCentralFile.exists()) {
+            final long lastModified = ldapCentralFile.lastModified();
+            if (lastModified > ldapCentralFileLastModifiedTime) { // reload configuration only if it was modified
+            	loadLdapCentralConfiguration();
+                Events.instance().raiseAsynchronousEvent(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+            }
+        } else if (this.ldapCentralConfiguration != null) {
+        	// Allow to remove not mandatory configuration file
+    		this.ldapCentralConfiguration = null;
+            Events.instance().raiseAsynchronousEvent(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+        }
 
-		if (ldapFile.exists()) {
-			this.ldapFileLastModifiedTime = ldapFile.lastModified();
-		}
+    	if (!loadedFromLdap) {
+    		return;
+    	}
 
-		if (ldapCentralFile.exists()) {
-			this.ldapCentralFileLastModifiedTime = ldapCentralFile.lastModified();
-		}
+    	final LdapOxTrustConfiguration conf = loadConfigurationFromLdap("oxRevision");
+        if (conf == null) {
+        	return;
+        }
 
-		if (configFile.exists()) {
-			this.confFileLastModifiedTime = configFile.lastModified();
-		}
+        if (conf.getRevision() <= this.loadedRevision) {
+        	return;
+        }
 
-		if (cacheRefreshFile.exists()) {
-			this.cacheRefreshFileLastModifiedTime = cacheRefreshFile.lastModified();
-		}
+    	createFromLdap(false);
     }
 
-	private boolean createConfigurationFromLdap(boolean recoverFromFiles) {
+	private boolean createFromLdap(boolean recoverFromFiles) {
 		log.info("Loading configuration from LDAP...");
-
-		LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
-
-		String configurationDn = getConfigurationDn();
-		ldapOxTrustConfig = load(ldapEntryManager, configurationDn);
-		if (ldapOxTrustConfig != null) {
-			initConfigurationFromLdap(ldapOxTrustConfig);
-			return true;
-		}
+        try {
+            final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
+            if (conf != null) {
+                init(conf);
+                return true;
+            }
+        } catch (Exception ex) {
+        	log.error(ex.getMessage(), ex);
+        }
 
 		if (recoverFromFiles) {
-			log.warn("Unable to find configuration in LDAP, try to create configuration entry in LDAP... ");
-			if (getLdapConfiguration().getBoolean("createLdapConfigurationEntryIfNotExist", false)) {
-				reloadConfigurationFromFile();
-
-				return persistToLdap();
+			log.warn("Unable to find configuration in LDAP, try to load configuration from file system... ");
+			if (createFromFile()) {
+				this.loadedFromLdap = false;
+                return true;
 			}
 		}
 
 		return false;
 	}
+    
+    private LdapOxTrustConfiguration loadConfigurationFromLdap(String ... returnAttributes) {
+    	final LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
+    	final String configurationDn = getConfigurationDn();
+        try {
+            final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn, returnAttributes);
+
+            return conf;
+        } catch (LdapMappingException ex) {
+            log.error("Failed to load configuration from LDAP", ex);
+        }
+        
+        return null;
+    }
 
     public String confDir() {
         final String confDir = getLdapConfiguration().getString("confDir");
@@ -270,55 +238,88 @@ public class OxTrustConfiguration {
         return DIR;
     }
 
-	public LdapOxTrustConfiguration load(LdapEntryManager ldapEntryManager, String configurationDn) {
-		try {
-			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
+	private void init(LdapOxTrustConfiguration conf) {
+		initApplicationConfigurationFromJson(conf.getApplication());
+		initCacheRefreshConfigurationFromJson(conf.getCacheRefresh());
+		this.loadedRevision = conf.getRevision();
+	}
 
-			return conf;
-		} catch (LdapMappingException ex) {
-			log.error("Failed to load configuration from LDAP");
+    private void initApplicationConfigurationFromJson(String applicationConfigurationJson) {
+        try {
+			final ApplicationConfiguration applicationConfiguration = jsonService.jsonToObject(applicationConfigurationJson, ApplicationConfiguration.class);
+            if (applicationConfiguration != null) {
+            	this.applicationConfiguration = applicationConfiguration;
+            }
+        } catch (Exception ex) {
+            log.error("Failed to initialize applicationConfiguration from JSON", ex);
+        }
+    }
+
+    private void initCacheRefreshConfigurationFromJson(String cacheRefreshConfigurationJson) {
+    	if (StringHelper.isEmpty(cacheRefreshConfigurationJson)) {
+            log.trace("Skipping empty Cache Refresh configuration");
+            this.cacheRefreshConfiguration = null;
+            return;
+    	}
+
+    	try {
+			final CacheRefreshConfiguration cacheRefreshConfiguration = jsonService.jsonToObject(cacheRefreshConfigurationJson, CacheRefreshConfiguration.class);
+            if (cacheRefreshConfiguration != null) {
+            	this.cacheRefreshConfiguration = cacheRefreshConfiguration;
+            }
+        } catch (Exception ex) {
+            log.error("Failed to initialize Cache Refresh configuration from JSON", ex);
+        }
+    }
+
+	private boolean createFromFile() {
+    	boolean result = reloadAppConfFromFile();
+    	
+    	return result;
+    }
+
+    private boolean reloadAppConfFromFile() {
+        final ApplicationConfiguration applicationConfiguration = loadAppConfFromFile();
+        if (applicationConfiguration != null) {
+            log.info("Reloaded application configuration from file: " + configFilePath);
+            this.applicationConfiguration = applicationConfiguration;
+            return true;
+        } else {
+        	log.error("Failed to load application configuration from file: " + configFilePath);
+        }
+
+        return false;
+    }
+
+	private ApplicationConfiguration loadAppConfFromFile() {
+		try {
+	        String jsonConfig = FileUtils.readFileToString(new File(configFilePath));
+	        ApplicationConfiguration applicationConfiguration = jsonService.jsonToObject(jsonConfig, ApplicationConfiguration.class);
+
+			return applicationConfiguration;
+		} catch (Exception ex) {
+			log.error("Failed to load configuration from {0}", ex, configFilePath);
 		}
 
 		return null;
 	}
 
-	private void initConfigurationFromLdap(LdapOxTrustConfiguration conf) {
-		try {
-			log.debug("oxTrustConfig:"+conf.getApplication());
-			this.applicationConfiguration = jsonService.jsonToObject(conf.getApplication(), ApplicationConfiguration.class);
-			
-		} catch (Exception ex) {
-			log.error("Failed to initialize applicationConfiguration from JSON: {0}", ex, conf.getApplication());
-			throw new ConfigurationException("Failed to initialize applicationConfiguration from JSON", ex);
+	private void loadLdapConfiguration() {
+		this.ldapConfiguration = createFileConfiguration(LDAP_PROPERTIES_FILE, true);
+
+		File ldapFile = new File(LDAP_PROPERTIES_FILE);
+		if (ldapFile.exists()) {
+			this.ldapFileLastModifiedTime = ldapFile.lastModified();
 		}
 	}
 
-	public boolean persistToLdap() {
-		String configurationDn = getConfigurationDn();
-		LdapOxTrustConfiguration conf = prepareLdapConfiguration(configurationDn);
+	private void loadLdapCentralConfiguration() {
+		this.ldapCentralConfiguration = createFileConfiguration(LDAP_CENTRAL_PROPERTIES_FILE, false);
 
-		LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
-		try {
-			ldapEntryManager.persist(conf);
-			log.info("Configuration entry is created in LDAP");
-			
-			return true;
-		} catch (LdapMappingException ex) {
-			try {
-				ldapEntryManager.merge(conf);
-				log.info("Configuration entry is updated in LDAP");
-				
-				return true;
-			} catch (LdapMappingException ex2) {
-				log.error("Failed to save configuration in LDAP", ex2);
-			}
+		File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
+		if (ldapCentralFile.exists()) {
+			this.ldapCentralFileLastModifiedTime = ldapCentralFile.lastModified();
 		}
-		
-		return false;
-	}
-
-	private FileConfiguration createFileConfiguration(String fileName) {
-		return createFileConfiguration(fileName, true);
 	}
 
 	private FileConfiguration createFileConfiguration(String fileName, boolean isMandatory) {
@@ -337,71 +338,16 @@ public class OxTrustConfiguration {
 		return null;
 	}
 
-	private void reloadConfigurationFromFile() {
-		try {
-			FileConfiguration fileConfiguration = createFileConfiguration(configFilePath);
-	        if (fileConfiguration != null) {
-	        	log.info("Reloaded configuration from file: " + configFilePath);
-	        } else {
-	        	log.error("Failed to load configuration from file: " + configFilePath);
-	        	return;
-	        }
+    public void loadCryptoConfigurationSalt() {
+        try {
+            FileConfiguration cryptoConfiguration = createFileConfiguration(saltFilePath, true);
 
-	        ApplicationConfigurationFile applicationConfigurationFile = new ApplicationConfigurationFile(fileConfiguration);
-
-			ApplicationConfiguration fileApplicationConfiguration = new ApplicationConfiguration();
-			BeanUtilsBean2.getInstance().copyProperties(fileApplicationConfiguration, applicationConfigurationFile);
-			this.applicationConfiguration = fileApplicationConfiguration;
-		} catch (Exception ex) {
-			log.error("Failed to load configuration from {0}", ex, configFilePath);
-			throw new ConfigurationException("Failed to load configuration from " + configFilePath, ex);
-		}
-	}
-
-	private void reloadCacheRefreshConfigurationFromFile() {
-		try {
-			FileConfiguration fileConfiguration = createFileConfiguration(cacheRefreshFilePath);
-	        if (fileConfiguration != null) {
-	        	log.info("Reloaded configuration from file: " + cacheRefreshFilePath);
-	        } else {
-	        	log.error("Failed to load configuration from file: " + cacheRefreshFilePath);
-	        	this.cacheRefreshConfiguration = null;
-	        	return;
-	        }
-
-	        CacheRefreshConfiguration cacheRefreshConfiguration = new CacheRefreshConfiguration(fileConfiguration);
-			this.cacheRefreshConfiguration = cacheRefreshConfiguration;
-		} catch (Exception ex) {
-			log.error("Failed to load configuration from {0}", ex, cacheRefreshFilePath);
-			throw new ConfigurationException("Failed to load configuration from " + cacheRefreshFilePath, ex);
-		}
-	}
-
-	public void loadCryptoConfigurationFromFile() {
-		try {
-			log.info("Creating cryptoConfiguration");
-			FileConfiguration cryptoConfiguration = createFileConfiguration(this.saltFilePath);
-			CryptoConfigurationFile cryptoConfigurationFile = new CryptoConfigurationFile(cryptoConfiguration);
-
-			this.cryptoConfiguration = cryptoConfigurationFile;
-		} catch (Exception ex) {
+			this.cryptoConfigurationSalt = cryptoConfiguration.getString("encodeSalt");
+        } catch (Exception ex) {
 			log.error("Failed to load configuration from {0}", ex, this.saltFilePath);
 			throw new ConfigurationException("Failed to load configuration from " + this.saltFilePath, ex);
-		}
-	}
-
-	private LdapOxTrustConfiguration prepareLdapConfiguration(String configurationDn) {
-		LdapOxTrustConfiguration conf = new LdapOxTrustConfiguration();
-		conf.setDn(configurationDn);
-		try {
-			conf.setApplication(jsonService.objectToJson(applicationConfiguration));
-		} catch (Exception ex) {
-			log.error("Failed to prepare LDAP configuration", ex);
-			throw new ConfigurationException("Failed to prepare LDAP configuration", ex);
-		}
-
-		return conf;
-	}
+        }
+    }
 
 	public FileConfiguration getLdapConfiguration() {
 		return ldapConfiguration;
@@ -419,8 +365,8 @@ public class OxTrustConfiguration {
 		return cacheRefreshConfiguration;
 	}
 
-	public CryptoConfigurationFile getCryptoConfiguration() {
-		return cryptoConfiguration;
+	public String getCryptoConfigurationSalt() {
+		return cryptoConfigurationSalt;
 	}
 
 	public String getCacheRefreshFilePath() {

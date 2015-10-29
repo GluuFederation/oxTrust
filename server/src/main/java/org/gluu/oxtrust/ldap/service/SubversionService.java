@@ -55,8 +55,8 @@ public class SubversionService {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfiguration}")
-	private CryptoConfigurationFile cryptoConfiguration;
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;
 
 	final private static String baseSvnDir = "/var/gluu/svn";
 
@@ -76,7 +76,7 @@ public class SubversionService {
 		SVNClientManager clientManager = null;
 		try {
 			// Decrypt password
-			svnPassword = StringEncrypter.defaultInstance().decrypt(svnPassword, cryptoConfiguration.getEncodeSalt());
+			svnPassword = StringEncrypter.defaultInstance().decrypt(svnPassword, cryptoConfigurationSalt);
 
 			// Create an instance of SVNClientManager
 			log.debug("Creating an instance of SVNClientManager");
