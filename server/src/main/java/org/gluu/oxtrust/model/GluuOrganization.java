@@ -66,9 +66,6 @@ public @Data class GluuOrganization extends Entry implements Serializable {
 	@LdapAttribute(name = "gluuManagerGroup")
 	private String managerGroup;
 
-	@LdapAttribute(name = "gluuOwnerGroup")
-	private String ownerGroup;
-
 	@LdapAttribute(name = "gluuLogoImage")
 	private String logoImage;
 
@@ -233,13 +230,6 @@ public @Data class GluuOrganization extends Entry implements Serializable {
         this.organization = organization;
     }
 
-    public String getOwnerGroup() {
-        return ownerGroup;
-    }
-
-    public void setOwnerGroup(String ownerGroup) {
-        this.ownerGroup = ownerGroup;
-    }
 
     public String getOxInumConfig() {
         return oxInumConfig;
