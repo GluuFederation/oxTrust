@@ -55,7 +55,7 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="oxAuthTrustedClientBox">
                 <ui:define name="label">Pre-Authorization</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthTrustedClient}" id="trustedClientId" required="true">
-                    <s:selectItems value="#{clientService.oxAuthTrustedClient}" noSelectionLabel="Trusted Client" var="_type" label="#{_type.displayName}" />
+                    <s:selectItems value="#{clientService.oxAuthTrustedClient}"  var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
