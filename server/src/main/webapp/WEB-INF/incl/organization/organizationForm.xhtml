@@ -128,17 +128,7 @@
 									</h:selectOneMenu>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="vdsCacheRefreshState">
-									<ui:define name="label">Cache Refresh</ui:define>
-									<h:selectOneMenu value="#{_appliance.vdsCacheRefreshEnabled}" styleClass="form-control"
-										id="vdsCacheRefreshStateId">
-										<s:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" label="#{_type.displayName}" />
-										<s:convertEnum />
-									</h:selectOneMenu>
-								</s:decorate>
+								
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="scimEnabledState">
