@@ -86,6 +86,17 @@
                     <a4j:ajax event="change" render="vdsTogglePanelGroup, copyTogglePanelGroup" execute="@this" limitRender="true" />
                 </h:selectOneMenu>
             </s:decorate>
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+									id="vdsCacheRefreshState">
+									<ui:define name="label">Cache Refresh</ui:define>
+									<h:selectOneMenu value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshEnabled}" styleClass="form-control"
+										id="vdsCacheRefreshStateId">
+										<s:selectItems
+											value="#{organizationService.booleanSelectionTypes}"
+											var="_type" label="#{_type.displayName}" />
+										<s:convertEnum />
+									</h:selectOneMenu>
+								</s:decorate>
 			  <h:panelGroup id="copyTogglePanelGroup">
                     <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                         <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'copy'}" label="Source attribute to destination attribute mapping" labelAdd="source attribute to destination attribute mapping"
