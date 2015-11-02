@@ -64,6 +64,7 @@
 		<module>configuration</module>
 		<module>server</module>
 		<module>scim</module>
+		<module>openid-auth-client</module>
 		<module>saml-openid-auth-client</module>
 		<module>cas-openid-auth-client</module>
 	</modules>

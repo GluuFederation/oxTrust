@@ -16,6 +16,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.oxauth.client.auth.principal.ClientCredential;
 import org.gluu.oxauth.client.auth.user.CommonProfile;
 import org.gluu.oxauth.client.auth.user.UserProfile;
+import org.gluu.oxauth.client.conf.AppConfiguration;
 import org.gluu.oxauth.client.exception.CommunicationException;
 import org.gluu.oxauth.client.exception.ConfigurationException;
 import org.slf4j.Logger;
@@ -59,18 +60,21 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 	private final ReentrantLock clientLock = new ReentrantLock();
 
-	private String clientId;
-	private String clientSecret;
-	private long clientExpiration;
-
 	@NotNull
-	private List<String> openIdScopes;
+	private String appName = "Dynamic";
 
 	@NotNull
 	private String openIdProvider;
 
 	@NotNull
+	private List<String> openIdScopes;
+
+	@NotNull
 	private String redirectUri;
+
+	private String clientId;
+	private String clientSecret;
+	private long clientExpiration;
 
 	private OpenIdConfigurationResponse openIdConfiguration;
 
@@ -84,11 +88,18 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		this.clientSecret = clientSecret;
 	}
 
-	public AuthClient(final String openIdProvider, final String clientId, final String clientSecret, final List<String> openIdScopes, final String redirectUri) {
+	public AuthClient(final String appName, final String openIdProvider, final String clientId, final String clientSecret, final List<String> openIdScopes, final String redirectUri) {
 		this(clientId, clientSecret);
+		this.appName = appName;
 		this.openIdProvider = openIdProvider;
 		this.openIdScopes = openIdScopes;
 		this.redirectUri = redirectUri;
+	}
+
+	public AuthClient(final AppConfiguration appConfiguration) {
+		this(appConfiguration.getOpenIdProviderUrl(), appConfiguration.getApplicationName(),
+				appConfiguration.getOpenIdClientId(), appConfiguration.getOpenIdClientPassword(),
+				appConfiguration.getOpenIdClientScopes(), appConfiguration.getOpenIdProviderUrl());
 	}
 
 	@Override
@@ -152,7 +163,8 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	}
 
 	private RegisterResponse registerOpenIdClient() {
-		RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "CAS client", Arrays.asList(this.redirectUri));
+		String clientName = this.appName + " client";
+		RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, clientName, Arrays.asList(this.redirectUri));
 		registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.RS256);
 		registerRequest.setTokenEndpointAuthMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 
@@ -334,6 +346,37 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 		return claims.get(0);
 	}
+	public String getOpenIdProvider() {
+		return openIdProvider;
+	}
+
+	public void setOpenIdProvider(String openIdProvider) {
+		this.openIdProvider = openIdProvider;
+	}
+
+	public String getAppName() {
+		return appName;
+	}
+
+	public void setAppName(String appName) {
+		this.appName = appName;
+	}
+
+	public List<String> getOpenIdScopes() {
+		return openIdScopes;
+	}
+
+	public void setOpenIdScopes(List<String> openIdScopes) {
+		this.openIdScopes = openIdScopes;
+	}
+
+	public String getRedirectUri() {
+		return redirectUri;
+	}
+
+	public void setRedirectUri(String redirectUri) {
+		this.redirectUri = redirectUri;
+	}
 
 	public String getClientId() {
 		return clientId;
@@ -349,30 +392,6 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
-	}
-
-	public List<String> getOpenIdScopes() {
-		return openIdScopes;
-	}
-
-	public void setOpenIdScopes(List<String> openIdScopes) {
-		this.openIdScopes = openIdScopes;
-	}
-
-	public String getOpenIdProvider() {
-		return openIdProvider;
-	}
-
-	public void setOpenIdProvider(String openIdProvider) {
-		this.openIdProvider = openIdProvider;
-	}
-
-	public String getRedirectUri() {
-		return redirectUri;
-	}
-
-	public void setRedirectUri(String redirectUri) {
-		this.redirectUri = redirectUri;
 	}
 
 	public String toString() {

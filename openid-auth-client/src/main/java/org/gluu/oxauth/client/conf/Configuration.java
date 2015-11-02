@@ -11,14 +11,14 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.gluu.oxauth.client.AuthClient;
 import org.gluu.oxauth.client.exception.ConfigurationException;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
@@ -31,7 +31,7 @@ import org.xdi.util.security.PropertiesDecrypter;
  */
 public abstract class Configuration<C extends AppConfiguration> {
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Logger logger = LoggerFactory.getLogger(AuthClient.class);
 
 	static {
 		if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
@@ -67,6 +67,8 @@ public abstract class Configuration<C extends AppConfiguration> {
 
 	private String cryptoConfigurationSalt;
 
+	private LdapEntryManager ldapEntryManager;
+
 	private long ldapFileLastModifiedTime;
 
 	private AtomicBoolean isActive;
@@ -74,23 +76,35 @@ public abstract class Configuration<C extends AppConfiguration> {
 	private Configuration() {
 		this.isActive = new AtomicBoolean(true);
 		try {
-			this.ldapConfiguration = loadLdapConfiguration();
-
-			this.confDir = confDir();
-			this.saltFilePath = confDir + SALT_FILE_NAME;
-
-			this.cryptoConfigurationSalt = loadCryptoConfigurationSalt();
-
-			if (!createFromLdap()) {
-				log.error("Failed to load configuration from Ldap. Please fix it!!!.");
-				throw new ConfigurationException("Failed to load configuration from Ldap.");
-			} else {
-				log.info("Configuration loaded successfully.");
-			}
-
-			this.authClient = createAuthClient();
+			create();
 		} finally {
 			this.isActive.set(false);
+		}
+	}
+
+	private void create() {
+		this.ldapConfiguration = loadLdapConfiguration();
+
+		this.confDir = confDir();
+		this.saltFilePath = confDir + SALT_FILE_NAME;
+
+		this.cryptoConfigurationSalt = loadCryptoConfigurationSalt();
+
+		this.ldapEntryManager = createLdapEntryManager();
+
+		if (!createFromLdap()) {
+			logger.error("Failed to load configuration from Ldap. Please fix it!!!.");
+			throw new ConfigurationException("Failed to load configuration from Ldap.");
+		} else {
+			logger.info("Configuration loaded successfully.");
+		}
+
+		this.authClient = createAuthClient();
+	}
+
+	public void destroy() {
+		if (this.ldapEntryManager != null) {
+			destroyLdapEntryManager(this.ldapEntryManager);
 		}
 	}
 
@@ -112,7 +126,7 @@ public abstract class Configuration<C extends AppConfiguration> {
 
 			return ldapConfiguration;
 		} catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
+			logger.error(ex.getMessage(), ex);
 			throw new ConfigurationException("Failed to load Ldap configuration from " + ldapConfigurationFileName, ex);
 		}
 	}
@@ -123,7 +137,7 @@ public abstract class Configuration<C extends AppConfiguration> {
 
 			return cryptoConfiguration.getString("encodeSalt");
 		} catch (Exception ex) {
-			log.error("Failed to load configuration from " + saltFilePath, ex);
+			logger.error("Failed to load configuration from {}", saltFilePath, ex);
 			throw new ConfigurationException("Failed to load configuration from " + saltFilePath, ex);
 		}
 	}
@@ -138,7 +152,7 @@ public abstract class Configuration<C extends AppConfiguration> {
 	}
 
 	private boolean createFromLdap() {
-		log.info("Loading configuration from Ldap...");
+		logger.info("Loading configuration from Ldap...");
 		try {
 			final C conf = loadConfigurationFromLdap();
 			if (conf != null) {
@@ -146,23 +160,20 @@ public abstract class Configuration<C extends AppConfiguration> {
 				return true;
 			}
 		} catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
+			logger.error(ex.getMessage(), ex);
 		}
 
 		return false;
 	}
 
 	private C loadConfigurationFromLdap(String... returnAttributes) {
-		final LdapEntryManager ldapEntryManager = createLdapEntryManager();
 		try {
 			final String dn = getLdapConfiguration().getString("configurationEntryDN");
 
-			final C conf = ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
+			final C conf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
 			return conf;
 		} catch (LdapMappingException ex) {
-			log.error(ex.getMessage());
-		} finally {
-			destroyLdapEntryManager(ldapEntryManager);
+			logger.error(ex.getMessage());
 		}
 
 		return null;
@@ -175,7 +186,7 @@ public abstract class Configuration<C extends AppConfiguration> {
 		LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(decryptedConnectionProperties);
 		LdapEntryManager ldapEntryManager = new LdapEntryManager(new OperationsFacade(connectionProvider, null));
 
-		log.debug("Created LdapEntryManager: " + ldapEntryManager);
+		logger.debug("Created LdapEntryManager: {}", ldapEntryManager);
 
 		return ldapEntryManager;
 	}
@@ -183,15 +194,15 @@ public abstract class Configuration<C extends AppConfiguration> {
 	private void destroyLdapEntryManager(final LdapEntryManager ldapEntryManager) {
 		boolean result = ldapEntryManager.destroy();
 		if (result) {
-			log.debug("Destoyed LdapEntryManager: " + ldapEntryManager);
+			logger.debug("Destoyed LdapEntryManager: {}", ldapEntryManager);
 		} else {
-			log.error("Failed to destoy LdapEntryManager: " + ldapEntryManager);
+			logger.error("Failed to destoy LdapEntryManager: {}", ldapEntryManager);
 		}
 	}
 
 	private AuthClient createAuthClient() {
-		AuthClient authClient = new AuthClient(this.appConfiguration.getOpenIdProviderUrl(), this.appConfiguration.getOpenIdClientId(),
-				this.appConfiguration.getOpenIdClientPassword(), this.appConfiguration.getOpenIdClientScopes(), this.appConfiguration.getOpenIdProviderUrl());
+		AuthClient authClient = new AuthClient(this.appConfiguration);
+		authClient.init();
 
 		return authClient;
 	}
