@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface AppConfiguration {
 
+	String getApplicationName();
+
 	String getOpenIdProviderUrl();
 
 	String getOpenIdClientId();
