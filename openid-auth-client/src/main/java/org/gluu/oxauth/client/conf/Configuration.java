@@ -31,7 +31,7 @@ import org.xdi.util.security.PropertiesDecrypter;
  */
 public abstract class Configuration<C extends AppConfiguration, L extends LdapAppConfiguration> {
 
-	private final Logger logger = LoggerFactory.getLogger(OpenIdClient.class);
+	private final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
 	static {
 		if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {

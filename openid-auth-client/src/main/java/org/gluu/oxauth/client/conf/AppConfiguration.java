@@ -20,6 +20,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AppConfiguration implements Serializable {
 
+	private static final long serialVersionUID = -587414854758989561L;
+
 	private String applicationName;
 	private String openIdProviderUrl;
 	private String openIdClientId;
