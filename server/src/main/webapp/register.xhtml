@@ -8,28 +8,49 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://java.sun.com/jsf/composite/richext"
-	template="/WEB-INF/incl/layout/template.xhtml">
+	template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
+
+	<ui:define name="head">
+		<style>
+			.login-box, .register-box
+			{
+				width:800px !important;
+			}
+			.login-logo, .register-logo
+			{
+				margin-bottom:0px;
+			}
+		</style>
+	</ui:define>
 
 	<ui:define name="body">
 		<div id="formArea">
-			<div class="row">
-				<div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1">
-					<div id="register">
+			
+			<div id="addPerson">
+				<!-- Registration Form -->
+				<h:form id="personRegistrationForm">
+				<rich:panel>
+              <div class="login-box">
+		      <div class="login-logo">
+		        <a href="#" style="font-size: 35px;"><img src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png" ></img></a>
+		      </div><!-- /.login-logo -->
+		      <div class="row" style="margin-bottom:20px;">
+				<div class="col-md-12">
+					<div id="register" style="color:white;">
 						<h1>Sign up</h1>
 						To create an account, please complete your details below. Already
 						have an account?
 						<richext:spacer width="4" />
-						<s:link view="/login.xhtml" value="Login"
+						<s:link view="/login.xhtml" value="Login" style="color:white;font-weight:bold;"
 							rendered="#{not identity.loggedIn and not isLogin}"
 							propagation="none" />
 					</div>
 				</div>
 			</div>
-			<div id="addPerson">
-				<!-- Registration Form -->
-				<h:form id="personRegistrationForm">
-					<div class="formColumn row">
-						<div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1">
+		      
+		      <div class="login-box-body">
+		        <div class="formColumn row">
+						<div class="col-md-12">
 							<ui:param name="_mandatoryAttributes"
 								value="#{registerPersonAction.mandatoryAttributes}" />
 							<div id="registrationFormHolder">
@@ -41,13 +62,13 @@
 									<a4j:outputPanel>
 										<ui:param name="_mandatory" value="#{_custAttr.mandatory}" />
 <!-- Ordinary Attribute -->
-										<s:decorate id="_custAttrIdx"
+										<s:decorate id="_custAttrIdx" style="margin-left: -15px;"
 											template="/WEB-INF/incl/layout/edit.xhtml"
 											rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')}">
 											<ui:define name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
 <!-- String Attribute -->
 											<h:inputText value="#{_custAttr.value}" maxlength="60"
-												size="40" required="#{_mandatory}" id="custId"
+												size="40" required="#{_mandatory}" id="custId" class="form-control"
 												tabindex="#{_custAttrIdx + 1}"
 												rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE')}">
 
@@ -100,19 +121,19 @@
 								</a4j:repeat>
 
 <!-- Passwords -->
-								<s:decorate id="passwordField"
+								<s:decorate id="passwordField" style="margin-left: -15px;"
 									template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Password</ui:define>
-									<h:inputSecret id="password"
+									<h:inputSecret id="password" class="form-control"
 										value="#{registerPersonAction.password}" maxlength="60"
 										size="40" tabindex="6" required="true" redisplay="true"
 										autocomplete="off" />
 									<h:outputText value="&#160;" />
 								</s:decorate>
-								<s:decorate id="repeatPasswordField"
+								<s:decorate id="repeatPasswordField" style="margin-left: -15px;"
 									template="/WEB-INF/incl/layout/edit.xhtml">
 									<ui:define name="label">Repeat password</ui:define>
-									<h:inputSecret id="passwordValidation"
+									<h:inputSecret id="passwordValidation" class="form-control"
 										value="#{registerPersonAction.repeatPassword}" maxlength="60"
 										size="40" tabindex="7" required="true" redisplay="true"
 										autocomplete="off">
@@ -128,19 +149,42 @@
 								<h:outputText value="#{recaptcha.html}" escape="false"
 									rendered="#{not registerPersonAction.captchaDisabled}" />
 							</div>
-						</div>
-					</div>
-<!-- Command Buttons -->
-					<div class="row">
-						<div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1">
-							<div id="updateButtons">
-								<h:commandButton value="Register"
+							<div class="row">
+						<div class="col-md-12">
+							<div id="updateButtons" style="margin-top: 20px;">
+								<h:commandButton value="Register" class="btn btn-primary btn-flat" style="width:90px;"
 									action="#{registerPersonAction.register}" />
-								<h:commandButton value="Cancel"
+								<h:commandButton value="Cancel" class="btn btn-primary btn-flat" style="margin-left:3px; width:90px;"
 									action="#{registerPersonAction.cancel}" immediate="true" />
 							</div>
 						</div>
 					</div>
+						</div>
+					</div>
+					
+                  
+		      </div><!-- /.login-box-body -->
+		    </div><!-- /.login-box -->
+            <script type="text/javascript">
+                 
+            $( document ).ready(function() {
+                $('input').iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%' // optional
+        });
+            });
+
+            </script>
+
+           
+
+
+        </rich:panel>
+				
+					
+<!-- Command Buttons -->
+					
 				</h:form>
 			</div>
 
