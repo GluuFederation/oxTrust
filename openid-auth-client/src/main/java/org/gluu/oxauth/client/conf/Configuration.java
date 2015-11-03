@@ -11,7 +11,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxauth.client.AuthClient;
+import org.gluu.oxauth.client.OpenIdClient;
 import org.gluu.oxauth.client.exception.ConfigurationException;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
@@ -29,9 +29,9 @@ import org.xdi.util.security.PropertiesDecrypter;
  * @author Yuriy Movchan
  * @version 0.1, 11/02/2015
  */
-public abstract class Configuration<C extends AppConfiguration> {
+public abstract class Configuration<C extends AppConfiguration, L extends LdapAppConfiguration> {
 
-	private final Logger logger = LoggerFactory.getLogger(AuthClient.class);
+	private final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
 	static {
 		if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
@@ -63,7 +63,7 @@ public abstract class Configuration<C extends AppConfiguration> {
 
 	private FileConfiguration ldapConfiguration;
 	private C appConfiguration;
-	private AuthClient authClient;
+	private OpenIdClient openIdClient;
 
 	private String cryptoConfigurationSalt;
 
@@ -73,7 +73,7 @@ public abstract class Configuration<C extends AppConfiguration> {
 
 	private AtomicBoolean isActive;
 
-	private Configuration() {
+	protected Configuration() {
 		this.isActive = new AtomicBoolean(true);
 		try {
 			create();
@@ -99,7 +99,7 @@ public abstract class Configuration<C extends AppConfiguration> {
 			logger.info("Configuration loaded successfully.");
 		}
 
-		this.authClient = createAuthClient();
+		this.openIdClient = createAuthClient();
 	}
 
 	public void destroy() {
@@ -118,17 +118,20 @@ public abstract class Configuration<C extends AppConfiguration> {
 			String ldapConfigurationFilePath = DIR + ldapConfigurationFileName;
 
 			FileConfiguration ldapConfiguration = new FileConfiguration(ldapConfigurationFilePath);
-
-			File ldapFile = new File(ldapConfigurationFilePath);
-			if (ldapFile.exists()) {
-				this.ldapFileLastModifiedTime = ldapFile.lastModified();
+			if (ldapConfiguration.isLoaded()) {
+				File ldapFile = new File(ldapConfigurationFilePath);
+				if (ldapFile.exists()) {
+					this.ldapFileLastModifiedTime = ldapFile.lastModified();
+				}
+	
+				return ldapConfiguration;
 			}
-
-			return ldapConfiguration;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 			throw new ConfigurationException("Failed to load Ldap configuration from " + ldapConfigurationFileName, ex);
 		}
+
+		throw new ConfigurationException("Failed to load Ldap configuration from " + ldapConfigurationFileName);
 	}
 
 	private String loadCryptoConfigurationSalt() {
@@ -154,9 +157,9 @@ public abstract class Configuration<C extends AppConfiguration> {
 	private boolean createFromLdap() {
 		logger.info("Loading configuration from Ldap...");
 		try {
-			final C conf = loadConfigurationFromLdap();
-			if (conf != null) {
-				this.appConfiguration = initAppConfiguration(conf);
+			final L ldapConf = loadConfigurationFromLdap();
+			if (ldapConf != null) {
+				this.appConfiguration = initAppConfiguration(ldapConf);
 				return true;
 			}
 		} catch (Exception ex) {
@@ -166,12 +169,12 @@ public abstract class Configuration<C extends AppConfiguration> {
 		return false;
 	}
 
-	private C loadConfigurationFromLdap(String... returnAttributes) {
+	private L loadConfigurationFromLdap(String... returnAttributes) {
 		try {
 			final String dn = getLdapConfiguration().getString("configurationEntryDN");
 
-			final C conf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
-			return conf;
+			final L ldapConf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
+			return ldapConf;
 		} catch (LdapMappingException ex) {
 			logger.error(ex.getMessage());
 		}
@@ -200,11 +203,11 @@ public abstract class Configuration<C extends AppConfiguration> {
 		}
 	}
 
-	private AuthClient createAuthClient() {
-		AuthClient authClient = new AuthClient(this.appConfiguration);
-		authClient.init();
+	private OpenIdClient createAuthClient() {
+		OpenIdClient openIdClient = new OpenIdClient(this.appConfiguration);
+		openIdClient.init();
 
-		return authClient;
+		return openIdClient;
 	}
 
 	public FileConfiguration getLdapConfiguration() {
@@ -215,14 +218,14 @@ public abstract class Configuration<C extends AppConfiguration> {
 		return cryptoConfigurationSalt;
 	}
 
-	public AuthClient getAuthClient() {
-		return authClient;
+	public OpenIdClient getOpenIdClient() {
+		return openIdClient;
 	}
 
 	protected abstract String getLdapConfigurationFileName();
 
-	protected abstract Class<C> getAppConfigurationType();
+	protected abstract Class<L> getAppConfigurationType();
 
-	protected abstract C initAppConfiguration(C appConfiguarion);
+	protected abstract C initAppConfiguration(L ldapAppConfiguarion);
 
 }

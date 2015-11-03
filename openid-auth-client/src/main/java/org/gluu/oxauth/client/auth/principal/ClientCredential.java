@@ -70,12 +70,4 @@ public final class ClientCredential implements Serializable {
 		return null;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("ClientCredential [clientName=").append(clientName).append(", authorizationCode=").append(authorizationCode).append(", accessToken=")
-				.append(accessToken).append(", userProfile=").append(userProfile).append("]");
-		return builder.toString();
-	}
-
 }

@@ -6,7 +6,10 @@
 
 package org.gluu.oxauth.client.conf;
 
+import java.io.Serializable;
 import java.util.List;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * Base application configuration
@@ -14,15 +17,64 @@ import java.util.List;
  * @author Yuriy Movchan
  * @version 0.1, 11/02/2015
  */
-public interface AppConfiguration {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class AppConfiguration implements Serializable {
 
-	String getApplicationName();
+	private static final long serialVersionUID = -587414854758989561L;
 
-	String getOpenIdProviderUrl();
+	private String applicationName;
+	private String openIdProviderUrl;
+	private String openIdClientId;
+	private String openIdClientPassword;
+	private List<String> openIdScopes;
+	private String openIdRedirectUrl;
 
-	String getOpenIdClientId();
-	String getOpenIdClientPassword();
+	public String getApplicationName() {
+		return applicationName;
+	}
 
-	List<String> getOpenIdClientScopes();
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
+
+	public String getOpenIdProviderUrl() {
+		return openIdProviderUrl;
+	}
+
+	public void setOpenIdProviderUrl(String openIdProviderUrl) {
+		this.openIdProviderUrl = openIdProviderUrl;
+	}
+
+	public String getOpenIdClientId() {
+		return openIdClientId;
+	}
+
+	public void setOpenIdClientId(String openIdClientId) {
+		this.openIdClientId = openIdClientId;
+	}
+
+	public String getOpenIdClientPassword() {
+		return openIdClientPassword;
+	}
+
+	public void setOpenIdClientPassword(String openIdClientPassword) {
+		this.openIdClientPassword = openIdClientPassword;
+	}
+
+	public List<String> getOpenIdScopes() {
+		return openIdScopes;
+	}
+
+	public void setOpenIdScopes(List<String> openIdScopes) {
+		this.openIdScopes = openIdScopes;
+	}
+
+	public String getOpenIdRedirectUrl() {
+		return openIdRedirectUrl;
+	}
+
+	public void setOpenIdRedirectUrl(String openIdRedirectUrl) {
+		this.openIdRedirectUrl = openIdRedirectUrl;
+	}
 
 }

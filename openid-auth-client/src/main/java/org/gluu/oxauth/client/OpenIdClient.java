@@ -48,20 +48,19 @@ import org.xdi.util.init.Initializable;
  * 
  * @author Yuriy Movchan 11/02/2015
  */
-public class AuthClient extends Initializable implements Client<UserProfile> {
+public class OpenIdClient extends Initializable implements Client<UserProfile> {
 
-	private final Logger logger = LoggerFactory.getLogger(AuthClient.class);
+	private final Logger logger = LoggerFactory.getLogger(OpenIdClient.class);
 
 	private static final String STATE_PARAMETER = "#oxauth_state_parameter";
 
-	// Register new client earlier than old client was expired to allow execute
-	// authorization requests
-	private static final long NEW_CLIENT_EXPIRATION_OVERLAP = 15 * 60 * 1000;
+	// Register new client earlier than old client was expired to allow execute authorization requests
+	private static final long NEW_CLIENT_EXPIRATION_OVERLAP = 60 * 1000;
 
 	private final ReentrantLock clientLock = new ReentrantLock();
 
 	@NotNull
-	private String appName = "Dynamic";
+	private String appName;
 
 	@NotNull
 	private String openIdProvider;
@@ -77,29 +76,23 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 	private long clientExpiration;
 
 	private OpenIdConfigurationResponse openIdConfiguration;
-
 	private boolean preRegisteredClient;
 
-	public AuthClient() {
-	}
+	public OpenIdClient() {}
 
-	public AuthClient(final String clientId, final String clientSecret) {
-		this.clientId = clientId;
-		this.clientSecret = clientSecret;
-	}
-
-	public AuthClient(final String appName, final String openIdProvider, final String clientId, final String clientSecret, final List<String> openIdScopes, final String redirectUri) {
-		this(clientId, clientSecret);
+	public OpenIdClient(final String appName, final String openIdProvider, final String clientId, final String clientSecret, final List<String> openIdScopes, final String redirectUri) {
 		this.appName = appName;
 		this.openIdProvider = openIdProvider;
+		this.clientId = clientId;
+		this.clientSecret = clientSecret;
 		this.openIdScopes = openIdScopes;
 		this.redirectUri = redirectUri;
 	}
 
-	public AuthClient(final AppConfiguration appConfiguration) {
-		this(appConfiguration.getOpenIdProviderUrl(), appConfiguration.getApplicationName(),
+	public OpenIdClient(final AppConfiguration appConfiguration) {
+		this(appConfiguration.getApplicationName(), appConfiguration.getOpenIdProviderUrl(),
 				appConfiguration.getOpenIdClientId(), appConfiguration.getOpenIdClientPassword(),
-				appConfiguration.getOpenIdClientScopes(), appConfiguration.getOpenIdProviderUrl());
+				appConfiguration.getOpenIdScopes(), appConfiguration.getOpenIdRedirectUrl());
 	}
 
 	@Override
@@ -285,8 +278,7 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 		final TokenClient tokenClient = new TokenClient(this.openIdConfiguration.getTokenEndpoint());
 
-		final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.redirectUri, this.clientId,
-				this.clientSecret);
+		final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.redirectUri, this.clientId, this.clientSecret);
 		logger.trace("tokenResponse.getStatus(): '{}'", tokenResponse.getStatus());
 		logger.trace("tokenResponse.getErrorType(): '{}'", tokenResponse.getErrorType());
 
@@ -346,13 +338,6 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 		return claims.get(0);
 	}
-	public String getOpenIdProvider() {
-		return openIdProvider;
-	}
-
-	public void setOpenIdProvider(String openIdProvider) {
-		this.openIdProvider = openIdProvider;
-	}
 
 	public String getAppName() {
 		return appName;
@@ -360,6 +345,14 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 
 	public void setAppName(String appName) {
 		this.appName = appName;
+	}
+
+	public String getOpenIdProvider() {
+		return openIdProvider;
+	}
+
+	public void setOpenIdProvider(String openIdProvider) {
+		this.openIdProvider = openIdProvider;
 	}
 
 	public List<String> getOpenIdScopes() {
@@ -394,11 +387,8 @@ public class AuthClient extends Initializable implements Client<UserProfile> {
 		this.clientSecret = clientSecret;
 	}
 
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("AuthClient [clientId=").append(clientId).append(", discoveryUrl=").append(openIdProvider).append(", openIdProvider=")
-				.append(redirectUri).append("]");
-		return builder.toString();
+	public OpenIdConfigurationResponse getOpenIdConfiguration() {
+		return openIdConfiguration;
 	}
 
 }
