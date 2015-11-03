@@ -101,4 +101,8 @@ public final class Configuration {
     	return null;
 	}
 
+	public String getCryptoPropertyValue() {
+		return SamlConfiguration.instance().getCryptoConfigurationSalt();
+	}
+
 }
