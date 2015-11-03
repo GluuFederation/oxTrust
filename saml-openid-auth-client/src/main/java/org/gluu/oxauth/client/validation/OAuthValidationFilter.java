@@ -55,19 +55,10 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
 
         this.oAuthTokenUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_TOKEN_URL, null);
         this.oAuthValidationUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_TOKEN_VALIDATION_URL, null);
-        this.oAuthCheckSessionUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_CHECKSESSION_URL, null);
         this.oAuthUserInfoUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_USERINFO_URL, null);
 
         this.oAuthClientId = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
         this.oAuthClientPassword = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, null);
-
-        if (this.oAuthClientPassword != null) {
-            try {
-                this.oAuthClientPassword = StringEncrypter.defaultInstance().decrypt(this.oAuthClientPassword, Configuration.instance().getCryptoPropertyValue("encodeSalt"));
-            } catch (EncryptionException ex) {
-                log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
-            }
-        }
 
         AssertionHelper.assertNotNull(this.oAuthAuthorizeUrl, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL + "cannot be null");
     }

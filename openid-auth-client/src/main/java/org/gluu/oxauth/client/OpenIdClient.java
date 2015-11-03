@@ -387,4 +387,8 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 		this.clientSecret = clientSecret;
 	}
 
+	public OpenIdConfigurationResponse getOpenIdConfiguration() {
+		return openIdConfiguration;
+	}
+
 }
