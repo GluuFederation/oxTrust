@@ -378,7 +378,7 @@ public class OxTrustConfiguration {
 	}
 
 	public String getConfigurationDn() {
-		return getLdapConfiguration().getString("baseConfigurationDN");
+		return getLdapConfiguration().getString("configurationEntryDN");
 	}
 
 	public static OxTrustConfiguration instance() {
