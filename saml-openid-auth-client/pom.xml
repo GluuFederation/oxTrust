@@ -48,6 +48,12 @@
 
         <dependency>
             <groupId>org.xdi</groupId>
+            <artifactId>openid-auth-client</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xdi</groupId>
             <artifactId>oxauth-model</artifactId>
             <scope>provided</scope>
         </dependency>
