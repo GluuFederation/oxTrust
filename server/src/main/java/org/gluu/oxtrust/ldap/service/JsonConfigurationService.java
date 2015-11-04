@@ -52,9 +52,9 @@ public class JsonConfigurationService implements Serializable {
 	@In(value = "#{oxTrustConfiguration.configurationDn}")
 	private String configurationDn;
 
-	public String getOxTrustConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
+	public ApplicationConfiguration getOxTrustApplicationConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return jsonService.objectToJson(ldapOxTrustConfiguration.getApplication());
+		return ldapOxTrustConfiguration.getApplication();
 	}
 
 	public CacheRefreshConfiguration getOxTrustCacheRefreshConfiguration() {
@@ -72,11 +72,9 @@ public class JsonConfigurationService implements Serializable {
 		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
 	}
 
-	public boolean saveOxTrustConfigJson(String oxTrustConfigJson) throws JsonParseException, JsonMappingException, IOException {
-		ApplicationConfiguration applicationConfiguration = jsonService.jsonToObject(oxTrustConfigJson, ApplicationConfiguration.class);
-
+	public boolean saveOxTrustApplicationConfiguration(ApplicationConfiguration oxTrustApplicationConfiguration) {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		ldapOxTrustConfiguration.setApplication(applicationConfiguration);
+		ldapOxTrustConfiguration.setApplication(oxTrustApplicationConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
 		ldapEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
