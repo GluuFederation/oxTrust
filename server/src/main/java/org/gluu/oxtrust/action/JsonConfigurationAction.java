@@ -46,6 +46,8 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @Restrict("#{identity.loggedIn}")
 public class JsonConfigurationAction implements Serializable {
 
+	private static final String HIDDEN_PASSWORD_TEXT = "hidden";
+
 	private static final long serialVersionUID = -4470460481895022468L;
 
 	@In
@@ -133,14 +135,14 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			ApplicationConfiguration resultOxTrustApplicationConfiguration = (ApplicationConfiguration) BeanUtils.cloneBean(oxTrustApplicationConfiguration);
 
-			resultOxTrustApplicationConfiguration.setSvnConfigurationStorePassword("hidden");
-			resultOxTrustApplicationConfiguration.setKeystorePassword("hidden");
-			resultOxTrustApplicationConfiguration.setIdpSecurityKeyPassword("hidden");
-			resultOxTrustApplicationConfiguration.setIdpBindPassword("hidden");
-			resultOxTrustApplicationConfiguration.setMysqlPassword("hidden");
-			resultOxTrustApplicationConfiguration.setCaCertsPassphrase("hidden");
-			resultOxTrustApplicationConfiguration.setOxAuthClientPassword("hidden");
-			resultOxTrustApplicationConfiguration.setUmaClientPassword("hidden");
+			resultOxTrustApplicationConfiguration.setSvnConfigurationStorePassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustApplicationConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustApplicationConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustApplicationConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustApplicationConfiguration.setMysqlPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustApplicationConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustApplicationConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustApplicationConfiguration.setUmaClientPassword(HIDDEN_PASSWORD_TEXT);
 
 			return jsonService.objectToJson(resultOxTrustApplicationConfiguration);
 		} catch (Exception ex) {
@@ -173,7 +175,7 @@ public class JsonConfigurationAction implements Serializable {
 
 	private void processPasswordProperty(ApplicationConfiguration source, ApplicationConfiguration current, String property) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, EncryptionException {
 		String currentValue = BeanUtils.getProperty(current, property);
-		if (StringHelper.equals(currentValue, "hidden")) {
+		if (StringHelper.equals(currentValue, HIDDEN_PASSWORD_TEXT)) {
 			String sourceValue = BeanUtils.getSimpleProperty(source, property);
 			BeanUtils.setProperty(current, property, sourceValue);
 		} else {
