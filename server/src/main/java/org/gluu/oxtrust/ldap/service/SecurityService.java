@@ -33,10 +33,10 @@ public class SecurityService implements Serializable {
 	private static final long serialVersionUID = 1395327358942223005L;
 
 	@In
-	GroupService groupService;
+	private GroupService groupService;
 
 	@In
-	OrganizationService organizationService;
+	private OrganizationService organizationService;
 
 	/**
 	 * Get person user roles
