@@ -30,6 +30,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
+import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
 
@@ -71,13 +72,13 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			return authenticationChartDto;
 		}
 		
-		Map<MetricType, List<MetricEntry>> entries = findAuthenticationMetrics(-countDays);
+		Map<MetricType, List<? extends MetricEntry>> entries = findAuthenticationMetrics(-countDays);
 
 		String[] labels = new String[countDays];
-		Map<String, Integer> successStats = calculateStatistics(countDays, entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
+		Map<String, Long> successStats = calculateCounterStatistics(countDays, (List<CounterMetricEntry>) entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
 		labels = successStats.keySet().toArray(labels);
 
-		Integer[] values = new Integer[countDays];
+		Long[] values = new Long[countDays];
 		values = successStats.values().toArray(values);
 
 		authenticationChartDto = new AuthenticationChartDto();
@@ -85,8 +86,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		authenticationChartDto.setLabels(labels);
 		authenticationChartDto.setSuccess(values);
 
-		Map<String, Integer> failureStats = calculateStatistics(countDays, entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
-		values = new Integer[countDays];
+		Map<String, Long> failureStats = calculateCounterStatistics(countDays, (List<CounterMetricEntry>) entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
+		values = new Long[countDays];
 		values = failureStats.values().toArray(values);
 		authenticationChartDto.setFailure(values);
 
@@ -95,11 +96,10 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return authenticationChartDto;
 	}
 
-	private Map<MetricType, List<MetricEntry>> findAuthenticationMetrics(int countDays) {
+	private Map<MetricType, List<? extends MetricEntry>> findAuthenticationMetrics(int countDays) {
 		List<MetricType> metricTypes = new ArrayList<MetricType>();
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
-		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_RATE);
 
 		Date endDate = new Date();
 		Calendar calendar = Calendar.getInstance();
@@ -107,32 +107,87 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date startDate = calendar.getTime();
 
-		Map<MetricType, List<MetricEntry>> entries = findMetricEntry(ApplicationType.OX_AUTH, oxTrustConfiguration.getApplicationConfiguration()
-				.getApplianceInum(), metricTypes, startDate, endDate, null);
+		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(ApplicationType.OX_AUTH, oxTrustConfiguration.getApplicationConfiguration()
+				.getApplianceInum(), metricTypes, startDate, endDate);
 
 		return entries;
 	}
 
-	private Map<String, Integer> calculateStatistics(int countDays, List<MetricEntry> success) {
-		Map<String, Integer> stats = new TreeMap<String, Integer>();
+	private Map<String, Long> calculateCounterStatistics(int countDays, List<CounterMetricEntry> metrics) {
+		// Prepare map with all dates
+		Map<String, Long> stats = new TreeMap<String, Long>();
 		Calendar calendar = Calendar.getInstance();
-		for (int i = 0; i < countDays; i++) {
+		for (int i = 0; i <= countDays; i++) {
 			String dateString = df.format(calendar.getTime());
-			stats.put(dateString, 0);
+			stats.put(dateString, 0L);
 			calendar.add(Calendar.DATE, -1);
 
 		}
-		if (success != null)
-			for (MetricEntry metricEntry : success) {
-				Date date = metricEntry.getCreationDate();
-				String dateString = df.format(date);
-				Integer count = stats.get(dateString);
-				if (count != null)
-					stats.put(dateString, (count + 1));
-				else
-					stats.put(dateString, 1);
+		
+		if ((metrics == null) || (metrics.size() == 0)) {
+			return stats;
+		}
+
+		// Detect servers restart and readjust counts
+		// Server restart condition: previous entry CounterMetricEntry.CounterMetricEntry.count > current entry CounterMetricEntry.CounterMetricEntry.count
+		CounterMetricEntry prevMetric = null;
+		long prevDayCount = 0L;
+		long adjust = 0;
+		for (CounterMetricEntry metric : metrics) {
+			Date date = metric.getCreationDate();
+			calendar.setTime(date);
+
+			// Detect server restarts
+			if ((prevMetric != null) && (prevMetric.getMetricData().getCount() > metric.getMetricData().getCount() + adjust)) {
+				// Last count before server restart
+				long count = prevMetric.getMetricData().getCount();
+
+				// Change adjust value
+				adjust = count;
 			}
+			
+			long count = metric.getMetricData().getCount();
+			metric.getMetricData().setCount(count + adjust);
+			
+			prevMetric = metric;
+		}
+
+		// Iterate through ordered by MetricEntry.startDate list and just make value snapshot at the end of the day
+		int prevDay = -1;
+		prevMetric = null;
+		prevDayCount = 0L;
+		for (CounterMetricEntry metric : metrics) {
+			Date date = metric.getCreationDate();
+			calendar.setTime(date);
+
+			int currDay = calendar.get(Calendar.DAY_OF_MONTH);
+			if ((prevMetric != null) && (prevDay != currDay)) {
+				long count = prevMetric.getMetricData().getCount();
+				String dateString = df.format(prevMetric.getCreationDate());
+				stats.put(dateString, count - prevDayCount);
+				
+				// Show only difference, not total
+				prevDayCount = count;
+			}
+			
+			prevMetric = metric;
+			prevDay = currDay;
+		}
+
+		// Add last day statistic
+		long count = prevMetric.getMetricData().getCount();
+		String dateString = df.format(prevMetric.getCreationDate());
+		stats.put(dateString, count - prevDayCount);
+
 		return stats;
+	}
+
+	private void dump(List<CounterMetricEntry> metrics) {
+		for (CounterMetricEntry metric : metrics) {
+			Date date = metric.getCreationDate();
+			long count = metric.getMetricData().getCount();
+			System.out.println(date + " : " + count);
+		}
 	}
 
 	@Override
