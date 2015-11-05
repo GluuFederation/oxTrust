@@ -207,6 +207,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private void updateAppliance() {
 		GluuAppliance updateAppliance = ApplianceService.instance().getAppliance();
+		updateAppliance.setVdsCacheRefreshEnabled(this.appliance.getVdsCacheRefreshEnabled());
 		updateAppliance.setVdsCacheRefreshPollingInterval(this.appliance.getVdsCacheRefreshPollingInterval());
 		updateAppliance.setCacheRefreshServerIpAddress(this.appliance.getCacheRefreshServerIpAddress());
 		ApplianceService.instance().updateAppliance(updateAppliance);
