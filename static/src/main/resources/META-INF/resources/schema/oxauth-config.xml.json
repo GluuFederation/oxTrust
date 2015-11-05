@@ -745,10 +745,6 @@
                 }
             }
         },
-        "externalAuthenticatorEnabled": {
-            "id": "externalAuthenticatorEnabled",
-            "type": "boolean"
-        },
         "applianceInum": {
             "id": "applianceInum",
             "type": "string",
@@ -903,7 +899,6 @@
         "clientAuthenticationFiltersEnabled",
         "authenticationFilters",
         "clientAuthenticationFilters",
-        "externalAuthenticatorEnabled",
         "applianceInum",
         "sessionIdUnusedLifetime",
         "sessionIdUnauthenticatedUnusedLifetime",
