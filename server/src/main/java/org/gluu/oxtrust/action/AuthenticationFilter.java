@@ -98,7 +98,7 @@ public class AuthenticationFilter extends AbstractFilter {
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		// Exclude SCIm configuration endpoint
+		// Exclude SCIM configuration endpoint
 		String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 		if (path.endsWith("/oxrust/scim-configuration")) {
 		    chain.doFilter(request, response);
