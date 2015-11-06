@@ -63,9 +63,6 @@ public class AuthenticationFilter extends AbstractFilter {
 	@Logger
 	private Log log;
 
-	@In
-	private SecurityService securityService;
-
 	private String realm = DEFAULT_REALM;
 
 	private int nonceValiditySeconds = 300;
@@ -207,7 +204,7 @@ public class AuthenticationFilter extends AbstractFilter {
 					username = usernameValues.get(0);
 				}
 
-				boolean isAdmin = securityService.isUseAdminUser(username);
+				boolean isAdmin = SecurityService.instance().isUseAdminUser(username);
 				if (isAdmin) {
 					return authenticateUserSilently(identity, credentials, username);
 				}
