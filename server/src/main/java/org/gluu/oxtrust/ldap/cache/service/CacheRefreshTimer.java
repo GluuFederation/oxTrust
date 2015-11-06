@@ -1167,7 +1167,7 @@ public class CacheRefreshTimer {
 		Properties ldapProperties = new Properties();
 		ldapProperties.put("servers", PropertyUtil.simplePropertiesToCommaSeparatedList(ldapConfiguration.getServers()));
 		ldapProperties.put("maxconnections", Integer.toString(ldapConfiguration.getMaxConnections()));
-		ldapProperties.put("useSSL", ldapConfiguration.isUseSSL());
+		ldapProperties.put("useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
 		ldapProperties.put("bindDN", ldapConfiguration.getBindDN());
 		ldapProperties.put("bindPassword", ldapConfiguration.getBindPassword());
 
