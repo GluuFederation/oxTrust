@@ -19,9 +19,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -60,6 +62,9 @@ public class AuthenticationFilter extends AbstractFilter {
 
 	@Logger
 	private Log log;
+
+	@In
+	private SecurityService securityService;
 
 	private String realm = DEFAULT_REALM;
 
@@ -195,7 +200,10 @@ public class AuthenticationFilter extends AbstractFilter {
 					username = usernameValues.get(0);
 				}
 
-				return authenticateUserSilently(identity, credentials, username);
+				boolean isAdmin = securityService.isUseAdminUser(username);
+				if (isAdmin) {
+					return authenticateUserSilently(identity, credentials, username);
+				}
 			}
 		} catch (Exception ex) {
 			log.warn("Could not validate accessToken." + ex.getMessage());
