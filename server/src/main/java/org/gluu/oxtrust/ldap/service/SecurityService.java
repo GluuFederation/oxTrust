@@ -41,10 +41,10 @@ public class SecurityService implements Serializable {
 	private PersonService personService;
 
 	@In
-	GroupService groupService;
+	private GroupService groupService;
 
 	@In
-	OrganizationService organizationService;
+	private OrganizationService organizationService;
 
 	/**
 	 * Get person user roles
