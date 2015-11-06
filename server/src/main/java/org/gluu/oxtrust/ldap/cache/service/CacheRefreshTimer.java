@@ -1157,7 +1157,7 @@ public class CacheRefreshTimer {
 	private Map<String, String> getTargetServerAttributesMapping(CacheRefreshConfiguration cacheRefreshConfiguration) {
 		Map<String, String> result = new HashMap<String, String>();
 		for (CacheRefreshAttributeMapping attributeMapping : cacheRefreshConfiguration.getAttributeMapping()) {
-			result.put(attributeMapping.getSource(), attributeMapping.getDestination());
+			result.put(attributeMapping.getDestination(), attributeMapping.getSource());
 		}
 
 		return result;
