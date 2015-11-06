@@ -37,6 +37,12 @@
             "format": "url",
             "minLength": 1
         },
+        "baseEndpoint": {
+            "id": "baseEndpoint",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "schemaAddObjectClassWithoutAttributeTypesDefinition": {
             "id": "schemaAddObjectClassWithoutAttributeTypesDefinition",
             "type": "string",
@@ -466,6 +472,7 @@
         "orgSupportEmail",
         "applianceInum",
         "applianceUrl",
+        "baseEndpoint",
         "schemaAddObjectClassWithoutAttributeTypesDefinition",
         "schemaAddObjectClassWithAttributeTypesDefinition",
         "personObjectClassTypes",
