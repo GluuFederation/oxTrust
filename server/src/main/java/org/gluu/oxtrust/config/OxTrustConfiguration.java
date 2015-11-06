@@ -31,7 +31,6 @@ import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
-import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 /**
