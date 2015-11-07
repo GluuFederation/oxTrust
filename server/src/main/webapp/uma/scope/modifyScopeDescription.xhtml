@@ -46,20 +46,9 @@
                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                        <ui:define name="label">Name</ui:define>
+                        <ui:define name="label">Display Name</ui:define>
                         <rich:inplaceInput style="width:100% !important" value="#{_scopeDescription.displayName}" defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="180"  required="true" id="displayNameId" />
                     </s:decorate>
-
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="type">
-                        <ui:define name="label">Type</ui:define>
-                        <h:selectOneMenu styleClass="form-control" value="#{_scopeDescription.type}" id="typeId">
-                            <s:selectItems value="#{organizationService.internalExternalTypes}" var="_type" label="#{_type.displayName}"
-                                noSelectionLabel="Type"/>
-                            <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
-                            <a4j:ajax event="change" render="internalTypeGroupId, externalTypeGroupId" execute="@this" limitRender="true"/>
-                        </h:selectOneMenu>
-                    </s:decorate>
-
                     <h:panelGroup id="internalTypeGroupId">
                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scope" rendered="#{_scopeDescription.type.value eq 'internal'}">
                             <ui:define name="label">Id</ui:define>
@@ -91,6 +80,20 @@
                             
                         </s:decorate>
                     </h:panelGroup>
+
+                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="type">
+                        <ui:define name="label">Type</ui:define>
+                        <h:outputText value="#{_scopeDescription.type.displayName}">
+                        
+                        </h:outputText>
+                        <!-- <h:selectOneMenu styleClass="form-control" value="#{_scopeDescription.type}" id="typeId">
+                            <s:selectItems value="#{organizationService.internalExternalTypes}" var="_type" label="#{_type.displayName}"
+                                noSelectionLabel="Type"/>
+                            <s:convertEnum/> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
+                            <a4j:ajax event="change" render="internalTypeGroupId, externalTypeGroupId" execute="@this" limitRender="true"/>
+                        </h:selectOneMenu> -->
+                    </s:decorate>
+
 
                     <h:panelGroup id="externalTypeGroupId">
                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
@@ -145,7 +148,11 @@
                 </s:div>
             </div>
             </div></div></div>
-
+        </s:div>
+        
+        </section>
+        </h:form>
+        
             <ox:selectSelectableEntityDialog id="authorizationPolicy" searchMethod="#{updateScopeDescriptionAction.searchAvailableAuthorizationPolicies}"
                 searchResult="#{updateScopeDescriptionAction.availableAuthorizationPolicies}" displaySearchForm="false"
                 acceptMethod="#{updateScopeDescriptionAction.acceptSelectAuthorizationPolicies}" cancelMethod="#{updateScopeDescriptionAction.cancelSelectAuthorizationPolicies}"
@@ -153,10 +160,7 @@
                 label="Add Authorization Policy"/>
 
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeDescriptionAction.scopeDescription.id}" deleteMethod="#{updateScopeDescriptionAction.delete}" />
-        </s:div>
         
-        </section>
-        </h:form>
     </ui:define>
 
 </ui:composition>
