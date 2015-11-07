@@ -95,7 +95,7 @@
                     <h:panelGroup id="externalTypeGroupId">
                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
                             <ui:define name="label">Icon Uri</ui:define>
-                            <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Icon Url" maxlength="60" inputWidth="180" required="true" id="iconUrlId" />
+                            <rich:inplaceInput value="#{_scopeDescription.iconUrl}" defaultLabel="Click to enter Icon Url" maxlength="60" inputWidth="180" required="true" id="iconUrlId" />
                         </s:decorate>
 
                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
