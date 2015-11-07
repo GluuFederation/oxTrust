@@ -48,7 +48,7 @@
                     </s:decorate>
 
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                        <ui:define name="label">Name</ui:define>
+                        <ui:define name="label">Display Name</ui:define>
                        <div class = "col-sm-9">
                         <rich:inplaceInput style="margin-left:-16px;"  value="#{_resourceSet.name}" defaultLabel="Click to enter Display Name" maxlength="60"  required="true" id="displayNameId" />
                         </div>
@@ -105,7 +105,7 @@
                         </h:panelGroup>
                     </s:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clients">
+<!--                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clients">
                         <ui:define name="label">Clients</ui:define>
                         <h:panelGroup id="selectedClientsId">
                         
@@ -119,7 +119,7 @@
                                     </div>
                                      <div class = "col-sm-6">
                                     <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceSetAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
-                                       <!--  <h:graphicImage value="/img/remove.gif" />  -->
+                                        <h:graphicImage value="/img/remove.gif" /> 
                                     </a4j:commandLink>
                                     </div>
                                   </div>
@@ -128,7 +128,7 @@
                             </h:panelGrid>
                            
                         </h:panelGroup>
-                    </s:decorate>
+                    </s:decorate> -->
 
                     <h:panelGroup>
                             <a4j:commandButton value="Add Resource" onclick="#{rich:component('resource:inputText')}.show();" styleClass="btn btn-primary" style = "margin-left:20px;"/>
