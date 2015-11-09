@@ -88,7 +88,7 @@
         "contactObjectClassTypes": {
             "id": "contactObjectClassTypes",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": false,
             "additionalItems": true,
             "items": {
@@ -99,7 +99,7 @@
         "contactObjectClassDisplayNames": {
             "id": "contactObjectClassDisplayNames",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": false,
             "additionalItems": true,
             "items": {
@@ -239,7 +239,7 @@
         "gluuSpAttributes": {
             "id": "gluuSpAttributes",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": false,
             "additionalItems": true,
             "items": {
@@ -409,7 +409,7 @@
         "clusteredInums": {
             "id": "clusteredInums",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": false,
             "additionalItems": true,
             "items": {
