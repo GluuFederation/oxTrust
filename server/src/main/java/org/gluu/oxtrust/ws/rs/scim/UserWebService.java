@@ -58,7 +58,7 @@ import org.xml.sax.InputSource;
  * @author Reda Zerrad Date: 04.03.2012
  */
 @Name("userWebService")
-@Path("/Users")
+@Path("/scim/v1/Users")
 public class UserWebService extends BaseScimWebService {
 
 	@Logger

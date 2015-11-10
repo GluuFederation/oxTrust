@@ -46,8 +46,8 @@ import org.jboss.seam.log.Log;
  * @author Rahat Ali Date: 05.08.2015
  */
 @Name("scim2GroupEndpoint")
-@Path("/v2/Groups")
-@Api(value = "/v2/Groups", description = "SCIM2 Group Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.4.1)",
+@Path("/scim/v2/Groups")
+@Api(value = "/scim/v2/Groups", description = "SCIM2 Group Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.4.1)",
 		authorizations = {
 				@Authorization(value = "Authorization", type = "oauth2")})
 public class GroupWebService extends BaseScimWebService {

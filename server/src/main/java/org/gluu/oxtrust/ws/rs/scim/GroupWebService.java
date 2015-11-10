@@ -40,7 +40,7 @@ import org.jboss.seam.log.Log;
  * @author Reda Zerrad Date: 04.13.2012
  */
 @Name("GroupWebService")
-@Path("/Groups")
+@Path("/scim/v1/Groups")
 public class GroupWebService extends BaseScimWebService {
 
 	@Logger

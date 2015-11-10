@@ -50,8 +50,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Rahat ALi Date: 05.08.2015
  */
 @Name("scim2BulkEndpoint")
-@Path("/v2/Bulk")
-@Api(value = "/v2/Bulk", description = "SCIM2 Bulk Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
+@Path("/scim/v2/Bulk")
+@Api(value = "/scim/v2/Bulk", description = "SCIM2 Bulk Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
 		authorizations = {
 				@Authorization(value = "Authorization", type = "oauth2")})
 public class BulkWebService extends BaseScimWebService {

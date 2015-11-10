@@ -25,7 +25,7 @@ import org.jboss.seam.log.Log;
  * @author Rahat Ali Date: 05.08.2015
  */
 @Name("resourceTypesWs")
-@Path("/v2/ResourceTypes")
+@Path("/scim/v2/ResourceTypes")
 public class ResourceTypeWS extends BaseScimWebService {
 
 	@Logger
