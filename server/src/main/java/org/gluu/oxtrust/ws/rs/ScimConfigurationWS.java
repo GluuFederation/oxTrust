@@ -73,10 +73,10 @@ public class ScimConfigurationWS {
             final ScimConfiguration c1 = new ScimConfiguration();
             c1.setVersion("1.0");
             c1.setAuthorizationSupported(new String[]{"uma", "openid"});
-            c1.setUserEndpoint(baseEndpointUri + "/Users");
-            c1.setUserSearchEndpoint(baseEndpointUri + "/Users/Search");
-            c1.setGroupEndpoint(baseEndpointUri + "/Groups");
-            c1.setBulkEndpoint(baseEndpointUri + "/Bulk");
+            c1.setUserEndpoint(baseEndpointUri + "/scim/v1/Users");
+            c1.setUserSearchEndpoint(baseEndpointUri + "/scim/v1/Users/Search");
+            c1.setGroupEndpoint(baseEndpointUri + "/scim/v1/Groups");
+            c1.setBulkEndpoint(baseEndpointUri + "/scim/v1/Bulk");
 
             cl.add(c1);
 
@@ -84,12 +84,12 @@ public class ScimConfigurationWS {
             final ScimConfiguration c2 = new ScimConfiguration();
             c2.setVersion("2.0");
             c2.setAuthorizationSupported(new String[]{"uma", "openid"});
-            c2.setUserEndpoint(baseEndpointUri + "/v2/Users");
-            c2.setUserSearchEndpoint(baseEndpointUri + "/v2/Users/Search");
-            c2.setGroupEndpoint(baseEndpointUri + "/v2/Groups");
-            c2.setBulkEndpoint(baseEndpointUri + "/v2/Bulk");
-            c2.setServiceProviderEndpoint(baseEndpointUri + "/v2/ServiceProviderConfig");
-            c2.setResourceTypesEndpoint(baseEndpointUri + "/v2/ResourceTypes");
+            c2.setUserEndpoint(baseEndpointUri + "/scim/v2/Users");
+            c2.setUserSearchEndpoint(baseEndpointUri + "/scim/v2/Users/Search");
+            c2.setGroupEndpoint(baseEndpointUri + "/scim/v2/Groups");
+            c2.setBulkEndpoint(baseEndpointUri + "/scim/v2/Bulk");
+            c2.setServiceProviderEndpoint(baseEndpointUri + "/scim/v2/ServiceProviderConfig");
+            c2.setResourceTypesEndpoint(baseEndpointUri + "/scim/v2/ResourceTypes");
 
             cl.add(c2);
 

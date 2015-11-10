@@ -54,7 +54,7 @@ import org.jboss.seam.log.Log;
  * @author Rahat Ali Date: 05.08.2015
  */
 @Name("scim2UserEndpoint")
-@Path("/v2/Users")
+@Path("/scim/v2/Users")
 @Api(value = "/v2/Users", description = "SCIM2 User Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.4.1)",
 		authorizations = {
 		@Authorization(value = "Authorization", type = "oauth2")})

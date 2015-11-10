@@ -61,7 +61,7 @@ import org.openid4java.message.ax.FetchResponse;
 import org.xdi.model.GluuUserRole;
 
 @Name("oxChooserWebService")
-@Path("/Chooser")
+@Path("/scim/v1/Chooser")
 public class OxChooserWebService extends BaseScimWebService {
 
 	@Logger
