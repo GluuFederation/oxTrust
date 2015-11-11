@@ -439,8 +439,8 @@
             "type": "string",
             "minLength": 1
         },
-        "umaClientPassword": {
-            "id": "umaClientPassword",
+        "umaClientKeyId": {
+            "id": "umaClientKeyId",
             "type": "string",
             "minLength": 1
         },
@@ -542,7 +542,7 @@
         "ignoreValidation",
         "umaIssuer",
         "umaClientId",
-        "umaClientPassword",
+        "umaClientKeyId",
         "umaResourceId",
         "umaScope",
         "cssLocation",

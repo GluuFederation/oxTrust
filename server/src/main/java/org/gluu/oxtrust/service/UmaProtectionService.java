@@ -11,6 +11,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.model.OxAuthClient;
 import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.seam.ScopeType;
@@ -32,11 +34,13 @@ import org.xdi.oxauth.model.uma.ResourceSetPermissionTicket;
 import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.wrapper.Token;
+import org.xdi.oxauth.model.util.JwtUtil;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.PropertiesDecrypter;
 
 import javax.ws.rs.core.Response;
+
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -73,6 +77,9 @@ public class UmaProtectionService implements Serializable {
 	
 	@In
 	private AppInitializer appInitializer;
+
+	@In
+	private ClientService clientService;
 
 	private Token umaPat;
 	private long umaPatAccessTokenExpiration = 0l; // When the "accessToken" will expire;
@@ -224,11 +231,15 @@ public class UmaProtectionService implements Serializable {
 		if (umaMetadataConfiguration == null) {
 			return;
 		}
+		
+		OxAuthClient umaClient = clientService.getClientByInum(applicationConfiguration.getUmaClientId(), "inum", "oxAuthJwks");
+//		JwtUtil.getPublicKey(jwksUri, jwks, signatureAlgorithm, keyId)		
+		String clientId = umaClient.getInum();
 
-		String umaClientPassword = PropertiesDecrypter.decryptProperty(applicationConfiguration.getUmaClientPassword(), true, cryptoConfigurationSalt);
+		String umaClientPassword = "";
 		try {
 			this.umaPat = UmaClient.requestPat(umaMetadataConfiguration.getTokenEndpoint(),
-					applicationConfiguration.getUmaClientId(), umaClientPassword);
+					clientId, umaClientPassword);
 			this.umaPatAccessTokenExpiration = computeAccessTokenExpirationTime(this.umaPat.getExpiresIn());
 		} catch (Exception ex) {
 			throw new UmaProtectionException("Failed to obtain valid UMA PAT token", ex);
