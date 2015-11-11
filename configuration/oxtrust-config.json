@@ -76,7 +76,7 @@
         "givenName"
     ],
 
-    "configGeneration":true,
+    "configGeneration":false,
     "ignoreValidation":false,
 
     "idpSecurityCert":"${base.root}/etc/certs/${config.organization.inum-fn}-shib.crt",
