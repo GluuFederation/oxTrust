@@ -12,3 +12,4 @@ target
 
 server/.tern-project
 /bin/
+server/src/main/webapp/META-INF/MANIFEST.MF
