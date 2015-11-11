@@ -87,9 +87,9 @@ public class ClientService implements Serializable {
 	 *            client Inum
 	 * @return client
 	 */
-	public OxAuthClient getClientByInum(String inum) {
+	public OxAuthClient getClientByInum(String inum, String ... ldapReturnAttributes) {
 
-		OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum));
+		OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
 
 		return result;
 	}
