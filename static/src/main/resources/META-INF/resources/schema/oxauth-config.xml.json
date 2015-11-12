@@ -837,7 +837,7 @@
         "clientInfoEndpoint",
         "checkSessionIFrame",
         "endSessionEndpoint",
-        "endSessionPage"
+        "endSessionPage",
         "jwksUri",
         "registrationEndpoint",
         "validateTokenEndpoint",
