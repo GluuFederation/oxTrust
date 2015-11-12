@@ -142,7 +142,6 @@ public class JsonConfigurationAction implements Serializable {
 			resultOxTrustApplicationConfiguration.setMysqlPassword(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustApplicationConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustApplicationConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setUmaClientPassword(HIDDEN_PASSWORD_TEXT);
 
 			return jsonService.objectToJson(resultOxTrustApplicationConfiguration);
 		} catch (Exception ex) {
@@ -163,7 +162,6 @@ public class JsonConfigurationAction implements Serializable {
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "mysqlPassword");
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "caCertsPassphrase");
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "oxAuthClientPassword");
-			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "umaClientPassword");
 
 			return resultOxTrustApplicationConfiguration;
 		} catch (Exception ex) {
