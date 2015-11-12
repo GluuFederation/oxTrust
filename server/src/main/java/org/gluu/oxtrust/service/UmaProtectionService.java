@@ -255,10 +255,12 @@ public class UmaProtectionService implements Serializable {
 				tokenRequest.setRsaPrivateKey((RSAPrivateKey) privateKey);
 			}
 
+			tokenRequest.setAuthenticationMethod(AuthenticationMethod.PRIVATE_KEY_JWT);
 	        tokenRequest.setAuthUsername(clientId);
 	        tokenRequest.setAlgorithm(privateKey.getSignatureAlgorithm());
 	        tokenRequest.setKeyId(privateKey.getKeyId());
 	        tokenRequest.setAudience(clientId);
+	        tokenRequest.setAssertion(umaMetadataConfiguration.getTokenEndpoint());
 
 			this.umaPat = UmaClient.request(umaMetadataConfiguration.getTokenEndpoint(), tokenRequest);
 			this.umaPatAccessTokenExpiration = computeAccessTokenExpirationTime(this.umaPat.getExpiresIn());
