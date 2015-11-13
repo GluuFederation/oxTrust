@@ -72,7 +72,7 @@ public class ScimConfigurationWS {
             // SCIM 1.0
             final ScimConfiguration c1 = new ScimConfiguration();
             c1.setVersion("1.0");
-            c1.setAuthorizationSupported(new String[]{"uma", "openid"});
+            c1.setAuthorizationSupported(new String[]{"uma"});
             c1.setUserEndpoint(baseEndpointUri + "/scim/v1/Users");
             c1.setUserSearchEndpoint(baseEndpointUri + "/scim/v1/Users/Search");
             c1.setGroupEndpoint(baseEndpointUri + "/scim/v1/Groups");
@@ -83,7 +83,7 @@ public class ScimConfigurationWS {
             // SCIM 2.0
             final ScimConfiguration c2 = new ScimConfiguration();
             c2.setVersion("2.0");
-            c2.setAuthorizationSupported(new String[]{"uma", "openid"});
+            c2.setAuthorizationSupported(new String[]{"uma"});
             c2.setUserEndpoint(baseEndpointUri + "/scim/v2/Users");
             c2.setUserSearchEndpoint(baseEndpointUri + "/scim/v2/Users/Search");
             c2.setGroupEndpoint(baseEndpointUri + "/scim/v2/Groups");
