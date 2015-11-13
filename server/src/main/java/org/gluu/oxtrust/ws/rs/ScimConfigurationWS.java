@@ -66,7 +66,7 @@ public class ScimConfigurationWS {
             final String baseEndpointUri = configuration.getBaseEndpoint();
 
             final List<ScimConfiguration> cl = new ArrayList<ScimConfiguration>();
-            
+
 //            cl.setScimConfigurationList(new ArrayList<ScimConfiguration>());
 
             // SCIM 1.0
