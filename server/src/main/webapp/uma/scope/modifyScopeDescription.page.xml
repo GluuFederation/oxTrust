@@ -14,7 +14,7 @@
     <navigation from-action="#{updateScopeDescriptionAction.modify}">
         <rule if-outcome="success">
             <begin-conversation flush-mode="manual" join="true" />
-            <redirect view-id="/uma/scope/modifyScopeDescription.xhtml" />
+            <render view-id="/uma/scope/modifyScopeDescription.xhtml" />
         </rule>
 
         <rule if-outcome="no_permissions">
