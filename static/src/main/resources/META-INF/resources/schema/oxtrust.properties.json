@@ -20,25 +20,10 @@
             "type": "string",
             "minLength": 1
         },
-        "orgDisplayName": {
-            "id": "orgDisplayName",
-            "type": "string",
-            "minLength": 1
-        },
-        "orgShortName": {
-            "id": "orgShortName",
-            "type": "string",
-            "minLength": 1
-        },
         "orgSupportEmail": {
             "id": "orgSupportEmail",
             "type": "string",
             "format": "email",
-            "minLength": 1
-        },
-        "applianceIname": {
-            "id": "applianceIname",
-            "type": "string",
             "minLength": 1
         },
         "applianceInum": {
@@ -48,6 +33,12 @@
         },
         "applianceUrl": {
             "id": "applianceUrl",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "baseEndpoint": {
+            "id": "baseEndpoint",
             "type": "string",
             "format": "url",
             "minLength": 1
@@ -97,7 +88,7 @@
         "contactObjectClassTypes": {
             "id": "contactObjectClassTypes",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": false,
             "additionalItems": true,
             "items": {
@@ -108,7 +99,7 @@
         "contactObjectClassDisplayNames": {
             "id": "contactObjectClassDisplayNames",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": false,
             "additionalItems": true,
             "items": {
@@ -248,7 +239,7 @@
         "gluuSpAttributes": {
             "id": "gluuSpAttributes",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": false,
             "additionalItems": true,
             "items": {
@@ -418,7 +409,7 @@
         "clusteredInums": {
             "id": "clusteredInums",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": false,
             "additionalItems": true,
             "items": {
@@ -448,8 +439,8 @@
             "type": "string",
             "minLength": 1
         },
-        "umaClientPassword": {
-            "id": "umaClientPassword",
+        "umaClientKeyId": {
+            "id": "umaClientKeyId",
             "type": "string",
             "minLength": 1
         },
@@ -478,12 +469,10 @@
         "baseDN",
         "orgInum",
         "orgIname",
-        "orgDisplayName",
-        "orgShortName",
         "orgSupportEmail",
-        "applianceIname",
         "applianceInum",
         "applianceUrl",
+        "baseEndpoint",
         "schemaAddObjectClassWithoutAttributeTypesDefinition",
         "schemaAddObjectClassWithAttributeTypesDefinition",
         "personObjectClassTypes",
@@ -553,7 +542,7 @@
         "ignoreValidation",
         "umaIssuer",
         "umaClientId",
-        "umaClientPassword",
+        "umaClientKeyId",
         "umaResourceId",
         "umaScope",
         "cssLocation",

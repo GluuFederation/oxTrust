@@ -36,6 +36,27 @@ import org.xdi.util.INumGenerator;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 
+/* 
+
+If you update this API, please keep this table in the github docs:
+https://github.com/GluuFederation/docs/blob/master/sources/reference/api/id-generation.md
+
+| `prefix` | `type`               | `description`                          |
+| -------- | -------------------- | -------------------------------------- |
+| 0000     | people               | Person object                          |
+| 0001     | organization         | Organization object                    |
+| 0002     | appliance            | Appliance object                       |
+| 0003     | group                | Group object                           |
+| 0004     | server               | Server object                          |
+| 0005     | attribute            | User attribute (claim) object          |
+| 0006     | tRelationship        | SAML Trust Relationship object         |
+| 0008     | client               | OAuth2 Client object                   |
+| 0009     | scope                | OAuth2 Scope Object                    |
+| 0010     | uma-resource-set     | UMA Resource Set Object                |
+| 0011     | interception-script  | Gluu Server interception script object |
+
+ */
+
 @Scope(ScopeType.STATELESS)
 @Name("inumService")
 @AutoCreate
@@ -50,6 +71,10 @@ public class InumService implements Serializable {
 	// private static final String SERVER = "0004";
 	private static final String ATTRIBUTE = "0005";
 	private static final String TRUST_RELATIONSHIP = "0006";
+	private static final String CLIENT = "0008";
+	private static final String UMA_SCOPE = "0009";
+	private static final String UMA_RESOURCE_SET = "0010";
+	private static final String INTERCEPTION_SCRIPT = "0011";
 
 	private static final String SEPARATOR = "!";
 
@@ -83,10 +108,19 @@ public class InumService implements Serializable {
 			contains = containsServer(inum, gluuInum);
 		} else if ("trelationship".equals(type)) {
 			contains = containsTrustRelationship(inum, gluuInum);
+//		} else if ("client".equals(type)) {
+//			contains = containsClient(inum, gluuInum);
+//		} else if ("uma-scope".equals(type)) {
+//			contains = containsUmaScope(inum, gluuInum);
+//		} else if ("uma-resource-set".equals(type)) {
+//			contains = containsUmaResourceSet(inum, gluuInum);
+//		} else if ("interception-script".equals(type)) {
+//			contains = containsInterceptionScript(inum, gluuInum);
 		}
 		return contains;
 	}
 
+		
 	public boolean containsAttribute(String inum, String gluuInum) {
 		GluuAttribute attribute = new GluuAttribute();
 		attribute.setBaseDn("inum=" + inum + ",ou=attributes,o=" + gluuInum + "o=gluu");

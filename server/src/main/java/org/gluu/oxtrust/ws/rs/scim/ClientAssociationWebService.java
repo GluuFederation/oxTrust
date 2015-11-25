@@ -38,7 +38,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
 @Name("clientAssociationWebService")
-@Path("/ClientAssociation")
+@Path("/scim/v1/ClientAssociation")
 public class ClientAssociationWebService extends BaseScimWebService {
 
 	@Logger

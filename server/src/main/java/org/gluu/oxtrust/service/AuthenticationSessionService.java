@@ -54,7 +54,7 @@ public class AuthenticationSessionService {
             endSessionClient.setRequest(endSessionRequest);
             EndSessionResponse endSessionResponse = endSessionClient.exec();
  
-            if (endSessionResponse.getStatus() != 302) {
+            if ((endSessionResponse == null) || (endSessionResponse.getStatus() != 302)) {
     	    	log.error("Invalid response code at oxAuth logout. User: '{0}'", userUid);
             }
 		} catch (Exception ex) {

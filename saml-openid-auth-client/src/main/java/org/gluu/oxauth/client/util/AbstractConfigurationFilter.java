@@ -11,6 +11,7 @@ import javax.servlet.FilterConfig;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.gluu.oxauth.client.OpenIdClient;
 import org.xdi.util.StringHelper;
 
 /**
@@ -33,18 +34,18 @@ public abstract class AbstractConfigurationFilter implements Filter {
      * @return the property value, following the above conventions.  It will always return the more specific value (i.e. filter vs. context).
      */
     protected final String getPropertyFromInitParams(final FilterConfig filterConfig, final String propertyName, final String defaultValue)  {
-        final String value = filterConfig.getInitParameter(propertyName);
-
-        if (StringHelper.isNotEmpty(value)) {
-            log.info("Property [" + propertyName + "] loaded from FilterConfig.getInitParameter with value [" + value + "]");
-            return value;
-        }
-
-        final String value2 = filterConfig.getServletContext().getInitParameter(propertyName);
-        if (StringHelper.isNotEmpty(value2)) {
-            log.info("Property [" + propertyName + "] loaded from ServletContext.getInitParameter with value [" + value2 + "]");
-            return value2;
-        }
+//        final String value = filterConfig.getInitParameter(propertyName);
+//
+//        if (StringHelper.isNotEmpty(value)) {
+//            log.info("Property [" + propertyName + "] loaded from FilterConfig.getInitParameter with value [" + value + "]");
+//            return value;
+//        }
+//
+//        final String value2 = filterConfig.getServletContext().getInitParameter(propertyName);
+//        if (StringHelper.isNotEmpty(value2)) {
+//            log.info("Property [" + propertyName + "] loaded from ServletContext.getInitParameter with value [" + value2 + "]");
+//            return value2;
+//        }
 
         final String value3 = Configuration.instance().getPropertyValue(propertyName);
         if (StringHelper.isNotEmpty(value3)) {

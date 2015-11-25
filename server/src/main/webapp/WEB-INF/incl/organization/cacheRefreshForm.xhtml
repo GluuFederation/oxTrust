@@ -138,6 +138,18 @@
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.ldapSearchSizeLimit}" size="6" required="false" />
             </s:decorate>
 
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+									id="vdsCacheRefreshState">
+									<ui:define name="label">Cache Refresh</ui:define>
+									<h:selectOneMenu value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshEnabled}" styleClass="form-control"
+										id="vdsCacheRefreshStateId">
+										<s:selectItems
+											value="#{organizationService.booleanSelectionTypes}"
+											var="_type" label="#{_type.displayName}" />
+										<s:convertEnum />
+									</h:selectOneMenu>
+			</s:decorate>
+
             </h:panelGroup>
             
              <h:panelGroup id="vdsTogglePanelGroup">

@@ -76,7 +76,7 @@
         "givenName"
     ],
 
-    "configGeneration":true,
+    "configGeneration":false,
     "ignoreValidation":false,
 
     "idpSecurityCert":"${base.root}/etc/certs/${config.organization.inum-fn}-shib.crt",
@@ -125,7 +125,7 @@
 
     "umaIssuer":"${config.uma.issuer}",
     "umaClientId":"${config.uma.client_id}",
-    "umaClientPassword":"${config.uma.client_password}",
+    "umaClientKeyId":"${config.uma.client_key_id}",
     "umaResourceId":"${config.uma.resource_id}",
     "umaScope":"${config.uma.scope}",
 

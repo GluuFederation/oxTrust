@@ -20,6 +20,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,43 +34,7 @@ import java.util.List;
  */
 public class OAuthValidationFilter extends AbstractOAuthFilter {
 
-    /**
-     * OAuth properties
-     */
-    private String oAuthAuthorizeUrl;
-    private String oAuthTokenUrl;
-    private String oAuthValidationUrl;
-    private String oAuthCheckSessionUrl;
-    private String oAuthUserInfoUrl;
-
-    private String oAuthHost;
-
-    private String oAuthClientId;
-    private String oAuthClientPassword;
-
     public final void init(final FilterConfig filterConfig) throws ServletException {
-        this.oAuthAuthorizeUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
-        if (this.oAuthAuthorizeUrl != null) {
-            this.oAuthHost = getOAuthHost(this.oAuthAuthorizeUrl);
-        }
-
-        this.oAuthTokenUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_TOKEN_URL, null);
-        this.oAuthValidationUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_TOKEN_VALIDATION_URL, null);
-        this.oAuthCheckSessionUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_CHECKSESSION_URL, null);
-        this.oAuthUserInfoUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_USERINFO_URL, null);
-
-        this.oAuthClientId = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
-        this.oAuthClientPassword = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, null);
-
-        if (this.oAuthClientPassword != null) {
-            try {
-                this.oAuthClientPassword = StringEncrypter.defaultInstance().decrypt(this.oAuthClientPassword, Configuration.instance().getCryptoPropertyValue("encodeSalt"));
-            } catch (EncryptionException ex) {
-                log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
-            }
-        }
-
-        AssertionHelper.assertNotNull(this.oAuthAuthorizeUrl, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL + "cannot be null");
     }
 
     public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
@@ -124,6 +89,23 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
     }
 
     private OAuthData getOAuthData(HttpServletRequest request, String authorizationCode, String idToken) throws Exception {
+        String oAuthAuthorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
+        String oAuthHost = getOAuthHost(oAuthAuthorizeUrl);
+
+        String oAuthTokenUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_TOKEN_URL, null);
+        String oAuthValidationUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_TOKEN_VALIDATION_URL, null);
+        String oAuthUserInfoUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_USERINFO_URL, null);
+
+        String oAuthClientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
+        String oAuthClientPassword = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, null);
+        if (oAuthClientPassword != null) {
+            try {
+                oAuthClientPassword = StringEncrypter.defaultInstance().decrypt(oAuthClientPassword, Configuration.instance().getCryptoPropertyValue());
+            } catch (EncryptionException ex) {
+                log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
+            }
+        }
+
         String scopes = getParameter(request, Configuration.OAUTH_SCOPE);
         log.trace("scopes : " + scopes);
 
@@ -142,7 +124,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
 
         // 2. Validate the access token
         log.trace("Validating access token ");
-        ValidateTokenClient validateTokenClient = new ValidateTokenClient(this.oAuthValidationUrl);
+        ValidateTokenClient validateTokenClient = new ValidateTokenClient(oAuthValidationUrl);
         ValidateTokenResponse tokenValidationResponse = validateTokenClient.execValidateToken(accessToken);
         log.trace(" response3.getStatus() : " + tokenValidationResponse.getStatus());
 

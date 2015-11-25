@@ -50,22 +50,10 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	/**
 	 * The URL to the OAuth Server authorization services
 	 */
-	private String oAuthAuthorizeUrl;
-
-	private String oAuthClientId;
-	private String oAuthClientScope;
 
 	private final Pattern authModePattern = Pattern.compile(".+/acr_values/([\\d\\w]+)$");
 
 	public final void init(final FilterConfig filterConfig) throws ServletException {
-		this.oAuthAuthorizeUrl = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
-
-		this.oAuthClientId = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
-		this.oAuthClientScope = getPropertyFromInitParams(filterConfig, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, null);
-
-		AssertionHelper.assertNotNull(this.oAuthAuthorizeUrl, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL + "cannot be null");
-		AssertionHelper.assertNotNull(this.oAuthClientId, Configuration.OAUTH_PROPERTY_CLIENT_ID + "cannot be null");
-		AssertionHelper.assertNotNull(this.oAuthClientScope, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE + "cannot be null");
 	}
 
 	public final void destroy() {
@@ -128,14 +116,19 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	}
 
 	public String getOAuthRedirectUrl(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		ClientRequest clientRequest = new ClientRequest(this.oAuthAuthorizeUrl);
+		String oAuthAuthorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
+
+		String oAuthClientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
+		String oAuthClientScope = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, null);
+
+		ClientRequest clientRequest = new ClientRequest(oAuthAuthorizeUrl);
 		String responseType = "code+id_token";
 		String nonce = "nonce";
 
 		String redirectUri = constructRedirectUrl(request);
 
-		clientRequest.queryParameter("client_id", this.oAuthClientId);
-		clientRequest.queryParameter("scope", this.oAuthClientScope);
+		clientRequest.queryParameter("client_id", oAuthClientId);
+		clientRequest.queryParameter("scope", oAuthClientScope);
 		clientRequest.queryParameter("redirect_uri", redirectUri);
 		clientRequest.queryParameter("response_type", responseType);
 		clientRequest.queryParameter("nonce", nonce);

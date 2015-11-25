@@ -18,8 +18,6 @@ import java.util.Set;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
-import org.gluu.oxtrust.ldap.cache.service.CacheRefreshAttributeMapping;
-import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
@@ -47,12 +45,16 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
+import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
+import org.xdi.util.security.StringEncrypter;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Action class for configuring cache refresh
@@ -144,36 +146,27 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 
 	private CacheRefreshConfiguration getOxTrustCacheRefreshConfig() {
-		CacheRefreshConfiguration cacheRefreshConfigurationuration = null;
-
-		try {
-			String cacheRefreshConfigurationJson = jsonConfigurationService.getOxTrustCacheRefreshConfigJson();
-			if (StringHelper.isNotEmpty(cacheRefreshConfigurationJson)) {
-				cacheRefreshConfigurationuration = jsonService.jsonToObject(cacheRefreshConfigurationJson, CacheRefreshConfiguration.class);
-			}
-		} catch (Exception ex) {
-			log.error("Failed to load Cache Refresh configuration from LDAP", ex);
+		CacheRefreshConfiguration cacheRefreshConfiguration = jsonConfigurationService.getOxTrustCacheRefreshConfiguration();
+		
+		if (cacheRefreshConfiguration == null) {
+			cacheRefreshConfiguration = new CacheRefreshConfiguration();
+			cacheRefreshConfiguration.setUpdateMethod(CacheRefreshUpdateMethod.COPY.getValue());
+			cacheRefreshConfiguration.setSourceConfigs(new ArrayList<GluuLdapConfiguration>());
+			cacheRefreshConfiguration.setInumConfig(new GluuLdapConfiguration());
+			cacheRefreshConfiguration.setTargetConfig(new GluuLdapConfiguration());
+			cacheRefreshConfiguration.setKeyAttributes(new ArrayList<String>(0));
+			cacheRefreshConfiguration.setKeyObjectClasses(new ArrayList<String>());
+			cacheRefreshConfiguration.setSourceAttributes(new ArrayList<String>());
+			cacheRefreshConfiguration.setAttributeMapping(new ArrayList<CacheRefreshAttributeMapping>());
 		}
 		
-		if (cacheRefreshConfigurationuration == null) {
-			cacheRefreshConfigurationuration = new CacheRefreshConfiguration();
-			cacheRefreshConfigurationuration.setUpdateMethod(CacheRefreshUpdateMethod.COPY.getValue());
-			cacheRefreshConfigurationuration.setSourceConfigs(new ArrayList<GluuLdapConfiguration>());
-			cacheRefreshConfigurationuration.setInumConfig(new GluuLdapConfiguration());
-			cacheRefreshConfigurationuration.setTargetConfig(new GluuLdapConfiguration());
-			cacheRefreshConfigurationuration.setKeyAttributes(new ArrayList<String>(0));
-			cacheRefreshConfigurationuration.setKeyObjectClasses(new ArrayList<String>());
-			cacheRefreshConfigurationuration.setSourceAttributes(new ArrayList<String>());
-			cacheRefreshConfigurationuration.setAttributeMapping(new ArrayList<CacheRefreshAttributeMapping>());
-		}
-		
-		this.updateMethod = CacheRefreshUpdateMethod.getByValue(cacheRefreshConfigurationuration.getUpdateMethod());
-		this.keyAttributes = toSimpleProperties(cacheRefreshConfigurationuration.getKeyAttributes());
-		this.keyObjectClasses = toSimpleProperties(cacheRefreshConfigurationuration.getKeyObjectClasses());
-		this.sourceAttributes = toSimpleProperties(cacheRefreshConfigurationuration.getSourceAttributes());
-		this.attributeMapping = toSimpleCustomProperties(cacheRefreshConfigurationuration.getAttributeMapping());
+		this.updateMethod = CacheRefreshUpdateMethod.getByValue(cacheRefreshConfiguration.getUpdateMethod());
+		this.keyAttributes = toSimpleProperties(cacheRefreshConfiguration.getKeyAttributes());
+		this.keyObjectClasses = toSimpleProperties(cacheRefreshConfiguration.getKeyObjectClasses());
+		this.sourceAttributes = toSimpleProperties(cacheRefreshConfiguration.getSourceAttributes());
+		this.attributeMapping = toSimpleCustomProperties(cacheRefreshConfiguration.getAttributeMapping());
 
-		return cacheRefreshConfigurationuration;
+		return cacheRefreshConfiguration;
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -193,8 +186,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		fixLdapConfiguration(this.cacheRefreshConfiguration.getTargetConfig());
 		
 		try {
-			String oxTrustConfigJson = jsonService.objectToJson(this.cacheRefreshConfiguration);
-			jsonConfigurationService.saveOxTrustCacheRefreshConfigJson(oxTrustConfigJson);
+			jsonConfigurationService.saveOxTrustCacheRefreshConfiguration(this.cacheRefreshConfiguration);
 
 			updateAppliance();
 		} catch (Exception ex) {
@@ -215,6 +207,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private void updateAppliance() {
 		GluuAppliance updateAppliance = ApplianceService.instance().getAppliance();
+		updateAppliance.setVdsCacheRefreshEnabled(this.appliance.getVdsCacheRefreshEnabled());
 		updateAppliance.setVdsCacheRefreshPollingInterval(this.appliance.getVdsCacheRefreshPollingInterval());
 		updateAppliance.setCacheRefreshServerIpAddress(this.appliance.getCacheRefreshServerIpAddress());
 		ApplianceService.instance().updateAppliance(updateAppliance);
@@ -554,7 +547,15 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 
 	public void updateBindPassword() {
-		// Use this method if we need to save configuration after setting new bind password
+		if (this.activeLdapConfig == null) {
+			return;
+		}
+
+		try {
+        	this.activeLdapConfig.setBindPassword(StringEncrypter.defaultInstance().encrypt(this.activeLdapConfig.getBindPassword(), cryptoConfigurationSalt));
+        } catch (EncryptionException ex) {
+            log.error("Failed to encrypt password", ex);
+        }
 	}
 
 	@Override

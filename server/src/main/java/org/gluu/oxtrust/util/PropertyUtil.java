@@ -42,7 +42,7 @@ public class PropertyUtil {
 		return null;
 	}
 
-	public String stringsToCommaSeparatedList(List<String> values) {
+	public static String stringsToCommaSeparatedList(List<String> values) {
 		StringBuilder sb = new StringBuilder();
 
 		int count = values.size();
@@ -56,7 +56,7 @@ public class PropertyUtil {
 		return sb.toString();
 	}
 
-	public String simplePropertiesToCommaSeparatedList(List<SimpleProperty> values) {
+	public static String simplePropertiesToCommaSeparatedList(List<SimpleProperty> values) {
 		StringBuilder sb = new StringBuilder();
 
 		int count = values.size();
@@ -70,7 +70,7 @@ public class PropertyUtil {
 		return sb.toString();
 	}
 
-	public String escapeString(String value) {
+	public static String escapeString(String value) {
 		if (StringHelper.isEmpty(value)) {
 			return "";
 		}
@@ -93,7 +93,7 @@ public class PropertyUtil {
 		return buf.toString();
 	}
 	
-	public boolean isEmptyString(String string) {
+	public static boolean isEmptyString(String string) {
 		return StringHelper.isEmpty(string);
 	}
 

@@ -7,6 +7,8 @@
 package org.gluu.oxtrust.service;
 
 import org.gluu.oxtrust.exception.UmaProtectionException;
+import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.model.GluuAppliance;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -14,12 +16,15 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
 
 import javax.ws.rs.core.Response;
+
 import java.io.Serializable;
 
 /**
@@ -39,7 +44,13 @@ public class UmaAuthenticationService implements Serializable {
 
 	@In
 	private UmaProtectionService umaProtectionService;
-	
+
+	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	private ApplicationConfiguration applicationConfiguration;
+
+	@In
+	private ApplianceService applianceService;
+
 	private final Pair<Boolean, Response> authenticationFailure = new Pair<Boolean, Response>(false, null);
 	private final Pair<Boolean, Response> authenticationSuccess = new Pair<Boolean, Response>(true, null);
 	
@@ -92,7 +103,14 @@ public class UmaAuthenticationService implements Serializable {
 	}
 
 	public boolean isEnabledUmaAuthentication() {
-		return umaProtectionService.isEnabledUmaAuthentication();
+		return isScimEnabled() && umaProtectionService.isEnabledUmaAuthentication();
+	}
+
+	private boolean isScimEnabled() {
+		GluuAppliance appliance = applianceService.getAppliance();
+		GluuBoolean scimEnbaled = appliance.getScimEnabled();
+		
+		return GluuBoolean.ENABLED.equals(scimEnbaled) || GluuBoolean.TRUE.equals(scimEnbaled);
 	}
 
 }

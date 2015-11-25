@@ -74,6 +74,12 @@
             "format": "url",
             "minLength": 1
         },
+        "endSessionPage": {
+            "id": "endSessionPage",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "jwksUri": {
             "id": "jwksUri",
             "type": "string",
@@ -745,10 +751,6 @@
                 }
             }
         },
-        "externalAuthenticatorEnabled": {
-            "id": "externalAuthenticatorEnabled",
-            "type": "boolean"
-        },
         "applianceInum": {
             "id": "applianceInum",
             "type": "string",
@@ -835,6 +837,7 @@
         "clientInfoEndpoint",
         "checkSessionIFrame",
         "endSessionEndpoint",
+        "endSessionPage",
         "jwksUri",
         "registrationEndpoint",
         "validateTokenEndpoint",
@@ -903,7 +906,6 @@
         "clientAuthenticationFiltersEnabled",
         "authenticationFilters",
         "clientAuthenticationFilters",
-        "externalAuthenticatorEnabled",
         "applianceInum",
         "sessionIdUnusedLifetime",
         "sessionIdUnauthenticatedUnusedLifetime",

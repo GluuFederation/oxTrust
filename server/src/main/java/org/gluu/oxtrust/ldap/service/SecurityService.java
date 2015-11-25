@@ -16,8 +16,10 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.log.Log;
 import org.xdi.model.GluuUserRole;
 
 /**
@@ -32,11 +34,17 @@ public class SecurityService implements Serializable {
 
 	private static final long serialVersionUID = 1395327358942223005L;
 
-	@In
-	GroupService groupService;
+	@Logger
+	private Log log;
 
 	@In
-	OrganizationService organizationService;
+	private PersonService personService;
+
+	@In
+	private GroupService groupService;
+
+	@In
+	private OrganizationService organizationService;
 
 	/**
 	 * Get person user roles
@@ -72,6 +80,23 @@ public class SecurityService implements Serializable {
 		}
 
 		return userRoles.toArray(new GluuUserRole[userRoles.size()]);
+	}
+
+	public boolean isUseAdminUser(String userName) {
+		try {
+			User user = personService.getUserByUid(userName);
+			GluuUserRole[] roles = getUserRoles(user);
+			
+			for (GluuUserRole role: roles) {
+				if (GluuUserRole.MANAGER.equals(role)) {
+					return true;
+				}
+			}
+		} catch (Exception ex) {
+			log.error("Failed to find user '{0}' in ldap", ex, userName);
+		}
+			
+		return false;
 	}
 
 	public static SecurityService instance() {

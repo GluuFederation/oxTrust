@@ -6,13 +6,21 @@
 
 package org.gluu.oxtrust.service;
 
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.ws.rs.core.Response;
+
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.resteasy.client.ClientResponseFailure;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
@@ -21,28 +29,24 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.oxauth.client.TokenRequest;
 import org.xdi.oxauth.client.uma.PermissionRegistrationService;
 import org.xdi.oxauth.client.uma.RptStatusService;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
+import org.xdi.oxauth.model.common.AuthenticationMethod;
+import org.xdi.oxauth.model.common.GrantType;
+import org.xdi.oxauth.model.crypto.signature.ECDSAPrivateKey;
+import org.xdi.oxauth.model.crypto.signature.RSAPrivateKey;
 import org.xdi.oxauth.model.uma.RegisterPermissionRequest;
 import org.xdi.oxauth.model.uma.ResourceSetPermissionTicket;
 import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.wrapper.Token;
+import org.xdi.oxauth.model.util.JwtUtil;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.PropertiesDecrypter;
-
-import javax.ws.rs.core.Response;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provide methods to simplify work with UMA Rest services
@@ -74,6 +78,9 @@ public class UmaProtectionService implements Serializable {
 	@In
 	private AppInitializer appInitializer;
 
+	@In
+	private ClientService clientService;
+
 	private Token umaPat;
 	private long umaPatAccessTokenExpiration = 0l; // When the "accessToken" will expire;
 
@@ -85,12 +92,8 @@ public class UmaProtectionService implements Serializable {
 	@Create
 	public void init() {
 		if (this.umaMetadataConfiguration != null) {
-			ClientConnectionManager connectoinManager = new PoolingClientConnectionManager();
-	        final DefaultHttpClient defaultHttpClient = new DefaultHttpClient(connectoinManager);
-	        final ApacheHttpClient4Executor clientExecutor = new ApacheHttpClient4Executor(defaultHttpClient);
-
-	        this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration, clientExecutor);
-			this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration, clientExecutor);
+	        this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration);
+			this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration);
 		}
 	}
 
@@ -224,11 +227,35 @@ public class UmaProtectionService implements Serializable {
 		if (umaMetadataConfiguration == null) {
 			return;
 		}
-
-		String umaClientPassword = PropertiesDecrypter.decryptProperty(applicationConfiguration.getUmaClientPassword(), true, cryptoConfigurationSalt);
+		
+		OxAuthClient umaClient = null;
 		try {
-			this.umaPat = UmaClient.requestPat(umaMetadataConfiguration.getTokenEndpoint(),
-					applicationConfiguration.getUmaClientId(), umaClientPassword);
+			umaClient = clientService.getClientByInum(applicationConfiguration.getUmaClientId(), "inum", "oxAuthJwks");
+		} catch (EntryPersistenceException ex) {
+			throw new UmaProtectionException("Failed to load UMA client", ex);
+		}
+
+		org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwtUtil.getPrivateKey(null, umaClient.getJwks(), applicationConfiguration.getUmaClientKeyId());		
+		if (privateKey == null) {
+			throw new UmaProtectionException("There is no keyId in JWKS");
+		}
+
+		try {
+			String clientId = umaClient.getInum();
+			TokenRequest tokenRequest = TokenRequest.builder().pat().grantType(GrantType.CLIENT_CREDENTIALS).build();
+			if (privateKey instanceof ECDSAPrivateKey) {
+				tokenRequest.setEcPrivateKey((ECDSAPrivateKey) privateKey);
+			} else if (privateKey instanceof RSAPrivateKey) {
+				tokenRequest.setRsaPrivateKey((RSAPrivateKey) privateKey);
+			}
+
+			tokenRequest.setAuthenticationMethod(AuthenticationMethod.PRIVATE_KEY_JWT);
+	        tokenRequest.setAuthUsername(clientId);
+	        tokenRequest.setAlgorithm(privateKey.getSignatureAlgorithm());
+	        tokenRequest.setKeyId(privateKey.getKeyId());
+	        tokenRequest.setAudience(umaMetadataConfiguration.getTokenEndpoint());
+
+			this.umaPat = UmaClient.request(umaMetadataConfiguration.getTokenEndpoint(), tokenRequest);
 			this.umaPatAccessTokenExpiration = computeAccessTokenExpirationTime(this.umaPat.getExpiresIn());
 		} catch (Exception ex) {
 			throw new UmaProtectionException("Failed to obtain valid UMA PAT token", ex);

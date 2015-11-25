@@ -9,6 +9,10 @@ package org.gluu.oxauth.client.util;
 import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
+import org.gluu.oxauth.client.OpenIdClient;
+import org.gluu.oxauth.client.conf.AppConfiguration;
+import org.xdi.oxauth.client.OpenIdConfigurationResponse;
+import org.xdi.oxauth.model.util.Util;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
@@ -19,21 +23,6 @@ import org.xdi.util.properties.FileConfiguration;
  * @version 0.1, 03/20/2013
  */
 public final class Configuration {
-
-	static {
-        if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
-            BASE_DIR = System.getProperty("catalina.base");
-        } else if (System.getProperty("catalina.home") != null) {
-            BASE_DIR = System.getProperty("catalina.home");
-        } else if (System.getProperty("jboss.home.dir") != null) {
-            BASE_DIR = System.getProperty("jboss.home.dir");
-        } else {
-            BASE_DIR = null;
-        }
-    }
-
-    private static final String BASE_DIR;
-    private static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
     /**
      * Represents the constant for where the OAuth data will be located in memory
@@ -66,42 +55,19 @@ public final class Configuration {
 	public static final String OAUTH_PROPERTY_AUTHORIZE_URL = "oxauth.authorize.url";
 	public static final String OAUTH_PROPERTY_TOKEN_URL = "oxauth.token.url";
 	public static final String OAUTH_PROPERTY_TOKEN_VALIDATION_URL = "oxauth.token.validation.url";
-	public static final String OAUTH_PROPERTY_CHECKSESSION_URL = "oxauth.checksession.url";
 	public static final String OAUTH_PROPERTY_USERINFO_URL = "oxauth.userinfo.url";
 	public static final String OAUTH_PROPERTY_LOGOUT_URL = "oxauth.logout.url";
 	public static final String OAUTH_PROPERTY_CLIENT_ID = "oxauth.client.id";
 	public static final String OAUTH_PROPERTY_CLIENT_PASSWORD = "oxauth.client.password";
 	public static final String OAUTH_PROPERTY_CLIENT_SCOPE = "oxauth.client.scope";
 
-	/**
-	 * Configuration files
-	 */
-	public static final String LDAP_PROPERTIES_FILE = DIR + "oxTrustLdap.properties";
-	public static final String CONFIGURATION_FILE_APPLICATION_CONFIGURATION = "oxTrust.properties";
-	private static final String CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE = "salt";
 	
 
 	private static class ConfigurationSingleton {
 		static Configuration INSTANCE = new Configuration();
 	}
 
-	private FileConfiguration applicationConfiguration;
-
-	private FileConfiguration cryptoConfiguration;
-
 	private Configuration() {
-		FileConfiguration ldapConfiguration = new FileConfiguration(LDAP_PROPERTIES_FILE);
-
-		String confDir = DIR;
-		if (ldapConfiguration.isLoaded()) {
-			String ldapConfDir = ldapConfiguration.getString("confDir");
-			if (StringHelper.isNotEmpty(ldapConfDir)) {
-				confDir = ldapConfDir;
-			}
-		}
-
-		applicationConfiguration = new FileConfiguration(confDir + CONFIGURATION_FILE_APPLICATION_CONFIGURATION);
-	    cryptoConfiguration = new FileConfiguration(confDir + CONFIGURATION_FILE_CRYPTO_PROPERTIES_FILE);
 	}
 
 	public static Configuration instance() {
@@ -109,10 +75,34 @@ public final class Configuration {
 	}
 
 	public String getPropertyValue(String propertyName) {
-		return applicationConfiguration.getString(propertyName);
+    	SamlConfiguration samlConfiguration = SamlConfiguration.instance();
+    	AppConfiguration appConfiguration = samlConfiguration.getAppConfiguration();
+    	OpenIdClient openIdClient = samlConfiguration.getOpenIdClient();
+    	OpenIdConfigurationResponse openIdConfiguration = openIdClient.getOpenIdConfiguration();
+
+    	if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, propertyName)) {
+    		return openIdConfiguration.getAuthorizationEndpoint();
+    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_TOKEN_URL, propertyName)) {
+    		return openIdConfiguration.getTokenEndpoint();
+    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_TOKEN_VALIDATION_URL, propertyName)) {
+    		return openIdConfiguration.getValidateTokenEndpoint();
+    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_USERINFO_URL, propertyName)) {
+    		return openIdConfiguration.getUserInfoEndpoint();
+    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_LOGOUT_URL, propertyName)) {
+    		return openIdConfiguration.getEndSessionEndpoint();
+    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_CLIENT_ID, propertyName)) {
+    		return appConfiguration.getOpenIdClientId();
+    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, propertyName)) {
+    		return appConfiguration.getOpenIdClientPassword();
+    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, propertyName)) {
+    		return Util.listAsString(appConfiguration.getOpenIdScopes());
+    	}
+
+    	return null;
 	}
 
-	public String getCryptoPropertyValue(String propertyName) {
-		return cryptoConfiguration.getString(propertyName);
+	public String getCryptoPropertyValue() {
+		return SamlConfiguration.instance().getCryptoConfigurationSalt();
 	}
+
 }

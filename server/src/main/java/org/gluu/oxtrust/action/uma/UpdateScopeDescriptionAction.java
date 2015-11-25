@@ -116,6 +116,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 
 		this.scopeDescription = new ScopeDescription();
+		
+		this.scopeDescription.setType(InternalExternal.INTERNAL);
 		this.authorizationPolicies = getInitialAuthorizationPolicies();
 
 		return OxTrustConstants.RESULT_SUCCESS;

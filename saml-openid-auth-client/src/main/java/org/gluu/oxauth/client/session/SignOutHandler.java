@@ -84,7 +84,7 @@ public final class SignOutHandler {
     	if(redirectUri == null || redirectUri.equals("")){
 	    	int serverPort = request.getServerPort();
 	    	if ((serverPort == 80) || (serverPort == 443)) {
-	    		redirectUri = String.format("%s://%s%s", request.getScheme(), request.getServerName(), "/identity");
+	    		redirectUri = String.format("%s://%s%s", request.getScheme(), request.getServerName(), "/identity/authentication/finishlogout");
 	    	} else {
 	    		redirectUri = String.format("%s://%s:%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), "/identity");
 	    	}

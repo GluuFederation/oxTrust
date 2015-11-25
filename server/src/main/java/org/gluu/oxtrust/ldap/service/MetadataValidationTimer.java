@@ -25,7 +25,6 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.oxtrust.util.GluuErrorHandler;
-
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -84,17 +83,36 @@ public class MetadataValidationTimer {
 	private void process(Date when, Long interval) {
 		log.debug("Starting metadata validation");
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		validateMetadata(applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
+		boolean result = validateMetadata(applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
 				+ Shibboleth2ConfService.SHIB2_IDP_TEMPMETADATA_FOLDER + File.separator, applicationConfiguration
 				.getShibboleth2IdpRootDir() + File.separator + Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator);
-		log.debug("Metadata validation finished");
+		log.debug("Metadata validation finished with result: '{0}'", result);
+		
+		if (result) {
+			regenerateConfigurationFiles();
+		}
+	}
+
+	private void regenerateConfigurationFiles() {
+		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		boolean createConfig = applicationConfiguration.isConfigGeneration();
+		log.info("IDP config generation is set to " + createConfig);
+		
+		if (createConfig) {
+			List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
+			Shibboleth2ConfService.instance().generateConfigurationFiles(trustRelationships);
+
+			log.info("IDP config generation files finished. TR count: '{0}'", trustRelationships.size());
+		}
+
 	}
 
 	/**
 	 * @param shib2IdpTempmetadataFolder
 	 * @param shib2IdpMetadataFolder
 	 */
-	private void validateMetadata(String shib2IdpTempmetadataFolder, String shib2IdpMetadataFolder) {
+	private boolean validateMetadata(String shib2IdpTempmetadataFolder, String shib2IdpMetadataFolder) {
+		boolean result = false;
 		log.trace("Starting metadata validation process.");
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 
@@ -104,6 +122,7 @@ public class MetadataValidationTimer {
 				metadataFN = metadataUpdates.poll();
 			}
 		}
+
 		synchronized (this) {
 			if (StringHelper.isNotEmpty(metadataFN)) {
 				File metadata = new File(shib2IdpTempmetadataFolder + metadataFN);
@@ -112,7 +131,7 @@ public class MetadataValidationTimer {
 						metadataFN.split("-" + Shibboleth2ConfService.SHIB2_IDP_SP_METADATA_FILE)[0]);
 				if (tr == null) {
 					metadataUpdates.add(metadataFN);
-					return;
+					return false;
 				}
 				tr.setValidationStatus(GluuValidationStatus.VALIDATION);
 				TrustService.instance().updateTrustRelationship(tr);
@@ -129,7 +148,8 @@ public class MetadataValidationTimer {
 					log.warn("Validation of " + tr.getInum() + " failed: " + e.getMessage() );
 					tr.setValidationLog(validationLog);
 					TrustService.instance().updateTrustRelationship(tr);
-					return;
+
+					return false;
 				}
 				if (handler.isValid()) {
 					tr.setValidationLog(handler.getLog());
@@ -174,7 +194,7 @@ public class MetadataValidationTimer {
 					tr.setStatus(GluuStatus.ACTIVE);
 
 					TrustService.instance().updateTrustRelationship(tr);
-
+					result = true;
 				}else if(applicationConfiguration.isIgnoreValidation()){
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(handler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
@@ -206,6 +226,7 @@ public class MetadataValidationTimer {
 						validationLog.add("This metadata contains multiple instances of entityId: " + Arrays.toString(duplicatesSet.toArray()));
 					}
 					TrustService.instance().updateTrustRelationship(tr);
+					result = true;
 				} else {
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(handler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
@@ -214,5 +235,7 @@ public class MetadataValidationTimer {
 				}
 			}
 		}
+
+		return result;
 	}
 }

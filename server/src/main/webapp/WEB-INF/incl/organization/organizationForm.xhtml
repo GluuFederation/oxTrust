@@ -128,17 +128,7 @@
 									</h:selectOneMenu>
 								</s:decorate>
 
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="vdsCacheRefreshState">
-									<ui:define name="label">Cache Refresh</ui:define>
-									<h:selectOneMenu value="#{_appliance.vdsCacheRefreshEnabled}" styleClass="form-control"
-										id="vdsCacheRefreshStateId">
-										<s:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" label="#{_type.displayName}" />
-										<s:convertEnum />
-									</h:selectOneMenu>
-								</s:decorate>
+								
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="scimEnabledState">
@@ -360,8 +350,8 @@
 										width="100%" border="0" cellpadding="0" cellspacing="0">
 										<rich:fileUpload id="custFaviconUploadId"
 											fileUploadListener="#{_organizationAction.setFaviconImage}"
-											acceptedTypes="ico"
-											ontyperejected="alert('Only ICO files are accepted');"
+											acceptedTypes="ico, jpeg, jpg"
+											ontyperejected="alert('Only ICO, JPEG and JPG files are accepted');"
 											maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
 											styleClass="uploadFile" style="width:80% !important;"
 											rendered="#{not _organizationAction.faviconImageExist}">
