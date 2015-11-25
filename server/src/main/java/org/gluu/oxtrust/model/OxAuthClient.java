@@ -32,7 +32,7 @@ import java.util.List;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version October 21, 2015
+ * @version November 9, 2015
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "oxAuthClient" })
@@ -72,9 +72,6 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 	@LdapAttribute(ignoreDuringUpdate = true)
 	private String userPassword;
 
-	@LdapAttribute(name = "oxAuthIdTokenSignedResponseAlg")
-	private TokenResponseAlgs oxAuthIdTokenSignedResponseAlg;
-
 	@LdapAttribute(name = "associatedPerson")
 	private List<String> associatedPersons;
 
@@ -84,8 +81,59 @@ public @Data class OxAuthClient extends Entry implements Serializable {
 	@LdapAttribute(name = "oxAuthResponseType")
 	private ResponseType[] responseTypes;
 
+    @LdapAttribute(name = "oxAuthLogoURI")
+    private String logoUri;
+
+    @LdapAttribute(name = "oxAuthClientURI")
+    private String clientUri;
+
+    @LdapAttribute(name = "oxAuthPolicyURI")
+    private String policyUri;
+
+    @LdapAttribute(name = "oxAuthTosURI")
+    private String tosUri;
+
+    @LdapAttribute(name = "oxAuthJwksURI")
+    private String jwksUri;
+
+    @LdapAttribute(name = "oxAuthJwks")
+    private String jwks;
+
+    @LdapAttribute(name = "oxAuthSectorIdentifierURI")
+    private String sectorIdentifierUri;
+
+    @LdapAttribute(name = "oxAuthSubjectType")
+    private OxAuthSubjectType subjectType;
+
+    @LdapAttribute(name = "oxAuthIdTokenSignedResponseAlg")
+    private SignatureAlgorithm idTokenSignedResponseAlg;
+
+    @LdapAttribute(name = "oxAuthIdTokenEncryptedResponseAlg")
+    private KeyEncryptionAlgorithm idTokenEncryptedResponseAlg;
+
+    @LdapAttribute(name = "oxAuthIdTokenEncryptedResponseEnc")
+    private BlockEncryptionAlgorithm idTokenEncryptedResponseEnc;
+
+    @LdapAttribute(name = "oxAuthSignedResponseAlg")
+    private SignatureAlgorithm userInfoSignedResponseAlg;
+
+    @LdapAttribute(name = "oxAuthUserInfoEncryptedResponseAlg")
+    private KeyEncryptionAlgorithm userInfoEncryptedResponseAlg;
+
+    @LdapAttribute(name = "oxAuthUserInfoEncryptedResponseEnc")
+    private BlockEncryptionAlgorithm userInfoEncryptedResponseEnc;
+
+    @LdapAttribute(name = "oxAuthRequestObjectSigningAlg")
+    private String requestObjectSigningAlg;
+
+    @LdapAttribute(name = "oxAuthDefaultMaxAge")
+    private Integer defaultMaxAge;
+
+    @LdapAttribute(name = "oxAuthRequireAuthTime")
+    private GluuBoolean requireAuthTime;
+
     @LdapAttribute(name = "oxAuthTokenEndpointAuthMethod")
-    private OxAuthAuthenticationMethod tokenEndpointAuthMethod;
+    private AuthenticationMethod tokenEndpointAuthMethod;
 	
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
     private String[] postLogoutRedirectUris;
@@ -150,14 +198,6 @@ public @Data class OxAuthClient extends Entry implements Serializable {
         this.oxAuthAppType = oxAuthAppType;
     }
 
-    public TokenResponseAlgs getOxAuthIdTokenSignedResponseAlg() {
-        return oxAuthIdTokenSignedResponseAlg;
-    }
-
-    public void setOxAuthIdTokenSignedResponseAlg(TokenResponseAlgs oxAuthIdTokenSignedResponseAlg) {
-        this.oxAuthIdTokenSignedResponseAlg = oxAuthIdTokenSignedResponseAlg;
-    }
-
     public List<String> getOxAuthPostLogoutRedirectURIs() {
         return oxAuthPostLogoutRedirectURIs;
     }
@@ -206,11 +246,139 @@ public @Data class OxAuthClient extends Entry implements Serializable {
         this.responseTypes = responseTypes;
     }
 
-    public OxAuthAuthenticationMethod getTokenEndpointAuthMethod() {
+    public String getLogoUri() {
+        return logoUri;
+    }
+
+    public void setLogoUri(String logoUri) {
+        this.logoUri = logoUri;
+    }
+
+    public String getClientUri() {
+        return clientUri;
+    }
+
+    public void setClientUri(String clientUri) {
+        this.clientUri = clientUri;
+    }
+
+    public String getPolicyUri() {
+        return policyUri;
+    }
+
+    public void setPolicyUri(String policyUri) {
+        this.policyUri = policyUri;
+    }
+
+    public String getTosUri() {
+        return tosUri;
+    }
+
+    public void setTosUri(String tosUri) {
+        this.tosUri = tosUri;
+    }
+
+    public String getJwksUri() {
+        return jwksUri;
+    }
+
+    public void setJwksUri(String jwksUri) {
+        this.jwksUri = jwksUri;
+    }
+
+    public String getJwks() {
+        return jwks;
+    }
+
+    public void setJwks(String jwks) {
+        this.jwks = jwks;
+    }
+
+    public String getSectorIdentifierUri() {
+        return sectorIdentifierUri;
+    }
+
+    public void setSectorIdentifierUri(String sectorIdentifierUri) {
+        this.sectorIdentifierUri = sectorIdentifierUri;
+    }
+
+    public OxAuthSubjectType getSubjectType() {
+        return subjectType;
+    }
+
+    public void setSubjectType(OxAuthSubjectType subjectType) {
+        this.subjectType = subjectType;
+    }
+
+    public SignatureAlgorithm getIdTokenSignedResponseAlg() {
+        return idTokenSignedResponseAlg;
+    }
+
+    public void setIdTokenSignedResponseAlg(SignatureAlgorithm idTokenSignedResponseAlg) {
+        this.idTokenSignedResponseAlg = idTokenSignedResponseAlg;
+    }
+
+    public KeyEncryptionAlgorithm getIdTokenEncryptedResponseAlg() {
+        return idTokenEncryptedResponseAlg;
+    }
+
+    public void setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm idTokenEncryptedResponseAlg) {
+        this.idTokenEncryptedResponseAlg = idTokenEncryptedResponseAlg;
+    }
+
+    public BlockEncryptionAlgorithm getIdTokenEncryptedResponseEnc() {
+        return idTokenEncryptedResponseEnc;
+    }
+
+    public void setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm idTokenEncryptedResponseEnc) {
+        this.idTokenEncryptedResponseEnc = idTokenEncryptedResponseEnc;
+    }
+
+    public SignatureAlgorithm getUserInfoSignedResponseAlg() {
+        return userInfoSignedResponseAlg;
+    }
+
+    public void setUserInfoSignedResponseAlg(SignatureAlgorithm userInfoSignedResponseAlg) {
+        this.userInfoSignedResponseAlg = userInfoSignedResponseAlg;
+    }
+
+    public KeyEncryptionAlgorithm getUserInfoEncryptedResponseAlg() {
+        return userInfoEncryptedResponseAlg;
+    }
+
+    public void setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm userInfoEncryptedResponseAlg) {
+        this.userInfoEncryptedResponseAlg = userInfoEncryptedResponseAlg;
+    }
+
+    public BlockEncryptionAlgorithm getUserInfoEncryptedResponseEnc() {
+        return userInfoEncryptedResponseEnc;
+    }
+
+    public void setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm userInfoEncryptedResponseEnc) {
+        this.userInfoEncryptedResponseEnc = userInfoEncryptedResponseEnc;
+    }
+
+    public Integer getDefaultMaxAge() {
+        return defaultMaxAge;
+    }
+
+    public void setDefaultMaxAge(Integer defaultMaxAge) {
+        this.defaultMaxAge = defaultMaxAge;
+    }
+
+    public GluuBoolean getRequireAuthTime() {
+        return requireAuthTime;
+    }
+
+    public void setRequireAuthTime(GluuBoolean requireAuthTime) {
+        this.requireAuthTime = requireAuthTime;
+    }
+
+    public AuthenticationMethod getTokenEndpointAuthMethod() {
         return tokenEndpointAuthMethod;
     }
 
-    public void setTokenEndpointAuthMethod(OxAuthAuthenticationMethod tokenEndpointAuthMethod) {
+    public void setTokenEndpointAuthMethod(AuthenticationMethod tokenEndpointAuthMethod) {
         this.tokenEndpointAuthMethod = tokenEndpointAuthMethod;
     }
 
