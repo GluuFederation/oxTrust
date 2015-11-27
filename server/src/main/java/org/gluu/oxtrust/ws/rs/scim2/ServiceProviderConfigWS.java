@@ -24,7 +24,7 @@ import org.jboss.seam.log.Log;
  * @author Rahat Ali Date: 05.08.2015
  */
 @Name("serviceProviderConfig")
-@Path("/v2/ServiceProviderConfig")
+@Path("/scim/v2/ServiceProviderConfig")
 public class ServiceProviderConfigWS extends BaseScimWebService {
 
 	@Logger

@@ -52,7 +52,7 @@ import org.jboss.seam.annotations.Name;
  * @author Reda Zerrad Date: 04.19.2012
  */
 @Name("BulkWebService")
-@Path("/Bulk")
+@Path("/scim/v1/Bulk")
 public class BulkWebService extends BaseScimWebService {
 
 	private static final Logger log = Logger.getLogger(BulkWebService.class);

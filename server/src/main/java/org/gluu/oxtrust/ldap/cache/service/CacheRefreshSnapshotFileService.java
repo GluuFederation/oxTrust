@@ -34,6 +34,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.log.Log;
+import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.util.ArrayHelper;
 
 /**

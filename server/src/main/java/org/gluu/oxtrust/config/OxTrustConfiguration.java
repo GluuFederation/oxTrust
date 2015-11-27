@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.ldap.cache.service.CacheRefreshConfiguration;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
@@ -28,10 +27,10 @@ import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
-import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 /**
@@ -239,38 +238,10 @@ public class OxTrustConfiguration {
     }
 
 	private void init(LdapOxTrustConfiguration conf) {
-		initApplicationConfigurationFromJson(conf.getApplication());
-		initCacheRefreshConfigurationFromJson(conf.getCacheRefresh());
+		this.applicationConfiguration = conf.getApplication();
+		this.cacheRefreshConfiguration = conf.getCacheRefresh();
 		this.loadedRevision = conf.getRevision();
 	}
-
-    private void initApplicationConfigurationFromJson(String applicationConfigurationJson) {
-        try {
-			final ApplicationConfiguration applicationConfiguration = jsonService.jsonToObject(applicationConfigurationJson, ApplicationConfiguration.class);
-            if (applicationConfiguration != null) {
-            	this.applicationConfiguration = applicationConfiguration;
-            }
-        } catch (Exception ex) {
-            log.error("Failed to initialize applicationConfiguration from JSON", ex);
-        }
-    }
-
-    private void initCacheRefreshConfigurationFromJson(String cacheRefreshConfigurationJson) {
-    	if (StringHelper.isEmpty(cacheRefreshConfigurationJson)) {
-            log.trace("Skipping empty Cache Refresh configuration");
-            this.cacheRefreshConfiguration = null;
-            return;
-    	}
-
-    	try {
-			final CacheRefreshConfiguration cacheRefreshConfiguration = jsonService.jsonToObject(cacheRefreshConfigurationJson, CacheRefreshConfiguration.class);
-            if (cacheRefreshConfiguration != null) {
-            	this.cacheRefreshConfiguration = cacheRefreshConfiguration;
-            }
-        } catch (Exception ex) {
-            log.error("Failed to initialize Cache Refresh configuration from JSON", ex);
-        }
-    }
 
 	private boolean createFromFile() {
     	boolean result = reloadAppConfFromFile();

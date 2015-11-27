@@ -50,14 +50,6 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private static final String SALT_FILE_NAME = "salt";
 
-	// private static class ConfigurationSingleton {
-	// static Configuration INSTANCE = new Configuration();
-	// }
-
-	// public static Configuration instance() {
-	// return ConfigurationSingleton.INSTANCE;
-	// }
-
 	private String confDir;
 	private String saltFilePath;
 

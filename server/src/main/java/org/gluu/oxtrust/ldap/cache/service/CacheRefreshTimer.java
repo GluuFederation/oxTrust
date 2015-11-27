@@ -39,6 +39,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.PropertyUtil;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -57,9 +58,12 @@ import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
+import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuDummyEntry;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.ObjectSerializationService;
 import org.xdi.service.SchemaService;
@@ -1153,7 +1157,7 @@ public class CacheRefreshTimer {
 	private Map<String, String> getTargetServerAttributesMapping(CacheRefreshConfiguration cacheRefreshConfiguration) {
 		Map<String, String> result = new HashMap<String, String>();
 		for (CacheRefreshAttributeMapping attributeMapping : cacheRefreshConfiguration.getAttributeMapping()) {
-			result.put(attributeMapping.getSource(), attributeMapping.getDestination());
+			result.put(attributeMapping.getDestination(), attributeMapping.getSource());
 		}
 
 		return result;
@@ -1161,10 +1165,9 @@ public class CacheRefreshTimer {
 
 	private Properties toLdapProperties(GluuLdapConfiguration ldapConfiguration) {
 		Properties ldapProperties = new Properties();
-		ldapProperties.put("servers", ldapConfiguration.getServers());
-		ldapProperties.put("maxconnections", ldapConfiguration.getMaxConnections());
-		ldapProperties.put("useSSL", ldapConfiguration.isUseSSL());
-		ldapProperties.put("baseDNs", ldapConfiguration.getBaseDNs());
+		ldapProperties.put("servers", PropertyUtil.simplePropertiesToCommaSeparatedList(ldapConfiguration.getServers()));
+		ldapProperties.put("maxconnections", Integer.toString(ldapConfiguration.getMaxConnections()));
+		ldapProperties.put("useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
 		ldapProperties.put("bindDN", ldapConfiguration.getBindDN());
 		ldapProperties.put("bindPassword", ldapConfiguration.getBindPassword());
 
@@ -1172,7 +1175,7 @@ public class CacheRefreshTimer {
 	}
 
 	private String[] getBaseDNs(GluuLdapConfiguration ldapConfiguration) {
-		return ldapConfiguration.getBaseDNs().toArray(new String[0]);
+		return ldapConfiguration.getBaseDNsStringsList().toArray(new String[0]);
 	}
 
 	public static void main(String[] args) {

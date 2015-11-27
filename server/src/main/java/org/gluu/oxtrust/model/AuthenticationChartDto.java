@@ -7,16 +7,16 @@ public class AuthenticationChartDto implements Serializable {
 	private static final long serialVersionUID = -6376070511032852935L;
 
 	String[] labels;
-	Integer[] success;
-	Integer[] failure;
-	Integer totalRequest;
-	Integer totalSuccess;
-	Integer totalFailure;
+	Long[] success;
+	Long[] failure;
+	Long totalRequest;
+	Long totalSuccess;
+	Long totalFailure;
 
 	public AuthenticationChartDto() {
-		totalRequest = 0;
-		totalSuccess = 0;
-		totalFailure = 0;
+		totalRequest = 0L;
+		totalSuccess = 0L;
+		totalFailure = 0L;
 
 	}
 
@@ -28,13 +28,13 @@ public class AuthenticationChartDto implements Serializable {
 		this.labels = labels;
 	}
 
-	public Integer[] getSuccess() {
+	public Long[] getSuccess() {
 		return success;
 	}
 
-	public void setSuccess(Integer[] success) {
+	public void setSuccess(Long[] success) {
 		if (success != null) {
-			for (Integer number : success) {
+			for (Long number : success) {
 				totalRequest = totalRequest + number;
 				totalSuccess = totalSuccess + number;
 			}
@@ -43,14 +43,14 @@ public class AuthenticationChartDto implements Serializable {
 		this.success = success;
 	}
 
-	public Integer[] getFailure() {
+	public Long[] getFailure() {
 
 		return failure;
 	}
 
-	public void setFailure(Integer[] failure) {
+	public void setFailure(Long[] failure) {
 		if (failure != null) {
-			for (Integer number : failure) {
+			for (Long number : failure) {
 				totalRequest = totalRequest + number;
 				totalFailure = totalFailure + number;
 			}
@@ -60,27 +60,27 @@ public class AuthenticationChartDto implements Serializable {
 		this.failure = failure;
 	}
 
-	public Integer getTotalRequest() {
+	public Long getTotalRequest() {
 		return totalRequest;
 	}
 
-	public void setTotalRequest(Integer totalRequest) {
+	public void setTotalRequest(Long totalRequest) {
 		this.totalRequest = totalRequest;
 	}
 
-	public Integer getTotalSuccess() {
+	public Long getTotalSuccess() {
 		return totalSuccess;
 	}
 
-	public void setTotalSuccess(Integer totalSuccess) {
+	public void setTotalSuccess(Long totalSuccess) {
 		this.totalSuccess = totalSuccess;
 	}
 
-	public Integer getTotalFailure() {
+	public Long getTotalFailure() {
 		return totalFailure;
 	}
 
-	public void setTotalFailure(Integer totalFailure) {
+	public void setTotalFailure(Long totalFailure) {
 		this.totalFailure = totalFailure;
 	}
 
