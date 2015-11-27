@@ -6,88 +6,94 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
 import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * oxAuthClient
- * 
+ *
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version October 21, 2015
+ * @version December 8, 2015
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "oxAuthClient" })
+@LdapEntry(sortBy = {"displayName"})
+@LdapObjectClass(values = {"top", "oxAuthClient"})
 public class OxAuthClient extends Entry implements Serializable {
 
-	private static final long serialVersionUID = -2310140703735705346L;
+    private static final long serialVersionUID = -2310140703735705346L;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String inum;
+    @LdapAttribute(ignoreDuringUpdate = true)
+    private String inum;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String iname;
+    @LdapAttribute(ignoreDuringUpdate = true)
+    private String iname;
 
-	@NotNull
-	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
-	@LdapAttribute
-	private String displayName;
+    @NotNull
+    @Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
+    @LdapAttribute
+    private String displayName;
 
-	@NotNull
-	@LdapAttribute(name = "oxAuthAppType")
-	private OxAuthApplicationType oxAuthAppType;
+    @NotNull
+    @LdapAttribute(name = "oxAuthAppType")
+    private OxAuthApplicationType oxAuthAppType;
 
-	@LdapAttribute(name = "oxAuthRedirectURI")
-	private List<String> oxAuthRedirectURIs;
+    @LdapAttribute(name = "oxAuthContact")
+    private List<String> contacts;
 
-	@LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
-	private List<String> oxAuthPostLogoutRedirectURIs;
+    @LdapAttribute(name = "oxAuthRedirectURI")
+    private List<String> oxAuthRedirectURIs;
 
-	@LdapAttribute(name = "oxAuthScope")
-	private List<String> oxAuthScopes;
-
-	@NotNull
-	@LdapAttribute(name = "oxAuthClientSecret")
-	private String encodedClientSecret;
-
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String userPassword;
-
-	@LdapAttribute(name = "oxAuthIdTokenSignedResponseAlg")
-	private TokenResponseAlgs oxAuthIdTokenSignedResponseAlg;
-
-	@LdapAttribute(name = "associatedPerson")
-	private List<String> associatedPersons;
-
-	@LdapAttribute(name = "oxAuthTrustedClient")
-	private OxAuthTrustedClientBox oxAuthTrustedClient;
-
-	@LdapAttribute(name = "oxAuthResponseType")
-	private ResponseType[] responseTypes;
-
-    @LdapAttribute(name = "oxAuthTokenEndpointAuthMethod")
-    private OxAuthAuthenticationMethod tokenEndpointAuthMethod;
-	
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
-    private String[] postLogoutRedirectUris;
+    private List<String> oxAuthPostLogoutRedirectURIs;
 
-    @LdapAttribute(name = "oxPersistClientAuthorizations")
-    private GluuBoolean oxAuthPersistClientAuthorizations;
+    @LdapAttribute(name = "oxAuthScope")
+    private List<String> oxAuthScopes;
+
+    @NotNull
+    @LdapAttribute(name = "oxAuthClientSecret")
+    private String encodedClientSecret;
+
+    @LdapAttribute(ignoreDuringUpdate = true)
+    private String userPassword;
+
+    @LdapAttribute(name = "associatedPerson")
+    private List<String> associatedPersons;
+
+    @LdapAttribute(name = "oxAuthTrustedClient")
+    private OxAuthTrustedClientBox oxAuthTrustedClient;
+
+    @LdapAttribute(name = "oxAuthResponseType")
+    private ResponseType[] responseTypes;
+
+    @LdapAttribute(name = "oxAuthGrantType")
+    private GrantType[] grantTypes;
+
+    @LdapAttribute(name = "oxAuthLogoURI")
+    private String logoUri;
+
+    @LdapAttribute(name = "oxAuthClientURI")
+    private String clientUri;
+
+    @LdapAttribute(name = "oxAuthPolicyURI")
+    private String policyUri;
+
+    @LdapAttribute(name = "oxAuthTosURI")
+    private String tosUri;
 
     @LdapAttribute(name = "oxAuthJwksURI")
     private String jwksUri;
@@ -95,161 +101,364 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxAuthJwks")
     private String jwks;
 
-	private String oxAuthClientSecret;
+    @LdapAttribute(name = "oxAuthSectorIdentifierURI")
+    private String sectorIdentifierUri;
 
-	public String getInum() {
-		return inum;
-	}
+    @LdapAttribute(name = "oxAuthSubjectType")
+    private OxAuthSubjectType subjectType;
 
-	public void setInum(String inum) {
-		this.inum = inum;
-	}
+    @LdapAttribute(name = "oxAuthIdTokenSignedResponseAlg")
+    private SignatureAlgorithm idTokenSignedResponseAlg;
 
-	public String getIname() {
-		return iname;
-	}
+    @LdapAttribute(name = "oxAuthIdTokenEncryptedResponseAlg")
+    private KeyEncryptionAlgorithm idTokenEncryptedResponseAlg;
 
-	public void setIname(String iname) {
-		this.iname = iname;
-	}
+    @LdapAttribute(name = "oxAuthIdTokenEncryptedResponseEnc")
+    private BlockEncryptionAlgorithm idTokenEncryptedResponseEnc;
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    @LdapAttribute(name = "oxAuthSignedResponseAlg")
+    private SignatureAlgorithm userInfoSignedResponseAlg;
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+    @LdapAttribute(name = "oxAuthUserInfoEncryptedResponseAlg")
+    private KeyEncryptionAlgorithm userInfoEncryptedResponseAlg;
 
-	public OxAuthApplicationType getOxAuthAppType() {
-		return oxAuthAppType;
-	}
+    @LdapAttribute(name = "oxAuthUserInfoEncryptedResponseEnc")
+    private BlockEncryptionAlgorithm userInfoEncryptedResponseEnc;
 
-	public void setOxAuthAppType(OxAuthApplicationType oxAuthAppType) {
-		this.oxAuthAppType = oxAuthAppType;
-	}
+    @LdapAttribute(name = "oxAuthRequestObjectSigningAlg")
+    private SignatureAlgorithm requestObjectSigningAlg;
 
-	public List<String> getOxAuthRedirectURIs() {
-		return oxAuthRedirectURIs;
-	}
+    @LdapAttribute(name = "oxAuthDefaultMaxAge")
+    private Integer defaultMaxAge;
 
-	public void setOxAuthRedirectURIs(List<String> oxAuthRedirectURIs) {
-		this.oxAuthRedirectURIs = oxAuthRedirectURIs;
-	}
+    @LdapAttribute(name = "oxAuthRequireAuthTime")
+    private GluuBoolean requireAuthTime;
 
-	public List<String> getOxAuthPostLogoutRedirectURIs() {
-		return oxAuthPostLogoutRedirectURIs;
-	}
+    @LdapAttribute(name = "oxAuthTokenEndpointAuthMethod")
+    private AuthenticationMethod tokenEndpointAuthMethod;
 
-	public void setOxAuthPostLogoutRedirectURIs(List<String> oxAuthPostLogoutRedirectURIs) {
-		this.oxAuthPostLogoutRedirectURIs = oxAuthPostLogoutRedirectURIs;
-	}
+    @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
+    private String[] postLogoutRedirectUris;
 
-	public List<String> getOxAuthScopes() {
-		return oxAuthScopes;
-	}
+    @LdapAttribute(name = "oxPersistClientAuthorizations")
+    private GluuBoolean oxAuthPersistClientAuthorizations;
 
-	public void setOxAuthScopes(List<String> oxAuthScopes) {
-		this.oxAuthScopes = oxAuthScopes;
-	}
+    @LdapAttribute(name = "oxAuthDefaultAcrValues")
+    private String[] defaultAcrValues;
 
-	public String getEncodedClientSecret() {
-		return encodedClientSecret;
-	}
+    @LdapAttribute(name = "oxAuthInitiateLoginURI")
+    private String initiateLoginUri;
 
-	public void setEncodedClientSecret(String encodedClientSecret) {
-		this.encodedClientSecret = encodedClientSecret;
-	}
+    @LdapAttribute(name = "oxAuthRequestURI")
+    private String[] requestUris;
 
-	public String getUserPassword() {
-		return userPassword;
-	}
+    private String oxAuthClientSecret;
 
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
-	}
+    public String getInum() {
+        return inum;
+    }
 
-	public TokenResponseAlgs getOxAuthIdTokenSignedResponseAlg() {
-		return oxAuthIdTokenSignedResponseAlg;
-	}
+    public void setInum(String inum) {
+        this.inum = inum;
+    }
 
-	public void setOxAuthIdTokenSignedResponseAlg(TokenResponseAlgs oxAuthIdTokenSignedResponseAlg) {
-		this.oxAuthIdTokenSignedResponseAlg = oxAuthIdTokenSignedResponseAlg;
-	}
+    public String getIname() {
+        return iname;
+    }
 
-	public List<String> getAssociatedPersons() {
-		return associatedPersons;
-	}
+    public void setIname(String iname) {
+        this.iname = iname;
+    }
 
-	public void setAssociatedPersons(List<String> associatedPersons) {
-		this.associatedPersons = associatedPersons;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public OxAuthTrustedClientBox getOxAuthTrustedClient() {
-		return oxAuthTrustedClient;
-	}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-	public void setOxAuthTrustedClient(OxAuthTrustedClientBox oxAuthTrustedClient) {
-		this.oxAuthTrustedClient = oxAuthTrustedClient;
-	}
+    public OxAuthApplicationType getOxAuthAppType() {
+        return oxAuthAppType;
+    }
 
-	public ResponseType[] getResponseTypes() {
-		return responseTypes;
-	}
+    public void setOxAuthAppType(OxAuthApplicationType oxAuthAppType) {
+        this.oxAuthAppType = oxAuthAppType;
+    }
 
-	public void setResponseTypes(ResponseType[] responseTypes) {
-		this.responseTypes = responseTypes;
-	}
+    public List<String> getContacts() {
+        return contacts;
+    }
 
-	public OxAuthAuthenticationMethod getTokenEndpointAuthMethod() {
-		return tokenEndpointAuthMethod;
-	}
+    public void setContacts(List<String> contacts) {
+        this.contacts = contacts;
+    }
 
-	public void setTokenEndpointAuthMethod(OxAuthAuthenticationMethod tokenEndpointAuthMethod) {
-		this.tokenEndpointAuthMethod = tokenEndpointAuthMethod;
-	}
+    public List<String> getOxAuthRedirectURIs() {
+        return oxAuthRedirectURIs;
+    }
 
-	public String[] getPostLogoutRedirectUris() {
-		return postLogoutRedirectUris;
-	}
+    public void setOxAuthRedirectURIs(List<String> oxAuthRedirectURIs) {
+        this.oxAuthRedirectURIs = oxAuthRedirectURIs;
+    }
 
-	public void setPostLogoutRedirectUris(String[] postLogoutRedirectUris) {
-		this.postLogoutRedirectUris = postLogoutRedirectUris;
-	}
+    public List<String> getOxAuthPostLogoutRedirectURIs() {
+        return oxAuthPostLogoutRedirectURIs;
+    }
 
-	public GluuBoolean getOxAuthPersistClientAuthorizations() {
-		return oxAuthPersistClientAuthorizations;
-	}
+    public void setOxAuthPostLogoutRedirectURIs(List<String> oxAuthPostLogoutRedirectURIs) {
+        this.oxAuthPostLogoutRedirectURIs = oxAuthPostLogoutRedirectURIs;
+    }
 
-	public void setOxAuthPersistClientAuthorizations(GluuBoolean oxAuthPersistClientAuthorizations) {
-		this.oxAuthPersistClientAuthorizations = oxAuthPersistClientAuthorizations;
-	}
+    public List<String> getOxAuthScopes() {
+        return oxAuthScopes;
+    }
 
-	public String getJwksUri() {
-		return jwksUri;
-	}
+    public void setOxAuthScopes(List<String> oxAuthScopes) {
+        this.oxAuthScopes = oxAuthScopes;
+    }
 
-	public void setJwksUri(String jwksUri) {
-		this.jwksUri = jwksUri;
-	}
+    public String getEncodedClientSecret() {
+        return encodedClientSecret;
+    }
 
-	public String getJwks() {
-		return jwks;
-	}
+    public void setEncodedClientSecret(String encodedClientSecret) {
+        this.encodedClientSecret = encodedClientSecret;
+    }
 
-	public void setJwks(String jwks) {
-		this.jwks = jwks;
-	}
+    public String getUserPassword() {
+        return userPassword;
+    }
 
-	public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
-		this.oxAuthClientSecret = oxAuthClientSecret;
-		if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
-			setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfigurationSalt()));
-		}
-	}
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
 
-	public String getOxAuthClientSecret() {
-		return oxAuthClientSecret;
-	}
+    public List<String> getAssociatedPersons() {
+        return associatedPersons;
+    }
+
+    public void setAssociatedPersons(List<String> associatedPersons) {
+        this.associatedPersons = associatedPersons;
+    }
+
+    public OxAuthTrustedClientBox getOxAuthTrustedClient() {
+        return oxAuthTrustedClient;
+    }
+
+    public void setOxAuthTrustedClient(OxAuthTrustedClientBox oxAuthTrustedClient) {
+        this.oxAuthTrustedClient = oxAuthTrustedClient;
+    }
+
+    public ResponseType[] getResponseTypes() {
+        return responseTypes;
+    }
+
+    public void setResponseTypes(ResponseType[] responseTypes) {
+        this.responseTypes = responseTypes;
+    }
+
+    public GrantType[] getGrantTypes() {
+        return grantTypes;
+    }
+
+    public void setGrantTypes(GrantType[] grantTypes) {
+        this.grantTypes = grantTypes;
+    }
+
+    public String getLogoUri() {
+        return logoUri;
+    }
+
+    public void setLogoUri(String logoUri) {
+        this.logoUri = logoUri;
+    }
+
+    public String getClientUri() {
+        return clientUri;
+    }
+
+    public void setClientUri(String clientUri) {
+        this.clientUri = clientUri;
+    }
+
+    public String getPolicyUri() {
+        return policyUri;
+    }
+
+    public void setPolicyUri(String policyUri) {
+        this.policyUri = policyUri;
+    }
+
+    public String getTosUri() {
+        return tosUri;
+    }
+
+    public void setTosUri(String tosUri) {
+        this.tosUri = tosUri;
+    }
+
+    public String getJwksUri() {
+        return jwksUri;
+    }
+
+    public void setJwksUri(String jwksUri) {
+        this.jwksUri = jwksUri;
+    }
+
+    public String getJwks() {
+        return jwks;
+    }
+
+    public void setJwks(String jwks) {
+        this.jwks = jwks;
+    }
+
+    public String getSectorIdentifierUri() {
+        return sectorIdentifierUri;
+    }
+
+    public void setSectorIdentifierUri(String sectorIdentifierUri) {
+        this.sectorIdentifierUri = sectorIdentifierUri;
+    }
+
+    public OxAuthSubjectType getSubjectType() {
+        return subjectType;
+    }
+
+    public void setSubjectType(OxAuthSubjectType subjectType) {
+        this.subjectType = subjectType;
+    }
+
+    public SignatureAlgorithm getIdTokenSignedResponseAlg() {
+        return idTokenSignedResponseAlg;
+    }
+
+    public void setIdTokenSignedResponseAlg(SignatureAlgorithm idTokenSignedResponseAlg) {
+        this.idTokenSignedResponseAlg = idTokenSignedResponseAlg;
+    }
+
+    public KeyEncryptionAlgorithm getIdTokenEncryptedResponseAlg() {
+        return idTokenEncryptedResponseAlg;
+    }
+
+    public void setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm idTokenEncryptedResponseAlg) {
+        this.idTokenEncryptedResponseAlg = idTokenEncryptedResponseAlg;
+    }
+
+    public BlockEncryptionAlgorithm getIdTokenEncryptedResponseEnc() {
+        return idTokenEncryptedResponseEnc;
+    }
+
+    public void setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm idTokenEncryptedResponseEnc) {
+        this.idTokenEncryptedResponseEnc = idTokenEncryptedResponseEnc;
+    }
+
+    public SignatureAlgorithm getUserInfoSignedResponseAlg() {
+        return userInfoSignedResponseAlg;
+    }
+
+    public void setUserInfoSignedResponseAlg(SignatureAlgorithm userInfoSignedResponseAlg) {
+        this.userInfoSignedResponseAlg = userInfoSignedResponseAlg;
+    }
+
+    public KeyEncryptionAlgorithm getUserInfoEncryptedResponseAlg() {
+        return userInfoEncryptedResponseAlg;
+    }
+
+    public void setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm userInfoEncryptedResponseAlg) {
+        this.userInfoEncryptedResponseAlg = userInfoEncryptedResponseAlg;
+    }
+
+    public BlockEncryptionAlgorithm getUserInfoEncryptedResponseEnc() {
+        return userInfoEncryptedResponseEnc;
+    }
+
+    public void setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm userInfoEncryptedResponseEnc) {
+        this.userInfoEncryptedResponseEnc = userInfoEncryptedResponseEnc;
+    }
+
+    public SignatureAlgorithm getRequestObjectSigningAlg() {
+        return requestObjectSigningAlg;
+    }
+
+    public void setRequestObjectSigningAlg(SignatureAlgorithm requestObjectSigningAlg) {
+        this.requestObjectSigningAlg = requestObjectSigningAlg;
+    }
+
+    public Integer getDefaultMaxAge() {
+        return defaultMaxAge;
+    }
+
+    public void setDefaultMaxAge(Integer defaultMaxAge) {
+        this.defaultMaxAge = defaultMaxAge;
+    }
+
+    public GluuBoolean getRequireAuthTime() {
+        return requireAuthTime;
+    }
+
+    public void setRequireAuthTime(GluuBoolean requireAuthTime) {
+        this.requireAuthTime = requireAuthTime;
+    }
+
+    public AuthenticationMethod getTokenEndpointAuthMethod() {
+        return tokenEndpointAuthMethod;
+    }
+
+    public void setTokenEndpointAuthMethod(AuthenticationMethod tokenEndpointAuthMethod) {
+        this.tokenEndpointAuthMethod = tokenEndpointAuthMethod;
+    }
+
+    public String[] getPostLogoutRedirectUris() {
+        return postLogoutRedirectUris;
+    }
+
+    public void setPostLogoutRedirectUris(String[] postLogoutRedirectUris) {
+        this.postLogoutRedirectUris = postLogoutRedirectUris;
+    }
+
+    public GluuBoolean getOxAuthPersistClientAuthorizations() {
+        return oxAuthPersistClientAuthorizations;
+    }
+
+    public void setOxAuthPersistClientAuthorizations(GluuBoolean oxAuthPersistClientAuthorizations) {
+        this.oxAuthPersistClientAuthorizations = oxAuthPersistClientAuthorizations;
+    }
+
+    public String[] getDefaultAcrValues() {
+        return defaultAcrValues;
+    }
+
+    public void setDefaultAcrValues(String[] defaultAcrValues) {
+        this.defaultAcrValues = defaultAcrValues;
+    }
+
+    public String getInitiateLoginUri() {
+        return initiateLoginUri;
+    }
+
+    public void setInitiateLoginUri(String initiateLoginUri) {
+        this.initiateLoginUri = initiateLoginUri;
+    }
+
+    public String[] getRequestUris() {
+        return requestUris;
+    }
+
+    public void setRequestUris(String[] requestUris) {
+        this.requestUris = requestUris;
+    }
+
+    public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
+        this.oxAuthClientSecret = oxAuthClientSecret;
+        if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
+            setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfigurationSalt()));
+        }
+    }
+
+    public String getOxAuthClientSecret() {
+        return oxAuthClientSecret;
+    }
 
 }
