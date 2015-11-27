@@ -7,6 +7,7 @@
     "properties": {
         "mode": {
             "id": "mode",
+            "description": "The mode of the Gluu oxAuth Server. Possible modes are memory and ldap.",
             "type": "string",
             "enum": [
                 "memory",
@@ -15,6 +16,7 @@
         },
         "issuer": {
             "id": "issuer",
+            "description": "URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier.",
             "title": "Issuer",
             "type": "string",
             "format": "url",
@@ -22,131 +24,153 @@
         },
         "loginPage": {
             "id": "loginPage",
+            "description": "URL of the login page.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "authorizationPage": {
             "id": "authorizationPage",
+            "description": "URL of the oxAuth authorization page.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "baseEndpoint": {
             "id": "baseEndpoint",
+            "description": "Base URL of the Endpoints.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "authorizationEndpoint": {
             "id": "authorizationEndpoint",
+            "description": "The URL of the Authorization Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "tokenEndpoint": {
             "id": "tokenEndpoint",
+            "description": "The URL of the Token Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "userInfoEndpoint": {
             "id": "userInfoEndpoint",
+            "description": "The URL of the User Info Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "clientInfoEndpoint": {
             "id": "clientInfoEndpoint",
+            "description": "The URL of the Client Info Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "checkSessionIFrame": {
             "id": "checkSessionIFrame",
+            "description": "URL of an OP iframe that supports cross-origin communications for session state information with the RP Client, using the HTML5 postMessage API.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "endSessionEndpoint": {
             "id": "endSessionEndpoint",
+            "description": "URL at the OP to which an RP can perform a redirect to request that the End-User be logged out at the OP.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "endSessionPage": {
             "id": "endSessionPage",
+            "description": "URL of the End Session Page.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "jwksUri": {
             "id": "jwksUri",
+            "description": "URL of the OP's JSON Web Key Set (JWK) document. This contains the signing key(s) the RP uses to validate signatures from the OP.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "registrationEndpoint": {
             "id": "registrationEndpoint",
+            "description": "URL of the Registration Enpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "validateTokenEndpoint": {
             "id": "validateTokenEndpoint",
+            "description": "URL of the Endpoint for token validation.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "federationMetadataEndpoint": {
             "id": "federationMetadataEndpoint",
+            "description": "URL for the Federation Metadata Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "federationEndpoint": {
             "id": "federationEndpoint",
+            "description": "URL for the Federation Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "openIdDiscoveryEndpoint": {
             "id": "openIdDiscoveryEndpoint",
+            "description": "URL for the Discovery Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "openIdConfigurationEndpoint": {
             "id": "openIdConfigurationEndpoint",
+            "description": "URL for the Open ID Connect Configuration Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "idGenerationEndpoint": {
             "id": "idGenerationEndpoint",
+            "description": "URL for the ID Generation Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "introspectionEndpoint": {
             "id": "introspectionEndpoint",
+            "description": "URL for the Introspection Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "umaConfigurationEndpoint": {
             "id": "umaConfigurationEndpoint",
+            "description": "URL for the UMA Configuration Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "openidSubAttribute": {
             "id": "openidSubAttribute",
+            "description": "LDAP attribute used for the sub claim.",
             "type": "string",
             "minLength": 1
         },
         "responseTypesSupported": {
             "id": "responseTypesSupported",
+            "description": "A list of the OAuth 2.0 response_type values that this OP supports.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -166,6 +190,7 @@
         },
         "grantTypesSupported": {
             "id": "grantTypesSupported",
+            "description": "A list of the OAuth 2.0 Grant Type values that this OP supports.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -181,6 +206,7 @@
         },
         "subjectTypesSupported": {
             "id": "subjectTypesSupported",
+            "description": "A list of the Subject Identifier types that this OP supports. Valid types include pairwise and public.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -195,6 +221,7 @@
         },
         "userInfoSigningAlgValuesSupported": {
             "id": "userInfoSigningAlgValuesSupported",
+            "description": "A list of the JWS signing algorithms (alg values) JWA supported by the UserInfo Endpoint to encode the Claims in a JWT.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -216,6 +243,7 @@
         },
         "userInfoEncryptionAlgValuesSupported": {
             "id": "userInfoEncryptionAlgValuesSupported",
+            "description": "A list of the JWE encryption algorithms (alg values) JWA supported by the UserInfo Endpoint to encode the Claims in a JWT.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -232,6 +260,7 @@
         },
         "userInfoEncryptionEncValuesSupported": {
             "id": "userInfoEncryptionEncValuesSupported",
+            "description": "A list of the JWE encryption algorithms (enc values) JWA supported by the UserInfo Endpoint to encode the Claims in a JWT.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -248,6 +277,7 @@
         },
         "idTokenSigningAlgValuesSupported": {
             "id": "idTokenSigningAlgValuesSupported",
+            "description": "A list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -270,6 +300,7 @@
         },
         "idTokenEncryptionAlgValuesSupported": {
             "id": "idTokenEncryptionAlgValuesSupported",
+            "description": "A list of the JWE encryption algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -286,6 +317,7 @@
         },
         "idTokenEncryptionEncValuesSupported": {
             "id": "idTokenEncryptionEncValuesSupported",
+            "description": "A list of the JWE encryption algorithms (enc values) supported by the OP for the ID Token to encode the Claims in a JWT.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -302,6 +334,7 @@
         },
         "requestObjectSigningAlgValuesSupported": {
             "id": "requestObjectSigningAlgValuesSupported",
+            "description": "A list of the JWS signing algorithms (alg values) supported by the OP for Request Objects.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -324,6 +357,7 @@
         },
         "requestObjectEncryptionAlgValuesSupported": {
             "id": "requestObjectEncryptionAlgValuesSupported",
+            "description": "A list of the JWE encryption algorithms (alg values) supported by the OP for Request Objects.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -340,6 +374,7 @@
         },
         "requestObjectEncryptionEncValuesSupported": {
             "id": "requestObjectEncryptionEncValuesSupported",
+            "description": "A list of the JWE encryption algorithms (enc values) supported by the OP for Request Objects.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -356,6 +391,7 @@
         },
         "tokenEndpointAuthMethodsSupported": {
             "id": "tokenEndpointAuthMethodsSupported",
+            "description": "A list of Client Authentication methods supported by this Token Endpoint.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -372,6 +408,7 @@
         },
         "tokenEndpointAuthSigningAlgValuesSupported": {
             "id": "tokenEndpointAuthSigningAlgValuesSupported",
+            "description": "A list of the JWS signing algorithms (alg values) supported by the Token Endpoint for the signature on the JWT used to authenticate the Client at the Token Endpoint for the private_key_jwt and client_secret_jwt authentication methods.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -393,6 +430,7 @@
         },
         "dynamicRegistrationCustomAttributes": {
             "id": "dynamicRegistrationCustomAttributes",
+            "description": "Custom attributes for the Dynamic registration.",
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
@@ -404,6 +442,7 @@
         },
         "displayValuesSupported": {
             "id": "displayValuesSupported",
+            "description": "A list of the display parameter values that the OpenID Provider supports.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -418,6 +457,7 @@
         },
         "claimTypesSupported": {
             "id": "claimTypesSupported",
+            "description": "A list of the Claim Types that the OpenID Provider supports.",
             "type": "array",
             "format": "select",
             "minItems": 1,
@@ -431,12 +471,14 @@
         },
         "serviceDocumentation": {
             "id": "serviceDocumentation",
+            "description": "URL of a page containing human-readable information that developers might want or need to know when using the OpenID Provider.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "claimsLocalesSupported": {
             "id": "claimsLocalesSupported",
+            "description": "Languages and scripts supported for values in Claims being returned.",
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
@@ -448,6 +490,7 @@
         },
         "uiLocalesSupported": {
             "id": "uiLocalesSupported",
+            "description": "Languages and scripts supported for the user interface.",
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
@@ -459,34 +502,41 @@
         },
         "claimsParameterSupported": {
             "id": "claimsParameterSupported",
+            "description": "Specifies whether the OP supports use of the claims parameter.",
             "type": "boolean"
         },
         "requestParameterSupported": {
             "id": "requestParameterSupported",
+            "description": "Boolean value specifying whether the OP supports use of the request parameter.",
             "type": "boolean"
         },
         "requestUriParameterSupported": {
             "id": "requestUriParameterSupported",
+            "description": "Boolean value specifying whether the OP supports use of the request_uri parameter.",
             "type": "boolean"
         },
         "requireRequestUriRegistration": {
             "id": "requireRequestUriRegistration",
+            "description": "Boolean value specifying whether the OP requires any request_uri values used to be pre-registered using the request_uris registration parameter.",
             "type": "boolean"
         },
         "opPolicyUri": {
             "id": "opPolicyUri",
+            "description": "URL that the OpenID Provider provides to the person registering the Client to read about the OP's requirements on how the Relying Party can use the data provided by the OP.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "opTosUri": {
             "id": "opTosUri",
+            "description": "URL that the OpenID Provider provides to the person registering the Client to read about OpenID Provider's terms of service.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "authorizationCodeLifetime": {
             "id": "authorizationCodeLifetime",
+            "description": "The lifetime of the Authorization Code.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -496,6 +546,7 @@
         },
         "refreshTokenLifetime": {
             "id": "refreshTokenLifetime",
+            "description": "The lifetime of the Refresh Token.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -505,6 +556,7 @@
         },
         "idTokenLifetime": {
             "id": "idTokenLifetime",
+            "description": "The lifetime of the ID Token.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -514,6 +566,7 @@
         },
         "shortLivedAccessTokenLifetime": {
             "id": "shortLivedAccessTokenLifetime",
+            "description": "The lifetime of the short lived Access Token.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -523,6 +576,7 @@
         },
         "longLivedAccessTokenLifetime": {
             "id": "longLivedAccessTokenLifetime",
+            "description": "The lifetime of the long lived Access Token.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -532,6 +586,7 @@
         },
         "umaRequesterPermissionTokenLifetime": {
             "id": "umaRequesterPermissionTokenLifetime",
+            "description": "",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -541,14 +596,17 @@
         },
         "umaAddScopesAutomatically": {
             "id": "umaAddScopesAutomatically",
+            "description": "",
             "type": "boolean"
         },
         "umaKeepClientDuringResourceSetRegistration": {
             "id": "umaKeepClientDuringResourceSetRegistration",
+            "description": "",
             "type": "boolean"
         },
         "cleanServiceInterval": {
             "id": "cleanServiceInterval",
+            "description": "Time interval for the Clean Service in seconds.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -558,6 +616,7 @@
         },
         "federationCheckInterval": {
             "id": "federationCheckInterval",
+            "description": "The federation check interval in seconds.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -567,10 +626,12 @@
         },
         "keyRegenerationEnabled": {
             "id": "keyRegenerationEnabled",
+            "description": "Boolean value specifying whether to regenerate keys.",
             "type": "boolean"
         },
         "keyRegenerationInterval": {
             "id": "keyRegenerationInterval",
+            "description": "The interval for key regeneration in seconds.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -580,6 +641,7 @@
         },
         "defaultSignatureAlgorithm": {
             "id": "defaultSignatureAlgorithm",
+            "description": "The default signature algorithm to sign ID Tokens.",
             "type": "string",
             "enum": [
                 "HS256",
@@ -595,26 +657,31 @@
         },
         "oxOpenIdConnectVersion": {
             "id": "oxOpenIdConnectVersion",
+            "description": "OpenID Connect Version.",
             "type": "string",
             "minLength": 1
         },
         "organizationInum": {
             "id": "organizationInum",
+            "description": "The Organization Inum.",
             "type": "string",
             "minLength": 1
         },
         "oxId": {
             "id": "oxId",
+            "description": "URL for the Inum generator Service.",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
         "dynamicRegistrationEnabled": {
             "id": "dynamicRegistrationEnabled",
+            "description": "Boolean value specifying whether to enable Dynamic Registration.",
             "type": "boolean"
         },
         "dynamicRegistrationExpirationTime": {
             "id": "dynamicRegistrationExpirationTime",
+            "description": "Expiration time in seconds for clients created with dynamic registration, 0 means never expire.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -624,27 +691,33 @@
         },
         "dynamicRegistrationPersistClientAuthorizations": {
             "id": "dynamicRegistrationPersistClientAuthorizations",
+            "description": "Boolean value specifying whether to persist client authorizations.",
             "type": "boolean"
         },
         "trustedClientEnabled": {
             "id": "trustedClientEnabled",
+            "description": "Boolean value specifying whether a client is trusted and no authorization is required.",
             "type": "boolean"
         },
         "dynamicRegistrationScopesParamEnabled": {
             "id": "dynamicRegistrationScopesParamEnabled",
+            "description": "Boolean value specifying whether to enable scopes parameter in dynamic registration.",
             "type": "boolean"
         },
         "dynamicRegistrationCustomObjectClass": {
             "id": "dynamicRegistrationCustomObjectClass",
+            "description": "LDAP custom object class for dynamic registration.",
             "type": "string",
             "minLength": 1
         },
         "federationEnabled": {
             "id": "federationEnabled",
+            "description": "Boolean value specifying whether federation is enabled.",
             "type": "boolean"
         },
         "federationSkipPolicy": {
             "id": "federationSkipPolicy",
+            "description": "Boolean value specifying whether to skip federation policy.",
             "type": "string",
             "enum": [
                 "OR",
@@ -653,6 +726,7 @@
         },
         "federationScopePolicy": {
             "id": "federationScopePolicy",
+            "description": "The federation scope policy.",
             "type": "string",
             "enum": [
                 "join"
@@ -660,6 +734,7 @@
         },
         "federationSigningAlg": {
             "id": "federationSigningAlg",
+            "description": "The federation signing algorithm.",
             "type": "string",
             "enum": [
                 "HS256",
@@ -675,19 +750,23 @@
         },
         "federationSigningKid": {
             "id": "federationSigningKid",
+            "description": "The federation signing key ID.",
             "type": "string",
             "minLength": 1
         },
         "authenticationFiltersEnabled": {
             "id": "authenticationFiltersEnabled",
+            "description": "Boolean value specifying whether to enable user authentication filters.",
             "type": "boolean"
         },
         "clientAuthenticationFiltersEnabled": {
             "id": "clientAuthenticationFiltersEnabled",
+            "description": "Boolean value specifying whether to enable client authentication filters.",
             "type": "boolean"
         },
         "authenticationFilters": {
             "id": "authenticationFilters",
+            "description": "User authentication filters.",
             "type": "array",
             "minItems": 1,
             "uniqueItems": false,
@@ -720,6 +799,7 @@
         },
         "clientAuthenticationFilters": {
             "id": "clientAuthenticationFilters",
+            "description": "Client authentication filters.",
             "type": "array",
             "minItems": 1,
             "uniqueItems": false,
@@ -753,11 +833,13 @@
         },
         "applianceInum": {
             "id": "applianceInum",
+            "description": "The Appliance Inum",
             "type": "string",
             "minLength": 1
         },
         "sessionIdUnusedLifetime": {
             "id": "sessionIdUnusedLifetime",
+            "description": "The lifetime for unused session IDs.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -767,6 +849,7 @@
         },
         "sessionIdUnauthenticatedUnusedLifetime": {
             "id": "sessionIdUnauthenticatedUnusedLifetime",
+            "description": "The lifetime for unused unauthenticated session IDs.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -776,14 +859,17 @@
         },
         "sessionIdEnabled": {
             "id": "sessionIdEnabled",
+            "description": "Boolean value specifying whether to enable session ID parameter.",
             "type": "boolean"
         },
         "sessionIdPersistOnPromptNone": {
             "id": "sessionIdPersistOnPromptNone",
+            "description": "Boolean value specifying whether to persist session ID on prompt none.",
             "type": "boolean"
         },
         "configurationUpdateInterval": {
             "id": "configurationUpdateInterval",
+            "description": "The interval for configuration update in seconds.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -793,21 +879,25 @@
         },
         "cssLocation": {
             "id": "cssLocation",
+            "description": "The location for CSS files.",
             "type": "string",
             "minLength": 1
         },
         "jsLocation": {
             "id": "jsLocation",
+            "description": "The location for JavaScript files.",
             "type": "string",
             "minLength": 1
         },
         "imgLocation": {
             "id": "imgLocation",
+            "description": "The location for image files.",
             "type": "string",
             "minLength": 1
         },
         "metricReporterInterval": {
             "id": "metricReporterInterval",
+            "description": "The interval for metric reporter in seconds.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -817,6 +907,7 @@
         },
         "metricReporterKeepDataDays": {
             "id": "metricReporterKeepDataDays",
+            "description": "The days to keep metric reported data.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
