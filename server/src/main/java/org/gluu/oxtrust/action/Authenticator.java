@@ -251,7 +251,7 @@ public class Authenticator implements Serializable {
 	private User findUserByUserName(String userName) {
         User user = null;
 		try {
-			user = authenticationService.getUserByUid(userName);
+			user = personService.getUserByUid(userName);
 		} catch (Exception ex) {
 			log.error("Failed to find user '{0}' in ldap", ex, userName);
 		}
@@ -262,7 +262,7 @@ public class Authenticator implements Serializable {
 	private GluuCustomPerson findPersonByDn(String userDn) {
 		GluuCustomPerson person = null;
 		try {
-			person = authenticationService.getPersonByDn(userDn);
+			person = personService.getPersonByDn(userDn);
 		} catch (Exception ex) {
 			log.error("Failed to find person '{0}' in ldap", ex, userDn);
 		}
@@ -352,7 +352,7 @@ public class Authenticator implements Serializable {
 			user = personService.getPersonByEmail(userUid);
 		} else {
 			// Find user by uid
-			user = authenticationService.getUserByUid(userUid);
+			user = personService.getUserByUid(userUid);
 		}
 
 		if (user == null) {
