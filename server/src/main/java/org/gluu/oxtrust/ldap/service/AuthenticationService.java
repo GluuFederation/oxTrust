@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.SimpleUser;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.AttributeData;
@@ -27,6 +28,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.CustomAttribute;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.util.ArrayHelper;
@@ -404,11 +406,11 @@ public class AuthenticationService implements Serializable {
     public GluuCustomPerson getUserByAttribute(String baseDn, String attributeName, String attributeValue) {
         log.debug("Getting user information from LDAP: attributeName = '{0}', attributeValue = '{1}'", attributeName, attributeValue);
 
-        GluuCustomPerson user = new GluuCustomPerson();
+        SimpleUser user = new SimpleUser();
         user.setDn(baseDn);
         
-        List<GluuCustomAttribute> customAttributes =  new ArrayList<GluuCustomAttribute>();
-        customAttributes.add(new GluuCustomAttribute(attributeName, attributeValue));
+        List<CustomAttribute> customAttributes =  new ArrayList<CustomAttribute>();
+        customAttributes.add(new CustomAttribute(attributeName, attributeValue));
 
         user.setCustomAttributes(customAttributes);
 
