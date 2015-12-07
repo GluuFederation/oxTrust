@@ -14,7 +14,7 @@
 		<maven.min-version>3.0.3</maven.min-version>
 
 		<seam.version>2.3.1.Final</seam.version>
-		<richfaces.version>4.3.4.Final</richfaces.version>
+		<richfaces.version>4.3.7.Final</richfaces.version>
 		<hibernate.version>4.1.8.Final</hibernate.version>
 		<jackson.version>1.9.11</jackson.version>
 		<resteasy.version>2.3.4.Final</resteasy.version>
@@ -254,7 +254,7 @@
 			<dependency>
 				<groupId>commons-collections</groupId>
 				<artifactId>commons-collections</artifactId>
-				<version>3.2.1</version>
+				<version>3.2.2</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-configuration</groupId>
