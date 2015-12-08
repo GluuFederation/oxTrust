@@ -6,76 +6,82 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
 import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * oxAuthClient
- * 
+ *
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version November 26, 2015
+ * @version December 8, 2015
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "oxAuthClient" })
+@LdapEntry(sortBy = {"displayName"})
+@LdapObjectClass(values = {"top", "oxAuthClient"})
 public class OxAuthClient extends Entry implements Serializable {
 
-	private static final long serialVersionUID = -2310140703735705346L;
+    private static final long serialVersionUID = -2310140703735705346L;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String inum;
+    @LdapAttribute(ignoreDuringUpdate = true)
+    private String inum;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String iname;
+    @LdapAttribute(ignoreDuringUpdate = true)
+    private String iname;
 
-	@NotNull
-	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
-	@LdapAttribute
-	private String displayName;
+    @NotNull
+    @Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
+    @LdapAttribute
+    private String displayName;
 
-	@NotNull
-	@LdapAttribute(name = "oxAuthAppType")
-	private OxAuthApplicationType oxAuthAppType;
+    @NotNull
+    @LdapAttribute(name = "oxAuthAppType")
+    private OxAuthApplicationType oxAuthAppType;
 
-	@LdapAttribute(name = "oxAuthRedirectURI")
-	private List<String> oxAuthRedirectURIs;
+    @LdapAttribute(name = "oxAuthContact")
+    private List<String> contacts;
 
-	@LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
-	private List<String> oxAuthPostLogoutRedirectURIs;
+    @LdapAttribute(name = "oxAuthRedirectURI")
+    private List<String> oxAuthRedirectURIs;
 
-	@LdapAttribute(name = "oxAuthScope")
-	private List<String> oxAuthScopes;
+    @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
+    private List<String> oxAuthPostLogoutRedirectURIs;
 
-	@NotNull
-	@LdapAttribute(name = "oxAuthClientSecret")
-	private String encodedClientSecret;
+    @LdapAttribute(name = "oxAuthScope")
+    private List<String> oxAuthScopes;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String userPassword;
+    @NotNull
+    @LdapAttribute(name = "oxAuthClientSecret")
+    private String encodedClientSecret;
 
-	@LdapAttribute(name = "associatedPerson")
-	private List<String> associatedPersons;
+    @LdapAttribute(ignoreDuringUpdate = true)
+    private String userPassword;
 
-	@LdapAttribute(name = "oxAuthTrustedClient")
-	private OxAuthTrustedClientBox oxAuthTrustedClient;
+    @LdapAttribute(name = "associatedPerson")
+    private List<String> associatedPersons;
 
-	@LdapAttribute(name = "oxAuthResponseType")
-	private ResponseType[] responseTypes;
+    @LdapAttribute(name = "oxAuthTrustedClient")
+    private OxAuthTrustedClientBox oxAuthTrustedClient;
+
+    @LdapAttribute(name = "oxAuthResponseType")
+    private ResponseType[] responseTypes;
+
+    @LdapAttribute(name = "oxAuthGrantType")
+    private GrantType[] grantTypes;
 
     @LdapAttribute(name = "oxAuthLogoURI")
     private String logoUri;
@@ -120,7 +126,7 @@ public class OxAuthClient extends Entry implements Serializable {
     private BlockEncryptionAlgorithm userInfoEncryptedResponseEnc;
 
     @LdapAttribute(name = "oxAuthRequestObjectSigningAlg")
-    private String requestObjectSigningAlg;
+    private SignatureAlgorithm requestObjectSigningAlg;
 
     @LdapAttribute(name = "oxAuthDefaultMaxAge")
     private Integer defaultMaxAge;
@@ -137,103 +143,128 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxPersistClientAuthorizations")
     private GluuBoolean oxAuthPersistClientAuthorizations;
 
-	private String oxAuthClientSecret;
+    @LdapAttribute(name = "oxAuthDefaultAcrValues")
+    private String[] defaultAcrValues;
 
-	public String getInum() {
-		return inum;
-	}
+    @LdapAttribute(name = "oxAuthInitiateLoginURI")
+    private String initiateLoginUri;
 
-	public void setInum(String inum) {
-		this.inum = inum;
-	}
+    @LdapAttribute(name = "oxAuthRequestURI")
+    private String[] requestUris;
 
-	public String getIname() {
-		return iname;
-	}
+    private String oxAuthClientSecret;
 
-	public void setIname(String iname) {
-		this.iname = iname;
-	}
+    public String getInum() {
+        return inum;
+    }
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    public void setInum(String inum) {
+        this.inum = inum;
+    }
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+    public String getIname() {
+        return iname;
+    }
 
-	public OxAuthApplicationType getOxAuthAppType() {
-		return oxAuthAppType;
-	}
+    public void setIname(String iname) {
+        this.iname = iname;
+    }
 
-	public void setOxAuthAppType(OxAuthApplicationType oxAuthAppType) {
-		this.oxAuthAppType = oxAuthAppType;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public List<String> getOxAuthRedirectURIs() {
-		return oxAuthRedirectURIs;
-	}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-	public void setOxAuthRedirectURIs(List<String> oxAuthRedirectURIs) {
-		this.oxAuthRedirectURIs = oxAuthRedirectURIs;
-	}
+    public OxAuthApplicationType getOxAuthAppType() {
+        return oxAuthAppType;
+    }
 
-	public List<String> getOxAuthPostLogoutRedirectURIs() {
-		return oxAuthPostLogoutRedirectURIs;
-	}
+    public void setOxAuthAppType(OxAuthApplicationType oxAuthAppType) {
+        this.oxAuthAppType = oxAuthAppType;
+    }
 
-	public void setOxAuthPostLogoutRedirectURIs(List<String> oxAuthPostLogoutRedirectURIs) {
-		this.oxAuthPostLogoutRedirectURIs = oxAuthPostLogoutRedirectURIs;
-	}
+    public List<String> getContacts() {
+        return contacts;
+    }
 
-	public List<String> getOxAuthScopes() {
-		return oxAuthScopes;
-	}
+    public void setContacts(List<String> contacts) {
+        this.contacts = contacts;
+    }
 
-	public void setOxAuthScopes(List<String> oxAuthScopes) {
-		this.oxAuthScopes = oxAuthScopes;
-	}
+    public List<String> getOxAuthRedirectURIs() {
+        return oxAuthRedirectURIs;
+    }
 
-	public String getEncodedClientSecret() {
-		return encodedClientSecret;
-	}
+    public void setOxAuthRedirectURIs(List<String> oxAuthRedirectURIs) {
+        this.oxAuthRedirectURIs = oxAuthRedirectURIs;
+    }
 
-	public void setEncodedClientSecret(String encodedClientSecret) {
-		this.encodedClientSecret = encodedClientSecret;
-	}
+    public List<String> getOxAuthPostLogoutRedirectURIs() {
+        return oxAuthPostLogoutRedirectURIs;
+    }
 
-	public String getUserPassword() {
-		return userPassword;
-	}
+    public void setOxAuthPostLogoutRedirectURIs(List<String> oxAuthPostLogoutRedirectURIs) {
+        this.oxAuthPostLogoutRedirectURIs = oxAuthPostLogoutRedirectURIs;
+    }
 
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
-	}
+    public List<String> getOxAuthScopes() {
+        return oxAuthScopes;
+    }
 
-	public List<String> getAssociatedPersons() {
-		return associatedPersons;
-	}
+    public void setOxAuthScopes(List<String> oxAuthScopes) {
+        this.oxAuthScopes = oxAuthScopes;
+    }
 
-	public void setAssociatedPersons(List<String> associatedPersons) {
-		this.associatedPersons = associatedPersons;
-	}
+    public String getEncodedClientSecret() {
+        return encodedClientSecret;
+    }
 
-	public OxAuthTrustedClientBox getOxAuthTrustedClient() {
-		return oxAuthTrustedClient;
-	}
+    public void setEncodedClientSecret(String encodedClientSecret) {
+        this.encodedClientSecret = encodedClientSecret;
+    }
 
-	public void setOxAuthTrustedClient(OxAuthTrustedClientBox oxAuthTrustedClient) {
-		this.oxAuthTrustedClient = oxAuthTrustedClient;
-	}
+    public String getUserPassword() {
+        return userPassword;
+    }
 
-	public ResponseType[] getResponseTypes() {
-		return responseTypes;
-	}
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
 
-	public void setResponseTypes(ResponseType[] responseTypes) {
-		this.responseTypes = responseTypes;
-	}
+    public List<String> getAssociatedPersons() {
+        return associatedPersons;
+    }
+
+    public void setAssociatedPersons(List<String> associatedPersons) {
+        this.associatedPersons = associatedPersons;
+    }
+
+    public OxAuthTrustedClientBox getOxAuthTrustedClient() {
+        return oxAuthTrustedClient;
+    }
+
+    public void setOxAuthTrustedClient(OxAuthTrustedClientBox oxAuthTrustedClient) {
+        this.oxAuthTrustedClient = oxAuthTrustedClient;
+    }
+
+    public ResponseType[] getResponseTypes() {
+        return responseTypes;
+    }
+
+    public void setResponseTypes(ResponseType[] responseTypes) {
+        this.responseTypes = responseTypes;
+    }
+
+    public GrantType[] getGrantTypes() {
+        return grantTypes;
+    }
+
+    public void setGrantTypes(GrantType[] grantTypes) {
+        this.grantTypes = grantTypes;
+    }
 
     public String getLogoUri() {
         return logoUri;
@@ -347,11 +378,11 @@ public class OxAuthClient extends Entry implements Serializable {
         this.userInfoEncryptedResponseEnc = userInfoEncryptedResponseEnc;
     }
 
-    public String getRequestObjectSigningAlg() {
+    public SignatureAlgorithm getRequestObjectSigningAlg() {
         return requestObjectSigningAlg;
     }
 
-    public void setRequestObjectSigningAlg(String requestObjectSigningAlg) {
+    public void setRequestObjectSigningAlg(SignatureAlgorithm requestObjectSigningAlg) {
         this.requestObjectSigningAlg = requestObjectSigningAlg;
     }
 
@@ -380,30 +411,54 @@ public class OxAuthClient extends Entry implements Serializable {
     }
 
     public String[] getPostLogoutRedirectUris() {
-		return postLogoutRedirectUris;
-	}
+        return postLogoutRedirectUris;
+    }
 
-	public void setPostLogoutRedirectUris(String[] postLogoutRedirectUris) {
-		this.postLogoutRedirectUris = postLogoutRedirectUris;
-	}
+    public void setPostLogoutRedirectUris(String[] postLogoutRedirectUris) {
+        this.postLogoutRedirectUris = postLogoutRedirectUris;
+    }
 
-	public GluuBoolean getOxAuthPersistClientAuthorizations() {
-		return oxAuthPersistClientAuthorizations;
-	}
+    public GluuBoolean getOxAuthPersistClientAuthorizations() {
+        return oxAuthPersistClientAuthorizations;
+    }
 
-	public void setOxAuthPersistClientAuthorizations(GluuBoolean oxAuthPersistClientAuthorizations) {
-		this.oxAuthPersistClientAuthorizations = oxAuthPersistClientAuthorizations;
-	}
+    public void setOxAuthPersistClientAuthorizations(GluuBoolean oxAuthPersistClientAuthorizations) {
+        this.oxAuthPersistClientAuthorizations = oxAuthPersistClientAuthorizations;
+    }
 
-	public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
-		this.oxAuthClientSecret = oxAuthClientSecret;
-		if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
-			setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfigurationSalt()));
-		}
-	}
+    public String[] getDefaultAcrValues() {
+        return defaultAcrValues;
+    }
 
-	public String getOxAuthClientSecret() {
-		return oxAuthClientSecret;
-	}
+    public void setDefaultAcrValues(String[] defaultAcrValues) {
+        this.defaultAcrValues = defaultAcrValues;
+    }
+
+    public String getInitiateLoginUri() {
+        return initiateLoginUri;
+    }
+
+    public void setInitiateLoginUri(String initiateLoginUri) {
+        this.initiateLoginUri = initiateLoginUri;
+    }
+
+    public String[] getRequestUris() {
+        return requestUris;
+    }
+
+    public void setRequestUris(String[] requestUris) {
+        this.requestUris = requestUris;
+    }
+
+    public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
+        this.oxAuthClientSecret = oxAuthClientSecret;
+        if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
+            setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfigurationSalt()));
+        }
+    }
+
+    public String getOxAuthClientSecret() {
+        return oxAuthClientSecret;
+    }
 
 }
