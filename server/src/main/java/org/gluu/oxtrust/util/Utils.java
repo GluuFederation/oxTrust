@@ -66,19 +66,19 @@ public class Utils implements Serializable {
 		}
 
 	}
-	
-	public static String iterableToString(Iterable<?> list){
-		if(list == null){
+
+	public static String iterableToString(Iterable<?> list) {
+		if (list == null) {
 			return "";
 		}
-			
+
 		StringBuilder sb = new StringBuilder();
-		for(Object item : list){
+		for (Object item : list) {
 			sb.append(item);
 			sb.append(",");
 		}
-		if(sb.length()>0){
-			sb.deleteCharAt(sb.length()-1);
+		if (sb.length() > 0) {
+			sb.deleteCharAt(sb.length() - 1);
 		}
 		return sb.toString();
 	}
@@ -229,7 +229,7 @@ public class Utils implements Serializable {
 
 	public static boolean isBasicAuth() {
 		String mode = OxTrustConfiguration.instance().getApplicationConfiguration().getAuthMode();
-		if (mode.equalsIgnoreCase("basic")) {
+		if ("basic".equalsIgnoreCase(mode)) {
 			return true;
 		}
 		return false;
@@ -243,7 +243,7 @@ public class Utils implements Serializable {
 
 	public static boolean isOxAuth() {
 		String mode = OxTrustConfiguration.instance().getApplicationConfiguration().getAuthMode();
-		if (mode.equalsIgnoreCase("oxauth")) {
+		if ("oxauth".equalsIgnoreCase(mode)) {
 			return true;
 		}
 		return false;
@@ -296,18 +296,24 @@ public class Utils implements Serializable {
 		String parentXri = inum.substring(0, inum.lastIndexOf(OxTrustConstants.inameDelimiter));
 		return parentXri.toLowerCase();
 	}
-/*
-	public static String getSchoolClassParentIname() {
-		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgInum() + Configuration.inameDelimiter + OxTrustConfiguration.instance().getApplicationConfiguration().getOxPlusIname()
-				+ Configuration.inameDelimiter + Configuration.INAME_CLASS_OBJECTTYPE;
-	}
-*/
+
+	/*
+	 * public static String getSchoolClassParentIname() { return
+	 * OxTrustConfiguration
+	 * .instance().getApplicationConfiguration().getOrgInum() +
+	 * Configuration.inameDelimiter +
+	 * OxTrustConfiguration.instance().getApplicationConfiguration
+	 * ().getOxPlusIname() + Configuration.inameDelimiter +
+	 * Configuration.INAME_CLASS_OBJECTTYPE; }
+	 */
 	public static String getPersonParentInum() {
-		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgInum() + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_PERSON_OBJECTTYPE;
+		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgInum() + OxTrustConstants.inumDelimiter
+				+ OxTrustConstants.INUM_PERSON_OBJECTTYPE;
 	}
 
 	public static String getPersonParentIname() {
-		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgIname() + OxTrustConstants.inameDelimiter + OxTrustConstants.INAME_PERSON_OBJECTTYPE;
+		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgIname() + OxTrustConstants.inameDelimiter
+				+ OxTrustConstants.INAME_PERSON_OBJECTTYPE;
 	}
 
 }
