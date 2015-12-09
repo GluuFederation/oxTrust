@@ -705,7 +705,7 @@ public class CacheRefreshTimer {
 
 			// Remove person from target server
 			try {
-				targetLdapEntryManager.remove(removedPerson);
+				targetLdapEntryManager.removeWithSubtree(removedPerson.getDn());
 				result1.add(inum);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to remove person entry with inum '{0}' and DN: {1}", ex, inum, removedPerson.getDn());
