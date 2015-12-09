@@ -68,8 +68,8 @@ public class ImportPersonConfiguration {
 			return result;
 		}
 		//issue 102
-		Iterator<?> keys = oxTrustConfiguration.getApplicationConfiguration().getGluuImportPerson().keySet().iterator();
-		//Iterator<?> keys = importConfiguration.getProperties().keySet().iterator();
+//		Iterator<?> keys = oxTrustConfiguration.getApplicationConfiguration().getGluuImportPerson().keySet().iterator();
+		Iterator<?> keys = importConfiguration.getProperties().keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 
