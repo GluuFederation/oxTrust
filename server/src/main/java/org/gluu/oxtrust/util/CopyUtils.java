@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -23,8 +24,6 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.Person;
-import org.gluu.oxtrust.model.PersonAttribute;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 import org.gluu.oxtrust.model.scim.ScimData;
 import org.gluu.oxtrust.model.scim.ScimEntitlements;
@@ -57,7 +56,6 @@ import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
 
 @Name("copyUtils")
 public class CopyUtils implements Serializable {
@@ -91,131 +89,66 @@ public class CopyUtils implements Serializable {
 			destination = new GluuCustomPerson();
 
 		}
-		
+
 		if (isUpdate) {
 			personService1.addCustomObjectClass(destination);
 
-			log.trace(" setting userName ");
-			if (source.getUserName() != null && source.getUserName().length() > 0) {
+			if (StringUtils.isNotEmpty(source.getUserName())) {
+				log.trace(" setting userName ");
 				destination.setUid(source.getUserName());
 			}
-			log.trace(" setting givenname ");
-			if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
+			if (StringUtils.isNotEmpty(source.getName().getGivenName())) {
+				log.trace(" setting givenname ");
 				destination.setGivenName(source.getName().getGivenName());
 			}
-			log.trace(" setting famillyname ");
-			if (source.getName().getFamilyName() != null && source.getName().getFamilyName().length() > 0) {
+			if (StringUtils.isNotEmpty(source.getName().getFamilyName())) {
+				log.trace(" setting familyname ");
 				destination.setSurname(source.getName().getFamilyName());
 			}
-			log.trace(" setting middlename ");
-			if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
-				destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
-			}
-			log.trace(" setting honor");
-			if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
-				destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
-			}
-			if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
-				destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
-			}
-			log.trace(" setting displayname ");
-			if (source.getDisplayName() != null && source.getDisplayName().length() > 0) {
+			if (StringUtils.isNotEmpty(source.getDisplayName())) {
+				log.trace(" setting displayname ");
 				destination.setDisplayName(source.getDisplayName());
 			}
-			log.trace(" setting externalID ");
-			if (source.getExternalId() != null && source.getExternalId().length() > 0) {
-				destination.setAttribute("oxTrustExternalId", source.getExternalId());
-			}
-			log.trace(" setting nickname ");
-			if (source.getNickName() != null && source.getNickName().length() > 0) {
-				destination.setAttribute("oxTrustNickName", source.getNickName());
-			}
-			log.trace(" setting profileURL ");
-			if (source.getProfileUrl() != null && source.getProfileUrl().length() > 0) {
-				destination.setAttribute("oxTrustProfileURL", source.getProfileUrl());
-			}
 
-			// getting emails
-			log.trace(" setting emails ");
-			if (source.getEmails() != null && source.getEmails().size() > 0) {
-				List<ScimPersonEmails> emails = source.getEmails();
-				StringWriter listOfEmails = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfEmails, emails);
+			setOrRemoveOptionalAttribute(destination, source.getName().getMiddleName(), "oxTrustMiddleName");
 
-				destination.setAttribute("oxTrustEmail", listOfEmails.toString());
+			setOrRemoveOptionalAttribute(destination, source.getName().getHonorificPrefix(), "oxTrusthonorificPrefix");
 
-			}
+			setOrRemoveOptionalAttribute(destination, source.getName().getHonorificSuffix(), "oxTrusthonorificSuffix");
 
-			// getting addresses
-			log.trace(" setting addresses ");
-			if (source.getAddresses() != null && source.getAddresses().size() > 0) {
-				List<ScimPersonAddresses> addresses = source.getAddresses();
+			setOrRemoveOptionalAttribute(destination, source.getExternalId(), "oxTrustExternalId");
 
-				StringWriter listOfAddresses = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfAddresses, addresses);
+			setOrRemoveOptionalAttribute(destination, source.getNickName(), "oxTrustNickName");
 
-				destination.setAttribute("oxTrustAddresses", listOfAddresses.toString());
-			}
+			setOrRemoveOptionalAttribute(destination, source.getProfileUrl(), "oxTrustProfileURL");
 
-			// getting phone numbers;
-			log.trace(" setting phoneNumbers ");
-			if (source.getPhoneNumbers() != null && source.getPhoneNumbers().size() > 0) {
-				List<ScimPersonPhones> phones = source.getPhoneNumbers();
+			setOrRemoveOptionalAttributeList(destination, source.getEmails(), "oxTrustEmail");
 
-				StringWriter listOfPhones = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfPhones, phones);
+			setOrRemoveOptionalAttributeList(destination, source.getAddresses(), "oxTrustAddresses");
 
-				destination.setAttribute("oxTrustPhoneValue", listOfPhones.toString());
-			}
+			setOrRemoveOptionalAttributeList(destination, source.getPhoneNumbers(), "oxTrustPhoneValue");
 
-			// getting ims
-			log.trace(" setting ims ");
-			if (source.getIms() != null && source.getIms().size() > 0) {
+			setOrRemoveOptionalAttributeList(destination, source.getIms(), "oxTrustImsValue");
 
-				List<ScimPersonIms> ims = source.getIms();
+			setOrRemoveOptionalAttributeList(destination, source.getPhotos(), "oxTrustPhotos");
 
-				StringWriter listOfIms = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfIms, ims);
+			setOrRemoveOptionalAttribute(destination, source.getUserType(), "oxTrustUserType");
 
-				destination.setAttribute("oxTrustImsValue", listOfIms.toString());
-			}
+			setOrRemoveOptionalAttribute(destination, source.getTitle(), "oxTrustTitle");
 
-			// getting Photos
-			log.trace(" setting photos ");
-			if (source.getPhotos() != null && source.getPhotos().size() > 0) {
-
-				List<ScimPersonPhotos> photos = source.getPhotos();
-
-				StringWriter listOfPhotos = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfPhotos, photos);
-
-				destination.setAttribute("oxTrustPhotos", listOfPhotos.toString());
-			}
-
-			if (source.getUserType() != null && source.getUserType().length() > 0) {
-				destination.setAttribute("oxTrustUserType", source.getUserType());
-			}
-			if (source.getTitle() != null && source.getTitle().length() > 0) {
-				destination.setAttribute("oxTrustTitle", source.getTitle());
-			}
 			if (source.getPreferredLanguage() != null && source.getPreferredLanguage().length() > 0) {
 				destination.setPreferredLanguage(source.getPreferredLanguage());
 			}
-			if (source.getLocale() != null && source.getLocale().length() > 0) {
-				destination.setAttribute("oxTrustLocale", source.getLocale());
-			}
+
+			setOrRemoveOptionalAttribute(destination, source.getLocale(), "oxTrustLocale");
+
 			if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 				destination.setTimezone(source.getTimezone());
 			}
-			if (source.getActive() != null && source.getActive().length() > 0) {
-				destination.setAttribute("oxTrustActive", source.getActive());
-			}
-			if (source.getPassword() != null && source.getPassword().length() > 0) {
+
+			setOrRemoveOptionalAttribute(destination, source.getActive(), "oxTrustActive");
+
+			if (StringUtils.isNotEmpty(source.getPassword())) {
 				destination.setUserPassword(source.getPassword());
 			}
 
@@ -232,42 +165,11 @@ public class CopyUtils implements Serializable {
 				destination.setMemberOf(members);
 			}
 
-			// getting roles
+			setOrRemoveOptionalAttributeList(destination, source.getRoles(), "oxTrustRole");
 
-			log.trace(" setting roles ");
-			if (source.getRoles() != null && source.getRoles().size() > 0) {
-				List<ScimRoles> roles = source.getRoles();
+			setOrRemoveOptionalAttributeList(destination, source.getEntitlements(), "oxTrustEntitlements");
 
-				StringWriter listOfRoles = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfRoles, roles);
-
-				destination.setAttribute("oxTrustRole", listOfRoles.toString());
-			}
-
-			// getting entitlements
-			log.trace(" setting entilements ");
-			if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
-				List<ScimEntitlements> ents = source.getEntitlements();
-
-				StringWriter listOfEnts = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfEnts, ents);
-
-				destination.setAttribute("oxTrustEntitlements", listOfEnts.toString());
-			}
-
-			// getting x509Certificates
-			log.trace(" setting certs ");
-			if (source.getX509Certificates() != null && source.getX509Certificates().size() > 0) {
-				List<Scimx509Certificates> certs = source.getX509Certificates();
-
-				StringWriter listOfCerts = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfCerts, certs);
-
-				destination.setAttribute("oxTrustx509Certificate", listOfCerts.toString());
-			}
+			setOrRemoveOptionalAttributeList(destination, source.getX509Certificates(), "oxTrustx509Certificate");
 
 			// getting meta
 			log.trace(" setting meta ");
@@ -332,7 +234,7 @@ public class CopyUtils implements Serializable {
 				if (personService1.getPersonByUid(source.getUserName()) != null) {
 					return null;
 				}
-				
+
 				personService1.addCustomObjectClass(destination);
 
 				log.trace(" setting userName ");
@@ -563,10 +465,37 @@ public class CopyUtils implements Serializable {
 				return null;
 			}
 		}
-		
+
 		setGluuStatus(source, destination);
 
 		return destination;
+	}
+
+	private static void setOrRemoveOptionalAttributeList(GluuCustomPerson destination, List<?> items, String attributeName)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		if (items == null) {
+			log.trace(" removing " + attributeName);
+			destination.removeAttribute(attributeName);
+		} else {
+			log.trace(" setting " + attributeName);
+
+			StringWriter listOfItems = new StringWriter();
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.writeValue(listOfItems, items);
+			destination.setAttribute(attributeName, listOfItems.toString());
+
+		}
+
+	}
+
+	private static void setOrRemoveOptionalAttribute(GluuCustomPerson destination, String attributevalue, String attributeName) {
+		if (attributevalue == null) {
+			log.trace(" removing " + attributeName);
+			destination.removeAttribute(attributeName);
+		} else {
+			log.trace(" setting " + attributeName);
+			destination.setAttribute(attributeName, attributevalue);
+		}
 	}
 
 	/**
@@ -582,7 +511,7 @@ public class CopyUtils implements Serializable {
 			return null;
 		}
 		if (destination == null) {
-            log.trace(" creating a new GluuCustomPerson instant ");
+			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new ScimPerson();
 		}
 		destination.getSchemas().add("urn:scim2:schemas:core:1.0");
@@ -834,8 +763,9 @@ public class CopyUtils implements Serializable {
 		// getting roles
 		if (source.getAttribute("oxTrustRole") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<ScimRoles> listOfRoles = mapper.readValue(source.getAttribute("oxTrustRole"), new TypeReference<List<ScimRoles>>() {
-			});
+			List<ScimRoles> listOfRoles = mapper.readValue(source.getAttribute("oxTrustRole"),
+					new TypeReference<List<ScimRoles>>() {
+					});
 
 			/*
 			 * List<ScimRoles> roles = new ArrayList<ScimRoles>(); String[]
@@ -1354,7 +1284,8 @@ public class CopyUtils implements Serializable {
 
 			int entsSize = 0;
 
-			if (destination.getAttributes("oxTrustEntitlements") != null && destination.getAttributes("oxTrustEntitlements").length > 0) {
+			if (destination.getAttributes("oxTrustEntitlements") != null
+					&& destination.getAttributes("oxTrustEntitlements").length > 0) {
 				listEnts = destination.getAttributes("oxTrustEntitlements");
 				entsSize = destination.getAttributes("oxTrustEntitlements").length;
 			}
@@ -1405,7 +1336,7 @@ public class CopyUtils implements Serializable {
 		if (source.getMeta().getLocation() != null && source.getMeta().getLocation().length() > 0) {
 			destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
 		}
-		
+
 		setGluuStatus(source, destination);
 
 		return destination;
