@@ -476,7 +476,7 @@ public class CopyUtils implements Serializable {
 		if (items == null) {
 			log.trace(" removing " + attributeName);
 			destination.removeAttribute("oxTrustEmail");
-		} else if (items.size() > 0) {
+		} else {
 			log.trace(" setting " + attributeName);
 
 			StringWriter listOfItems = new StringWriter();
