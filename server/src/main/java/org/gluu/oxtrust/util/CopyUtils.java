@@ -475,7 +475,7 @@ public class CopyUtils implements Serializable {
 			throws JsonGenerationException, JsonMappingException, IOException {
 		if (items == null) {
 			log.trace(" removing " + attributeName);
-			destination.removeAttribute("oxTrustEmail");
+			destination.removeAttribute(attributeName);
 		} else {
 			log.trace(" setting " + attributeName);
 
