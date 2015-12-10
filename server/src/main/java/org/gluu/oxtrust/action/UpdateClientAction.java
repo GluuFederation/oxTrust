@@ -40,7 +40,7 @@ import java.util.*;
  * @author Reda Zerrad Date: 06.11.2012
  * @author Yuriy Movchan Date: 04/07/2014
  * @author Javier Rojas Blum
- * @version December 8, 2015
+ * @version December 10, 2015
  */
 @Scope(ScopeType.CONVERSATION)
 @Name("updateClientAction")
@@ -173,7 +173,7 @@ public class UpdateClientAction implements Serializable {
 
     private List<String> getNonEmptyStringList(String[] currentList) {
         if (currentList != null && currentList.length > 0) {
-            return Arrays.asList(currentList);
+            return new ArrayList<String>(Arrays.asList(currentList));
         } else {
             return new ArrayList<String>();
         }
@@ -424,6 +424,14 @@ public class UpdateClientAction implements Serializable {
         this.availableLogoutUri = "http://";
     }
 
+    public void cancelSelectContact() {
+    }
+
+    public void cancelSelectDefaultAcrValue() {
+    }
+
+    public void cancelSelectRequestUri() {
+    }
 
     private void updateLoginURIs() {
         if (this.loginUris == null || this.loginUris.size() == 0) {
@@ -474,7 +482,12 @@ public class UpdateClientAction implements Serializable {
             return;
         }
 
-        client.setDefaultAcrValues(defaultAcrValues.toArray(new String[defaultAcrValues.size()]));
+        List<String> tmpDefaultAcrValues = new ArrayList<String>();
+        for (String defaultAcrValue : defaultAcrValues) {
+            tmpDefaultAcrValues.add(defaultAcrValue);
+        }
+
+        client.setDefaultAcrValues(tmpDefaultAcrValues.toArray(new String[tmpDefaultAcrValues.size()]));
     }
 
     private void updateRequestUris() {
@@ -483,7 +496,12 @@ public class UpdateClientAction implements Serializable {
             return;
         }
 
-        client.setRequestUris(requestUris.toArray(new String[requestUris.size()]));
+        List<String> tmpRequestUris = new ArrayList<String>();
+        for (String requestUri : requestUris) {
+            tmpRequestUris.add(requestUri);
+        }
+
+        client.setRequestUris(tmpRequestUris.toArray(new String[tmpRequestUris.size()]));
     }
 
     private void updateScopes() {
@@ -706,9 +724,9 @@ public class UpdateClientAction implements Serializable {
 
         List<SelectableEntity<GrantType>> tmpAvailableGrantTypes = new ArrayList<SelectableEntity<GrantType>>();
 
-        for (GrantType grantType : GrantType.values()) {
-            tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(grantType));
-        }
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.AUTHORIZATION_CODE));
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.IMPLICIT));
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.REFRESH_TOKEN));
 
         this.availableGrantTypes = tmpAvailableGrantTypes;
         selectAddedGrantTypes();
@@ -760,6 +778,31 @@ public class UpdateClientAction implements Serializable {
 
     public void setAvailableLogoutUri(String availableLogoutUri) {
         this.availableLogoutUri = availableLogoutUri;
+    }
+
+
+    public String getAvailableContact() {
+        return availableContact;
+    }
+
+    public void setAvailableContact(String availableContact) {
+        this.availableContact = availableContact;
+    }
+
+    public String getAvailableDefaultAcrValue() {
+        return availableDefaultAcrValue;
+    }
+
+    public void setAvailableDefaultAcrValue(String availableDefaultAcrValue) {
+        this.availableDefaultAcrValue = availableDefaultAcrValue;
+    }
+
+    public String getAvailableRequestUri() {
+        return availableRequestUri;
+    }
+
+    public void setAvailableRequestUri(String availableRequestUri) {
+        this.availableRequestUri = availableRequestUri;
     }
 
     public List<OxAuthScope> getAvailableScopes() {

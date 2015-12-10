@@ -53,10 +53,45 @@
                 acceptMethod="#{updateClientAction.acceptSelectScopes}" cancelMethod="#{updateClientAction.cancelSelectScopes}"
                 render="selectedScopesId" queue="clientQueue"/>
 
-            <ox:selectSelectableEntityDialog id="responseType" searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
-                searchResult="#{updateClientAction.availableResponseTypes}" displaySearchForm="false"
-                acceptMethod="#{updateClientAction.acceptSelectResponseTypes}" cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
-                render="selectedResponseTypesId" nameProperty="entity.value" displayNameProperty="entity.displayName"/>
+            <ox:selectSelectableEntityDialog id="responseType"
+                                             searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
+                                             searchResult="#{updateClientAction.availableResponseTypes}"
+                                             displaySearchForm="false"
+                                             acceptMethod="#{updateClientAction.acceptSelectResponseTypes}"
+                                             cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
+                                             render="selectedResponseTypesId" nameProperty="entity.value"
+                                             displayNameProperty="entity.displayName"/>
+
+            <ox:selectSelectableEntityDialog id="grantType"
+                                             searchMethod="#{updateClientAction.searchAvailableGrantTypes}"
+                                             searchResult="#{updateClientAction.availableGrantTypes}"
+                                             displaySearchForm="false"
+                                             acceptMethod="#{updateClientAction.acceptSelectGrantTypes}"
+                                             cancelMethod="#{updateClientAction.cancelSelectGrantTypes}"
+                                             render="selectedGrantTypesId" nameProperty="entity.value"
+                                             displayNameProperty="entity.value"
+                                             label="Add Grant Type"/>
+
+            <ox:inputTextDialog id="contact" label="Select Contact" inputLabel="Contact Email Address"
+                                text="#{updateClientAction.availableContact}" textId="contactTextId"
+                                acceptMethod="#{updateClientAction.acceptSelectContact()}"
+                                cancelMethod="#{updateClientAction.cancelSelectContact()}"
+                                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedContactsId"
+                                queue="clientQueue"/>
+
+            <ox:inputTextDialog id="defaultAcrValue" label="Select Default Acr Value" inputLabel="Default Acr Value"
+                                text="#{updateClientAction.availableDefaultAcrValue}" textId="contactTextId"
+                                acceptMethod="#{updateClientAction.acceptSelectDefaultAcrValue()}"
+                                cancelMethod="#{updateClientAction.cancelSelectDefaultAcrValue()}"
+                                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedDefaultAcrValuesId"
+                                queue="clientQueue"/>
+
+            <ox:inputTextDialog id="requestUri" label="Select Request URI" inputLabel="Request URI"
+                                text="#{updateClientAction.availableRequestUri}" textId="requestUriTextId"
+                                acceptMethod="#{updateClientAction.acceptSelectRequestUri()}"
+                                cancelMethod="#{updateClientAction.cancelSelectRequestUri()}"
+                                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedRequestUrisId"
+                                queue="clientQueue"/>
         </div></section>
     </ui:define>
 </ui:composition>
