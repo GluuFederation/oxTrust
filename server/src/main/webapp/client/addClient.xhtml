@@ -60,7 +60,8 @@
                                              acceptMethod="#{updateClientAction.acceptSelectResponseTypes}"
                                              cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
                                              render="selectedResponseTypesId" nameProperty="entity.value"
-                                             displayNameProperty="entity.displayName"/>
+                                             displayNameProperty="entity.displayName"
+                                             label="Add Response Type" />
 
             <ox:selectSelectableEntityDialog id="grantType"
                                              searchMethod="#{updateClientAction.searchAvailableGrantTypes}"
@@ -70,7 +71,7 @@
                                              cancelMethod="#{updateClientAction.cancelSelectGrantTypes}"
                                              render="selectedGrantTypesId" nameProperty="entity.value"
                                              displayNameProperty="entity.value"
-                                             label="Add Grant Type"/>
+                                             label="Add Grant Type" />
 
             <ox:inputTextDialog id="contact" label="Select Contact" inputLabel="Contact Email Address"
                                 text="#{updateClientAction.availableContact}" textId="contactTextId"
