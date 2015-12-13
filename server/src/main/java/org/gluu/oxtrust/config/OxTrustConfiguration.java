@@ -28,6 +28,7 @@ import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
+import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
@@ -86,6 +87,7 @@ public class OxTrustConfiguration {
 	private ApplicationConfiguration applicationConfiguration;
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 	private String cryptoConfigurationSalt;
+	private ImportPersonConfig  importPersonConfig;	////issue 102  : changed by shekhar
 
     private AtomicBoolean isActive;
 
@@ -241,6 +243,7 @@ public class OxTrustConfiguration {
 		this.applicationConfiguration = conf.getApplication();
 		this.cacheRefreshConfiguration = conf.getCacheRefresh();
 		this.loadedRevision = conf.getRevision();
+		this.importPersonConfig = conf.getImportPersonConfig();//issue 102   : changed by shekhar
 	}
 
 	private boolean createFromFile() {
@@ -351,6 +354,16 @@ public class OxTrustConfiguration {
 	public String getConfigurationDn() {
 		return getLdapConfiguration().getString("configurationEntryDN");
 	}
+	
+	// issue 102 - begin : changed by shekhar
+	public ImportPersonConfig getImportPersonConfig() {
+		return importPersonConfig;
+	}
+
+	public void setImportPersonConfig(ImportPersonConfig importPersonConfig) {
+		this.importPersonConfig = importPersonConfig;
+	}// issue 102 - end : changed by shekhar
+
 
 	public static OxTrustConfiguration instance() {
 		return (OxTrustConfiguration) Component.getInstance(OxTrustConfiguration.class);
