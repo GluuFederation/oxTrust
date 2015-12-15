@@ -1,0 +1,10 @@
+<components xmlns="http://jboss.com/products/seam/components" 
+            xmlns:core="http://jboss.com/products/seam/core">
+    <component name="oxTrustConfiguration" class="org.gluu.oxtrust.util.MockOxTrustConfiguration" precedence="30" />
+    <component name="appInitializer" class="org.gluu.oxtrust.util.MockAppInitializer" precedence="30" />
+    <component name="imageRepository" class="org.gluu.oxtrust.util.MockImageRepository" precedence="30" />
+    <component name="cacheRefreshTimer" class="org.gluu.oxtrust.util.MockCacheRefreshTimer" precedence="30" />
+    <component name="entityIDMonitoringService" class="org.gluu.oxtrust.util.MockEntityIDMonitoringService" precedence="30" />
+    <component name="personService" class="org.gluu.oxtrust.util.MockPersonService" precedence="30" />
+    <component name="groupService" class="org.gluu.oxtrust.util.MockGroupService" precedence="30" />
+</components>

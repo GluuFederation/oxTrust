@@ -22,9 +22,9 @@ import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.TemplateService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -78,7 +78,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private TemplateService templateService;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private ExternalCacheRefreshService externalCacheRefreshService;

@@ -20,6 +20,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -145,7 +147,7 @@ public class CopyUtils2 implements Serializable {
 			return null;
 		}
 
-		PersonService personService1 = PersonService.instance();
+		IPersonService personService1 = PersonService.instance();
 
 
 		if (destination == null) {
@@ -286,7 +288,7 @@ public class CopyUtils2 implements Serializable {
 			// getting user groups
 			log.trace(" setting groups ");
 			if (source.getGroups() != null && source.getGroups().size() > 0) {
-				GroupService groupService = GroupService.instance();
+				IGroupService groupService = GroupService.instance();
 				List<GroupRef> listGroups = source.getGroups();
 				List<String> members = new ArrayList<String>();
 				for (GroupRef group : listGroups) {
@@ -530,7 +532,7 @@ public class CopyUtils2 implements Serializable {
 				// getting user groups
 				log.trace(" setting groups ");
 				if (source.getGroups() != null && source.getGroups().size() > 0) {
-					GroupService groupService = GroupService.instance();
+					IGroupService groupService = GroupService.instance();
 					List<GroupRef> listGroups = source.getGroups();
 					List<String> members = new ArrayList<String>();
 					for (GroupRef group : listGroups) {
@@ -835,7 +837,7 @@ public class CopyUtils2 implements Serializable {
 		// getting user groups
 		log.trace(" setting  groups ");
 		if (source.getMemberOf() != null) {
-			GroupService groupService = GroupService.instance();
+			IGroupService groupService = GroupService.instance();
 
 			List<String> listOfGroups = source.getMemberOf();
 			List<GroupRef> groupRefList = new ArrayList<GroupRef>();
@@ -1038,7 +1040,7 @@ public class CopyUtils2 implements Serializable {
 		if (destination == null) {
 			destination = new Group();
 		}
-		PersonService personService = PersonService.instance();
+		IPersonService personService = PersonService.instance();
 		destination.setDisplayName(source.getDisplayName());
 		destination.setId(source.getInum());
 		if (source.getMembers() != null) {
@@ -1071,7 +1073,7 @@ public class CopyUtils2 implements Serializable {
 		List<String> listMembers = new ArrayList<String>();
 		// mapMembers.
 
-		PersonService personservice = PersonService.instance();
+		IPersonService personservice = PersonService.instance();
 		for (String dn : listMembers) {
 			GluuCustomPerson gluuPerson = personservice.getPersonByDn(dn);
 			ScimGroupMembers member = new ScimGroupMembers();
@@ -1380,7 +1382,7 @@ public class CopyUtils2 implements Serializable {
 		// getting user groups
 		log.trace(" setting groups ");
 		if (source.getGroups() != null && source.getGroups().size() > 0) {
-			GroupService groupService = GroupService.instance();
+			IGroupService groupService = GroupService.instance();
 			List<ScimPersonGroupsPatch> listGroups = source.getGroups();
 			List<String> members = new ArrayList<String>();
 			for (ScimPersonGroups group : listGroups) {
@@ -1525,7 +1527,7 @@ public class CopyUtils2 implements Serializable {
 				destination.setDisplayName(source.getDisplayName());
 			}
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
-				PersonService personService = PersonService.instance();
+				IPersonService personService = PersonService.instance();
 				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (MemberRef member : members) {
@@ -1537,7 +1539,7 @@ public class CopyUtils2 implements Serializable {
 
 		} else {
 			log.trace(" creating a new GroupService instant ");
-			GroupService groupService1 = GroupService.instance();
+			IGroupService groupService1 = GroupService.instance();
 			log.trace(" source.getDisplayName() : ", source.getDisplayName());
 
 			if (groupService1.getGroupByDisplayName(source.getDisplayName()) != null) {
@@ -1553,7 +1555,7 @@ public class CopyUtils2 implements Serializable {
 			log.trace(" source.getMembers().size() : ", source.getMembers().size());
 
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
-				PersonService personService = PersonService.instance();
+				IPersonService personService = PersonService.instance();
 				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (MemberRef member : members) {

@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -60,7 +60,7 @@ public class WhitePagesAction implements Serializable {
 	private ImageService imageService;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	private String tableState;
 

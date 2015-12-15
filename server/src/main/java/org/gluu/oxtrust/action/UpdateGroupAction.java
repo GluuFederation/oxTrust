@@ -17,9 +17,9 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -77,13 +77,13 @@ public class UpdateGroupAction implements Serializable {
 	protected GluuCustomPerson currentPerson;
 
 	@In
-	private GroupService groupService;
+	private IGroupService groupService;
 
 	@In
 	private LookupService lookupService;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private FacesMessages facesMessages;

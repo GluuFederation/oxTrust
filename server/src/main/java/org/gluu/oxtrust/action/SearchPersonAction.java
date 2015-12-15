@@ -12,7 +12,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
@@ -52,7 +52,7 @@ public class SearchPersonAction implements Serializable {
 	private List<GluuCustomPerson> personList;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@Restrict("#{s:hasPermission('person', 'access')}")
 	public String start() {

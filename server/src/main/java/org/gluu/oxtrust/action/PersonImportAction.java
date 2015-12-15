@@ -23,7 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
 import org.gluu.oxtrust.ldap.service.ExcelService;
-import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.table.Table;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -68,7 +68,7 @@ public class PersonImportAction implements Serializable {
 	StatusMessages statusMessages;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private transient ExcelService excelService;

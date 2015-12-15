@@ -32,8 +32,8 @@ import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -102,7 +102,7 @@ public class CacheRefreshTimer {
 	private CacheRefreshService cacheRefreshService;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private LdapEntryManager ldapEntryManager;
