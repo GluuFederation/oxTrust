@@ -1,0 +1,49 @@
+{
+    "$schema":"http://json-schema.org/draft-04/schema#",
+    "id":"/",
+    "title":"Import person configuration",
+    "type":"object",
+    "properties":{
+        "mappings":{
+            "id":"mappings",
+            "type":"array",
+            "minItems":0,
+            "uniqueItems":false,
+            "additionalItems":true,
+            "items":{
+                "type":"object",
+                "additionalProperties":false,
+                "properties":{
+                    "ldapName":{
+                        "id":"ldapName",
+                        "type":"string",
+                        "minLength":1
+                    },
+                    "displayName":{
+                        "id":"displayName",
+                        "type":"string"                    },
+                    "dataType":{
+                        "id":"dataType",
+                        "type":"string",
+                        "enum":[
+                            "string",
+                            "numeric"
+                        ]
+                    },
+                    "required":{
+                        "id":"required",
+                        "type":"boolean"
+                    }
+                }
+            },
+            "required": [
+                "ldapName",
+                "dataType",
+                "required"
+            ]
+        }
+    },
+    "required":[
+
+    ]
+}

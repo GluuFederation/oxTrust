@@ -23,6 +23,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.config.oxtrust.ImportPerson;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.util.StringHelper;
@@ -67,18 +68,16 @@ public class ImportPersonConfiguration {
 		if (!this.importConfiguration.isLoaded()) {
 			return result;
 		}
-		//issue 102
-//		Iterator<?> keys = oxTrustConfiguration.getApplicationConfiguration().getGluuImportPerson().keySet().iterator();
-		Iterator<?> keys = importConfiguration.getProperties().keySet().iterator();
-		while (keys.hasNext()) {
-			String key = (String) keys.next();
+		//issue 102 - begin  : changed by shekhar
+		List<ImportPerson>  mappings = oxTrustConfiguration.getImportPersonConfig().getMappings();
+		Iterator<ImportPerson> it = mappings.iterator();
 
-			if (key.endsWith(ATTRIBUTE_LDAP_NAME_SUFFIX)) {
-				int index = key.lastIndexOf(ATTRIBUTE_LDAP_NAME_SUFFIX);
-				String prefix = key.substring(0, index);
+		while (it.hasNext()) {
+			ImportPerson importPerson = (ImportPerson) it.next();
 
-				String attributeName = importConfiguration.getString(prefix + ATTRIBUTE_LDAP_NAME_SUFFIX, null);
-				boolean required = importConfiguration.getBoolean(prefix + ATTRIBUTE_DATA_REQUIRED_SUFFIX, false);
+				String attributeName = importPerson.getLdapName();
+				boolean required = importPerson.getRequired();
+				//issue 102 - end  : changed by shekhar
 
 				if (StringHelper.isNotEmpty(attributeName)) {
 					GluuAttribute attr = null;
@@ -89,7 +88,7 @@ public class ImportPersonConfiguration {
 					}
 					if (attr == null) {
 						log.warn("Failed to find attribute '{0}' definition in LDAP", attributeName);
-						attr = createAttributeFromConfig(prefix);
+						attr = createAttributeFromConfig(importPerson);
 						if (attr == null) {
 							log.error("Failed to find attribute '{0}' definition in '{1}'", attributeName,
 									GLUU_IMPORT_PERSON_PROPERTIES_FILE);
@@ -100,7 +99,7 @@ public class ImportPersonConfiguration {
 					}
 					result.add(attr);
 				}
-			}
+			//}
 		}
 
 		return result;
@@ -127,6 +126,30 @@ public class ImportPersonConfiguration {
 
 		return null;
 	}
+	
+	//issue 102 - begin  : changed by shekhar
+	private GluuAttribute createAttributeFromConfig(ImportPerson importPerson) {
+		String attributeName = importPerson.getLdapName();
+		String displayName = importPerson.getDisplayName();
+		String dataType = importPerson.getDataType();
+		boolean required = importPerson.getRequired();
+
+		if (StringHelper.isNotEmpty(attributeName) && StringHelper.isNotEmpty(displayName) && StringHelper.isNotEmpty(dataType)) {
+			GluuAttributeDataType attributeDataType = GluuAttributeDataType.getByValue(dataType);
+			if (attributeDataType != null) {
+				GluuAttribute attr = new GluuAttribute();
+				attr.setName(attributeName);
+				attr.setDisplayName(displayName);
+				attr.setDataType(attributeDataType);
+				attr.setRequred(required);
+
+				return attr;
+			}
+		}
+
+		return null;
+	}//issue 102 - end  : changed by shekhar
+
 
 	public List<GluuAttribute> getAttributes() {
 		return attributes;
