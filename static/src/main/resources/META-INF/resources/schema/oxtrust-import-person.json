@@ -21,9 +21,7 @@
                     },
                     "displayName":{
                         "id":"displayName",
-                        "type":"string",
-                        "minLength":1
-                    },
+                        "type":"string"                    },
                     "dataType":{
                         "id":"dataType",
                         "type":"string",
@@ -37,7 +35,12 @@
                         "type":"boolean"
                     }
                 }
-            }
+            },
+            "required": [
+                "ldapName",
+                "dataType",
+                "required"
+            ]
         }
     },
     "required":[
