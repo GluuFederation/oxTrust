@@ -104,7 +104,7 @@ public class CopyUtils implements Serializable {
 
 	private static final String OX_TRUST_ACTIVE = "oxTrustActive";
 
-	private static final String OX_TRUST_LOCALE = "oxTrustLocale";
+	private static final String OX_TRUST_LOCALE = "locale";
 
 	private static final String OX_TRUST_TITLE = "oxTrustTitle";
 
@@ -122,7 +122,7 @@ public class CopyUtils implements Serializable {
 
 	private static final String OX_TRUST_PROFILE_URL = "oxTrustProfileURL";
 
-	private static final String OX_TRUST_NICK_NAME = "oxTrustNickName";
+	private static final String OX_TRUST_NICK_NAME = "nickName";
 
 	private static final String OX_TRUST_EXTERNAL_ID = "oxTrustExternalId";
 
@@ -130,7 +130,7 @@ public class CopyUtils implements Serializable {
 
 	private static final String OX_TRUSTHONORIFIC_PREFIX = "oxTrusthonorificPrefix";
 
-	private static final String OX_TRUST_MIDDLE_NAME = "oxTrustMiddleName";
+	private static final String OX_TRUST_MIDDLE_NAME = "middleName";
 
 	/**
      *
