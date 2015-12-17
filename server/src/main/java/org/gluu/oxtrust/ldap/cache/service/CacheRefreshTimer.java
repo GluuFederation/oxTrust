@@ -611,7 +611,7 @@ public class CacheRefreshTimer {
 			return true;
 		}
 
-		log.error("Skipping target entries update. Destination server shema doesn't has next attributes: '{0}'", targetAttributesSet);
+		log.error("Skipping target entries update. Destination server schema doesn't has next attributes: '{0}'", targetAttributesSet);
 
 		return false;
 	}
