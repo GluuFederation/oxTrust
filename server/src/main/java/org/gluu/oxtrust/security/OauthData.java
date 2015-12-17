@@ -26,7 +26,7 @@ public class OauthData implements Serializable {
 	private int accessTokenExpirationInSeconds;
 	private String idToken;
 	private String scopes;
-	private String sessionId;
+	private String sessionState;
 
 	public String getHost() {
 		return host;
@@ -76,12 +76,12 @@ public class OauthData implements Serializable {
 		this.scopes = scopes;
 	}
 
-	public String getSessionId() {
-		return sessionId;
+	public String getSessionState() {
+		return sessionState;
 	}
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
+	public void setSessionState(String sessionState) {
+		this.sessionState = sessionState;
 	}
 
 }

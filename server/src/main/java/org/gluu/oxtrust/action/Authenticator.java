@@ -322,7 +322,7 @@ public class Authenticator implements Serializable {
 		// Clean up OAuth token
 		oauthData.setUserUid(null);
 		oauthData.setIdToken(null);
-		oauthData.setSessionId(null);
+		oauthData.setSessionState(null);
 		oauthData = null;
 
 		FacesContext.getCurrentInstance().getExternalContext().redirect(clientRequest.getUri());
@@ -481,10 +481,10 @@ public class Authenticator implements Serializable {
 
 		String authorizationCode = requestParameterMap.get(OxTrustConstants.OXAUTH_CODE);
 
-		Object sessionIdCookie = requestCookieMap.get(OxTrustConstants.OXAUTH_SESSION_STATE);
-		String sessionId = null;
-		if (sessionIdCookie != null) {
-			sessionId = ((Cookie) sessionIdCookie).getValue();
+		Object sessionStateCookie = requestCookieMap.get(OxTrustConstants.OXAUTH_SESSION_STATE);
+		String sessionState = null;
+		if (sessionStateCookie != null) {
+			sessionState = ((Cookie) sessionStateCookie).getValue();
 		}
 
 		String idToken = requestParameterMap.get(OxTrustConstants.OXAUTH_ID_TOKEN);
@@ -579,7 +579,7 @@ public class Authenticator implements Serializable {
 			this.oauthData.setAccessTokenExpirationInSeconds(response3.getExpiresIn());
 			this.oauthData.setScopes(scopes);
 			this.oauthData.setIdToken(idToken);
-			this.oauthData.setSessionId(sessionId);
+			this.oauthData.setSessionState(sessionState);
 
 			log.info("user uid:" + oauthData.getUserUid());
 			
