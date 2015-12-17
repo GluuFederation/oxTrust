@@ -54,7 +54,6 @@ import org.jboss.seam.navigation.Pages;
 import org.jboss.seam.security.Credentials;
 import org.jboss.seam.security.Identity;
 import org.jboss.seam.security.SimplePrincipal;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
@@ -64,7 +63,6 @@ import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
 import org.xdi.oxauth.client.ValidateTokenClient;
 import org.xdi.oxauth.client.ValidateTokenResponse;
-import org.xdi.oxauth.model.common.Parameters;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
@@ -483,7 +481,7 @@ public class Authenticator implements Serializable {
 
 		String authorizationCode = requestParameterMap.get(OxTrustConstants.OXAUTH_CODE);
 
-		Object sessionIdCookie = requestCookieMap.get(Parameters.SESSION_ID.getParamName());
+		Object sessionIdCookie = requestCookieMap.get(OxTrustConstants.OXAUTH_SESSION_STATE);
 		String sessionId = null;
 		if (sessionIdCookie != null) {
 			sessionId = ((Cookie) sessionIdCookie).getValue();
