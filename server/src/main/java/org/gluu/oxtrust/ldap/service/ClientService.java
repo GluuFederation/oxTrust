@@ -9,12 +9,7 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.List;
 
-import org.gluu.oxtrust.model.OxAuthApplicationType;
-import org.gluu.oxtrust.model.OxAuthAuthenticationMethod;
-import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.model.OxAuthCustomClient;
-import org.gluu.oxtrust.model.OxAuthTrustedClientBox;
-import org.gluu.oxtrust.model.TokenResponseAlgs;
+import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
@@ -35,6 +30,9 @@ import com.unboundid.ldap.sdk.Filter;
  * Provides operations with clients
  * 
  * @author Reda Zerrad Date: 06.08.2012
+ * @author Javier Rojas Blum
+ *
+ * @version November 9, 2015
  */
 
 @Scope(ScopeType.STATELESS)
@@ -354,15 +352,6 @@ public class ClientService implements Serializable {
 	}
 
 	/**
-	 * Get all available IdToken Response Algorithm
-	 * 
-	 * @return Array of Application types
-	 */
-	public TokenResponseAlgs[] getOxAuthIdTokenSignedResponseAlgs() {
-		return TokenResponseAlgs.values();
-	}
-
-	/**
 	 * GetOxAuthTrustedClient
 	 * 
 	 * @return Array of OxAuthTrustedClient
@@ -371,13 +360,48 @@ public class ClientService implements Serializable {
 		return OxAuthTrustedClientBox.values();
 	}
 
-	/**
-	 * Get all available Authentication methods
-	 * 
-	 * @return Array of Authentication methods
-	 */
-	public OxAuthAuthenticationMethod[] getAuthenticationMethods() {
-		return OxAuthAuthenticationMethod.values();
-	}
+    /**
+     * Get all available Subject types
+     *
+     * @return Array of Subject types
+     */
+    public OxAuthSubjectType[] getSubjectTypes() {
+        return OxAuthSubjectType.values();
+    }
 
+    /**
+     * Get all available Signature Algorithms
+     *
+     * @return Array of Signature Algorithms
+     */
+    public SignatureAlgorithm[] getSignatureAlgorithms() {
+        return SignatureAlgorithm.values();
+    }
+
+    /**
+     * Get all available Key Encryption Algorithms
+     *
+     * @return Array of Key Encryption Algorithms
+     */
+    public KeyEncryptionAlgorithm[] getKeyEncryptionAlgorithms() {
+        return KeyEncryptionAlgorithm.values();
+    }
+
+    /**
+     * Get all available Block Encryption Algorithms
+     *
+     * @return Array of Block Encryption Algorithms
+     */
+    public BlockEncryptionAlgorithm[] getBlockEncryptionAlgorithms() {
+        return BlockEncryptionAlgorithm.values();
+    }
+
+    /**
+     * Get all available Authentication methods
+     *
+     * @return Array of Authentication methods
+     */
+    public AuthenticationMethod[] getAuthenticationMethods() {
+        return AuthenticationMethod.values();
+    }
 }

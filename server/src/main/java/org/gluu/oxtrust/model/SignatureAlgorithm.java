@@ -15,24 +15,28 @@ import org.gluu.site.ldap.persistence.annotation.LdapEnum;
  * oxAuth IdToken Signed Response Algorithm
  * 
  * @author Reda Zerrad Date: 06.15.2012
+ * @author Javier Rojas Blum
+ * @version November 10, 2015
  */
-public enum TokenResponseAlgs implements LdapEnum {
+public enum SignatureAlgorithm implements LdapEnum {
 
-	HS256("HS256", "HS256"), HS384("HS384", "HS384"), HS512("HS512", "HS512"), RS256("RS256", "RS256"), RS384("RS384", "RS384"), RS512(
-			"RS512", "RS512");
+    NONE("none", "none"),
+	HS256("HS256", "HS256"), HS384("HS384", "HS384"), HS512("HS512", "HS512"),
+    RS256("RS256", "RS256"), RS384("RS384", "RS384"), RS512("RS512", "RS512"),
+    ES256("ES256", "ES256"), ES384("ES384", "ES384"), ES512("ES512", "ES512");
 
 	private String value;
 	private String displayName;
 
-	private static Map<String, TokenResponseAlgs> mapByValues = new HashMap<String, TokenResponseAlgs>();
+	private static Map<String, SignatureAlgorithm> mapByValues = new HashMap<String, SignatureAlgorithm>();
 
 	static {
-		for (TokenResponseAlgs enumType : values()) {
+		for (SignatureAlgorithm enumType : values()) {
 			mapByValues.put(enumType.getValue(), enumType);
 		}
 	}
 
-	private TokenResponseAlgs(String value, String displayName) {
+	private SignatureAlgorithm(String value, String displayName) {
 		this.value = value;
 		this.displayName = displayName;
 	}
@@ -45,7 +49,7 @@ public enum TokenResponseAlgs implements LdapEnum {
 		return displayName;
 	}
 
-	public static TokenResponseAlgs getByValue(String value) {
+	public static SignatureAlgorithm getByValue(String value) {
 		return mapByValues.get(value);
 	}
 
