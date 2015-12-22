@@ -14,7 +14,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapEnum;
 /**
  * @author Yuriy Movchan Date: 07/07/2014
  */
-public enum OxAuthAuthenticationMethod implements LdapEnum {
+public enum AuthenticationMethod implements LdapEnum {
 
     /**
      * Clients in possession of a client password authenticate with the Authorization Server
@@ -52,15 +52,15 @@ public enum OxAuthAuthenticationMethod implements LdapEnum {
 	private String value;
 	private String displayName;
 
-	private static Map<String, OxAuthAuthenticationMethod> mapByValues = new HashMap<String, OxAuthAuthenticationMethod>();
+	private static Map<String, AuthenticationMethod> mapByValues = new HashMap<String, AuthenticationMethod>();
 
 	static {
-		for (OxAuthAuthenticationMethod enumType : values()) {
+		for (AuthenticationMethod enumType : values()) {
 			mapByValues.put(enumType.getValue(), enumType);
 		}
 	}
 
-	private OxAuthAuthenticationMethod(String value, String displayName) {
+	private AuthenticationMethod(String value, String displayName) {
 		this.value = value;
 		this.displayName = displayName;
 	}
@@ -73,7 +73,7 @@ public enum OxAuthAuthenticationMethod implements LdapEnum {
 		return displayName;
 	}
 
-	public static OxAuthAuthenticationMethod getByValue(String value) {
+	public static AuthenticationMethod getByValue(String value) {
 		return mapByValues.get(value);
 	}
 

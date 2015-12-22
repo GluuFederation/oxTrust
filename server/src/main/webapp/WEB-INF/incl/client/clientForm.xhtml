@@ -25,8 +25,8 @@
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                <ui:define name="label">Display Name</ui:define>
-                <rich:inplaceInput value="#{_client.displayName}" defaultLabel="click to enter Display Name" maxlength="60" inputWidth="695" required="true" id="displayNameId" />
+                <ui:define name="label">Client Name</ui:define>
+                <rich:inplaceInput value="#{_client.displayName}" defaultLabel="click to enter the Client Name" maxlength="60" inputWidth="695" required="true" id="displayNameId" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clientSecret" rendered="#{_new}">
@@ -37,16 +37,7 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="applicatonType">
                 <ui:define name="label">Application Type</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthAppType}" id="applicationTypeId" required="true">
-                    <s:selectItems value="#{clientService.applicationType}" noSelectionLabel="Application type" var="_type" label="#{_type.displayName}" />
-                    <!-- <s:convertEnum/> -->
-                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
-                </h:selectOneMenu>
-            </s:decorate>
-
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenAlgorithm">
-                <ui:define name="label">Algorithm</ui:define>
-                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthIdTokenSignedResponseAlg}" id="idTokenAlgorithmId" required="true">
-                    <s:selectItems value="#{clientService.oxAuthIdTokenSignedResponseAlgs}" noSelectionLabel="Algorithm type" var="_type" label="#{_type.displayName}" />
+                    <s:selectItems value="#{clientService.applicationType}" var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
@@ -61,11 +52,127 @@
                 </h:selectOneMenu>
             </s:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenAuthMethod">
-                <ui:define name="label">Authentication method</ui:define>
-                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.tokenEndpointAuthMethod}" id="idTokenAuthMethodId" required="false">
-                    <s:selectItems value="#{clientService.authenticationMethods}" noSelectionLabel="Authentication method" var="_method" label="#{_method.displayName}" />
-                    <!-- <s:convertEnum/> -->
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="logoUri">
+                <ui:define name="label">Logo URI</ui:define>
+                <rich:inplaceInput value="#{_client.logoUri}" defaultLabel="click to enter a logo for the Client application" maxlength="60" inputWidth="695" required="false" id="logoUriId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clientUri">
+                <ui:define name="label">Client URI</ui:define>
+                <rich:inplaceInput value="#{_client.clientUri}" defaultLabel="click to enter the home page of the Client" maxlength="60" inputWidth="695" required="false" id="clientUriId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="policyUri">
+                <ui:define name="label">Policy URI</ui:define>
+                <rich:inplaceInput value="#{_client.policyUri}" defaultLabel="click to enter the Policy URI" maxlength="60" inputWidth="695" required="false" id="policyUriId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="tosUri">
+                <ui:define name="label">Terms of Service URI</ui:define>
+                <rich:inplaceInput value="#{_client.tosUri}" defaultLabel="click to enter the TOS URI" maxlength="60" inputWidth="695" required="false" id="tosUriId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="jwksUri">
+                <ui:define name="label">JWKS URI</ui:define>
+                <rich:inplaceInput value="#{_client.jwksUri}" defaultLabel="click to enter the URL for the Client's JSON Web Key Set" maxlength="60" inputWidth="695" required="false" id="jwksUriId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="jwks">
+                <ui:define name="label">JWKS</ui:define>
+                <h:inputTextarea styleClass="form-control" value="#{_client.jwks}" rows="3" cols="80" maxlength="4000" id="jwksId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="sectorIdentifierUri">
+                <ui:define name="label">Sector Identifier URI</ui:define>
+                <rich:inplaceInput value="#{_client.sectorIdentifierUri}" defaultLabel="click to enter the Sector Identifier URL" maxlength="60" inputWidth="695" required="false" id="sectorIdentifierUriId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="subjectType">
+                <ui:define name="label">Subject Type</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.subjectType}" id="subjectTypeId" required="true">
+                    <s:selectItems value="#{clientService.subjectTypes}" var="_subjectType" label="#{_subjectType.displayName}" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenSignedResponseAlg">
+                <ui:define name="label">JWS alg Algorithm for signing the ID Token</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.idTokenSignedResponseAlg}" id="idTokenSignedResponseAlgId" required="false">
+                    <s:selectItems value="#{clientService.signatureAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenEncryptedResponseAlg">
+                <ui:define name="label">JWE alg Algorithm for encrypting the ID Token</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.idTokenEncryptedResponseAlg}" id="idTokenEncryptedResponseAlgId" required="false">
+                    <s:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenEncryptedResponseEnc">
+                <ui:define name="label">JWE enc Algorithm for encrypting the ID Token</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.idTokenEncryptedResponseEnc}" id="idTokenEncryptedResponseEncId" required="false">
+                    <s:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="userInfoSignedResponseAlg">
+                <ui:define name="label">JWS alg Algorithm for signing the UserInfo Responses</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.userInfoSignedResponseAlg}" id="userInfoSignedResponseAlgId" required="false">
+                    <s:selectItems value="#{clientService.signatureAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="userInfoEncryptedResponseAlg">
+                <ui:define name="label">JWE alg Algorithm for encrypting the UserInfo Responses</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.userInfoEncryptedResponseAlg}" id="userInfoEncryptedResponseAlgId" required="false">
+                    <s:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="userInfoEncryptedResponseEnc">
+                <ui:define name="label">JWE enc Algorithm for encrypting the UserInfo Responses</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.userInfoEncryptedResponseEnc}" id="userInfoEncryptedResponseEncId" required="false">
+                    <s:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="requestObjectSigningAlg">
+                <ui:define name="label">JWS alg Algorithm for signing Request Objects</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.requestObjectSigningAlg}" id="requestObjectSigningAlgId" required="false">
+                    <s:selectItems value="#{clientService.signatureAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <!-- request_object_encryption_alg -->
+            <!-- request_object_encryption_enc -->
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="tokenEndpointAuthMethod">
+                <ui:define name="label">Authentication method for the Token Endpoint</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.tokenEndpointAuthMethod}" id="tokenEndpointAuthMethodId" required="false">
+                    <s:selectItems value="#{clientService.authenticationMethods}" var="_method" label="#{_method.displayName}" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <!-- token_endpoint_auth_signing_alg -->
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="defaultMaxAge">
+                <ui:define name="label">Default Maximum Authentication Age</ui:define>
+                <rich:inplaceInput value="#{_client.defaultMaxAge}" defaultLabel="click to enter the Default Maximum Authentication Age (value in seconds)" maxlength="60" inputWidth="695" required="false" id="defaultMaxAgeId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="requireAuthTime">
+                <ui:define name="label">Require Auth Time</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.requireAuthTime}" required="false">
+                    <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
             </s:decorate>
@@ -139,20 +246,109 @@
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="responseTypes">
-                <ui:define name="label">Response Type</ui:define>
+                <ui:define name="label">Response Types</ui:define>
                 <h:panelGroup id="selectedResponseTypesId">
                     <h:panelGroup>
                         <a4j:repeat value="#{_clientAction.responseTypes}" rowKeyVar="_responseTypeIdx" var="_responseType">
-                            <h:outputText value="#{_responseType.displayName}" />
+                            <h:outputText value="#{_responseType.value}" />
                             <h:outputText value="&#160;" />
-                             <div class="row-fluid">
-     <div class="span6 pull-right" >
-                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"  style="margin-top:-20px;" action="#{_clientAction.removeResponseType(_responseType.value)}" execute="@this" render="selectedResponseTypesId" eventsQueue="clientQueue">
-                              <!--  <h:graphicImage value="/img/remove.gif" />  -->
-                            </a4j:commandLink></div></div>
+                            <div class="row-fluid">
+                                <div class="span6 pull-right" >
+                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove"  style="margin-top:-20px;" action="#{_clientAction.removeResponseType(_responseType.value)}" execute="@this" render="selectedResponseTypesId" eventsQueue="clientQueue">
+                                    </a4j:commandLink>
+                                </div>
+                            </div>
                             <br />
                         </a4j:repeat>
                         <richext:spacer height="16" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="grantTypes">
+                <ui:define name="label">Grant Types</ui:define>
+                <h:panelGroup id="selectedGrantTypesId">
+                    <h:panelGroup>
+                        <a4j:repeat value="#{_clientAction.grantTypes}" rowKeyVar="_grantTypeIdx" var="_grantType">
+                            <h:outputText value="#{_grantType.value}" />
+                            <h:outputText value="&#160;" />
+                            <div class="row-fluid">
+                                <div class="span6 pull-right">
+                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove"  style="margin-top:-20px;" action="#{_clientAction.removeGrantType(_grantType.value)}" execute="@this" render="selectedGrantTypesId" eventsQueue="clientQueue">
+                                    </a4j:commandLink>
+                                </div>
+                            </div>
+                            <br />
+                        </a4j:repeat>
+                        <richext:spacer height="16" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="contacts">
+                <ui:define name="label">Contacts</ui:define>
+                <h:panelGroup id="selectedContactsId">
+                    <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <a4j:repeat value="#{_clientAction.contacts}" rowKeyVar="_contactsIdx" var="_contact">
+                            <h:outputText value="#{empty _contact ? _contact : _contact}"/>
+                            <h:outputText value="&#160;"/>
+                            <div class="row-fluid">
+                                <div class="span6 pull-right">
+                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;"
+                                                     action="#{_clientAction.removeContact(_contact)}" execute="@this"
+                                                     render="selectedContactsId" eventsQueue="clientQueue">
+                                    </a4j:commandLink></div>
+                            </div>
+                            <br/>
+                        </a4j:repeat>
+                        <richext:spacer height="16"/>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="defaultAcrValues">
+                <ui:define name="label">Default requested Authentication Context Class Reference values</ui:define>
+                <h:panelGroup id="selectedDefaultAcrValuesId">
+                    <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <a4j:repeat value="#{_clientAction.defaultAcrValues}" rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue">
+                            <h:outputText value="#{_defaultAcrValue}"/>
+                            <h:outputText value="&#160;"/>
+                            <div class="row-fluid">
+                                <div class="span6 pull-right">
+                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;"
+                                                     action="#{_clientAction.removeDefaultAcrValue(_defaultAcrValue)}" execute="@this"
+                                                     render="selectedDefaultAcrValuesId" eventsQueue="clientQueue">
+                                    </a4j:commandLink></div>
+                            </div>
+                            <br/>
+                        </a4j:repeat>
+                        <richext:spacer height="16"/>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="initiateLoginUri">
+                <ui:define name="label">Initiate Login URI</ui:define>
+                <rich:inplaceInput value="#{_client.initiateLoginUri}" defaultLabel="click to enter an URI using the https scheme that a third party can use to initiate a login by the RP" maxlength="60" inputWidth="695" required="false" id="initiateLoginUriId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="requestUris">
+                <ui:define name="label">Request URIs</ui:define>
+                <h:panelGroup id="selectedRequestUrisId">
+                    <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <a4j:repeat value="#{_clientAction.requestUris}" rowKeyVar="_requestUrisIdx" var="_requestUri">
+                            <h:outputText value="#{_requestUri}"/>
+                            <h:outputText value="&#160;"/>
+                            <div class="row-fluid">
+                                <div class="span6 pull-right">
+                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;"
+                                                     action="#{_clientAction.removeRequestUri(_requestUri)}" execute="@this"
+                                                     render="selectedRequestUrisId" eventsQueue="clientQueue">
+                                    </a4j:commandLink></div>
+                            </div>
+                            <br/>
+                        </a4j:repeat>
+                        <richext:spacer height="16"/>
                     </h:panelGroup>
                 </h:panelGroup>
             </s:decorate>
@@ -162,10 +358,15 @@
                 <div class="btn-group" role="group" aria-label="..." style="margin-left:105px;">
                 
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Login URI" oncomplete="#{rich:component('loginRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
-                    <a4j:commandButton styleClass="btn btn-primary"  value="Add Logout URI" oncomplete="#{rich:component('logoutRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
-                    <a4j:commandButton styleClass="btn btn-primary"  value="Add Scope" oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
-                    <a4j:commandButton styleClass="btn btn-primary"  value="Add Response Type" oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();" execute="@this" />
-                </div></h:panelGroup>
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Logout URI" oncomplete="#{rich:component('logoutRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Scope" oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Response Type" oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Grant Type" oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Contact" oncomplete="#{rich:component('contact:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Default ACR value" oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Request URI" oncomplete="#{rich:component('requestUri:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                </div>
+                </h:panelGroup>
             </s:decorate>
 
         </h:panelGroup>
