@@ -22,7 +22,7 @@
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="selectAttributeModalPanel" onmaskclick="#{rich:component('selectAttributeModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460">
+    <rich:popupPanel id="selectAttributeModalPanel" onmaskclick="#{rich:component('selectAttributeModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="675" height="460">
         <f:facet name="header">
             <h:outputText value="#{cc.attrs.label}" />
         </f:facet>
@@ -44,7 +44,7 @@
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
 
-                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                <h:panelGroup style="overflow-y:scroll; width:100%;#{cc.attrs.searchResult.size gt 10 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
                     <rich:dataTable sortMode="single" id="attributeListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">
                         <rich:column>
                             <f:facet name="header">X</f:facet>
