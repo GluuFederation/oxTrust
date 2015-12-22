@@ -14,11 +14,11 @@
             <cc:attribute name="render" required="false" type="java.lang.String" />
             <cc:attribute name="nameProperty" required="true" type="java.lang.String" />
             <cc:attribute name="displayNameProperty" required="true" type="java.lang.String" />
-            <cc:attribute name="id"></cc:attribute>
+            <cc:attribute name="id" />
         </cc:interface>
 
         <cc:implementation>
-            <rich:popupPanel id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="360" height="460" onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch();}">
+            <rich:popupPanel id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="360" height="460" onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch#{cc.attrs.id}();}">
                 <f:facet name="header">
                     <h:outputText value="#{cc.attrs.label}" />
                 </f:facet>
@@ -38,7 +38,7 @@
                         </s:decorate>
 
                         <s:fragment rendered="#{not cc.attrs.displaySearchForm}">
-                            <a4j:jsFunction name="executeSearch" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />
+                            <a4j:jsFunction name="executeSearch#{cc.attrs.id}" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />
                         </s:fragment>
 
                         <h:panelGroup id="searchNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
