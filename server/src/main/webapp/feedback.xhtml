@@ -1,39 +1,58 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/template.xhtml">
+                xmlns:s="http://jboss.org/schema/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
 
-<ui:param name="isLogin" value="#{true}" />
-<ui:define name="body">
-    <ui:param name="customPageMessage" value="#{organizationService.getOrganizationCustomMessage(identity.loggedIn ? 'welcomePage' : 'loginPage')}" />
-    <h:form id="loginForm">
-        <rich:panel>
-            <f:facet name="header">SAML error happened</f:facet>
+    <ui:param name="showGlobalMessages" value="false"/>
 
-            <p class="info">You were redirected to this page because of error during access to the federated resource. Please file an issue about this in out Jira or write a message to our support. </p>
-            <p class="info">Information we would like to know: </p>
-            <ul>
-                <li>What site were you trying to access?</li>
-                <li>What is your username?</li>
-                <li>At what time did this error happen?</li>
-                <li>Any additional information you consider relevant.</li>
-            </ul>
-            <p class="info">Jira:</p>
-            <ul>
-                <li><h:outputLink value="https://jira.gluu.org/browse/#{organizationService.organization.shortName}">#{organizationService.organization.shortName.toUpperCase()}</h:outputLink></li>
-            </ul>
-            <p class="info">support email:</p>
-            <ui:param name="support_email" value="#{oxTrustConfiguration.applicationConfiguration.orgSupportEmail}" />
-            <ul>
-                <li><h:outputLink value="mailto:#{support_email}">#{support_email}</h:outputLink></li>
-            </ul>
-        </rich:panel>
-    </h:form>
+    <ui:define name="body">
+        <div class="lockscreen-wrapper" style="text-align: center;">
+            <div class="lockscreen-logo" style="margin-top: 20%;">
+                <b style="font-size: 1.4em !important;  color: darkred;">
+                    SAML error happened
+                </b>
+            </div>
 
- </ui:define>
+            <div class="lockscreen-name"
+                 style="text-align: justify;font-size: 1.2em !important;">
+
+                <p class="info">
+                    You were redirected to this page because of error during access to the federated resource.
+                    Please file an issue about this in out Jira or write a message to our support.
+                </p>
+                <p class="info">
+                    Information we would like to know:
+                </p>
+                <ul>
+                    <li>What site were you trying to access?</li>
+                    <li>What is your username?</li>
+                    <li>At what time did this error happen?</li>
+                    <li>Any additional information you consider relevant.</li>
+                </ul>
+
+                <p class="info">support email:</p>
+                <ui:param name="support_email" value="#{oxTrustConfiguration.applicationConfiguration.orgSupportEmail}"/>
+                <ul>
+                    <li>
+                        <h:outputLink value="mailto:#{support_email}"
+                                      style="color: darkred;">
+                            #{support_email}
+                        </h:outputLink>
+                    </li>
+                </ul>
+
+                <br></br>
+
+                <span style="font-size: 14px;">Return to the application using below button.</span>
+            </div>
+
+            <a href="#{request.contextPath}/home"
+               class="btn btn-block btn-primary btn-lg"
+               style="width: 60%;">Return</a>
+        </div>
+    </ui:define>
 </ui:composition>
