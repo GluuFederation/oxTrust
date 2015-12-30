@@ -38,7 +38,7 @@ public class AuthenticationSessionService {
     @Destroy
     public void sessionDestroyed() {
     	OauthData oauthData = (OauthData) Component.getInstance(OauthData.class, false);
-    	if ((oauthData == null) || StringHelper.isEmpty(oauthData.getSessionId())) {
+    	if ((oauthData == null) || StringHelper.isEmpty(oauthData.getSessionState())) {
     		return;
     	}
 
@@ -48,7 +48,7 @@ public class AuthenticationSessionService {
             String endSessionState = UUID.randomUUID().toString();
 
             EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), applicationConfiguration.getLogoutRedirectUrl(), endSessionState);
-            endSessionRequest.setSessionId(oauthData.getSessionId());
+            endSessionRequest.setSessionState(oauthData.getSessionState());
 
             EndSessionClient endSessionClient = new EndSessionClient(applicationConfiguration.getOxAuthEndSessionUrl());
             endSessionClient.setRequest(endSessionRequest);

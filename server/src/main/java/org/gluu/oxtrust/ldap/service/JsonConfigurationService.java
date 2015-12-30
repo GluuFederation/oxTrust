@@ -24,6 +24,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
+import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.service.JsonService;
@@ -57,6 +58,11 @@ public class JsonConfigurationService implements Serializable {
 		return ldapOxTrustConfiguration.getApplication();
 	}
 
+	public ImportPersonConfig getOxTrustImportPersonConfiguration() {
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		return ldapOxTrustConfiguration.getImportPersonConfig();
+	}
+
 	public CacheRefreshConfiguration getOxTrustCacheRefreshConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		return ldapOxTrustConfiguration.getCacheRefresh();
@@ -80,7 +86,15 @@ public class JsonConfigurationService implements Serializable {
 		return true;
 	}
 
-	public boolean saveOxTrustCacheRefreshConfiguration(CacheRefreshConfiguration oxTrustCacheRefreshConfiguration) throws JsonParseException, JsonMappingException, IOException {
+	public boolean saveOxTrustImportPersonConfiguration(ImportPersonConfig oxTrustImportPersonConfiguration) {
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		ldapOxTrustConfiguration.setImportPersonConfig(oxTrustImportPersonConfiguration);
+		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
+		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		return true;
+	}
+
+	public boolean saveOxTrustCacheRefreshConfiguration(CacheRefreshConfiguration oxTrustCacheRefreshConfiguration) {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		ldapOxTrustConfiguration.setCacheRefresh(oxTrustCacheRefreshConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
@@ -123,4 +137,5 @@ public class JsonConfigurationService implements Serializable {
 	public static JsonConfigurationService instance() {
 		return (JsonConfigurationService) Component.getInstance(JsonConfigurationService.class);
 	}
+
 }

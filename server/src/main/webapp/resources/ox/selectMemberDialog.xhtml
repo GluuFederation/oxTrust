@@ -22,7 +22,7 @@
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="selectMemberModalPanel" onmaskclick="#{rich:component('selectMemberModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="560" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
+    <rich:popupPanel id="selectMemberModalPanel" onmaskclick="#{rich:component('selectMemberModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
         <f:facet name="header">
             <h:outputText value="#{cc.attrs.label}" />
         </f:facet>
@@ -49,7 +49,7 @@
                     <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="memberPanelId"/>
                 </s:fragment>
     
-                <h:panelGroup style="overflow-y:scroll; width:100%;#{cc.attrs.searchResult.size gt 10 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
                     <rich:dataTable sortMode="single" id="memberListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="_item">
                         <rich:column>
                             <f:facet name="header">X</f:facet>

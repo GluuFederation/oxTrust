@@ -14,11 +14,11 @@
             <cc:attribute name="render" required="false" type="java.lang.String" />
             <cc:attribute name="nameProperty" required="true" type="java.lang.String" />
             <cc:attribute name="displayNameProperty" required="true" type="java.lang.String" />
-            <cc:attribute name="id"></cc:attribute>
+            <cc:attribute name="id" />
         </cc:interface>
 
         <cc:implementation>
-            <rich:popupPanel id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="360" height="460" onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch();}">
+            <rich:popupPanel id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch#{cc.attrs.id}();}">
                 <f:facet name="header">
                     <h:outputText value="#{cc.attrs.label}" />
                 </f:facet>
@@ -38,14 +38,14 @@
                         </s:decorate>
 
                         <s:fragment rendered="#{not cc.attrs.displaySearchForm}">
-                            <a4j:jsFunction name="executeSearch" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />
+                            <a4j:jsFunction name="executeSearch#{cc.attrs.id}" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />
                         </s:fragment>
 
                         <h:panelGroup id="searchNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
                             <h:outputText value="No Search Result Found" />
                         </h:panelGroup>
 
-                        <h:panelGroup style="overflow:auto; width:330px;#{cc.attrs.searchResult.size gt 10 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                        <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
                             <rich:dataTable  sortMode="single" id="selectableListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs" style="width:100%">
                                 <rich:column width="35">
                                     <f:facet name="header">X</f:facet>
