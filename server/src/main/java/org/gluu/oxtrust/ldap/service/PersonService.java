@@ -542,5 +542,29 @@ public class PersonService implements Serializable {
 
 		return null;
 	}
+	
+	/**
+	 * Get list of persons by attribute
+	 * 
+	 * @param attribute
+	 *            attribute
+	 * @param value
+	 *            value
+	 * @return List <Person>
+	 */
+	public List<GluuCustomPerson> getPersonsByAttribute(String attribute, String value) throws Exception {
+		log.info("atttriburte : " + attribute + "      value : "+value);
+		GluuCustomPerson person = new GluuCustomPerson();
+		person.setBaseDn(getDnForPerson(null));
+		person.setAttribute(attribute, value);
+
+		List<GluuCustomPerson> persons = ldapEntryManager.findEntries(person);
+		log.info("list : " + (persons));
+		if ((persons != null) && (persons.size() > 0)) {
+			return persons;
+		}
+
+		return null;
+	}
 
 }
