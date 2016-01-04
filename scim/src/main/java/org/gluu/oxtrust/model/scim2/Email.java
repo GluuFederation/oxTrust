@@ -5,9 +5,14 @@
  */
 package org.gluu.oxtrust.model.scim2;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonValue;
 import org.gluu.oxtrust.model.exception.SCIMDataValidationException;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,13 +32,6 @@ public class Email extends MultiValuedAttribute {
 	
     @JsonProperty
     private Type type;
-
-    /**
-     * Default constructor for Jackson
-     */
-    public Email() {
-    }
-
 
     @Override
     public String getOperation() {
@@ -157,8 +155,26 @@ public class Email extends MultiValuedAttribute {
         public static final Type HOME = new Type("home");
         public static final Type OTHER = new Type("other");
 
+        private static Map<String, Type> namesMap = new HashMap<String, Type>(3);
+
+        static {
+            namesMap.put(WORK.getValue(), WORK);
+            namesMap.put(HOME.getValue(), HOME);
+            namesMap.put(OTHER.getValue(), OTHER);
+        }
+
         public Type(String value) {
             super(value);
+        }
+
+        @JsonCreator
+        public static MultiValuedAttributeType forValue(String value) {
+            return namesMap.get(StringUtils.lowerCase(value));
+        }
+
+        @JsonValue
+        public String getValue() {
+            return super.getValue();
         }
     }
 
