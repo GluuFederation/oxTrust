@@ -5,6 +5,13 @@
  */
 package org.gluu.oxtrust.model.scim2;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonValue;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -137,8 +144,29 @@ public class PhoneNumber extends MultiValuedAttribute {
         public static final Type PAGER = new Type("pager");
         public static final Type OTHER = new Type("other");
 
+        private static Map<String, Type> namesMap = new HashMap<String, Type>(3);
+
+        static {
+            namesMap.put(WORK.getValue(), WORK);
+            namesMap.put(HOME.getValue(), HOME);
+            namesMap.put(MOBILE.getValue(), OTHER);
+            namesMap.put(FAX.getValue(), OTHER);
+            namesMap.put(PAGER.getValue(), OTHER);
+            namesMap.put(OTHER.getValue(), OTHER);
+        }
+
         public Type(String value) {
             super(value);
+        }
+
+        @JsonCreator
+        public static MultiValuedAttributeType forValue(String value) {
+            return namesMap.get(StringUtils.lowerCase(value));
+        }
+
+        @JsonValue
+        public String getValue() {
+            return super.getValue();
         }
     }
 }
