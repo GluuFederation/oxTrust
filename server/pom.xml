@@ -282,7 +282,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+<!-- 			<plugin>
 				<groupId>com.github.kongchen</groupId>
 				<artifactId>swagger-maven-plugin</artifactId>
 				<version>3.0.0</version>
@@ -306,15 +306,15 @@
 									<name>Rahat Ali</name>
 									<url>http://gluu.org</url>
 								</contact>
-<!--								<license>
+								<license>
 									<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
 									<name>Apache 2.0</name>
-								</license>-->
+								</license>
 							</info>
-							<!-- Support classpath or file absolute path here.
+							Support classpath or file absolute path here.
                             1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"
                             2) file e.g: "${basedir}/src/main/resources/markdown.hbs",
-                                "${basedir}/src/main/resources/template/hello.html" -->
+                                "${basedir}/src/main/resources/template/hello.html"
 							<templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
 							<outputPath>${basedir}/docs/index.html</outputPath>
 							<swaggerDirectory>docs/swagger-ui</swaggerDirectory>
@@ -329,7 +329,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 
 		</plugins>
 	</build>
