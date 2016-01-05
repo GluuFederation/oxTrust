@@ -604,6 +604,11 @@
             "description": "",
             "type": "boolean"
         },
+        "umaRptAsJwt": {
+            "id": "umaRptAsJwt",
+            "description": "Issue RPT as JWT or as random string.",
+            "type": "boolean"
+        },
         "cleanServiceInterval": {
             "id": "cleanServiceInterval",
             "description": "Time interval for the Clean Service in seconds.",

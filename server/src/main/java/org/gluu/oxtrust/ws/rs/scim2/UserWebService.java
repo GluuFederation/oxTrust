@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.*;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -322,4 +323,46 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
+	
+	
+	@Path("/SearchPersons")
+	@POST
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response searchPersons(@HeaderParam("Authorization") String authorization, ScimPersonSearch searchPattern) throws Exception {
+		personService = PersonService.instance();
+
+		Response authorizationResponse = processAuthorization(authorization);
+		if (authorizationResponse != null) {
+			return authorizationResponse;
+		}
+
+		try {
+			List<GluuCustomPerson> personList = personService.getPersonsByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
+			ListResponse personsListResponse = new ListResponse();
+			if (personList != null) {
+				log.info(" LDAP person list is not empty ");
+				for (GluuCustomPerson gluuPerson : personList) {
+					log.info(" copying person from GluuPerson to ScimPerson ");
+					User person = CopyUtils2.copy(gluuPerson, null);
+
+					log.info(" adding ScimPerson to the AllPersonList ");
+					log.info(" person to be added userid : " + person.getUserName());
+					personsListResponse.getResources().add(person);
+					log.info(" person added? : " + personsListResponse.getResources().contains(person));
+				}
+
+			}
+			List<String> schema = new ArrayList<String>();
+			schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+			log.info("setting schema");
+			personsListResponse.setSchemas(schema);
+			personsListResponse.setTotalResults(personsListResponse.getResources().size());
+			URI location = new URI("/Users/");
+			return Response.ok(personsListResponse).location(location).build();
+		} catch (Exception ex) {
+			log.error("Exception: ", ex);
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		}
+	}
+
 }

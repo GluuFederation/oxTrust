@@ -348,13 +348,58 @@ public class UserWebService extends BaseScimWebService {
 			GluuCustomPerson gluuPerson = personService.getPersonByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
-				return getErrorResponse(
-						"No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue()
-								+ "' please try again or use another pattern.", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse("No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue()
+						+ "' please try again or use another pattern.", Response.Status.NOT_FOUND.getStatusCode());
 			}
 			ScimPerson person = CopyUtils.copy(gluuPerson, null);
 			URI location = new URI("/Users/" + gluuPerson.getInum());
 			return Response.ok(person).location(location).build();
+		} catch (EntryPersistenceException ex) {
+			log.error("Exception: ", ex);
+			return getErrorResponse("Resource not found", Response.Status.NOT_FOUND.getStatusCode());
+		} catch (Exception ex) {
+			log.error("Exception: ", ex);
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		}
+	}
+	
+	
+	@Path("/SearchPersons")
+	@POST
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response searchPersons(@HeaderParam("Authorization") String authorization, ScimPersonSearch searchPattern) throws Exception {
+		personService = PersonService.instance();
+
+		Response authorizationResponse = processAuthorization(authorization);
+		if (authorizationResponse != null) {
+			return authorizationResponse;
+		}
+
+		try {
+			List<GluuCustomPerson> personList = personService.getPersonsByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
+			
+			GluuCustomPersonList allPersonList = new GluuCustomPersonList();
+			if (personList != null) {
+				log.info(" LDAP person list is not empty ");
+				for (GluuCustomPerson gluuPerson : personList) {
+					log.info(" copying person from GluuPerson to ScimPerson ");
+					ScimPerson person = CopyUtils.copy(gluuPerson, null);
+					log.info(" adding ScimPerson to the AllPersonList ");
+					log.info(" person to be added userid : " + person.getUserName());
+					allPersonList.getResources().add(person);
+					log.info(" person added? : " + allPersonList.getResources().contains(person));
+				}
+
+			}
+			List<String> schema = new ArrayList<String>();
+			schema.add("urn:scim2:schemas:core:1.0");
+			log.info(" setting schema ");
+			allPersonList.setSchemas(schema);
+			List<ScimPerson> resources = allPersonList.getResources();
+			allPersonList.setTotalResults((long) resources.size());
+
+			URI location = new URI("/Users/");
+			return Response.ok(allPersonList).location(location).build();
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return getErrorResponse("Resource not found", Response.Status.NOT_FOUND.getStatusCode());
