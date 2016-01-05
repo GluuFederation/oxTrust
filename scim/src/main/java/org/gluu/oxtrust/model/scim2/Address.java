@@ -6,6 +6,14 @@
 
 package org.gluu.oxtrust.model.scim2;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonValue;
+import org.gluu.oxtrust.model.scim2.Email.Type;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -239,8 +247,26 @@ public class Address extends MultiValuedAttribute { // NOSONAR - Builder constru
         public static final Type HOME = new Type("home");
         public static final Type OTHER = new Type("other");
 
+        private static Map<String, Type> namesMap = new HashMap<String, Type>(3);
+
+        static {
+            namesMap.put(WORK.getValue(), WORK);
+            namesMap.put(HOME.getValue(), HOME);
+            namesMap.put(OTHER.getValue(), OTHER);
+        }
+
         public Type(String value) {
             super(value);
+        }
+
+        @JsonCreator
+        public static MultiValuedAttributeType forValue(String value) {
+            return namesMap.get(StringUtils.lowerCase(value));
+        }
+
+        @JsonValue
+        public String getValue() {
+            return super.getValue();
         }
     }
 

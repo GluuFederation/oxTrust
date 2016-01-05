@@ -5,21 +5,20 @@
  */
 package org.gluu.oxtrust.model.scim2;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.google.common.base.Strings;
+import org.apache.commons.lang.StringUtils;
+
 
 public abstract class MultiValuedAttributeType {
 
     private final String value;
 
     protected MultiValuedAttributeType(String value) {
-        if (Strings.isNullOrEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             throw new IllegalArgumentException(String.format("The value of %s can't be null or empty.", getClass().getName()));
         }
         this.value = value;
     }
 
-    @JsonValue
     public String getValue() {
         return value;
     }
