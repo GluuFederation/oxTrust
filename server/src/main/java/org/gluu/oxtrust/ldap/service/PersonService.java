@@ -135,7 +135,7 @@ public class PersonService implements Serializable {
 		}
 
 		// Remove person
-		ldapEntryManager.remove(person);
+		ldapEntryManager.removeWithSubtree(person.getDn());
 	}
 
 	/**
