@@ -5,6 +5,14 @@
  */
 package org.gluu.oxtrust.model.scim2;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonValue;
+import org.gluu.oxtrust.model.scim2.Photo.Type;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -125,8 +133,25 @@ public class GroupRef extends MultiValuedAttribute {
          */
         public static final Type INDIRECT = new Type("indirect");
 
-        private Type(String value) {
+        private static Map<String, Type> namesMap = new HashMap<String, Type>(3);
+
+        static {
+            namesMap.put(DIRECT.getValue(), DIRECT);
+            namesMap.put(INDIRECT.getValue(), INDIRECT);
+        }
+
+        public Type(String value) {
             super(value);
+        }
+
+        @JsonCreator
+        public static MultiValuedAttributeType forValue(String value) {
+            return namesMap.get(StringUtils.lowerCase(value));
+        }
+
+        @JsonValue
+        public String getValue() {
+            return super.getValue();
         }
     }
 
