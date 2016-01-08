@@ -5,6 +5,14 @@
  */
 package org.gluu.oxtrust.model.scim2;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonValue;
+import org.gluu.oxtrust.model.scim2.GroupRef.Type;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -130,8 +138,14 @@ public class Entitlement extends MultiValuedAttribute {
      * Represents an entitlement type.
      */
     public static class Type extends MultiValuedAttributeType {
+
         public Type(String value) {
             super(value);
+        }
+
+        @JsonValue
+        public String getValue() {
+            return super.getValue();
         }
     }
 

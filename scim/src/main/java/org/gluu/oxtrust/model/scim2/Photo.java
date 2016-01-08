@@ -7,10 +7,16 @@ package org.gluu.oxtrust.model.scim2;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonValue;
 import org.gluu.oxtrust.model.data.ImageDataURI;
 import org.gluu.oxtrust.model.data.PhotoValueType;
 import org.gluu.oxtrust.model.exception.SCIMDataValidationException;
+import org.gluu.oxtrust.model.scim2.Email.Type;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -188,8 +194,25 @@ public class Photo extends MultiValuedAttribute {
         public static final Type PHOTO = new Type("photo");
         public static final Type THUMBNAIL = new Type("thumbnail");
 
+        private static Map<String, Type> namesMap = new HashMap<String, Type>(3);
+
+        static {
+            namesMap.put(PHOTO.getValue(), PHOTO);
+            namesMap.put(THUMBNAIL.getValue(), THUMBNAIL);
+        }
+
         public Type(String value) {
             super(value);
+        }
+
+        @JsonCreator
+        public static MultiValuedAttributeType forValue(String value) {
+            return namesMap.get(StringUtils.lowerCase(value));
+        }
+
+        @JsonValue
+        public String getValue() {
+            return super.getValue();
         }
     }
 
