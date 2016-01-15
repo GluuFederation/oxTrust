@@ -115,6 +115,7 @@
     "oxAuthEndSessionUrl":"${config.host.schema}://${config.host.idp_name}/oxauth/seam/resource/restv1/oxauth/end_session",
     "oxAuthUserInfo":"${config.host.schema}://${config.host.idp_name}/oxauth/seam/resource/restv1/oxauth/userinfo",
     "oxAuthLogoutUrl":"${config.host.schema}://${config.host.idp_name}/oxauth/logout",
+    "oxAuthSectorIdentifierUrl":"${config.host.schema}://${config.host.idp_name}/oxauth/sectoridentifier",
 
     "oxAuthClientId":"${config.host.oxauth_client_id}",
     "oxAuthClientPassword":"${config.host.oxauth_client_password}",

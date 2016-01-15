@@ -38,6 +38,16 @@ then
   check.grant();
 end
 
+rule AccessSectorIdentifierInventory
+  no-loop
+  activation-group "permissions"
+when
+  check: PermissionCheck(target == "sectorIdentifier", action == "access", granted == false)
+  Role((name == "manager"))
+then
+  check.grant();
+end
+
 rule AccessTrustManagement
   no-loop
   activation-group "permissions"

@@ -162,6 +162,13 @@
             "format": "url",
             "minLength": 1
         },
+        "sectorIdentifierEndpoint": {
+            "id": "sectorIdentifierEndpoint",
+            "description": "URL for the Sector Identifier Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "openidSubAttribute": {
             "id": "openidSubAttribute",
             "description": "LDAP attribute used for the sub claim.",
@@ -944,6 +951,7 @@
         "idGenerationEndpoint",
         "introspectionEndpoint",
         "umaConfigurationEndpoint",
+        "sectorIdentifierEndpoint",
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
