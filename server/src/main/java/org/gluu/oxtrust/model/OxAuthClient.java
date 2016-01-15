@@ -29,13 +29,15 @@ import java.util.List;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version December 8, 2015
+ * @version January 15, 2016
  */
 @LdapEntry(sortBy = {"displayName"})
 @LdapObjectClass(values = {"top", "oxAuthClient"})
 public class OxAuthClient extends Entry implements Serializable {
 
     private static final long serialVersionUID = -2310140703735705346L;
+
+    private transient boolean selected;
 
     @LdapAttribute(ignoreDuringUpdate = true)
     private String inum;
@@ -153,6 +155,14 @@ public class OxAuthClient extends Entry implements Serializable {
     private String[] requestUris;
 
     private String oxAuthClientSecret;
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
     public String getInum() {
         return inum;

@@ -1,0 +1,50 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.org/schema/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:richext="http://java.sun.com/jsf/composite/richext"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox"
+                template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <ui:define name="body">
+        <div id="formArea">
+            <ui:decorate template="/WEB-INF/incl/sectoridentifier/sectorIdentifierForm.xhtml">
+                <ui:param name="_sectorIdentifier" value="#{updateSectorIdentifierAction.sectorIdentifier}"/>
+                <ui:param name="_sectorIdentifierAction" value="#{updateSectorIdentifierAction}"/>
+                <ui:param name="_new" value="false"/>
+
+                <ui:define name="controlButttons">
+                    <div id="updateButtons">
+                        <h:commandButton styleClass="btn btn-primary" value="Update"
+                                         action="#{updateSectorIdentifierAction.save}"/>
+                        <a4j:commandButton styleClass="btn btn-primary" value="Delete"
+                                           onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                           ajaxSingle="true" eventsQueue="sectorIdentifierQueue" rendered="#{not _new}"
+                                           style="margin-left:3px;"/>
+                        <h:commandButton styleClass="btn btn-primary" value="Cancel"
+                                         action="#{updateSectorIdentifierAction.cancel}" immediate="true"
+                                         style="margin-left:3px;"/>
+                    </div>
+                </ui:define>
+            </ui:decorate>
+
+            <ox:selectClientDialog id="client"
+                                   searchPattern="#{updateSectorIdentifierAction.searchAvailableClientPattern}"
+                                   searchMethod="#{updateSectorIdentifierAction.searchAvailableClients}"
+                                   searchResult="#{updateSectorIdentifierAction.availableClients}"
+                                   acceptMethod="#{updateSectorIdentifierAction.acceptSelectClients}"
+                                   cancelMethod="#{updateSectorIdentifierAction.cancelSelectClients()}"
+                                   render="selectedClientsId"/>
+
+            <ox:acceptRemovalDialog id="deleteConfirmation" subject="sectorIdentifier"
+                                    value="#{updateSectorIdentifierAction.sectorIdentifier.inum}"
+                                    deleteMethod="#{updateSectorIdentifierAction.delete}" queue="sectorIdentifierQueue"/>
+        </div>
+    </ui:define>
+
+</ui:composition>
