@@ -33,6 +33,16 @@
                 </ui:define>
             </ui:decorate>
 
+            <ox:inputTextDialog id="loginRedirect"
+                                label="Select Login Redirect URI"
+                                inputLabel="Login Redirect URI"
+                                text="#{updateSectorIdentifierAction.availableLoginUri}"
+                                textId="loginTextId"
+                                acceptMethod="#{updateSectorIdentifierAction.acceptSelectLoginUri}"
+                                cancelMethod="#{updateSectorIdentifierAction.cancelSelectLoginUri}"
+                                maxLength="256" inputWidth="80" dialogWidth="600"
+                                render="selectedLoginURIsId" queue="sectorIdentifierQueue"/>
+
             <ox:selectClientDialog id="client"
                                    searchPattern="#{updateSectorIdentifierAction.searchAvailableClientPattern}"
                                    searchMethod="#{updateSectorIdentifierAction.searchAvailableClients}"
