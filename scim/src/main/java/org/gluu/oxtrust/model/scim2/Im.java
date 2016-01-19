@@ -5,6 +5,14 @@
  */
 package org.gluu.oxtrust.model.scim2;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonValue;
+import org.gluu.oxtrust.model.scim2.Email.Type;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -138,8 +146,32 @@ public class Im extends MultiValuedAttribute {
         public static final Type QQ = new Type("qq");
         public static final Type YAHOO = new Type("yahoo");
 
+        private static Map<String, Type> namesMap = new HashMap<String, Type>(3);
+
+        static {
+            namesMap.put(AIM.getValue(), AIM);
+            namesMap.put(GTALK.getValue(), GTALK);
+            namesMap.put(ICQ.getValue(), ICQ);
+            namesMap.put(XMPP.getValue(), XMPP);
+            namesMap.put(MSN.getValue(), MSN);
+            namesMap.put(SKYPE.getValue(), SKYPE);
+            namesMap.put(QQ.getValue(), QQ);
+            namesMap.put(YAHOO.getValue(), YAHOO);
+            
+        }
+
         public Type(String value) {
             super(value);
+        }
+
+        @JsonCreator
+        public static MultiValuedAttributeType forValue(String value) {
+            return namesMap.get(StringUtils.lowerCase(value));
+        }
+
+        @JsonValue
+        public String getValue() {
+            return super.getValue();
         }
     }
 
