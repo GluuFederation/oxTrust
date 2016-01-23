@@ -22,7 +22,7 @@
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="selectScopeModalPanel" onmaskclick="#{rich:component('selectScopeModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
+    <rich:popupPanel id="selectScopeModalPanel" onmaskclick="#{rich:component('selectScopeModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" top="22" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
         <f:facet name="header">
             <h:outputText value="#{cc.attrs.label}" />
         </f:facet>
@@ -51,8 +51,8 @@
                     <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="scopePanelId"/>
                 </s:fragment>
 
-                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
-                    <h:dataTable styleClass="table table-hover rt" sortMode="single" id="scopeListId" value="#{cc.attrs.searchResult}"  var="prs">
+                <h:panelGroup style="overflow-y:auto; width:815px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                    <h:dataTable styleClass="table table-hover rt" sortMode="single" id="scopeListId" value="#{cc.attrs.searchResult}"  var="prs" columnClasses=" , , ,selectscopedailoguefourthcolumn">
                         <h:column>
                             <f:facet name="header">X</f:facet>
                             <h:selectBooleanCheckbox value="#{prs.selected}" />

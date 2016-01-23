@@ -582,6 +582,11 @@ input.rf-ii-fld {
 	background-color: rgb(48, 60, 66);
 }
 
+
+td.selectscopedailoguefourthcolumn {
+   width: 40%;
+}
+
 .message
 {
 	  list-style: none !important;
