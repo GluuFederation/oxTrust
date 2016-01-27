@@ -17,6 +17,7 @@ import java.util.Map;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.OxAuthSessionId;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
@@ -136,6 +137,15 @@ public class PersonService implements Serializable {
 
 		// Remove person
 		ldapEntryManager.removeWithSubtree(person.getDn());
+		
+		// Remove also user sessions
+		final Filter filter = Filter.createEqualityFilter("oxAuthUserDN", person.getDn());
+		final List<OxAuthSessionId> sessions = ldapEntryManager.findEntries(getDnForSession(null), OxAuthSessionId.class, filter);
+		if (sessions != null && !sessions.isEmpty()) {
+			for (OxAuthSessionId session : sessions) {
+				ldapEntryManager.remove(session);
+			}
+		}
 	}
 
 	/**
@@ -392,6 +402,23 @@ public class PersonService implements Serializable {
 		return String.format("inum=%s,ou=people,%s", inum, orgDn);
 	}
 
+	/**
+	 * 
+	 * Build DN string for session
+	 * 
+	 * @param uniqueIdentifier unique identifier
+	 * @return DN string for specified session or DN for sessions branch if uniqueIdentifier is null
+	 * 
+	 */
+	public String getDnForSession(String uniqueIdentifier) {
+		String orgDn = OrganizationService.instance().getDnForOrganization();
+		if (StringHelper.isEmpty(uniqueIdentifier)) {
+			return String.format("ou=session,%s", orgDn);
+		}
+
+		return String.format("uniqueIdentifier=%s,ou=session,%s", uniqueIdentifier, orgDn);
+	}
+	
 	/**
 	 * Authenticate user
 	 * 
