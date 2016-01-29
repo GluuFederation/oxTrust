@@ -17,7 +17,9 @@
 		<richfaces.version>4.3.7.Final</richfaces.version>
 		<hibernate.version>4.1.8.Final</hibernate.version>
 		<jackson.version>1.9.11</jackson.version>
-		<resteasy.version>2.3.4.Final</resteasy.version>
+		<resteasy.version>2.3.7.Final</resteasy.version>
+		<httpcore.version>4.3.3</httpcore.version>
+		<httpclient.version>4.3.6</httpclient.version>
 		<version.shrinkwrap>1.0.1</version.shrinkwrap>
 		<drools.version>5.3.3.Final</drools.version>
 		<arquillian.version>1.1.2.Final</arquillian.version>
@@ -316,12 +318,12 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.2.2</version>
+				<version>${httpclient.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpcore</artifactId>
-				<version>4.2.2</version>
+				<version>${httpcore.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javassist</groupId>
