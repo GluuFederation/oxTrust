@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
@@ -45,7 +46,8 @@ public class ListResponse implements Serializable {
 
 	@XmlElementWrapper(name = "Resources")
 	@XmlElement(name = "Resource")
-	@JsonProperty
+	//@JsonProperty
+	@JsonIgnore
 	private List<Resource> Resources;
 
 	public ListResponse() {
