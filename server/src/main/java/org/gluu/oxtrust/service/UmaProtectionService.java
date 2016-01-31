@@ -6,15 +6,6 @@
 
 package org.gluu.oxtrust.service;
 
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.ws.rs.core.Response;
-
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ClientService;
@@ -39,14 +30,22 @@ import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.crypto.signature.ECDSAPrivateKey;
 import org.xdi.oxauth.model.crypto.signature.RSAPrivateKey;
-import org.xdi.oxauth.model.uma.RegisterPermissionRequest;
-import org.xdi.oxauth.model.uma.ResourceSetPermissionTicket;
+import org.xdi.oxauth.model.uma.PermissionTicket;
 import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
+import org.xdi.oxauth.model.uma.UmaPermission;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.oxauth.model.util.JwtUtil;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
+
+import javax.ws.rs.core.Response;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provide methods to simplify work with UMA Rest services
@@ -69,8 +68,8 @@ public class UmaProtectionService implements Serializable {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+//	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+//	private String cryptoConfigurationSalt;
 		
 	@In
 	private JsonService jsonService;
@@ -158,12 +157,12 @@ public class UmaProtectionService implements Serializable {
 		String authorization = "Bearer " + patToken.getAccessToken();
 
 		// Register permissions for resource set
-        RegisterPermissionRequest resourceSetPermissionRequest = new RegisterPermissionRequest();
+        UmaPermission resourceSetPermissionRequest = new UmaPermission();
         resourceSetPermissionRequest.setResourceSetId(resourceSetId);
 
         resourceSetPermissionRequest.setScopes(Arrays.asList(umaScope));
 
-        ResourceSetPermissionTicket resourceSetPermissionTicket = null;
+        PermissionTicket resourceSetPermissionTicket = null;
         try {
         	resourceSetPermissionTicket = this.resourceSetPermissionRegistrationService.registerResourceSetPermission(
         			authorization,
@@ -191,7 +190,7 @@ public class UmaProtectionService implements Serializable {
 
     	String entity = null;
 		try {
-			entity = jsonService.objectToJson(new ResourceSetPermissionTicket(ticket));
+			entity = jsonService.objectToJson(new PermissionTicket(ticket));
 		} catch (Exception ex) {
         	log.error("Failed to prepare response", ex);
 		}
@@ -281,12 +280,10 @@ public class UmaProtectionService implements Serializable {
 		final long now = System.currentTimeMillis();
 
 		// Get new access token only if is the previous one is missing or expired
-		if ((validatePatToken == null) || (validatePatToken.getAccessToken() == null) || (validatePatTokenExpiration <= now)) {
-			return false;
-		}
+        return !((validatePatToken == null) || (validatePatToken.getAccessToken() == null) ||
+                (validatePatTokenExpiration <= now));
 
-		return true;
-	}
+    }
 
 
 }
