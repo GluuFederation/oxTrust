@@ -306,6 +306,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	public void setExistLdapConfigIdpAuthConf(boolean existLdapConfigIdpAuthConf) {
 		this.existLdapConfigIdpAuthConf = existLdapConfigIdpAuthConf;
+		this.ldapConfig.setEnabled(true);
 	}
 
 	public GluuLdapConfiguration getLdapConfig() {
