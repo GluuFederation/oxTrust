@@ -1,0 +1,236 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:outputStylesheet>
+        .attributeColumn {
+            width: 350px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .formColumn {
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .contactLabels{
+            text-align: left;
+            width: 30%;
+            
+        }
+        
+        .breakFedeation{
+            color: red;
+        }
+
+        .entityList{
+            width:250px;
+            height:150px;
+            overflow:visible;
+            padding:0px;
+            left: 0px;
+        }
+
+        .half {
+            vertical-align: top;
+            width: 220px;
+            overflow: auto;
+        }
+            
+        .inpanelBody{
+            height: 220px;
+            width: 220px;
+            overflow: auto;
+        }
+        
+        #spMetadataPanel_container
+        {
+        	z-index:999 !important;
+        }
+        
+        #spMetadataPanel_content_scroller
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        #spMetadataPanel_content
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        pre
+        {
+        	height: 450px !important;
+        }
+        
+        
+    </h:outputStylesheet>
+
+    <h:outputScript>		
+        function changeAttributeVisibility(attrId, show) {
+            var attr = $('a[id*=' + attrId + ']');
+            var currentState = attr.is(":visible");
+
+            if (/* !currentState and */ show) {
+                attr.show();
+            } else {
+                attr.hide();
+            }
+        }
+
+        $( document ).ready(function() {
+	        $('.checkbox1').on('ifChanged', function(event) {
+			  configureRelyingParty();
+			});
+        });          
+    </h:outputScript>
+
+	<h:form enctype="multipart/form-data" id="spForm">
+            <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
+            <input type='hidden' name='cid' value='#{conversation.id}' />
+            
+            <div class="row">
+                <div class="col-xs-12">
+            
+            <h:panelGroup id="spEditIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spEditID"
+                    rendered="true">
+                    <ui:define name="label">ID</ui:define>
+                    
+                    <h:outputLabel 
+                        title="The id of the SP"
+                        value="The id of the SP"/>
+                    <h:inputText styleClass="form-control"
+                        title="The id of the SP"
+                        value="requestorpool.1" size="100" tabindex="0" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spEditFriendlyNameGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spEditFriendlyName"
+                    rendered="true">
+                    <ui:define name="label">Friendly Name</ui:define>
+            <h:outputLabel 
+                title="The SP friendly name"
+                value="The SP friendly name"/>
+            <h:inputText styleClass="form-control"
+                title="The SP friendly name"
+                value="friendlyName" size="100" tabindex="1" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spEditPreAuthorizationProfileIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spEditPreAuthorizationProfileID"
+                    rendered="true">
+                    <ui:define name="label">PreAuthorizationProfileID</ui:define>
+                    
+                    <h:selectOneMenu styleClass="form-control"
+                        title="Pre authorization profile id."
+                        value=""  tabindex="2"  />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spEditPostAuthorizationProfileIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spEditPostAuthorizationProfileID"
+                    rendered="true">
+                    <ui:define name="label">PostAuthorizationProfileID</ui:define>
+                    
+                    <h:inputText styleClass="form-control"
+                        title="Post authorization profile id"
+                        value="postauthz.1 TODO: checkbox" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spEditAttributeReleasePolicyIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spEditAttributeReleasePolicyID"
+                    rendered="true">
+                    <ui:define name="label">AttributeReleasePolicyID</ui:define>
+                    
+                    <h:inputText styleClass="form-control"
+                        title=""
+                        value="asimba.releasepolicy.1 TODO: checkbox" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spEditAuthenticationProfileIDsGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spEditAuthenticationProfileIDs"
+                    rendered="true">
+                    <ui:define name="label">AuthenticationProfileIDs</ui:define>
+                    
+                    <h:inputText styleClass="form-control"
+                        title=""
+                        value="remote.saml2 TODO: multiselect list" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spRequestorEditAdditionalPropertiesGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spRequestorEditAdditionalProperties"
+                    rendered="true">
+                    <ui:define name="label">Properties</ui:define>
+                    
+                    <h:outputLabel 
+                        title="Additional properties"
+                        value="Additional properties"/>
+                    <h:inputText styleClass="form-control"
+                        title=""
+                        value="" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">
+                <tbody>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Enabled"
+                value="true" />
+            <h:outputLabel 
+                value="Enabled"/>
+                        </td>
+                        <td colspan="2" rowspan="1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Sets whether the IdP should force the user to reauthenticate."
+                value="false" />
+            <h:outputLabel 
+                title="Sets whether the IdP should force the user to reauthenticate."
+                value="Forced Authenticate"/>
+                        </td>
+                        <td colspan="2" rowspan="1">          
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <ui:insert name="controlButttons" />
+            
+                </div>
+            </div>
+        </h:form>
+
+</ui:composition>

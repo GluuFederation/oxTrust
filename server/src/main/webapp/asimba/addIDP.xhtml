@@ -11,31 +11,21 @@
 
 	<ui:define name="body">
 		<section class="content-header">
-		<h1 style="color: #333;">
-			SAML<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Add Trust Relationship</small>
-		</h1>
+		<h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />Asimba 
+                        <i class="fa fa-caret-right" style="color: #333 !important;" /> Add IDP</small></h1>
 		<ol class="breadcrumb">
 		
-			<li><a href="#{request.contextPath}/trustmanager/relationships"><i
-					class="fa fa-home"></i> Trust Relationships</a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/trustmanager/add">Add Trust
-					Relationships</a></li>
+			<li><a href="#{request.contextPath}/asimba/idps"><i class="fa fa-home"></i> IDPs</a></li>
+			<li class="organization/configuration"><a href="#{request.contextPath}/asimba/addIDP">Add IDP</a></li>
 		</ol>
 		</section>
 
 		<section class="content"> 
-		<ui:decorate
-			template="/WEB-INF/incl/trustmanager/trustRelationshipForm.xhtml">
-			<ui:param name="_trustRelationship"
-				value="#{updateTrustRelationshipAction.trustRelationship}" />
-			<ui:param name="_customAttributes"
-				value="#{updateTrustRelationshipAction.trustRelationship.releasedCustomAttributes}" />
-			<ui:param name="_customAttributeAction"
-				value="#{customAttributeAction}" />
-			<ui:param name="_trustRelationshipAction"
-				value="#{updateTrustRelationshipAction}" />
+		<ui:decorate template="/WEB-INF/incl/asimba/idpForm.xhtml">
+			<ui:param name="_idp"
+				value="#{updateAsimbaIDPAction.idp}" />
+			<ui:param name="_updateAsimbaIDPAction"
+				value="#{updateAsimbaIDPAction}" />
 			<ui:param name="_new" value="true" />
 
 
@@ -44,13 +34,13 @@
 				<div  style="width: 100%;height: 30px;">
 					<div id="updateButtons" style="float: left;width: 150px;">
 						<h:commandButton styleClass="btn btn-primary" value="   Add   "
-							action="#{updateTrustRelationshipAction.save}" />
+							action="#{updateAsimbaIDPAction.save}" />
 						<h:commandButton value="   Cancel  " styleClass="btn btn-primary"
 							style="margin-left:5px;"
-							action="#{updateTrustRelationshipAction.cancel}" immediate="true" />
+							action="#{updateAsimbaIDPAction.cancel}" immediate="true" />
 					</div>
 				</div>
-				</div>
+                        </div>
 			</ui:define>
 			
 

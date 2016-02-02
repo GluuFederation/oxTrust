@@ -116,26 +116,101 @@
 									class="fa fa-pencil-square-o"></i> <span>SAML</span> <i
 									class="fa fa-angle-left pull-right"></i>
 							</a>
+                                                        <!--<ui:fragment rendered="#{s:hasPermission('trust', 'access')}">-->
+                                                            
+                                                        
 								<ul class="treeview-menu" id="subMenuSAML">
-									<li id="subMenuLinkSAML1"><h:commandLink
+                                                                    <li id="menuSAMLShibboleth"><a href="#"> <i
+                                                                            class="fa fa-pencil-square-o"></i> <span>Shibboleth</span> <i
+                                                                            class="fa fa-angle-left pull-right"></i></a>
+									<!--Shibboleth-->
+                                                                        <li id="subMenuLinkSAML1"><h:commandLink
 											value="Trust Relationships"
 											action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-									<li id="subMenuLinkSAML2">
-									<h:commandLink
+									<li id="subMenuLinkSAML2"><h:commandLink
 											value="Add Trust Relationships"
 											action="#{menuAction.endConversation('/trustmanager/addTrustRelationship.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>	
-
-								</ul></li>
+                                                                    
+                                                                    </li>
+                                                                </ul>
+                                                        <!--</ui:fragment>
+                                                        <ui:fragment rendered="#{s:hasPermission('trust', 'access')}">-->
+                                                            
+                                                        
+								<ul class="treeview-menu" id="subMenuSAMLAsimba">
+                                                                    <li id="menuSAMLAsimba"><a href="#"> <i
+                                                                            class="fa fa-pencil-square-o"></i> <span>Asimba</span> <i
+                                                                            class="fa fa-angle-left pull-right"></i></a>
+                                                                        <!--Asimba-->
+                                                                        <li id="subMenuLinkAsimba1"><h:commandLink
+											value="IDPs"
+											action="#{menuAction.endConversation('/asimba/idps.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
+									<li id="subMenuLinkAsimba2"><h:commandLink
+											value="Add IDP"
+											action="#{menuAction.endConversation('/asimba/addIDP.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>	
+                                                                        <li id="subMenuLinkAsimba3"><h:commandLink
+											value="SPs"
+											action="#{menuAction.endConversation('/asimba/sps.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
+									<li id="subMenuLinkAsimba4"><h:commandLink
+											value="Add SP "
+											action="#{menuAction.endConversation('/asimba/addSP.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
+                                                                        <li id="subMenuLinkAsimba5"><h:commandLink
+											value="SP Requestors"
+											action="#{menuAction.endConversation('/asimba/spRequestors.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
+									<li id="subMenuLinkAsimba6"><h:commandLink
+											value="Add SP Requestor"
+											action="#{menuAction.endConversation('/asimba/addSPRequestor.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
+                                                                        <li id="subMenuLinkAsimba7"><h:commandLink
+											value="Selectors"
+											action="#{menuAction.endConversation('/asimba/selectors.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
+									<li id="subMenuLinkAsimba8"><h:commandLink
+											value="Add Selector"
+											action="#{menuAction.endConversation('/asimba/addSelector.xhtml')}"
+											rendered="#{s:hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
+                                                                    </li>
+								</ul>
+                                                        <!--</ui:fragment>-->
+                                                    </li>
 						</ui:fragment>
-
 						<ui:fragment rendered="#{s:hasPermission('oxauth', 'access')}">
 
 							<li class="treeview" id="menuOpenID"><a href="#"> <i
