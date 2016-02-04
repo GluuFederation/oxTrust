@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -37,6 +38,7 @@ import org.xdi.service.SchemaService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
+import org.gluu.asimba.util.ldap.idp.IDPEntry;
 
 
 /**
@@ -82,8 +84,24 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @In
     private ResourceLoader resourceLoader;
     
-    private String idp;
+    private IDPEntry idp = new IDPEntry();
     
+    private ArrayList<IDPEntry> idpList = new ArrayList<IDPEntry>();
+    
+    private String searchPattern = "";
+    
+    public UpdateAsimbaIDPAction() {
+        init();
+    }
+    
+    public void init() {
+        IDPEntry entry = new IDPEntry();
+        entry.setId("IDP_1");
+        entry.setFriendlyName("IDP 1");
+        entry.setLastModified(new Date());
+        idpList.add(entry);
+        //TODO: add list loading
+    }
     
     private List<GluuAttribute> getAllAttributes() {
         List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
@@ -130,6 +148,14 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public String uploadFile() {
+        synchronized (svnSyncTimer) {
+
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
+    
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         synchronized (svnSyncTimer) {
@@ -137,18 +163,56 @@ public class UpdateAsimbaIDPAction implements Serializable {
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
+    
+    @Restrict("#{s:hasPermission('person', 'access')}")
+    public String search() {
+        synchronized (svnSyncTimer) {
+
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
+    
+    
 
     /**
      * @return the idp
      */
-    public String getIdp() {
+    public IDPEntry getIdp() {
         return idp;
     }
 
     /**
      * @param idp the idp to set
      */
-    public void setIdp(String idp) {
+    public void setIdp(IDPEntry idp) {
         this.idp = idp;
+    }
+
+    /**
+     * @return the idpList
+     */
+    public ArrayList<IDPEntry> getIdpList() {
+        return idpList;
+    }
+
+    /**
+     * @param idpList the idpList to set
+     */
+    public void setIdpList(ArrayList<IDPEntry> idpList) {
+        this.idpList = idpList;
+    }
+
+    /**
+     * @return the searchPattern
+     */
+    public String getSearchPattern() {
+        return searchPattern;
+    }
+
+    /**
+     * @param searchPattern the searchPattern to set
+     */
+    public void setSearchPattern(String searchPattern) {
+        this.searchPattern = searchPattern;
     }
 }

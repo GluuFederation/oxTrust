@@ -7,9 +7,11 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -28,14 +30,8 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-import org.xdi.model.SchemaEntry;
-import org.xdi.service.SchemaService;
-import org.xdi.util.StringHelper;
-import org.xdi.util.io.FileUploadWrapper;
-import org.xdi.util.io.ResponseHelper;
 
 
 /**
@@ -81,7 +77,29 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @In
     private ResourceLoader resourceLoader;
     
-    private String requestor;
+    private RequestorEntry spRequestor = new RequestorEntry();
+    
+    private ArrayList<RequestorEntry> spRequestorList = new ArrayList<RequestorEntry>();
+    
+    private ArrayList<SelectItem> spList = new ArrayList<SelectItem>();
+    
+    private String searchPattern = "";
+    
+    
+    public UpdateAsimbaSPRequestorAction() {
+        init();
+    }
+    
+    public void init() {
+        spList.add(new SelectItem("Pool_1", "Pool_1"));
+        
+        RequestorEntry entry = new RequestorEntry();
+        entry.setId("Requestor_1");
+        entry.setFriendlyName("Requestor 1");
+        entry.setLastModified(new Date());
+        spRequestorList.add(entry);
+        //TODO: add list loading
+    }
     
     
     private List<GluuAttribute> getAllAttributes() {
@@ -99,7 +117,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             List<String> origins = attributeService.getAllAttributeOrigins(attributes);
     }
         
-    public ArrayList<SelectItem> getAllIDPs() {
+    public ArrayList<SelectItem> getAllSPRequestors() {
         ArrayList<SelectItem> result = new ArrayList<SelectItem>();
 //            for (GluuSAMLTrustRelationship federation : trustService.getAllFederations()) {
 //                    result.add(new SelectItem(federation, federation.getDisplayName()));
@@ -136,18 +154,76 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public String uploadFile() {
+        synchronized (svnSyncTimer) {
 
-    /**
-     * @return the requestor
-     */
-    public String getRequestor() {
-        return requestor;
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
+    
+    @Restrict("#{s:hasPermission('person', 'access')}")
+    public String search() {
+        synchronized (svnSyncTimer) {
+
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
     }
 
     /**
-     * @param requestor the requestor to set
+     * @return the spRequestor
      */
-    public void setRequestor(String requestor) {
-        this.requestor = requestor;
+    public RequestorEntry getSpRequestor() {
+        return spRequestor;
+    }
+
+    /**
+     * @param spRequestor the spRequestor to set
+     */
+    public void setSpRequestor(RequestorEntry spRequestor) {
+        this.spRequestor = spRequestor;
+    }
+
+    /**
+     * @return the spRequestorList
+     */
+    public ArrayList<RequestorEntry> getSpRequestorList() {
+        return spRequestorList;
+    }
+
+    /**
+     * @param spRequestorList the spRequestorList to set
+     */
+    public void setSpRequestorList(ArrayList<RequestorEntry> spRequestorList) {
+        this.spRequestorList = spRequestorList;
+    }
+
+    /**
+     * @return the searchPattern
+     */
+    public String getSearchPattern() {
+        return searchPattern;
+    }
+
+    /**
+     * @param searchPattern the searchPattern to set
+     */
+    public void setSearchPattern(String searchPattern) {
+        this.searchPattern = searchPattern;
+    }
+
+    /**
+     * @return the spList
+     */
+    public ArrayList<SelectItem> getSpList() {
+        return spList;
+    }
+
+    /**
+     * @param spList the spList to set
+     */
+    public void setSpList(ArrayList<SelectItem> spList) {
+        this.spList = spList;
     }
 }

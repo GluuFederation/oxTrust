@@ -115,7 +115,7 @@
                         value="The id of the selector"/>
                     <h:inputText styleClass="form-control"
                         title="The id of the selector"
-                        value="id" size="100" tabindex="0" 
+                        value="#{_selector.id}" size="100" tabindex="0" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
@@ -131,7 +131,7 @@
                         value="The id of the organization"/>
                     <h:inputText styleClass="form-control"
                         title="The id of the organization"
-                        value="organizationId" size="100" tabindex="0" 
+                        value="#{_selector.organizationId}" size="100" tabindex="0" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
@@ -146,7 +146,7 @@
                 value="The organization friendly name"/>
             <h:inputText styleClass="form-control"
                 title="The organization friendly name"
-                value="friendlyName" size="100" tabindex="1" />
+                value="#{_selector.friendlyName}" size="100" tabindex="1" />
             </s:decorate>
             </h:panelGroup>
             
@@ -156,7 +156,7 @@
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
                 title="Enabled"
-                value="true" />
+                value="#{_selector.enabled}" />
             <h:outputLabel 
                 value="Enabled"/>
                         </td>

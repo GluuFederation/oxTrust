@@ -110,11 +110,11 @@
                     <ui:define name="label">ID</ui:define>
                     
                     <h:outputLabel 
-                        title="The id of the SP"
+                        title="The id of the SP. Example: requestorpool.1"
                         value="The id of the SP"/>
                     <h:inputText styleClass="form-control"
-                        title="The id of the SP"
-                        value="requestorpool.1" size="100" tabindex="0" 
+                        title="The id of the SP. Example: requestorpool.1"
+                        value="#{_sp.id}" size="100" tabindex="0" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
@@ -129,7 +129,7 @@
                 value="The SP friendly name"/>
             <h:inputText styleClass="form-control"
                 title="The SP friendly name"
-                value="friendlyName" size="100" tabindex="1" />
+                value="#{_sp.friendlyName}" size="100" tabindex="1" />
             </s:decorate>
             </h:panelGroup>
             
@@ -150,10 +150,10 @@
                     id="spEditPostAuthorizationProfileID"
                     rendered="true">
                     <ui:define name="label">PostAuthorizationProfileID</ui:define>
-                    
+                    <!-- postauthz.1 TODO: checkbox -->
                     <h:inputText styleClass="form-control"
                         title="Post authorization profile id"
-                        value="postauthz.1 TODO: checkbox" 
+                        value="#{_sp.postAuthorizationProfileID}" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
@@ -163,10 +163,10 @@
                     id="spEditAttributeReleasePolicyID"
                     rendered="true">
                     <ui:define name="label">AttributeReleasePolicyID</ui:define>
-                    
+                    <!-- asimba.releasepolicy.1 TODO: checkbox -->
                     <h:inputText styleClass="form-control"
                         title=""
-                        value="asimba.releasepolicy.1 TODO: checkbox" 
+                        value="#{_sp.attributeReleasePolicyID}" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
@@ -176,10 +176,10 @@
                     id="spEditAuthenticationProfileIDs"
                     rendered="true">
                     <ui:define name="label">AuthenticationProfileIDs</ui:define>
-                    
+                    <!-- remote.saml2 TODO: multiselect list -->
                     <h:inputText styleClass="form-control"
                         title=""
-                        value="remote.saml2 TODO: multiselect list" 
+                        value="#{_sp.authenticationProfileIDs}" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
@@ -205,7 +205,7 @@
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
                 title="Enabled"
-                value="true" />
+                value="#{_sp.enabled}" />
             <h:outputLabel 
                 value="Enabled"/>
                         </td>
@@ -216,7 +216,7 @@
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
                 title="Sets whether the IdP should force the user to reauthenticate."
-                value="false" />
+                value="#{_sp.forcedAuthenticate}" />
             <h:outputLabel 
                 title="Sets whether the IdP should force the user to reauthenticate."
                 value="Forced Authenticate"/>

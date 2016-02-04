@@ -111,8 +111,10 @@
                     
                     <h:selectOneMenu styleClass="form-control"
                         title=""
-                        value="Default SP" 
-                        required="true"/>
+                        value="#{_spRequestor.poolID}" 
+                        required="true" >
+                        <f:selectItems value="#{_updateAsimbaSPRequestorAction.spList}" var="sp" itemValue="#{sp.id}" itemLabel="#{sp.friendlyName}" /> />
+                    </h:selectOneMenu>
             </s:decorate>
             </h:panelGroup>
             
@@ -127,7 +129,7 @@
                         value="The id of the SP Requestor (client application)"/>
                     <h:inputText styleClass="form-control"
                         title="Example: https://ce.gluu.info/shibboleth"
-                        value="id" size="100" tabindex="0" 
+                        value="#{_spRequestor.id}" size="100" tabindex="0" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
@@ -142,7 +144,7 @@
                 value="The SP Requestor friendly name"/>
             <h:inputText styleClass="form-control"
                 title="The SP Requestor friendly name"
-                value="friendlyName" size="100" tabindex="1" />
+                value="#{_spRequestor.friendlyName}" size="100" tabindex="1" />
             </s:decorate>
             </h:panelGroup>
             
@@ -157,8 +159,8 @@
                         value="The location of the metadata file or empty if none"/>
                     <h:outputText  styleClass="form-control"
                         title="The location of the metadata file or empty if none"
-                        value="metadataFile" />
-                    <h:commandButton value="Upload File"/>
+                        value="#{_spRequestor.metadataFile}" />
+                    <h:commandButton value="Upload File" action="#{_updateAsimbaSPRequestorAction.uploadFile}"/>
             </s:decorate>
             </h:panelGroup>
             
@@ -185,7 +187,7 @@
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
                 title="Enabled"
-                value="true" />
+                value="#{_spRequestor.enabled}" />
             <h:outputLabel 
                 value="Enabled"/>
                         </td>
@@ -196,7 +198,7 @@
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
                 title="Signing"
-                value="false" />
+                value="#{_spRequestor.signing}" />
             <h:outputLabel 
                 title="Signing"
                 value="Signing"/>

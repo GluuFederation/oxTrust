@@ -8,9 +8,11 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import org.gluu.asimba.util.ldap.selector.ApplicationSelectorLDAPEntry;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -29,14 +31,8 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-import org.xdi.model.SchemaEntry;
-import org.xdi.service.SchemaService;
-import org.xdi.util.StringHelper;
-import org.xdi.util.io.FileUploadWrapper;
-import org.xdi.util.io.ResponseHelper;
 
 
 /**
@@ -82,8 +78,24 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @In
     private ResourceLoader resourceLoader;
     
-    private String selector;
+    private ApplicationSelectorLDAPEntry selector = new ApplicationSelectorLDAPEntry();
     
+    private ArrayList<ApplicationSelectorLDAPEntry> selectorList = new ArrayList<ApplicationSelectorLDAPEntry>();
+    
+    private String searchPattern = "";
+    
+    public UpdateAsimbaSelectorAction() {
+        init();
+    }
+    
+    public void init() {
+        ApplicationSelectorLDAPEntry entry = new ApplicationSelectorLDAPEntry();
+        entry.setId("Selector_1");
+        entry.setFriendlyName("Selector 1");
+        entry.setLastModified(new Date());
+        selectorList.add(entry);
+        //TODO: add list loading
+    }
     
     private List<GluuAttribute> getAllAttributes() {
         List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
@@ -137,18 +149,54 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
+    
+    @Restrict("#{s:hasPermission('person', 'access')}")
+    public String search() {
+        synchronized (svnSyncTimer) {
+
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
 
     /**
      * @return the selector
      */
-    public String getSelector() {
+    public ApplicationSelectorLDAPEntry getSelector() {
         return selector;
     }
 
     /**
      * @param selector the selector to set
      */
-    public void setSelector(String selector) {
+    public void setSelector(ApplicationSelectorLDAPEntry selector) {
         this.selector = selector;
+    }
+
+    /**
+     * @return the selectorList
+     */
+    public ArrayList<ApplicationSelectorLDAPEntry> getSelectorList() {
+        return selectorList;
+    }
+
+    /**
+     * @param selectorList the selectorList to set
+     */
+    public void setSelectorList(ArrayList<ApplicationSelectorLDAPEntry> selectorList) {
+        this.selectorList = selectorList;
+    }
+
+    /**
+     * @return the searchPattern
+     */
+    public String getSearchPattern() {
+        return searchPattern;
+    }
+
+    /**
+     * @param searchPattern the searchPattern to set
+     */
+    public void setSearchPattern(String searchPattern) {
+        this.searchPattern = searchPattern;
     }
 }

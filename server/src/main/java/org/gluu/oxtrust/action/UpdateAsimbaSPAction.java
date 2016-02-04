@@ -8,9 +8,11 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -29,14 +31,8 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-import org.xdi.model.SchemaEntry;
-import org.xdi.service.SchemaService;
-import org.xdi.util.StringHelper;
-import org.xdi.util.io.FileUploadWrapper;
-import org.xdi.util.io.ResponseHelper;
 
 
 /**
@@ -82,8 +78,22 @@ public class UpdateAsimbaSPAction implements Serializable {
     @In
     private ResourceLoader resourceLoader;
     
-    private String sp;
+    private RequestorPoolEntry sp = new RequestorPoolEntry();
     
+    private ArrayList<RequestorPoolEntry> spList = new ArrayList<RequestorPoolEntry>();
+    
+    public UpdateAsimbaSPAction() {
+        init();
+    }
+    
+    public void init() {
+        RequestorPoolEntry entry = new RequestorPoolEntry();
+        entry.setId("RequestorPool_1");
+        entry.setFriendlyName("RequestorPool 1");
+        entry.setLastModified(new Date());
+        spList.add(entry);
+        //TODO: add list loading
+    }
     
     private List<GluuAttribute> getAllAttributes() {
         List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
@@ -100,7 +110,7 @@ public class UpdateAsimbaSPAction implements Serializable {
             List<String> origins = attributeService.getAllAttributeOrigins(attributes);
     }
         
-    public ArrayList<SelectItem> getAllIDPs() {
+    public ArrayList<SelectItem> getAllSPs() {
         ArrayList<SelectItem> result = new ArrayList<SelectItem>();
 //            for (GluuSAMLTrustRelationship federation : trustService.getAllFederations()) {
 //                    result.add(new SelectItem(federation, federation.getDisplayName()));
@@ -141,14 +151,28 @@ public class UpdateAsimbaSPAction implements Serializable {
     /**
      * @return the sp
      */
-    public String getSp() {
+    public RequestorPoolEntry getSp() {
         return sp;
     }
 
     /**
      * @param sp the sp to set
      */
-    public void setSp(String sp) {
+    public void setSp(RequestorPoolEntry sp) {
         this.sp = sp;
+    }
+
+    /**
+     * @return the spList
+     */
+    public ArrayList<RequestorPoolEntry> getSpList() {
+        return spList;
+    }
+
+    /**
+     * @param spList the spList to set
+     */
+    public void setSpList(ArrayList<RequestorPoolEntry> spList) {
+        this.spList = spList;
     }
 }
