@@ -9,7 +9,9 @@ package org.gluu.oxtrust.util;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +28,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.Person;
 import org.gluu.oxtrust.model.PersonAttribute;
+import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 import org.gluu.oxtrust.model.scim.ScimEntitlements;
 import org.gluu.oxtrust.model.scim.ScimEntitlementsPatch;
 import org.gluu.oxtrust.model.scim.ScimGroup;
@@ -47,6 +50,7 @@ import org.gluu.oxtrust.model.scim.ScimRolesPatch;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
 import org.gluu.oxtrust.model.scim2.Address;
+import org.gluu.oxtrust.model.scim2.CustomAttributes;
 import org.gluu.oxtrust.model.scim2.Email;
 import org.gluu.oxtrust.model.scim2.Entitlement;
 import org.gluu.oxtrust.model.scim2.Group;
@@ -273,12 +277,10 @@ public class CopyUtils2 implements Serializable {
 			}
 			if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 				destination.setTimezone(source.getTimezone());
-			}
-			
+			}			
 			if (source.isActive() != null) {
 				destination.setAttribute("oxTrustActive", source.isActive().toString());
-			}
-			
+			}			
 			if (source.getPassword() != null && source.getPassword().length() > 0) {
 				destination.setUserPassword(source.getPassword());
 			}
@@ -334,8 +336,7 @@ public class CopyUtils2 implements Serializable {
 			}
 
 			// getting meta
-			log.trace(" setting meta ");
-			
+			log.trace(" setting meta ");			
 			
 			if (source.getMeta()!=null && source.getMeta().getCreated() != null && source.getMeta().getCreated().toString().length() > 0) {
 				destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated().toString());
@@ -352,6 +353,47 @@ public class CopyUtils2 implements Serializable {
 
 			// getting customAttributes
 			log.trace("getting custom attributes");
+
+			if (source.getCustomAttributes() != null) {
+				log.trace("source.getCustomAttributes() != null");
+				log.trace("getting a list of ScimCustomAttributes");
+
+				List<CustomAttributes> customAttr = source.getCustomAttributes();
+				log.trace("checling every attribute in the request");
+
+				for (CustomAttributes oneAttr : customAttr) {
+					if (oneAttr == null) {
+						continue;
+					}
+
+					int countValues = oneAttr.getValues().size();
+					if (countValues == 0) {
+						log.trace("setting a empty attribute");
+						destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), oneAttr.getValues().toArray(new String[0]));
+					} else if (countValues == 1) {
+						log.trace("setting a single attribute");
+						destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), oneAttr.getValues().get(0));
+					} else if (countValues > 1) {
+						log.trace("setting a multivalued attribute");
+
+						List<String> listOfAttr = oneAttr.getValues();
+						String[] AttrArray = new String[listOfAttr.size()];
+						int i = 0;
+						for (String oneValue : listOfAttr) {
+							if (oneValue != null && oneValue.length() > 0) {
+								log.trace("setting a value");
+								AttrArray[i] = oneValue;
+								i++;
+							}
+
+						}
+						log.trace("setting the list of multivalued attributes");
+						destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), AttrArray);
+					}
+				}
+			}
+			
+			log.trace("getting meta attributes");
 
 			if (source.getMeta()!=null && source.getMeta().getAttributes() != null) {
 				log.trace("source.getCustomAttributes() != null");
@@ -596,17 +638,14 @@ public class CopyUtils2 implements Serializable {
 				// getting customAttributes
 				log.trace("getting custom attributes");
 
-				if (source.getMeta()!= null && source.getMeta().getAttributes() != null && source.getMeta().getAttributes().size() > 0) {
+				if (source.getCustomAttributes() != null && source.getCustomAttributes().size() > 0) {
 					log.trace("source.getCustomAttributes() != null");
-					log.trace("getting a list of ScimCustomAttributes");
+					log.trace("getting a list of CustomAttributes");
 
-					Set<String> customAttr = source.getMeta().getAttributes();
+					List<CustomAttributes> customAttr = source.getCustomAttributes();
 					log.trace("checling every attribute in the request");
 
-					for (String oneAttr : customAttr) {
-						destination.setAttribute(oneAttr.replaceAll(" ", ""), "");
-						
-						/* NOTE : WRITE CODE FOR THIS
+					for (CustomAttributes oneAttr : customAttr) {
 						if (oneAttr != null && oneAttr.getValues().size() == 1) {
 							log.trace("setting a single attribute");
 							destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), oneAttr.getValues().get(0));
@@ -627,7 +666,6 @@ public class CopyUtils2 implements Serializable {
 							log.trace("setting the list of multivalued attributes");
 							destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), AttrArray);
 						}
-						*/
 					}
 
 				}
@@ -702,8 +740,9 @@ public class CopyUtils2 implements Serializable {
 		}
 		log.trace(" setting userName ");
 		if (source.getUid() != null) {
-			destination.setDisplayName(source.getUid());
+			destination.setUserName(source.getUid());			
 		}
+		
 		log.trace(" setting ExternalID ");
 		if (source.getAttribute("oxTrustExternalId") != null) {
 			destination.setExternalId(source.getAttribute("oxTrustExternalId"));
@@ -712,36 +751,18 @@ public class CopyUtils2 implements Serializable {
 		if (source.getGivenName() != null) {
 			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
 			name.setGivenName(source.getGivenName());
+			if (source.getSurname() != null)  
+				name.setFamilyName(source.getSurname());
+			if (source.getAttribute("oxTrustMiddleName") != null)
+				name.setMiddleName(source.getAttribute("oxTrustMiddleName"));
+			if (source.getAttribute("oxTrusthonorificPrefix") != null)
+				name.setHonorificPrefix(source.getAttribute("oxTrusthonorificPrefix"));
+			if (source.getAttribute("oxTrusthonorificSuffix") != null) 
+				name.setHonorificSuffix(source.getAttribute("oxTrusthonorificSuffix"));			
 			destination.setName(name);
 			
 		}
-		log.trace(" getting family name ");
-		if (source.getSurname() != null) {
-			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
-			name.setFamilyName(source.getSurname());
-			destination.setName(name);
-		}
-		log.trace(" getting middlename ");
-		if (source.getAttribute("oxTrustMiddleName") != null) {
-			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
-			name.setMiddleName(source.getAttribute("oxTrustMiddleName"));
-			destination.setName(name);
-		}
-		;
-		log.trace(" getting honorificPrefix ");
-		if (source.getAttribute("oxTrusthonorificPrefix") != null) {
-			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
-			name.setHonorificPrefix(source.getAttribute("oxTrusthonorificPrefix"));
-			destination.setName(name);
-		}
-		;
-		log.trace(" getting honorificSuffix ");
-		if (source.getAttribute("oxTrusthonorificSuffix") != null) {
-			org.gluu.oxtrust.model.scim2.Name name=new org.gluu.oxtrust.model.scim2.Name();
-			name.setHonorificSuffix(source.getAttribute("oxTrusthonorificSuffix"));
-			destination.setName(name);
-		}
-		;
+
 		log.trace(" getting displayname ");
 		if (source.getDisplayName() != null) {
 			destination.setDisplayName(source.getDisplayName());
@@ -893,9 +914,18 @@ public class CopyUtils2 implements Serializable {
 				meta.setLocation(source.getAttribute("oxTrustMetaLocation"));
 			}
 			
+			if (source.getAttribute("oxTrustMetaCreated") != null)
+				meta.setCreated(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaCreated")));
+			
+			if (source.getAttribute("oxTrustMetaLastModified") != null)
+				meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
+				
+			
+			destination.setMeta(meta);
+			
 			log.trace(" getting custom Attributes ");
 			// getting custom Attributes
-			AttributeService attributeService = AttributeService.instance();
+			/*AttributeService attributeService = AttributeService.instance();
 			List<GluuAttribute> listOfAttr = attributeService.getSCIMRelatedAttributes();
 			if (listOfAttr != null && listOfAttr.size() > 0) {
 				//List<ScimCustomAttributes> listOfCustomAttr = new ArrayList<ScimCustomAttributes>();
@@ -919,7 +949,7 @@ public class CopyUtils2 implements Serializable {
 					meta.setAttributes(listOfCustomAttr);
 					destination.setMeta(meta);
 				}
-			}
+			}*/
 		}
 		log.trace(" returning destination ");
 		destination.getMeta().setLocation("/v2/Users/"+destination.getId());

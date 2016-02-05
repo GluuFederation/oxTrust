@@ -194,7 +194,9 @@ public class UserWebService extends BaseScimWebService {
 
 			personService.addPerson(gluuPerson);
 			User newPerson = CopyUtils2.copy(gluuPerson, null);
+			newPerson.setCustomAttributes(person.getCustomAttributes());
 			String uri = "/v2/Users/" + newPerson.getId();
+			
 			return Response.created(URI.create(uri)).entity(newPerson).build();
 		} catch (Exception ex) {
 			log.error("Failed to add user", ex);

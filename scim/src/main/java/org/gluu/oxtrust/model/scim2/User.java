@@ -59,6 +59,7 @@ public class User extends Resource {
     private List<Role> roles = new ArrayList<Role>();
     private List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
     private Map<String, Extension> extensions = new HashMap<String, Extension>();
+	private List<CustomAttributes> customAttributes = new ArrayList<CustomAttributes>();;
 
     /**
      * Default constructor for Jackson
@@ -511,7 +512,15 @@ public class User extends Resource {
 		this.active = active;
 	}
 
-    public void addExtension(Extension extension) {
+    public List<CustomAttributes> getCustomAttributes() {
+		return customAttributes;
+	}
+
+	public void setCustomAttributes(List<CustomAttributes> customAttributes) {
+		this.customAttributes = customAttributes;
+	}
+
+	public void addExtension(Extension extension) {
         if (extension != null) {
             extensions.put(extension.getUrn(), extension);
             addSchema(extension.getUrn());
