@@ -102,21 +102,6 @@ public class UpdateAsimbaIDPAction implements Serializable {
         idpList.add(entry);
         //TODO: add list loading
     }
-    
-    private List<GluuAttribute> getAllAttributes() {
-        List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
-        return attributes;
-    }
-
-    private List<GluuAttribute> getAllActiveAttributes() {
-        List<GluuAttribute> attributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
-        return attributes;
-    }
-    
-    private void initAttributes(GluuSAMLTrustRelationship trust) {
-            List<GluuAttribute> attributes = getAllActiveAttributes();
-            List<String> origins = attributeService.getAllAttributeOrigins(attributes);
-    }
         
     public ArrayList<SelectItem> getAllIDPs() {
         ArrayList<SelectItem> result = new ArrayList<SelectItem>();
