@@ -5,10 +5,14 @@
  */
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
@@ -78,6 +82,8 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     private ResourceLoader resourceLoader;
     
     private RequestorEntry spRequestor = new RequestorEntry();
+    
+    private String spRequestorAdditionalProperties = "";
     
     private ArrayList<RequestorEntry> spRequestorList = new ArrayList<RequestorEntry>();
     
@@ -225,5 +231,36 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
      */
     public void setSpList(ArrayList<SelectItem> spList) {
         this.spList = spList;
+    }
+
+    /**
+     * @return the spRequestorAdditionalProperties
+     */
+    public String getSpRequestorAdditionalProperties() {
+        return spRequestorAdditionalProperties;
+    }
+    
+    public Properties getSpRequestorAdditionalPropertiesAsProperties() throws IOException {
+        Properties result = new Properties();
+        result.load(new StringReader(spRequestorAdditionalProperties));
+        return result;
+    }
+
+    /**
+     * @param spRequestorAdditionalProperties the spRequestorAdditionalProperties to set
+     */
+    public void setSpRequestorAdditionalProperties(String spRequestorAdditionalProperties) {
+        this.spRequestorAdditionalProperties = spRequestorAdditionalProperties;
+    }
+    
+    public void setSpRequestorAdditionalProperties(Properties additionalProperties) {
+        StringWriter writer = new StringWriter();
+        for (String property : additionalProperties.stringPropertyNames()) {
+            writer.write(property);
+            writer.write("=");
+            writer.write(additionalProperties.getProperty(property));
+            writer.write("\n");
+        }
+        this.spRequestorAdditionalProperties = writer.toString();
     }
 }

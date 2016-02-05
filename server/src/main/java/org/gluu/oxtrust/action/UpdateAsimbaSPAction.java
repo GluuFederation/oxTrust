@@ -6,10 +6,14 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
@@ -80,7 +84,11 @@ public class UpdateAsimbaSPAction implements Serializable {
     
     private RequestorPoolEntry sp = new RequestorPoolEntry();
     
+    private String spAdditionalProperties = "";
+    
     private ArrayList<RequestorPoolEntry> spList = new ArrayList<RequestorPoolEntry>();
+    
+    private String searchPattern = "";
     
     public UpdateAsimbaSPAction() {
         init();
@@ -147,6 +155,14 @@ public class UpdateAsimbaSPAction implements Serializable {
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
+    
+    @Restrict("#{s:hasPermission('person', 'access')}")
+    public String search() {
+        synchronized (svnSyncTimer) {
+
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
 
     /**
      * @return the sp
@@ -174,5 +190,50 @@ public class UpdateAsimbaSPAction implements Serializable {
      */
     public void setSpList(ArrayList<RequestorPoolEntry> spList) {
         this.spList = spList;
+    }
+
+    /**
+     * @return the searchPattern
+     */
+    public String getSearchPattern() {
+        return searchPattern;
+    }
+
+    /**
+     * @param searchPattern the searchPattern to set
+     */
+    public void setSearchPattern(String searchPattern) {
+        this.searchPattern = searchPattern;
+    }
+
+    /**
+     * @return the spRequestorAdditionalProperties
+     */
+    public String getSpAdditionalProperties() {
+        return spAdditionalProperties;
+    }
+    
+    public Properties getSpAdditionalPropertiesAsProperties() throws IOException {
+        Properties result = new Properties();
+        result.load(new StringReader(spAdditionalProperties));
+        return result;
+    }
+
+    /**
+     * @param spAdditionalProperties the spAdditionalProperties to set
+     */
+    public void setSpAdditionalProperties(String spAdditionalProperties) {
+        this.spAdditionalProperties = spAdditionalProperties;
+    }
+    
+    public void setSpAdditionalProperties(Properties additionalProperties) {
+        StringWriter writer = new StringWriter();
+        for (String property : additionalProperties.stringPropertyNames()) {
+            writer.write(property);
+            writer.write("=");
+            writer.write(additionalProperties.getProperty(property));
+            writer.write("\n");
+        }
+        this.spAdditionalProperties = writer.toString();
     }
 }
