@@ -914,11 +914,15 @@ public class CopyUtils2 implements Serializable {
 				meta.setLocation(source.getAttribute("oxTrustMetaLocation"));
 			}
 			
-			if (source.getAttribute("oxTrustMetaCreated") != null)
-				meta.setCreated(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaCreated")));
-			
-			if (source.getAttribute("oxTrustMetaLastModified") != null)
-				meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
+			try {
+				if (source.getAttribute("oxTrustMetaCreated") != null)
+					meta.setCreated(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaCreated")));
+				
+				if (source.getAttribute("oxTrustMetaLastModified") != null)
+					meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
+			} catch (java.text.ParseException e) {
+				log.info(" Date parse exception " + e.getMessage());				
+			}
 				
 			
 			destination.setMeta(meta);
