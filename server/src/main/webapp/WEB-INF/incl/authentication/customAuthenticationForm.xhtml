@@ -48,7 +48,7 @@
 									ldapConfigAction="#{_action}" propertiesAction="#{_action}"
 									displayBaseDn="true" displayAnonymousBind="false"
 									displayRemoveButton="false" displayPrimaryKey="true"
-									displayLocalPrimaryKey="true"
+									displayLocalPrimaryKey="true" displayEnable="false"
 									changePasswordDialogId="bindPassword:changePasswordModalPanel"
 									rendered="#{_action.existLdapConfigIdpAuthConf}" />
 								 <a4j:commandButton value="Activate" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
