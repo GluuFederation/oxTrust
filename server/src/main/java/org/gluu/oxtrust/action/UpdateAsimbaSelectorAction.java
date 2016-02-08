@@ -12,7 +12,10 @@ import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.gluu.asimba.util.ldap.selector.ApplicationSelectorLDAPEntry;
+import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -24,6 +27,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
@@ -78,16 +82,22 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @In
     private ResourceLoader resourceLoader;
     
+    @In
+    private AsimbaService asimbaService;
+    
     private ApplicationSelectorLDAPEntry selector = new ApplicationSelectorLDAPEntry();
     
     private ArrayList<ApplicationSelectorLDAPEntry> selectorList = new ArrayList<ApplicationSelectorLDAPEntry>();
     
+    @NotNull
+    @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
     private String searchPattern = "";
     
     public UpdateAsimbaSelectorAction() {
-        init();
+        //init();
     }
     
+    @Observer("org.jboss.seam.postInitialization")
     public void init() {
         ApplicationSelectorLDAPEntry entry = new ApplicationSelectorLDAPEntry();
         entry.setId("Selector_1");

@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.Properties;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
+import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -28,6 +31,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
@@ -82,18 +86,24 @@ public class UpdateAsimbaSPAction implements Serializable {
     @In
     private ResourceLoader resourceLoader;
     
+    @In
+    private AsimbaService asimbaService;
+    
     private RequestorPoolEntry sp = new RequestorPoolEntry();
     
     private String spAdditionalProperties = "";
     
     private ArrayList<RequestorPoolEntry> spList = new ArrayList<RequestorPoolEntry>();
     
+    @NotNull
+    @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
     private String searchPattern = "";
     
     public UpdateAsimbaSPAction() {
-        init();
+        //init();
     }
     
+    @Observer("org.jboss.seam.postInitialization")
     public void init() {
         RequestorPoolEntry entry = new RequestorPoolEntry();
         entry.setId("RequestorPool_1");
