@@ -24,6 +24,7 @@ import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -97,7 +98,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         //init();
     }
     
-    @Observer("org.jboss.seam.postInitialization")
+    @Create
     public void init() {
         ApplicationSelectorLDAPEntry entry = new ApplicationSelectorLDAPEntry();
         entry.setId("Selector_1");

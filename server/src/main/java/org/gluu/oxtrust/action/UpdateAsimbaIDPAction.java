@@ -32,6 +32,7 @@ import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Observer;
 
 
@@ -93,7 +94,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         //init();
     }
     
-    @Observer("org.jboss.seam.postInitialization")
+    @Create
     public void init() {
         IDPEntry entry = new IDPEntry();
         entry.setId("IDP_1");
