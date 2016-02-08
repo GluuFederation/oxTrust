@@ -920,8 +920,8 @@ public class CopyUtils2 implements Serializable {
 				
 				if (source.getAttribute("oxTrustMetaLastModified") != null)
 					meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
-			} catch (java.text.ParseException e) {
-				log.info(" Date parse exception " + e.getMessage());				
+			} catch (java.text.ParseException ex) {
+				log.error(" Date parse exception ", ex);				
 			}
 				
 			
