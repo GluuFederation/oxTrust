@@ -29,7 +29,7 @@ import java.util.List;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version January 15, 2016
+ * @version February 6, 2016
  */
 @LdapEntry(sortBy = {"displayName"})
 @LdapObjectClass(values = {"top", "oxAuthClient"})
@@ -130,17 +130,32 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxAuthRequestObjectSigningAlg")
     private SignatureAlgorithm requestObjectSigningAlg;
 
+    @LdapAttribute(name = "oxAuthRequestObjectEncryptionAlg")
+    private KeyEncryptionAlgorithm requestObjectEncryptionAlg;
+
+    @LdapAttribute(name = "oxAuthRequestObjectEncryptionEnc")
+    private BlockEncryptionAlgorithm requestObjectEncryptionEnc;
+
+    @LdapAttribute(name = "oxAuthTokenEndpointAuthMethod")
+    private AuthenticationMethod tokenEndpointAuthMethod;
+
+    @LdapAttribute(name = "oxAuthTokenEndpointAuthSigningAlg")
+    private SignatureAlgorithm tokenEndpointAuthSigningAlg;
+
     @LdapAttribute(name = "oxAuthDefaultMaxAge")
     private Integer defaultMaxAge;
 
     @LdapAttribute(name = "oxAuthRequireAuthTime")
     private GluuBoolean requireAuthTime;
 
-    @LdapAttribute(name = "oxAuthTokenEndpointAuthMethod")
-    private AuthenticationMethod tokenEndpointAuthMethod;
-
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
     private String[] postLogoutRedirectUris;
+
+    @LdapAttribute(name = "oxAuthLogoutURI")
+    private String logoutUri;
+
+    @LdapAttribute(name = "oxAuthLogoutSessionRequired")
+    private GluuBoolean logoutSessionRequired;
 
     @LdapAttribute(name = "oxPersistClientAuthorizations")
     private GluuBoolean oxAuthPersistClientAuthorizations;
@@ -396,6 +411,30 @@ public class OxAuthClient extends Entry implements Serializable {
         this.requestObjectSigningAlg = requestObjectSigningAlg;
     }
 
+    public KeyEncryptionAlgorithm getRequestObjectEncryptionAlg() {
+        return requestObjectEncryptionAlg;
+    }
+
+    public void setRequestObjectEncryptionAlg(KeyEncryptionAlgorithm requestObjectEncryptionAlg) {
+        this.requestObjectEncryptionAlg = requestObjectEncryptionAlg;
+    }
+
+    public BlockEncryptionAlgorithm getRequestObjectEncryptionEnc() {
+        return requestObjectEncryptionEnc;
+    }
+
+    public void setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm requestObjectEncryptionEnc) {
+        this.requestObjectEncryptionEnc = requestObjectEncryptionEnc;
+    }
+
+    public SignatureAlgorithm getTokenEndpointAuthSigningAlg() {
+        return tokenEndpointAuthSigningAlg;
+    }
+
+    public void setTokenEndpointAuthSigningAlg(SignatureAlgorithm tokenEndpointAuthSigningAlg) {
+        this.tokenEndpointAuthSigningAlg = tokenEndpointAuthSigningAlg;
+    }
+
     public Integer getDefaultMaxAge() {
         return defaultMaxAge;
     }
@@ -426,6 +465,22 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setPostLogoutRedirectUris(String[] postLogoutRedirectUris) {
         this.postLogoutRedirectUris = postLogoutRedirectUris;
+    }
+
+    public String getLogoutUri() {
+        return logoutUri;
+    }
+
+    public void setLogoutUri(String logoutUri) {
+        this.logoutUri = logoutUri;
+    }
+
+    public GluuBoolean getLogoutSessionRequired() {
+        return logoutSessionRequired;
+    }
+
+    public void setLogoutSessionRequired(GluuBoolean logoutSessionRequired) {
+        this.logoutSessionRequired = logoutSessionRequired;
     }
 
     public GluuBoolean getOxAuthPersistClientAuthorizations() {

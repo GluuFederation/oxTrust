@@ -151,8 +151,21 @@
                 </h:selectOneMenu>
             </s:decorate>
 
-            <!-- request_object_encryption_alg -->
-            <!-- request_object_encryption_enc -->
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="requestObjectEncryptionAlg">
+                <ui:define name="label">JWE alg Algorithm for encrypting Request Objects</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.requestObjectEncryptionAlg}" id="requestObjectEncryptionAlgId" required="false">
+                    <s:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="requestObjectEncryptionEnc">
+                <ui:define name="label">JWE enc Algorithm for encrypting Request Objects</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.requestObjectEncryptionEnc}" id="requestObjectEncryptionEncId" required="false">
+                    <s:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="tokenEndpointAuthMethod">
                 <ui:define name="label">Authentication method for the Token Endpoint</ui:define>
@@ -162,7 +175,13 @@
                 </h:selectOneMenu>
             </s:decorate>
 
-            <!-- token_endpoint_auth_signing_alg -->
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="tokenEndpointAuthSigningAlg">
+                <ui:define name="label">JWS alg Algorithm for Authentication method to Token Endpoint</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.tokenEndpointAuthSigningAlg}" id="tokenEndpointAuthSigningAlgId" required="false">
+                    <s:selectItems value="#{clientService.signatureAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="defaultMaxAge">
                 <ui:define name="label">Default Maximum Authentication Age</ui:define>
@@ -181,7 +200,6 @@
                 <ui:define name="label">Persist Client Authorizations</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthPersistClientAuthorizations}" required="true">
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
-                    <!-- <s:convertEnum/> -->
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
             </s:decorate>
@@ -351,6 +369,19 @@
                         <richext:spacer height="16"/>
                     </h:panelGroup>
                 </h:panelGroup>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="logoutUri">
+                <ui:define name="label">Logout URI</ui:define>
+                <rich:inplaceInput value="#{_client.logoutUri}" defaultLabel="click to enter a logout URI" maxlength="60" inputWidth="695" required="false" id="logoutUriId" />
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="logoutSessionRequired">
+                <ui:define name="label">Logout Session Required</ui:define>
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.logoutSessionRequired}" required="true">
+                    <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="command">
