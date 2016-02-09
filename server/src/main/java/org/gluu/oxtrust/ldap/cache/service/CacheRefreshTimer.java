@@ -1170,6 +1170,9 @@ public class CacheRefreshTimer {
 		ldapProperties.put("useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
 		ldapProperties.put("bindDN", ldapConfiguration.getBindDN());
 		ldapProperties.put("bindPassword", ldapConfiguration.getBindPassword());
+		
+		// Copy binary attributes list from main LDAP connection
+		ldapProperties.put("binaryAttributes", ldapEntryManager.getLdapOperationService().getConnectionProvider().getBinaryAttributes());
 
 		return ldapProperties;
 	}
