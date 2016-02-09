@@ -1172,7 +1172,7 @@ public class CacheRefreshTimer {
 		ldapProperties.put("bindPassword", ldapConfiguration.getBindPassword());
 		
 		// Copy binary attributes list from main LDAP connection
-		ldapProperties.put("binaryAttributes", ldapEntryManager.getLdapOperationService().getConnectionProvider().getBinaryAttributes());
+		ldapProperties.put("binaryAttributes", PropertyUtil.stringsToCommaSeparatedList(ldapEntryManager.getLdapOperationService().getConnectionProvider().getBinaryAttributes()));
 
 		return ldapProperties;
 	}
