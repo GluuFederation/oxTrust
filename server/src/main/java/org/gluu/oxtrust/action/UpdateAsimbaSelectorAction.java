@@ -9,26 +9,22 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.gluu.asimba.util.ldap.selector.ApplicationSelectorLDAPEntry;
+import org.gluu.asimba.util.ldap.selector.ApplicationSelectorEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TemplateService;
 import org.gluu.oxtrust.ldap.service.TrustService;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
@@ -36,8 +32,6 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
 
 
 /**
@@ -86,9 +80,9 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private ApplicationSelectorLDAPEntry selector = new ApplicationSelectorLDAPEntry();
+    private ApplicationSelectorEntry selector = new ApplicationSelectorEntry();
     
-    private ArrayList<ApplicationSelectorLDAPEntry> selectorList = new ArrayList<ApplicationSelectorLDAPEntry>();
+    private ArrayList<ApplicationSelectorEntry> selectorList = new ArrayList<ApplicationSelectorEntry>();
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -100,7 +94,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Create
     public void init() {
-        ApplicationSelectorLDAPEntry entry = new ApplicationSelectorLDAPEntry();
+        ApplicationSelectorEntry entry = new ApplicationSelectorEntry();
         entry.setId("Selector_1");
         entry.setFriendlyName("Selector 1");
         entry.setLastModified(new Date());
@@ -149,28 +143,28 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     /**
      * @return the selector
      */
-    public ApplicationSelectorLDAPEntry getSelector() {
+    public ApplicationSelectorEntry getSelector() {
         return selector;
     }
 
     /**
      * @param selector the selector to set
      */
-    public void setSelector(ApplicationSelectorLDAPEntry selector) {
+    public void setSelector(ApplicationSelectorEntry selector) {
         this.selector = selector;
     }
 
     /**
      * @return the selectorList
      */
-    public ArrayList<ApplicationSelectorLDAPEntry> getSelectorList() {
+    public ArrayList<ApplicationSelectorEntry> getSelectorList() {
         return selectorList;
     }
 
     /**
      * @param selectorList the selectorList to set
      */
-    public void setSelectorList(ArrayList<ApplicationSelectorLDAPEntry> selectorList) {
+    public void setSelectorList(ArrayList<ApplicationSelectorEntry> selectorList) {
         this.selectorList = selectorList;
     }
 
