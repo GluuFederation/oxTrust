@@ -59,21 +59,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
 
     @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
     private ApplicationConfiguration applicationConfiguration;
-    
-    @In
-    protected AttributeService attributeService;
-
-    @In
-    private TrustService trustService;
-
-    @In
-    private ClientService clientService;
 
     @In
     private Identity identity;
-
-    @In
-    private TemplateService templateService;
 
     @In
     private SvnSyncTimer svnSyncTimer;
