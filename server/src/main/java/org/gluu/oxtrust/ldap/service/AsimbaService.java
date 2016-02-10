@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
@@ -65,134 +66,222 @@ public class AsimbaService {
 //    }
     
     public List<IDPEntry> loadIDPs() {
-        return ldapEntryManager.findEntries(LdapIDPEntry.class);
+        List<IDPEntry> result = new ArrayList<IDPEntry>();
+        List<LdapIDPEntry> entries = ldapEntryManager.findEntries(LdapIDPEntry.class);
+        for (LdapIDPEntry entry : entries) {
+            result.add(entry.getEntry());
+        }
+        return result;
     }
     
     public List<RequestorPoolEntry> loadRequestorPools() {
-        return ldapEntryManager.findEntries(new RequestorPoolEntry());
+        List<RequestorPoolEntry> result = new ArrayList<RequestorPoolEntry>();
+        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(LDAPRequestorPoolEntry.class);
+        for (LDAPRequestorPoolEntry entry : entries) {
+            result.add(entry.getEntry());
+        }
+        return result;
     }
     
     public List<RequestorEntry> loadRequestors() {
-        return ldapEntryManager.findEntries(new RequestorEntry());
+        List<RequestorEntry> result = new ArrayList<RequestorEntry>();
+        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(LDAPRequestorEntry.class);
+        for (LDAPRequestorEntry entry : entries) {
+            result.add(entry.getEntry());
+        }
+        return result;
     }
     
     public List<ApplicationSelectorEntry> loadSelectors() {
-        return ldapEntryManager.findEntries(new ApplicationSelectorEntry());
+        List<ApplicationSelectorEntry> result = new ArrayList<ApplicationSelectorEntry>();
+        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(LDAPApplicationSelectorEntry.class);
+        for (LDAPApplicationSelectorEntry entry : entries) {
+            result.add(entry.getEntry());
+        }
+        return result;
     }
     
     
     /**
-    * Add new IDPEntry
+    * Add new IDPEntry.
     * 
     * @param entry IDPEntry
     */
     public void addIDPEntry(IDPEntry entry) {
-        ldapEntryManager.persist(entry);
+        LdapIDPEntry ldapEntry = new LdapIDPEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.persist(ldapEntry);
     }
 
     /**
-    * Update IDPEntry
+    * Update IDPEntry.
     * 
     * @param entry IDPEntry
     */
     public void updateIDPEntry(IDPEntry entry) {
-        ldapEntryManager.merge(entry);
+        LdapIDPEntry ldapEntry = new LdapIDPEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.merge(ldapEntry);
     }
 
     /**
-    * Check if LDAP server contains IDPEntry with specified attributes
+    * Remove IDPEntry.
+    * 
+    * @param entry IDPEntry
+    */
+    public void removeIDPEntry(IDPEntry entry) {
+        LdapIDPEntry ldapEntry = new LdapIDPEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.remove(ldapEntry);
+    }
+
+    /**
+    * Check if LDAP server contains IDPEntry with specified attributes.
     * 
     * @param entry IDPEntry
     * @return True if entry with specified attributes exist
     */
     public boolean containsIDPEntry(IDPEntry entry) {
-        return ldapEntryManager.contains(entry);
+        LdapIDPEntry ldapEntry = new LdapIDPEntry();
+        ldapEntry.setEntry(entry);
+        return ldapEntryManager.contains(ldapEntry);
     }
     
     
     /**
-    * Add new LDAPRequestorPoolEntry
+    * Add new LDAPRequestorPoolEntry.
     * 
     * @param entry LDAPRequestorPoolEntry
     */
-    public void addRequestorPoolEntry(LDAPRequestorPoolEntry entry) {
-        ldapEntryManager.persist(entry);
+    public void addRequestorPoolEntry(RequestorPoolEntry entry) {
+        LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.persist(ldapEntry);
     }
 
     /**
-    * Update LDAPRequestorPoolEntry
+    * Update LDAPRequestorPoolEntry.
     * 
     * @param entry LDAPRequestorPoolEntry
     */
-    public void updateRequestorPoolEntry(LDAPRequestorPoolEntry entry) {
-        ldapEntryManager.merge(entry);
+    public void updateRequestorPoolEntry(RequestorPoolEntry entry) {
+        LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.merge(ldapEntry);
     }
 
     /**
-    * Check if LDAP server contains LDAPRequestorPoolEntry with specified attributes
+    * Remove LDAPRequestorPoolEntry.
+    * 
+    * @param entry LDAPRequestorPoolEntry
+    */
+    public void removeRequestorPoolEntry(RequestorPoolEntry entry) {
+        LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.remove(ldapEntry);
+    }
+
+    /**
+    * Check if LDAP server contains LDAPRequestorPoolEntry with specified attributes.
     * 
     * @param entry LDAPRequestorPoolEntry
     * @return True if entry with specified attributes exist
     */
-    public boolean containsRequestorPoolEntry(LDAPRequestorPoolEntry entry) {
-        return ldapEntryManager.contains(entry);
+    public boolean containsRequestorPoolEntry(RequestorPoolEntry entry) {
+        LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
+        ldapEntry.setEntry(entry);
+        return ldapEntryManager.contains(ldapEntry);
     }
     
     
     /**
-    * Add new LDAPRequestorEntry
+    * Add new LDAPRequestorEntry.
     * 
     * @param entry LDAPRequestorEntry
     */
-    public void addRequestorEntry(LDAPRequestorEntry entry) {
-        ldapEntryManager.persist(entry);
+    public void addRequestorEntry(RequestorEntry entry) {
+        LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.persist(ldapEntry);
     }
 
     /**
-    * Update LDAPRequestorEntry
+    * Update LDAPRequestorEntry.
     * 
     * @param entry LDAPRequestorEntry
     */
-    public void updateRequestorEntry(LDAPRequestorEntry entry) {
+    public void updateRequestorEntry(RequestorEntry entry) {
+        LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
+        ldapEntry.setEntry(entry);
         ldapEntryManager.merge(entry);
     }
 
     /**
-    * Check if LDAP server contains LDAPRequestorEntry with specified attributes
+    * Remove LDAPRequestorEntry.
+    * 
+    * @param entry LDAPRequestorEntry
+    */
+    public void removeRequestorEntry(RequestorEntry entry) {
+        LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.remove(entry);
+    }
+
+    /**
+    * Check if LDAP server contains LDAPRequestorEntry with specified attributes.
     * 
     * @param entry LDAPRequestorEntry
     * @return True if entry with specified attributes exist
     */
-    public boolean containsRequestorEntry(LDAPRequestorEntry entry) {
+    public boolean containsRequestorEntry(RequestorEntry entry) {
+        LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
+        ldapEntry.setEntry(entry);
         return ldapEntryManager.contains(entry);
     }
     
     
     /**
-    * Add new LDAPApplicationSelectorEntry
+    * Add new LDAPApplicationSelectorEntry.
     * 
     * @param entry LDAPApplicationSelectorEntry
     */
-    public void addRequestorEntry(LDAPApplicationSelectorEntry entry) {
-        ldapEntryManager.persist(entry);
+    public void addRequestorEntry(ApplicationSelectorEntry entry) {
+        LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.persist(ldapEntry);
     }
 
     /**
-    * Update LDAPApplicationSelectorEntry
+    * Update LDAPApplicationSelectorEntry.
     * 
     * @param entry LDAPApplicationSelectorEntry
     */
-    public void updateRequestorEntry(LDAPApplicationSelectorEntry entry) {
-        ldapEntryManager.merge(entry);
+    public void updateRequestorEntry(ApplicationSelectorEntry entry) {
+        LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.merge(ldapEntry);
     }
 
     /**
-    * Check if LDAP server contains LDAPApplicationSelectorEntry with specified attributes
+    * Remove LDAPApplicationSelectorEntry.
+    * 
+    * @param entry LDAPApplicationSelectorEntry
+    */
+    public void removeRequestorEntry(ApplicationSelectorEntry entry) {
+        LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
+        ldapEntry.setEntry(entry);
+        ldapEntryManager.remove(ldapEntry);
+    }
+
+    /**
+    * Check if LDAP server contains LDAPApplicationSelectorEntry with specified attributes.
     * 
     * @param entry LDAPApplicationSelectorEntry
     * @return True if entry with specified attributes exist
     */
-    public boolean containsRequestorEntry(LDAPApplicationSelectorEntry entry) {
-        return ldapEntryManager.contains(entry);
+    public boolean containsRequestorEntry(ApplicationSelectorEntry entry) {
+        LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
+        ldapEntry.setEntry(entry);
+        return ldapEntryManager.contains(ldapEntry);
     }
 }
