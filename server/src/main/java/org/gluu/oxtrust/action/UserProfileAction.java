@@ -122,7 +122,7 @@ public class UserProfileAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('person', 'access')}")
+//	@Restrict("#{s:hasPermission('person', 'access')}")
 	public void cancel() {
 	}
 
