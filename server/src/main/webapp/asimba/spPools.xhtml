@@ -12,19 +12,19 @@
     <ui:define name="body">
         <section class="content-header">
         <h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />Asimba 
-                <i class="fa fa-caret-right" style="color: #333 !important;" /> SPs</small></h1>
+                <i class="fa fa-caret-right" style="color: #333 !important;" /> SP Pools</small></h1>
         <ol class="breadcrumb">
 
-                <li><a href="#{request.contextPath}/asimba/sps"><i
-                                class="fa fa-home"></i> SPs</a></li>
+                <li><a href="#{request.contextPath}/asimba/spPools"><i
+                                class="fa fa-home"></i> SP Pools</a></li>
                 <li class="organization/configuration"><a
-                        href="#{request.contextPath}/asimba/addSP">Add SP</a></li>
+                        href="#{request.contextPath}/asimba/addSPPool">Add SP Pool</a></li>
         </ol>
         </section>
 
         <section class="content"> 
             <div style="margin-left: 16px;">
-                <s:link view="/asimba/addSP" value="Add SP" styleClass="addPerson btn btn-primary" propagation="none" />
+                <s:link view="/asimba/addSPPool" value="Add SP Pool" styleClass="addPerson btn btn-primary" propagation="none" />
             </div>
 
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -33,33 +33,32 @@
         <h:form>
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
                 <ui:param name="_hideLabel" value="true" />
-                <h:inputText value="#{updateAsimbaSPAction.searchPattern}" size="30" maxlength="30" required="true" id="searchPatternId" styleClass="searchParameters form-control" style="width: 50%; float: left;"
+                <h:inputText value="#{updateAsimbaSPPoolAction.searchPattern}" size="30" maxlength="30" required="true" id="searchPatternId" styleClass="searchParameters form-control" style="width: 50%; float: left;"
                     alt="search parameters for person like uid,iname,email" />
-                <h:commandButton value="Search" action="#{updateAsimbaSPAction.search}" styleClass="btn btn-primary" style="float: left;" />
+                <h:commandButton value="Search" action="#{updateAsimbaSPPoolAction.search}" styleClass="btn btn-primary" style="float: left;" />
             </s:decorate>
         </h:form>
 
         <richext:spacer height="16" />
 
         <h:form id="personsFormId">
-            <s:fragment rendered="#{updateAsimbaSPAction.spList.size eq 0}">
+            <s:fragment rendered="#{updateAsimbaSPPoolAction.spPoolList.size eq 0}">
                 <richext:spacer height="30" />
                 <h:outputText value="No Search Result Found" />
             </s:fragment>
 
-
             <h:dataTable 
                 styleClass="table table-hover rt"
-                value="#{updateAsimbaSPAction.spList}"
-                var="sp" id="attributesListId" width="100%"
-                rendered="#{updateAsimbaSPAction.spList.size gt 0}">
+                value="#{updateAsimbaSPPoolAction.spPoolList}"
+                var="spPool" id="attributesListId" width="100%"
+                rendered="#{updateAsimbaSPPoolAction.spPoolList.size gt 0}">
 
                 <h:column>
                        <f:facet name="header">  
                         <div style="text-align: center;"> ID</div>
                     </f:facet>
-                    <s:link view="/person/updatePerson.xhtml" value="#{sp.id}" propagation="none">
-                        <f:param name="inum" value="#{sp.id}" />
+                    <s:link view="/person/updatePerson.xhtml" value="#{spPool.id}" propagation="none">
+                        <f:param name="inum" value="#{spPool.id}" />
                     </s:link>
                 </h:column>
 
@@ -67,35 +66,35 @@
                     <f:facet name="header">  
                         <div style="text-align: center;"> Friendly Name</div>
                     </f:facet>
-                    <h:outputText value="#{sp.friendlyName}" class="col-xs-12" />
+                    <h:outputText value="#{spPool.friendlyName}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
                         <div style="text-align: center;">Pre Authorization Profile ID</div>
                     </f:facet>
-                    <h:outputText value="#{sp.preAuthorizationProfileID}" class="col-xs-12" />
+                    <h:outputText value="#{spPool.preAuthorizationProfileID}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
                         <div style="text-align: center;">Post Authorization Profile ID</div>
                     </f:facet>
-                    <h:outputText value="#{sp.postAuthorizationProfileID}" class="col-xs-12" />
+                    <h:outputText value="#{spPool.postAuthorizationProfileID}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
                         <div style="text-align: center;">Attribute Release Policy ID</div>
                     </f:facet>
-                    <h:outputText value="#{sp.attributeReleasePolicyID}" class="col-xs-12" />
+                    <h:outputText value="#{spPool.attributeReleasePolicyID}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
                         <div style="text-align: center;">Authentication Profile IDs</div>
                     </f:facet>
-                    <h:outputText value="#{sp.authenticationProfileIDs}" class="col-xs-12" />
+                    <h:outputText value="#{spPool.authenticationProfileIDs}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
@@ -103,7 +102,7 @@
                         <div style="text-align: center;"> Enabled</div>
                     </f:facet>
                     <div style="text-align: center;">
-                        <h:selectBooleanCheckbox value="#{sp.enabled}" readonly="true" />
+                        <h:selectBooleanCheckbox value="#{spPool.enabled}" readonly="true" />
                     </div>
                 </h:column>
             </h:dataTable>

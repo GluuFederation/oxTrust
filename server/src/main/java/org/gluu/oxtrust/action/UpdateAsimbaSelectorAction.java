@@ -89,7 +89,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     private String searchPattern = "";
     
     public UpdateAsimbaSelectorAction() {
-        //init();
+        
     }
     
     @Create

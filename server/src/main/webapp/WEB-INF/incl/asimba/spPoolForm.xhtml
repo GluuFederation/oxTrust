@@ -96,46 +96,46 @@
         });          
     </h:outputScript>
 
-	<h:form enctype="multipart/form-data" id="spForm">
+	<h:form enctype="multipart/form-data" id="spPoolForm">
             <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <input type='hidden' name='cid' value='#{conversation.id}' />
             
             <div class="row">
                 <div class="col-xs-12">
             
-            <h:panelGroup id="spEditIDGroupId">
+            <h:panelGroup id="spPoolEditIDGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="spEditID"
+                    id="spPoolEditID"
                     rendered="true">
                     <ui:define name="label">ID</ui:define>
                     
                     <h:outputLabel 
-                        title="The id of the SP. Example: requestorpool.1"
-                        value="The id of the SP"/>
+                        title="The id of the SP Pool. Example: requestorpool.1"
+                        value="The id of the SP Pool"/>
                     <h:inputText styleClass="form-control"
-                        title="The id of the SP. Example: requestorpool.1"
-                        value="#{_sp.id}" size="100" tabindex="0" 
+                        title="The id of the SP Pool. Example: requestorpool.1"
+                        value="#{_spPool.id}" size="100" tabindex="0" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
             
-            <h:panelGroup id="spEditFriendlyNameGroupId">
+            <h:panelGroup id="spPoolEditFriendlyNameGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="spEditFriendlyName"
+                    id="spPoolEditFriendlyName"
                     rendered="true">
                     <ui:define name="label">Friendly Name</ui:define>
             <h:outputLabel 
-                title="The SP friendly name"
-                value="The SP friendly name"/>
+                title="The SP Pool friendly name"
+                value="The SP Pool friendly name"/>
             <h:inputText styleClass="form-control"
-                title="The SP friendly name"
-                value="#{_sp.friendlyName}" size="100" tabindex="1" />
+                title="The SP Pool friendly name"
+                value="#{_spPool.friendlyName}" size="100" tabindex="1" />
             </s:decorate>
             </h:panelGroup>
             
-            <h:panelGroup id="spEditPreAuthorizationProfileIDGroupId">
+            <h:panelGroup id="spPoolEditPreAuthorizationProfileIDGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="spEditPreAuthorizationProfileID"
+                    id="spPoolEditPreAuthorizationProfileID"
                     rendered="true">
                     <ui:define name="label">PreAuthorizationProfileID</ui:define>
                     
@@ -145,48 +145,48 @@
             </s:decorate>
             </h:panelGroup>
             
-            <h:panelGroup id="spEditPostAuthorizationProfileIDGroupId">
+            <h:panelGroup id="spPoolEditPostAuthorizationProfileIDGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="spEditPostAuthorizationProfileID"
+                    id="spPoolEditPostAuthorizationProfileID"
                     rendered="true">
                     <ui:define name="label">PostAuthorizationProfileID</ui:define>
                     <!-- postauthz.1 TODO: checkbox -->
                     <h:inputText styleClass="form-control"
                         title="Post authorization profile id"
-                        value="#{_sp.postAuthorizationProfileID}" 
+                        value="#{_spPool.postAuthorizationProfileID}" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
             
-            <h:panelGroup id="spEditAttributeReleasePolicyIDGroupId">
+            <h:panelGroup id="spPoolEditAttributeReleasePolicyIDGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="spEditAttributeReleasePolicyID"
+                    id="spPoolEditAttributeReleasePolicyID"
                     rendered="true">
                     <ui:define name="label">AttributeReleasePolicyID</ui:define>
                     <!-- asimba.releasepolicy.1 TODO: checkbox -->
                     <h:inputText styleClass="form-control"
                         title=""
-                        value="#{_sp.attributeReleasePolicyID}" 
+                        value="#{_spPool.attributeReleasePolicyID}" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
             
-            <h:panelGroup id="spEditAuthenticationProfileIDsGroupId">
+            <h:panelGroup id="spPoolEditAuthenticationProfileIDsGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="spEditAuthenticationProfileIDs"
+                    id="spPoolEditAuthenticationProfileIDs"
                     rendered="true">
                     <ui:define name="label">AuthenticationProfileIDs</ui:define>
                     <!-- remote.saml2 TODO: multiselect list -->
                     <h:inputText styleClass="form-control"
                         title=""
-                        value="#{_sp.authenticationProfileIDs}" 
+                        value="#{_spPool.authenticationProfileIDs}" 
                         required="true" />
             </s:decorate>
             </h:panelGroup>
             
-            <h:panelGroup id="spRequestorEditAdditionalPropertiesGroupId">
+            <h:panelGroup id="spPoolRequestorEditAdditionalPropertiesGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="spRequestorEditAdditionalProperties"
+                    id="spPoolRequestorEditAdditionalProperties"
                     rendered="true">
                     <ui:define name="label">Properties</ui:define>
                     
@@ -195,7 +195,7 @@
                         value="Additional properties"/>
                     <h:inputText styleClass="form-control"
                         title=""
-                        value="#{_updateAsimbaSPAction.spAdditionalProperties}" />
+                        value="#{_updateAsimbaSPPoolAction.spPoolAdditionalProperties}" />
             </s:decorate>
             </h:panelGroup>
             
@@ -205,7 +205,7 @@
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
                 title="Enabled"
-                value="#{_sp.enabled}" />
+                value="#{_spPool.enabled}" />
             <h:outputLabel 
                 value="Enabled"/>
                         </td>
@@ -216,7 +216,7 @@
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
                 title="Sets whether the IdP should force the user to reauthenticate."
-                value="#{_sp.forcedAuthenticate}" />
+                value="#{_spPool.forcedAuthenticate}" />
             <h:outputLabel 
                 title="Sets whether the IdP should force the user to reauthenticate."
                 value="Forced Authenticate"/>

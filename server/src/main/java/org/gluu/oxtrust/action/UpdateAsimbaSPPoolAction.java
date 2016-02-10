@@ -50,9 +50,9 @@ import org.xdi.model.GluuUserRole;
  * @author Dmitry Ognyannikov
  */
 @Scope(ScopeType.CONVERSATION)
-@Name("updateAsimbaSPAction")
+@Name("updateAsimbaSPPoolAction")
 @Restrict("#{identity.loggedIn}")
-public class UpdateAsimbaSPAction implements Serializable {
+public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Logger
     private Log log;
@@ -90,18 +90,18 @@ public class UpdateAsimbaSPAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private RequestorPoolEntry sp = new RequestorPoolEntry();
+    private RequestorPoolEntry spPool = new RequestorPoolEntry();
     
-    private String spAdditionalProperties = "";
+    private String spPoolAdditionalProperties = "";
     
-    private ArrayList<RequestorPoolEntry> spList = new ArrayList<RequestorPoolEntry>();
+    private ArrayList<RequestorPoolEntry> spPoolList = new ArrayList<RequestorPoolEntry>();
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
     private String searchPattern = "";
     
-    public UpdateAsimbaSPAction() {
-        //init();
+    public UpdateAsimbaSPPoolAction() {
+        
     }
     
     @Create
@@ -110,23 +110,8 @@ public class UpdateAsimbaSPAction implements Serializable {
         entry.setId("RequestorPool_1");
         entry.setFriendlyName("RequestorPool 1");
         entry.setLastModified(new Date());
-        spList.add(entry);
+        spPoolList.add(entry);
         //TODO: add list loading
-    }
-    
-    private List<GluuAttribute> getAllAttributes() {
-        List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
-        return attributes;
-    }
-
-    private List<GluuAttribute> getAllActiveAttributes() {
-        List<GluuAttribute> attributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
-        return attributes;
-    }
-    
-    private void initAttributes(GluuSAMLTrustRelationship trust) {
-            List<GluuAttribute> attributes = getAllActiveAttributes();
-            List<String> origins = attributeService.getAllAttributeOrigins(attributes);
     }
         
     public ArrayList<SelectItem> getAllSPs() {
@@ -176,31 +161,31 @@ public class UpdateAsimbaSPAction implements Serializable {
     }
 
     /**
-     * @return the sp
+     * @return the spPool
      */
-    public RequestorPoolEntry getSp() {
-        return sp;
+    public RequestorPoolEntry getSpPool() {
+        return spPool;
     }
 
     /**
-     * @param sp the sp to set
+     * @param spPool the spPool to set
      */
-    public void setSp(RequestorPoolEntry sp) {
-        this.sp = sp;
+    public void setSpPool(RequestorPoolEntry spPool) {
+        this.spPool = spPool;
     }
 
     /**
-     * @return the spList
+     * @return the spPoolList
      */
-    public ArrayList<RequestorPoolEntry> getSpList() {
-        return spList;
+    public ArrayList<RequestorPoolEntry> getSpPoolList() {
+        return spPoolList;
     }
 
     /**
-     * @param spList the spList to set
+     * @param spPoolList the spPoolList to set
      */
-    public void setSpList(ArrayList<RequestorPoolEntry> spList) {
-        this.spList = spList;
+    public void setSpPoolList(ArrayList<RequestorPoolEntry> spPoolList) {
+        this.spPoolList = spPoolList;
     }
 
     /**
@@ -220,21 +205,21 @@ public class UpdateAsimbaSPAction implements Serializable {
     /**
      * @return the spRequestorAdditionalProperties
      */
-    public String getSpAdditionalProperties() {
-        return spAdditionalProperties;
+    public String getSpPoolAdditionalProperties() {
+        return spPoolAdditionalProperties;
     }
     
     public Properties getSpAdditionalPropertiesAsProperties() throws IOException {
         Properties result = new Properties();
-        result.load(new StringReader(spAdditionalProperties));
+        result.load(new StringReader(spPoolAdditionalProperties));
         return result;
     }
 
     /**
-     * @param spAdditionalProperties the spAdditionalProperties to set
+     * @param spPoolAdditionalProperties the spPoolAdditionalProperties to set
      */
-    public void setSpAdditionalProperties(String spAdditionalProperties) {
-        this.spAdditionalProperties = spAdditionalProperties;
+    public void setSpPoolAdditionalProperties(String spPoolAdditionalProperties) {
+        this.spPoolAdditionalProperties = spPoolAdditionalProperties;
     }
     
     public void setSpAdditionalProperties(Properties additionalProperties) {
@@ -245,6 +230,6 @@ public class UpdateAsimbaSPAction implements Serializable {
             writer.write(additionalProperties.getProperty(property));
             writer.write("\n");
         }
-        this.spAdditionalProperties = writer.toString();
+        this.spPoolAdditionalProperties = writer.toString();
     }
 }

@@ -91,7 +91,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     private String searchPattern = "";
     
     public UpdateAsimbaIDPAction() {
-        //init();
+        
     }
     
     @Create

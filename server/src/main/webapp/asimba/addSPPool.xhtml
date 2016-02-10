@@ -12,22 +12,22 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />Asimba 
-                        <i class="fa fa-caret-right" style="color: #333 !important;" /> Add SP</small></h1>
+                        <i class="fa fa-caret-right" style="color: #333 !important;" /> Add SP Pool</small></h1>
 		<ol class="breadcrumb">
 		
-			<li><a href="#{request.contextPath}/asimba/sps"><i
-					class="fa fa-home"></i> SPs</a></li>
+			<li><a href="#{request.contextPath}/asimba/spPools"><i
+					class="fa fa-home"></i> SP Pools</a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/asimba/addSP">Add SP</a></li>
+				href="#{request.contextPath}/asimba/addSPPool">Add SP Pool</a></li>
 		</ol>
 		</section>
 
 		<section class="content"> 
-		<ui:decorate template="/WEB-INF/incl/asimba/spForm.xhtml">
-			<ui:param name="_sp"
-				value="#{updateAsimbaSPAction.sp}" />
-			<ui:param name="_updateAsimbaSPAction"
-				value="#{updateAsimbaSPAction}" />
+		<ui:decorate template="/WEB-INF/incl/asimba/spPoolForm.xhtml">
+			<ui:param name="_spPool"
+				value="#{updateAsimbaSPPoolAction.spPool}" />
+			<ui:param name="_updateAsimbaSPPoolAction"
+				value="#{updateAsimbaSPPoolAction}" />
 			<ui:param name="_new" value="true" />
 
 
@@ -36,10 +36,10 @@
 				<div  style="width: 100%;height: 30px;">
 					<div id="updateButtons" style="float: left;width: 150px;">
 						<h:commandButton styleClass="btn btn-primary" value="   Add   "
-							action="#{updateAsimbaSPAction.save}" />
+							action="#{updateAsimbaSPPoolAction.save}" />
 						<h:commandButton value="   Cancel  " styleClass="btn btn-primary"
 							style="margin-left:5px;"
-							action="#{updateAsimbaSPAction.cancel}" immediate="true" />
+							action="#{updateAsimbaSPPoolAction.cancel}" immediate="true" />
 					</div>
 				</div>
                         </div>

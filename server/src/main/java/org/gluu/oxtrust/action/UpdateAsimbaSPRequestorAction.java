@@ -99,7 +99,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     
     public UpdateAsimbaSPRequestorAction() {
-        //init();
+        
     }
     
     @Create
