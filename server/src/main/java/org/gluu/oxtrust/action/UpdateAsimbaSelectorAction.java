@@ -9,16 +9,13 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.gluu.asimba.util.ldap.selector.ApplicationSelectorEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
-import org.gluu.oxtrust.ldap.service.TemplateService;
-import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -70,7 +67,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     private ApplicationSelectorEntry selector = new ApplicationSelectorEntry();
     
-    private ArrayList<ApplicationSelectorEntry> selectorList = new ArrayList<ApplicationSelectorEntry>();
+    private List<ApplicationSelectorEntry> selectorList = new ArrayList<ApplicationSelectorEntry>();
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -82,12 +79,14 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Create
     public void init() {
-        ApplicationSelectorEntry entry = new ApplicationSelectorEntry();
-        entry.setId("Selector_1");
-        entry.setFriendlyName("Selector 1");
-        entry.setLastModified(new Date());
-        selectorList.add(entry);
-        //TODO: add list loading
+//        ApplicationSelectorEntry entry = new ApplicationSelectorEntry();
+//        entry.setId("Selector_1");
+//        entry.setFriendlyName("Selector 1");
+//        entry.setLastModified(new Date());
+//        selectorList.add(entry);
+        
+        // list loading
+        selectorList = asimbaService.loadSelectors();
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -123,7 +122,16 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         synchronized (svnSyncTimer) {
-
+            if (searchPattern != null && !"".equals(searchPattern)){
+                try {
+                    selectorList = asimbaService.searchSelectors(searchPattern, 0);
+                } catch (Exception ex) {
+                    log.error("LDAP search exception", ex);
+                }
+            } else {
+                //list loading
+                selectorList = asimbaService.loadSelectors();
+            }
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -145,14 +153,14 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     /**
      * @return the selectorList
      */
-    public ArrayList<ApplicationSelectorEntry> getSelectorList() {
+    public List<ApplicationSelectorEntry> getSelectorList() {
         return selectorList;
     }
 
     /**
      * @param selectorList the selectorList to set
      */
-    public void setSelectorList(ArrayList<ApplicationSelectorEntry> selectorList) {
+    public void setSelectorList(List<ApplicationSelectorEntry> selectorList) {
         this.selectorList = selectorList;
     }
 

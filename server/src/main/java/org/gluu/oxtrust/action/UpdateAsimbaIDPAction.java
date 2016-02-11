@@ -9,15 +9,12 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
-import org.gluu.oxtrust.ldap.service.TemplateService;
-import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -33,7 +30,6 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Observer;
 
 
 /**
@@ -72,7 +68,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     private IDPEntry idp = new IDPEntry();
     
-    private ArrayList<IDPEntry> idpList = new ArrayList<IDPEntry>();
+    private List<IDPEntry> idpList = new ArrayList<IDPEntry>();
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -89,15 +85,10 @@ public class UpdateAsimbaIDPAction implements Serializable {
         entry.setFriendlyName("IDP 1");
         entry.setLastModified(new Date());
         idpList.add(entry);
-        //TODO: add list loading
-    }
         
-    public ArrayList<SelectItem> getAllIDPs() {
-        ArrayList<SelectItem> result = new ArrayList<SelectItem>();
-//            for (GluuSAMLTrustRelationship federation : trustService.getAllFederations()) {
-//                    result.add(new SelectItem(federation, federation.getDisplayName()));
-//            }
-        return result;
+        asimbaService.loadAsimbaConfiguration();
+        // list loading
+        idpList = asimbaService.loadIDPs();
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -116,8 +107,9 @@ public class UpdateAsimbaIDPAction implements Serializable {
 
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String save() {
+        log.info("save() call for IDP");
         synchronized (svnSyncTimer) {
-
+            asimbaService.addIDPEntry(idp);
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -141,7 +133,16 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         synchronized (svnSyncTimer) {
-
+            if (searchPattern != null && !"".equals(searchPattern)){
+                try {
+                    idpList = asimbaService.searchIDPs(searchPattern, 0);
+                } catch (Exception ex) {
+                    log.error("LDAP search exception", ex);
+                }
+            } else {
+                //list loading
+                idpList = asimbaService.loadIDPs();
+            }
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -165,14 +166,14 @@ public class UpdateAsimbaIDPAction implements Serializable {
     /**
      * @return the idpList
      */
-    public ArrayList<IDPEntry> getIdpList() {
+    public List<IDPEntry> getIdpList() {
         return idpList;
     }
 
     /**
      * @param idpList the idpList to set
      */
-    public void setIdpList(ArrayList<IDPEntry> idpList) {
+    public void setIdpList(List<IDPEntry> idpList) {
         this.idpList = idpList;
     }
 

@@ -5,9 +5,10 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import com.unboundid.ldap.sdk.Filter;
 import java.util.ArrayList;
 import java.util.List;
-import org.gluu.asimba.util.ldap.LDAPUtility;
+import org.gluu.asimba.util.ldap.LdapConfigurationEntry;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.idp.LdapIDPEntry;
 import org.gluu.asimba.util.ldap.selector.ApplicationSelectorEntry;
@@ -16,15 +17,19 @@ import org.gluu.asimba.util.ldap.sp.LDAPRequestorEntry;
 import org.gluu.asimba.util.ldap.sp.LDAPRequestorPoolEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.util.INumGenerator;
+import org.xdi.util.StringHelper;
 
 /**
  * Asimba LDAP configuration service.
@@ -38,15 +43,16 @@ public class AsimbaService {
     @Logger
     private Log log;
     
+    @In
     private LdapEntryManager ldapEntryManager;
     
-//    @In
-//    ApplianceService applianceService;
+    @In
+    ApplianceService applianceService;
      
     @Create
     public void init() {
         try {
-            ldapEntryManager = LDAPUtility.getLDAPEntryManager();
+            //ldapEntryManager = LDAPUtility.getLDAPEntryManager();
         } catch (Exception e) {
             log.error("AsimbaService Init exception", e);
         }
@@ -57,17 +63,20 @@ public class AsimbaService {
         
     }
     
-//    public LdapConfigurationEntry loadAsimbaConfiguration() {
-//        String dn = applianceService.getDnForAppliance();
-//        
-//        LdapConfigurationEntry ldapConfiguration = ldapEntryManager.find(LdapConfigurationEntry.class, applianceService.getDnForAppliance(applianceService.getApplianceInum()), null);
-//        
-//        return ldapConfiguration;
-//    }
+    public LdapConfigurationEntry loadAsimbaConfiguration() {
+        String applianceDn = applianceService.getDnForAppliance();
+        //LdapConfigurationEntry template = new LdapConfigurationEntry();
+        //template.setDn("ou=oxasimba,ou=configuration,"+applianceDn);
+        LdapConfigurationEntry ldapConfiguration = ldapEntryManager.find(LdapConfigurationEntry.class, "ou=oxasimba,ou=configuration,"+applianceDn, null);
+        
+        return ldapConfiguration;
+    }
     
     public List<IDPEntry> loadIDPs() {
         List<IDPEntry> result = new ArrayList<IDPEntry>();
-        List<LdapIDPEntry> entries = ldapEntryManager.findEntries(LdapIDPEntry.class);
+        LdapIDPEntry template = new LdapIDPEntry();
+        template.setDn(getDnForLdapIDPEntry(null));
+        List<LdapIDPEntry> entries = ldapEntryManager.findEntries(template);
         for (LdapIDPEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -76,7 +85,9 @@ public class AsimbaService {
     
     public List<RequestorPoolEntry> loadRequestorPools() {
         List<RequestorPoolEntry> result = new ArrayList<RequestorPoolEntry>();
-        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(LDAPRequestorPoolEntry.class);
+        LDAPRequestorPoolEntry template = new LDAPRequestorPoolEntry();
+        template.setDn(getDnForLDAPRequestorPoolEntry(null));
+        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPRequestorPoolEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -85,7 +96,9 @@ public class AsimbaService {
     
     public List<RequestorEntry> loadRequestors() {
         List<RequestorEntry> result = new ArrayList<RequestorEntry>();
-        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(LDAPRequestorEntry.class);
+        LDAPRequestorEntry template = new LDAPRequestorEntry();
+        template.setDn(getDnForLDAPRequestorEntry(null));
+        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPRequestorEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -94,13 +107,199 @@ public class AsimbaService {
     
     public List<ApplicationSelectorEntry> loadSelectors() {
         List<ApplicationSelectorEntry> result = new ArrayList<ApplicationSelectorEntry>();
-        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(LDAPApplicationSelectorEntry.class);
+        LDAPApplicationSelectorEntry template = new LDAPApplicationSelectorEntry();
+        template.setDn(getDnForLDAPApplicationSelectorEntry(null));
+        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPApplicationSelectorEntry entry : entries) {
             result.add(entry.getEntry());
         }
         return result;
     }
     
+    /**
+    * Search by pattern
+    * 
+    * @param pattern Pattern
+    * @param sizeLimit Maximum count of results
+    * @return List of scopes
+    * @throws Exception
+    */
+    public List<IDPEntry> searchIDPs(String pattern, int sizeLimit) throws Exception {
+        // filter
+        String[] targetArray = new String[] { pattern };
+        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
+        Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
+        Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
+        Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
+        Filter identificationURLFilter = Filter.createSubstringFilter(OxTrustConstants.identificationURL, null, targetArray, null);
+        Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter, identificationURLFilter);
+
+        // search
+        final List<LdapIDPEntry> entries = ldapEntryManager.findEntries(getDnForLdapIDPEntry(null), LdapIDPEntry.class, searchFilter, sizeLimit);
+
+        // convert result
+        List<IDPEntry> ret = new ArrayList<IDPEntry>();
+        for (LdapIDPEntry entry : entries) {
+            ret.add(entry.getEntry());
+        }
+        return ret;
+    }
+    
+    /**
+    * Search by pattern
+    * 
+    * @param pattern Pattern
+    * @param sizeLimit Maximum count of results
+    * @return List of scopes
+    * @throws Exception
+    */
+    public List<ApplicationSelectorEntry> searchSelectors(String pattern, int sizeLimit) throws Exception {
+        // filter
+        String[] targetArray = new String[] { pattern };
+        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
+        Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
+        Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
+        Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
+        Filter organizationIdFilter = Filter.createSubstringFilter(OxTrustConstants.organizationId, null, targetArray, null);
+        Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter, organizationIdFilter);
+
+        // search
+        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPApplicationSelectorEntry(null), LDAPApplicationSelectorEntry.class, searchFilter, sizeLimit);
+
+        // convert result
+        List<ApplicationSelectorEntry> ret = new ArrayList<ApplicationSelectorEntry>();
+        for (LDAPApplicationSelectorEntry entry : entries) {
+            ret.add(entry.getEntry());
+        }
+        return ret;
+    }
+    
+    /**
+    * Search by pattern
+    * 
+    * @param pattern Pattern
+    * @param sizeLimit Maximum count of results
+    * @return List of scopes
+    * @throws Exception
+    */
+    public List<RequestorEntry> searchRequestors(String pattern, int sizeLimit) throws Exception {
+        // filter
+        String[] targetArray = new String[] { pattern };
+        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
+        Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
+        Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
+        Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
+        Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter);
+
+        // search
+        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorEntry(null), LDAPRequestorEntry.class, searchFilter, sizeLimit);
+
+        // convert result
+        List<RequestorEntry> ret = new ArrayList<RequestorEntry>();
+        for (LDAPRequestorEntry entry : entries) {
+            ret.add(entry.getEntry());
+        }
+        return ret;
+    }
+    
+    /**
+    * Search by pattern
+    * 
+    * @param pattern Pattern
+    * @param sizeLimit Maximum count of results
+    * @return List of scopes
+    * @throws Exception
+    */
+    public List<RequestorPoolEntry> searchRequestorPools(String pattern, int sizeLimit) throws Exception {
+        // filter
+        String[] targetArray = new String[] { pattern };
+        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
+        Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
+        Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
+        Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
+        Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter);
+
+        // search
+        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorPoolEntry(null), LDAPRequestorPoolEntry.class, searchFilter, sizeLimit);
+
+        // convert result
+        List<RequestorPoolEntry> ret = new ArrayList<RequestorPoolEntry>();
+        for (LDAPRequestorPoolEntry entry : entries) {
+            ret.add(entry.getEntry());
+        }
+        return ret;
+    }
+    
+    /**
+    * Build DN string for LdapIDPEntry
+    * 
+    * @param inum entry Inum
+    * @return DN string for specified entry or DN for entry branch if inum is null
+    * @throws Exception
+    */
+    public String getDnForLdapIDPEntry(String inum) {
+        String applianceDn = applianceService.getDnForAppliance();
+        if (StringHelper.isEmpty(inum)) {
+                return String.format("ou=idps,ou=oxasimba,ou=configuration,%s", applianceDn);
+        }
+        return String.format("inum=%s,ou=idps,ou=oxasimba,ou=configuration,%s", inum, applianceDn);
+    }
+    
+    /**
+    * Build DN string for LDAPApplicationSelectorEntry
+    * 
+    * @param inum entry Inum
+    * @return DN string for specified entry or DN for entry branch if inum is null
+    * @throws Exception
+    */
+    public String getDnForLDAPApplicationSelectorEntry(String inum) {
+        String applianceDn = applianceService.getDnForAppliance();
+        if (StringHelper.isEmpty(inum)) {
+                return String.format("ou=selectors,ou=oxasimba,ou=configuration,%s", applianceDn);
+        }
+        return String.format("inum=%s,ou=selectors,ou=oxasimba,ou=configuration,%s", inum, applianceDn);
+    }
+    
+    /**
+    * Build DN string for LDAPRequestorEntry
+    * 
+    * @param inum entry Inum
+    * @return DN string for specified entry or DN for entry branch if inum is null
+    * @throws Exception
+    */
+    public String getDnForLDAPRequestorEntry(String inum) {
+        String applianceDn = applianceService.getDnForAppliance();
+        if (StringHelper.isEmpty(inum)) {
+                return String.format("ou=requestors,ou=oxasimba,ou=configuration,%s", applianceDn);
+        }
+        return String.format("inum=%s,ou=requestors,ou=oxasimba,ou=configuration,%s", inum, applianceDn);
+    }
+    
+    /**
+    * Build DN string for LDAPRequestorPoolEntry
+    * 
+    * @param inum entry Inum
+    * @return DN string for specified entry or DN for entry branch if inum is null
+    * @throws Exception
+    */
+    public String getDnForLDAPRequestorPoolEntry(String inum) {
+        String applianceDn = applianceService.getDnForAppliance();
+        if (StringHelper.isEmpty(inum)) {
+                return String.format("ou=requestorpools,ou=oxasimba,ou=configuration,%s", applianceDn);
+        }
+        return String.format("inum=%s,ou=requestorpools,ou=oxasimba,ou=configuration,%s", inum, applianceDn);
+    }
+    
+    /**
+    * Generate new inum for Scope
+    * 
+    * @return New inum for Scope
+    * @throws Exception
+    */
+    private String generateInumImpl() {
+        String orgInum = applianceService.getApplianceInum();
+        return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(8);
+    }
     
     /**
     * Add new IDPEntry.
@@ -108,9 +307,15 @@ public class AsimbaService {
     * @param entry IDPEntry
     */
     public void addIDPEntry(IDPEntry entry) {
-        LdapIDPEntry ldapEntry = new LdapIDPEntry();
-        ldapEntry.setEntry(entry);
-        ldapEntryManager.persist(ldapEntry);
+        log.info("addIDPEntry() call");
+        try {
+            LdapIDPEntry ldapEntry = new LdapIDPEntry();
+            ldapEntry.setDn(getDnForLdapIDPEntry(null));
+            ldapEntry.setEntry(entry);
+            ldapEntryManager.persist(ldapEntry);
+        } catch (Exception e) {
+            log.error("addIDPEntry() exception", e);
+        }
     }
 
     /**

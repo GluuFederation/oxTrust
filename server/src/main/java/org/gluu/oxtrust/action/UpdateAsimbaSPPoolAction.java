@@ -82,7 +82,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     private String spPoolAdditionalProperties = "";
     
-    private ArrayList<RequestorPoolEntry> spPoolList = new ArrayList<RequestorPoolEntry>();
+    private List<RequestorPoolEntry> spPoolList = new ArrayList<RequestorPoolEntry>();
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -94,20 +94,13 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Create
     public void init() {
-        RequestorPoolEntry entry = new RequestorPoolEntry();
-        entry.setId("RequestorPool_1");
-        entry.setFriendlyName("RequestorPool 1");
-        entry.setLastModified(new Date());
-        spPoolList.add(entry);
-        //TODO: add list loading
-    }
-        
-    public ArrayList<SelectItem> getAllSPs() {
-        ArrayList<SelectItem> result = new ArrayList<SelectItem>();
-//            for (GluuSAMLTrustRelationship federation : trustService.getAllFederations()) {
-//                    result.add(new SelectItem(federation, federation.getDisplayName()));
-//            }
-        return result;
+//        RequestorPoolEntry entry = new RequestorPoolEntry();
+//        entry.setId("RequestorPool_1");
+//        entry.setFriendlyName("RequestorPool 1");
+//        entry.setLastModified(new Date());
+//        spPoolList.add(entry);
+        //list loading
+        spPoolList = asimbaService.loadRequestorPools();
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -143,7 +136,16 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         synchronized (svnSyncTimer) {
-
+            if (searchPattern != null && !"".equals(searchPattern)){
+                try {
+                    spPoolList = asimbaService.searchRequestorPools(searchPattern, 0);
+                } catch (Exception ex) {
+                    log.error("LDAP search exception", ex);
+                }
+            } else {
+                //list loading
+                spPoolList = asimbaService.loadRequestorPools();
+            }
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -165,14 +167,14 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     /**
      * @return the spPoolList
      */
-    public ArrayList<RequestorPoolEntry> getSpPoolList() {
+    public List<RequestorPoolEntry> getSpPoolList() {
         return spPoolList;
     }
 
     /**
      * @param spPoolList the spPoolList to set
      */
-    public void setSpPoolList(ArrayList<RequestorPoolEntry> spPoolList) {
+    public void setSpPoolList(List<RequestorPoolEntry> spPoolList) {
         this.spPoolList = spPoolList;
     }
 

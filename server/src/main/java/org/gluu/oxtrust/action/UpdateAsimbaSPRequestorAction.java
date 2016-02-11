@@ -11,19 +11,15 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.gluu.asimba.util.ldap.sp.LDAPRequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
-import org.gluu.oxtrust.ldap.service.TemplateService;
-import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -77,7 +73,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     private String spRequestorAdditionalProperties = "";
     
-    private ArrayList<RequestorEntry> spRequestorList = new ArrayList<RequestorEntry>();
+    private List<RequestorEntry> spRequestorList = new ArrayList<RequestorEntry>();
     
     private ArrayList<SelectItem> spList = new ArrayList<SelectItem>();
     
@@ -92,22 +88,18 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     @Create
     public void init() {
+        //TODO: fill spList
+        //TODO: rename to spPoolList
         spList.add(new SelectItem("Pool_1", "Pool_1"));
         
-        RequestorEntry entry = new RequestorEntry();
-        entry.setId("Requestor_1");
-        entry.setFriendlyName("Requestor 1");
-        entry.setLastModified(new Date());
-        spRequestorList.add(entry);
-        //TODO: add list loading
-    }
-        
-    public ArrayList<SelectItem> getAllSPRequestors() {
-        ArrayList<SelectItem> result = new ArrayList<SelectItem>();
-//            for (GluuSAMLTrustRelationship federation : trustService.getAllFederations()) {
-//                    result.add(new SelectItem(federation, federation.getDisplayName()));
-//            }
-        return result;
+//        RequestorEntry entry = new RequestorEntry();
+//        entry.setId("Requestor_1");
+//        entry.setFriendlyName("Requestor 1");
+//        entry.setLastModified(new Date());
+//        spRequestorList.add(entry);
+
+        //list loading
+        spRequestorList = asimbaService.loadRequestors();
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -151,7 +143,16 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         synchronized (svnSyncTimer) {
-
+            if (searchPattern != null && !"".equals(searchPattern)){
+                try {
+                    spRequestorList = asimbaService.searchRequestors(searchPattern, 0);
+                } catch (Exception ex) {
+                    log.error("LDAP search exception", ex);
+                }
+            } else {
+                //list loading
+                spRequestorList = asimbaService.loadRequestors();
+            }
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -173,14 +174,14 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     /**
      * @return the spRequestorList
      */
-    public ArrayList<RequestorEntry> getSpRequestorList() {
+    public List<RequestorEntry> getSpRequestorList() {
         return spRequestorList;
     }
 
     /**
      * @param spRequestorList the spRequestorList to set
      */
-    public void setSpRequestorList(ArrayList<RequestorEntry> spRequestorList) {
+    public void setSpRequestorList(List<RequestorEntry> spRequestorList) {
         this.spRequestorList = spRequestorList;
     }
 
