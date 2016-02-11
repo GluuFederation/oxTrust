@@ -47,35 +47,6 @@
                     <h:outputText value="No Search Result Found" />
                 </s:fragment>
 
-                <rich:dataTable sortMode="single" id="idpListId" value="#{updateAsimbaIDPAction.idpList}" rows="20" styleClass="table table-hover rt" var="idp"
-                    rendered="true">
-                    <rich:column sortBy="#{idp.id}">
-                        <f:facet name="header">ID</f:facet>
-                        <s:link view="/person/updatePerson.xhtml" value="#{idp.id}" propagation="none">
-                            <f:param name="inum" value="#{idp.id}" />
-                        </s:link>
-                    </rich:column>
-                    <rich:column sortBy="#{idp.friendlyName}">
-                        <f:facet name="header">Friendly Name</f:facet>
-                        <h:outputText value="#{idp.friendlyName}" />
-                    </rich:column>
-                    <rich:column sortBy="#{idp.identificationURL}">
-                        <f:facet name="header">Identification URL</f:facet>
-                        <h:outputText value="#{idp.identificationURL}" />
-                    </rich:column>
-                    <rich:column sortBy="#{idp.enabled}">
-                        <f:facet name="header">Enabled</f:facet>
-                        <div style="text-align: center;">
-                            <h:selectBooleanCheckbox value="#{idp.enabled}" readonly="true" />
-                        </div>
-                    </rich:column>
-                    <f:facet name="footer">
-                        <rich:dataScroller renderIfSinglePage="true" rendered="#{updateAsimbaIDPAction.idpList.size >= 0}" for="idpListId" maxPages="10" stepControls="auto" />
-                    </f:facet>
-                </rich:dataTable>
-
-
-
                 <h:dataTable 
                     styleClass="table table-hover rt"
                     value="#{updateAsimbaIDPAction.idpList}"
