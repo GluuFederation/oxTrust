@@ -47,6 +47,7 @@ public final class OxTrustConstants extends OxConstants {
         /**
          * oxAsimba fields
          */
+	public static final String uniqueIdentifier = "uniqueIdentifier";
 	public static final String friendlyName = "friendlyName";
         public static final String identificationURL = "identificationURL";
         public static final String organizationId = "organizationId";
