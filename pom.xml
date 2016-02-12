@@ -5,7 +5,7 @@
 	<groupId>org.xdi</groupId>
 	<artifactId>oxtrust</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.3-SNAPSHOT</version>
+	<version>2.4.2.Final</version>
 	<name>oxTrust</name>
 	<url>http://ox.gluu.org</url>
 
@@ -24,8 +24,8 @@
 		<drools.version>5.3.3.Final</drools.version>
 		<arquillian.version>1.1.2.Final</arquillian.version>
 		<shibboleth.version>1.1.0</shibboleth.version>
-		<oxcore.version>3.0.3-SNAPSHOT</oxcore.version>
-		<oxauth.version>3.0.3-SNAPSHOT</oxauth.version>
+		<oxcore.version>2.4.2.Final</oxcore.version>
+		<oxauth.version>2.4.2.Final</oxauth.version>
 	</properties>
 
 	<prerequisites>
