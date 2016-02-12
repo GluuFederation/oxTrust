@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:outputStylesheet>
+        .attributeColumn {
+            width: 350px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .formColumn {
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .contactLabels{
+            text-align: left;
+            width: 30%;
+            
+        }
+        
+        .breakFedeation{
+            color: red;
+        }
+
+        .entityList{
+            width:250px;
+            height:150px;
+            overflow:visible;
+            padding:0px;
+            left: 0px;
+        }
+
+        .half {
+            vertical-align: top;
+            width: 220px;
+            overflow: auto;
+        }
+            
+        .inpanelBody{
+            height: 220px;
+            width: 220px;
+            overflow: auto;
+        }
+        
+        #spMetadataPanel_container
+        {
+        	z-index:999 !important;
+        }
+        
+        #spMetadataPanel_content_scroller
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        #spMetadataPanel_content
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        pre
+        {
+        	height: 450px !important;
+        }
+        
+        
+    </h:outputStylesheet>
+
+	<h:form enctype="multipart/form-data" id="spRequestorForm">
+            <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
+            <input type='hidden' name='cid' value='#{conversation.id}' />
+            
+            <div class="row">
+                <div class="col-xs-12">
+                    
+            <h:panelGroup id="spRequestorSelectSPGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spRequestorSelectSP"
+                    rendered="true">
+                    <ui:define name="label">Select SP</ui:define>
+                    
+                    <h:selectOneMenu styleClass="form-control"
+                        title=""
+                        value="#{_spRequestor.poolID}" 
+                        required="true" >
+                        <f:selectItems value="#{_updateAsimbaSPRequestorAction.spList}" var="sp" itemValue="#{sp.id}" itemLabel="#{sp.friendlyName}" /> />
+                    </h:selectOneMenu>
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spRequestorEditIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spRequestorEditID"
+                    rendered="true">
+                    <ui:define name="label">ID</ui:define>
+                    
+                    <h:outputLabel 
+                        title="Example: https://ce.gluu.info/shibboleth"
+                        value="The id of the SP Requestor (client application)"/>
+                    <h:inputText styleClass="form-control"
+                        title="Example: https://ce.gluu.info/shibboleth"
+                        value="#{_spRequestor.id}" size="100" tabindex="0" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spRequestorEditFriendlyNameGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spRequestorEditFriendlyName"
+                    rendered="true">
+                    <ui:define name="label">Friendly Name</ui:define>
+            <h:outputLabel 
+                title="The SP Requestor friendly name"
+                value="The SP Requestor friendly name"/>
+            <h:inputText styleClass="form-control"
+                title="The SP Requestor friendly name"
+                value="#{_spRequestor.friendlyName}" size="100" tabindex="1" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spRequestorEditMetadataFileGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spRequestorEditMetadataFile"
+                    rendered="true">
+                    <ui:define name="label">Metadata File</ui:define>
+                    
+                    <h:outputLabel 
+                        title="The location of the metadata file or empty if none"
+                        value="The location of the metadata file or empty if none"/>
+                    <h:outputText  styleClass="form-control"
+                        title="The location of the metadata file or empty if none"
+                        value="#{_spRequestor.metadataFile}" />
+                    <h:commandButton value="Upload File" action="#{_updateAsimbaSPRequestorAction.uploadFile}"/>
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spRequestorEditAdditionalPropertiesGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spRequestorEditAdditionalProperties"
+                    rendered="true">
+                    <ui:define name="label">Properties</ui:define>
+                    
+                    <h:outputLabel 
+                        title="Additional properties"
+                        value="Additional properties"/>
+                    <h:inputText styleClass="form-control"
+                        title=""
+                        value="#{_updateAsimbaSPRequestorAction.spRequestorAdditionalProperties}" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            
+            
+            <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">
+                <tbody>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Enabled"
+                value="#{_spRequestor.enabled}" />
+            <h:outputLabel 
+                value="Enabled"/>
+                        </td>
+                        <td colspan="2" rowspan="1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Signing"
+                value="#{_spRequestor.signing}" />
+            <h:outputLabel 
+                title="Signing"
+                value="Signing"/>
+                        </td>
+                        <td colspan="2" rowspan="1">        
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <ui:insert name="controlButttons" />
+            
+                </div>
+            </div>
+        </h:form>
+
+</ui:composition>

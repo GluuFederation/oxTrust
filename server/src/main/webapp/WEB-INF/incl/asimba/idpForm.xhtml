@@ -1,0 +1,268 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:outputStylesheet>
+        .attributeColumn {
+            width: 350px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .formColumn {
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .contactLabels{
+            text-align: left;
+            width: 30%;
+            
+        }
+        
+        .breakFedeation{
+            color: red;
+        }
+
+        .entityList{
+            width:250px;
+            height:150px;
+            overflow:visible;
+            padding:0px;
+            left: 0px;
+        }
+
+        .half {
+            vertical-align: top;
+            width: 220px;
+            overflow: auto;
+        }
+            
+        .inpanelBody{
+            height: 220px;
+            width: 220px;
+            overflow: auto;
+        }
+        
+        #spMetadataPanel_container
+        {
+        	z-index:999 !important;
+        }
+        
+        #spMetadataPanel_content_scroller
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        #spMetadataPanel_content
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        pre
+        {
+        	height: 450px !important;
+        }
+    </h:outputStylesheet>
+
+	<h:form enctype="multipart/form-data" id="editIDPForm">
+            <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
+            <input type='hidden' name='cid' value='#{conversation.id}' />
+            
+            <div class="row">
+                <div class="col-xs-12">
+            
+            <h:panelGroup id="idpEditIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditID"
+                    rendered="true">
+                    <ui:define name="label">ID</ui:define>
+                    
+                    <h:outputLabel 
+                        title="It should be the entityID of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
+                        value="The id of the organization"/>
+                    <h:inputText styleClass="form-control"
+                        title="It should be the entityID of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
+                        value="#{_idp.id}" size="100" tabindex="0" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="idpEditFriendlyNameGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditFriendlyName"
+                    rendered="true">
+                    <ui:define name="label">Friendly Name</ui:define>
+            <h:outputLabel 
+                title="Anything human readable"
+                value="The organization friendly name"/>
+            <h:inputText styleClass="form-control"
+                title="Anything human readable"
+                value="#{_idp.friendlyName}" size="100" tabindex="1" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="idpEditIdentificationURLGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditIdentificationURL"
+                    rendered="true">
+                    <ui:define name="label">Identification URL</ui:define>
+                    
+                    <h:inputText styleClass="form-control"
+                        title="Identification URL"
+                        value="#{_idp.identificationURL}" size="100" tabindex="2" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="idpEditMetadataURLGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditMetadataURL"
+                    rendered="true">
+                    <ui:define name="label">Metadata URL</ui:define>
+                    
+                    <h:outputLabel 
+                        title="The URL of the metadata or empty if none"
+                        value="The URL of the metadata or empty if none"/>
+                    <h:inputText styleClass="form-control"
+                        title="The URL of the metadata or empty if none"
+                        value="#{_idp.metadataUrl}" size="100" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="idpEditMetadataTimeoutGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditMetadataTimeout"
+                    rendered="true">
+                    <ui:define name="label">Metadata Timeout</ui:define>
+                    
+                    <h:outputLabel 
+                        title="The timeout to be used in connecting the the URL metadata or -1 when default must be used"
+                        value="The timeout to be used in connecting the the URL metadata or -1 when default must be used"/>
+                    <h:inputText styleClass="form-control"
+                        title="The timeout to be used in connecting the the URL metadata or -1 when default must be used"
+                        value="#{_idp.metadataTimeout}" size="100" label="Metadata Timeout"/>
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="idpEditMetadataFileGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditMetadataFile"
+                    rendered="true">
+                    <ui:define name="label">Metadata File</ui:define>
+                    
+                    <h:outputLabel 
+                        title="Provide the absolute location of metadata"
+                        value="The location of the metadata file or empty if none"/>
+                    <h:outputText  styleClass="form-control"
+                        title="Provide the absolute location of metadata"
+                        value="#{_idp.metadataFile}" />
+                    <h:commandButton value="Upload File" action="#{_updateAsimbaIDPAction.uploadFile}"/>
+            </s:decorate>
+            </h:panelGroup>
+            
+            
+            
+            <h:panelGroup id="idpEditNameIDFormatGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditNameIDFormat"
+                    rendered="true">
+                    <ui:define name="label">NameIDFormat</ui:define>
+                    
+                    <h:outputLabel 
+                        title="The NameIDFormat to be set in the NameIDPolicy or empty if resolved from metadata"
+                        value="The NameIDFormat to be set in the NameIDPolicy or empty if resolved from metadata"/>
+                    <h:inputText styleClass="form-control"
+                        title="The NameIDFormat to be set in the NameIDPolicy or empty if resolved from metadata"
+                        value="#{_idp.nameIdFormat}" size="100" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">
+                <tbody>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Enabled"
+                value="#{_idp.enabled}" />
+            <h:outputLabel 
+                value="Enabled"/>
+                        </td>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="ACS Index. TRUE if ACS should be set as Index"
+                value="#{_idp.acsIndex}" />
+            <h:outputLabel 
+                title="ACS Index. TRUE if ACS should be set as Index"
+                value="ACS Index"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Scoping. TRUE if Scoping element must be send"
+                value="#{_idp.scoping}" />
+            <h:outputLabel 
+                title="Scoping. TRUE if Scoping element must be send"
+                value="Send Scoping"/>
+                        </td>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="NameIDPolicy. TRUE if NameIDPolicy element must be send"
+                value="#{_idp.nameIdPolicy}" />
+            <h:outputLabel 
+                title="NameIDPolicy. TRUE if NameIDPolicy element must be send"
+                value="Send NameIDPolicy"/>            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Enable AllowCreate value"
+                value="#{_idp.allowCreate}" />
+            <h:outputLabel 
+                title="Enable AllowCreate value"
+                value="AllowCreate"/>
+                        </td>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Avoid Subject Confirmations. Indicates whether avoid including SubjectConfirmation in an AuthnRequest to this IDP; used for compatibility with Microsoft ADFS"
+                value="#{_idp.avoidSubjectConfirmations}" 
+                label="Avoid Subject Confirmations" />
+            <h:outputLabel 
+                title="Avoid Subject Confirmations. Indicates whether avoid including SubjectConfirmation in an AuthnRequest to this IDP; used for compatibility with Microsoft ADFS"
+                value="Avoid Subject Confirmations"/>            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Disable SSO For IDP. Indicates whether SSO should be disabled when authentication is performed by this IDP"
+                value="#{_idp.disableSSOForIDP}" 
+                label="Disable SSO For IDP"  />
+            <h:outputLabel 
+                title="Disable SSO For IDP. Indicates whether SSO should be disabled when authentication is performed by this IDP"
+                value="Disable SSO For IDP"/>
+                        </td>
+                        <td colspan="2" rowspan="1">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <ui:insert name="controlButttons" />
+            
+                </div>
+            </div>
+        </h:form>
+
+</ui:composition>

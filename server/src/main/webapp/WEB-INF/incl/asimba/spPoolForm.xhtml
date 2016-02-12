@@ -1,0 +1,217 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:outputStylesheet>
+        .attributeColumn {
+            width: 350px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .formColumn {
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .contactLabels{
+            text-align: left;
+            width: 30%;
+            
+        }
+        
+        .breakFedeation{
+            color: red;
+        }
+
+        .entityList{
+            width:250px;
+            height:150px;
+            overflow:visible;
+            padding:0px;
+            left: 0px;
+        }
+
+        .half {
+            vertical-align: top;
+            width: 220px;
+            overflow: auto;
+        }
+            
+        .inpanelBody{
+            height: 220px;
+            width: 220px;
+            overflow: auto;
+        }
+        
+        #spMetadataPanel_container
+        {
+        	z-index:999 !important;
+        }
+        
+        #spMetadataPanel_content_scroller
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        #spMetadataPanel_content
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        pre
+        {
+        	height: 450px !important;
+        }
+        
+        
+    </h:outputStylesheet>
+
+	<h:form enctype="multipart/form-data" id="spPoolForm">
+            <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
+            <input type='hidden' name='cid' value='#{conversation.id}' />
+            
+            <div class="row">
+                <div class="col-xs-12">
+            
+            <h:panelGroup id="spPoolEditIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spPoolEditID"
+                    rendered="true">
+                    <ui:define name="label">ID</ui:define>
+                    
+                    <h:outputLabel 
+                        title="The id of the SP Pool. Example: requestorpool.1"
+                        value="The id of the SP Pool"/>
+                    <h:inputText styleClass="form-control"
+                        title="The id of the SP Pool. Example: requestorpool.1"
+                        value="#{_spPool.id}" size="100" tabindex="0" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spPoolEditFriendlyNameGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spPoolEditFriendlyName"
+                    rendered="true">
+                    <ui:define name="label">Friendly Name</ui:define>
+            <h:outputLabel 
+                title="The SP Pool friendly name"
+                value="The SP Pool friendly name"/>
+            <h:inputText styleClass="form-control"
+                title="The SP Pool friendly name"
+                value="#{_spPool.friendlyName}" size="100" tabindex="1" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spPoolEditPreAuthorizationProfileIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spPoolEditPreAuthorizationProfileID"
+                    rendered="true">
+                    <ui:define name="label">PreAuthorizationProfileID</ui:define>
+                    
+                    <h:selectOneMenu styleClass="form-control"
+                        title="Pre authorization profile id."
+                        value=""  tabindex="2"  />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spPoolEditPostAuthorizationProfileIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spPoolEditPostAuthorizationProfileID"
+                    rendered="true">
+                    <ui:define name="label">PostAuthorizationProfileID</ui:define>
+                    <!-- postauthz.1 TODO: checkbox -->
+                    <h:inputText styleClass="form-control"
+                        title="Post authorization profile id"
+                        value="#{_spPool.postAuthorizationProfileID}" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spPoolEditAttributeReleasePolicyIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spPoolEditAttributeReleasePolicyID"
+                    rendered="true">
+                    <ui:define name="label">AttributeReleasePolicyID</ui:define>
+                    <!-- asimba.releasepolicy.1 TODO: checkbox -->
+                    <h:inputText styleClass="form-control"
+                        title=""
+                        value="#{_spPool.attributeReleasePolicyID}" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spPoolEditAuthenticationProfileIDsGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spPoolEditAuthenticationProfileIDs"
+                    rendered="true">
+                    <ui:define name="label">AuthenticationProfileIDs</ui:define>
+                    <!-- remote.saml2 TODO: multiselect list -->
+                    <h:inputText styleClass="form-control"
+                        title=""
+                        value="#{_spPool.authenticationProfileIDs}" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="spPoolRequestorEditAdditionalPropertiesGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spPoolRequestorEditAdditionalProperties"
+                    rendered="true">
+                    <ui:define name="label">Properties</ui:define>
+                    
+                    <h:outputLabel 
+                        title="Additional properties"
+                        value="Additional properties"/>
+                    <h:inputText styleClass="form-control"
+                        title=""
+                        value="#{_updateAsimbaSPPoolAction.spPoolAdditionalProperties}" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">
+                <tbody>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Enabled"
+                value="#{_spPool.enabled}" />
+            <h:outputLabel 
+                value="Enabled"/>
+                        </td>
+                        <td colspan="2" rowspan="1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Sets whether the IdP should force the user to reauthenticate."
+                value="#{_spPool.forcedAuthenticate}" />
+            <h:outputLabel 
+                title="Sets whether the IdP should force the user to reauthenticate."
+                value="Forced Authenticate"/>
+                        </td>
+                        <td colspan="2" rowspan="1">          
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <ui:insert name="controlButttons" />
+            
+                </div>
+            </div>
+        </h:form>
+
+</ui:composition>

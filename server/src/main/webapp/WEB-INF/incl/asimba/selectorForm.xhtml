@@ -1,0 +1,156 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:outputStylesheet>
+        .attributeColumn {
+            width: 350px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .formColumn {
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .contactLabels{
+            text-align: left;
+            width: 30%;
+            
+        }
+        
+        .breakFedeation{
+            color: red;
+        }
+
+        .entityList{
+            width:250px;
+            height:150px;
+            overflow:visible;
+            padding:0px;
+            left: 0px;
+        }
+
+        .half {
+            vertical-align: top;
+            width: 220px;
+            overflow: auto;
+        }
+            
+        .inpanelBody{
+            height: 220px;
+            width: 220px;
+            overflow: auto;
+        }
+        
+        #spMetadataPanel_container
+        {
+        	z-index:999 !important;
+        }
+        
+        #spMetadataPanel_content_scroller
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        #spMetadataPanel_content
+        {
+        	width:700px !important;
+        	height:500px !important;
+        }
+        
+        pre
+        {
+        	height: 450px !important;
+        }
+        
+        
+    </h:outputStylesheet>
+    
+
+	<h:form enctype="multipart/form-data" id="selectorForm">
+            <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
+            <input type='hidden' name='cid' value='#{conversation.id}' />
+            
+            <div class="row">
+                <div class="col-xs-12">
+            
+            <h:panelGroup id="idpEditIDGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditID"
+                    rendered="true">
+                    <ui:define name="label">ID</ui:define>
+                    
+                    <h:outputLabel 
+                        title="The id of the selector"
+                        value="The id of the selector"/>
+                    <h:inputText styleClass="form-control"
+                        title="The id of the selector"
+                        value="#{_selector.id}" size="100" tabindex="0" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="idpEditOrganizationIdGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditOrganizationId"
+                    rendered="true">
+                    <ui:define name="label">Organization ID</ui:define>
+                    
+                    <h:outputLabel 
+                        title="The id of the organization"
+                        value="The id of the organization"/>
+                    <h:inputText styleClass="form-control"
+                        title="The id of the organization"
+                        value="#{_selector.organizationId}" size="100" tabindex="0" 
+                        required="true" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <h:panelGroup id="idpEditFriendlyNameGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditFriendlyName"
+                    rendered="true">
+                    <ui:define name="label">Friendly Name</ui:define>
+            <h:outputLabel 
+                title="The organization friendly name"
+                value="The organization friendly name"/>
+            <h:inputText styleClass="form-control"
+                title="The organization friendly name"
+                value="#{_selector.friendlyName}" size="100" tabindex="1" />
+            </s:decorate>
+            </h:panelGroup>
+            
+            <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">
+                <tbody>
+                    <tr>
+                        <td colspan="2" rowspan="1">
+            <h:selectBooleanCheckbox 
+                title="Enabled"
+                value="#{_selector.enabled}" />
+            <h:outputLabel 
+                value="Enabled"/>
+                        </td>
+                        <td colspan="2" rowspan="1">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <ui:insert name="controlButttons" />
+            
+                </div>
+            </div>
+        </h:form>
+
+</ui:composition>
