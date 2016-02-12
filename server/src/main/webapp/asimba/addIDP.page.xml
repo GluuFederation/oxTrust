@@ -12,7 +12,7 @@
 
     <rewrite pattern="/asimba/addIDP" />
 
-    <!--<navigation from-action="#{trustRelationshipInventoryAction.start}">
+    <navigation from-action="#{updateAsimbaIDPAction.add}">
         <rule if-outcome="success">
             <begin-conversation join="true" flush-mode="manual" />
             <render view-id="/asimba/idps.xhtml" />
@@ -21,12 +21,12 @@
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to find trust relationships</message>
+                <message severity="ERROR">Failed to add IDP</message>
             </redirect>
         </rule>
     </navigation>
 
-    <navigation from-action="#{trustRelationshipInventoryAction.search}">
+    <navigation from-action="#{updateAsimbaIDPAction.search}">
         <rule if-outcome="success">
             <redirect view-id="/asimba/idps.xhtml" />
         </rule>
@@ -34,8 +34,8 @@
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to trust relationships</message>
+                <message severity="ERROR">Failed to search IDPs</message>
             </redirect>
         </rule>
-    </navigation>-->
+    </navigation>
 </page>

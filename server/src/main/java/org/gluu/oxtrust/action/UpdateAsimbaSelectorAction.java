@@ -40,6 +40,8 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 @Name("updateAsimbaSelectorAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSelectorAction implements Serializable {
+
+    private static final long serialVersionUID = -1242167044333943680L;
     
     @Logger
     private Log log;
@@ -91,20 +93,26 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
+        log.info("add() Selector", selector);
+        asimbaService.addApplicationSelectorEntry(selector);
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
+        log.info("update() Selector", selector);
+        asimbaService.updateApplicationSelectorEntry(selector);
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
+        log.info("cancel() Selector", selector);
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String save() {
+        log.info("save() Selector", selector);
         synchronized (svnSyncTimer) {
 
         }
@@ -113,6 +121,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String delete() {
+        log.info("delete() Selector", selector);
         synchronized (svnSyncTimer) {
 
         }
@@ -121,6 +130,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
+        log.info("search() Selector searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {
             if (searchPattern != null && !"".equals(searchPattern)){
                 try {

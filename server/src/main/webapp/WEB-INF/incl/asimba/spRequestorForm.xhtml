@@ -77,25 +77,6 @@
         
     </h:outputStylesheet>
 
-    <h:outputScript>		
-        function changeAttributeVisibility(attrId, show) {
-            var attr = $('a[id*=' + attrId + ']');
-            var currentState = attr.is(":visible");
-
-            if (/* !currentState and */ show) {
-                attr.show();
-            } else {
-                attr.hide();
-            }
-        }
-
-        $( document ).ready(function() {
-	        $('.checkbox1').on('ifChanged', function(event) {
-			  configureRelyingParty();
-			});
-        });          
-    </h:outputScript>
-
 	<h:form enctype="multipart/form-data" id="spRequestorForm">
             <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <input type='hidden' name='cid' value='#{conversation.id}' />

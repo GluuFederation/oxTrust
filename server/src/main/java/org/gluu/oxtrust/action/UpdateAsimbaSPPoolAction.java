@@ -53,6 +53,8 @@ import org.xdi.model.GluuUserRole;
 @Name("updateAsimbaSPPoolAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPPoolAction implements Serializable {
+
+    private static final long serialVersionUID = -1242167022433943680L;
     
     @Logger
     private Log log;
@@ -105,20 +107,26 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
+        log.info("save new RequestorPool", spPool);
+        asimbaService.addRequestorPoolEntry(spPool);
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
+        log.info("update() RequestorPool", spPool);
+        asimbaService.addRequestorPoolEntry(spPool);
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
+        log.info("cancel() RequestorPool", spPool);
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String save() {
+        log.info("save() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
 
         }
@@ -127,6 +135,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
+        log.info("delete() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
 
         }
@@ -135,6 +144,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
+        log.info("search() RequestorPool searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {
             if (searchPattern != null && !"".equals(searchPattern)){
                 try {

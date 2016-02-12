@@ -6,7 +6,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
 	<ui:define name="body">
@@ -45,7 +45,18 @@
 			
 
 		</ui:decorate> 
-		
+                <!--<h:form>
+		<div class = "box-footer">
+                        <div  style="width: 100%;height: 30px;">
+                                <div id="updateButtons2" style="float: left;width: 150px;">
+                                        <h:commandButton value="   Add   "
+                                                action="#{updateAsimbaIDPAction.add}"  />
+                                        <h:commandButton value="   Cancel  " 
+                                                action="#{updateAsimbaIDPAction.cancel}"  />
+                                </div>
+                        </div>
+                </div>
+                </h:form>-->
 		</section>
 		<!--<div class = "box-footer"></div>-->
 	</ui:define>

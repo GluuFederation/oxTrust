@@ -44,6 +44,8 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 @Name("updateAsimbaSPRequestorAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPRequestorAction implements Serializable {
+
+    private static final long serialVersionUID = -1342167044333943680L;
     
     @Logger
     private Log log;
@@ -104,20 +106,26 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
+        log.info("save new Requestor", spRequestor);
+        asimbaService.addRequestorEntry(spRequestor);
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
+        log.info("update() Requestor", spRequestor);
+        asimbaService.updateRequestorEntry(spRequestor);
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
+        log.info("cancel() Requestor", spRequestor);
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String save() {
+        log.info("save Requestor", spRequestor);
         synchronized (svnSyncTimer) {
 
         }
@@ -126,6 +134,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
+        log.info("delete() Requestor", spRequestor);
         synchronized (svnSyncTimer) {
 
         }
@@ -134,6 +143,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadFile() {
+        log.info("uploadFile() Requestor", spRequestor);
         synchronized (svnSyncTimer) {
 
         }
@@ -142,6 +152,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
+        log.info("search() Requestor searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {
             if (searchPattern != null && !"".equals(searchPattern)){
                 try {

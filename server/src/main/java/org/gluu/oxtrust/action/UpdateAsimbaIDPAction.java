@@ -41,6 +41,8 @@ import org.jboss.seam.annotations.Create;
 @Name("updateAsimbaIDPAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaIDPAction implements Serializable {
+
+    private static final long serialVersionUID = -1032167091333943680L;
     
     @Logger
     private Log log;
@@ -86,6 +88,8 @@ public class UpdateAsimbaIDPAction implements Serializable {
         entry.setLastModified(new Date());
         idpList.add(entry);
         
+        log.info("init() call, IDP", entry);
+        
         asimbaService.loadAsimbaConfiguration();
         // list loading
         idpList = asimbaService.loadIDPs();
@@ -93,16 +97,21 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
+        log.info("save new IDP", idp);
+        asimbaService.addIDPEntry(idp);
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
+        log.info("update IDP", idp);
+        asimbaService.updateIDPEntry(idp);
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
+        log.info("cancel IDP", idp);
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -116,6 +125,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadFile() {
+        log.info("uploadFile() call for IDP");
         synchronized (svnSyncTimer) {
 
         }
@@ -132,6 +142,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
+        log.info("search() IDP searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {
             if (searchPattern != null && !"".equals(searchPattern)){
                 try {
