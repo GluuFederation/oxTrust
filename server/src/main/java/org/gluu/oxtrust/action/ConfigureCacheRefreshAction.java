@@ -600,7 +600,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private Map<String, String> getTargetServerAttributesMapping(CacheRefreshConfiguration cacheRefreshConfigurationuration) {
 		Map<String, String> result = new HashMap<String, String>();
 		for (CacheRefreshAttributeMapping attributeMapping : cacheRefreshConfigurationuration.getAttributeMapping()) {
-			result.put(attributeMapping.getSource(), attributeMapping.getDestination());
+			result.put(attributeMapping.getDestination(), attributeMapping.getSource());
 		}
 
 		return result;

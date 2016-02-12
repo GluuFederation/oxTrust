@@ -54,6 +54,7 @@ https://github.com/GluuFederation/docs/blob/master/sources/reference/api/id-gene
 | 0009     | scope                | OAuth2 Scope Object                    |
 | 0010     | uma-resource-set     | UMA Resource Set Object                |
 | 0011     | interception-script  | Gluu Server interception script object |
+| 0012     | sector-identifier    | Managed Sector Identifier URI          |
 
  */
 
@@ -75,6 +76,7 @@ public class InumService implements Serializable {
 	private static final String UMA_SCOPE = "0009";
 	private static final String UMA_RESOURCE_SET = "0010";
 	private static final String INTERCEPTION_SCRIPT = "0011";
+    private static final String SECTOR_IDENTIFIER =  "0012";
 
 	private static final String SEPARATOR = "!";
 

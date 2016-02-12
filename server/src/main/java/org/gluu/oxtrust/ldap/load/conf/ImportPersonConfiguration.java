@@ -65,10 +65,6 @@ public class ImportPersonConfiguration {
 
 	private List<GluuAttribute> prepareAttributes() throws Exception {
 		List<GluuAttribute> result = new ArrayList<GluuAttribute>();
-		if (!this.importConfiguration.isLoaded()) {
-			return result;
-		}
-		//issue 102 - begin  : changed by shekhar
 		List<ImportPerson>  mappings = oxTrustConfiguration.getImportPersonConfig().getMappings();
 		Iterator<ImportPerson> it = mappings.iterator();
 
@@ -76,8 +72,7 @@ public class ImportPersonConfiguration {
 			ImportPerson importPerson = (ImportPerson) it.next();
 
 				String attributeName = importPerson.getLdapName();
-				boolean required = importPerson.getRequired();
-				//issue 102 - end  : changed by shekhar
+				boolean required = importPerson.getRequired();				
 
 				if (StringHelper.isNotEmpty(attributeName)) {
 					GluuAttribute attr = null;
@@ -127,7 +122,6 @@ public class ImportPersonConfiguration {
 		return null;
 	}
 	
-	//issue 102 - begin  : changed by shekhar
 	private GluuAttribute createAttributeFromConfig(ImportPerson importPerson) {
 		String attributeName = importPerson.getLdapName();
 		String displayName = importPerson.getDisplayName();
@@ -148,10 +142,17 @@ public class ImportPersonConfiguration {
 		}
 
 		return null;
-	}//issue 102 - end  : changed by shekhar
+	}
 
 
 	public List<GluuAttribute> getAttributes() {
+		if(attributes == null){
+			try {
+				attributes = prepareAttributes();
+			} catch (Exception ex) {
+				log.error("Failed to load import configuration", ex);
+			}
+		}
 		return attributes;
 	}
 

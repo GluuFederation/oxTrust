@@ -22,10 +22,14 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
+import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.table.Table;
+import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.AttributeData;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
@@ -34,6 +38,7 @@ import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
@@ -42,8 +47,11 @@ import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
+import org.xdi.model.GluuUserRole;
 import org.xdi.util.StringHelper;
 
 /**
@@ -69,6 +77,15 @@ public class PersonImportAction implements Serializable {
 
 	@In
 	private PersonService personService;
+	
+	@In
+	private AttributeService attributeService;
+	
+	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	private ApplicationConfiguration applicationConfiguration;
+	
+	@In
+	private ExternalUpdateUserService externalUpdateUserService;
 
 	@In
 	private transient ExcelService excelService;
@@ -78,6 +95,10 @@ public class PersonImportAction implements Serializable {
 
 	@In
 	private transient ImportPersonConfiguration importPersonConfiguration;
+	
+	@In(create = true)
+	@Out(scope = ScopeType.CONVERSATION)
+	private CustomAttributeAction customAttributeAction;
 
 	private UploadedFile uploadedFile;
 	private FileDataToImport fileDataToImport;
@@ -86,6 +107,10 @@ public class PersonImportAction implements Serializable {
 	private byte[] fileData;
 
 	private boolean isInitialized;
+
+	private GluuCustomPerson person;
+
+	private String inum;
 
 	@Restrict("#{s:hasPermission('import', 'person')}")
 	public String init() {
@@ -112,14 +137,18 @@ public class PersonImportAction implements Serializable {
 		log.info("Attempting to add {0} persons", fileDataToImport.getPersons().size());
 		try {
 			for (GluuCustomPerson person : fileDataToImport.getPersons()) {
-				String inum = personService.generateInumForNewPerson();
-				String dn = personService.getDnForPerson(inum);
-
-				person.setDn(dn);
-				person.setInum(inum);
-
-				personService.addPerson(person);
-				log.debug("Added new person: {0}", person.getUid());
+				
+				this.person=person;
+				String result = initializePerson();
+				if(result.equals(OxTrustConstants.RESULT_SUCCESS)){
+					result = save();
+				}
+				if(result.equals(OxTrustConstants.RESULT_SUCCESS)){
+					log.debug("Added new person: {0}", person.getUid());
+				}
+				else{
+					log.debug("Failed to Add new person: {0}", person.getUid());
+				}
 			}
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to add new person", ex);
@@ -302,6 +331,7 @@ public class PersonImportAction implements Serializable {
 			if (isGeneratePassword && StringHelper.isEmpty(person.getUserPassword())) {
 				person.setUserPassword(RandomStringUtils.randomAlphanumeric(16));
 			}
+
 		}
 
 		return true;
@@ -444,6 +474,88 @@ public class PersonImportAction implements Serializable {
 
 		return result;
 	}
+	
+	private void initAttributes() {
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
+
+		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
+		boolean newPerson = (customAttributes == null) || customAttributes.isEmpty();
+		if (newPerson) {
+			customAttributes = new ArrayList<GluuCustomAttribute>();
+			this.person.setCustomAttributes(customAttributes);
+		}
+
+		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, applicationConfiguration
+				.getPersonObjectClassTypes(), applicationConfiguration.getPersonObjectClassDisplayNames());
+
+		if (newPerson) {
+			customAttributeAction.addCustomAttributes(personService.getMandatoryAtributes());
+		}
+	}
+	
+	public String save() {
+		if (!OrganizationService.instance().isAllowPersonModification()) {
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+		personService.addCustomObjectClass(this.person);
+		this.person.setStatus(GluuStatus.ACTIVE);
+		
+			if (personService.getPersonByUid(this.person.getUid()) != null) {
+				return OxTrustConstants.RESULT_DUPLICATE;
+			}
+
+			this.inum = personService.generateInumForNewPerson();
+			String iname = personService.generateInameForNewPerson(this.person.getUid());
+			String dn = personService.getDnForPerson(this.inum);
+
+			// Save person
+			this.person.setDn(dn);
+			this.person.setInum(this.inum);
+			this.person.setIname(iname);
+
+			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
+			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
+				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
+				changedAttributes.addAll(personAttributes);
+				changedAttributes.add(new GluuCustomAttribute("cn", this.person.getGivenName() + " " + this.person.getDisplayName()));
+				this.person.setCustomAttributes(changedAttributes);
+			} else {
+				this.person.setCommonName(this.person.getCommonName() + " " + this.person.getGivenName());
+			}
+
+			try {
+				if (externalUpdateUserService.isEnabled()) {
+					externalUpdateUserService.executeExternalAddUserMethods(this.person);
+                }
+				personService.addPerson(this.person);
+			} catch (Exception ex) {
+				log.error("Failed to add new person {0}", ex, this.person.getInum());
+
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	
+	public String initializePerson() {
+		if (!OrganizationService.instance().isAllowPersonModification()) {
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+		if (this.person != null) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
+		this.person = new GluuCustomPerson();
+
+		initAttributes();
+
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	
+	
 
 	public static class FileDataToImport implements Serializable {
 

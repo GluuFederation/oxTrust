@@ -379,6 +379,12 @@
             "format": "url",
             "minLength": 1
         },
+        "oxAuthSectorIdentifierUrl": {
+            "id": "oxAuthSectorIdentifierUrl",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "oxAuthClientId": {
             "id": "oxAuthClientId",
             "type": "string",
@@ -531,6 +537,7 @@
         "oxAuthLogoutUrl",
         "oxAuthTokenValidationUrl",
         "oxAuthUserInfo",
+        "oxAuthSectorIdentifierUrl",
         "oxAuthClientId",
         "oxAuthClientPassword",
         "oxAuthClientScope",
