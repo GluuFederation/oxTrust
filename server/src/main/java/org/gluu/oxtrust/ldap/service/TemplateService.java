@@ -72,7 +72,7 @@ public class TemplateService implements Serializable {
 	}
 
 	public boolean writeApplicationConfFile(String confFile, String conf) {
-		return writeConfFile(System.getProperty("catalina.home") + File.separator + "conf" + File.separator + confFile, conf);
+		return writeConfFile(System.getProperty("catalina.base") + File.separator + "conf" + File.separator + confFile, conf);
 	}
 
 	/*
@@ -88,18 +88,18 @@ public class TemplateService implements Serializable {
 
 			// Set right folder for file loader
 			if (loaderType.indexOf("file") == 0) {
-				String folder1 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+				String folder1 = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "shibboleth2"
 						+ File.separator + "idp";
-				String folder2 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+				String folder2 = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "shibboleth2"
 						+ File.separator + "sp";
-				String folder3 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "ldif";
-				String folder4 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+				String folder3 = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "ldif";
+				String folder4 = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "shibboleth2"
 						+ File.separator + "idp" + File.separator + "MetadataFilter";
-				String folder5 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+				String folder5 = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "shibboleth2"
 						+ File.separator + "idp" + File.separator + "ProfileConfiguration";
-				String folder6 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "template"
+				String folder6 = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "template"
 						+ File.separator + "conf";
-				String folder7 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "template"
+				String folder7 = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "template"
 						+ File.separator + "shibboleth2";
 				properties.setProperty("file.resource.loader.path", folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
 						+ folder5 + ", " + folder6  + ", " + folder7);
