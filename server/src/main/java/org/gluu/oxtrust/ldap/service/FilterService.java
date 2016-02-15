@@ -21,6 +21,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.velocity.VelocityContext;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
 import org.jboss.seam.Component;
@@ -63,7 +64,7 @@ public class FilterService {
 	private Shibboleth2ConfService shibboleth2ConfService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
-		File filterFolder = new File(System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "shibboleth2"
+		File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth2"
 				+ File.separator + "idp" + File.separator + "MetadataFilter");
 		File[] filterTemplates = null;
 		if (filterFolder.exists() && filterFolder.isDirectory()) {

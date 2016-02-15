@@ -63,8 +63,8 @@ public class OxTrustConfiguration {
         }
     }
 
-    private static final String BASE_DIR;
-    private static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
+    public static final String BASE_DIR;
+    public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
 	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
 	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxtrust-central-ldap.properties";

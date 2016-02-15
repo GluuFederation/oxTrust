@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.velocity.VelocityContext;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.jboss.seam.Component;
@@ -56,7 +57,7 @@ public class ProfileConfigurationService {
 	private TemplateService templateService;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
-		File profileConfigurationFolder = new File(System.getProperty("catalina.base") + File.separator + "conf" + File.separator
+		File profileConfigurationFolder = new File(OxTrustConfiguration.DIR
 				+ "shibboleth2" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 		File[] profileConfigurationTemplates = null;
 		if (profileConfigurationFolder.exists() && profileConfigurationFolder.isDirectory()) {

@@ -93,17 +93,10 @@ public class LogFileSizeChecker {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			String todayStr = sdf.format(today);
 
-			String filePath = "";
-			String tomcatHome = System.getProperty("catalina.base");
-			if (tomcatHome != null) {
-				log.debug("Setting the tomcat home directory");
-				filePath = System.getProperty("catalina.base") + File.separator + "conf" + File.separator
-						+ OxTrustConfiguration.LOG_ROTATION_CONFIGURATION;
-				log.debug("FilePath: " + filePath);
-			} else {
-				log.error(OxTrustConfiguration.LOG_ROTATION_CONFIGURATION + " file not found");
-				return;
-			}
+			log.debug("Getting the tomcat home directory");
+			String filePath = OxTrustConfiguration.DIR
+					+ OxTrustConfiguration.LOG_ROTATION_CONFIGURATION;
+			log.debug("FilePath: " + filePath);
 
 			List<LogDir> logDirs = readConfig(filePath);
 
