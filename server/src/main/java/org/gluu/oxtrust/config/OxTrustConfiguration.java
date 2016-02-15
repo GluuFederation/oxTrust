@@ -25,6 +25,7 @@ import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
+import org.jboss.seam.init.Initialization;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
@@ -202,7 +203,11 @@ public class OxTrustConfiguration {
                 return true;
             }
         } catch (Exception ex) {
-        	log.error(ex.getMessage(), ex);
+        	if (Component.getInstance("org.jboss.seam.ui.facelet.mockServletContext", false) == null) {
+        		log.error(ex.getMessage(), ex);
+        	} else {
+        		System.err.println("Test mode");
+        	}
         }
 
 		if (recoverFromFiles) {
