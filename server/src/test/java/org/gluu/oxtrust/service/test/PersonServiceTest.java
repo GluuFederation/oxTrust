@@ -9,7 +9,7 @@ package org.gluu.oxtrust.service.test;
 import java.util.List;
 
 import org.gluu.oxtrust.action.test.AbstractAuthorizationTest;
-import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.arquillian.junit.Arquillian;
@@ -36,7 +36,7 @@ public class PersonServiceTest extends AbstractAuthorizationTest {
 
 			@Override
 			protected void invokeApplication() throws Exception {
-				PersonService personService = (PersonService) getInstance("personService");
+				IPersonService personService = (IPersonService) getInstance("personService");
 
 				String pattern = testData.getString("person.search.pattern");
 				List<GluuCustomPerson> persons = personService.searchPersons(pattern, OxTrustConstants.searchPersonsSizeLimit);
@@ -52,7 +52,7 @@ public class PersonServiceTest extends AbstractAuthorizationTest {
 		new JUnitSeamTest.FacesRequest() {
 			@Override
 			protected void invokeApplication() throws Exception {
-				PersonService personService = (PersonService) getInstance("personService");
+				IPersonService personService = (IPersonService) getInstance("personService");
 
 				String personUid = testData.getString("person.uid");
 				GluuCustomPerson person = personService.getPersonByUid(personUid);

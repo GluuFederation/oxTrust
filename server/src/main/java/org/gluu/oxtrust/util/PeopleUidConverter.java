@@ -11,6 +11,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 
@@ -23,7 +24,7 @@ public class PeopleUidConverter implements Converter {
         if (value == null) {
             return null;
         }
-        PersonService personService = PersonService.instance();
+        IPersonService personService = PersonService.instance();
         GluuCustomPerson person = personService.getPersonByUid(value);
         return person;
     }

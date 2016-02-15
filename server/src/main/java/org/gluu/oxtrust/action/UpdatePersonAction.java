@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -66,7 +66,7 @@ public class UpdatePersonAction implements Serializable {
 	private AttributeService attributeService;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In(create = true)
 	@Out(scope = ScopeType.CONVERSATION)

@@ -29,6 +29,7 @@ import com.wordnik.swagger.annotations.*;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.ScimPerson;
@@ -64,7 +65,7 @@ public class UserWebService extends BaseScimWebService {
 	private Log log;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private UmaAuthenticationService umaAuthenticationService;
