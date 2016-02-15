@@ -9,7 +9,9 @@ package org.gluu.oxtrust.service.scim2.schema;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,7 +40,11 @@ public class SchemaTypeMapping {
         return schemaInstances.get(id);
     }
 
-    public static Map<String, SchemaType> getSchemaInstances() {
-        return schemaInstances;
+    public static List<SchemaType> getSchemaInstances() {
+        List<SchemaType> schemaInstancesAsList = new ArrayList<SchemaType>();
+        for (Map.Entry<String, SchemaType> entry : schemaInstances.entrySet()) {
+            schemaInstancesAsList.add(entry.getValue());
+        }
+        return schemaInstancesAsList;
     }
 }

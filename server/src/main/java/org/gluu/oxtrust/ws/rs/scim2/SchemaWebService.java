@@ -18,9 +18,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Web service for the /Schemas endpoint.
@@ -48,11 +46,11 @@ public class SchemaWebService extends BaseScimWebService {
 
         log.info(" listSchemas() ");
 
-        List<SchemaType> schemas = new ArrayList<SchemaType>();
+        List<SchemaType> schemas = SchemaTypeMapping.getSchemaInstances();
 
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
-        for (Map.Entry<String, SchemaType> entry : SchemaTypeMapping.getSchemaInstances().entrySet()) {
-            schemas.add(factory.load(entry.getValue().getId()));
+        for (SchemaType schemaType : schemas) {
+            factory.load(schemaType);
         }
 
         URI location = new URI("/v2/Schemas");
@@ -83,7 +81,7 @@ public class SchemaWebService extends BaseScimWebService {
         if (schemaType != null) {
             return Response.ok(schemaType).location(location).build();
         } else {
-            return Response.ok("[]").location(location).build();
+            return Response.ok("{}").location(location).build();
         }
     }
 }
