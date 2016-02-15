@@ -1,10 +1,13 @@
 package org.gluu.oxtrust.model.scim2.provider;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.Resource;
+import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
 
 public class ResourceType extends Resource{
 	private String id;
@@ -12,6 +15,7 @@ public class ResourceType extends Resource{
 	private String endpoint;
 	private String description;
 	private String schema;
+	private List<SchemaExtensionHolder> schemaExtensions = new ArrayList<SchemaExtensionHolder>();
 	
 	public ResourceType(){
 		Meta userMeta = new Meta();
@@ -51,6 +55,12 @@ public class ResourceType extends Resource{
 	public void setSchema(String schema) {
 		this.schema = schema;
 	}
-	
-	
+
+	public List<SchemaExtensionHolder> getSchemaExtensions() {
+		return schemaExtensions;
+	}
+
+	public void setSchemaExtensions(List<SchemaExtensionHolder> schemaExtensions) {
+		this.schemaExtensions = schemaExtensions;
+	}
 }
