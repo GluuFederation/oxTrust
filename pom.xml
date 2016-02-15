@@ -97,6 +97,12 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.jboss.arquillian.extension</groupId>
+				<artifactId>arquillian-seam2</artifactId>
+				<scope>test</scope>
+				<version>1.0.0.Final-SNAPSHOT</version>
+			</dependency>
+			<dependency>
 				<groupId>org.jboss.shrinkwrap</groupId>
 				<artifactId>shrinkwrap-bom</artifactId>
 				<version>1.0.1</version>
