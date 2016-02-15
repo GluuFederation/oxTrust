@@ -903,13 +903,13 @@
 			<artifactId>arquillian-container-spi</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+<!--
 		<dependency>
 			<groupId>org.jboss.arquillian.extension</groupId>
 			<artifactId>arquillian-seam2</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+ -->
 		<dependency>
 			<groupId>org.eu.ingwar.tools</groupId>
 			<artifactId>arquillian-suite-extension</artifactId>
