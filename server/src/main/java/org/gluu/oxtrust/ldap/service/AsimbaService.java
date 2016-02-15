@@ -127,7 +127,7 @@ public class AsimbaService {
     public List<IDPEntry> searchIDPs(String pattern, int sizeLimit) throws Exception {
         // filter
         String[] targetArray = new String[] { pattern };
-        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
+        Filter idFilter = Filter.createSubstringFilter("id", null, targetArray, null);
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -156,7 +156,7 @@ public class AsimbaService {
     public List<ApplicationSelectorEntry> searchSelectors(String pattern, int sizeLimit) throws Exception {
         // filter
         String[] targetArray = new String[] { pattern };
-        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
+        Filter idFilter = Filter.createSubstringFilter("id", null, targetArray, null);
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -185,7 +185,7 @@ public class AsimbaService {
     public List<RequestorEntry> searchRequestors(String pattern, int sizeLimit) throws Exception {
         // filter
         String[] targetArray = new String[] { pattern };
-        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
+        Filter idFilter = Filter.createSubstringFilter("id", null, targetArray, null);
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -213,7 +213,7 @@ public class AsimbaService {
     public List<RequestorPoolEntry> searchRequestorPools(String pattern, int sizeLimit) throws Exception {
         // filter
         String[] targetArray = new String[] { pattern };
-        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
+        Filter idFilter = Filter.createSubstringFilter("id", null, targetArray, null);
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -310,10 +310,10 @@ public class AsimbaService {
         log.info("addIDPEntry() call");
         try {
             LdapIDPEntry ldapEntry = new LdapIDPEntry();
+            ldapEntry.setEntry(entry);
             String inum = generateInumImpl();
             ldapEntry.setInum(inum);
             ldapEntry.setDn(getDnForLdapIDPEntry(inum));
-            ldapEntry.setEntry(entry);
             ldapEntryManager.persist(ldapEntry);
         } catch (Exception e) {
             log.error("addIDPEntry() exception", e);
@@ -365,10 +365,10 @@ public class AsimbaService {
     */
     public void addRequestorPoolEntry(RequestorPoolEntry entry) {
         LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
+        ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPRequestorPoolEntry(inum));
-        ldapEntry.setEntry(entry);
         ldapEntryManager.persist(ldapEntry);
     }
 
@@ -417,10 +417,10 @@ public class AsimbaService {
     */
     public void addRequestorEntry(RequestorEntry entry) {
         LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
+        ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPRequestorEntry(inum));
-        ldapEntry.setEntry(entry);
         ldapEntryManager.persist(ldapEntry);
     }
 
@@ -469,10 +469,10 @@ public class AsimbaService {
     */
     public void addApplicationSelectorEntry(ApplicationSelectorEntry entry) {
         LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
+        ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPApplicationSelectorEntry(inum));
-        ldapEntry.setEntry(entry);
         ldapEntryManager.persist(ldapEntry);
     }
 

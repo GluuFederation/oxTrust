@@ -81,14 +81,23 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Create
     public void init() {
-//        ApplicationSelectorEntry entry = new ApplicationSelectorEntry();
-//        entry.setId("Selector_1");
-//        entry.setFriendlyName("Selector 1");
-//        entry.setLastModified(new Date());
-//        selectorList.add(entry);
-        
+        log.info("init() Selector call");
         // list loading
         selectorList = asimbaService.loadSelectors();
+    }
+    
+    public void tempTestSelectorCRUD() {
+        log.info("tempTestSelectorCRUD() start");
+        
+        ApplicationSelectorEntry entry = new ApplicationSelectorEntry();
+        entry.setId("https://ce.gluu.info/shibboleth");
+        entry.setFriendlyName("Selector 1, shibboleth SP -> shibboleth IDP");
+        entry.setOrganizationId("https://ce.gluu.info/idp/shibboleth");
+        entry.setLastModified(new Date());
+        
+        log.info("test ApplicationSelectorEntry", entry);
+        asimbaService.addApplicationSelectorEntry(entry);
+        log.info("test ApplicationSelectorEntry saved");
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -108,6 +117,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel() Selector", selector);
+        selector = new ApplicationSelectorEntry();
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")
