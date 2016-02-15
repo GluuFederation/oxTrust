@@ -22,12 +22,15 @@ import org.gluu.oxtrust.model.scim.ScimPersonPhones;
 import org.gluu.oxtrust.model.scim.ScimPersonPhotos;
 import org.gluu.oxtrust.model.scim.ScimRoles;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.mock.SeamTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 
+@RunWith(Arquillian.class)
 public class CopyUtilsTestUpdate extends SeamTest {
 	private static final String GLUU_STATUS = "gluuStatus";
 
