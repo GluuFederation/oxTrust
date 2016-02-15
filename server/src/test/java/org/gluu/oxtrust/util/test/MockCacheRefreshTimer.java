@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.util;
+package org.gluu.oxtrust.util.test;
 
 public class MockCacheRefreshTimer {
 

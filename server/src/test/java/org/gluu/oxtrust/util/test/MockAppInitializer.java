@@ -1,15 +1,14 @@
-package org.gluu.oxtrust.util;
+package org.gluu.oxtrust.util.test;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
-
-@Name("imageRepository")
-@Scope(ScopeType.APPLICATION)
+@Startup(depends = "oxTrustConfiguration")
 @AutoCreate
-@Startup
-public class MockImageRepository {//extends ImageRepository {
+@Scope(ScopeType.APPLICATION)
+@Name("appInitializer")
+public class MockAppInitializer { //extends AppInitializer {
 
 }

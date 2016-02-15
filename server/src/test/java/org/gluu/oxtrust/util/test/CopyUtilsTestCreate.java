@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.util;
+package org.gluu.oxtrust.util.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,6 +23,7 @@ import org.gluu.oxtrust.model.scim.ScimPersonPhones;
 import org.gluu.oxtrust.model.scim.ScimPersonPhotos;
 import org.gluu.oxtrust.model.scim.ScimRoles;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
+import org.gluu.oxtrust.util.CopyUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;

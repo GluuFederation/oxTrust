@@ -12,7 +12,7 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquilianSuiteDeployment;
 import org.gluu.oxtrust.service.test.PersonServiceTest;
-import org.gluu.oxtrust.util.CopyUtilsTestCreate;
+import org.gluu.oxtrust.util.test.CopyUtilsTestCreate;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

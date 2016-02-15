@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.util;
+package org.gluu.oxtrust.util.test;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.jboss.seam.ScopeType;
