@@ -402,6 +402,12 @@
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-static</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxtrust-configuration</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-scim</artifactId>
