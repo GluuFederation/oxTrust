@@ -17,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -72,7 +73,7 @@ public class TemplateService implements Serializable {
 	}
 
 	public boolean writeApplicationConfFile(String confFile, String conf) {
-		return writeConfFile(System.getProperty("catalina.home") + File.separator + "conf" + File.separator + confFile, conf);
+		return writeConfFile(OxTrustConfiguration.DIR + confFile, conf);
 	}
 
 	/*
@@ -88,18 +89,18 @@ public class TemplateService implements Serializable {
 
 			// Set right folder for file loader
 			if (loaderType.indexOf("file") == 0) {
-				String folder1 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+				String folder1 = OxTrustConfiguration.DIR + "shibboleth2"
 						+ File.separator + "idp";
-				String folder2 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+				String folder2 = OxTrustConfiguration.DIR + "shibboleth2"
 						+ File.separator + "sp";
-				String folder3 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "ldif";
-				String folder4 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+				String folder3 = OxTrustConfiguration.DIR + "ldif";
+				String folder4 = OxTrustConfiguration.DIR + "shibboleth2"
 						+ File.separator + "idp" + File.separator + "MetadataFilter";
-				String folder5 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+				String folder5 = OxTrustConfiguration.DIR + "shibboleth2"
 						+ File.separator + "idp" + File.separator + "ProfileConfiguration";
-				String folder6 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "template"
+				String folder6 = OxTrustConfiguration.DIR + "template"
 						+ File.separator + "conf";
-				String folder7 = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "template"
+				String folder7 = OxTrustConfiguration.DIR + "template"
 						+ File.separator + "shibboleth2";
 				properties.setProperty("file.resource.loader.path", folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
 						+ folder5 + ", " + folder6  + ", " + folder7);

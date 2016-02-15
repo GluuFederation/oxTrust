@@ -37,6 +37,7 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
@@ -1283,8 +1284,7 @@ public class Shibboleth2ConfService implements Serializable {
 		newFactory.setValidating(false);
 		DocumentBuilder xmlParser = newFactory.newDocumentBuilder();
 		Document xmlDoc = xmlParser.parse(stream);
-		String schemaDir = System.getProperty("catalina.home") 
-		                        + File.separator + "conf" + File.separator + "shibboleth2" + File.separator
+		String schemaDir = OxTrustConfiguration.DIR + "shibboleth2" + File.separator
 		                        + "idp" + File.separator + "schema" + File.separator;
 		Schema schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
 		Validator validator = schema.newValidator();
