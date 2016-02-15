@@ -198,4 +198,15 @@ public interface IPersonService {
 	 */
 	public abstract User getUserByUid(String uid);
 
+	/**
+	 * Get list of persons by attribute
+	 * 
+	 * @param attribute
+	 *            attribute
+	 * @param value
+	 *            value
+	 * @return List <Person>
+	 */
+	public List<GluuCustomPerson> getPersonsByAttribute(String attribute, String value) throws Exception;
+	
 }

@@ -145,4 +145,9 @@ public class MockPersonService implements IPersonService {
 	public User getUserByUid(String uid) {
 		throw new IllegalStateException("Not Implemented");
 	}
+
+	public List<GluuCustomPerson> getPersonsByAttribute(String attribute, String value) throws Exception {
+		throw new IllegalStateException("Not Implemented");
+	}
+
 }

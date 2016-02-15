@@ -9,7 +9,6 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,14 +30,12 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
-import com.unboundid.util.StaticUtils;
 
 /**
  * Provides operations with persons
@@ -537,6 +534,7 @@ public class PersonService implements Serializable, IPersonService {
 	 *            value
 	 * @return List <Person>
 	 */
+	@Override
 	public List<GluuCustomPerson> getPersonsByAttribute(String attribute, String value) throws Exception {
 		log.info("atttriburte : " + attribute + "      value : "+value);
 		GluuCustomPerson person = new GluuCustomPerson();
