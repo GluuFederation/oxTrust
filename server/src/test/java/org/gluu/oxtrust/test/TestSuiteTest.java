@@ -25,7 +25,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  *
  * @author Yuriy Movchan Date: 02/06/2014
  */
-//@ArquilianSuiteDeployment
+@ArquilianSuiteDeployment
 public class TestSuiteTest {
 	@Deployment
 	@OverProtocol("Servlet 3.0")

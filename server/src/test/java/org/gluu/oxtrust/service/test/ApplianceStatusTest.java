@@ -32,41 +32,41 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class ApplianceStatusTest extends ConfigurableTest {
-	 @Deployment
-	   public static Archive<?> createDeployment()
-	   {
-		 WebArchive web = ShrinkWrap.create(WebArchive.class, "test.war")
-                  .addClass(ApplianceStatusTest.class)
-                  .addPackage(ConfigurableTest.class.getPackage())
-                  .addAsResource(EmptyAsset.INSTANCE, "seam.properties")
-                  .setWebXML("web.xml");
-
-			web.delete("/WEB-INF/web.xml");
-			web.addAsWebInfResource("web.xml");
-
-			// TODO: Workaround
-			WebArchive web2 = ShrinkWrap.create(ZipImporter.class, "oxtrust.war").importFrom(new File("target/oxtrust-server.war"))
-					.as(WebArchive.class);
-
-			InputStream is = web2.get("/WEB-INF/components.xml").getAsset().openStream();
-			try {
-				String components = IOUtils.toString(is);
-				String marker = "<!-- Inum DB configuration -->";
-				int idx1 = components.indexOf(marker);
-				int idx2 = components.indexOf(marker, idx1 + 1);
-				components = components.substring(0, idx1 + marker.length()) + components.substring(idx2);
-				StringAsset componentsAsset = new StringAsset(components);
-				web.add(componentsAsset, "/WEB-INF/components.xml");
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			} finally {
-				IOUtils.closeQuietly(is);
-			}
-
-			//        web.addAsWebInfResource("in-container-components.xml", "components.xml");
-			return web;
-
-	   }
+//	 @Deployment
+//	   public static Archive<?> createDeployment()
+//	   {
+//		 WebArchive web = ShrinkWrap.create(WebArchive.class, "test.war")
+//                  .addClass(ApplianceStatusTest.class)
+//                  .addPackage(ConfigurableTest.class.getPackage())
+//                  .addAsResource(EmptyAsset.INSTANCE, "seam.properties")
+//                  .setWebXML("web.xml");
+//
+//			web.delete("/WEB-INF/web.xml");
+//			web.addAsWebInfResource("web.xml");
+//
+//			// TODO: Workaround
+//			WebArchive web2 = ShrinkWrap.create(ZipImporter.class, "oxtrust.war").importFrom(new File("target/oxtrust-server.war"))
+//					.as(WebArchive.class);
+//
+//			InputStream is = web2.get("/WEB-INF/components.xml").getAsset().openStream();
+//			try {
+//				String components = IOUtils.toString(is);
+//				String marker = "<!-- Inum DB configuration -->";
+//				int idx1 = components.indexOf(marker);
+//				int idx2 = components.indexOf(marker, idx1 + 1);
+//				components = components.substring(0, idx1 + marker.length()) + components.substring(idx2);
+//				StringAsset componentsAsset = new StringAsset(components);
+//				web.add(componentsAsset, "/WEB-INF/components.xml");
+//			} catch (Exception ex) {
+//				ex.printStackTrace();
+//			} finally {
+//				IOUtils.closeQuietly(is);
+//			}
+//
+//			//        web.addAsWebInfResource("in-container-components.xml", "components.xml");
+//			return web;
+//
+//	   }
 
 	 @Test
 	public void testIsApplianceStatus() throws Exception {
