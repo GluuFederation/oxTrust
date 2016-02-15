@@ -203,11 +203,7 @@ public class OxTrustConfiguration {
                 return true;
             }
         } catch (Exception ex) {
-        	if (Component.getInstance("org.jboss.seam.ui.facelet.mockServletContext", false) == null) {
-        		log.error(ex.getMessage(), ex);
-        	} else {
-        		System.err.println("Test mode");
-        	}
+    		log.error(ex.getMessage(), ex);
         }
 
 		if (recoverFromFiles) {
