@@ -90,7 +90,7 @@
 
     <!-- ############### oxTrust ################# -->
     <category name="org.gluu.oxtrust">
-        <priority value="DEBUG" />
+        <priority value="${oxtrust.log4j.default.log.level}" />
     </category>
 
     <!-- ############### Embedded JBoss AS ################# -->
