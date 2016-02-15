@@ -27,7 +27,9 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.Authorization;
+
 import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.ListResponse;
@@ -56,7 +58,7 @@ public class GroupWebService extends BaseScimWebService {
 	private Log log;
 
 	@In
-	private GroupService groupService;
+	private IGroupService groupService;
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

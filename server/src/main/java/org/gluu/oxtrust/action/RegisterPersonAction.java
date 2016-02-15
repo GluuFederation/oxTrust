@@ -21,8 +21,8 @@ import javax.validation.constraints.Size;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -80,7 +80,7 @@ public class RegisterPersonAction implements Serializable {
 	private GluuCustomPerson person;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@NotNull
 	@Size(min = 2, max = 30, message = "Length of password should be between 2 and 30")

@@ -37,10 +37,10 @@ public class StatusCheckerDaily {
 	private ApplianceService applianceService;
 
 	@In
-	private GroupService groupService;
+	private IGroupService groupService;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private CentralLdapService centralLdapService;

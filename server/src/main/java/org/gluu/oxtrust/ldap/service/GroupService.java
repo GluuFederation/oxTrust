@@ -38,7 +38,7 @@ import com.unboundid.ldap.sdk.Filter;
 @Scope(ScopeType.STATELESS)
 @Name("groupService")
 @AutoCreate
-public class GroupService implements Serializable {
+public class GroupService implements Serializable, IGroupService {
 
 	/**
      *
@@ -54,22 +54,18 @@ public class GroupService implements Serializable {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	/**
-	 * Add new group entry
-	 * 
-	 * @param group
-	 *            Group
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#addGroup(org.gluu.oxtrust.model.GluuGroup)
 	 */
+	@Override
 	public void addGroup(GluuGroup group) throws Exception {
 		ldapEntryManager.persist(group);
 	}
 
-	/**
-	 * Remove group entry
-	 * 
-	 * @param group
-	 *            Group
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#removeGroup(org.gluu.oxtrust.model.GluuGroup)
 	 */
+	@Override
 	public void removeGroup(GluuGroup group) {
 		if (group.getMembers() != null) {
 			List<String> memberDNs = group.getMembers();
@@ -88,24 +84,18 @@ public class GroupService implements Serializable {
 		// clear references in gluuPerson entries
 	}
 
-	/**
-	 * Get all groups
-	 * 
-	 * @return List of groups
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getAllGroups()
 	 */
+	@Override
 	public List<GluuGroup> getAllGroups() {
 		return ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, null);
 	}
 
-	/**
-	 * Check if person is a member or owner of specified group
-	 * 
-	 * @param groupDN
-	 *            Group DN
-	 * @param personDN
-	 *            Person DN
-	 * @return True if person is a member or owner of specified group
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#isMemberOrOwner(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public boolean isMemberOrOwner(String groupDN, String personDN) {
 		Filter ownerFilter = Filter.createEqualityFilter(OxTrustConstants.owner, personDN);
 		Filter memberFilter = Filter.createEqualityFilter(OxTrustConstants.member, personDN);
@@ -122,13 +112,10 @@ public class GroupService implements Serializable {
 		return isMemberOrOwner;
 	}
 
-	/**
-	 * Get group by inum
-	 * 
-	 * @param inum
-	 *            Group Inum
-	 * @return Group
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getGroupByInum(java.lang.String)
 	 */
+	@Override
 	public GluuGroup getGroupByInum(String inum) {
 		GluuGroup result = null;
 		try{
@@ -140,15 +127,10 @@ public class GroupService implements Serializable {
 
 	}
 
-	/**
-	 * Build DN string for group
-	 * 
-	 * @param inum
-	 *            Group Inum
-	 * @return DN string for specified group or DN for groups branch if inum is
-	 *         null
-	 * @throws Exception
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getDnForGroup(java.lang.String)
 	 */
+	@Override
 	public String getDnForGroup(String inum) {
 		String orgDn = OrganizationService.instance().getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
@@ -158,17 +140,19 @@ public class GroupService implements Serializable {
 		return String.format("inum=%s,ou=groups,%s", inum, orgDn);
 	}
 
-	/**
-	 * Update group entry
-	 * 
-	 * @param group
-	 *            Group
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#updateGroup(org.gluu.oxtrust.model.GluuGroup)
 	 */
+	@Override
 	public void updateGroup(GluuGroup group) throws Exception {
 		ldapEntryManager.merge(group);
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#countGroups()
+	 */
+	@Override
 	public int countGroups() {
 		GluuGroup gluuGroup = new GluuGroup();
 		gluuGroup.setBaseDn(getDnForGroup(null));
@@ -176,12 +160,10 @@ public class GroupService implements Serializable {
 		return ldapEntryManager.countEntries(gluuGroup);
 	}
 
-	/**
-	 * Generate new inum for group
-	 * 
-	 * @return New inum for group
-	 * @throws Exception
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#generateInumForNewGroup()
 	 */
+	@Override
 	public String generateInumForNewGroup() throws Exception {
 		GluuGroup group = new GluuGroup();
 		String newInum = null;
@@ -194,24 +176,18 @@ public class GroupService implements Serializable {
 		return newInum;
 	}
 
-	/**
-	 * Generate new iname for group
-	 * 
-	 * @return New iname for group
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#generateInameForNewGroup(java.lang.String)
 	 */
+	@Override
 	public String generateInameForNewGroup(String name) throws Exception {
 		return String.format("%s*group*%s", applicationConfiguration.getOrgIname(), name);
 	}
 
-	/**
-	 * Search groups by pattern
-	 * 
-	 * @param pattern
-	 *            Pattern
-	 * @param sizeLimit
-	 *            Maximum count of results
-	 * @return List of groups
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#searchGroups(java.lang.String, int)
 	 */
+	@Override
 	public List<GluuGroup> searchGroups(String pattern, int sizeLimit) throws Exception {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
@@ -224,11 +200,10 @@ public class GroupService implements Serializable {
 		return result;
 	}
 
-	/**
-	 * Get all available visibility types
-	 * 
-	 * @return Array of visibility types
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getVisibilityTypes()
 	 */
+	@Override
 	public GluuGroupVisibility[] getVisibilityTypes() throws Exception {
 		return GluuGroupVisibility.values();
 	}
@@ -244,12 +219,11 @@ public class GroupService implements Serializable {
 				+ INumGenerator.generate(2);
 	}
 
-	/**
-	 * returns a list of all groups
-	 * 
-	 * @return list of groups
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getAllGroupsList()
 	 */
 
+	@Override
 	public List<GluuGroup> getAllGroupsList() throws Exception {
 
 		List<GluuGroup> result = ldapEntryManager
@@ -258,12 +232,11 @@ public class GroupService implements Serializable {
 		return result;
 	}
 
-	/**
-	 * returns GluuGroup by Dn
-	 * 
-	 * @return GluuGroup
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getGroupByDn(java.lang.String)
 	 */
 
+	@Override
 	public GluuGroup getGroupByDn(String Dn) {
 		GluuGroup result = ldapEntryManager.find(GluuGroup.class, Dn);
 
@@ -275,16 +248,14 @@ public class GroupService implements Serializable {
 	 * 
 	 * @return GroupService instance
 	 */
-	public static GroupService instance() {
-		return (GroupService) Component.getInstance(GroupService.class);
+	public static IGroupService instance() {
+		return (IGroupService) Component.getInstance(GroupService.class);
 	}
 
-	/**
-	 * Get Group by iname
-	 * 
-	 * @param iname
-	 * @return Group
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getGroupByIname(java.lang.String)
 	 */
+	@Override
 	public GluuGroup getGroupByIname(String iname) throws Exception {
 		GluuGroup group = new GluuGroup();
 		group.setBaseDn(getDnForGroup(null));
@@ -299,12 +270,10 @@ public class GroupService implements Serializable {
 		return null;
 	}
 
-	/**
-	 * Get group by DisplayName
-	 * 
-	 * @param DisplayName
-	 * @return group
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getGroupByDisplayName(java.lang.String)
 	 */
+	@Override
 	public GluuGroup getGroupByDisplayName(String DisplayName) throws Exception {
 		GluuGroup group = new GluuGroup();
 		group.setBaseDn(getDnForGroup(null));

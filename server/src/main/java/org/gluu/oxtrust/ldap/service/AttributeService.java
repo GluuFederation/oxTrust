@@ -379,7 +379,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 *            Attribute
 	 */
 	public boolean removeAttribute(GluuAttribute attribute) {
-		PersonService personService = PersonService.instance();
+		IPersonService personService = PersonService.instance();
 		log.info("Attribute removal started");
 		log.trace("Getting attribute information");
 		

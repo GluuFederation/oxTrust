@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -49,7 +49,7 @@ public class UserProfileAction implements Serializable {
 	private Log log;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private AttributeService attributeService;
