@@ -56,7 +56,7 @@ public class ProfileConfigurationService {
 	private TemplateService templateService;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
-		File profileConfigurationFolder = new File(System.getProperty("catalina.home") + File.separator + "conf" + File.separator
+		File profileConfigurationFolder = new File(System.getProperty("catalina.base") + File.separator + "conf" + File.separator
 				+ "shibboleth2" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 		File[] profileConfigurationTemplates = null;
 		if (profileConfigurationFolder.exists() && profileConfigurationFolder.isDirectory()) {

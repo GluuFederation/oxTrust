@@ -29,7 +29,7 @@ public abstract class ConfigurableTest extends JUnitSeamTest {
 	@Before
 	public void initTest() {
 		super.begin();
-		this.testData = new TestFileConfiguration(System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "oxTrustLdapTest.properties");
+		this.testData = new TestFileConfiguration(System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "oxTrustLdapTest.properties");
 	}
 
 	/**

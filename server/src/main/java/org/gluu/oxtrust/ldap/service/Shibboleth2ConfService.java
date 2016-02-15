@@ -1283,7 +1283,7 @@ public class Shibboleth2ConfService implements Serializable {
 		newFactory.setValidating(false);
 		DocumentBuilder xmlParser = newFactory.newDocumentBuilder();
 		Document xmlDoc = xmlParser.parse(stream);
-		String schemaDir = System.getProperty("catalina.home") 
+		String schemaDir = System.getProperty("catalina.base") 
 		                        + File.separator + "conf" + File.separator + "shibboleth2" + File.separator
 		                        + "idp" + File.separator + "schema" + File.separator;
 		Schema schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);

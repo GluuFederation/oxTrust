@@ -94,10 +94,10 @@ public class LogFileSizeChecker {
 			String todayStr = sdf.format(today);
 
 			String filePath = "";
-			String tomcatHome = System.getProperty("catalina.home");
+			String tomcatHome = System.getProperty("catalina.base");
 			if (tomcatHome != null) {
 				log.debug("Setting the tomcat home directory");
-				filePath = System.getProperty("catalina.home") + File.separator + "conf" + File.separator
+				filePath = System.getProperty("catalina.base") + File.separator + "conf" + File.separator
 						+ OxTrustConfiguration.LOG_ROTATION_CONFIGURATION;
 				log.debug("FilePath: " + filePath);
 			} else {

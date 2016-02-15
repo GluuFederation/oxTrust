@@ -63,7 +63,7 @@ public class FilterService {
 	private Shibboleth2ConfService shibboleth2ConfService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
-		File filterFolder = new File(System.getProperty("catalina.home") + File.separator + "conf" + File.separator + "shibboleth2"
+		File filterFolder = new File(System.getProperty("catalina.base") + File.separator + "conf" + File.separator + "shibboleth2"
 				+ File.separator + "idp" + File.separator + "MetadataFilter");
 		File[] filterTemplates = null;
 		if (filterFolder.exists() && filterFolder.isDirectory()) {
