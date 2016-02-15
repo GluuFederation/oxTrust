@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gluu.oxtrust.action.test.ConfigurableTest;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.PersonMeta;
@@ -23,7 +24,6 @@ import org.gluu.oxtrust.model.scim.ScimPersonPhotos;
 import org.gluu.oxtrust.model.scim.ScimRoles;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.mock.SeamTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CopyUtilsTestCreate extends SeamTest {
+public class CopyUtilsTestCreate extends ConfigurableTest {
 	private static final String GLUU_STATUS = "gluuStatus";
 
 	private static final String OX_TRUST_PHOTOS_TYPE = "oxTrustPhotosType";
