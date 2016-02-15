@@ -24,8 +24,6 @@ import org.gluu.oxtrust.model.scim.ScimPersonPhotos;
 import org.gluu.oxtrust.model.scim.ScimRoles;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -101,21 +99,9 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 	private static final String OX_TRUSTHONORIFIC_PREFIX = "oxTrusthonorificPrefix";
 
 	private static final String OX_TRUST_MIDDLE_NAME = "oxTrustMiddleName";
-	@Before
-	public void startSeamInstance() throws Exception {
-		startSeam();
-		begin();
-	}
-
-	@After
-	public void stopSeamInstance() throws Exception {
-		end();
-		stopSeam();
-	}
 
 	@Test
 	public void testCopyScim1EmptyCreate() throws Exception {
-		
 		new ComponentTest() {
 			@Override
 			protected void testComponents() throws Exception {
