@@ -75,17 +75,17 @@
 
     <!-- ############### oxAuth ################# -->
     <category name="org.xdi.oxauth">
-        <priority value="TRACE" />
+        <priority value="${oxtrust.log4j.default.log.level}" />
     </category>
 
     <!-- ############### Gluu ################# -->
     <category name="org.gluu">
-        <priority value="INFO" />
+        <priority value="${oxtrust.log4j.default.log.level}" />
     </category>
 
     <!-- ############### opnexdi ################# -->
     <category name="org.openxdi">
-        <priority value="INFO" />
+        <priority value="${oxtrust.log4j.default.log.level}" />
     </category>
 
     <!-- ############### oxTrust ################# -->
@@ -142,7 +142,7 @@
     <!-- ================ -->
 
     <logger name="org.gluu.site.ldap.persistence" additivity="false">
-        <level value="INFO" />
+        <level value="${oxtrust.log4j.default.log.level}" />
         <appender-ref ref="OX_TRUST_PERSISTENCE_FILE" />
     </logger>
 
@@ -152,37 +152,37 @@
     </logger>
 
     <logger name="org.gluu.oxtrust.ldap.service.staus.ldap" additivity="false">
-        <level value="DEBUG"/>
+        <level value="${oxtrust.log4j.default.log.level}"/>
         <appender-ref ref="OX_TRUST_PERSISTENCE_LDAP_STATISTICS_FILE" />
     </logger>
 
     <logger name="org.gluu.oxtrust.service.external.ExternalCacheRefreshService" additivity="false">
-        <level value="DEBUG" />
+        <level value="${oxtrust.log4j.default.log.level}" />
         <appender-ref ref="OX_TRUST_CACHE_REFRESH_PYTHON_FILE" />
     </logger>
 
     <logger name="org.gluu.oxtrust.ldap.cache.service" additivity="false">
-        <level value="DEBUG" />
+        <level value="${oxtrust.log4j.default.log.level}" />
         <appender-ref ref="OX_TRUST_CACHE_REFRESH_FILE" />
     </logger>
 
     <logger name="org.gluu.oxtrust.action.ConfigureCacheRefreshAction" additivity="false">
-        <level value="DEBUG" />
+        <level value="${oxtrust.log4j.default.log.level}" />
         <appender-ref ref="OX_TRUST_CACHE_REFRESH_FILE" />
     </logger>
 
     <logger name="org.xdi.service.PythonService" additivity="false">
-        <level value="DEBUG"/>
+        <level value="${oxtrust.log4j.default.log.level}"/>
         <appender-ref ref="OX_TRUST_SCRIPT_LOG_FILE" />
     </logger>
 
     <logger name="org.xdi.service.custom.script" additivity="false">
-        <level value="DEBUG"/>
+        <level value="${oxtrust.log4j.default.log.level}"/>
         <appender-ref ref="OX_TRUST_SCRIPT_LOG_FILE" />
     </logger>
 
     <logger name="org.gluu.oxtrust.service.custom" additivity="false">
-        <level value="DEBUG"/>
+        <level value="${oxtrust.log4j.default.log.level}"/>
         <appender-ref ref="OX_TRUST_SCRIPT_LOG_FILE" />
     </logger>
 
