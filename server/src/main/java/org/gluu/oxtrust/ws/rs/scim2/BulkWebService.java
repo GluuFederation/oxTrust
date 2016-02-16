@@ -54,7 +54,7 @@ import org.jboss.seam.annotations.Name;
  */
 @Name("scim2BulkEndpoint")
 @Path("/scim/v2/Bulk")
-@Api(value = "/scim/v2/Bulk", description = "SCIM2 Bulk Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
+@Api(value = "/v2/Bulk", description = "SCIM 2.0 Bulk Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
 		authorizations = {
 				@Authorization(value = "Authorization", type = "oauth2")})
 public class BulkWebService extends BaseScimWebService {
