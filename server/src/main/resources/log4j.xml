@@ -147,7 +147,7 @@
     </logger>
 
     <logger name="com.unboundid.ldap.sdk.LDAPConnection" additivity="false">
-        <level value="DEBUG" />
+        <level value="${log4j.default.log.level}" />
         <appender-ref ref="OX_TRUST_PERSISTENCE_FILE" />
     </logger>
 
