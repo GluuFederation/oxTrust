@@ -118,6 +118,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.xdi</groupId>
+				<artifactId>oxtrust-configuration</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xdi</groupId>
 				<artifactId>openid-auth-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
