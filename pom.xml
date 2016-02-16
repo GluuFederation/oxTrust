@@ -111,26 +111,21 @@
 				<scope>import</scope>
 			</dependency>
 
-            <dependency>
-                <groupId>org.xdi</groupId>
-                <artifactId>oxtrust-static</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xdi</groupId>
-                <artifactId>oxtrust-configuration</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xdi</groupId>
-                <artifactId>openid-auth-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xdi</groupId>
-                <artifactId>oxtrust-scim</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>org.xdi</groupId>
+				<artifactId>oxtrust-static</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xdi</groupId>
+				<artifactId>openid-auth-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xdi</groupId>
+				<artifactId>oxtrust-scim</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<!-- OX libraries -->
 			<dependency>
