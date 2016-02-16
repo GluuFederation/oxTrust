@@ -30,6 +30,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -58,10 +60,10 @@ public class BulkWebService extends BaseScimWebService {
 	private static final Logger log = Logger.getLogger(BulkWebService.class);
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
-	private GroupService groupService;
+	private IGroupService groupService;
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

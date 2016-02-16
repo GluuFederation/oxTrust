@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -34,7 +36,7 @@ public class Utils implements Serializable {
 	 */
 	public static void deleteGroupFromPerson(GluuGroup group, String dn) throws Exception {
 
-		PersonService personService = PersonService.instance();
+		IPersonService personService = PersonService.instance();
 
 		List<String> persons = group.getMembers();
 		for (String onePerson : persons) {
@@ -91,7 +93,7 @@ public class Utils implements Serializable {
 	 */
 	public static void deleteUserFromGroup(GluuCustomPerson person, String dn) throws Exception {
 
-		GroupService groupService = GroupService.instance();
+		IGroupService groupService = GroupService.instance();
 
 		List<String> groups = person.getMemberOf();
 		for (String oneGroup : groups) {
@@ -133,7 +135,7 @@ public class Utils implements Serializable {
 	 * @throws Exception
 	 */
 	public static void personMemebersAdder(GluuGroup gluuGroup, String dn) throws Exception {
-		PersonService personService = PersonService.instance();
+		IPersonService personService = PersonService.instance();
 
 		List<String> members = gluuGroup.getMembers();
 
@@ -180,7 +182,7 @@ public class Utils implements Serializable {
 	 */
 	public static void groupMemebersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
 
-		GroupService groupService = GroupService.instance();
+		IGroupService groupService = GroupService.instance();
 
 		List<String> groups = gluuPerson.getMemberOf();
 

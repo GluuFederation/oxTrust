@@ -8,7 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
-import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
@@ -38,7 +38,7 @@ public class UserPasswordAction implements Serializable {
 	private GluuCustomPerson person;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	public String validatePassword() {
 		String result;

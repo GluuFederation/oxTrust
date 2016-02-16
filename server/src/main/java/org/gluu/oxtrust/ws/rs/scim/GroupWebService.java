@@ -24,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupList;
 import org.gluu.oxtrust.model.scim.ScimGroup;
@@ -47,7 +48,7 @@ public class GroupWebService extends BaseScimWebService {
 	private Log log;
 
 	@In
-	private GroupService groupService;
+	private IGroupService groupService;
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

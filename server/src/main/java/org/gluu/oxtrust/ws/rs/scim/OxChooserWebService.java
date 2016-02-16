@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -68,7 +69,7 @@ public class OxChooserWebService extends BaseScimWebService {
 	private Log log;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private SecurityService securityService;

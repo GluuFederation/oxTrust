@@ -96,13 +96,27 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Create
     public void init() {
-//        RequestorPoolEntry entry = new RequestorPoolEntry();
-//        entry.setId("RequestorPool_1");
-//        entry.setFriendlyName("RequestorPool 1");
-//        entry.setLastModified(new Date());
-//        spPoolList.add(entry);
+        log.info("init() SPPool call");
         //list loading
         spPoolList = asimbaService.loadRequestorPools();
+    }
+    
+    public void tempTestSPPoolCRUD() {
+        log.info("tempTestSPPoolCRUD() start");
+
+        RequestorPoolEntry entry = new RequestorPoolEntry();
+        entry.setId("requestorpool.1");
+        entry.setFriendlyName("Requestor Pool 1");
+        entry.setForcedAuthenticate(false);
+        entry.setAuthenticationProfileIDs("remote.saml2");
+        entry.setPostAuthorizationProfileID("postauthz.1");
+        entry.setAttributeReleasePolicyID("asimba.releasepolicy.1");
+        entry.setEnabled(true);
+        entry.setLastModified(new Date());
+        
+        log.info("test RequestorPoolEntry", entry);
+        asimbaService.addRequestorPoolEntry(entry);
+        log.info("test RequestorPoolEntry saved");
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -122,6 +136,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel() RequestorPool", spPool);
+        spPool = new RequestorPoolEntry();
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")

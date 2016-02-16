@@ -12,7 +12,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
@@ -52,7 +52,7 @@ public class SearchGroupAction implements Serializable {
 	private List<GluuGroup> groupList;
 
 	@In
-	private GroupService groupService;
+	private IGroupService groupService;
 
 	@Restrict("#{s:hasPermission('group', 'access')}")
 	public String start() {

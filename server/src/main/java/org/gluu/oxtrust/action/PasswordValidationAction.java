@@ -14,7 +14,7 @@ import javax.faces.context.FacesContext;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
-import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
 import org.jboss.seam.ScopeType;
@@ -41,7 +41,7 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	private Log log;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	private String oldPassword = "";
 

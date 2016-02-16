@@ -38,10 +38,10 @@ public class SecurityService implements Serializable {
 	private Log log;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
-	private GroupService groupService;
+	private IGroupService groupService;
 
 	@In
 	private OrganizationService organizationService;

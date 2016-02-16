@@ -8,33 +8,43 @@
 
     <restrict>#{s:hasPermission('trust', 'access')}</restrict>
 
-    <!--<action execute="#{trustRelationshipInventoryAction.start}" if="#{trustRelationshipInventoryAction.trustedSpList == null}" on-postback="false" />-->
-
     <rewrite pattern="/asimba/addIDP" />
 
-    <navigation from-action="#{updateAsimbaIDPAction.add}">
+    <navigation from-action="#{updateAsimbaIDPAction.save}">
         <rule if-outcome="success">
-            <begin-conversation join="true" flush-mode="manual" />
             <render view-id="/asimba/idps.xhtml" />
         </rule>
 
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to add IDP</message>
+                <message severity="ERROR">Failed to save Asimba IDP</message>
             </redirect>
         </rule>
     </navigation>
 
-    <navigation from-action="#{updateAsimbaIDPAction.search}">
+    <navigation from-action="#{updateAsimbaIDPAction.add}">
         <rule if-outcome="success">
-            <redirect view-id="/asimba/idps.xhtml" />
+            <render view-id="/asimba/idps.xhtml" />
         </rule>
 
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to search IDPs</message>
+                <message severity="ERROR">Failed to add Asimba IDP</message>
+            </redirect>
+        </rule>
+    </navigation>
+
+    <navigation from-action="#{updateAsimbaIDPAction.cancel}">
+        <rule if-outcome="success">
+            <render view-id="/asimba/idps.xhtml" />
+        </rule>
+
+        <rule if-outcome="failure">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">Failed to cancel Asimba IDP</message>
             </redirect>
         </rule>
     </navigation>

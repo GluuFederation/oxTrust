@@ -8,8 +8,6 @@
 
     <restrict>#{s:hasPermission('trust', 'access')}</restrict>
 
-    <!--<action execute="#{trustRelationshipInventoryAction.start}" if="#{trustRelationshipInventoryAction.trustedSpList == null}" on-postback="false" />-->
-
     <rewrite pattern="/asimba/idps" />
 
     <navigation from-action="#{updateAsimbaIDPAction.add}">
@@ -21,7 +19,7 @@
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to add IDP</message>
+                <message severity="ERROR">Failed to add Asimba IDP</message>
             </redirect>
         </rule>
     </navigation>
@@ -34,7 +32,7 @@
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to search IDPs</message>
+                <message severity="ERROR">Failed to search Asimba IDPs</message>
             </redirect>
         </rule>
     </navigation>
