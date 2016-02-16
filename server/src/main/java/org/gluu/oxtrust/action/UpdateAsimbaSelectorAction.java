@@ -8,7 +8,6 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
@@ -81,12 +80,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Create
     public void init() {
-//        ApplicationSelectorEntry entry = new ApplicationSelectorEntry();
-//        entry.setId("Selector_1");
-//        entry.setFriendlyName("Selector 1");
-//        entry.setLastModified(new Date());
-//        selectorList.add(entry);
-        
+        log.info("init() Selector call");
         // list loading
         selectorList = asimbaService.loadSelectors();
     }
@@ -108,6 +102,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel() Selector", selector);
+        selector = new ApplicationSelectorEntry();
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")

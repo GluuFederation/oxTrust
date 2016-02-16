@@ -8,10 +8,8 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -81,16 +79,8 @@ public class UpdateAsimbaIDPAction implements Serializable {
     }
     
     @Create
-    public void init() {
-        IDPEntry entry = new IDPEntry();
-        entry.setId("IDP_1");
-        entry.setFriendlyName("IDP 1");
-        entry.setLastModified(new Date());
-        idpList.add(entry);
-        
-        log.info("init() call, IDP", entry);
-        
-        asimbaService.loadAsimbaConfiguration();
+    public void init() {        
+        log.info("init() IDP call");
         // list loading
         idpList = asimbaService.loadIDPs();
     }
@@ -112,6 +102,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel IDP", idp);
+        idp = new IDPEntry();
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")

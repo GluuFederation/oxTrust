@@ -25,6 +25,7 @@ import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
+import org.jboss.seam.init.Initialization;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
@@ -63,8 +64,8 @@ public class OxTrustConfiguration {
         }
     }
 
-    private static final String BASE_DIR;
-    private static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
+    public static final String BASE_DIR;
+    public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
 	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
 	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxtrust-central-ldap.properties";
@@ -202,7 +203,7 @@ public class OxTrustConfiguration {
                 return true;
             }
         } catch (Exception ex) {
-        	log.error(ex.getMessage(), ex);
+    		log.error(ex.getMessage(), ex);
         }
 
 		if (recoverFromFiles) {

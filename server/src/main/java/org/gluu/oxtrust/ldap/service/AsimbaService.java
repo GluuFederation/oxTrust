@@ -65,18 +65,14 @@ public class AsimbaService {
     
     public LdapConfigurationEntry loadAsimbaConfiguration() {
         String applianceDn = applianceService.getDnForAppliance();
-        //LdapConfigurationEntry template = new LdapConfigurationEntry();
-        //template.setDn("ou=oxasimba,ou=configuration,"+applianceDn);
         LdapConfigurationEntry ldapConfiguration = ldapEntryManager.find(LdapConfigurationEntry.class, "ou=oxasimba,ou=configuration,"+applianceDn, null);
         
         return ldapConfiguration;
     }
     
     public List<IDPEntry> loadIDPs() {
+        List<LdapIDPEntry> entries = ldapEntryManager.findEntries(getDnForLdapIDPEntry(null), LdapIDPEntry.class, null);
         List<IDPEntry> result = new ArrayList<IDPEntry>();
-        LdapIDPEntry template = new LdapIDPEntry();
-        template.setDn(getDnForLdapIDPEntry(null));
-        List<LdapIDPEntry> entries = ldapEntryManager.findEntries(template);
         for (LdapIDPEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -84,10 +80,9 @@ public class AsimbaService {
     }
     
     public List<RequestorPoolEntry> loadRequestorPools() {
+        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorPoolEntry(null), 
+                LDAPRequestorPoolEntry.class, null);
         List<RequestorPoolEntry> result = new ArrayList<RequestorPoolEntry>();
-        LDAPRequestorPoolEntry template = new LDAPRequestorPoolEntry();
-        template.setDn(getDnForLDAPRequestorPoolEntry(null));
-        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPRequestorPoolEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -95,10 +90,9 @@ public class AsimbaService {
     }
     
     public List<RequestorEntry> loadRequestors() {
+        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorEntry(null),
+                LDAPRequestorEntry.class, null);
         List<RequestorEntry> result = new ArrayList<RequestorEntry>();
-        LDAPRequestorEntry template = new LDAPRequestorEntry();
-        template.setDn(getDnForLDAPRequestorEntry(null));
-        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPRequestorEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -106,10 +100,9 @@ public class AsimbaService {
     }
     
     public List<ApplicationSelectorEntry> loadSelectors() {
+        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPApplicationSelectorEntry(null),
+                LDAPApplicationSelectorEntry.class, null);
         List<ApplicationSelectorEntry> result = new ArrayList<ApplicationSelectorEntry>();
-        LDAPApplicationSelectorEntry template = new LDAPApplicationSelectorEntry();
-        template.setDn(getDnForLDAPApplicationSelectorEntry(null));
-        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPApplicationSelectorEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -310,10 +303,10 @@ public class AsimbaService {
         log.info("addIDPEntry() call");
         try {
             LdapIDPEntry ldapEntry = new LdapIDPEntry();
+            ldapEntry.setEntry(entry);
             String inum = generateInumImpl();
             ldapEntry.setInum(inum);
             ldapEntry.setDn(getDnForLdapIDPEntry(inum));
-            ldapEntry.setEntry(entry);
             ldapEntryManager.persist(ldapEntry);
         } catch (Exception e) {
             log.error("addIDPEntry() exception", e);
@@ -365,10 +358,10 @@ public class AsimbaService {
     */
     public void addRequestorPoolEntry(RequestorPoolEntry entry) {
         LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
+        ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPRequestorPoolEntry(inum));
-        ldapEntry.setEntry(entry);
         ldapEntryManager.persist(ldapEntry);
     }
 
@@ -417,10 +410,10 @@ public class AsimbaService {
     */
     public void addRequestorEntry(RequestorEntry entry) {
         LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
+        ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPRequestorEntry(inum));
-        ldapEntry.setEntry(entry);
         ldapEntryManager.persist(ldapEntry);
     }
 
@@ -469,10 +462,10 @@ public class AsimbaService {
     */
     public void addApplicationSelectorEntry(ApplicationSelectorEntry entry) {
         LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
+        ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPApplicationSelectorEntry(inum));
-        ldapEntry.setEntry(entry);
         ldapEntryManager.persist(ldapEntry);
     }
 

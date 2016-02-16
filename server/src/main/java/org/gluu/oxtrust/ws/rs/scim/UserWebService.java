@@ -35,6 +35,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.dom4j.Document;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DocumentSource;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuCustomPersonList;
@@ -65,7 +66,7 @@ public class UserWebService extends BaseScimWebService {
 	private Log log;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private UmaAuthenticationService umaAuthenticationService;

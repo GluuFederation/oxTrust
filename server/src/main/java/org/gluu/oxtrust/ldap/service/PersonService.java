@@ -9,7 +9,6 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,14 +30,12 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
-import com.unboundid.util.StaticUtils;
 
 /**
  * Provides operations with persons
@@ -48,7 +45,7 @@ import com.unboundid.util.StaticUtils;
 @Scope(ScopeType.STATELESS)
 @Name("personService")
 @AutoCreate
-public class PersonService implements Serializable {
+public class PersonService implements Serializable, IPersonService {
 
 	private static final long serialVersionUID = 6685720517520443399L;
 
@@ -59,7 +56,7 @@ public class PersonService implements Serializable {
 	private LdapEntryManager ldapEntryManager;
 
 	@In
-	private GroupService groupService;
+	private IGroupService groupService;
 
 	@In
 	private AttributeService attributeService;
@@ -69,6 +66,10 @@ public class PersonService implements Serializable {
 
 	private List<GluuCustomAttribute> mandatoryAttributes;
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#addCustomObjectClass(org.gluu.oxtrust.model.GluuCustomPerson)
+	 */
+	@Override
 	public void addCustomObjectClass(GluuCustomPerson person) {
 		String customObjectClass = attributeService.getCustomOrigin();
 		String[] customObjectClassesArray = person.getCustomObjectClasses();
@@ -88,15 +89,12 @@ public class PersonService implements Serializable {
 		}
 	}
 
-	/**
-	 * Add new person
-	 * 
-	 * @param person
-	 *            Person
-	 * @throws DuplicateEntryException
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#addPerson(org.gluu.oxtrust.model.GluuCustomPerson)
 	 */
 	// TODO: Review this methods. We need to check if uid is unique in outside
 	// method
+	@Override
 	public void addPerson(GluuCustomPerson person) throws DuplicateEntryException {
 		GluuCustomPerson uidPerson = new GluuCustomPerson();
 		uidPerson.setUid(person.getUid());
@@ -108,23 +106,19 @@ public class PersonService implements Serializable {
 		}
 	}
 
-	/**
-	 * Add person entry
-	 * 
-	 * @param person
-	 *            Person
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#updatePerson(org.gluu.oxtrust.model.GluuCustomPerson)
 	 */
+	@Override
 	public void updatePerson(GluuCustomPerson person) {
 		ldapEntryManager.merge(person);
 
 	}
 
-	/**
-	 * Remove person with persona and contacts branches
-	 * 
-	 * @param person
-	 *            Person
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#removePerson(org.gluu.oxtrust.model.GluuCustomPerson)
 	 */
+	@Override
 	public void removePerson(GluuCustomPerson person) {
 		// TODO: Do we realy need to remove group if owner is removed?
 		List<GluuGroup> groups = groupService.getAllGroups();
@@ -138,15 +132,10 @@ public class PersonService implements Serializable {
 		ldapEntryManager.removeWithSubtree(person.getDn());
 	}
 
-	/**
-	 * Search persons by pattern
-	 * 
-	 * @param pattern
-	 *            Pattern
-	 * @param sizeLimit
-	 *            Maximum count of results
-	 * @return List of persons
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#searchPersons(java.lang.String, int)
 	 */
+	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter uidFilter = Filter.createSubstringFilter(OxTrustConstants.uid, null, targetArray, null);
@@ -160,32 +149,19 @@ public class PersonService implements Serializable {
 		return result;
 	}
 
-	/**
-	 * Search persons by sample object
-	 * 
-	 * @param person
-	 *            Person with set attributes relevant to he current search (for
-	 *            example gluuAllowPublication)
-	 * @param sizeLimit
-	 *            Maximum count of results
-	 * @return List of persons
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#findPersons(org.gluu.oxtrust.model.GluuCustomPerson, int)
 	 */
+	@Override
 	public List<GluuCustomPerson> findPersons(GluuCustomPerson person, int sizeLimit) {
 		person.setBaseDn(getDnForPerson(null));
 		return ldapEntryManager.findEntries(person, sizeLimit);
 	}
 
-	/**
-	 * Search persons by pattern
-	 * 
-	 * @param pattern
-	 *            Pattern
-	 * @param sizeLimit
-	 *            Maximum count of results
-	 * @param excludedPersons
-	 *            list of uids that we don't want returned by service
-	 * @return List of persons
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#searchPersons(java.lang.String, int, java.util.List)
 	 */
+	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit, List<GluuCustomPerson> excludedPersons) throws Exception {
 		String[] targetArray = new String[] { pattern };
 		Filter uidFilter = Filter.createSubstringFilter(OxTrustConstants.uid, null, targetArray, null);
@@ -219,12 +195,20 @@ public class PersonService implements Serializable {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#findAllPersons(java.lang.String[])
+	 */
+	@Override
 	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes)  {
 		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, null);
 
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#findPersonsByUids(java.util.List, java.lang.String[])
+	 */
+	@Override
 	public List<GluuCustomPerson> findPersonsByUids(List<String> uids, String[] returnAttributes) throws Exception {
 		List<Filter> uidFilters = new ArrayList<Filter>();
 		for (String uid : uids) {
@@ -239,32 +223,36 @@ public class PersonService implements Serializable {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#findPersonByDn(java.lang.String, java.lang.String)
+	 */
+	@Override
 	public GluuCustomPerson findPersonByDn(String dn, String... returnAttributes) {
 		return ldapEntryManager.find(GluuCustomPerson.class, dn, returnAttributes);
 	}
 
-	/**
-	 * Check if LDAP server contains person with specified attributes
-	 * 
-	 * @return True if person with specified attributes exist
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#containsPerson(org.gluu.oxtrust.model.GluuCustomPerson)
 	 */
+	@Override
 	public boolean containsPerson(GluuCustomPerson person) {
 		boolean result = ldapEntryManager.contains(person);
 
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#contains(java.lang.String)
+	 */
+	@Override
 	public boolean contains(String dn) {
 		return ldapEntryManager.contains(GluuCustomPerson.class, dn);
 	}
 
-	/**
-	 * Get person by DN
-	 * 
-	 * @param dn
-	 *            Dn
-	 * @return Person
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonByDn(java.lang.String)
 	 */
+	@Override
 	public GluuCustomPerson getPersonByDn(String dn) {
 		GluuCustomPerson result = ldapEntryManager.find(GluuCustomPerson.class, dn);
 
@@ -272,16 +260,10 @@ public class PersonService implements Serializable {
 
 	}
 
-	/**
-	 * Get person by inum
-	 * 
-	 * @param returnClass
-	 *            POJO class which EntryManager should use to return entry
-	 *            object
-	 * @param inum
-	 *            Inum
-	 * @return Person
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonByInum(java.lang.String)
 	 */
+	@Override
 	public GluuCustomPerson getPersonByInum(String inum) {
 		GluuCustomPerson person = null;
 		try{
@@ -294,13 +276,10 @@ public class PersonService implements Serializable {
 		return person;
 	}
 
-	/**
-	 * Get person by uid
-	 * 
-	 * @param uid
-	 *            Uid
-	 * @return Person
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonByUid(java.lang.String)
 	 */
+	@Override
 	public GluuCustomPerson getPersonByUid(String uid) {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
@@ -315,6 +294,10 @@ public class PersonService implements Serializable {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#countPersons()
+	 */
+	@Override
 	public int countPersons() {
 		GluuCustomPerson gluuBasePerson = new GluuCustomPerson();
 		gluuBasePerson.setBaseDn(getDnForPerson(null));
@@ -322,11 +305,10 @@ public class PersonService implements Serializable {
 		return ldapEntryManager.countEntries(gluuBasePerson);
 	}
 
-	/**
-	 * Generate new inum for person
-	 * 
-	 * @return New inum for person
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#generateInumForNewPerson()
 	 */
+	@Override
 	public String generateInumForNewPerson() {
 		GluuCustomPerson person = null;
 		String newInum = null;
@@ -352,6 +334,10 @@ public class PersonService implements Serializable {
 		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_PERSON_OBJECTTYPE + OxTrustConstants.inumDelimiter + generateInum();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#generateInameForNewPerson(java.lang.String)
+	 */
+	@Override
 	public String generateInameForNewPerson(String uid) {
 		return String.format("%s*person*%s", applicationConfiguration.getOrgIname(), uid);
 	}
@@ -374,15 +360,10 @@ public class PersonService implements Serializable {
 		return inum;
 	}
 
-	/**
-	 * Build DN string for person
-	 * 
-	 * @param inum
-	 *            Inum
-	 * @return DN string for specified person or DN for persons branch if inum
-	 *         is null
-	 * @throws Exception
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getDnForPerson(java.lang.String)
 	 */
+	@Override
 	public String getDnForPerson(String inum) {
 		String orgDn = OrganizationService.instance().getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
@@ -392,15 +373,10 @@ public class PersonService implements Serializable {
 		return String.format("inum=%s,ou=people,%s", inum, orgDn);
 	}
 
-	/**
-	 * Authenticate user
-	 * 
-	 * @param userName
-	 *            User name
-	 * @param password
-	 *            User password
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#authenticate(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public boolean authenticate(String userName, String password) {
 		boolean result = ldapEntryManager.authenticate(userName, password, applicationConfiguration.getBaseDN());
 
@@ -412,10 +388,14 @@ public class PersonService implements Serializable {
 	 * 
 	 * @return PersonService instance
 	 */
-	public static PersonService instance() {
-		return (PersonService) Component.getInstance(PersonService.class);
+	public static IPersonService instance() {
+		return (IPersonService) Component.getInstance(PersonService.class);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getMandatoryAtributes()
+	 */
+	@Override
 	public List<GluuCustomAttribute> getMandatoryAtributes() {
 		if (this.mandatoryAttributes == null) {
 			mandatoryAttributes = new ArrayList<GluuCustomAttribute>();
@@ -429,6 +409,10 @@ public class PersonService implements Serializable {
 		return mandatoryAttributes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonString(java.util.List)
+	 */
+	@Override
 	public String getPersonString(List<GluuCustomPerson> persons) throws Exception {
 		StringBuilder sb = new StringBuilder();
 
@@ -442,12 +426,20 @@ public class PersonService implements Serializable {
 		return sb.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#createEntities(java.util.Map)
+	 */
+	@Override
 	public List<GluuCustomPerson> createEntities(Map<String, List<AttributeData>> entriesAttributes) throws Exception {
 		List<GluuCustomPerson> result = ldapEntryManager.createEntities(GluuCustomPerson.class, entriesAttributes);
 
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#isMemberOrOwner(java.lang.String[], java.lang.String)
+	 */
+	@Override
 	public boolean isMemberOrOwner(String[] groupDNs, String personDN) throws Exception {
 		boolean result = false;
 		if (ArrayHelper.isEmpty(groupDNs)) {
@@ -468,13 +460,10 @@ public class PersonService implements Serializable {
 		return result;
 	}
 
-	/**
-	 * Get person by email
-	 * 
-	 * @param email
-	 *            email
-	 * @return Person
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonByEmail(java.lang.String)
 	 */
+	@Override
 	public GluuCustomPerson getPersonByEmail(String email) {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
@@ -489,15 +478,10 @@ public class PersonService implements Serializable {
 		return null;
 	}
 
-	/**
-	 * Get person by attribute
-	 * 
-	 * @param attribute
-	 *            attribute
-	 * @param value
-	 *            value
-	 * @return Person
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonByAttribute(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public GluuCustomPerson getPersonByAttribute(String attribute, String value) throws Exception {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
@@ -512,21 +496,19 @@ public class PersonService implements Serializable {
 		return null;
 	}
 
-	/**
-	 * Remove custom attribute from all persons.
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#removeAttribute(org.xdi.model.GluuAttribute)
 	 */
+	@Override
 	public void removeAttribute(GluuAttribute attribute) {
 		ldapEntryManager.removeAttributeFromEntries(getDnForPerson(null), GluuCustomPerson.class, attribute.getName());
 		
 	}
 
-	/**
-	 * Get user by uid
-	 * 
-	 * @param uid
-	 *            Uid
-	 * @return User
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#getUserByUid(java.lang.String)
 	 */
+	@Override
 	public User getUserByUid(String uid) {
 
 		User user = new User();
@@ -552,6 +534,7 @@ public class PersonService implements Serializable {
 	 *            value
 	 * @return List <Person>
 	 */
+	@Override
 	public List<GluuCustomPerson> getPersonsByAttribute(String attribute, String value) throws Exception {
 		log.info("atttriburte : " + attribute + "      value : "+value);
 		GluuCustomPerson person = new GluuCustomPerson();

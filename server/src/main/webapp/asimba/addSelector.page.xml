@@ -8,34 +8,44 @@
 
     <restrict>#{s:hasPermission('trust', 'access')}</restrict>
 
-    <!--<action execute="#{trustRelationshipInventoryAction.start}" if="#{trustRelationshipInventoryAction.trustedSpList == null}" on-postback="false" />-->
-
     <rewrite pattern="/asimba/addSelector" />
 
-    <!--<navigation from-action="#{trustRelationshipInventoryAction.start}">
+    <navigation from-action="#{updateAsimbaSelectorAction.save}">
         <rule if-outcome="success">
-            <begin-conversation join="true" flush-mode="manual" />
             <render view-id="/asimba/selectors.xhtml" />
         </rule>
 
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to find trust relationships</message>
+                <message severity="ERROR">Failed to save Asimba Selector</message>
             </redirect>
         </rule>
     </navigation>
 
-    <navigation from-action="#{trustRelationshipInventoryAction.search}">
+    <navigation from-action="#{updateAsimbaSelectorAction.add}">
         <rule if-outcome="success">
-            <redirect view-id="/asimba/selectors.xhtml" />
+            <render view-id="/asimba/selectors.xhtml" />
         </rule>
 
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to trust relationships</message>
+                <message severity="ERROR">Failed to add Asimba Selector</message>
             </redirect>
         </rule>
-    </navigation>-->
+    </navigation>
+
+    <navigation from-action="#{updateAsimbaSelectorAction.cancel}">
+        <rule if-outcome="success">
+            <render view-id="/asimba/selectors.xhtml" />
+        </rule>
+
+        <rule if-outcome="failure">
+            <end-conversation />
+            <redirect view-id="/home.xhtml">
+                <message severity="ERROR">Failed to cancel Asimba Selector</message>
+            </redirect>
+        </rule>
+    </navigation>
 </page>

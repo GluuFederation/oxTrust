@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import javax.faces.context.FacesContext;
@@ -18,6 +17,7 @@ import javax.faces.model.SelectItem;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
+import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -77,7 +77,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     private List<RequestorEntry> spRequestorList = new ArrayList<RequestorEntry>();
     
-    private ArrayList<SelectItem> spList = new ArrayList<SelectItem>();
+    private ArrayList<SelectItem> spPoolList = new ArrayList<SelectItem>();
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -90,15 +90,14 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     @Create
     public void init() {
-        //TODO: fill spList
-        //TODO: rename to spPoolList
-        spList.add(new SelectItem("Pool_1", "Pool_1"));
+        log.info("init() SPRequestor call");
+        // fill spPoolList
+        List<RequestorPoolEntry> spPoolListEntries = asimbaService.loadRequestorPools();
+        for (RequestorPoolEntry entry : spPoolListEntries) {
+            spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
+        }
         
-//        RequestorEntry entry = new RequestorEntry();
-//        entry.setId("Requestor_1");
-//        entry.setFriendlyName("Requestor 1");
-//        entry.setLastModified(new Date());
-//        spRequestorList.add(entry);
+        spRequestor.setPoolID("requestorpool.1");
 
         //list loading
         spRequestorList = asimbaService.loadRequestors();
@@ -121,6 +120,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel() Requestor", spRequestor);
+        spRequestor = new RequestorEntry();
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -211,17 +211,17 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     }
 
     /**
-     * @return the spList
+     * @return the spPoolList
      */
-    public ArrayList<SelectItem> getSpList() {
-        return spList;
+    public ArrayList<SelectItem> getSpPoolList() {
+        return spPoolList;
     }
 
     /**
-     * @param spList the spList to set
+     * @param spPoolList the spPoolList to set
      */
-    public void setSpList(ArrayList<SelectItem> spList) {
-        this.spList = spList;
+    public void setSpPoolList(ArrayList<SelectItem> spPoolList) {
+        this.spPoolList = spPoolList;
     }
 
     /**

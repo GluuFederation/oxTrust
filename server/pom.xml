@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.xdi</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>2.4.2.Final</version>
+		<version>3.0.3-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -402,6 +402,12 @@
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-static</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxtrust-configuration</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-scim</artifactId>
@@ -903,7 +909,13 @@
 			<artifactId>arquillian-container-spi</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+<!--
+		<dependency>
+			<groupId>org.jboss.arquillian.extension</groupId>
+			<artifactId>arquillian-seam2</artifactId>
+			<scope>test</scope>
+		</dependency>
+ -->
 		<dependency>
 			<groupId>org.eu.ingwar.tools</groupId>
 			<artifactId>arquillian-suite-extension</artifactId>

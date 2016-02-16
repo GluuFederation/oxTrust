@@ -11,22 +11,14 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.gluu.asimba.util.ldap.sp.LDAPRequestorPoolEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
-import org.gluu.oxtrust.ldap.service.TemplateService;
-import org.gluu.oxtrust.ldap.service.TrustService;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -40,8 +32,6 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
 
 
 /**
@@ -96,11 +86,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Create
     public void init() {
-//        RequestorPoolEntry entry = new RequestorPoolEntry();
-//        entry.setId("RequestorPool_1");
-//        entry.setFriendlyName("RequestorPool 1");
-//        entry.setLastModified(new Date());
-//        spPoolList.add(entry);
+        log.info("init() SPPool call");
         //list loading
         spPoolList = asimbaService.loadRequestorPools();
     }
@@ -122,6 +108,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel() RequestorPool", spPool);
+        spPool = new RequestorPoolEntry();
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")

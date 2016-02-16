@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
@@ -45,7 +46,7 @@ public class ClientAssociationWebService extends BaseScimWebService {
 	private Log log;
 
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private ClientService clientService;

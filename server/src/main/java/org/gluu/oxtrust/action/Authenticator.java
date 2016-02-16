@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AuthenticationService;
-import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -99,7 +99,7 @@ public class Authenticator implements Serializable {
 	Redirect redirect;
 	
 	@In
-	private PersonService personService;
+	private IPersonService personService;
 
 	@In
 	private SecurityService securityService;
