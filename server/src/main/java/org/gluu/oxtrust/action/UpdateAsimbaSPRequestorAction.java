@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import javax.faces.context.FacesContext;
@@ -102,22 +101,6 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 
         //list loading
         spRequestorList = asimbaService.loadRequestors();
-    }
-    
-    public void tempTestSPRequestorCRUD() {
-        log.info("tempTestSPRequestorCRUD() start");
-        RequestorEntry entry = new RequestorEntry();
-        entry.setId("https://ce.gluu.info/shibboleth");
-        entry.setSigning(false);
-        entry.setFriendlyName("Apache webserver Requestor");
-        entry.setPoolID("requestorpool.1");
-        entry.setMetadataFile("${webapp.root}/WEB-INF/sample-data/ce-localhost-sp.xml");
-        entry.setLastModified(new Date());
-        spRequestorList.add(entry);
-        
-        log.info("test RequestorEntry", entry);
-        asimbaService.addRequestorEntry(entry);
-        log.info("test RequestorEntry saved");
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")

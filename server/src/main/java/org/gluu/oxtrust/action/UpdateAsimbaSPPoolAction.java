@@ -11,22 +11,14 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.gluu.asimba.util.ldap.sp.LDAPRequestorPoolEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
-import org.gluu.oxtrust.ldap.service.TemplateService;
-import org.gluu.oxtrust.ldap.service.TrustService;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -40,8 +32,6 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
 
 
 /**
@@ -99,24 +89,6 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         log.info("init() SPPool call");
         //list loading
         spPoolList = asimbaService.loadRequestorPools();
-    }
-    
-    public void tempTestSPPoolCRUD() {
-        log.info("tempTestSPPoolCRUD() start");
-
-        RequestorPoolEntry entry = new RequestorPoolEntry();
-        entry.setId("requestorpool.1");
-        entry.setFriendlyName("Requestor Pool 1");
-        entry.setForcedAuthenticate(false);
-        entry.setAuthenticationProfileIDs("remote.saml2");
-        entry.setPostAuthorizationProfileID("postauthz.1");
-        entry.setAttributeReleasePolicyID("asimba.releasepolicy.1");
-        entry.setEnabled(true);
-        entry.setLastModified(new Date());
-        
-        log.info("test RequestorPoolEntry", entry);
-        asimbaService.addRequestorPoolEntry(entry);
-        log.info("test RequestorPoolEntry saved");
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
