@@ -926,6 +926,27 @@
             "minimum": 1,
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
+        },
+        "pairwiseIdType": {
+            "id": "pairwiseIdType",
+            "description": "The pairwise ID type.",
+            "type": "string",
+            "enum": [
+                "persistent",
+                "algorithmic"
+            ]
+        },
+        "pairwiseCalculationKey": {
+            "id": "pairwiseCalculationKey",
+            "description": "Key to calculate algorithmic pairwise IDs.",
+            "type": "string",
+            "minLength": 1
+        },
+        "pairwiseCalculationSalt": {
+            "id": "pairwiseCalculationSalt",
+            "description": "Salt to calculate algorithmic pairwise IDs.",
+            "type": "string",
+            "minLength": 1
         }
     },
     "required": [
@@ -1020,6 +1041,9 @@
         "jsLocation",
         "imgLocation",
         "metricReporterInterval",
-        "metricReporterKeepDataDays"
+        "metricReporterKeepDataDays",
+        "pairwiseIdType",
+        "pairwiseCalculationKey",
+        "pairwiseCalculationSalt"
     ]
 }
