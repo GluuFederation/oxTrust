@@ -71,17 +71,18 @@ public class SchemaWebService extends BaseScimWebService {
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response getSchemaById(@HeaderParam("Authorization") String authorization, @PathParam("id") String id) throws Exception {
 
-        log.info(" getSchemaById(), id = " + id);
+        log.info(" getSchemaById(), id = '" + id + "'");
 
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
         SchemaType schemaType = factory.load(id);
 
         URI location = new URI("/v2/Schemas/" + id);
 
-        if (schemaType != null) {
-            return Response.ok(schemaType).location(location).build();
-        } else {
-            return Response.ok("{}").location(location).build();
+        if (schemaType == null) {
+            log.info(" NOT FOUND: schema with id = '" + id + "'");
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        return Response.ok(schemaType).location(location).build();
     }
 }

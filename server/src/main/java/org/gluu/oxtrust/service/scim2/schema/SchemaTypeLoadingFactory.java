@@ -21,7 +21,13 @@ import org.gluu.oxtrust.service.scim2.schema.strategy.UserExtensionLoadingStrate
 public class SchemaTypeLoadingFactory {
 
     public SchemaType load(String id) throws Exception {
+
         SchemaType schemaType = SchemaTypeMapping.getSchemaTypeInstance(id);
+
+        if (schemaType == null) {
+            return null;
+        }
+
         return load(schemaType);
     }
 
@@ -35,10 +41,10 @@ public class SchemaTypeLoadingFactory {
             loadingStrategy = new UserExtensionLoadingStrategy();
         }
 
-        if (loadingStrategy != null) {
-            return loadingStrategy.load(schemaType);
-        } else {
+        if (loadingStrategy == null) {
             return null;
         }
+
+        return loadingStrategy.load(schemaType);
     }
 }
