@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -16,12 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.annotations.Api;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
-import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
-import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
-import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.ws.rs.scim.BaseScimWebService;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -32,7 +26,6 @@ import org.jboss.seam.log.Log;
  */
 @Name("resourceTypesWs")
 @Path("/scim/v2/ResourceTypes")
-@Api(value = "/v2/ResourceTypes", description = "SCIM 2.0 ResourceType Endpoint (https://tools.ietf.org/html/rfc7643#section-6)")
 public class ResourceTypeWS extends BaseScimWebService {
 
 	@Logger
@@ -48,14 +41,6 @@ public class ResourceTypeWS extends BaseScimWebService {
 		resource.setName("User");
 		resource.setId("User");
 		resource.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");		
-
-		List<SchemaExtensionHolder> schemaExtensions = new ArrayList<SchemaExtensionHolder>();
-		SchemaExtensionHolder userExtensionSchema = new SchemaExtensionHolder();
-		userExtensionSchema.setSchema(SchemaTypeMapping.EXT_ID);
-		userExtensionSchema.setRequired(false);
-		schemaExtensions.add(userExtensionSchema);
-		resource.setSchemaExtensions(schemaExtensions);
-
 		resouceTypes.getResources().add(resource);
 		
 		resource = new ResourceType();
@@ -65,7 +50,8 @@ public class ResourceTypeWS extends BaseScimWebService {
 		resource.setId("Group");
 		resource.setSchema("urn:ietf:params:scim:schemas:core:2.0:Group");		
 		resouceTypes.getResources().add(resource);
-
+		
+		
 		URI location = new URI("/v2/ResourceTypes");
 		return Response.ok(resouceTypes).location(location).build();
 
