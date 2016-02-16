@@ -65,18 +65,14 @@ public class AsimbaService {
     
     public LdapConfigurationEntry loadAsimbaConfiguration() {
         String applianceDn = applianceService.getDnForAppliance();
-        //LdapConfigurationEntry template = new LdapConfigurationEntry();
-        //template.setDn("ou=oxasimba,ou=configuration,"+applianceDn);
         LdapConfigurationEntry ldapConfiguration = ldapEntryManager.find(LdapConfigurationEntry.class, "ou=oxasimba,ou=configuration,"+applianceDn, null);
         
         return ldapConfiguration;
     }
     
     public List<IDPEntry> loadIDPs() {
+        List<LdapIDPEntry> entries = ldapEntryManager.findEntries(getDnForLdapIDPEntry(null), LdapIDPEntry.class, null);
         List<IDPEntry> result = new ArrayList<IDPEntry>();
-        LdapIDPEntry template = new LdapIDPEntry();
-        template.setDn(getDnForLdapIDPEntry(null));
-        List<LdapIDPEntry> entries = ldapEntryManager.findEntries(template);
         for (LdapIDPEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -84,10 +80,9 @@ public class AsimbaService {
     }
     
     public List<RequestorPoolEntry> loadRequestorPools() {
+        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorPoolEntry(null), 
+                LDAPRequestorPoolEntry.class, null);
         List<RequestorPoolEntry> result = new ArrayList<RequestorPoolEntry>();
-        LDAPRequestorPoolEntry template = new LDAPRequestorPoolEntry();
-        template.setDn(getDnForLDAPRequestorPoolEntry(null));
-        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPRequestorPoolEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -95,10 +90,9 @@ public class AsimbaService {
     }
     
     public List<RequestorEntry> loadRequestors() {
+        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorEntry(null),
+                LDAPRequestorEntry.class, null);
         List<RequestorEntry> result = new ArrayList<RequestorEntry>();
-        LDAPRequestorEntry template = new LDAPRequestorEntry();
-        template.setDn(getDnForLDAPRequestorEntry(null));
-        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPRequestorEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -106,10 +100,9 @@ public class AsimbaService {
     }
     
     public List<ApplicationSelectorEntry> loadSelectors() {
+        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPApplicationSelectorEntry(null),
+                LDAPApplicationSelectorEntry.class, null);
         List<ApplicationSelectorEntry> result = new ArrayList<ApplicationSelectorEntry>();
-        LDAPApplicationSelectorEntry template = new LDAPApplicationSelectorEntry();
-        template.setDn(getDnForLDAPApplicationSelectorEntry(null));
-        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(template);
         for (LDAPApplicationSelectorEntry entry : entries) {
             result.add(entry.getEntry());
         }
@@ -127,7 +120,7 @@ public class AsimbaService {
     public List<IDPEntry> searchIDPs(String pattern, int sizeLimit) throws Exception {
         // filter
         String[] targetArray = new String[] { pattern };
-        Filter idFilter = Filter.createSubstringFilter("id", null, targetArray, null);
+        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -156,7 +149,7 @@ public class AsimbaService {
     public List<ApplicationSelectorEntry> searchSelectors(String pattern, int sizeLimit) throws Exception {
         // filter
         String[] targetArray = new String[] { pattern };
-        Filter idFilter = Filter.createSubstringFilter("id", null, targetArray, null);
+        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -185,7 +178,7 @@ public class AsimbaService {
     public List<RequestorEntry> searchRequestors(String pattern, int sizeLimit) throws Exception {
         // filter
         String[] targetArray = new String[] { pattern };
-        Filter idFilter = Filter.createSubstringFilter("id", null, targetArray, null);
+        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -213,7 +206,7 @@ public class AsimbaService {
     public List<RequestorPoolEntry> searchRequestorPools(String pattern, int sizeLimit) throws Exception {
         // filter
         String[] targetArray = new String[] { pattern };
-        Filter idFilter = Filter.createSubstringFilter("id", null, targetArray, null);
+        Filter idFilter = Filter.createSubstringFilter(OxTrustConstants.uniqueIdentifier, null, targetArray, null);
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);

@@ -8,7 +8,6 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
@@ -84,23 +83,6 @@ public class UpdateAsimbaIDPAction implements Serializable {
         log.info("init() IDP call");
         // list loading
         idpList = asimbaService.loadIDPs();
-    }
-    
-    public void tempTestIdpCRUD() {
-        log.info("tempTestIdpCRUD() start");
-        log.info("asimbaConfiguration loaded", asimbaService.loadAsimbaConfiguration());
-        IDPEntry entry = new IDPEntry();
-        entry.setId("https://ce.gluu.info/idp/shibboleth");
-        entry.setFriendlyName("Gluu Server CE");
-        entry.setMetadataUrl("https://ce.gluu.info/idp/shibboleth");
-        entry.setMetadataFile("/opt/idp/metadata/2B9642E9295368ED0001ED8B5504-idp-metadata.xml");
-        entry.setNameIdPolicy(false);
-        entry.setScoping(false);
-        entry.setAvoidSubjectConfirmations(false);
-        entry.setLastModified(new Date());
-        log.info("test IDP entry", entry);
-        asimbaService.addIDPEntry(entry);
-        log.info("test IDP entry saved");
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
