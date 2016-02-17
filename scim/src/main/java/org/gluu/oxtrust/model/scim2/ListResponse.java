@@ -31,7 +31,7 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 @XmlRootElement(name = "Resources")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonPropertyOrder({ "totalResults", "startIndex","itemsPerPage","schemas", "Resources" })
-@XmlType(propOrder = { "totalResults", "Resources" })
+@XmlType(propOrder = { "totalResults", "startIndex","itemsPerPage","schemas" ,"Resources" })
 public class ListResponse implements Serializable {
 
 	private static final long serialVersionUID = 433980309301930837L;
