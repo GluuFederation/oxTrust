@@ -160,7 +160,7 @@ public class CacheRefreshService implements Serializable {
 		// Add attributes configured via mapping
 		Set<String> processedAttributeNames = new HashSet<String>();
 		for (Entry<String, String> targetServerAttributeEntry : targetServerAttributesMapping.entrySet()) {
-			String sourceKeyAttributeName = targetServerAttributeEntry.getValue();
+			String sourceKeyAttributeName = StringHelper.toLowerCase(targetServerAttributeEntry.getValue());
 			String targetKeyAttributeName = targetServerAttributeEntry.getKey();
 
 			processedAttributeNames.add(sourceKeyAttributeName);
