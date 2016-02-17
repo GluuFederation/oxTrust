@@ -9,8 +9,10 @@
     <restrict>#{s:hasPermission('trust', 'access')}</restrict>
 
     <rewrite pattern="/asimba/spRequestors" />
+    
+    <action execute="#{updateAsimbaSPRequestorAction.refresh}"/>
 
-    <navigation from-action="#{updateAsimbaSPRequestorActions.add}">
+    <navigation from-action="#{updateAsimbaSPRequestorAction.add}">
         <rule if-outcome="success">
             <begin-conversation join="true" flush-mode="manual" />
             <render view-id="/asimba/spRequestors.xhtml" />
@@ -24,7 +26,7 @@
         </rule>
     </navigation>
 
-    <navigation from-action="#{updateAsimbaSPRequestorActions.search}">
+    <navigation from-action="#{updateAsimbaSPRequestorAction.search}">
         <rule if-outcome="success">
             <redirect view-id="/asimba/spRequestors.xhtml" />
         </rule>

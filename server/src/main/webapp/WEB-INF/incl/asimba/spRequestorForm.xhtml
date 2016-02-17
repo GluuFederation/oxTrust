@@ -77,7 +77,7 @@
         
     </h:outputStylesheet>
 
-	<h:form enctype="multipart/form-data" id="editSPRequestorForm">
+	<h:form id="editSPRequestorForm">
             <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <input type='hidden' name='cid' value='#{conversation.id}' />
             
@@ -93,7 +93,7 @@
                 <h:selectOneMenu styleClass="form-control"
                     title=""
                     value="#{_spRequestor.poolID}" 
-                    required="true" >
+                    required="true" tabindex="7" >
                     <f:selectItems value="#{_updateAsimbaSPRequestorAction.spPoolList}" var="spPool" itemValue="#{spPool.id}" itemLabel="#{spPool.friendlyName}" />
                 </h:selectOneMenu>
             </s:decorate>
@@ -140,7 +140,7 @@
                     value="The URL of the metadata or empty if none"/>
                 <h:inputText styleClass="form-control"
                     title="The URL of the metadata or empty if none"
-                    value="#{_spRequestor.metadataUrl}" size="100" />
+                    value="#{_spRequestor.metadataUrl}" size="100" tabindex="2" />
             </s:decorate>
             </h:panelGroup>
             
@@ -155,7 +155,7 @@
                         value="The timeout to be used in connecting the the URL metadata or -1 when default must be used"/>
                     <h:inputText styleClass="form-control"
                         title="The timeout to be used in connecting the the URL metadata or -1 when default must be used"
-                        value="#{_spRequestor.metadataTimeout}" size="100" label="Metadata Timeout"/>
+                        value="#{_spRequestor.metadataTimeout}" size="100" label="Metadata Timeout" tabindex="3" />
             </s:decorate>
             </h:panelGroup>
             
@@ -168,10 +168,10 @@
                     <h:outputLabel 
                         title="The location of the metadata file or empty if none"
                         value="The location of the metadata file or empty if none"/>
-                    <h:outputText  styleClass="form-control"
+                    <h:inputText  styleClass="form-control"
                         title="The location of the metadata file or empty if none"
-                        value="#{_spRequestor.metadataFile}" />
-                    <h:commandButton value="Upload File" action="#{_updateAsimbaSPRequestorAction.uploadFile}"/>
+                        value="#{_spRequestor.metadataFile}" tabindex="4" />
+                    <!-- TODO: upload file button -->
             </s:decorate>
             </h:panelGroup>
             
@@ -186,7 +186,7 @@
                         value="Additional properties"/>
                     <h:inputText styleClass="form-control"
                         title=""
-                        value="#{_updateAsimbaSPRequestorAction.spRequestorAdditionalProperties}" />
+                        value="#{_updateAsimbaSPRequestorAction.spRequestorAdditionalProperties}" tabindex="5" />
             </s:decorate>
             </h:panelGroup>
             

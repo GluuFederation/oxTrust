@@ -9,6 +9,8 @@
     <restrict>#{s:hasPermission('trust', 'access')}</restrict>
 
     <rewrite pattern="/asimba/spPools" />
+    
+    <action execute="#{updateAsimbaSPPoolAction.refresh}"/>
 
     <navigation from-action="#{updateAsimbaSPPoolAction.add}">
         <rule if-outcome="success">

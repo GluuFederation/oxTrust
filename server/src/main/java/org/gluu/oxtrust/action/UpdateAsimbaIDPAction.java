@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
@@ -35,7 +36,7 @@ import org.jboss.seam.annotations.Create;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("updateAsimbaIDPAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaIDPAction implements Serializable {
@@ -66,7 +67,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private IDPEntry idp = new IDPEntry();
+    private IDPEntry idp;
     
     private List<IDPEntry> idpList = new ArrayList<IDPEntry>();
     
@@ -81,6 +82,14 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Create
     public void init() {        
         log.info("init() IDP call");
+        
+        idp = new IDPEntry();
+        
+        refresh();
+    }
+    
+    public void refresh() {
+        log.info("refresh() IDP call");
         // list loading
         idpList = asimbaService.loadIDPs();
     }
@@ -88,21 +97,28 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("save new IDP", idp);
-        asimbaService.addIDPEntry(idp);
+        synchronized (svnSyncTimer) {
+            asimbaService.addIDPEntry(idp);
+        }
+        idp = new IDPEntry();
+        
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update IDP", idp);
-        asimbaService.updateIDPEntry(idp);
+        synchronized (svnSyncTimer) {
+            asimbaService.updateIDPEntry(idp);
+        }
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public void cancel() {
+    public String cancel() {
         log.info("cancel IDP", idp);
         idp = new IDPEntry();
+        return OxTrustConstants.RESULT_SUCCESS;
     }
 
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -111,23 +127,23 @@ public class UpdateAsimbaIDPAction implements Serializable {
         synchronized (svnSyncTimer) {
             asimbaService.addIDPEntry(idp);
         }
+        idp = new IDPEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadFile() {
         log.info("uploadFile() call for IDP");
-        synchronized (svnSyncTimer) {
-
-        }
+        //TODO: upload file
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         synchronized (svnSyncTimer) {
-
+            //TODO:
         }
+        idp = new IDPEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

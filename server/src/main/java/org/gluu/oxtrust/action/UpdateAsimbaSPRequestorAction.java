@@ -71,7 +71,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private RequestorEntry spRequestor = new RequestorEntry();
+    private RequestorEntry spRequestor;
     
     private String spRequestorAdditionalProperties = "";
     
@@ -91,13 +91,21 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Create
     public void init() {
         log.info("init() SPRequestor call");
+        
+        spRequestor = new RequestorEntry();
+        spRequestor.setPoolID("requestorpool.1");
+        
+        refresh();
+    }
+    
+    public void refresh() {
+        log.info("refresh() SPRequestor call");
+        
         // fill spPoolList
         List<RequestorPoolEntry> spPoolListEntries = asimbaService.loadRequestorPools();
         for (RequestorPoolEntry entry : spPoolListEntries) {
             spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
         }
-        
-        spRequestor.setPoolID("requestorpool.1");
 
         //list loading
         spRequestorList = asimbaService.loadRequestors();
@@ -106,14 +114,20 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("save new Requestor", spRequestor);
-        asimbaService.addRequestorEntry(spRequestor);
+        synchronized (svnSyncTimer) {
+            asimbaService.addRequestorEntry(spRequestor);
+        }
+        spRequestor = new RequestorEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Requestor", spRequestor);
-        asimbaService.updateRequestorEntry(spRequestor);
+        synchronized (svnSyncTimer) {
+            asimbaService.updateRequestorEntry(spRequestor);
+        }
+        spRequestor = new RequestorEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -127,8 +141,9 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     public String save() {
         log.info("save Requestor", spRequestor);
         synchronized (svnSyncTimer) {
-
+            asimbaService.addRequestorEntry(spRequestor);
         }
+        spRequestor = new RequestorEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -136,17 +151,16 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     public String delete() {
         log.info("delete() Requestor", spRequestor);
         synchronized (svnSyncTimer) {
-
+            //TODO: delete current node
         }
+        spRequestor = new RequestorEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadFile() {
         log.info("uploadFile() Requestor", spRequestor);
-        synchronized (svnSyncTimer) {
-
-        }
+        //TODO: upload file
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

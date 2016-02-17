@@ -70,7 +70,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private RequestorPoolEntry spPool = new RequestorPoolEntry();
+    private RequestorPoolEntry spPool;
     
     private String spPoolAdditionalProperties = "";
     
@@ -87,6 +87,14 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @Create
     public void init() {
         log.info("init() SPPool call");
+        
+        spPool = new RequestorPoolEntry();
+        
+        refresh();
+    }
+    
+    public void refresh() {
+        log.info("refresh() SPPool call");
         //list loading
         spPoolList = asimbaService.loadRequestorPools();
     }
@@ -94,14 +102,20 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("save new RequestorPool", spPool);
-        asimbaService.addRequestorPoolEntry(spPool);
+        synchronized (svnSyncTimer) {
+            asimbaService.addRequestorPoolEntry(spPool);
+        }
+        spPool = new RequestorPoolEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() RequestorPool", spPool);
-        asimbaService.addRequestorPoolEntry(spPool);
+        synchronized (svnSyncTimer) {
+            asimbaService.addRequestorPoolEntry(spPool);
+        }
+        spPool = new RequestorPoolEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -115,8 +129,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     public String save() {
         log.info("save() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
-
+            asimbaService.addRequestorPoolEntry(spPool);
         }
+        spPool = new RequestorPoolEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -124,8 +139,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     public String delete() {
         log.info("delete() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
-
+            //TODO: delete current node
         }
+        spPool = new RequestorPoolEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

@@ -10,7 +10,7 @@
 
     <rewrite pattern="/asimba/addSPRequestor" />
 
-    <navigation from-action="#{updateAsimbaSPRequestorActions.save}">
+    <navigation from-action="#{updateAsimbaSPRequestorAction.save}">
         <rule if-outcome="success">
             <render view-id="/asimba/spRequestors.xhtml" />
         </rule>
@@ -23,7 +23,7 @@
         </rule>
     </navigation>
 
-    <navigation from-action="#{updateAsimbaSPRequestorActions.add}">
+    <navigation from-action="#{updateAsimbaSPRequestorAction.add}">
         <rule if-outcome="success">
             <render view-id="/asimba/spRequestors.xhtml" />
         </rule>
@@ -36,7 +36,7 @@
         </rule>
     </navigation>
 
-    <navigation from-action="#{updateAsimbaSPRequestorActions.cancel}">
+    <navigation from-action="#{updateAsimbaSPRequestorAction.cancel}">
         <rule if-outcome="success">
             <render view-id="/asimba/spRequestors.xhtml" />
         </rule>

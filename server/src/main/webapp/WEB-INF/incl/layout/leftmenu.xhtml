@@ -116,7 +116,6 @@
 									class="fa fa-pencil-square-o"></i> <span>SAML</span> <i
 									class="fa fa-angle-left pull-right"></i>
 							</a>
-                                                        <!--<ui:fragment rendered="#{s:hasPermission('trust', 'access')}">-->
                                                             
                                                         
 								<ul class="treeview-menu" id="subMenuSAML">
@@ -141,8 +140,6 @@
                                                                     
                                                                     </li>
                                                                 </ul>
-                                                        <!--</ui:fragment>
-                                                        <ui:fragment rendered="#{s:hasPermission('trust', 'access')}">-->
                                                             
                                                         
 								<ul class="treeview-menu" id="subMenuSAMLAsimba">
@@ -157,23 +154,9 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-									<li id="subMenuLinkAsimba2"><h:commandLink
-											value="Add IDP"
-											action="#{menuAction.endConversation('/asimba/addIDP.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>	
                                                                         <li id="subMenuLinkAsimba3"><h:commandLink
 											value="SP Pools"
 											action="#{menuAction.endConversation('/asimba/spPools.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
-									<li id="subMenuLinkAsimba4"><h:commandLink
-											value="Add SP Pool"
-											action="#{menuAction.endConversation('/asimba/addSPPool.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
@@ -185,13 +168,6 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-									<li id="subMenuLinkAsimba6"><h:commandLink
-											value="Add SP Requestor"
-											action="#{menuAction.endConversation('/asimba/addSPRequestor.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
                                                                         <li id="subMenuLinkAsimba7"><h:commandLink
 											value="Selectors"
 											action="#{menuAction.endConversation('/asimba/selectors.xhtml')}"
@@ -199,16 +175,8 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-									<li id="subMenuLinkAsimba8"><h:commandLink
-											value="Add Selector"
-											action="#{menuAction.endConversation('/asimba/addSelector.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
                                                                     </li>
 								</ul>
-                                                        <!--</ui:fragment>-->
                                                     </li>
 						</ui:fragment>
 						<ui:fragment rendered="#{s:hasPermission('oxauth', 'access')}">

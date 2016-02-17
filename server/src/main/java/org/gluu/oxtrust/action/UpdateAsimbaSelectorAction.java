@@ -81,6 +81,14 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @Create
     public void init() {
         log.info("init() Selector call");
+        
+        selector = new ApplicationSelectorEntry();
+        
+        refresh();
+    }
+    
+    public void refresh() {
+        log.info("refresh() Selector call");
         // list loading
         selectorList = asimbaService.loadSelectors();
     }
@@ -88,14 +96,20 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add() Selector", selector);
-        asimbaService.addApplicationSelectorEntry(selector);
+        synchronized (svnSyncTimer) {
+            asimbaService.addApplicationSelectorEntry(selector);
+        }
+        selector = new ApplicationSelectorEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Selector", selector);
-        asimbaService.updateApplicationSelectorEntry(selector);
+        synchronized (svnSyncTimer) {
+            asimbaService.updateApplicationSelectorEntry(selector);
+        }
+        selector = new ApplicationSelectorEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -109,8 +123,9 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     public String save() {
         log.info("save() Selector", selector);
         synchronized (svnSyncTimer) {
-
+            asimbaService.addApplicationSelectorEntry(selector);
         }
+        selector = new ApplicationSelectorEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -118,8 +133,9 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     public String delete() {
         log.info("delete() Selector", selector);
         synchronized (svnSyncTimer) {
-
+            //TODO: delete current node
         }
+        selector = new ApplicationSelectorEntry();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
