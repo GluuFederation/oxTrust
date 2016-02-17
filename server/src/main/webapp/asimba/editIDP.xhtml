@@ -26,17 +26,21 @@
                     value="#{updateAsimbaIDPAction.idp}" />
             <ui:param name="_updateAsimbaIDPAction"
                     value="#{updateAsimbaIDPAction}" />
-            <ui:param name="_new" value="true" />
-
 
             <ui:define name="controlButttons">
                 <div class = "box-footer">
                     <div  style="width: 100%;height: 30px;">
-                        <div id="updateButtons" style="float: left;width: 150px;">
+                        <div id="updateButtons" style="float: left;width: 250px;">
                             <h:commandButton styleClass="btn btn-primary" value="   Add   "
-                                    action="#{updateAsimbaIDPAction.save}" />
-                            <h:commandButton value="   Cancel  " styleClass="btn btn-primary"
-                                    style="margin-left:5px;"
+                                             action="#{updateAsimbaIDPAction.add}" rendered="#{updateAsimbaIDPAction.newEntry}" />
+                            <h:commandButton styleClass="btn btn-primary" value="   Update   "
+                                             style="margin-left:5px;"
+                                    action="#{updateAsimbaIDPAction.update}" rendered="#{not updateAsimbaIDPAction.newEntry}" />
+                            <h:commandButton styleClass="btn btn-primary" value="   Delete   "
+                                             style="margin-left:5px;"
+                                    action="#{updateAsimbaIDPAction.delete}" rendered="#{not updateAsimbaIDPAction.newEntry}" />
+                            <h:commandButton styleClass="btn btn-primary" value="   Cancel  "
+                                             style="margin-left:5px;"
                                     action="#{updateAsimbaIDPAction.cancel}" immediate="true" />
                         </div>
                     </div>

@@ -36,7 +36,7 @@ import org.jboss.seam.annotations.Create;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
+@Scope(ScopeType.CONVERSATION)
 @Name("updateAsimbaIDPAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaIDPAction implements Serializable {
@@ -69,6 +69,10 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     private IDPEntry idp;
     
+    private boolean newEntry = true;
+    
+    private String editEntryInum = null;
+    
     private List<IDPEntry> idpList = new ArrayList<IDPEntry>();
     
     @NotNull
@@ -83,7 +87,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     public void init() {        
         log.info("init() IDP call");
         
-        idp = new IDPEntry();
+        clearEdit();
         
         refresh();
     }
@@ -94,14 +98,32 @@ public class UpdateAsimbaIDPAction implements Serializable {
         idpList = asimbaService.loadIDPs();
     }
     
+    public void clearEdit() {
+        idp = new IDPEntry();
+        editEntryInum = null;
+        newEntry = true;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public void edit() {
+        log.info("edit() IDP call, inum: "+editEntryInum);
+        if (editEntryInum == null || "".equals(editEntryInum)) {
+            // no inum, new entry mode
+            clearEdit();
+        } else {
+            // edit entry
+            newEntry = false;
+            idp = asimbaService.readIDPEntry(editEntryInum);
+        }
+    }
+    
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("save new IDP", idp);
         synchronized (svnSyncTimer) {
             asimbaService.addIDPEntry(idp);
         }
-        idp = new IDPEntry();
-        
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -117,17 +139,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel IDP", idp);
-        idp = new IDPEntry();
-        return OxTrustConstants.RESULT_SUCCESS;
-    }
-
-    @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String save() {
-        log.info("save() call for IDP");
-        synchronized (svnSyncTimer) {
-            asimbaService.addIDPEntry(idp);
-        }
-        idp = new IDPEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -141,9 +153,9 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         synchronized (svnSyncTimer) {
-            //TODO:
+            asimbaService.removeIDPEntry(idp);
         }
-        idp = new IDPEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -207,5 +219,33 @@ public class UpdateAsimbaIDPAction implements Serializable {
      */
     public void setSearchPattern(String searchPattern) {
         this.searchPattern = searchPattern;
+    }
+
+    /**
+     * @return the newEntry
+     */
+    public boolean isNewEntry() {
+        return newEntry;
+    }
+
+    /**
+     * @param newEntry the newEntry to set
+     */
+    public void setNewEntry(boolean newEntry) {
+        this.newEntry = newEntry;
+    }
+
+    /**
+     * @return the editEntryInum
+     */
+    public String getEditEntryInum() {
+        return editEntryInum;
+    }
+
+    /**
+     * @param editEntryInum the editEntryInum to set
+     */
+    public void setEditEntryInum(String editEntryInum) {
+        this.editEntryInum = editEntryInum;
     }
 }

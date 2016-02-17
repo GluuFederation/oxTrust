@@ -16,7 +16,7 @@
         <ol class="breadcrumb">
 
                 <li><a href="#{request.contextPath}/asimba/idps"><i class="fa fa-home"></i> IDPs</a></li>
-                <li class="organization/configuration"><a href="#{request.contextPath}/asimba/addIDP">Add IDP</a></li>
+                <li class="organization/configuration"><a href="#{request.contextPath}/asimba/editIDP/">Add IDP</a></li>
         </ol>
         </section>
 
@@ -24,7 +24,7 @@
 
 
         <div style="margin-left: 16px;">
-            <s:link view="/asimba/addIDP" value="Add IDP" styleClass="btn btn-primary" propagation="none" />
+            <s:link view="/asimba/editIDP" value="Add IDP" styleClass="btn btn-primary" propagation="none" />
         </div>
 
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -57,8 +57,8 @@
                         <f:facet name="header">  
                             <div style="text-align: center;"> ID</div>
                         </f:facet>
-                        <s:link view="/person/updatePerson.xhtml" value="#{idp.id}" propagation="none">
-                            <f:param name="inum" value="#{idp.id}" />
+                        <s:link view="/asimba/editIDP.xhtml" value="#{idp.id}" propagation="none">
+                            <f:param name="inum" value="#{idp.inum}" />
                         </s:link>
                     </h:column>
 

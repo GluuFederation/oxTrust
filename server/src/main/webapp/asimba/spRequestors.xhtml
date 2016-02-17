@@ -18,13 +18,13 @@
                 <li><a href="#{request.contextPath}/asimba/spRequestors"><i
                                 class="fa fa-home"></i> SP Requestors</a></li>
                 <li class="organization/configuration"><a
-                        href="#{request.contextPath}/asimba/addSPRequestor">Add SP Requestor</a></li>
+                        href="#{request.contextPath}/asimba/editSPRequestor/">Add SP Requestor</a></li>
         </ol>
         </section>
 
         <section class="content"> 
             <div style="margin-left: 16px;">
-                <s:link view="/asimba/addSPRequestor" value="Add SP Requestor" styleClass="addPerson btn btn-primary" propagation="none" />
+                <s:link view="/asimba/editSPRequestor" value="Add SP Requestor" styleClass="addPerson btn btn-primary" propagation="none" />
             </div>
 
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -58,8 +58,8 @@
                        <f:facet name="header">  
                         <div style="text-align: center;"> ID</div>
                     </f:facet>
-                    <s:link view="/person/updatePerson.xhtml" value="#{spRequestor.id}" propagation="none">
-                        <f:param name="inum" value="#{spRequestor.id}" />
+                    <s:link view="/asimba/editSPRequestor.xhtml" value="#{spRequestor.id}" propagation="none">
+                        <f:param name="inum" value="#{spRequestor.inum}" />
                     </s:link>
                 </h:column>
 

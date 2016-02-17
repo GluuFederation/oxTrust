@@ -73,6 +73,10 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     private RequestorEntry spRequestor;
     
+    private boolean newEntry = true;
+    
+    private String editEntryInum = null;
+    
     private String spRequestorAdditionalProperties = "";
     
     private List<RequestorEntry> spRequestorList = new ArrayList<RequestorEntry>();
@@ -92,7 +96,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     public void init() {
         log.info("init() SPRequestor call");
         
-        spRequestor = new RequestorEntry();
+        clearEdit();
         spRequestor.setPoolID("requestorpool.1");
         
         refresh();
@@ -111,13 +115,32 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         spRequestorList = asimbaService.loadRequestors();
     }
     
+    public void clearEdit() {
+        spRequestor = new RequestorEntry();
+        editEntryInum = null;
+        newEntry = true;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public void edit() {
+        log.info("edit() SPRequestor call, inum: "+editEntryInum);
+        if (editEntryInum == null || "".equals(editEntryInum)) {
+            // no inum, new entry mode
+            clearEdit();
+        } else {
+            // edit entry
+            newEntry = false;
+            spRequestor = asimbaService.readRequestorEntry(editEntryInum);
+        }
+    }
+    
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("save new Requestor", spRequestor);
         synchronized (svnSyncTimer) {
             asimbaService.addRequestorEntry(spRequestor);
         }
-        spRequestor = new RequestorEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -127,24 +150,14 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         synchronized (svnSyncTimer) {
             asimbaService.updateRequestorEntry(spRequestor);
         }
-        spRequestor = new RequestorEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel() Requestor", spRequestor);
-        spRequestor = new RequestorEntry();
-    }
-
-    @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String save() {
-        log.info("save Requestor", spRequestor);
-        synchronized (svnSyncTimer) {
-            asimbaService.addRequestorEntry(spRequestor);
-        }
-        spRequestor = new RequestorEntry();
-        return OxTrustConstants.RESULT_SUCCESS;
+        clearEdit();
     }
     
     @Restrict("#{s:hasPermission('person', 'access')}")
@@ -153,7 +166,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         synchronized (svnSyncTimer) {
             //TODO: delete current node
         }
-        spRequestor = new RequestorEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -267,5 +280,33 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             writer.write("\n");
         }
         this.spRequestorAdditionalProperties = writer.toString();
+    }
+
+    /**
+     * @return the newEntry
+     */
+    public boolean isNewEntry() {
+        return newEntry;
+    }
+
+    /**
+     * @param newEntry the newEntry to set
+     */
+    public void setNewEntry(boolean newEntry) {
+        this.newEntry = newEntry;
+    }
+
+    /**
+     * @return the editEntryInum
+     */
+    public String getEditEntryInum() {
+        return editEntryInum;
+    }
+
+    /**
+     * @param editEntryInum the editEntryInum to set
+     */
+    public void setEditEntryInum(String editEntryInum) {
+        this.editEntryInum = editEntryInum;
     }
 }

@@ -66,7 +66,11 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private ApplicationSelectorEntry selector = new ApplicationSelectorEntry();
+    private ApplicationSelectorEntry selector;
+    
+    private boolean newEntry = true;
+    
+    private String editEntryInum = null;
     
     private List<ApplicationSelectorEntry> selectorList = new ArrayList<ApplicationSelectorEntry>();
     
@@ -82,7 +86,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     public void init() {
         log.info("init() Selector call");
         
-        selector = new ApplicationSelectorEntry();
+        clearEdit();
         
         refresh();
     }
@@ -93,13 +97,32 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         selectorList = asimbaService.loadSelectors();
     }
     
+    public void clearEdit() {
+        selector = new ApplicationSelectorEntry();
+        editEntryInum = null;
+        newEntry = true;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public void edit() {
+        log.info("edit() Selector call, inum: "+editEntryInum);
+        if (editEntryInum == null || "".equals(editEntryInum)) {
+            // no inum, new entry mode
+            clearEdit();
+        } else {
+            // edit entry
+            newEntry = false;
+            selector = asimbaService.readApplicationSelectorEntry(editEntryInum);
+        }
+    }
+    
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add() Selector", selector);
         synchronized (svnSyncTimer) {
             asimbaService.addApplicationSelectorEntry(selector);
         }
-        selector = new ApplicationSelectorEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -109,24 +132,14 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         synchronized (svnSyncTimer) {
             asimbaService.updateApplicationSelectorEntry(selector);
         }
-        selector = new ApplicationSelectorEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel() Selector", selector);
-        selector = new ApplicationSelectorEntry();
-    }
-
-    @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String save() {
-        log.info("save() Selector", selector);
-        synchronized (svnSyncTimer) {
-            asimbaService.addApplicationSelectorEntry(selector);
-        }
-        selector = new ApplicationSelectorEntry();
-        return OxTrustConstants.RESULT_SUCCESS;
+        clearEdit();
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -135,7 +148,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         synchronized (svnSyncTimer) {
             //TODO: delete current node
         }
-        selector = new ApplicationSelectorEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -197,5 +210,33 @@ public class UpdateAsimbaSelectorAction implements Serializable {
      */
     public void setSearchPattern(String searchPattern) {
         this.searchPattern = searchPattern;
+    }
+
+    /**
+     * @return the newEntry
+     */
+    public boolean isNewEntry() {
+        return newEntry;
+    }
+
+    /**
+     * @param newEntry the newEntry to set
+     */
+    public void setNewEntry(boolean newEntry) {
+        this.newEntry = newEntry;
+    }
+
+    /**
+     * @return the editEntryInum
+     */
+    public String getEditEntryInum() {
+        return editEntryInum;
+    }
+
+    /**
+     * @param editEntryInum the editEntryInum to set
+     */
+    public void setEditEntryInum(String editEntryInum) {
+        this.editEntryInum = editEntryInum;
     }
 }

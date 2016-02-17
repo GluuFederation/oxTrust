@@ -26,22 +26,26 @@
 				value="#{updateAsimbaSPRequestorAction.spRequestor}" />
 			<ui:param name="_updateAsimbaSPRequestorAction"
 				value="#{updateAsimbaSPRequestorAction}" />
-			<ui:param name="_new" value="true" />
 
-
-			<ui:define name="controlButttons">
-			<div class = "box-footer">
-				<div  style="width: 100%;height: 30px;">
-					<div id="updateButtons" style="float: left;width: 150px;">
-						<h:commandButton styleClass="btn btn-primary" value="   Add   "
-							action="#{updateAsimbaSPRequestorAction.save}" />
-						<h:commandButton value="   Cancel  " styleClass="btn btn-primary"
-							style="margin-left:5px;"
-							action="#{updateAsimbaSPRequestorAction.cancel}" immediate="true" />
-					</div>
-				</div>
+                    <ui:define name="controlButttons">
+                    <div class = "box-footer">
+                        <div  style="width: 100%;height: 30px;">
+                                <div id="updateButtons" style="float: left;width: 250px;">                                                
+                        <h:commandButton styleClass="btn btn-primary" value="   Add   "
+                                action="#{updateAsimbaSPRequestorAction.add}" rendered="#{updateAsimbaSPRequestorAction.newEntry}" />
+                        <h:commandButton styleClass="btn btn-primary" value="   Update   "
+                                         style="margin-left:5px;"
+                                action="#{updateAsimbaSPRequestorAction.update}" rendered="#{not updateAsimbaSPRequestorAction.newEntry}" />
+                        <h:commandButton styleClass="btn btn-primary" value="   Delete   "
+                                         style="margin-left:5px;"
+                                action="#{updateAsimbaSPRequestorAction.delete}" rendered="#{not updateAsimbaSPRequestorAction.newEntry}" />
+                        <h:commandButton styleClass="btn btn-primary" value="   Cancel  "
+                                         style="margin-left:5px;"
+                                action="#{updateAsimbaSPRequestorAction.cancel}" immediate="true" />
+                                </div>
                         </div>
-			</ui:define>
+                    </div>
+                    </ui:define>
 			
 
 		</ui:decorate> 

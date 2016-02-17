@@ -72,6 +72,10 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     private RequestorPoolEntry spPool;
     
+    private boolean newEntry = true;
+    
+    private String editEntryInum = null;
+    
     private String spPoolAdditionalProperties = "";
     
     private List<RequestorPoolEntry> spPoolList = new ArrayList<RequestorPoolEntry>();
@@ -88,7 +92,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     public void init() {
         log.info("init() SPPool call");
         
-        spPool = new RequestorPoolEntry();
+        clearEdit();
         
         refresh();
     }
@@ -99,13 +103,32 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         spPoolList = asimbaService.loadRequestorPools();
     }
     
+    public void clearEdit() {
+        spPool = new RequestorPoolEntry();
+        editEntryInum = null;
+        newEntry = true;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public void edit() {
+        log.info("edit() SPPool call, inum: "+editEntryInum);
+        if (editEntryInum == null || "".equals(editEntryInum)) {
+            // no inum, new entry mode
+            clearEdit();
+        } else {
+            // edit entry
+            newEntry = false;
+            spPool = asimbaService.readRequestorPoolEntry(editEntryInum);
+        }
+    }
+    
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("save new RequestorPool", spPool);
         synchronized (svnSyncTimer) {
             asimbaService.addRequestorPoolEntry(spPool);
         }
-        spPool = new RequestorPoolEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -115,24 +138,14 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         synchronized (svnSyncTimer) {
             asimbaService.addRequestorPoolEntry(spPool);
         }
-        spPool = new RequestorPoolEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void cancel() {
         log.info("cancel() RequestorPool", spPool);
-        spPool = new RequestorPoolEntry();
-    }
-
-    @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String save() {
-        log.info("save() RequestorPool", spPool);
-        synchronized (svnSyncTimer) {
-            asimbaService.addRequestorPoolEntry(spPool);
-        }
-        spPool = new RequestorPoolEntry();
-        return OxTrustConstants.RESULT_SUCCESS;
+        clearEdit();
     }
     
     @Restrict("#{s:hasPermission('person', 'access')}")
@@ -141,7 +154,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         synchronized (svnSyncTimer) {
             //TODO: delete current node
         }
-        spPool = new RequestorPoolEntry();
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -234,5 +247,33 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
             writer.write("\n");
         }
         this.spPoolAdditionalProperties = writer.toString();
+    }
+
+    /**
+     * @return the newEntry
+     */
+    public boolean isNewEntry() {
+        return newEntry;
+    }
+
+    /**
+     * @param newEntry the newEntry to set
+     */
+    public void setNewEntry(boolean newEntry) {
+        this.newEntry = newEntry;
+    }
+
+    /**
+     * @return the editEntryInum
+     */
+    public String getEditEntryInum() {
+        return editEntryInum;
+    }
+
+    /**
+     * @param editEntryInum the editEntryInum to set
+     */
+    public void setEditEntryInum(String editEntryInum) {
+        this.editEntryInum = editEntryInum;
     }
 }

@@ -51,16 +51,10 @@ public class AsimbaService {
      
     @Create
     public void init() {
-        try {
-            //ldapEntryManager = LDAPUtility.getLDAPEntryManager();
-        } catch (Exception e) {
-            log.error("AsimbaService Init exception", e);
-        }
     }
     
     @Destroy
-    public void destroy() {
-        
+    public void destroy() {        
     }
     
     public LdapConfigurationEntry loadAsimbaConfiguration() {
@@ -349,6 +343,17 @@ public class AsimbaService {
         ldapEntry.setEntry(entry);
         return ldapEntryManager.contains(ldapEntry);
     }
+
+    /**
+    * Read IDPEntry from LDAP.
+    * 
+    * @param inum Entry inum.
+    * @return IDPEntry
+    */
+    public IDPEntry readIDPEntry(String inum) {
+        LdapIDPEntry result = ldapEntryManager.find(LdapIDPEntry.class, getDnForLdapIDPEntry(inum));
+        return result.getEntry();
+    }
     
     
     /**
@@ -400,6 +405,17 @@ public class AsimbaService {
         ldapEntry.setDn(getDnForLDAPRequestorPoolEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         return ldapEntryManager.contains(ldapEntry);
+    }
+
+    /**
+    * Read RequestorPoolEntry from LDAP.
+    * 
+    * @param inum Entry inum.
+    * @return RequestorPoolEntry
+    */
+    public RequestorPoolEntry readRequestorPoolEntry(String inum) {
+        LDAPRequestorPoolEntry result = ldapEntryManager.find(LDAPRequestorPoolEntry.class, getDnForLDAPRequestorPoolEntry(inum));
+        return result.getEntry();
     }
     
     
@@ -453,6 +469,17 @@ public class AsimbaService {
         ldapEntry.setEntry(entry);
         return ldapEntryManager.contains(entry);
     }
+
+    /**
+    * Read RequestorEntry from LDAP.
+    * 
+    * @param inum Entry inum.
+    * @return RequestorEntry
+    */
+    public RequestorEntry readRequestorEntry(String inum) {
+        LDAPRequestorEntry result = ldapEntryManager.find(LDAPRequestorEntry.class, getDnForLDAPRequestorEntry(inum));
+        return result.getEntry();
+    }
     
     
     /**
@@ -504,5 +531,16 @@ public class AsimbaService {
         ldapEntry.setDn(getDnForLDAPApplicationSelectorEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         return ldapEntryManager.contains(ldapEntry);
+    }
+
+    /**
+    * Read ApplicationSelectorEntry from LDAP.
+    * 
+    * @param inum Entry inum.
+    * @return ApplicationSelectorEntry
+    */
+    public ApplicationSelectorEntry readApplicationSelectorEntry(String inum) {
+        LDAPApplicationSelectorEntry result = ldapEntryManager.find(LDAPApplicationSelectorEntry.class, getDnForLDAPApplicationSelectorEntry(inum));
+        return result.getEntry();
     }
 }
