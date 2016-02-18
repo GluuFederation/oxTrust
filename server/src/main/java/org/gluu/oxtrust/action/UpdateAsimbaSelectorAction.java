@@ -35,7 +35,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("updateAsimbaSelectorAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSelectorAction implements Serializable {
@@ -66,7 +66,11 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private ApplicationSelectorEntry selector = new ApplicationSelectorEntry();
+    private ApplicationSelectorEntry selector;
+    
+    private boolean newEntry = true;
+    
+    private String editEntryInum = null;
     
     private List<ApplicationSelectorEntry> selectorList = new ArrayList<ApplicationSelectorEntry>();
     
@@ -81,36 +85,67 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @Create
     public void init() {
         log.info("init() Selector call");
-        // list loading
-        selectorList = asimbaService.loadSelectors();
+        
+        clearEdit();
+        
+        refresh();
+    }
+    
+    public void refresh() {
+        log.info("refresh() Selector call");
+        
+        if (searchPattern == null || "".equals(searchPattern)) {
+            //list loading
+            selectorList = asimbaService.loadSelectors();
+        } else {
+            // search mode, clear pattern
+            searchPattern = null;
+        }
+    }
+    
+    public void clearEdit() {
+        selector = new ApplicationSelectorEntry();
+        editEntryInum = null;
+        newEntry = true;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public void edit() {
+        log.info("edit() Selector call, inum: "+editEntryInum);
+        if (editEntryInum == null || "".equals(editEntryInum)) {
+            // no inum, new entry mode
+            clearEdit();
+        } else {
+            // edit entry
+            newEntry = false;
+            selector = asimbaService.readApplicationSelectorEntry(editEntryInum);
+        }
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add() Selector", selector);
-        asimbaService.addApplicationSelectorEntry(selector);
+        synchronized (svnSyncTimer) {
+            asimbaService.addApplicationSelectorEntry(selector);
+        }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Selector", selector);
-        asimbaService.updateApplicationSelectorEntry(selector);
+        synchronized (svnSyncTimer) {
+            asimbaService.updateApplicationSelectorEntry(selector);
+        }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public void cancel() {
+    public String cancel() {
         log.info("cancel() Selector", selector);
-        selector = new ApplicationSelectorEntry();
-    }
-
-    @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String save() {
-        log.info("save() Selector", selector);
-        synchronized (svnSyncTimer) {
-
-        }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -118,8 +153,9 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     public String delete() {
         log.info("delete() Selector", selector);
         synchronized (svnSyncTimer) {
-
+            asimbaService.removeApplicationSelectorEntry(selector);
         }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -181,5 +217,33 @@ public class UpdateAsimbaSelectorAction implements Serializable {
      */
     public void setSearchPattern(String searchPattern) {
         this.searchPattern = searchPattern;
+    }
+
+    /**
+     * @return the newEntry
+     */
+    public boolean isNewEntry() {
+        return newEntry;
+    }
+
+    /**
+     * @param newEntry the newEntry to set
+     */
+    public void setNewEntry(boolean newEntry) {
+        this.newEntry = newEntry;
+    }
+
+    /**
+     * @return the editEntryInum
+     */
+    public String getEditEntryInum() {
+        return editEntryInum;
+    }
+
+    /**
+     * @param editEntryInum the editEntryInum to set
+     */
+    public void setEditEntryInum(String editEntryInum) {
+        this.editEntryInum = editEntryInum;
     }
 }

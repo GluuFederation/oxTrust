@@ -18,13 +18,13 @@
                 <li><a href="#{request.contextPath}/asimba/selectors"><i
                                 class="fa fa-home"></i> Selectors</a></li>
                 <li class="organization/configuration"><a
-                        href="#{request.contextPath}/asimba/addSelector">Add Selector</a></li>
+                        href="#{request.contextPath}/asimba/editSelector/">Add Selector</a></li>
         </ol>
         </section>
 
         <section class="content"> 
             <div style="margin-left: 16px;">
-                <s:link view="/asimba/addSelector" value="Add Selector" styleClass="addPerson btn btn-primary" propagation="none" />
+                <s:link view="/asimba/editSelector" value="Add Selector" styleClass="addPerson btn btn-primary" propagation="none" />
             </div>
 
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -58,8 +58,8 @@
                        <f:facet name="header">  
                         <div style="text-align: center;"> ID</div>
                     </f:facet>
-                    <s:link view="/person/updatePerson.xhtml" value="#{selector.id}" propagation="none">
-                        <f:param name="inum" value="#{selector.id}" />
+                    <s:link view="/asimba/editSelector.xhtml" value="#{selector.id}" propagation="none">
+                        <f:param name="inum" value="#{selector.inum}" />
                     </s:link>
                 </h:column>
 
@@ -82,7 +82,7 @@
                         <div style="text-align: center;"> Enabled</div>
                     </f:facet>
                     <div style="text-align: center;">
-                        <h:selectBooleanCheckbox value="#{selector.enabled}" readonly="true" />
+                        <h:selectBooleanCheckbox value="#{selector.enabled}" readonly="true" disabled="true" />
                     </div>
                 </h:column>
             </h:dataTable>

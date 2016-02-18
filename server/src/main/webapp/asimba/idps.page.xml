@@ -9,6 +9,8 @@
     <restrict>#{s:hasPermission('trust', 'access')}</restrict>
 
     <rewrite pattern="/asimba/idps" />
+    
+    <action execute="#{updateAsimbaIDPAction.refresh}"/>
 
     <navigation from-action="#{updateAsimbaIDPAction.add}">
         <rule if-outcome="success">

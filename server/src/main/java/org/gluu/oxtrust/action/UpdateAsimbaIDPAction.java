@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
@@ -35,7 +36,7 @@ import org.jboss.seam.annotations.Create;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("updateAsimbaIDPAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaIDPAction implements Serializable {
@@ -66,7 +67,11 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private IDPEntry idp = new IDPEntry();
+    private IDPEntry idp;
+    
+    private boolean newEntry = true;
+    
+    private String editEntryInum = null;
     
     private List<IDPEntry> idpList = new ArrayList<IDPEntry>();
     
@@ -81,53 +86,82 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Create
     public void init() {        
         log.info("init() IDP call");
-        // list loading
-        idpList = asimbaService.loadIDPs();
+        
+        clearEdit();
+        
+        refresh();
+    }
+    
+    public void refresh() {
+        log.info("refresh() IDP call");
+        
+        if (searchPattern == null || "".equals(searchPattern)) {
+            // list loading
+            idpList = asimbaService.loadIDPs();
+        } else {
+            // search mode, clear pattern
+            searchPattern = null;
+        }
+    }
+    
+    public void clearEdit() {
+        idp = new IDPEntry();
+        editEntryInum = null;
+        newEntry = true;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public void edit() {
+        log.info("edit() IDP call, inum: "+editEntryInum);
+        if (editEntryInum == null || "".equals(editEntryInum)) {
+            // no inum, new entry mode
+            clearEdit();
+        } else {
+            // edit entry
+            newEntry = false;
+            idp = asimbaService.readIDPEntry(editEntryInum);
+        }
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("save new IDP", idp);
-        asimbaService.addIDPEntry(idp);
+        synchronized (svnSyncTimer) {
+            asimbaService.addIDPEntry(idp);
+        }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update IDP", idp);
-        asimbaService.updateIDPEntry(idp);
+        synchronized (svnSyncTimer) {
+            asimbaService.updateIDPEntry(idp);
+        }
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public void cancel() {
+    public String cancel() {
         log.info("cancel IDP", idp);
-        idp = new IDPEntry();
-    }
-
-    @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String save() {
-        log.info("save() call for IDP");
-        synchronized (svnSyncTimer) {
-            asimbaService.addIDPEntry(idp);
-        }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadFile() {
         log.info("uploadFile() call for IDP");
-        synchronized (svnSyncTimer) {
-
-        }
+        //TODO: upload file
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         synchronized (svnSyncTimer) {
-
+            asimbaService.removeIDPEntry(idp);
         }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -191,5 +225,33 @@ public class UpdateAsimbaIDPAction implements Serializable {
      */
     public void setSearchPattern(String searchPattern) {
         this.searchPattern = searchPattern;
+    }
+
+    /**
+     * @return the newEntry
+     */
+    public boolean isNewEntry() {
+        return newEntry;
+    }
+
+    /**
+     * @param newEntry the newEntry to set
+     */
+    public void setNewEntry(boolean newEntry) {
+        this.newEntry = newEntry;
+    }
+
+    /**
+     * @return the editEntryInum
+     */
+    public String getEditEntryInum() {
+        return editEntryInum;
+    }
+
+    /**
+     * @param editEntryInum the editEntryInum to set
+     */
+    public void setEditEntryInum(String editEntryInum) {
+        this.editEntryInum = editEntryInum;
     }
 }

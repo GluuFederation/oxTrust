@@ -52,23 +52,6 @@
             overflow: auto;
         }
         
-        #spMetadataPanel_container
-        {
-        	z-index:999 !important;
-        }
-        
-        #spMetadataPanel_content_scroller
-        {
-        	width:700px !important;
-        	height:500px !important;
-        }
-        
-        #spMetadataPanel_content
-        {
-        	width:700px !important;
-        	height:500px !important;
-        }
-        
         pre
         {
         	height: 450px !important;
@@ -77,7 +60,7 @@
         
     </h:outputStylesheet>
 
-	<h:form enctype="multipart/form-data" id="editSPPoolForm">
+	<h:form id="editSPPoolForm">
             <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <input type='hidden' name='cid' value='#{conversation.id}' />
             
@@ -88,15 +71,15 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spPoolEditID"
                     rendered="true">
-                    <ui:define name="label">ID</ui:define>
-                    
-                    <h:outputLabel 
-                        title="The id of the SP Pool. Example: requestorpool.1"
-                        value="The id of the SP Pool"/>
-                    <h:inputText styleClass="form-control"
-                        title="The id of the SP Pool. Example: requestorpool.1"
-                        value="#{_spPool.id}" size="100" tabindex="0" 
-                        required="true" />
+                <ui:define name="label">ID</ui:define>
+
+                <h:outputLabel 
+                    title="The id of the SP Pool. Example: requestorpool.1"
+                    value="The id of the SP Pool"/>
+                <h:inputText styleClass="form-control"
+                    title="The id of the SP Pool. Example: requestorpool.1"
+                    value="#{_spPool.id}" size="100" tabindex="0" 
+                    required="true" />
             </s:decorate>
             </h:panelGroup>
             
@@ -104,13 +87,13 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spPoolEditFriendlyName"
                     rendered="true">
-                    <ui:define name="label">Friendly Name</ui:define>
-            <h:outputLabel 
-                title="The SP Pool friendly name"
-                value="The SP Pool friendly name"/>
-            <h:inputText styleClass="form-control"
-                title="The SP Pool friendly name"
-                value="#{_spPool.friendlyName}" size="100" tabindex="1" />
+                <ui:define name="label">Friendly Name</ui:define>
+                <h:outputLabel 
+                    title="The SP Pool friendly name"
+                    value="The SP Pool friendly name"/>
+                <h:inputText styleClass="form-control"
+                    title="The SP Pool friendly name"
+                    value="#{_spPool.friendlyName}" size="100" tabindex="1" />
             </s:decorate>
             </h:panelGroup>
             
@@ -118,11 +101,14 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spPoolEditPreAuthorizationProfileID"
                     rendered="true">
-                    <ui:define name="label">PreAuthorizationProfileID</ui:define>
-                    
-                    <h:selectOneMenu styleClass="form-control"
-                        title="Pre authorization profile id."
-                        value=""  tabindex="2"  />
+                <ui:define name="label">PreAuthorizationProfileID</ui:define>
+                <h:outputLabel 
+                    title="Pre-authorization profile id"
+                    value="Pre-authorization profile id"/>
+                <!-- TODO: selectbox -->
+                <h:inputText styleClass="form-control"
+                    title="Pre-authorization profile id"
+                    value="#{_spPool.preAuthorizationProfileID}"  tabindex="2"/>
             </s:decorate>
             </h:panelGroup>
             
@@ -130,12 +116,15 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spPoolEditPostAuthorizationProfileID"
                     rendered="true">
-                    <ui:define name="label">PostAuthorizationProfileID</ui:define>
-                    <!-- postauthz.1 TODO: checkbox -->
-                    <h:inputText styleClass="form-control"
-                        title="Post authorization profile id"
-                        value="#{_spPool.postAuthorizationProfileID}" 
-                        required="true" />
+                <ui:define name="label">PostAuthorizationProfileID</ui:define>
+                <!-- postauthz.1 TODO: selectbox -->
+                <h:outputLabel 
+                    title="Post-authorization profile id"
+                    value="Post-authorization profile id"/>
+                <h:inputText styleClass="form-control"
+                    title="Post-authorization profile id"
+                    value="#{_spPool.postAuthorizationProfileID}" 
+                    required="true" tabindex="3" />
             </s:decorate>
             </h:panelGroup>
             
@@ -143,12 +132,12 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spPoolEditAttributeReleasePolicyID"
                     rendered="true">
-                    <ui:define name="label">AttributeReleasePolicyID</ui:define>
-                    <!-- asimba.releasepolicy.1 TODO: checkbox -->
-                    <h:inputText styleClass="form-control"
-                        title=""
-                        value="#{_spPool.attributeReleasePolicyID}" 
-                        required="true" />
+                <ui:define name="label">AttributeReleasePolicyID</ui:define>
+                <!-- asimba.releasepolicy.1 TODO: checkbox -->
+                <h:inputText styleClass="form-control"
+                    title=""
+                    value="#{_spPool.attributeReleasePolicyID}" 
+                    required="true" tabindex="4" />
             </s:decorate>
             </h:panelGroup>
             
@@ -156,12 +145,12 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spPoolEditAuthenticationProfileIDs"
                     rendered="true">
-                    <ui:define name="label">AuthenticationProfileIDs</ui:define>
-                    <!-- remote.saml2 TODO: multiselect list -->
-                    <h:inputText styleClass="form-control"
-                        title=""
-                        value="#{_spPool.authenticationProfileIDs}" 
-                        required="true" />
+                <ui:define name="label">AuthenticationProfileIDs</ui:define>
+                <!-- remote.saml2 TODO: multiselect list -->
+                <h:inputText styleClass="form-control"
+                    title=""
+                    value="#{_spPool.authenticationProfileIDs}" 
+                    required="true"  tabindex="5" />
             </s:decorate>
             </h:panelGroup>
             
@@ -169,14 +158,14 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spPoolRequestorEditAdditionalProperties"
                     rendered="true">
-                    <ui:define name="label">Properties</ui:define>
-                    
-                    <h:outputLabel 
-                        title="Additional properties"
-                        value="Additional properties"/>
-                    <h:inputText styleClass="form-control"
-                        title=""
-                        value="#{_updateAsimbaSPPoolAction.spPoolAdditionalProperties}" />
+                <ui:define name="label">Properties</ui:define>
+
+                <h:outputLabel 
+                    title="Additional properties"
+                    value="Additional properties"/>
+                <h:inputText styleClass="form-control"
+                    title=""
+                    value="#{_updateAsimbaSPPoolAction.spPoolAdditionalProperties}"  tabindex="6" />
             </s:decorate>
             </h:panelGroup>
             

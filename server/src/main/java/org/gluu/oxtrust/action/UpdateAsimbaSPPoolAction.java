@@ -39,7 +39,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("updateAsimbaSPPoolAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPPoolAction implements Serializable {
@@ -70,7 +70,11 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private RequestorPoolEntry spPool = new RequestorPoolEntry();
+    private RequestorPoolEntry spPool;
+    
+    private boolean newEntry = true;
+    
+    private String editEntryInum = null;
     
     private String spPoolAdditionalProperties = "";
     
@@ -87,36 +91,67 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @Create
     public void init() {
         log.info("init() SPPool call");
-        //list loading
-        spPoolList = asimbaService.loadRequestorPools();
+        
+        clearEdit();
+        
+        refresh();
+    }
+    
+    public void refresh() {
+        log.info("refresh() SPPool call");
+        
+        if (searchPattern == null || "".equals(searchPattern)) {
+            //list loading
+            spPoolList = asimbaService.loadRequestorPools();
+        } else {
+            // search mode, clear pattern
+            searchPattern = null;
+        }
+    }
+    
+    public void clearEdit() {
+        spPool = new RequestorPoolEntry();
+        editEntryInum = null;
+        newEntry = true;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public void edit() {
+        log.info("edit() SPPool call, inum: "+editEntryInum);
+        if (editEntryInum == null || "".equals(editEntryInum)) {
+            // no inum, new entry mode
+            clearEdit();
+        } else {
+            // edit entry
+            newEntry = false;
+            spPool = asimbaService.readRequestorPoolEntry(editEntryInum);
+        }
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("save new RequestorPool", spPool);
-        asimbaService.addRequestorPoolEntry(spPool);
+        synchronized (svnSyncTimer) {
+            asimbaService.addRequestorPoolEntry(spPool);
+        }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() RequestorPool", spPool);
-        asimbaService.addRequestorPoolEntry(spPool);
+        synchronized (svnSyncTimer) {
+            asimbaService.updateRequestorPoolEntry(spPool);
+        }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public void cancel() {
+    public String cancel() {
         log.info("cancel() RequestorPool", spPool);
-        spPool = new RequestorPoolEntry();
-    }
-
-    @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String save() {
-        log.info("save() RequestorPool", spPool);
-        synchronized (svnSyncTimer) {
-
-        }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -124,8 +159,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     public String delete() {
         log.info("delete() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
-
+            asimbaService.removeRequestorPoolEntry(spPool);
         }
+        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -218,5 +254,33 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
             writer.write("\n");
         }
         this.spPoolAdditionalProperties = writer.toString();
+    }
+
+    /**
+     * @return the newEntry
+     */
+    public boolean isNewEntry() {
+        return newEntry;
+    }
+
+    /**
+     * @param newEntry the newEntry to set
+     */
+    public void setNewEntry(boolean newEntry) {
+        this.newEntry = newEntry;
+    }
+
+    /**
+     * @return the editEntryInum
+     */
+    public String getEditEntryInum() {
+        return editEntryInum;
+    }
+
+    /**
+     * @param editEntryInum the editEntryInum to set
+     */
+    public void setEditEntryInum(String editEntryInum) {
+        this.editEntryInum = editEntryInum;
     }
 }

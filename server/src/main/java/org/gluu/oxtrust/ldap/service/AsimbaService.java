@@ -51,16 +51,10 @@ public class AsimbaService {
      
     @Create
     public void init() {
-        try {
-            //ldapEntryManager = LDAPUtility.getLDAPEntryManager();
-        } catch (Exception e) {
-            log.error("AsimbaService Init exception", e);
-        }
     }
     
     @Destroy
-    public void destroy() {
-        
+    public void destroy() {        
     }
     
     public LdapConfigurationEntry loadAsimbaConfiguration() {
@@ -319,8 +313,7 @@ public class AsimbaService {
     * @param entry IDPEntry
     */
     public void updateIDPEntry(IDPEntry entry) {
-        LdapIDPEntry ldapEntry = new LdapIDPEntry();
-        ldapEntry.setDn(getDnForLdapIDPEntry(entry.getInum()));
+        LdapIDPEntry ldapEntry = ldapEntryManager.find(LdapIDPEntry.class, getDnForLdapIDPEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.merge(ldapEntry);
     }
@@ -331,23 +324,20 @@ public class AsimbaService {
     * @param entry IDPEntry
     */
     public void removeIDPEntry(IDPEntry entry) {
-        LdapIDPEntry ldapEntry = new LdapIDPEntry();
-        ldapEntry.setDn(getDnForLdapIDPEntry(entry.getInum()));
+        LdapIDPEntry ldapEntry = ldapEntryManager.find(LdapIDPEntry.class, getDnForLdapIDPEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.remove(ldapEntry);
     }
 
     /**
-    * Check if LDAP server contains IDPEntry with specified attributes.
+    * Read IDPEntry from LDAP.
     * 
-    * @param entry IDPEntry
-    * @return True if entry with specified attributes exist
+    * @param inum Entry inum.
+    * @return IDPEntry
     */
-    public boolean containsIDPEntry(IDPEntry entry) {
-        LdapIDPEntry ldapEntry = new LdapIDPEntry();
-        ldapEntry.setDn(getDnForLdapIDPEntry(entry.getInum()));
-        ldapEntry.setEntry(entry);
-        return ldapEntryManager.contains(ldapEntry);
+    public IDPEntry readIDPEntry(String inum) {
+        LdapIDPEntry result = ldapEntryManager.find(LdapIDPEntry.class, getDnForLdapIDPEntry(inum));
+        return result.getEntry();
     }
     
     
@@ -371,8 +361,7 @@ public class AsimbaService {
     * @param entry LDAPRequestorPoolEntry
     */
     public void updateRequestorPoolEntry(RequestorPoolEntry entry) {
-        LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
-        ldapEntry.setDn(getDnForLDAPRequestorPoolEntry(entry.getInum()));
+        LDAPRequestorPoolEntry ldapEntry = ldapEntryManager.find(LDAPRequestorPoolEntry.class, getDnForLDAPRequestorPoolEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.merge(ldapEntry);
     }
@@ -383,23 +372,20 @@ public class AsimbaService {
     * @param entry LDAPRequestorPoolEntry
     */
     public void removeRequestorPoolEntry(RequestorPoolEntry entry) {
-        LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
-        ldapEntry.setDn(getDnForLDAPRequestorPoolEntry(entry.getInum()));
+        LDAPRequestorPoolEntry ldapEntry = ldapEntryManager.find(LDAPRequestorPoolEntry.class, getDnForLDAPRequestorPoolEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.remove(ldapEntry);
     }
 
     /**
-    * Check if LDAP server contains LDAPRequestorPoolEntry with specified attributes.
+    * Read RequestorPoolEntry from LDAP.
     * 
-    * @param entry LDAPRequestorPoolEntry
-    * @return True if entry with specified attributes exist
+    * @param inum Entry inum.
+    * @return RequestorPoolEntry
     */
-    public boolean containsRequestorPoolEntry(RequestorPoolEntry entry) {
-        LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
-        ldapEntry.setDn(getDnForLDAPRequestorPoolEntry(entry.getInum()));
-        ldapEntry.setEntry(entry);
-        return ldapEntryManager.contains(ldapEntry);
+    public RequestorPoolEntry readRequestorPoolEntry(String inum) {
+        LDAPRequestorPoolEntry result = ldapEntryManager.find(LDAPRequestorPoolEntry.class, getDnForLDAPRequestorPoolEntry(inum));
+        return result.getEntry();
     }
     
     
@@ -423,10 +409,9 @@ public class AsimbaService {
     * @param entry LDAPRequestorEntry
     */
     public void updateRequestorEntry(RequestorEntry entry) {
-        LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
-        ldapEntry.setDn(getDnForLDAPRequestorEntry(entry.getInum()));
+        LDAPRequestorEntry ldapEntry = ldapEntryManager.find(LDAPRequestorEntry.class, getDnForLDAPRequestorEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
-        ldapEntryManager.merge(entry);
+        ldapEntryManager.merge(ldapEntry);
     }
 
     /**
@@ -435,23 +420,20 @@ public class AsimbaService {
     * @param entry LDAPRequestorEntry
     */
     public void removeRequestorEntry(RequestorEntry entry) {
-        LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
-        ldapEntry.setDn(getDnForLDAPRequestorEntry(entry.getInum()));
+        LDAPRequestorEntry ldapEntry = ldapEntryManager.find(LDAPRequestorEntry.class, getDnForLDAPRequestorEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
-        ldapEntryManager.remove(entry);
+        ldapEntryManager.remove(ldapEntry);
     }
 
     /**
-    * Check if LDAP server contains LDAPRequestorEntry with specified attributes.
+    * Read RequestorEntry from LDAP.
     * 
-    * @param entry LDAPRequestorEntry
-    * @return True if entry with specified attributes exist
+    * @param inum Entry inum.
+    * @return RequestorEntry
     */
-    public boolean containsRequestorEntry(RequestorEntry entry) {
-        LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
-        ldapEntry.setDn(getDnForLDAPRequestorEntry(entry.getInum()));
-        ldapEntry.setEntry(entry);
-        return ldapEntryManager.contains(entry);
+    public RequestorEntry readRequestorEntry(String inum) {
+        LDAPRequestorEntry result = ldapEntryManager.find(LDAPRequestorEntry.class, getDnForLDAPRequestorEntry(inum));
+        return result.getEntry();
     }
     
     
@@ -475,8 +457,7 @@ public class AsimbaService {
     * @param entry LDAPApplicationSelectorEntry
     */
     public void updateApplicationSelectorEntry(ApplicationSelectorEntry entry) {
-        LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
-        ldapEntry.setDn(getDnForLDAPApplicationSelectorEntry(entry.getInum()));
+        LDAPApplicationSelectorEntry ldapEntry = ldapEntryManager.find(LDAPApplicationSelectorEntry.class, getDnForLDAPApplicationSelectorEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.merge(ldapEntry);
     }
@@ -487,22 +468,19 @@ public class AsimbaService {
     * @param entry LDAPApplicationSelectorEntry
     */
     public void removeApplicationSelectorEntry(ApplicationSelectorEntry entry) {
-        LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
-        ldapEntry.setDn(getDnForLDAPApplicationSelectorEntry(entry.getInum()));
+        LDAPApplicationSelectorEntry ldapEntry = ldapEntryManager.find(LDAPApplicationSelectorEntry.class, getDnForLDAPApplicationSelectorEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.remove(ldapEntry);
     }
 
     /**
-    * Check if LDAP server contains LDAPApplicationSelectorEntry with specified attributes.
+    * Read ApplicationSelectorEntry from LDAP.
     * 
-    * @param entry LDAPApplicationSelectorEntry
-    * @return True if entry with specified attributes exist
+    * @param inum Entry inum.
+    * @return ApplicationSelectorEntry
     */
-    public boolean containsApplicationSelectorEntry(ApplicationSelectorEntry entry) {
-        LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
-        ldapEntry.setDn(getDnForLDAPApplicationSelectorEntry(entry.getInum()));
-        ldapEntry.setEntry(entry);
-        return ldapEntryManager.contains(ldapEntry);
+    public ApplicationSelectorEntry readApplicationSelectorEntry(String inum) {
+        LDAPApplicationSelectorEntry result = ldapEntryManager.find(LDAPApplicationSelectorEntry.class, getDnForLDAPApplicationSelectorEntry(inum));
+        return result.getEntry();
     }
 }

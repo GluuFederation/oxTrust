@@ -9,6 +9,8 @@
     <restrict>#{s:hasPermission('trust', 'access')}</restrict>
 
     <rewrite pattern="/asimba/selectors" />
+    
+    <action execute="#{updateAsimbaSelectorAction.refresh}"/>
 
     <navigation from-action="#{updateAsimbaSelectorAction.add}">
         <rule if-outcome="success">
