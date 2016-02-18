@@ -10,7 +10,7 @@
 
     <rewrite pattern="/asimba/editSPRequestor/{inum}" />
     
-    <param name="inum" value="#{uupdateAsimbaSPRequestorAction.editEntryInum}" required="false" />
+    <param name="inum" value="#{updateAsimbaSPRequestorAction.editEntryInum}" required="false" />
 
     <action execute="#{updateAsimbaSPRequestorAction.edit}" if="#{updateAsimbaSPRequestorAction.editEntryInum != null}" on-postback="true" />
 
