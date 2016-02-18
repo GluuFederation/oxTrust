@@ -40,7 +40,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("updateAsimbaSPRequestorAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPRequestorAction implements Serializable {
@@ -111,8 +111,13 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
         }
 
-        //list loading
-        spRequestorList = asimbaService.loadRequestors();
+        if (searchPattern == null || "".equals(searchPattern)) {
+            //list loading
+            spRequestorList = asimbaService.loadRequestors();
+        } else {
+            // search mode, clear pattern
+            searchPattern = null;
+        }
     }
     
     public void clearEdit() {
@@ -155,16 +160,17 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public void cancel() {
+    public String cancel() {
         log.info("cancel() Requestor", spRequestor);
         clearEdit();
+        return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         log.info("delete() Requestor", spRequestor);
         synchronized (svnSyncTimer) {
-            //TODO: delete current node
+            asimbaService.removeRequestorEntry(spRequestor);
         }
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;

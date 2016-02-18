@@ -36,7 +36,7 @@ import org.jboss.seam.annotations.Create;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("updateAsimbaIDPAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaIDPAction implements Serializable {
@@ -94,8 +94,14 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     public void refresh() {
         log.info("refresh() IDP call");
-        // list loading
-        idpList = asimbaService.loadIDPs();
+        
+        if (searchPattern == null || "".equals(searchPattern)) {
+            // list loading
+            idpList = asimbaService.loadIDPs();
+        } else {
+            // search mode, clear pattern
+            searchPattern = null;
+        }
     }
     
     public void clearEdit() {

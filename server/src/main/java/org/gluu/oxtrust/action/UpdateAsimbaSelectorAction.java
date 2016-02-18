@@ -35,7 +35,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("updateAsimbaSelectorAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSelectorAction implements Serializable {
@@ -93,8 +93,14 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     public void refresh() {
         log.info("refresh() Selector call");
-        // list loading
-        selectorList = asimbaService.loadSelectors();
+        
+        if (searchPattern == null || "".equals(searchPattern)) {
+            //list loading
+            selectorList = asimbaService.loadSelectors();
+        } else {
+            // search mode, clear pattern
+            searchPattern = null;
+        }
     }
     
     public void clearEdit() {
@@ -137,16 +143,17 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public void cancel() {
+    public String cancel() {
         log.info("cancel() Selector", selector);
         clearEdit();
+        return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String delete() {
         log.info("delete() Selector", selector);
         synchronized (svnSyncTimer) {
-            //TODO: delete current node
+            asimbaService.removeApplicationSelectorEntry(selector);
         }
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;

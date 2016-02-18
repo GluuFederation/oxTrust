@@ -39,7 +39,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("updateAsimbaSPPoolAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPPoolAction implements Serializable {
@@ -99,8 +99,14 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     public void refresh() {
         log.info("refresh() SPPool call");
-        //list loading
-        spPoolList = asimbaService.loadRequestorPools();
+        
+        if (searchPattern == null || "".equals(searchPattern)) {
+            //list loading
+            spPoolList = asimbaService.loadRequestorPools();
+        } else {
+            // search mode, clear pattern
+            searchPattern = null;
+        }
     }
     
     public void clearEdit() {
@@ -136,23 +142,24 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     public String update() {
         log.info("update() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
-            asimbaService.addRequestorPoolEntry(spPool);
+            asimbaService.updateRequestorPoolEntry(spPool);
         }
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public void cancel() {
+    public String cancel() {
         log.info("cancel() RequestorPool", spPool);
         clearEdit();
+        return OxTrustConstants.RESULT_SUCCESS;
     }
     
     @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         log.info("delete() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
-            //TODO: delete current node
+            asimbaService.removeRequestorPoolEntry(spPool);
         }
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
