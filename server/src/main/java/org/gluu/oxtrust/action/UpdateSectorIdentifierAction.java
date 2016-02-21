@@ -54,7 +54,6 @@ public class UpdateSectorIdentifierAction implements Serializable {
     private List<DisplayNameEntry> clientDisplayNameEntries;
 
     @NotNull
-    @Size(min = 2, max = 30, message = "Length of search string should be between 2 and 30")
     private String searchAvailableClientPattern;
 
     private String oldSearchAvailableClientPattern;
@@ -262,6 +261,9 @@ public class UpdateSectorIdentifierAction implements Serializable {
         try {
             this.availableClients = clientService.searchClients(this.searchAvailableClientPattern, OxTrustConstants.searchClientsSizeLimit);
             this.oldSearchAvailableClientPattern = this.searchAvailableClientPattern;
+            if(this.availableClients.size() > OxTrustConstants.displaySearchClientsSizeLimit){
+            	this.availableClients=this.availableClients.subList(0, OxTrustConstants.displaySearchClientsSizeLimit);           		
+            }
             selectAddedClients();
         } catch (Exception ex) {
             log.error("Failed to find clients", ex);
