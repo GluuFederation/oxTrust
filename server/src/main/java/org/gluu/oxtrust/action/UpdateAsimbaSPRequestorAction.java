@@ -141,6 +141,13 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
                 setProperties(spRequestor.getProperties());
             }
         }
+        
+        // fill spPoolList
+        spPoolList = new ArrayList<SelectItem>();
+        List<RequestorPoolEntry> spPoolListEntries = asimbaService.loadRequestorPools();
+        for (RequestorPoolEntry entry : spPoolListEntries) {
+            spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
+        }
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")

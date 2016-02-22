@@ -140,6 +140,19 @@ public class UpdateAsimbaSelectorAction implements Serializable {
             newEntry = false;
             selector = asimbaService.readApplicationSelectorEntry(editEntryInum);
         }
+        
+        // Load edit lists
+        idpList = new ArrayList<SelectItem>();
+        List<IDPEntry> idpListEntries = asimbaService.loadIDPs();
+        for (IDPEntry entry : idpListEntries) {
+            idpList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
+        }
+        
+        spRequestorList = new ArrayList<SelectItem>();
+        List<RequestorEntry> spRequestorListEntries = asimbaService.loadRequestors();
+        for (RequestorEntry entry : spRequestorListEntries) {
+            spRequestorList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
+        }
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
