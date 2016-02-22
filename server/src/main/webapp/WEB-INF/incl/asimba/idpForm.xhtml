@@ -72,10 +72,10 @@
                 <ui:define name="label">ID</ui:define>
 
                 <h:outputLabel 
-                    title="It should be the entityID of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
-                    value="The id of the organization"/>
+                    title="It should be the entityID (URL) of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
+                    value="The entity ID of the organization"/>
                 <h:inputText styleClass="form-control"
-                    title="It should be the entityID of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
+                    title="It should be the entityID (URL) of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
                     value="#{_idp.id}" size="100" tabindex="0" 
                     required="true" />
             </s:decorate>

@@ -111,6 +111,11 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     public void clearEdit() {
         spPool = new RequestorPoolEntry();
+        // dafault fields
+        spPool.setPostAuthorizationProfileID("postauthz.1");
+        spPool.setAttributeReleasePolicyID("asimba.releasepolicy.1");
+        spPool.setAuthenticationProfileIDs("remote.saml2");
+        
         editEntryInum = null;
         newEntry = true;
     }

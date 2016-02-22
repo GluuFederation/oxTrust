@@ -81,7 +81,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     private List<RequestorEntry> spRequestorList = new ArrayList<RequestorEntry>();
     
-    private ArrayList<SelectItem> spPoolList = new ArrayList<SelectItem>();
+    private ArrayList<SelectItem> spPoolList;
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -104,12 +104,6 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     public void refresh() {
         log.info("refresh() SPRequestor call");
-        
-        // fill spPoolList
-        List<RequestorPoolEntry> spPoolListEntries = asimbaService.loadRequestorPools();
-        for (RequestorPoolEntry entry : spPoolListEntries) {
-            spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
-        }
 
         if (searchPattern == null || "".equals(searchPattern)) {
             //list loading
@@ -136,6 +130,13 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             // edit entry
             newEntry = false;
             spRequestor = asimbaService.readRequestorEntry(editEntryInum);
+        }
+        
+        // fill spPoolList
+        spPoolList = new ArrayList<SelectItem>();
+        List<RequestorPoolEntry> spPoolListEntries = asimbaService.loadRequestorPools();
+        for (RequestorPoolEntry entry : spPoolListEntries) {
+            spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
         }
     }
     
