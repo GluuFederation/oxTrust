@@ -160,7 +160,7 @@ public final class OxTrustConstants extends OxConstants {
     public static final int searchPersonsSizeLimit = 100;
     public static final int searchGroupSizeLimit = 100;
     public static final int searchSectorIdentifierSizeLimit = 100;
-    public static final int displaySearchClientsSizeLimit =  20;
+    public static final int clientsSearchLimit =  20;
     
     // SCIM
     /**

@@ -192,7 +192,7 @@ public class ClientService implements Serializable {
 	 *            Maximum count of results
 	 * @return List of clients
 	 */
-	public List<OxAuthClient> searchClients(String pattern, int sizeLimit) {
+	public List<OxAuthClient> searchClients(String pattern, int searchLimit, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
@@ -200,7 +200,7 @@ public class ClientService implements Serializable {
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, inumFilter);
 
-		List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, sizeLimit);
+		List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, searchLimit, sizeLimit);
 
 		return result;
 	}

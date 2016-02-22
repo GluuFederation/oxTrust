@@ -259,11 +259,8 @@ public class UpdateSectorIdentifierAction implements Serializable {
         }
 
         try {
-            this.availableClients = clientService.searchClients(this.searchAvailableClientPattern, OxTrustConstants.searchClientsSizeLimit);
+            this.availableClients = clientService.searchClients(this.searchAvailableClientPattern, 0 ,OxTrustConstants.clientsSearchLimit);
             this.oldSearchAvailableClientPattern = this.searchAvailableClientPattern;
-            if(this.availableClients.size() > OxTrustConstants.displaySearchClientsSizeLimit){
-            	this.availableClients=this.availableClients.subList(0, OxTrustConstants.displaySearchClientsSizeLimit);           		
-            }
             selectAddedClients();
         } catch (Exception ex) {
             log.error("Failed to find clients", ex);
