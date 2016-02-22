@@ -30,7 +30,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.model.GluuAttribute;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -494,15 +493,6 @@ public class PersonService implements Serializable, IPersonService {
 		}
 
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.gluu.oxtrust.ldap.service.IPersonService#removeAttribute(org.xdi.model.GluuAttribute)
-	 */
-	@Override
-	public void removeAttribute(GluuAttribute attribute) {
-		ldapEntryManager.removeAttributeFromEntries(getDnForPerson(null), GluuCustomPerson.class, attribute.getName());
-		
 	}
 
 	/* (non-Javadoc)
