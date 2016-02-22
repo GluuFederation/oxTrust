@@ -114,10 +114,10 @@
                 <ui:define name="label">Metadata URL</ui:define>
 
                 <h:outputLabel 
-                    title="The URL of the metadata or empty if none"
+                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
                     value="The URL of the metadata or empty if none"/>
                 <h:inputText styleClass="form-control"
-                    title="The URL of the metadata or empty if none"
+                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
                     value="#{_idp.metadataUrl}" size="100" tabindex="3" />
             </s:decorate>
             </h:panelGroup>
@@ -144,10 +144,10 @@
                 <ui:define name="label">Metadata File</ui:define>
 
                 <h:outputLabel 
-                    title="Provide the absolute location of metadata"
+                    title="Provide the absolute location of metadata file."
                     value="The location of the metadata file or empty if none"/>
                 <h:inputText  styleClass="form-control"
-                    title="Provide the absolute location of metadata"
+                    title="Provide the absolute location of metadata file."
                     value="#{_idp.metadataFile}" tabindex="5" />
                 <!-- TODO: upload file button -->
             </s:decorate>

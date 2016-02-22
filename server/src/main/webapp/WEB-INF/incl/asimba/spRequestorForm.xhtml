@@ -119,10 +119,10 @@
                 <ui:define name="label">Metadata URL</ui:define>
 
                 <h:outputLabel 
-                    title="The URL of the metadata or empty if none"
+                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
                     value="The URL of the metadata or empty if none"/>
                 <h:inputText styleClass="form-control"
-                    title="The URL of the metadata or empty if none"
+                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
                     value="#{_spRequestor.metadataUrl}" size="100" tabindex="2" />
             </s:decorate>
             </h:panelGroup>
@@ -191,10 +191,10 @@
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Signing"
+                title="Configure whether signing is required for this requestor. When set to true, incoming requests without a signature will be rejected."
                 value="#{_spRequestor.signing}" />
             <h:outputLabel 
-                title="Signing"
+                title="Configure whether signing is required for this requestor. When set to true, incoming requests without a signature will be rejected."
                 value="Signing"/>
                         </td>
                         <td colspan="2" rowspan="1">        
