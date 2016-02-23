@@ -144,7 +144,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
-        log.info("add() Selector", selector);
+        log.info("add() Selector call", selector);
         synchronized (svnSyncTimer) {
             asimbaService.addApplicationSelectorEntry(selector);
         }

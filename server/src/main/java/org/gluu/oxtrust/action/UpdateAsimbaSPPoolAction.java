@@ -135,7 +135,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
-        log.info("save new RequestorPool", spPool);
+        log.info("add new RequestorPool", spPool);
         synchronized (svnSyncTimer) {
             asimbaService.addRequestorPoolEntry(spPool);
         }

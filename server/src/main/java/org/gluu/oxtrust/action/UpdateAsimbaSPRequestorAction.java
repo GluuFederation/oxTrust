@@ -142,7 +142,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
-        log.info("save new Requestor", spRequestor);
+        log.info("add new Requestor", spRequestor);
         synchronized (svnSyncTimer) {
             asimbaService.addRequestorEntry(spRequestor);
         }
