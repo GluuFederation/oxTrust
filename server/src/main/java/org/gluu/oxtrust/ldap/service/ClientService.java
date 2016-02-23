@@ -200,7 +200,7 @@ public class ClientService implements Serializable {
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, inumFilter);
 
-		List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, sizeLimit);
+		List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}
@@ -214,7 +214,7 @@ public class ClientService implements Serializable {
 	public List<OxAuthClient> getAllClientsList() {
 
 		List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class,
-				Filter.createPresenceFilter("inum"), 10);
+				Filter.createPresenceFilter("inum"), 0, 10);
 
 		return result;
 

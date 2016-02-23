@@ -266,7 +266,7 @@ public class UpdateGroupAction implements Serializable {
 		}
 
 		try {
-			this.availableMembers = personService.searchPersons(this.searchAvailableMemberPattern, OxTrustConstants.searchPersonsSizeLimit);
+			this.availableMembers = personService.searchPersons(this.searchAvailableMemberPattern, OxTrustConstants.searchGroupSizeLimit);
 			this.oldSearchAvailableMemberPattern = this.searchAvailableMemberPattern;
 			selectAddedMembers();
 		} catch (Exception ex) {

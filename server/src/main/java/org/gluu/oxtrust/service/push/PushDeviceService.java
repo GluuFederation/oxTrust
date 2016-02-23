@@ -144,7 +144,7 @@ public class PushDeviceService implements Serializable {
 		Filter oxAuthUserIdFilter = Filter.createSubstringFilter("oxAuthUserId", null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, oxTypeFilter, oxAuthUserIdFilter);
 
-		List<PushDevice> result = ldapEntryManager.findEntries(getDnForPushDevice(null), PushDevice.class, searchFilter, sizeLimit);
+		List<PushDevice> result = ldapEntryManager.findEntries(getDnForPushDevice(null), PushDevice.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}

@@ -135,7 +135,7 @@ public class ScopeDescriptionService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
 
-		List<ScopeDescription> result = ldapEntryManager.findEntries(getDnForScopeDescription(null), ScopeDescription.class, searchFilter, sizeLimit);
+		List<ScopeDescription> result = ldapEntryManager.findEntries(getDnForScopeDescription(null), ScopeDescription.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}

@@ -103,7 +103,7 @@ public class GroupService implements Serializable, IGroupService {
 
 		boolean isMemberOrOwner = false;
 		try {
-			isMemberOrOwner = ldapEntryManager.findEntries(groupDN, GluuGroup.class, searchFilter, 1).size() > 0;
+			isMemberOrOwner = ldapEntryManager.findEntries(groupDN, GluuGroup.class, searchFilter, 0, 1).size() > 0;
 
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to determine if person '{0}' memeber or owner of group '{1}'", ex, personDN, groupDN);
@@ -195,7 +195,7 @@ public class GroupService implements Serializable, IGroupService {
 		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 
-		List<GluuGroup> result = ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter, sizeLimit);
+		List<GluuGroup> result = ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}
@@ -227,7 +227,7 @@ public class GroupService implements Serializable, IGroupService {
 	public List<GluuGroup> getAllGroupsList() throws Exception {
 
 		List<GluuGroup> result = ldapEntryManager
-				.findEntries(getDnForGroup(null), GluuGroup.class, Filter.createPresenceFilter("inum"), 10);
+				.findEntries(getDnForGroup(null), GluuGroup.class, Filter.createPresenceFilter("inum"), 0, 10);
 
 		return result;
 	}

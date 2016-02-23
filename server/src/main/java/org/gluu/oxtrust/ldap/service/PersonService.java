@@ -143,7 +143,7 @@ public class PersonService implements Serializable, IPersonService {
 		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
 
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
+		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}
@@ -154,7 +154,7 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> findPersons(GluuCustomPerson person, int sizeLimit) {
 		person.setBaseDn(getDnForPerson(null));
-		return ldapEntryManager.findEntries(person, sizeLimit);
+		return ldapEntryManager.findEntries(person, 0, sizeLimit);
 	}
 
 	/* (non-Javadoc)
@@ -188,7 +188,7 @@ public class PersonService implements Serializable, IPersonService {
 			searchFilter = Filter.createANDFilter(orFilter, notFilter);
 		}
 
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
+		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, 0, sizeLimit);
 
 		return result;
 

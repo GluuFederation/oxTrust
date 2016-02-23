@@ -124,7 +124,7 @@ public class ResourceSetService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
 
-		List<ResourceSet> result = ldapEntryManager.findEntries(getDnForResourceSet(null), ResourceSet.class, searchFilter, sizeLimit);
+		List<ResourceSet> result = ldapEntryManager.findEntries(getDnForResourceSet(null), ResourceSet.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}

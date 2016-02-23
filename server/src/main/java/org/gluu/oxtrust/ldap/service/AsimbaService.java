@@ -122,7 +122,7 @@ public class AsimbaService {
         Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter, identificationURLFilter);
 
         // search
-        final List<LdapIDPEntry> entries = ldapEntryManager.findEntries(getDnForLdapIDPEntry(null), LdapIDPEntry.class, searchFilter, sizeLimit);
+        final List<LdapIDPEntry> entries = ldapEntryManager.findEntries(getDnForLdapIDPEntry(null), LdapIDPEntry.class, searchFilter, 0, sizeLimit);
 
         // convert result
         List<IDPEntry> ret = new ArrayList<IDPEntry>();
@@ -151,7 +151,7 @@ public class AsimbaService {
         Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter, organizationIdFilter);
 
         // search
-        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPApplicationSelectorEntry(null), LDAPApplicationSelectorEntry.class, searchFilter, sizeLimit);
+        List<LDAPApplicationSelectorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPApplicationSelectorEntry(null), LDAPApplicationSelectorEntry.class, searchFilter, 0, sizeLimit);
 
         // convert result
         List<ApplicationSelectorEntry> ret = new ArrayList<ApplicationSelectorEntry>();
@@ -179,7 +179,7 @@ public class AsimbaService {
         Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter);
 
         // search
-        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorEntry(null), LDAPRequestorEntry.class, searchFilter, sizeLimit);
+        List<LDAPRequestorEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorEntry(null), LDAPRequestorEntry.class, searchFilter, 0, sizeLimit);
 
         // convert result
         List<RequestorEntry> ret = new ArrayList<RequestorEntry>();
@@ -207,7 +207,7 @@ public class AsimbaService {
         Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter);
 
         // search
-        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorPoolEntry(null), LDAPRequestorPoolEntry.class, searchFilter, sizeLimit);
+        List<LDAPRequestorPoolEntry> entries = ldapEntryManager.findEntries(getDnForLDAPRequestorPoolEntry(null), LDAPRequestorPoolEntry.class, searchFilter, 0, sizeLimit);
 
         // convert result
         List<RequestorPoolEntry> ret = new ArrayList<RequestorPoolEntry>();

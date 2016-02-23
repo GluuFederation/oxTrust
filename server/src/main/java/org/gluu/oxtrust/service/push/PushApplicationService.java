@@ -145,7 +145,7 @@ public class PushApplicationService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, oxNameFilter, displayNameFilter);
 
-		List<PushApplication> result = ldapEntryManager.findEntries(getDnForPushApplication(null), PushApplication.class, searchFilter, sizeLimit);
+		List<PushApplication> result = ldapEntryManager.findEntries(getDnForPushApplication(null), PushApplication.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}

@@ -156,11 +156,11 @@ public final class OxTrustConstants extends OxConstants {
     public static final String SELF_LINK_CONTRACT = "$self";
     public static final String ADMIN_LINK_CONTRACT = "*linkcontract*manager";
 
-    public static final int searchClientsSizeLimit = 100;
-    public static final int searchPersonsSizeLimit = 100;
-    public static final int searchGroupSizeLimit = 100;
-    public static final int searchSectorIdentifierSizeLimit = 100;
-    public static final int displaySearchClientsSizeLimit =  20;
+    public static final int searchClientsSizeLimit = 20;
+    public static final int searchPersonsSizeLimit = 20;
+    public static final int searchGroupSizeLimit = 20;
+    public static final int searchSectorIdentifierSizeLimit = 20;
+    public static final int searchSizeLimit = 20;
     
     // SCIM
     /**
