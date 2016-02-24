@@ -5,14 +5,10 @@
     "type": "object",
     "additionalProperties": true,
     "properties": {
-        "mode": {
-            "id": "mode",
-            "description": "The mode of the Gluu oxAuth Server. Possible modes are memory and ldap.",
-            "type": "string",
-            "enum": [
-                "memory",
-                "ldap"
-            ]
+        "sessionAsJwt": {
+            "id": "sessionAsJwt",
+            "description": "Session as JWT.",
+            "type": "boolean"
         },
         "issuer": {
             "id": "issuer",
