@@ -90,7 +90,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         try {
             this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
             if(sectorIdentifier.getClientIds() != null && sectorIdentifier.getClientIds().size()>0)
-            	 this.loginUris.addAll(clientRedirectUriList(sectorIdentifier.getClientIds()));
+            	this.loginUris.addAll(clientRedirectUriList(sectorIdentifier.getClientIds()));
             this.clientDisplayNameEntries = loadClientDisplayNameEntries();
         } catch (LdapMappingException ex) {
             log.error("Failed to load person display names", ex);
