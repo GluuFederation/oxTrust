@@ -58,7 +58,7 @@ public abstract class AbstractAuthorizationTest extends ConfigurableTest {
 	 * @throws java.lang.Exception 
 	 */
 	protected void checkLoginUserFacesRequest(final String user, final String password) throws Exception {
-		new JUnitSeamTest.FacesRequest("/login.htm") {
+		new JUnitSeamTest.FacesRequest("/home.htm") {
 
 			@Override
 			protected void updateModelValues() throws Exception {
