@@ -54,7 +54,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
     private List<DisplayNameEntry> clientDisplayNameEntries;
 
     @NotNull
-    @Size(min = 2, max = 30, message = "Length of search string should be between 2 and 30")
+	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
     private String searchAvailableClientPattern;
 
     private String oldSearchAvailableClientPattern;

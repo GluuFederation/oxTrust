@@ -8,7 +8,6 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.AttributeData;
-import org.xdi.model.GluuAttribute;
 
 public interface IPersonService {
 
@@ -183,11 +182,6 @@ public interface IPersonService {
 	 * @return Person
 	 */
 	public abstract GluuCustomPerson getPersonByAttribute(String attribute, String value) throws Exception;
-
-	/**
-	 * Remove custom attribute from all persons.
-	 */
-	public abstract void removeAttribute(GluuAttribute attribute);
 
 	/**
 	 * Get user by uid

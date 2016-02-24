@@ -90,7 +90,7 @@
 
                 <h:outputLabel 
                     title="Example: https://ce.gluu.info/shibboleth"
-                    value="The Requestor ID (URL) of this SAML2 requestor. This is the same as the SAML2 EntityID"/>
+                    value="The id of the SP Requestor (client application)"/>
                 <h:inputText styleClass="form-control"
                     title="Example: https://ce.gluu.info/shibboleth"
                     value="#{_spRequestor.id}" size="100" tabindex="0" 
@@ -119,10 +119,10 @@
                 <ui:define name="label">Metadata URL</ui:define>
 
                 <h:outputLabel 
-                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
+                    title="The URL of the metadata or empty if none"
                     value="The URL of the metadata or empty if none"/>
                 <h:inputText styleClass="form-control"
-                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
+                    title="The URL of the metadata or empty if none"
                     value="#{_spRequestor.metadataUrl}" size="100" tabindex="2" />
             </s:decorate>
             </h:panelGroup>
@@ -191,10 +191,10 @@
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Configure whether signing is required for this requestor. When set to true, incoming requests without a signature will be rejected."
+                title="Signing"
                 value="#{_spRequestor.signing}" />
             <h:outputLabel 
-                title="Configure whether signing is required for this requestor. When set to true, incoming requests without a signature will be rejected."
+                title="Signing"
                 value="Signing"/>
                         </td>
                         <td colspan="2" rowspan="1">        

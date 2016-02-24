@@ -10,12 +10,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.selector.ApplicationSelectorEntry;
-import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -77,10 +74,6 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     private List<ApplicationSelectorEntry> selectorList = new ArrayList<ApplicationSelectorEntry>();
     
-    private List<SelectItem> idpList;
-    
-    private List<SelectItem> spRequestorList;
-    
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
     private String searchPattern = "";
@@ -108,19 +101,6 @@ public class UpdateAsimbaSelectorAction implements Serializable {
             // search mode, clear pattern
             searchPattern = null;
         }
-        
-        // Load edit lists
-        idpList = new ArrayList<SelectItem>();
-        List<IDPEntry> idpListEntries = asimbaService.loadIDPs();
-        for (IDPEntry entry : idpListEntries) {
-            idpList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
-        }
-        
-        spRequestorList = new ArrayList<SelectItem>();
-        List<RequestorEntry> spRequestorListEntries = asimbaService.loadRequestors();
-        for (RequestorEntry entry : spRequestorListEntries) {
-            spRequestorList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
-        }
     }
     
     public void clearEdit() {
@@ -140,24 +120,11 @@ public class UpdateAsimbaSelectorAction implements Serializable {
             newEntry = false;
             selector = asimbaService.readApplicationSelectorEntry(editEntryInum);
         }
-        
-        // Load edit lists
-        idpList = new ArrayList<SelectItem>();
-        List<IDPEntry> idpListEntries = asimbaService.loadIDPs();
-        for (IDPEntry entry : idpListEntries) {
-            idpList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
-        }
-        
-        spRequestorList = new ArrayList<SelectItem>();
-        List<RequestorEntry> spRequestorListEntries = asimbaService.loadRequestors();
-        for (RequestorEntry entry : spRequestorListEntries) {
-            spRequestorList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
-        }
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
-        log.info("add() Selector call", selector);
+        log.info("add() Selector", selector);
         synchronized (svnSyncTimer) {
             asimbaService.addApplicationSelectorEntry(selector);
         }
@@ -278,33 +245,5 @@ public class UpdateAsimbaSelectorAction implements Serializable {
      */
     public void setEditEntryInum(String editEntryInum) {
         this.editEntryInum = editEntryInum;
-    }
-
-    /**
-     * @return the idpList
-     */
-    public List<SelectItem> getIdpList() {
-        return idpList;
-    }
-
-    /**
-     * @param idpList the idpList to set
-     */
-    public void setIdpList(List<SelectItem> idpList) {
-        this.idpList = idpList;
-    }
-
-    /**
-     * @return the spRequestorList
-     */
-    public List<SelectItem> getSpRequestorList() {
-        return spRequestorList;
-    }
-
-    /**
-     * @param spRequestorList the spRequestorList to set
-     */
-    public void setSpRequestorList(List<SelectItem> spRequestorList) {
-        this.spRequestorList = spRequestorList;
     }
 }

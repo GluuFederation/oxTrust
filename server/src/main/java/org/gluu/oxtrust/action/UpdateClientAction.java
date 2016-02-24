@@ -562,7 +562,7 @@ public class UpdateClientAction implements Serializable {
 
         try {
 
-            this.availableScopes = scopeService.searchScopes(this.searchAvailableScopePattern, OxTrustConstants.searchPersonsSizeLimit);
+            this.availableScopes = scopeService.searchScopes(this.searchAvailableScopePattern, OxTrustConstants.searchClientsSizeLimit);
             this.oldSearchAvailableScopePattern = this.searchAvailableScopePattern;
             selectAddedScopes();
         } catch (Exception ex) {

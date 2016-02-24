@@ -81,7 +81,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     private List<RequestorEntry> spRequestorList = new ArrayList<RequestorEntry>();
     
-    private ArrayList<SelectItem> spPoolList;
+    private ArrayList<SelectItem> spPoolList = new ArrayList<SelectItem>();
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -104,6 +104,12 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     public void refresh() {
         log.info("refresh() SPRequestor call");
+        
+        // fill spPoolList
+        List<RequestorPoolEntry> spPoolListEntries = asimbaService.loadRequestorPools();
+        for (RequestorPoolEntry entry : spPoolListEntries) {
+            spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
+        }
 
         if (searchPattern == null || "".equals(searchPattern)) {
             //list loading
@@ -111,13 +117,6 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         } else {
             // search mode, clear pattern
             searchPattern = null;
-        }
-        
-        // fill spPoolList
-        spPoolList = new ArrayList<SelectItem>();
-        List<RequestorPoolEntry> spPoolListEntries = asimbaService.loadRequestorPools();
-        for (RequestorPoolEntry entry : spPoolListEntries) {
-            spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
         }
     }
     
@@ -137,23 +136,12 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             // edit entry
             newEntry = false;
             spRequestor = asimbaService.readRequestorEntry(editEntryInum);
-            if (spRequestor != null) {
-                setProperties(spRequestor.getProperties());
-            }
-        }
-        
-        // fill spPoolList
-        spPoolList = new ArrayList<SelectItem>();
-        List<RequestorPoolEntry> spPoolListEntries = asimbaService.loadRequestorPools();
-        for (RequestorPoolEntry entry : spPoolListEntries) {
-            spPoolList.add(new SelectItem(entry.getId(), entry.getId(), entry.getFriendlyName()));
         }
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
-        log.info("add new Requestor", spRequestor);
-        spRequestor.setProperties(getProperties());
+        log.info("save new Requestor", spRequestor);
         synchronized (svnSyncTimer) {
             asimbaService.addRequestorEntry(spRequestor);
         }
@@ -164,7 +152,6 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Requestor", spRequestor);
-        spRequestor.setProperties(getProperties());
         synchronized (svnSyncTimer) {
             asimbaService.updateRequestorEntry(spRequestor);
         }
@@ -212,34 +199,6 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             }
         }
         return OxTrustConstants.RESULT_SUCCESS;
-    }
-    
-    private Properties getProperties() {
-        if (spRequestorAdditionalProperties == null || "".equals(spRequestorAdditionalProperties)) {
-            // empty set
-            return new Properties();
-        }
-        try {
-            Properties p = new Properties();
-            p.load(new StringReader(spRequestorAdditionalProperties));
-            return p;
-        } catch (Exception ex) {
-            log.error("cannot parse SPRequestor properties: " + spRequestorAdditionalProperties);
-            return new Properties(); 
-        }
-    }
-    
-    private void setProperties(Properties properties) {
-        if (properties != null && properties.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (String propertyName : properties.stringPropertyNames()) {
-                String value = properties.getProperty(propertyName);
-                sb.append(propertyName + "=" + value + "\n");
-            }
-            spRequestorAdditionalProperties = sb.toString();
-        } else {
-            spRequestorAdditionalProperties = "";
-        }
     }
 
     /**

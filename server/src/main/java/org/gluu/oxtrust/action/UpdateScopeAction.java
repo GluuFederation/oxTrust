@@ -266,7 +266,7 @@ public class UpdateScopeAction implements Serializable {
 
 		try {
 			this.availableClaims = attributeService
-					.searchAttributes(this.searchAvailableClaimPattern, OxTrustConstants.searchPersonsSizeLimit);
+					.searchAttributes(this.searchAvailableClaimPattern, OxTrustConstants.searchSizeLimit);
 			//
 			removeDuplicates();
 			this.oldSearchAvailableClaimPattern = this.searchAvailableClaimPattern;

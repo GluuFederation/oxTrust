@@ -72,10 +72,10 @@
                 <ui:define name="label">ID</ui:define>
 
                 <h:outputLabel 
-                    title="It should be the entityID (URL) of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
-                    value="The entity ID of the organization"/>
+                    title="It should be the entityID of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
+                    value="The id of the organization"/>
                 <h:inputText styleClass="form-control"
-                    title="It should be the entityID (URL) of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
+                    title="It should be the entityID of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
                     value="#{_idp.id}" size="100" tabindex="0" 
                     required="true" />
             </s:decorate>
@@ -95,6 +95,18 @@
             </s:decorate>
             </h:panelGroup>
             
+            <h:panelGroup id="idpEditIdentificationURLGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="idpEditIdentificationURL"
+                    rendered="true">
+                <ui:define name="label">Identification URL</ui:define>
+
+                <h:inputText styleClass="form-control"
+                    title="Identification URL"
+                    value="#{_idp.identificationURL}" size="100" tabindex="2" />
+            </s:decorate>
+            </h:panelGroup>
+            
             <h:panelGroup id="idpEditMetadataURLGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditMetadataURL"
@@ -102,10 +114,10 @@
                 <ui:define name="label">Metadata URL</ui:define>
 
                 <h:outputLabel 
-                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
+                    title="The URL of the metadata or empty if none"
                     value="The URL of the metadata or empty if none"/>
                 <h:inputText styleClass="form-control"
-                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
+                    title="The URL of the metadata or empty if none"
                     value="#{_idp.metadataUrl}" size="100" tabindex="3" />
             </s:decorate>
             </h:panelGroup>
@@ -132,10 +144,10 @@
                 <ui:define name="label">Metadata File</ui:define>
 
                 <h:outputLabel 
-                    title="Provide the absolute location of metadata file."
+                    title="Provide the absolute location of metadata"
                     value="The location of the metadata file or empty if none"/>
                 <h:inputText  styleClass="form-control"
-                    title="Provide the absolute location of metadata file."
+                    title="Provide the absolute location of metadata"
                     value="#{_idp.metadataFile}" tabindex="5" />
                 <!-- TODO: upload file button -->
             </s:decorate>

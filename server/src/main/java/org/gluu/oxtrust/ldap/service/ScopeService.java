@@ -145,7 +145,7 @@ public class ScopeService implements Serializable {
 		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 
-		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, searchFilter, sizeLimit);
+		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}
@@ -172,7 +172,7 @@ public class ScopeService implements Serializable {
 	public List<OxAuthScope> getAllScopesList() throws Exception {
 
 		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class,
-				Filter.createPresenceFilter("inum"), 10);
+				Filter.createPresenceFilter("inum"), 0, 10);
 
 		return result;
 	}

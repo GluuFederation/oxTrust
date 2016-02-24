@@ -64,7 +64,7 @@ public class SectorIdentifierService implements Serializable {
         String[] targetArray = new String[]{pattern};
         Filter searchFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
 
-        List<OxAuthSectorIdentifier> result = ldapEntryManager.findEntries(getDnForSectorIdentifier(null), OxAuthSectorIdentifier.class, searchFilter, sizeLimit);
+        List<OxAuthSectorIdentifier> result = ldapEntryManager.findEntries(getDnForSectorIdentifier(null), OxAuthSectorIdentifier.class, searchFilter, 0, sizeLimit);
 
         return result;
     }

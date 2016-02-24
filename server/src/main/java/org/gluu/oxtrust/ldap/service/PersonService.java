@@ -30,7 +30,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.model.GluuAttribute;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -144,7 +143,7 @@ public class PersonService implements Serializable, IPersonService {
 		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
 
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
+		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}
@@ -155,7 +154,7 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> findPersons(GluuCustomPerson person, int sizeLimit) {
 		person.setBaseDn(getDnForPerson(null));
-		return ldapEntryManager.findEntries(person, sizeLimit);
+		return ldapEntryManager.findEntries(person, 0, sizeLimit);
 	}
 
 	/* (non-Javadoc)
@@ -189,7 +188,7 @@ public class PersonService implements Serializable, IPersonService {
 			searchFilter = Filter.createANDFilter(orFilter, notFilter);
 		}
 
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
+		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, 0, sizeLimit);
 
 		return result;
 
@@ -494,15 +493,6 @@ public class PersonService implements Serializable, IPersonService {
 		}
 
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.gluu.oxtrust.ldap.service.IPersonService#removeAttribute(org.xdi.model.GluuAttribute)
-	 */
-	@Override
-	public void removeAttribute(GluuAttribute attribute) {
-		ldapEntryManager.removeAttributeFromEntries(getDnForPerson(null), GluuCustomPerson.class, attribute.getName());
-		
 	}
 
 	/* (non-Javadoc)

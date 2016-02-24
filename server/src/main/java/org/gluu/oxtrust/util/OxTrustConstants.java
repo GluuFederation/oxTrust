@@ -51,6 +51,7 @@ public final class OxTrustConstants extends OxConstants {
      */
     public static final String uniqueIdentifier = "uniqueIdentifier";
     public static final String friendlyName = "friendlyName";
+    public static final String identificationURL = "identificationURL";
     public static final String organizationId = "organizationId";
 
     public static final String RESULT_SUCCESS = "success";
@@ -155,11 +156,12 @@ public final class OxTrustConstants extends OxConstants {
     public static final String SELF_LINK_CONTRACT = "$self";
     public static final String ADMIN_LINK_CONTRACT = "*linkcontract*manager";
 
-    public static final int searchClientsSizeLimit = 100;
-    public static final int searchPersonsSizeLimit = 100;
-    public static final int searchGroupSizeLimit = 100;
-    public static final int searchSectorIdentifierSizeLimit = 100;
-
+    public static final int searchClientsSizeLimit = 20;
+    public static final int searchPersonsSizeLimit = 20;
+    public static final int searchGroupSizeLimit = 20;
+    public static final int searchSectorIdentifierSizeLimit = 20;
+    public static final int searchSizeLimit = 20;
+    
     // SCIM
     /**
      * The HTTP query parameter used in a URI to select specific SCIM
