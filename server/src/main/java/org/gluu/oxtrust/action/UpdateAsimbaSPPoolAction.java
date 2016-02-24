@@ -130,12 +130,16 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
             // edit entry
             newEntry = false;
             spPool = asimbaService.readRequestorPoolEntry(editEntryInum);
+            if (spPool != null) {
+                setProperties(spPool.getProperties());
+            }
         }
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new RequestorPool", spPool);
+        spPool.setProperties(getProperties());
         synchronized (svnSyncTimer) {
             asimbaService.addRequestorPoolEntry(spPool);
         }
@@ -146,6 +150,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() RequestorPool", spPool);
+        spPool.setProperties(getProperties());
         synchronized (svnSyncTimer) {
             asimbaService.updateRequestorPoolEntry(spPool);
         }
@@ -186,6 +191,34 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
             }
         }
         return OxTrustConstants.RESULT_SUCCESS;
+    }
+    
+    private Properties getProperties() {
+        if (spPoolAdditionalProperties == null || "".equals(spPoolAdditionalProperties)) {
+            // empty set
+            return new Properties();
+        }
+        try {
+            Properties p = new Properties();
+            p.load(new StringReader(spPoolAdditionalProperties));
+            return p;
+        } catch (Exception ex) {
+            log.error("cannot parse SPRequestorPool properties: " + spPoolAdditionalProperties);
+            return new Properties(); 
+        }
+    }
+    
+    private void setProperties(Properties properties) {
+        if (properties != null && properties.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (String propertyName : properties.stringPropertyNames()) {
+                String value = properties.getProperty(propertyName);
+                sb.append(propertyName + "=" + value + "\n");
+            }
+            spPoolAdditionalProperties = sb.toString();
+        } else {
+            spPoolAdditionalProperties = "";
+        }
     }
 
     /**

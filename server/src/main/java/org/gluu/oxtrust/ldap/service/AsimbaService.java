@@ -7,6 +7,7 @@ package org.gluu.oxtrust.ldap.service;
 
 import com.unboundid.ldap.sdk.Filter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.gluu.asimba.util.ldap.LdapConfigurationEntry;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
@@ -118,8 +119,7 @@ public class AsimbaService {
         Filter friendlyNameFilter = Filter.createSubstringFilter(OxTrustConstants.friendlyName, null, targetArray, null);
         Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-        Filter identificationURLFilter = Filter.createSubstringFilter(OxTrustConstants.identificationURL, null, targetArray, null);
-        Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter, identificationURLFilter);
+        Filter searchFilter = Filter.createORFilter(idFilter, friendlyNameFilter, descriptionFilter, inameFilter);
 
         // search
         final List<LdapIDPEntry> entries = ldapEntryManager.findEntries(getDnForLdapIDPEntry(null), LdapIDPEntry.class, searchFilter, sizeLimit);
@@ -296,6 +296,7 @@ public class AsimbaService {
     public void addIDPEntry(IDPEntry entry) {
         log.info("addIDPEntry() call");
         try {
+            entry.setLastModified(new Date());
             LdapIDPEntry ldapEntry = new LdapIDPEntry();
             ldapEntry.setEntry(entry);
             String inum = generateInumImpl();
@@ -313,6 +314,7 @@ public class AsimbaService {
     * @param entry IDPEntry
     */
     public void updateIDPEntry(IDPEntry entry) {
+        entry.setLastModified(new Date());
         LdapIDPEntry ldapEntry = ldapEntryManager.find(LdapIDPEntry.class, getDnForLdapIDPEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.merge(ldapEntry);
@@ -347,6 +349,7 @@ public class AsimbaService {
     * @param entry LDAPRequestorPoolEntry
     */
     public void addRequestorPoolEntry(RequestorPoolEntry entry) {
+        entry.setLastModified(new Date());
         LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
         ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
@@ -361,6 +364,7 @@ public class AsimbaService {
     * @param entry LDAPRequestorPoolEntry
     */
     public void updateRequestorPoolEntry(RequestorPoolEntry entry) {
+        entry.setLastModified(new Date());
         LDAPRequestorPoolEntry ldapEntry = ldapEntryManager.find(LDAPRequestorPoolEntry.class, getDnForLDAPRequestorPoolEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.merge(ldapEntry);
@@ -395,6 +399,7 @@ public class AsimbaService {
     * @param entry LDAPRequestorEntry
     */
     public void addRequestorEntry(RequestorEntry entry) {
+        entry.setLastModified(new Date());
         LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
         ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
@@ -409,6 +414,7 @@ public class AsimbaService {
     * @param entry LDAPRequestorEntry
     */
     public void updateRequestorEntry(RequestorEntry entry) {
+        entry.setLastModified(new Date());
         LDAPRequestorEntry ldapEntry = ldapEntryManager.find(LDAPRequestorEntry.class, getDnForLDAPRequestorEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.merge(ldapEntry);
@@ -443,6 +449,7 @@ public class AsimbaService {
     * @param entry LDAPApplicationSelectorEntry
     */
     public void addApplicationSelectorEntry(ApplicationSelectorEntry entry) {
+        entry.setLastModified(new Date());
         LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
         ldapEntry.setEntry(entry);
         String inum = generateInumImpl();
@@ -457,6 +464,7 @@ public class AsimbaService {
     * @param entry LDAPApplicationSelectorEntry
     */
     public void updateApplicationSelectorEntry(ApplicationSelectorEntry entry) {
+        entry.setLastModified(new Date());
         LDAPApplicationSelectorEntry ldapEntry = ldapEntryManager.find(LDAPApplicationSelectorEntry.class, getDnForLDAPApplicationSelectorEntry(entry.getInum()));
         ldapEntry.setEntry(entry);
         ldapEntryManager.merge(ldapEntry);
