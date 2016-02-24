@@ -86,7 +86,7 @@
                 <h:panelGroup>
                     <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}" value="Ok"
                                        oncomplete="#{rich:component('selectClientModalPanel')}.hide();"
-                                       render="#{cc.attrs.render}"/>
+                                       render="#{cc.attrs.renderuri},#{cc.attrs.render}"/>
                     &nbsp;
                     <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}" value="Cancel"
                                        oncomplete="#{rich:component('selectClientModalPanel')}.hide(); return false;"/>

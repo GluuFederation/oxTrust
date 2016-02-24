@@ -89,6 +89,8 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
         try {
             this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
+            if(sectorIdentifier.getClientIds() != null && sectorIdentifier.getClientIds().size()>0)
+            	this.loginUris.addAll(clientRedirectUriList(sectorIdentifier.getClientIds()));
             this.clientDisplayNameEntries = loadClientDisplayNameEntries();
         } catch (LdapMappingException ex) {
             log.error("Failed to load person display names", ex);
@@ -296,6 +298,8 @@ public class UpdateSectorIdentifierAction implements Serializable {
         for (OxAuthClient client : this.availableClients) {
             if (client.isSelected() && !addedClientInums.contains(client.getInum())) {
                 addClient(client);
+                if(client.getOxAuthRedirectURIs() != null && client.getOxAuthRedirectURIs().size()>0)
+                	this.loginUris.addAll(client.getOxAuthRedirectURIs());
             }
         }
     }
@@ -472,4 +476,15 @@ public class UpdateSectorIdentifierAction implements Serializable {
     public void setAvailableLoginUri(String availableLoginUri) {
         this.availableLoginUri = availableLoginUri;
     }
+    
+	private List<String> clientRedirectUriList(List<String> clientInum) {
+		List<String> clientRedirectUri = new  ArrayList <String>();
+		for (int i = 0; i < clientInum.size(); i++) {
+			OxAuthClient OxAuthClient = clientService.getClientByInum(clientInum
+					.get(i));
+			clientRedirectUri.addAll(OxAuthClient.getOxAuthRedirectURIs());
+		}		
+		return clientRedirectUri;
+	}
+    
 }
