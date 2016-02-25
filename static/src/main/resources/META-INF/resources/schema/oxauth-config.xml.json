@@ -643,7 +643,7 @@
         },
         "keyRegenerationInterval": {
             "id": "keyRegenerationInterval",
-            "description": "The interval for key regeneration in seconds.",
+            "description": "The interval for key regeneration in hours.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
