@@ -40,7 +40,7 @@
 
     "clientAssociationAttribute":"inum",
 
-    "personCustomObjectClass":"oxCustomAttributes",
+    "personCustomObjectClass":"${config.person.custom_object_class}",
 
     "contactObjectClassTypes":[
         "gluuBasicPersona",
