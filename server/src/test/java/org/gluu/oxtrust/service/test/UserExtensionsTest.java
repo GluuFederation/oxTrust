@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * @author Val Pecaoco
  */
-@RunWith(Arquillian.class)
+//@RunWith(Arquillian.class)
 public class UserExtensionsTest extends AbstractAuthorizationTest {
 
 //    @Test
