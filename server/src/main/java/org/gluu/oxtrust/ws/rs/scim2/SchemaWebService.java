@@ -59,7 +59,7 @@ public class SchemaWebService extends BaseScimWebService {
     }
 
     /**
-     * Retrieves the User Extension schema.
+     * Retrieves a schema via its id/urn.
      *
      * @param authorization
      * @param id

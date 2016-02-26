@@ -5,6 +5,7 @@
  */
 
 package org.gluu.oxtrust.ws.rs.scim2;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +18,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.Api;
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
-import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.ws.rs.scim.BaseScimWebService;
 import org.jboss.seam.annotations.Logger;
@@ -41,17 +42,18 @@ public class ResourceTypeWS extends BaseScimWebService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response listGroups(@HeaderParam("Authorization") String authorization) throws Exception {
+
 		ListResponse resouceTypes = new ListResponse();
 		ResourceType resource = new ResourceType();
 		resource.setDescription("User Endpoint");
 		resource.setEndpoint("/Users");
 		resource.setName("User");
 		resource.setId("User");
-		resource.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");		
+		resource.setSchema(Constants.USER_EXT_SCHEMA_ID);
 
 		List<SchemaExtensionHolder> schemaExtensions = new ArrayList<SchemaExtensionHolder>();
 		SchemaExtensionHolder userExtensionSchema = new SchemaExtensionHolder();
-		userExtensionSchema.setSchema(SchemaTypeMapping.EXT_ID);
+		userExtensionSchema.setSchema(Constants.USER_EXT_SCHEMA_ID);
 		userExtensionSchema.setRequired(false);
 		schemaExtensions.add(userExtensionSchema);
 		resource.setSchemaExtensions(schemaExtensions);
@@ -63,12 +65,11 @@ public class ResourceTypeWS extends BaseScimWebService {
 		resource.setEndpoint("/Groups");
 		resource.setName("Group");
 		resource.setId("Group");
-		resource.setSchema("urn:ietf:params:scim:schemas:core:2.0:Group");		
+		resource.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
+
 		resouceTypes.getResources().add(resource);
 
 		URI location = new URI("/v2/ResourceTypes");
 		return Response.ok(resouceTypes).location(location).build();
-
 	}
-
 }

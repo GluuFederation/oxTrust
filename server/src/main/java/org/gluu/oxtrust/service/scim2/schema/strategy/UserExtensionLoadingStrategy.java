@@ -13,6 +13,7 @@ import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.log.Log;
 import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuAttributeDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,19 +47,24 @@ public class UserExtensionLoadingStrategy implements LoadingStrategy {
             attributeHolder.setName(scimCustomAttribute.getName());
 
             if (scimCustomAttribute.getDataType() != null) {
-                String typeStr = scimCustomAttribute.getDataType().getValue();
-                if (typeStr.equalsIgnoreCase("Text")) {
+
+                String typeStr = "";
+                GluuAttributeDataType attributeDataType = scimCustomAttribute.getDataType();
+
+                if (attributeDataType.equals(GluuAttributeDataType.STRING)) {
                     typeStr = "string";
-                } else if (typeStr.equalsIgnoreCase("Photo")) {
+                } else if (attributeDataType.equals(GluuAttributeDataType.PHOTO)) {
                     typeStr = "reference";
                     attributeHolder.getReferenceTypes().add("external");
-                } else if (typeStr.equalsIgnoreCase("Date")) {
+                } else if (attributeDataType.equals(GluuAttributeDataType.DATE)) {
                     typeStr = "dateTime";
-                } else if (typeStr.equalsIgnoreCase("Numeric")) {
+                } else if (attributeDataType.equals(GluuAttributeDataType.NUMERIC)) {
                     typeStr = "decimal";
                 } else {
+                    log.info(" NO MATCH: scimCustomAttribute.getDataType().getDisplayName() = " + scimCustomAttribute.getDataType().getDisplayName());
                     typeStr = "string";
                 }
+
                 attributeHolder.setType(typeStr);
             }
 

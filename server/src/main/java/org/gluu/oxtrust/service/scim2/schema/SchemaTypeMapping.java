@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.service.scim2.schema;
 
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 
@@ -21,19 +22,11 @@ import java.util.Map;
  */
 public class SchemaTypeMapping {
 
-    public static final String CORE_ID = "urn:ietf:params:scim:schemas:core:2.0:User";
-    public static final String CORE_NAME = "User";
-    public static final String CORE_DESCRIPTION = "User Account";
-
-    public static final String EXT_ID = "urn:ietf:params:scim:schemas:extension:gluu:2.0:User";
-    public static final String EXT_NAME = "GluuCustomExtension";
-    public static final String EXT_DESCRIPTION = "Gluu Custom Extension";
-
     private static Map<String, SchemaType> schemaInstances = new HashMap<String, SchemaType>();
 
     static {
-        // schemaInstances.put(CORE_ID, new UserCoreSchema(CORE_ID, CORE_NAME, CORE_DESCRIPTION));
-        schemaInstances.put(EXT_ID, new UserExtensionSchema(EXT_ID, EXT_NAME, EXT_DESCRIPTION));
+        // schemaInstances.put(Constants.USER_CORE_SCHEMA_ID, new UserCoreSchema(Constants.USER_CORE_SCHEMA_ID, Constants.USER_CORE_SCHEMA_NAME, Constants.USER_CORE_SCHEMA_DESCRIPTION));
+        schemaInstances.put(Constants.USER_EXT_SCHEMA_ID, new UserExtensionSchema(Constants.USER_EXT_SCHEMA_ID, Constants.USER_EXT_SCHEMA_NAME, Constants.USER_EXT_SCHEMA_DESCRIPTION));
     }
 
     public static SchemaType getSchemaTypeInstance(String id) throws Exception {

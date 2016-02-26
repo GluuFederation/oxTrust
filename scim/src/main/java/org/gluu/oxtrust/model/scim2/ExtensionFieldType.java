@@ -15,6 +15,8 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -82,18 +84,18 @@ public abstract class ExtensionFieldType<T> {
     public static ExtensionFieldType<?> valueOf(String name) {
         if (name.equals("STRING"))
             return STRING;
-        else if (name.equals("INTEGER"))
-            return INTEGER;
+        // else if (name.equals("INTEGER"))
+        //     return INTEGER;
         else if (name.equals("DECIMAL"))
             return DECIMAL;
-        else if (name.equals("BOOLEAN"))
-            return BOOLEAN;
+        // else if (name.equals("BOOLEAN"))
+        //     return BOOLEAN;
         else if (name.equals("DATE_TIME"))
             return DATE_TIME;
-        else if (name.equals("BINARY"))
-            return BINARY;
-        else if (name.equals("REFERENCE"))
-            return REFERENCE;
+        // else if (name.equals("BINARY"))
+        //     return BINARY;
+        // else if (name.equals("REFERENCE"))
+        //     return REFERENCE;
         else
             throw new IllegalArgumentException("Type " + name + " does not exist");
 
@@ -115,12 +117,12 @@ public abstract class ExtensionFieldType<T> {
             ensureValueIsNotNull(value);
             return value;
         }
-
     };
 
-    /**
+    /*
      * ExtensionFieldType for the Scim type Integer (actual type is {@link BigInteger})
      */
+    /*
     public static final ExtensionFieldType<BigInteger> INTEGER = new ExtensionFieldType<BigInteger>("INTEGER") {
 
         @Override
@@ -140,6 +142,7 @@ public abstract class ExtensionFieldType<T> {
         }
 
     };
+    */
 
     /**
      * ExtensionFieldType for the Scim type Decimal (actual type is {@link BigDecimal})
@@ -164,9 +167,10 @@ public abstract class ExtensionFieldType<T> {
 
     };
 
-    /**
+    /*
      * ExtensionFieldType for the Scim type Boolean (actual type is {@link Boolean})
      */
+    /*
     public static final ExtensionFieldType<Boolean> BOOLEAN = new ExtensionFieldType<Boolean>("BOOLEAN") {
 
         @Override
@@ -185,6 +189,7 @@ public abstract class ExtensionFieldType<T> {
         }
 
     };
+    */
 
     /**
      * ExtensionFieldType for the Scim type DateTime (actual type is {@link Date}). Valid values are in ISO
@@ -199,8 +204,12 @@ public abstract class ExtensionFieldType<T> {
         public Date fromString(String stringValue) {
             ensureValueIsNotNull(stringValue);
             try {
-                long millis = dateTimeFormatter.parseDateTime(stringValue).getMillis();
-                return new Date(millis);
+                // long millis = dateTimeFormatter.parseDateTime(stringValue).getMillis();
+                // return new Date(millis);
+
+                DateTime dateTimeUtc = new DateTime(stringValue, DateTimeZone.UTC);
+                return dateTimeUtc.toDate();
+
             } catch (NumberFormatException e) {
                 throw createConversionException(stringValue, "Date", e);
             }
@@ -214,9 +223,10 @@ public abstract class ExtensionFieldType<T> {
 
     };
 
-    /**
+    /*
      * ExtensionFieldType for the Scim type Binary (actual type is {@link ByteBuffer})
      */
+    /*
     public static final ExtensionFieldType<ByteBuffer> BINARY = new ExtensionFieldType<ByteBuffer>("BINARY") {
 
         @Override
@@ -236,10 +246,12 @@ public abstract class ExtensionFieldType<T> {
         }
 
     };
+    */
 
-    /**
+    /*
      * ExtensionFieldType for the Scim type Reference (actual type is {@link URI})
      */
+    /*
     public static final ExtensionFieldType<URI> REFERENCE = new ExtensionFieldType<URI>("REFERENCE") {
 
         @Override
@@ -259,6 +271,7 @@ public abstract class ExtensionFieldType<T> {
         }
 
     };
+    */
 
     protected IllegalArgumentException createConversionException(String stringValue, String targetType, Throwable cause) {
         IllegalArgumentException exception = createConversionException(stringValue, targetType);

@@ -1,42 +1,24 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
+
 package org.gluu.oxtrust.model.scim2;
 
 import java.math.BigDecimal;
-/*
- * Copyright (C) 2013 tarent AG
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
 
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-import org.gluu.oxtrust.model.helper.ExtensionSerializer;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ImmutableMap;
+import org.codehaus.jackson.annotate.JsonAnyGetter;
+import org.codehaus.jackson.annotate.JsonAnySetter;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * This class represents a schema extension.
@@ -46,7 +28,6 @@ import com.google.common.collect.ImmutableMap;
  * href="http://tools.ietf.org/html/draft-ietf-scim-core-schema-02#section-4">SCIM core schema 2.0, section 4</a>
  * </p>
  */
-@JsonSerialize(using = ExtensionSerializer.class)
 public class Extension {
 
     @JsonIgnore
@@ -87,6 +68,7 @@ public class Extension {
      * @throws IllegalArgumentException
      *         if the given field is null or an empty string or if the extensionFieldType is null.
      */
+    @JsonAnyGetter
     public <T> T getField(String field, ExtensionFieldType<T> extensionFieldType) {
         if (field == null || field.isEmpty()) {
             throw new IllegalArgumentException("Invalid field name");
@@ -117,7 +99,7 @@ public class Extension {
         return getField(field, ExtensionFieldType.STRING);
     }
 
-    /**
+    /*
      * Return the value for the field with a given name as boolean.
      * 
      * @param field
@@ -128,11 +110,13 @@ public class Extension {
      * @throws IllegalArgumentException
      *         if the given field is null or an empty string or if the extensionFieldType is null.
      */
+    /*
     public boolean getFieldAsBoolean(String field) {
         return getField(field, ExtensionFieldType.BOOLEAN);
     }
+    */
 
-    /**
+    /*
      * Return the value for the field with a given name as ByteBuffer.
      * 
      * @param field
@@ -143,9 +127,11 @@ public class Extension {
      * @throws IllegalArgumentException
      *         if the given field is null or an empty string or if the extensionFieldType is null.
      */
+    /*
     public ByteBuffer getFieldAsByteBuffer(String field) {
         return getField(field, ExtensionFieldType.BINARY);
     }
+    */
 
     /**
      * Return the value for the field with a given name as Date.
@@ -177,7 +163,7 @@ public class Extension {
         return getField(field, ExtensionFieldType.DECIMAL);
     }
 
-    /**
+    /*
      * Return the value for the field with a given name as BigInteger.
      * 
      * @param field
@@ -188,11 +174,13 @@ public class Extension {
      * @throws IllegalArgumentException
      *         if the given field is null or an empty string or if the extensionFieldType is null.
      */
+    /*
     public BigInteger getFieldAsInteger(String field) {
         return getField(field, ExtensionFieldType.INTEGER);
     }
+    */
 
-    /**
+    /*
      * Return the value for the field with a given name as URI.
      * 
      * @param field
@@ -203,16 +191,18 @@ public class Extension {
      * @throws IllegalArgumentException
      *         if the given field is null or an empty string or if the extensionFieldType is null.
      */
+    /*
     public URI getFieldAsReference(String field) {
         return getField(field, ExtensionFieldType.REFERENCE);
     }
+    */
 
     /**
      * Provides a {@link Map} containing the entries of the extension. Note that the returned {@link Map} is immutable.
      * 
      * @return The Entries of this schema as an map.
      */
-    @JsonIgnore
+    // @JsonIgnore
     public Map<String, Field> getFields() {
         return ImmutableMap.copyOf(fields);
     }
@@ -326,55 +316,35 @@ public class Extension {
          *        the new value
          * @return the builder itself
          */
+        @JsonAnySetter
         public Builder setField(String fieldName, String value) {
-            setField(fieldName, value, ExtensionFieldType.STRING);
+            setField(fieldName, value, ExtensionFieldType.STRING, false);
             return this;
         }
 
-        /**
-         * Sets the field specified by the given field name with the given value. <br>
-         * Can only be set and saved if extension field is registered in the database
-         * 
-         * @param fieldName
-         *        the field name
-         * @param value
-         *        the new value
-         * @return the builder itself
-         */
+        /*
+        @JsonAnySetter
         public Builder setField(String fieldName, Boolean value) {
-            setField(fieldName, value, ExtensionFieldType.BOOLEAN);
+            setField(fieldName, value, ExtensionFieldType.BOOLEAN, false);
             return this;
         }
+        */
 
-        /**
-         * Sets the field specified by the given field name with the given value. <br>
-         * Can only be set and saved if extension field is registered in the database
-         * 
-         * @param fieldName
-         *        the field name
-         * @param value
-         *        the new value
-         * @return the builder itself
-         */
+        /*
+        @JsonAnySetter
         public Builder setField(String fieldName, ByteBuffer value) {
-            setField(fieldName, value, ExtensionFieldType.BINARY);
+            setField(fieldName, value, ExtensionFieldType.BINARY, false);
             return this;
         }
+        */
 
-        /**
-         * Sets the field specified by the given field name with the given value. <br>
-         * Can only be set and saved if extension field is registered in the database
-         * 
-         * @param fieldName
-         *        the field name
-         * @param value
-         *        the new value
-         * @return the builder itself
-         */
+        /*
+        @JsonAnySetter
         public Builder setField(String fieldName, BigInteger value) {
-            setField(fieldName, value, ExtensionFieldType.INTEGER);
+            setField(fieldName, value, ExtensionFieldType.INTEGER, false);
             return this;
         }
+        */
 
         /**
          * Sets the field specified by the given field name with the given value. <br>
@@ -386,8 +356,9 @@ public class Extension {
          *        the new value
          * @return the builder itself
          */
+        @JsonAnySetter
         public Builder setField(String fieldName, BigDecimal value) {
-            setField(fieldName, value, ExtensionFieldType.DECIMAL);
+            setField(fieldName, value, ExtensionFieldType.DECIMAL, false);
             return this;
         }
 
@@ -401,23 +372,29 @@ public class Extension {
          *        the new value
          * @return the builder itself
          */
+        @JsonAnySetter
         public Builder setField(String fieldName, Date value) {
-            setField(fieldName, value, ExtensionFieldType.DATE_TIME);
+            setField(fieldName, value, ExtensionFieldType.DATE_TIME, false);
             return this;
         }
 
-        /**
-         * Sets the field specified by the given field name with the given value. <br>
-         * Can only be set and saved if extension field is registered in the database
-         * 
-         * @param fieldName
-         *        the field name
-         * @param value
-         *        the new value
-         * @return the builder itself
-         */
+        /*
+        @JsonAnySetter
         public Builder setField(String fieldName, URI value) {
-            setField(fieldName, value, ExtensionFieldType.REFERENCE);
+            setField(fieldName, value, ExtensionFieldType.REFERENCE, false);
+            return this;
+        }
+        */
+
+        @JsonAnySetter
+        public Builder setFieldAsList(String fieldName, List<?> values) throws Exception {
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+            setField(fieldName, mapper.writeValueAsString(values), ExtensionFieldType.STRING, true);
+
+
             return this;
         }
 
@@ -433,7 +410,8 @@ public class Extension {
          *        the scim2 type of the field
          * @return the builder itself
          */
-        public <T> Builder setField(String fieldName, T value, ExtensionFieldType<T> type) {
+        @JsonAnySetter
+        public <T> Builder setField(String fieldName, T value, ExtensionFieldType<T> type, boolean isMultiValued) {
             if (fieldName == null || fieldName.isEmpty()) {
                 throw new IllegalArgumentException("The field name can't be null or empty.");
             }
@@ -443,7 +421,7 @@ public class Extension {
             if (type == null) {
                 throw new IllegalArgumentException("The type can't be null.");
             }
-            fields.put(fieldName, new Field(type, type.toString(value)));
+            fields.put(fieldName, new Field(type, type.toString(value), isMultiValued));
             return this;
         }
 
@@ -468,8 +446,10 @@ public class Extension {
      * This class represents a field of an extension with its type and value. Instances of this class are immutable.
      */
     public static final class Field {
+
         private final ExtensionFieldType<?> type;
         private final String value;
+        private final boolean isMultiValued;
 
         /**
          * Constructs a new {@link Field} with the given type and value.
@@ -479,9 +459,10 @@ public class Extension {
          * @param value
          *        the value of the field
          */
-        public Field(ExtensionFieldType<?> type, String value) {
+        public Field(ExtensionFieldType<?> type, String value, boolean isMultiValued) {
             this.type = type;
             this.value = value;
+            this.isMultiValued = isMultiValued;
         }
 
         /**
@@ -500,6 +481,10 @@ public class Extension {
          */
         public String getValue() {
             return value;
+        }
+
+        public boolean isMultiValued() {
+            return isMultiValued;
         }
 
         @Override

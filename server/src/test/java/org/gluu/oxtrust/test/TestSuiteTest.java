@@ -12,6 +12,7 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquilianSuiteDeployment;
 import org.gluu.oxtrust.service.test.PersonServiceTest;
+import org.gluu.oxtrust.service.test.UserExtensionsTest;
 import org.gluu.oxtrust.util.test.CopyUtilsTestCreate;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
@@ -33,6 +34,7 @@ public class TestSuiteTest {
 		WebArchive web = ShrinkWrap.create(WebArchive.class, "test.war");
 		web.addPackage(PersonServiceTest.class.getPackage());
 		web.addPackage(CopyUtilsTestCreate.class.getPackage());
+		web.addPackage(UserExtensionsTest.class.getPackage());
 
 		// Install org.jboss.seam.mock.MockSeamListener
 		web.delete("/WEB-INF/web.xml");
