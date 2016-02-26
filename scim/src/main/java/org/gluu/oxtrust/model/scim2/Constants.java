@@ -11,8 +11,15 @@ package org.gluu.oxtrust.model.scim2;
  */
 public interface Constants {
 
-    String USER_CORE_SCHEMA = "urn:scim2:schemas:core:2.0:User";
-    String GROUP_CORE_SCHEMA = "urn:scim2:schemas:core:2.0:Group";
-    String SERVICE_PROVIDER_CORE_SCHEMA = "urn:scim2:schemas:core:2.0:ServiceProviderConfig";
+    String USER_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:User";
+    String USER_CORE_SCHEMA_NAME = "User";
+    String USER_CORE_SCHEMA_DESCRIPTION = "User Account";
+
+    String USER_EXT_SCHEMA_ID = "urn:ietf:params:scim:schemas:extension:gluu:2.0:User";
+    String USER_EXT_SCHEMA_NAME = "GluuCustomExtension";
+    String USER_EXT_SCHEMA_DESCRIPTION = "Gluu Custom Extension";
+
+    String GROUP_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:Group";
+    String SERVICE_PROVIDER_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
     int MAX_RESULT = 100;
 }

@@ -6,20 +6,10 @@
 
 package org.gluu.oxtrust.model.scim2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import org.codehaus.jackson.annotate.JsonAnyGetter;
+import org.codehaus.jackson.annotate.JsonAnySetter;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import java.util.*;
 
 /**
  * User model are meant to enable expression of common User informations. With the core attributes it should be
@@ -33,8 +23,8 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
  * 
  */
 
-@XmlRootElement(name = "User")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+// @XmlRootElement(name = "User")
+// @XmlAccessorType(XmlAccessType.PROPERTY)
 public class User extends Resource {
 
     private String userName;
@@ -59,7 +49,7 @@ public class User extends Resource {
     private List<Role> roles = new ArrayList<Role>();
     private List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
     private Map<String, Extension> extensions = new HashMap<String, Extension>();
-	private List<CustomAttributes> customAttributes = new ArrayList<CustomAttributes>();;
+	// private List<CustomAttributes> customAttributes = new ArrayList<CustomAttributes>();
 
     /**
      * Default constructor for Jackson
@@ -69,8 +59,8 @@ public class User extends Resource {
     	userMeta.setResourceType("User");
     	setMeta(userMeta);
     	Set<String> userSchemas = new HashSet<String>();
-    	userSchemas.add("urn:ietf:params:scim:schemas:core:2.0:User");    	
-		setSchemas(userSchemas );
+    	userSchemas.add(Constants.USER_CORE_SCHEMA_ID);
+		setSchemas(userSchemas);
     }
 
     /**
@@ -423,7 +413,7 @@ public class User extends Resource {
 		this.userName = userName;
 	}
 
-	public void setName(Name name) {
+    public void setName(Name name) {
 		this.name = name;
 	}
 
@@ -499,11 +489,11 @@ public class User extends Resource {
 		this.x509Certificates = x509Certificates;
 	}
 
+    @JsonAnySetter
 	public void setExtensions(Map<String, Extension> extensions) {
 		this.extensions = extensions;
 	}
-	
-	
+
     public void setSchemas(Set<String> schemas) {
         super.setSchemas(schemas);
     }
@@ -512,6 +502,7 @@ public class User extends Resource {
 		this.active = active;
 	}
 
+    /*
     public List<CustomAttributes> getCustomAttributes() {
 		return customAttributes;
 	}
@@ -519,6 +510,7 @@ public class User extends Resource {
 	public void setCustomAttributes(List<CustomAttributes> customAttributes) {
 		this.customAttributes = customAttributes;
 	}
+	*/
 
 	public void addExtension(Extension extension) {
         if (extension != null) {

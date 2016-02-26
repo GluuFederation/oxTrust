@@ -14,9 +14,10 @@ import org.gluu.oxtrust.service.scim2.schema.strategy.UserCoreLoadingStrategy;
 import org.gluu.oxtrust.service.scim2.schema.strategy.UserExtensionLoadingStrategy;
 
 /**
- * Factory for loading a SchemaType based on id.
+ * Factory for loading a SchemaType.
  *
  * @author Val Pecaoco
+ * @link SchemaType
  */
 public class SchemaTypeLoadingFactory {
 

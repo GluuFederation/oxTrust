@@ -15,6 +15,10 @@ import org.gluu.oxtrust.model.scim2.schema.SchemaType;
  */
 public class UserExtensionSchema extends SchemaType {
 
+    public UserExtensionSchema() {
+        super();
+    }
+
     public UserExtensionSchema(String id, String name, String description) {
         super(id, name, description);
     }

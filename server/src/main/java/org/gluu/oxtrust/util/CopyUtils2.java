@@ -9,28 +9,17 @@ package org.gluu.oxtrust.util;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.GroupService;
-import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.Person;
-import org.gluu.oxtrust.model.PersonAttribute;
-import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
+import org.gluu.oxtrust.ldap.service.*;
+import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.model.scim.ScimEntitlements;
 import org.gluu.oxtrust.model.scim.ScimEntitlementsPatch;
 import org.gluu.oxtrust.model.scim.ScimGroup;
@@ -51,37 +40,19 @@ import org.gluu.oxtrust.model.scim.ScimRoles;
 import org.gluu.oxtrust.model.scim.ScimRolesPatch;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
-import org.gluu.oxtrust.model.scim2.Address;
-import org.gluu.oxtrust.model.scim2.CustomAttributes;
-import org.gluu.oxtrust.model.scim2.Email;
-import org.gluu.oxtrust.model.scim2.Entitlement;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.model.scim2.GroupRef;
-import org.gluu.oxtrust.model.scim2.Im;
-import org.gluu.oxtrust.model.scim2.MemberRef;
-import org.gluu.oxtrust.model.scim2.Meta;
-import org.gluu.oxtrust.model.scim2.PhoneNumber;
-import org.gluu.oxtrust.model.scim2.Photo;
-import org.gluu.oxtrust.model.scim2.Role;
-import org.gluu.oxtrust.model.scim2.ScimData;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.User;
-import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.*;
 
 @Name("copyUtils2")
 public class CopyUtils2 implements Serializable {
 
-	/**
-     *
-     */
 	private static final long serialVersionUID = -1715995162448707004L;
 
 	@Logger
@@ -157,8 +128,10 @@ public class CopyUtils2 implements Serializable {
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new GluuCustomPerson();
-
 		}
+
+		log.trace(" setting schemas ");
+		destination.setSchemas(source.getSchemas());
 
 		if (isUpdate) {
 			personService1.addCustomObjectClass(destination);
@@ -337,6 +310,11 @@ public class CopyUtils2 implements Serializable {
 				destination.setAttribute("oxTrustx509Certificate", listOfCerts.toString());
 			}
 
+			log.trace(" setting extensions ");
+			if (source.getExtensions() != null && (source.getExtensions().size() > 0)) {
+				destination.setExtensions(source.getExtensions());
+			}
+
 			// getting meta
 			log.trace(" setting meta ");			
 			
@@ -353,6 +331,7 @@ public class CopyUtils2 implements Serializable {
 				destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
 			}
 
+            /*
 			// getting customAttributes
 			log.trace("getting custom attributes");
 
@@ -394,7 +373,8 @@ public class CopyUtils2 implements Serializable {
 					}
 				}
 			}
-			
+            */
+
 			log.trace("getting meta attributes");
 
 			if (source.getMeta()!=null && source.getMeta().getAttributes() != null) {
@@ -440,7 +420,9 @@ public class CopyUtils2 implements Serializable {
 			}
 
 		} else {
+
 			try {
+
 				if (personService1.getPersonByUid(source.getUserName()) != null) {
 					return null;
 				}
@@ -621,6 +603,11 @@ public class CopyUtils2 implements Serializable {
 					destination.setAttribute("oxTrustx509Certificate", listOfCerts.toString());
 				}
 
+				log.trace(" setting extensions ");
+				if (source.getExtensions() != null && (source.getExtensions().size() > 0)) {
+					destination.setExtensions(source.getExtensions());
+				}
+
 				// getting meta
 				log.trace(" setting meta ");
 
@@ -637,6 +624,7 @@ public class CopyUtils2 implements Serializable {
 					destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
 				}
 
+				/*
 				// getting customAttributes
 				log.trace("getting custom attributes");
 
@@ -669,8 +657,9 @@ public class CopyUtils2 implements Serializable {
 							destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), AttrArray);
 						}
 					}
-
 				}
+				*/
+
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				return null;
@@ -728,6 +717,7 @@ public class CopyUtils2 implements Serializable {
 	 * @throws Exception
 	 */
 	public static User copy(GluuCustomPerson source, User destination) throws Exception {
+
 		if (source == null) {
 			return null;
 		}
@@ -735,7 +725,7 @@ public class CopyUtils2 implements Serializable {
             log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new User();
 		}
-		
+
 		log.trace(" setting ID ");
 		if (source.getInum() != null) {
 			destination.setId(source.getInum());
@@ -901,9 +891,62 @@ public class CopyUtils2 implements Serializable {
 					});
 			destination.setX509Certificates(listOfCerts);
 		}
+
+		log.trace(" setting extensions ");
+
+		AttributeService attributeService = AttributeService.instance();
+		List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributesImpl(attributeService.getCustomAttributes());
+
+		if (scimCustomAttributes != null && !scimCustomAttributes.isEmpty()) {
+
+			Map<String, Extension> extensionMap = new HashMap<String, Extension>();
+			Extension.Builder extensionBuilder = new Extension.Builder(Constants.USER_EXT_SCHEMA_ID);
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+			boolean hasExtension = false;
+
+			outer:
+			for (GluuCustomAttribute customAttribute : source.getCustomAttributes()) {
+
+				for (GluuAttribute scimCustomAttribute : scimCustomAttributes) {
+
+					if (customAttribute.getName().equals(scimCustomAttribute.getName())) {
+
+						hasExtension = true;
+						GluuAttributeDataType scimCustomAttributeDataType = scimCustomAttribute.getDataType();
+
+						if ((scimCustomAttribute.getOxMultivaluedAttribute() != null) && scimCustomAttribute.getOxMultivaluedAttribute().equals(OxMultivalued.TRUE)) {
+
+							extensionBuilder.setFieldAsList(customAttribute.getName(), Arrays.asList(customAttribute.getValues()));
+
+						} else {
+
+							if (scimCustomAttributeDataType.equals(GluuAttributeDataType.STRING) || scimCustomAttributeDataType.equals(GluuAttributeDataType.PHOTO)) {
+								String value = ExtensionFieldType.STRING.fromString(customAttribute.getValue());
+								extensionBuilder.setField(customAttribute.getName(), value);
+							} else if (scimCustomAttributeDataType.equals(GluuAttributeDataType.DATE)) {
+								Date value = ExtensionFieldType.DATE_TIME.fromString(customAttribute.getValue());
+								extensionBuilder.setField(customAttribute.getName(), value);
+							} else if (scimCustomAttributeDataType.equals(GluuAttributeDataType.NUMERIC)) {
+								BigDecimal value = ExtensionFieldType.DECIMAL.fromString(customAttribute.getValue());
+								extensionBuilder.setField(customAttribute.getName(), value);
+							}
+						}
+
+						continue outer;
+					}
+				}
+			}
+			if (hasExtension) {
+				extensionMap.put(Constants.USER_EXT_SCHEMA_ID, extensionBuilder.build());
+				destination.getSchemas().add(Constants.USER_EXT_SCHEMA_ID);
+				destination.setExtensions(extensionMap);
+			}
+		}
+
 		log.trace(" setting meta ");
-		
-		
 		if(source.getAttribute("oxTrustMetaCreated")!=null && source.getAttribute("oxTrustMetaCreated")!="" && source.getAttribute("oxTrustMetaLastModified")!=null && source.getAttribute("oxTrustMetaLastModified")!="")
 		{
 			Meta meta=destination.getMeta()!=null?destination.getMeta():new Meta();	
@@ -925,7 +968,6 @@ public class CopyUtils2 implements Serializable {
 			} catch (java.text.ParseException ex) {
 				log.error(" Date parse exception ", ex);				
 			}
-				
 			
 			destination.setMeta(meta);
 			
@@ -957,8 +999,10 @@ public class CopyUtils2 implements Serializable {
 				}
 			}*/
 		}
+
 		log.trace(" returning destination ");
 		destination.getMeta().setLocation("/v2/Users/"+destination.getId());
+
 		return destination;
 	}
 

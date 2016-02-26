@@ -6,28 +6,29 @@
 
 package org.gluu.oxtrust.model.scim2;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * This class represents a SCIM Resource and is the base class for {@link User}s and {@link Group}s.
  */
-public abstract class Resource {
+public abstract class Resource implements Serializable {
 
     private String id;
     private String externalId;
     private Meta meta;
-    @JsonProperty(required = true)
-    private Set<String> schemas;
+
+    @JsonProperty("schemas")
+    private Set<String> schemas = new HashSet<String>();
 
     /**
      * Default constructor for Jackson
      */
     protected Resource() {
     }
-
 
     /**
      * Gets the Id of the resource.
@@ -87,7 +88,6 @@ public abstract class Resource {
 	public void setSchemas(Set<String> schemas) {
 		this.schemas = schemas;
 	}
-
     
     protected void addSchema(String schema){
         if(schemas == null){
@@ -95,9 +95,6 @@ public abstract class Resource {
         }
         schemas.add(schema);
     }
-
-
-	
 
     @Override
     public int hashCode() {
@@ -128,5 +125,4 @@ public abstract class Resource {
         }
         return true;
     }
-
 }

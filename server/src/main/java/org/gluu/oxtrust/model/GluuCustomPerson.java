@@ -8,11 +8,11 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
@@ -24,7 +24,6 @@ import org.xdi.ldap.model.GluuStatus;
  *
  * @author Yuriy Movchan Date: 10.21.2010
  */
-
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "gluuPerson"})
 public class GluuCustomPerson extends User 
@@ -47,6 +46,10 @@ public class GluuCustomPerson extends User
 
     @LdapAttribute
     private Date oxCreationTimestamp;
+
+    // Value object holders
+    private Set<String> schemas = new HashSet<String>();
+    private Map<String, Extension> extensions = new HashMap<String, Extension>();
 
     public String getIname() {
         return getAttribute("iname");
@@ -279,6 +282,44 @@ public class GluuCustomPerson extends User
 	public void setOxCreationTimestamp(Date oxCreationTimestamp) {
 		this.oxCreationTimestamp = oxCreationTimestamp;
 	}
+
+    public Set<String> getSchemas() {
+        return Collections.unmodifiableSet(schemas);
+    }
+
+    public void setSchemas(Set<String> schemas) {
+        this.schemas = schemas;
+    }
+
+    public Map<String, Extension> getExtensions() {
+        return Collections.unmodifiableMap(extensions);
+    }
+
+    public void setExtensions(Map<String, Extension> extensions) throws Exception {
+
+        this.extensions = extensions;
+
+        for (Map.Entry<String, Extension> extensionEntry : extensions.entrySet()) {
+
+            Extension extension = extensionEntry.getValue();
+
+            for (Map.Entry<String, Extension.Field> fieldEntry : extension.getFields().entrySet()) {
+
+                if (fieldEntry.getValue().isMultiValued() && (fieldEntry.getValue().getValue() != null)) {
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+                    String[] values = mapper.readValue(fieldEntry.getValue().getValue(), String[].class);
+
+                    setAttribute(fieldEntry.getKey(), values);
+
+                } else {
+                    setAttribute(fieldEntry.getKey(), fieldEntry.getValue().getValue());
+                }
+            }
+        }
+    }
 
 	/* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
