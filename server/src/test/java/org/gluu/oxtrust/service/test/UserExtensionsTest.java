@@ -39,11 +39,11 @@ import java.util.List;
 /**
  * @author Val Pecaoco
  */
-//@RunWith(Arquillian.class)
+@RunWith(Arquillian.class)
 public class UserExtensionsTest extends AbstractAuthorizationTest {
 
-//    @Test
-//    @InSequence(1)
+    @Test
+    @InSequence(1)
     public void testCreatePersonFromJsonString() throws Exception {
         new FacesRequest() {
             @Override
@@ -156,8 +156,8 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
         }.run();
     }
 
-//    @Test
-//    @InSequence(2)
+    @Test
+    @InSequence(2)
     public void testCreatePersonFromUserObject() throws Exception {
         new FacesRequest() {
             @Override
