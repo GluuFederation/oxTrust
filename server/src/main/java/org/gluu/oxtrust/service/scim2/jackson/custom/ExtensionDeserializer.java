@@ -28,7 +28,7 @@ import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.OxMultivalued;
 
 /**
- * Custom serializer for the SCIM 2.0 User Extension class.
+ * Custom deserializer for the SCIM 2.0 User Extension class.
  *
  * This class is package-private by intention. If you need to use it, something went wrong.
  */
