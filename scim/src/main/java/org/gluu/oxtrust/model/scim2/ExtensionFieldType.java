@@ -220,7 +220,6 @@ public abstract class ExtensionFieldType<T> {
             ensureValueIsNotNull(value);
             return dateTimeFormatter.print(value.getTime());
         }
-
     };
 
     /*
