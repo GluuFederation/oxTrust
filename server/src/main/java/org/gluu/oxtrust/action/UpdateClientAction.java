@@ -72,6 +72,8 @@ public class UpdateClientAction implements Serializable {
 
     private List<String> loginUris;
     private List<String> logoutUris;
+    private List<String> clientlogoutUris;
+    
 
     private List<DisplayNameEntry> scopes;
     private List<ResponseType> responseTypes;
@@ -88,6 +90,7 @@ public class UpdateClientAction implements Serializable {
 
     private String availableLoginUri = "https://";
     private String availableLogoutUri = "https://";
+    private String availableClientlogoutUri  = "https://";
     private String availableContact = "";
     private String availableDefaultAcrValue = "";
     private String availableRequestUri = "https://";
@@ -109,7 +112,7 @@ public class UpdateClientAction implements Serializable {
         try {
             this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
             this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
-
+            this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
             this.scopes = getInitialScopeDisplayNameEntiries();
             this.responseTypes = getInitialResponseTypes();
             this.grantTypes = getInitialGrantTypes();
@@ -148,7 +151,7 @@ public class UpdateClientAction implements Serializable {
         try {
             this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
             this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
-
+            this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
             this.scopes = getInitialScopeDisplayNameEntiries();
             this.responseTypes = getInitialResponseTypes();
             this.grantTypes = getInitialGrantTypes();
@@ -187,6 +190,7 @@ public class UpdateClientAction implements Serializable {
     public String save() throws Exception {
         updateLoginURIs();
         updateLogoutURIs();
+        updateClientLogoutURIs();
         updateScopes();
         updateResponseTypes();
         updateGrantTypes();
@@ -251,6 +255,11 @@ public class UpdateClientAction implements Serializable {
     @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeLogoutURI(String uri) {
         removeFromList(this.logoutUris, uri);
+    }
+
+    @Restrict("#{s:hasPermission('client', 'access')}")
+    public void removeClientLogoutURI(String uri) {
+        removeFromList(this.clientlogoutUris, uri);
     }
 
     @Restrict("#{s:hasPermission('client', 'access')}")
@@ -356,6 +365,18 @@ public class UpdateClientAction implements Serializable {
 
         this.availableLogoutUri = "https://";
     }
+    
+    public void acceptSelectClientLogoutUri() {
+    	if (StringHelper.isEmpty(this.availableClientlogoutUri )) {
+            return;
+        }
+
+        if (!this.clientlogoutUris.contains(this.availableClientlogoutUri )) {
+            this.clientlogoutUris.add(this.availableClientlogoutUri );
+        }
+
+        this.availableClientlogoutUri  = "https://";
+    }
 
     public void acceptSelectContact() {
         if (StringHelper.isEmpty(this.availableContact)) {
@@ -423,6 +444,10 @@ public class UpdateClientAction implements Serializable {
     public void cancelSelectLogoutUri() {
         this.availableLogoutUri = "http://";
     }
+    
+    public void cancelClientLogoutUri() {
+        this.availableClientlogoutUri = "http://";
+    }
 
     public void cancelSelectContact() {
     }
@@ -459,6 +484,21 @@ public class UpdateClientAction implements Serializable {
         }
 
         this.client.setOxAuthPostLogoutRedirectURIs(tmpUris);
+
+    }
+
+    private void updateClientLogoutURIs() {
+        if (this.clientlogoutUris == null || this.clientlogoutUris.size() == 0) {
+            this.client.setLogoutUri(null);
+            return;
+        }
+
+        List<String> tmpUris = new ArrayList<String>();
+        for (String uri : this.clientlogoutUris) {
+            tmpUris.add(uri);
+        }
+
+        this.client.setLogoutUri(tmpUris);
 
     }
 
@@ -860,5 +900,33 @@ public class UpdateClientAction implements Serializable {
     public void setSearchAvailableScopePattern(String searchAvailableScopePattern) {
         this.searchAvailableScopePattern = searchAvailableScopePattern;
     }
+
+	/**
+	 * @return the availableClientlogoutUri
+	 */
+	public String getAvailableClientlogoutUri() {
+		return availableClientlogoutUri;
+	}
+
+	/**
+	 * @param availableClientlogoutUri the availableClientlogoutUri to set
+	 */
+	public void setAvailableClientlogoutUri(String availableClientlogoutUri) {
+		this.availableClientlogoutUri = availableClientlogoutUri;
+	}
+
+	/**
+	 * @return the clientlogoutUris
+	 */
+	public List<String> getClientlogoutUris() {
+		return clientlogoutUris;
+	}
+
+	/**
+	 * @param clientlogoutUris the clientlogoutUris to set
+	 */
+	public void setClientlogoutUris(List<String> clientlogoutUris) {
+		this.clientlogoutUris = clientlogoutUris;
+	}
 
 }

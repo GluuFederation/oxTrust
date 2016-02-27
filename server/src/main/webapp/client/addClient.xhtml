@@ -93,6 +93,14 @@
                                 cancelMethod="#{updateClientAction.cancelSelectRequestUri()}"
                                 maxLength="256" inputWidth="80" dialogWidth="600" render="selectedRequestUrisId"
                                 queue="clientQueue"/>
+                                
+            <ox:inputTextDialog id="clientLogoutUri" label="Logout URI" inputLabel="Logout URI"
+            					text="#{updateClientAction.availableClientlogoutUri}" textId="clientLogoutTextId"
+                				acceptMethod="#{updateClientAction.acceptSelectClientLogoutUri()}" 
+                				cancelMethod="#{updateClientAction.cancelClientLogoutUri()}"
+                				maxLength="256" inputWidth="80" dialogWidth="600" render="selectedClientUrisId" 
+                				queue="clientQueue"/>
+                
         </div></section>
     </ui:define>
 </ui:composition>

@@ -152,7 +152,7 @@ public class OxAuthClient extends Entry implements Serializable {
     private String[] postLogoutRedirectUris;
 
     @LdapAttribute(name = "oxAuthLogoutURI")
-    private String logoutUri;
+    private List <String> logoutUri;
 
     @LdapAttribute(name = "oxAuthLogoutSessionRequired")
     private GluuBoolean logoutSessionRequired;
@@ -467,11 +467,11 @@ public class OxAuthClient extends Entry implements Serializable {
         this.postLogoutRedirectUris = postLogoutRedirectUris;
     }
 
-    public String getLogoutUri() {
+    public List <String> getLogoutUri() {
         return logoutUri;
     }
 
-    public void setLogoutUri(String logoutUri) {
+    public void setLogoutUri(List <String> logoutUri) {
         this.logoutUri = logoutUri;
     }
 
