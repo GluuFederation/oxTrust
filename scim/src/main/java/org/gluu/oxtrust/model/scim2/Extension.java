@@ -19,6 +19,8 @@ import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * This class represents a schema extension.
@@ -392,10 +394,30 @@ public class Extension {
             ObjectMapper mapper = new ObjectMapper();
             mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-            setField(fieldName, mapper.writeValueAsString(values), ExtensionFieldType.STRING, true);
+            Date[] dateArray = null;
+            boolean isDateArray = false;
+            try {
+                dateArray = (Date[])values.toArray();
+                isDateArray = true;
+            } catch (Exception e) {
+            }
 
+            if (isDateArray) {
 
-            return this;
+                DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+                List<String> stringDateList = new ArrayList<String>();
+                for (Date date : dateArray) {
+                    stringDateList.add(dateTimeFormatter.print(date.getTime()));
+                }
+
+                setField(fieldName, mapper.writeValueAsString(stringDateList), ExtensionFieldType.STRING, true);
+                return this;
+
+            } else {
+
+                setField(fieldName, mapper.writeValueAsString(values), ExtensionFieldType.STRING, true);
+                return this;
+            }
         }
 
         /**

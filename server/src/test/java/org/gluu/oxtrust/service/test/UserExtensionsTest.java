@@ -22,6 +22,7 @@ import org.gluu.oxtrust.util.CopyUtils2;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.seam.Component;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,6 +100,9 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
 
                 // Create Person
                 GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
+                Assert.assertNotNull("gluuPerson is null!", gluuPerson);
+                System.out.println(">>>>> gluuPerson.getUid() = " + gluuPerson.getUid());
+
                 IPersonService personService = PersonService.instance();
                 String inum = personService.generateInumForNewPerson();
                 String dn = personService.getDnForPerson(inum);
@@ -114,7 +118,7 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 GluuCustomPerson retrievedPerson = personService.getPersonByUid(gluuPerson.getUid());
                 Assert.assertNotNull("Failed to find person.", retrievedPerson);
 
-                User newPerson = CopyUtils2.copy(gluuPerson, null);
+                User newPerson = CopyUtils2.copy(retrievedPerson, null);
 
                 extension = newPerson.getExtension(Constants.USER_EXT_SCHEMA_ID);
                 Assert.assertNotNull("(Persistence) Custom extension not persisted.", extension);
@@ -186,6 +190,9 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
 
                 // Create Person
                 GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
+                Assert.assertNotNull("gluuPerson is null!", gluuPerson);
+                System.out.println(">>>>>>>>>> gluuPerson.getUid() = " + gluuPerson.getUid());
+
                 IPersonService personService = PersonService.instance();
                 String inum = personService.generateInumForNewPerson();
                 String dn = personService.getDnForPerson(inum);
@@ -201,7 +208,7 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 GluuCustomPerson retrievedPerson = personService.getPersonByUid(gluuPerson.getUid());
                 Assert.assertNotNull("Failed to find person.", retrievedPerson);
 
-                User newPerson = CopyUtils2.copy(gluuPerson, null);
+                User newPerson = CopyUtils2.copy(retrievedPerson, null);
 
                 Extension extension = newPerson.getExtension(Constants.USER_EXT_SCHEMA_ID);
                 Assert.assertNotNull("(Persistence) Custom extension not persisted.", extension);
@@ -281,7 +288,8 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
         // User Extensions
         Extension.Builder extensionBuilder = new Extension.Builder(Constants.USER_EXT_SCHEMA_ID);
         extensionBuilder.setField("customFirst", "customFirstValue");
-        extensionBuilder.setFieldAsList("customSecond", Arrays.asList(new String[]{"2016-02-23T03:35:22Z", "2016-02-24T01:52:05Z"}));
+        // extensionBuilder.setFieldAsList("customSecond", Arrays.asList(new String[]{"2016-02-23T03:35:22Z", "2016-02-24T01:52:05Z"}));
+        extensionBuilder.setFieldAsList("customSecond", Arrays.asList(new Date[]{(new DateTime("1969-01-02")).toDate(), (new DateTime("2016-02-27")).toDate()}));
         extensionBuilder.setField("customThird", new BigDecimal(3000));
         user.addExtension(extensionBuilder.build());
 
