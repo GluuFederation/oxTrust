@@ -125,7 +125,11 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
-        log.info("save new IDP", idp);
+        log.info("add new IDP", idp);
+        // compatibility with SAML2IDP SourceID field. SourceID should be generated from identificationURL.
+        // identificationURL = entityID = ID
+        idp.setIdentificationURL(idp.getId());
+        // save
         synchronized (svnSyncTimer) {
             asimbaService.addIDPEntry(idp);
         }
@@ -136,6 +140,10 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update IDP", idp);
+        // compatibility with SAML2IDP SourceID field. SourceID should be generated from identificationURL.
+        // identificationURL = entityID = ID
+        idp.setIdentificationURL(idp.getId());
+        // save
         synchronized (svnSyncTimer) {
             asimbaService.updateIDPEntry(idp);
         }

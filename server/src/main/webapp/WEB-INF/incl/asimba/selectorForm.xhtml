@@ -67,49 +67,47 @@
             
             <div class="row">
                 <div class="col-xs-12">
-            
-            <h:panelGroup id="idpEditIDGroupId">
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="idpEditID"
-                    rendered="true">
-                    <ui:define name="label">ID</ui:define>
                     
-                    <h:outputLabel 
-                        title="The id of the selector"
-                        value="The id of the selector"/>
-                    <h:inputText styleClass="form-control"
-                        title="The id of the selector"
-                        value="#{_selector.id}" size="100" tabindex="0" 
-                        required="true" />
+            <h:panelGroup id="selectorSelectSPRequestorGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                id="selectorSelectSPRequestor"
+                rendered="true">
+                <ui:define name="label">Select SP Requestor</ui:define>
+
+                <h:selectOneMenu styleClass="form-control"
+                    title=""
+                    value="#{_selector.id}" 
+                    required="true" tabindex="0" >
+                    <f:selectItems value="#{_updateAsimbaSelectorAction.spRequestorList}" />
+                </h:selectOneMenu>
+            </s:decorate>
+            </h:panelGroup>
+                    
+            <h:panelGroup id="selectorSelectIDPGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                id="selectorSelectIDP"
+                rendered="true">
+                <ui:define name="label">Select IDP</ui:define>
+
+                <h:selectOneMenu styleClass="form-control"
+                    title=""
+                    value="#{_selector.organizationId}" 
+                    required="true" tabindex="1" >
+                    <f:selectItems value="#{_updateAsimbaSelectorAction.idpList}" />
+                </h:selectOneMenu>
             </s:decorate>
             </h:panelGroup>
             
-            <h:panelGroup id="idpEditOrganizationIdGroupId">
+            <h:panelGroup id="selectorEditFriendlyNameGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="idpEditOrganizationId"
-                    rendered="true">
-                    <ui:define name="label">Organization ID</ui:define>
-                    
-                    <h:outputLabel 
-                        title="The id of the organization"
-                        value="The id of the organization"/>
-                    <h:inputText styleClass="form-control"
-                        title="The id of the organization"
-                        value="#{_selector.organizationId}" size="100" tabindex="1" 
-                        required="true" />
-            </s:decorate>
-            </h:panelGroup>
-            
-            <h:panelGroup id="idpEditFriendlyNameGroupId">
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                    id="idpEditFriendlyName"
+                    id="selectorEditFriendlyName"
                     rendered="true">
                     <ui:define name="label">Friendly Name</ui:define>
             <h:outputLabel 
-                title="The organization friendly name"
-                value="The organization friendly name"/>
+                title="The selector rule friendly name"
+                value="The selector rule friendly name"/>
             <h:inputText styleClass="form-control"
-                title="The organization friendly name"
+                title="The selector rule friendly name"
                 value="#{_selector.friendlyName}" size="100" tabindex="2" />
             </s:decorate>
             </h:panelGroup>

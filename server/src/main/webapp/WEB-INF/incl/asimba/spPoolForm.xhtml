@@ -102,12 +102,9 @@
                     id="spPoolEditPreAuthorizationProfileID"
                     rendered="true">
                 <ui:define name="label">PreAuthorizationProfileID</ui:define>
-                <h:outputLabel 
-                    title="Pre-authorization profile id"
-                    value="Pre-authorization profile id"/>
                 <!-- TODO: selectbox -->
                 <h:inputText styleClass="form-control"
-                    title="Pre-authorization profile id"
+                    title="Pre-authorization profile id. See asimba.xml"
                     value="#{_spPool.preAuthorizationProfileID}"  tabindex="2"/>
             </s:decorate>
             </h:panelGroup>
@@ -118,11 +115,8 @@
                     rendered="true">
                 <ui:define name="label">PostAuthorizationProfileID</ui:define>
                 <!-- postauthz.1 TODO: selectbox -->
-                <h:outputLabel 
-                    title="Post-authorization profile id"
-                    value="Post-authorization profile id"/>
                 <h:inputText styleClass="form-control"
-                    title="Post-authorization profile id"
+                    title="Post-authorization profile id. See asimba.xml"
                     value="#{_spPool.postAuthorizationProfileID}" 
                     required="true" tabindex="3" />
             </s:decorate>
@@ -135,7 +129,7 @@
                 <ui:define name="label">AttributeReleasePolicyID</ui:define>
                 <!-- asimba.releasepolicy.1 TODO: checkbox -->
                 <h:inputText styleClass="form-control"
-                    title=""
+                    title="Attribute release policy ID. See asimba.xml"
                     value="#{_spPool.attributeReleasePolicyID}" 
                     required="true" tabindex="4" />
             </s:decorate>
@@ -148,7 +142,7 @@
                 <ui:define name="label">AuthenticationProfileIDs</ui:define>
                 <!-- remote.saml2 TODO: multiselect list -->
                 <h:inputText styleClass="form-control"
-                    title=""
+                    title="Authentication profile IDs. See asimba.xml"
                     value="#{_spPool.authenticationProfileIDs}" 
                     required="true"  tabindex="5" />
             </s:decorate>
