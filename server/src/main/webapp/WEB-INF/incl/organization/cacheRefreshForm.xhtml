@@ -181,10 +181,7 @@
                     </s:decorate>
                 </h:panelGroup></div></div>
             
-            <div class="tab-pane" id="ldap-servers">
-            
-             <div style="display: inline-block;width: 75% !important;">
-              
+            <div class="tab-pane" id="ldap-servers">              
 			
 				<div class="box box-primary" style="width:1021px !important;">
 				<div class="box-header">
@@ -192,15 +189,17 @@
 				</div>
                 <h:panelGroup>
                     <rich:dataGrid id="sourceConfigsId" value="#{_configureCacheRefreshAction.sourceConfigs}" var="_ldapConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
+                       <div style="display: inline-block;width: 75% !important;">
                         <ox:ldapConfig ldapConfig="#{_ldapConfig}" ldapConfigList="#{_configureCacheRefreshAction.sourceConfigs}"
                             ldapConfigAction="#{configureCacheRefreshAction}" propertiesAction="#{_configureCacheRefreshAction}"  displayEnable="false"
                             renderAfterRomoval="sourceConfigsId" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" /> 
+                  		</div> 
                     </rich:dataGrid>
 
                     <s:div styleClass="addConfig">
                         <a4j:commandLink styleClass="btn btn-link" value="Add source LDAP server" action="#{_configureCacheRefreshAction.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
                     </s:div>
-                </h:panelGroup></div></div></div>
+                </h:panelGroup></div></div>
             
  <div class="tab-pane" id="Inum">
              <div style="display: inline-block;width: 75% !important;">
