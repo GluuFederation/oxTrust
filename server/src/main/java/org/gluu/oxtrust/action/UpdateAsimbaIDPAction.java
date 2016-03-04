@@ -125,7 +125,8 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
-        log.info("save new IDP", idp);
+        log.info("add new IDP", idp);
+        // save
         synchronized (svnSyncTimer) {
             asimbaService.addIDPEntry(idp);
         }
@@ -136,6 +137,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update IDP", idp);
+        // save
         synchronized (svnSyncTimer) {
             asimbaService.updateIDPEntry(idp);
         }
