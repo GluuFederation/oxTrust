@@ -28,12 +28,10 @@ import com.wordnik.swagger.annotations.*;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.User;
-import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -323,9 +321,10 @@ public class UserWebService extends BaseScimWebService {
 				return getErrorResponse("No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue()
 						+ "' please try again or use another pattern.", Response.Status.NOT_FOUND.getStatusCode());
 			}
-			ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			// ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			User user = CopyUtils2.copy(gluuPerson, null);
 			URI location = new URI("/Users/" + gluuPerson.getInum());
-			return Response.ok(person).location(location).build();
+			return Response.ok(user).location(location).build();
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return getErrorResponse("Resource not found", Response.Status.NOT_FOUND.getStatusCode());
