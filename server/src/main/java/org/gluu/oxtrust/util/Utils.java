@@ -6,7 +6,10 @@
 
 package org.gluu.oxtrust.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +20,7 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.richfaces.model.UploadedFile;
 
 /**
  * User: Dejan Maric
@@ -27,6 +31,8 @@ public class Utils implements Serializable {
      *
      */
 	private static final long serialVersionUID = -2842459224631032594L;
+    
+        private static final SecureRandom random = new SecureRandom();
 
 	/**
 	 * Delete a Group from a Person
@@ -317,5 +323,29 @@ public class Utils implements Serializable {
 		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgIname() + OxTrustConstants.inameDelimiter
 				+ OxTrustConstants.INAME_PERSON_OBJECTTYPE;
 	}
+        
+        
+        
+    
+    /**
+     * Save uploaded file with random name.
+     * @param uploadedFile
+     * @param baseDir Write to directory. 
+     * @param extension Filename extension.
+     * @return Return full path
+     * @throws IOException 
+     */
+    public static String saveUploadedFile(UploadedFile uploadedFile, String baseDir, String extension) throws IOException {
+        String filepath = baseDir + File.separator + random.nextLong() + "." + extension;
+        
+        File dir = new File(filepath);
+        if (!dir.exists())
+            dir.mkdirs();
+        else if (!dir.isDirectory())
+            throw new IllegalArgumentException("parameter baseDir should be directory. The value: " + baseDir);
+        
+        uploadedFile.write(filepath);
+        return filepath;
+    }
 
 }

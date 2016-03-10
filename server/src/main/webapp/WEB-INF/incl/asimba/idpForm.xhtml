@@ -137,7 +137,12 @@
                 <h:inputText  styleClass="form-control"
                     title="Provide the absolute location of metadata file."
                     value="#{_idp.metadataFile}" tabindex="5" />
-                <!-- TODO: upload file button -->
+                
+                <!-- upload file button -->
+                <rich:fileUpload fileUploadListener="#{_updateAsimbaIDPAction.uploadFile}" 
+                                     maxFilesQuantity="1" 
+                                     immediateUpload="true"
+                                     listHeight="60px" styleClass="uploadFile" />
             </s:decorate>
             </h:panelGroup>
             

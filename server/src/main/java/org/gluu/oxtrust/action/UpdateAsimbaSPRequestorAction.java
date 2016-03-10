@@ -32,6 +32,8 @@ import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
+import org.richfaces.event.FileUploadEvent;
+import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
 
@@ -183,9 +185,15 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String uploadFile() {
+    public String uploadFile(FileUploadEvent event) {
         log.info("uploadFile() Requestor", spRequestor);
-        //TODO: upload file
+        try {
+            UploadedFile uploadedFile = event.getUploadedFile();
+            String filepath = asimbaService.saveSPRequestorMetadataFile(uploadedFile);
+            spRequestor.setMetadataFile(filepath);
+        } catch (Exception e) {
+            log.info("Requestor metadata - uploadFile() exception", e);
+        }
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

@@ -6,9 +6,12 @@
 package org.gluu.oxtrust.ldap.service;
 
 import com.unboundid.ldap.sdk.Filter;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.asimba.util.ldap.LdapConfigurationEntry;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.idp.LdapIDPEntry;
@@ -19,6 +22,7 @@ import org.gluu.asimba.util.ldap.sp.LDAPRequestorPoolEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -29,6 +33,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.richfaces.model.UploadedFile;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -41,6 +46,9 @@ import org.xdi.util.StringHelper;
 @AutoCreate
 @Scope(ScopeType.APPLICATION)
 public class AsimbaService {
+    public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
+    public static String METADATA_SP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
+    
     @Logger
     private Log log;
     
@@ -491,4 +499,15 @@ public class AsimbaService {
         LDAPApplicationSelectorEntry result = ldapEntryManager.find(LDAPApplicationSelectorEntry.class, getDnForLDAPApplicationSelectorEntry(inum));
         return result.getEntry();
     }
+    
+    public String saveIDPMetadataFile(UploadedFile uploadedFile) throws IOException {
+        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "asimba" + File.separator + "idp";
+        return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
+    }
+    
+    public String saveSPRequestorMetadataFile(UploadedFile uploadedFile) throws IOException {
+        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "asimba" + File.separator + "sp";
+        return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
+    }
+    
 }

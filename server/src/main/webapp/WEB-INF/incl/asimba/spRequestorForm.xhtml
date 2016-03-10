@@ -154,7 +154,12 @@
                     <h:inputText  styleClass="form-control"
                         title="The location of the metadata file or empty if none"
                         value="#{_spRequestor.metadataFile}" tabindex="4" />
-                    <!-- TODO: upload file button -->
+                    
+                    <!-- upload file button -->
+                    <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadFile}" 
+                                     maxFilesQuantity="1" 
+                                     immediateUpload="true" 
+                                     listHeight="60px" />
             </s:decorate>
             </h:panelGroup>
             

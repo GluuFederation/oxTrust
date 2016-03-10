@@ -29,6 +29,8 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.jboss.seam.annotations.Create;
+import org.richfaces.event.FileUploadEvent;
+import org.richfaces.model.UploadedFile;
 
 
 /**
@@ -152,9 +154,15 @@ public class UpdateAsimbaIDPAction implements Serializable {
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
-    public String uploadFile() {
+    public String uploadFile(FileUploadEvent event) {
         log.info("uploadFile() call for IDP");
-        //TODO: upload file
+        try {
+            UploadedFile uploadedFile = event.getUploadedFile();
+            String filepath = asimbaService.saveIDPMetadataFile(uploadedFile);
+            idp.setMetadataFile(filepath);
+        } catch (Exception e) {
+            log.info("IDP metadata - uploadFile() exception", e);
+        }
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

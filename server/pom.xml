@@ -608,7 +608,7 @@
 		<dependency>
 			<groupId>org.asimba</groupId>
 			<artifactId>asimba-utility-ldap</artifactId>
-                        <version>2.4.2-SNAPSHOT</version>
+                        <version>2.4.3-SNAPSHOT</version>
 		</dependency>
 
 		<!-- JBoss -->
