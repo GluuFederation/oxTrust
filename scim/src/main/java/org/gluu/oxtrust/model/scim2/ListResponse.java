@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
@@ -32,6 +34,7 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonPropertyOrder({ "totalResults", "startIndex","itemsPerPage","schemas", "Resources" })
 @XmlType(propOrder = { "totalResults","startIndex","itemsPerPage", "Resources" })
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 public class ListResponse implements Serializable {
 
 	private static final long serialVersionUID = 433980309301930837L;
@@ -46,8 +49,7 @@ public class ListResponse implements Serializable {
 
 	@XmlElementWrapper(name = "Resources")
 	@XmlElement(name = "Resource")
-	//@JsonProperty
-	@JsonIgnore
+	@JsonProperty
 	private List<Resource> Resources;
 
 	public ListResponse() {
