@@ -122,7 +122,7 @@ public class RegisterPersonAction implements Serializable {
 			if(!externalUserRegistrationService.isEnabled()){
 				redirect.setViewId("/login.xhtml");
 				redirect.execute();
-			}
+			}  
 				
 			this.person = (inum == null) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
 
