@@ -39,6 +39,7 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.faces.Redirect;
 import org.jboss.seam.international.StatusMessage;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
@@ -69,8 +70,8 @@ public class RegisterPersonAction implements Serializable {
 	@In
 	private OrganizationService organizationService;
 	
-	@In(value = "customScriptService")
-	private CustomScriptService customScriptService;
+	@In
+	Redirect redirect;
 
 	@In(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
@@ -117,12 +118,11 @@ public class RegisterPersonAction implements Serializable {
 	public String initPerson() {
 		String result = sanityCheck();
 		if (result.equals(OxTrustConstants.RESULT_SUCCESS)) {
-			String basedInum = OrganizationService.instance().getOrganizationInum();
-			String customScriptDn = customScriptService.buildDn(basedInum+OxTrustConstants.user_registration_script_inum);
-			CustomScript customScript = customScriptService.getCustomScriptByDn(customScriptDn);
-			
-			if(!customScript.isEnabled())
-				return OxTrustConstants.RESULT_NO_PERMISSIONS;
+					
+			if(!externalUserRegistrationService.isEnabled()){
+				redirect.setViewId("/login.xhtml");
+				redirect.execute();
+			}
 				
 			this.person = (inum == null) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
 

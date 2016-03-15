@@ -43,10 +43,7 @@ public final class OxTrustConstants extends OxConstants {
     public static final String sn = "sn";
     public static final String cn = "cn";
     public static final String owner = "owner";
-    public static final String member = "member";
-    
-    public static final String user_registration_script_inum = "!0011!6EA0.8F0C";
-    
+    public static final String member = "member";    
         
     /**
      * oxAsimba fields
