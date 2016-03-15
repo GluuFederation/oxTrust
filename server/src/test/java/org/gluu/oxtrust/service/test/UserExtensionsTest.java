@@ -78,6 +78,8 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 mapper.registerModule(simpleModule);
 
                 User user = mapper.readValue(CREATEJSON, User.class);
+                String testUserName = user.getUserName() + " (" + System.currentTimeMillis() + ")";
+                user.setUserName(testUserName);
 
                 Extension extension = user.getExtension(Constants.USER_EXT_SCHEMA_ID);
                 Assert.assertNotNull("(Deserialization) Custom extension not deserialized.", extension);
@@ -251,7 +253,11 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
 
         User user = new User();
 
+
         user.setUserName("userjson.add.username");
+        String testUserName = user.getUserName() + " (" + System.currentTimeMillis() + ")";
+        user.setUserName(testUserName);
+
         user.setPassword("test");
         user.setDisplayName("Scim2DisplayName");
 
