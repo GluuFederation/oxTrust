@@ -1,1 +1,1 @@
-encodeSalt=123456789012345678901234567890
+encodeSalt=${config.salt}
