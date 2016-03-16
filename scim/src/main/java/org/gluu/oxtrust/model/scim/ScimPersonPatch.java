@@ -198,7 +198,7 @@ public class ScimPersonPatch {
 		this.addresses = addresses;
 	}
 
-	@XmlElementWrapper(name = "PhoneNumbers")
+	@XmlElementWrapper(name = "phoneNumbers")
 	@XmlElement(name = "PhoneNumber")
 	public List<ScimPersonPhonesPatch> getPhoneNumbers() {
 		return phoneNumbers;
