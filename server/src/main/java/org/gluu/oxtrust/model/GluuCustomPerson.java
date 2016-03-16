@@ -147,11 +147,11 @@ public class GluuCustomPerson extends User
     }
 
     public void setTimezone(String value) {
-        setAttribute("timezone", value);
+        setAttribute("zoneinfo", value);
     }
 
     public String getTimezone() {
-        return getAttribute("timezone");
+        return getAttribute("zoneinfo");
     }
 
     public void setPreferredLanguage(String value) {
