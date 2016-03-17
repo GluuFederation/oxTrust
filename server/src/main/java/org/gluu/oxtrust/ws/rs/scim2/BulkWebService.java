@@ -91,6 +91,9 @@ public class BulkWebService extends BaseScimWebService {
 
 		J2EContext context = new J2EContext(request, response);
 		String domain = context.getFullRequestURL().replace("/Bulk", "");
+		if (domain.endsWith("/")) {
+			domain = domain.substring(0, domain.length() - 1);
+		}
 
 		log.info(" getting list of BulkRequest ");
 		List<BulkOperation> bulkOperations = bulkRequest.getOperations();
