@@ -18,12 +18,12 @@ import java.util.List;
 public class BulkRequest {
 	private List<String> schemas;
 	private Integer failOnErrors; 
-	private List<BulkOperation> Operations;
+	private List<BulkOperation> operations;
 	
 	public BulkRequest() {
 		schemas = new ArrayList<String>();
 		schemas.add("urn:ietf:params:scim:api:messages:2.0:BulkRequest");
-		Operations = new ArrayList<BulkOperation>();
+		operations = new ArrayList<BulkOperation>();
 	}
 
 	public List<String> getSchemas() {
@@ -43,11 +43,11 @@ public class BulkRequest {
 	}
 
 	public List<BulkOperation> getOperations() {
-		return Operations;
+		return operations;
 	}
 
 	public void setOperations(List<BulkOperation> operations) {
-		Operations = operations;
+		this.operations = operations;
 	}
 
 }
