@@ -426,5 +426,12 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	public List<CustomScript> getAuthorizationPolicies() {
 		return authorizationPolicies;
 	}
+	
+	public List<InternalExternal> getInternalExternalList(){
+		List<InternalExternal> list = new ArrayList<InternalExternal>();
+		list.add(InternalExternal.INTERNAL);
+		list.add(InternalExternal.UMA);
+		return list; 		
+	}
 
 }
