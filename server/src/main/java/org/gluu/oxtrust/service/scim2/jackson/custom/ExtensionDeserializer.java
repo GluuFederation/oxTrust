@@ -70,7 +70,7 @@ public class ExtensionDeserializer extends JsonDeserializer<Extension> {
                 GluuAttribute gluuAttribute = attributeService.getAttributeByName(entry.getKey());
 
                 if (gluuAttribute != null) {
-                    
+
                     if (!(gluuAttribute.isCustom() && (gluuAttribute.getOxSCIMCustomAttribute() != null && gluuAttribute.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE)))) {
                         log.info(" NOT A CUSTOM ATTRIBUTE: " + gluuAttribute.getName());
                         throw new IllegalArgumentException("NOT A CUSTOM ATTRIBUTE: " + gluuAttribute.getName());
