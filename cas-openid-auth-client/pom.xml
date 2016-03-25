@@ -63,6 +63,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>openid-auth-client</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>

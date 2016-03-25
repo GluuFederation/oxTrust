@@ -30,7 +30,7 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
 	public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
 		if (credential instanceof ClientCredential) {
 			final ClientCredential clientCredential = (ClientCredential) credential;
-			builder.addAttribute(CLIENT_NAME, clientCredential.getClientName());
+			builder.addAttribute(CLIENT_NAME, clientCredential.getOpenIdCredentials().getClientName());
 		}
 	}
 

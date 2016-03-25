@@ -13,9 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.gluu.oxauth.cas.auth.client.Client;
 import org.gluu.oxauth.cas.auth.principal.ClientCredential;
-import org.gluu.oxauth.cas.auth.user.UserProfile;
+import org.gluu.oxauth.client.Client;
+import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
+import org.gluu.oxauth.client.auth.user.UserProfile;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
@@ -55,9 +56,10 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 	@Override
 	protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 		final ClientCredential clientCredentials = (ClientCredential) credential;
+		final OpenIdCredentials openIdCredentials = clientCredentials.getOpenIdCredentials();
 		logger.debug("Client credentials : '{}'", clientCredentials);
 
-		final String clientName = clientCredentials.getClientName();
+		final String clientName = openIdCredentials.getClientName();
 		logger.debug("Client name : '{}'", clientName);
 
 		// Web context
@@ -67,13 +69,13 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 		final WebContext webContext = new J2EContext(request, response);
 
 		// Get user profile
-		final UserProfile userProfile = this.client.getUserProfile(clientCredentials, webContext);
+		final UserProfile userProfile = this.client.getUserProfile(openIdCredentials, webContext);
 		logger.debug("userProfile : {}", userProfile);
 
 		if (userProfile != null) {
 			final String id = userProfile.getId();
 			if (StringHelper.isNotEmpty(id)) {
-				clientCredentials.setUserProfile(userProfile);
+				openIdCredentials.setUserProfile(userProfile);
 
 				return new HandlerResult(this, clientCredentials, new SimplePrincipal(id, userProfile.getAttributes()));
 			}
