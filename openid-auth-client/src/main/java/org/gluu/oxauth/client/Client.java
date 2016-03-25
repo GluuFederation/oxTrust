@@ -6,7 +6,7 @@
 
 package org.gluu.oxauth.client;
 
-import org.gluu.oxauth.client.auth.principal.ClientCredential;
+import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
 import org.gluu.oxauth.client.auth.user.UserProfile;
 import org.xdi.context.WebContext;
 
@@ -54,7 +54,7 @@ public interface Client<U extends UserProfile> {
 	 * @param context
 	 * @return the credentials
 	 */
-	public ClientCredential getCredentials(WebContext context);
+	public OpenIdCredentials getCredentials(WebContext context);
 
 	/**
 	 * Get the user profile from the credentials and web context
@@ -63,6 +63,6 @@ public interface Client<U extends UserProfile> {
 	 * @param context
 	 * @return the user profile
 	 */
-	public U getUserProfile(ClientCredential credentials, WebContext context);
+	public U getUserProfile(OpenIdCredentials credentials, WebContext context);
 
 }

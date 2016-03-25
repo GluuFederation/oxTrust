@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.gluu.oxauth.client.auth.principal.ClientCredential;
+import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
 import org.gluu.oxauth.client.auth.user.CommonProfile;
 import org.gluu.oxauth.client.auth.user.UserProfile;
 import org.gluu.oxauth.client.conf.AppConfiguration;
@@ -227,10 +227,10 @@ public class OpenIdClient<C extends AppConfiguration> extends Initializable impl
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final ClientCredential getCredentials(final WebContext context) {
+	public final OpenIdCredentials getCredentials(final WebContext context) {
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
 
-		final ClientCredential clientCredential = new ClientCredential(authorizationCode);
+		final OpenIdCredentials clientCredential = new OpenIdCredentials(authorizationCode);
 		logger.debug("Client credential: '{}'", clientCredential);
 
 		return clientCredential;
@@ -240,7 +240,7 @@ public class OpenIdClient<C extends AppConfiguration> extends Initializable impl
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UserProfile getUserProfile(final ClientCredential credential, final WebContext context) {
+	public UserProfile getUserProfile(final OpenIdCredentials credential, final WebContext context) {
 		init();
 
 		try {
@@ -256,7 +256,7 @@ public class OpenIdClient<C extends AppConfiguration> extends Initializable impl
 		}
 	}
 
-	private String getAccessToken(final ClientCredential credential) {
+	private String getAccessToken(final OpenIdCredentials credential) {
 		// Request access token using the authorization code
 		logger.debug("Getting access token");
 

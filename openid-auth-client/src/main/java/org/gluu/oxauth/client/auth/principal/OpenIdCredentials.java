@@ -15,7 +15,7 @@ import org.gluu.oxauth.client.auth.user.UserProfile;
  * 
  * @author Yuriy Movchan 11/14/2014
  */
-public final class ClientCredential implements Serializable {
+public final class OpenIdCredentials implements Serializable  {
 
 	private static final long serialVersionUID = -7368677422769694487L;
 
@@ -26,7 +26,7 @@ public final class ClientCredential implements Serializable {
 
 	private UserProfile userProfile;
 
-	public ClientCredential(final String authorizationCode) {
+	public OpenIdCredentials(final String authorizationCode) {
 		this.authorizationCode = authorizationCode;
 	}
 
