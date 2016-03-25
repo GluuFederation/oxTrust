@@ -102,9 +102,23 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private FileConfiguration loadLdapConfiguration() {
 		String ldapConfigurationFileName = getLdapConfigurationFileName();
+		FileConfiguration fileConfiguration = loadLdapConfiguration(ldapConfigurationFileName, false);
+		if (fileConfiguration == null) {
+			ldapConfigurationFileName = getDefaultLdapConfigurationFileName();
+			fileConfiguration = loadLdapConfiguration(ldapConfigurationFileName, true);
+		}
+		
+		return fileConfiguration;
+	}
+
+	public FileConfiguration loadLdapConfiguration(String ldapConfigurationFileName, boolean mandatory) {
 		try {
 			if (StringHelper.isEmpty(ldapConfigurationFileName)) {
-				throw new ConfigurationException("Failed to load Ldap configuration file!");
+				if (mandatory) {
+					throw new ConfigurationException("Failed to load Ldap configuration file!");
+				} else {
+					return null;
+				}
 			}
 
 			String ldapConfigurationFilePath = DIR + ldapConfigurationFileName;
@@ -212,6 +226,10 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	public OpenIdClient getOpenIdClient() {
 		return openIdClient;
+	}
+
+	protected String getDefaultLdapConfigurationFileName() {
+		return "ox-ldap.properties";
 	}
 
 	protected abstract String getLdapConfigurationFileName();

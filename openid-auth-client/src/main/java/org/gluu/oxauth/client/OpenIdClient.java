@@ -43,7 +43,7 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.init.Initializable;
 
 /**
- * This class is the oxAuth client to authenticate users and retreview user
+ * This class is the oxAuth client to authenticate users and retrieve user
  * profile
  * 
  * @author Yuriy Movchan 11/02/2015
