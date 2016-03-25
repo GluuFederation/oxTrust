@@ -22,8 +22,6 @@ public final class SamlConfiguration extends Configuration<AppConfiguration, Lda
 
 	private final Logger logger = LoggerFactory.getLogger(SamlConfiguration.class);
 
-	private AppConfiguration appConfiguration;
-
 	private static class ConfigurationSingleton {
 		static SamlConfiguration INSTANCE = new SamlConfiguration();
 	}
@@ -43,13 +41,8 @@ public final class SamlConfiguration extends Configuration<AppConfiguration, Lda
 	}
 
 	@Override
-	protected AppConfiguration initAppConfiguration(LdapAppConfiguration ldapAppConfiguration) {
-		this.appConfiguration = ldapAppConfiguration.getApplication();
-		return this.appConfiguration;
-	}
-
-	public AppConfiguration getAppConfiguration() {
-		return appConfiguration;
+	protected String getApplicationConfigurationPropertyName() {
+		return "idpConfigurationEntryDN";
 	}
 
 }

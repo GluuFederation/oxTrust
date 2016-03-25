@@ -77,7 +77,7 @@ public final class Configuration {
 	public String getPropertyValue(String propertyName) {
     	SamlConfiguration samlConfiguration = SamlConfiguration.instance();
     	AppConfiguration appConfiguration = samlConfiguration.getAppConfiguration();
-    	OpenIdClient openIdClient = samlConfiguration.getOpenIdClient();
+    	OpenIdClient openIdClient = new OpenIdClient<AppConfiguration>(appConfiguration);
     	OpenIdConfigurationResponse openIdConfiguration = openIdClient.getOpenIdConfiguration();
 
     	if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, propertyName)) {
