@@ -10,13 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.oxauth.client.auth.principal.ClientCredential;
 import org.gluu.oxauth.client.auth.user.CommonProfile;
 import org.gluu.oxauth.client.auth.user.UserProfile;
 import org.gluu.oxauth.client.conf.AppConfiguration;
+import org.gluu.oxauth.client.conf.ClaimToAttributeMapping;
 import org.gluu.oxauth.client.exception.CommunicationException;
 import org.gluu.oxauth.client.exception.ConfigurationException;
 import org.slf4j.Logger;
@@ -48,7 +47,7 @@ import org.xdi.util.init.Initializable;
  * 
  * @author Yuriy Movchan 11/02/2015
  */
-public class OpenIdClient extends Initializable implements Client<UserProfile> {
+public class OpenIdClient<C extends AppConfiguration> extends Initializable implements Client<UserProfile> {
 
 	private final Logger logger = LoggerFactory.getLogger(OpenIdClient.class);
 
@@ -59,40 +58,18 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 
 	private final ReentrantLock clientLock = new ReentrantLock();
 
-	@NotNull
-	private String appName;
-
-	@NotNull
-	private String openIdProvider;
-
-	@NotNull
-	private List<String> openIdScopes;
-
-	@NotNull
-	private String redirectUri;
+	private C appConfiguration;
 
 	private String clientId;
 	private String clientSecret;
 	private long clientExpiration;
 
-	private OpenIdConfigurationResponse openIdConfiguration;
 	private boolean preRegisteredClient;
 
-	public OpenIdClient() {}
+	private OpenIdConfigurationResponse openIdConfiguration;
 
-	public OpenIdClient(final String appName, final String openIdProvider, final String clientId, final String clientSecret, final List<String> openIdScopes, final String redirectUri) {
-		this.appName = appName;
-		this.openIdProvider = openIdProvider;
-		this.clientId = clientId;
-		this.clientSecret = clientSecret;
-		this.openIdScopes = openIdScopes;
-		this.redirectUri = redirectUri;
-	}
-
-	public OpenIdClient(final AppConfiguration appConfiguration) {
-		this(appConfiguration.getApplicationName(), appConfiguration.getOpenIdProviderUrl(),
-				appConfiguration.getOpenIdClientId(), appConfiguration.getOpenIdClientPassword(),
-				appConfiguration.getOpenIdScopes(), appConfiguration.getOpenIdRedirectUrl());
+	public OpenIdClient(final C appConfiguration) {
+		this.appConfiguration = appConfiguration;
 	}
 
 	@Override
@@ -102,16 +79,21 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 	}
 
 	protected void initInternal() {
-		loadOpenIdConfiguration();
+		this.clientId = appConfiguration.getOpenIdClientId();
+		this.clientSecret = appConfiguration.getOpenIdClientPassword();
+
 		this.preRegisteredClient = StringHelper.isNotEmpty(this.clientId) && StringHelper.isNotEmpty(this.clientSecret);
+
+		loadOpenIdConfiguration();
 	}
 
 	private void loadOpenIdConfiguration() {
-		if (StringHelper.isEmpty(this.openIdProvider)) {
+		String openIdProvider = appConfiguration.getOpenIdProviderUrl();
+		if (StringHelper.isEmpty(openIdProvider)) {
 			throw new ConfigurationException("OpenIdProvider Url is invalid");
 		}
 
-		final OpenIdConfigurationClient openIdConfigurationClient = new OpenIdConfigurationClient(this.openIdProvider);
+		final OpenIdConfigurationClient openIdConfigurationClient = new OpenIdConfigurationClient(openIdProvider);
 		final OpenIdConfigurationResponse response = openIdConfigurationClient.execOpenIdConfiguration();
 		if ((response == null) || (response.getStatus() != 200)) {
 			throw new ConfigurationException("Failed to load oxAuth configuration");
@@ -156,8 +138,10 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 	}
 
 	private RegisterResponse registerOpenIdClient() {
-		String clientName = this.appName + " client";
-		RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, clientName, Arrays.asList(this.redirectUri));
+		logger.info("Registering OpenId client");
+
+		String clientName = this.appConfiguration.getApplicationName() + " client";
+		RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, clientName, Arrays.asList(this.appConfiguration.getOpenIdRedirectUrl()));
 		registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.RS256);
 		registerRequest.setTokenEndpointAuthMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 
@@ -189,8 +173,8 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 		final String state = RandomStringUtils.randomAlphanumeric(10);
 		final String nonce = RandomStringUtils.randomAlphanumeric(10);
 
-		final AuthorizationRequest authorizationRequest = new AuthorizationRequest(Arrays.asList(ResponseType.CODE), this.clientId, this.openIdScopes,
-				this.redirectUri, null);
+		final AuthorizationRequest authorizationRequest = new AuthorizationRequest(Arrays.asList(ResponseType.CODE), this.clientId, this.appConfiguration.getOpenIdScopes(),
+				this.appConfiguration.getOpenIdRedirectUrl(), null);
 
 		authorizationRequest.setState(state);
 		authorizationRequest.setNonce(nonce);
@@ -278,7 +262,7 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 
 		final TokenClient tokenClient = new TokenClient(this.openIdConfiguration.getTokenEndpoint());
 
-		final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.redirectUri, this.clientId, this.clientSecret);
+		final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.appConfiguration.getOpenIdRedirectUrl(), this.clientId, this.clientSecret);
 		logger.trace("tokenResponse.getStatus(): '{}'", tokenResponse.getStatus());
 		logger.trace("tokenResponse.getErrorType(): '{}'", tokenResponse.getErrorType());
 
@@ -308,7 +292,7 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 		return userInfoResponse;
 	}
 
-	private CommonProfile retrieveUserProfileFromUserInfoResponse(final UserInfoResponse userInfoResponse) {
+	protected CommonProfile retrieveUserProfileFromUserInfoResponse(final UserInfoResponse userInfoResponse) {
 		final CommonProfile profile = new CommonProfile();
 
 		String id = getFirstClaim(userInfoResponse, JwtClaimName.USER_NAME);
@@ -318,18 +302,26 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 		profile.setId(id);
 		profile.setUserName(id);
 
-		profile.setEmail(getFirstClaim(userInfoResponse, JwtClaimName.EMAIL));
-
-		profile.setDisplayName(getFirstClaim(userInfoResponse, JwtClaimName.NAME));
-		profile.setFirstName(getFirstClaim(userInfoResponse, JwtClaimName.GIVEN_NAME));
-		profile.setFamilyName(getFirstClaim(userInfoResponse, JwtClaimName.FAMILY_NAME));
-		profile.setZone(getFirstClaim(userInfoResponse, JwtClaimName.ZONEINFO));
-		profile.setLocale(getFirstClaim(userInfoResponse, JwtClaimName.LOCALE));
+		List<ClaimToAttributeMapping> claimMappings = this.appConfiguration.getOpenIdClaimMapping();
+		if ((claimMappings == null) || (claimMappings.size() == 0)) {
+			logger.info("Using default claims to attributes mapping");
+			profile.setEmail(getFirstClaim(userInfoResponse, JwtClaimName.EMAIL));
+	
+			profile.setDisplayName(getFirstClaim(userInfoResponse, JwtClaimName.NAME));
+			profile.setFirstName(getFirstClaim(userInfoResponse, JwtClaimName.GIVEN_NAME));
+			profile.setFamilyName(getFirstClaim(userInfoResponse, JwtClaimName.FAMILY_NAME));
+			profile.setZone(getFirstClaim(userInfoResponse, JwtClaimName.ZONEINFO));
+			profile.setLocale(getFirstClaim(userInfoResponse, JwtClaimName.LOCALE));
+		} else {
+			for (ClaimToAttributeMapping mapping : claimMappings) {
+				profile.addAttribute(mapping.getAttribute(), getFirstClaim(userInfoResponse, mapping.getClaim()));
+			}
+		}
 
 		return profile;
 	}
 
-	private String getFirstClaim(final UserInfoResponse userInfoResponse, final String claimName) {
+	protected String getFirstClaim(final UserInfoResponse userInfoResponse, final String claimName) {
 		final List<String> claims = userInfoResponse.getClaim(claimName);
 
 		if ((claims == null) || claims.isEmpty()) {
@@ -339,52 +331,8 @@ public class OpenIdClient extends Initializable implements Client<UserProfile> {
 		return claims.get(0);
 	}
 
-	public String getAppName() {
-		return appName;
-	}
-
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
-
-	public String getOpenIdProvider() {
-		return openIdProvider;
-	}
-
-	public void setOpenIdProvider(String openIdProvider) {
-		this.openIdProvider = openIdProvider;
-	}
-
-	public List<String> getOpenIdScopes() {
-		return openIdScopes;
-	}
-
-	public void setOpenIdScopes(List<String> openIdScopes) {
-		this.openIdScopes = openIdScopes;
-	}
-
-	public String getRedirectUri() {
-		return redirectUri;
-	}
-
-	public void setRedirectUri(String redirectUri) {
-		this.redirectUri = redirectUri;
-	}
-
-	public String getClientId() {
-		return clientId;
-	}
-
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
-	}
-
-	public String getClientSecret() {
-		return clientSecret;
-	}
-
-	public void setClientSecret(String clientSecret) {
-		this.clientSecret = clientSecret;
+	public C getAppConfiguration() {
+		return appConfiguration;
 	}
 
 	public OpenIdConfigurationResponse getOpenIdConfiguration() {
