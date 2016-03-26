@@ -40,7 +40,7 @@ public final class CasConfiguration extends Configuration<CasAppConfiguration, C
 
 	@Override
 	protected String getApplicationConfigurationPropertyName() {
-		return "casConfigurationEntryDN";
+		return "oxcas_ConfigurationEntryDN";
 	}
 
 }

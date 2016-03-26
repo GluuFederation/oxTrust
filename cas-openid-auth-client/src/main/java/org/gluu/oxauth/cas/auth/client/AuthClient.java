@@ -8,6 +8,7 @@ package org.gluu.oxauth.cas.auth.client;
 
 import org.gluu.oxauth.cas.auth.conf.CasAppConfiguration;
 import org.gluu.oxauth.cas.auth.conf.CasConfiguration;
+import org.gluu.oxauth.cas.auth.conf.CasLdapAppConfiguration;
 import org.gluu.oxauth.cas.auth.login.flow.ClientAction;
 import org.gluu.oxauth.client.OpenIdClient;
 import org.slf4j.Logger;
@@ -18,12 +19,12 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Yuriy Movchan 11/14/2014
  */
-public class AuthClient extends OpenIdClient<CasAppConfiguration> {
+public class AuthClient extends OpenIdClient<CasAppConfiguration, CasLdapAppConfiguration> {
 
 	private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
 	public AuthClient() {
-		super(CasConfiguration.instance().getAppConfiguration());
+		super(CasConfiguration.instance());
 	}
 
 	public boolean isOpenIdDefaultAuthenticator() {

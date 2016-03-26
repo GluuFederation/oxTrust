@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class SamlConfiguration extends Configuration<AppConfiguration, LdapAppConfiguration> {
 
+	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(SamlConfiguration.class);
 
 	private static class ConfigurationSingleton {
@@ -42,7 +43,7 @@ public final class SamlConfiguration extends Configuration<AppConfiguration, Lda
 
 	@Override
 	protected String getApplicationConfigurationPropertyName() {
-		return "idpConfigurationEntryDN";
+		return "oxidp_ConfigurationEntryDN";
 	}
 
 }

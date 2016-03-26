@@ -11,6 +11,7 @@ import java.io.File;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxauth.client.OpenIdClient;
 import org.gluu.oxauth.client.conf.AppConfiguration;
+import org.gluu.oxauth.client.conf.LdapAppConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.model.util.Util;
 import org.xdi.util.StringHelper;
@@ -77,7 +78,7 @@ public final class Configuration {
 	public String getPropertyValue(String propertyName) {
     	SamlConfiguration samlConfiguration = SamlConfiguration.instance();
     	AppConfiguration appConfiguration = samlConfiguration.getAppConfiguration();
-    	OpenIdClient openIdClient = new OpenIdClient<AppConfiguration>(appConfiguration);
+    	OpenIdClient<AppConfiguration, LdapAppConfiguration> openIdClient = new OpenIdClient<AppConfiguration, LdapAppConfiguration>(samlConfiguration);
     	OpenIdConfigurationResponse openIdConfiguration = openIdClient.getOpenIdConfiguration();
 
     	if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, propertyName)) {

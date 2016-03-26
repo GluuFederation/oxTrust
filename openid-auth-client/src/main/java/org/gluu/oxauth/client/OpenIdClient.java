@@ -16,6 +16,8 @@ import org.gluu.oxauth.client.auth.user.CommonProfile;
 import org.gluu.oxauth.client.auth.user.UserProfile;
 import org.gluu.oxauth.client.conf.AppConfiguration;
 import org.gluu.oxauth.client.conf.ClaimToAttributeMapping;
+import org.gluu.oxauth.client.conf.Configuration;
+import org.gluu.oxauth.client.conf.LdapAppConfiguration;
 import org.gluu.oxauth.client.exception.CommunicationException;
 import org.gluu.oxauth.client.exception.ConfigurationException;
 import org.slf4j.Logger;
@@ -40,6 +42,8 @@ import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.oxauth.model.register.ApplicationType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.init.Initializable;
+import org.xdi.util.security.StringEncrypter;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * This class is the oxAuth client to authenticate users and retrieve user
@@ -47,7 +51,7 @@ import org.xdi.util.init.Initializable;
  * 
  * @author Yuriy Movchan 11/02/2015
  */
-public class OpenIdClient<C extends AppConfiguration> extends Initializable implements Client<UserProfile> {
+public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfiguration> extends Initializable implements Client<UserProfile> {
 
 	private final Logger logger = LoggerFactory.getLogger(OpenIdClient.class);
 
@@ -68,8 +72,11 @@ public class OpenIdClient<C extends AppConfiguration> extends Initializable impl
 
 	private OpenIdConfigurationResponse openIdConfiguration;
 
-	public OpenIdClient(final C appConfiguration) {
-		this.appConfiguration = appConfiguration;
+	private Configuration<C, L> configuration;
+
+	public OpenIdClient(final Configuration<C, L> configuration) {
+		this.configuration = configuration;
+		this.appConfiguration = configuration.getAppConfiguration();
 	}
 
 	@Override
@@ -81,6 +88,15 @@ public class OpenIdClient<C extends AppConfiguration> extends Initializable impl
 	protected void initInternal() {
 		this.clientId = appConfiguration.getOpenIdClientId();
 		this.clientSecret = appConfiguration.getOpenIdClientPassword();
+		
+		if (StringHelper.isNotEmpty(this.clientSecret)) {
+			try {
+				StringEncrypter stringEncrypter = StringEncrypter.instance(this.configuration.getCryptoConfigurationSalt());
+				this.clientSecret = stringEncrypter.decrypt(this.clientSecret);
+			} catch (EncryptionException ex) {
+				logger.warn("Assuming that client password is not encrypted!");
+			}
+		}
 
 		this.preRegisteredClient = StringHelper.isNotEmpty(this.clientId) && StringHelper.isNotEmpty(this.clientSecret);
 
