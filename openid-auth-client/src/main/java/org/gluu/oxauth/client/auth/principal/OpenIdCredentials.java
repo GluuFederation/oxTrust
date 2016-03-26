@@ -22,7 +22,6 @@ public final class OpenIdCredentials implements Serializable  {
 	private String clientName;
 
 	private String authorizationCode;
-	private String accessToken;
 
 	private UserProfile userProfile;
 
@@ -42,18 +41,6 @@ public final class OpenIdCredentials implements Serializable  {
 		return authorizationCode;
 	}
 
-	public void setAuthorizationCode(final String authorizationCode) {
-		this.authorizationCode = authorizationCode;
-	}
-
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	public void setAccessToken(final String accessToken) {
-		this.accessToken = accessToken;
-	}
-
 	public UserProfile getUserProfile() {
 		return userProfile;
 	}
@@ -68,6 +55,14 @@ public final class OpenIdCredentials implements Serializable  {
 		}
 
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("OpenIdCredentials [clientName=").append(clientName).append(", authorizationCode=").append(authorizationCode).append(", userProfile=")
+				.append(userProfile).append(", getId()=").append(getId()).append("]");
+		return builder.toString();
 	}
 
 }

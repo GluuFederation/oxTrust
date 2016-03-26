@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthClient extends OpenIdClient<CasAppConfiguration, CasLdapAppConfiguration> {
 
+	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
 	public AuthClient() {

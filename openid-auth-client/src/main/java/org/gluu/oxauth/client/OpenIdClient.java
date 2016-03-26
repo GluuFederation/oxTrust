@@ -247,6 +247,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
 
 		final OpenIdCredentials clientCredential = new OpenIdCredentials(authorizationCode);
+		clientCredential.setClientName(getName());
 		logger.debug("Client credential: '{}'", clientCredential);
 
 		return clientCredential;
