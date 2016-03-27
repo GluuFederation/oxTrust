@@ -227,6 +227,9 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "passwordResetAllowed")
 	private GluuBoolean passwordResetAllowed;
+	
+	@LdapAttribute(name = "defaultCacheRefreshInumServer")
+	private GluuBoolean defaultCacheRefreshInumServer;
 
 	@LdapAttribute(name = "oxTrustStoreConf")
 	@LdapJsonObject
@@ -785,5 +788,23 @@ public class GluuAppliance extends InumEntry implements Serializable {
     public void setWhitePagesEnabled(GluuBoolean whitePagesEnabled) {
         this.whitePagesEnabled = whitePagesEnabled;
     }
+
+	public GluuBoolean getDefaultCacheRefreshInumServer() {
+		return defaultCacheRefreshInumServer;
+	}
+
+	public void setDefaultCacheRefreshInumServer(
+			GluuBoolean defaultCacheRefreshInumServer) {
+		this.defaultCacheRefreshInumServer = defaultCacheRefreshInumServer;
+	}
+	
+	public boolean isUseDefaultCacheRefreshInumServer() {
+		log.info("defaultCacheRefreshInumServer  :  " + defaultCacheRefreshInumServer);
+		return defaultCacheRefreshInumServer.isBooleanValue();
+	}
+
+	public void setUseDefaultCacheRefreshInumServer(boolean useDefaultCacheRefreshInumServer) {
+		this.defaultCacheRefreshInumServer = useDefaultCacheRefreshInumServer ? GluuBoolean.TRUE : GluuBoolean.FALSE ;
+	}
 
 }
