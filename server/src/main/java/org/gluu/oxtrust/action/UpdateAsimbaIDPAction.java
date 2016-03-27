@@ -34,7 +34,7 @@ import org.richfaces.model.UploadedFile;
 
 
 /**
- * Action class for updating and adding the SAML IDP to Asimba
+ * Action class for updating and adding the SAML IDP to Asimba.
  * 
  * @author Dmitry Ognyannikov
  */
