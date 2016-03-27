@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -23,11 +24,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.Authorization;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
@@ -39,12 +35,22 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.BulkOperation;
+import org.gluu.oxtrust.model.scim2.BulkRequest;
+import org.gluu.oxtrust.model.scim2.BulkResponse;
+import org.gluu.oxtrust.model.scim2.Group;
+import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.xdi.context.J2EContext;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.Authorization;
 
 
 /**
@@ -74,7 +80,7 @@ public class BulkWebService extends BaseScimWebService {
 			notes = "SCIM Bulk Operation (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
 			response = BulkResponse.class
 	)
-	public Response bulkOperation(@Context HttpServletRequest request, @HeaderParam("Authorization") String authorization, @ApiParam(value = "BulkRequest", required = true)BulkRequest bulkRequest) throws WebApplicationException,
+	public Response bulkOperation(@Context HttpServletRequest request, @Context HttpServletResponse response, @HeaderParam("Authorization") String authorization, @ApiParam(value = "BulkRequest", required = true)BulkRequest bulkRequest) throws WebApplicationException,
 			MalformedURLException, URISyntaxException, JsonGenerationException, JsonMappingException, IOException, Exception {
 		personService = PersonService.instance();
 		groupService = GroupService.instance();
@@ -82,10 +88,15 @@ public class BulkWebService extends BaseScimWebService {
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
-		/*String domain;
-		URL reconstructedURL;
-		reconstructedURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), "");
-		domain = reconstructedURL.toString();*/
+
+		J2EContext context = new J2EContext(request, response);
+		int removePathLength = "/Bulk".length();
+		String domain = context.getFullRequestURL();
+		if (domain.endsWith("/")) {
+			removePathLength++; 
+		}
+		domain = domain.substring(0, domain.length() - removePathLength);
+
 		log.info(" getting list of BulkRequest ");
 		List<BulkOperation> bulkOperations = bulkRequest.getOperations();
 
@@ -95,10 +106,10 @@ public class BulkWebService extends BaseScimWebService {
 			log.info(" checking operations ");
 
 			if (operation.getPath().contains("Users")) {
-				operation = processUserOperation(operation);
+				operation = processUserOperation(operation, domain);
 
 			} else if (operation.getPath().contains("Groups")) {
-				operation = processGroupOperation(operation);
+				operation = processGroupOperation(operation, domain);
 				
 			}
 			bulkResponse.getOperations().add(operation);
@@ -109,7 +120,7 @@ public class BulkWebService extends BaseScimWebService {
 
 	}
 
-	private BulkOperation processGroupOperation(BulkOperation operation) throws Exception {
+	private BulkOperation processGroupOperation(BulkOperation operation, String domain) throws Exception {
 			
 			Group group = convertGroup(operation.getData());
 			
@@ -117,6 +128,11 @@ public class BulkWebService extends BaseScimWebService {
 					log.info(" method is post ");
 					boolean status = createGroup(group);
 					if (status) {
+						GluuGroup gluuGroup = groupService.getGroupByDisplayName(group.getDisplayName());
+						String iD = gluuGroup.getInum();
+						String location = (new StringBuilder()).append(domain).append("/Groups/").append(iD).toString();
+						operation.setLocation(location);
+
 						log.info(" POST status is true ");
 						operation.setStatus("200");
 						operation.setResponse(group);						
@@ -132,6 +148,9 @@ public class BulkWebService extends BaseScimWebService {
 					String groupiD = getId(path);
 					boolean status = updateGroup(groupiD, group);
 					if (status) {
+						String location = (new StringBuilder()).append(domain).append("/Groups/").append(groupiD).toString();
+						operation.setLocation(location);
+
 						log.info(" PUT status is true ");
 						operation.setStatus("200");
 						operation.setResponse(group);						
@@ -148,6 +167,9 @@ public class BulkWebService extends BaseScimWebService {
 					boolean status = deleteGroup(groupiD);
 
 					if (status) {
+						String location = (new StringBuilder()).append(domain).append("/Groups/").append(groupiD).toString();
+						operation.setLocation(location);
+
 						log.info(" DELETE operation is true ");
 						operation.setStatus("200");
 					} else if (!status) {
@@ -159,13 +181,18 @@ public class BulkWebService extends BaseScimWebService {
 		return operation;
 	}
 
-	private BulkOperation processUserOperation(BulkOperation operation) throws Exception {		 
+	private BulkOperation processUserOperation(BulkOperation operation, String domain) throws Exception {		 
 		User user = convertUser(operation.getData());		
 		log.info("operations is for Users");		
 		log.info(" method : " + operation.getMethod());
 		if (operation.getMethod().equalsIgnoreCase("POST")) {
 			log.info(" method is post ");
 			if(createUser(user)){
+				GluuCustomPerson gluuPerson = personService.getPersonByUid(user.getUserName());
+				String inum = gluuPerson.getInum();
+				String location = (new StringBuilder()).append(domain).append("/Users/").append(inum).toString();
+				operation.setLocation(location);
+
 				operation.setStatus("200");
 				operation.setResponse(user);
 			}
@@ -178,6 +205,9 @@ public class BulkWebService extends BaseScimWebService {
 			log.info("Inum :  " + personiD);
 			boolean status = updateUser(personiD, user);
 			if (status) {
+				String location = (new StringBuilder()).append(domain).append("/Users/").append(personiD).toString();
+				operation.setLocation(location);
+
 				log.info(" PUT status is true ");				
 				operation.setStatus("200");
 				operation.setResponse(user);
@@ -189,6 +219,9 @@ public class BulkWebService extends BaseScimWebService {
 			String personiD = getId(path);
 			boolean status = deleteUser(personiD);
 			if (status) {
+				String location = (new StringBuilder()).append(domain).append("/Users/").append(personiD).toString();
+				operation.setLocation(location);
+
 				log.info(" DELETE operation is true ");
 				operation.setStatus("200");
 

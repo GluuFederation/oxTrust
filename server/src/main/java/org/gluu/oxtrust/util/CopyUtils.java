@@ -1385,9 +1385,6 @@ public class CopyUtils implements Serializable {
 
 			}
 
-			GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
-			destination.setOwner(authUser.getDn());
-			log.trace(" authUser.getDn() : ", authUser.getDn());
 			destination.setStatus(GluuStatus.ACTIVE);
 			OrganizationService orgService = OrganizationService.instance();
 			destination.setOrganization(orgService.getDnForOrganization());

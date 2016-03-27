@@ -44,7 +44,6 @@ public final class OxTrustConstants extends OxConstants {
     public static final String cn = "cn";
     public static final String owner = "owner";
     public static final String member = "member";
-    
         
     /**
      * oxAsimba fields

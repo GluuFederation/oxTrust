@@ -35,7 +35,7 @@ public class GroupServiceTest extends ConfigurableTest {
                 
 
                 boolean isMemberOrOwner = groupService.isMemberOrOwner(groupDn, ownerDn);
-                Assert.assertTrue("Failed to confirm group owner", isMemberOrOwner);
+                Assert.assertTrue(String.format("Failed to confirm group '%s' owner '%s'", groupDn, ownerDn), isMemberOrOwner);
 
                 boolean isMemberOrOwnerWrong = groupService.isMemberOrOwner(groupDn, nonMemberDn);
                 Assert.assertFalse("Wrong person recognised as group member", isMemberOrOwnerWrong);

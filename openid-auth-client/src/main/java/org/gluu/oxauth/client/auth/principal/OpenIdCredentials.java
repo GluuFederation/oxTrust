@@ -15,18 +15,17 @@ import org.gluu.oxauth.client.auth.user.UserProfile;
  * 
  * @author Yuriy Movchan 11/14/2014
  */
-public final class ClientCredential implements Serializable {
+public final class OpenIdCredentials implements Serializable  {
 
 	private static final long serialVersionUID = -7368677422769694487L;
 
 	private String clientName;
 
 	private String authorizationCode;
-	private String accessToken;
 
 	private UserProfile userProfile;
 
-	public ClientCredential(final String authorizationCode) {
+	public OpenIdCredentials(final String authorizationCode) {
 		this.authorizationCode = authorizationCode;
 	}
 
@@ -40,18 +39,6 @@ public final class ClientCredential implements Serializable {
 
 	public String getAuthorizationCode() {
 		return authorizationCode;
-	}
-
-	public void setAuthorizationCode(final String authorizationCode) {
-		this.authorizationCode = authorizationCode;
-	}
-
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	public void setAccessToken(final String accessToken) {
-		this.accessToken = accessToken;
 	}
 
 	public UserProfile getUserProfile() {
@@ -68,6 +55,14 @@ public final class ClientCredential implements Serializable {
 		}
 
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("OpenIdCredentials [clientName=").append(clientName).append(", authorizationCode=").append(authorizationCode).append(", userProfile=")
+				.append(userProfile).append(", getId()=").append(getId()).append("]");
+		return builder.toString();
 	}
 
 }

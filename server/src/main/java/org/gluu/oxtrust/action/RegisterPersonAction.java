@@ -27,6 +27,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
+import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.RecaptchaUtils;
@@ -38,12 +39,14 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.faces.Redirect;
 import org.jboss.seam.international.StatusMessage;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
+import org.xdi.model.custom.script.model.CustomScript;
 
 /**
  * @author Dejan Maric
@@ -66,6 +69,9 @@ public class RegisterPersonAction implements Serializable {
 
 	@In
 	private OrganizationService organizationService;
+	
+	@In
+	Redirect redirect;
 
 	@In(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
@@ -112,6 +118,12 @@ public class RegisterPersonAction implements Serializable {
 	public String initPerson() {
 		String result = sanityCheck();
 		if (result.equals(OxTrustConstants.RESULT_SUCCESS)) {
+					
+			if(!externalUserRegistrationService.isEnabled()){
+				redirect.setViewId("/login.xhtml");
+				redirect.execute();
+			}  
+				
 			this.person = (inum == null) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
 
 			boolean isPersonActiveOrDisabled = GluuStatus.ACTIVE.equals(person.getStatus()) || GluuStatus.INACTIVE.equals(person.getStatus());

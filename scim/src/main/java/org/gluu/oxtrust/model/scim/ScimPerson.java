@@ -205,7 +205,7 @@ public class ScimPerson implements Serializable {
 		this.addresses = addresses;
 	}
 
-	@XmlElementWrapper(name = "PhoneNumbers")
+	@XmlElementWrapper(name = "phoneNumbers")
 	@XmlElement(name = "PhoneNumber")
 	public List<ScimPersonPhones> getPhoneNumbers() {
 		return phoneNumbers;

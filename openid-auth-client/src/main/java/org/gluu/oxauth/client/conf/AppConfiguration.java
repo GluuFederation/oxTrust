@@ -29,6 +29,8 @@ public class AppConfiguration implements Serializable {
 	private List<String> openIdScopes;
 	private String openIdRedirectUrl;
 
+	private List<ClaimToAttributeMapping> openIdClaimMapping;
+
 	public String getApplicationName() {
 		return applicationName;
 	}
@@ -75,6 +77,14 @@ public class AppConfiguration implements Serializable {
 
 	public void setOpenIdRedirectUrl(String openIdRedirectUrl) {
 		this.openIdRedirectUrl = openIdRedirectUrl;
+	}
+
+	public List<ClaimToAttributeMapping> getOpenIdClaimMapping() {
+		return openIdClaimMapping;
+	}
+
+	public void setOpenIdClaimMapping(List<ClaimToAttributeMapping> openIdClaimMapping) {
+		this.openIdClaimMapping = openIdClaimMapping;
 	}
 
 }

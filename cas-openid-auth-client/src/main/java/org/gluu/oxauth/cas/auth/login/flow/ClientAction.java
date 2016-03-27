@@ -10,17 +10,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.gluu.oxauth.cas.auth.client.Client;
+import org.gluu.oxauth.cas.auth.client.AuthClient;
 import org.gluu.oxauth.cas.auth.principal.ClientCredential;
-import org.gluu.oxauth.cas.auth.user.UserProfile;
+import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.xdi.context.J2EContext;
@@ -46,7 +44,7 @@ public final class ClientAction extends AbstractAction {
 	public static final String METHOD = "method";
 
 	@NotNull
-	private final Client<UserProfile> client;
+	private final AuthClient client;
 
 	@NotNull
 	private final CentralAuthenticationService centralAuthenticationService;
@@ -59,7 +57,7 @@ public final class ClientAction extends AbstractAction {
 	 * @param theClients
 	 *            The clients for authentication
 	 */
-	public ClientAction(final Client<UserProfile> client, final CentralAuthenticationService centralAuthenticationService) {
+	public ClientAction(final AuthClient client, final CentralAuthenticationService centralAuthenticationService) {
 		this.client = client;
 		this.centralAuthenticationService = centralAuthenticationService;
 	}
@@ -112,7 +110,8 @@ public final class ClientAction extends AbstractAction {
 	 * @return client credentials
 	 */
 	private ClientCredential getClientCrendentials(final RequestContext context, final WebContext webContext) {
-		final ClientCredential credentials = client.getCredentials(webContext);
+		final OpenIdCredentials openIdCredentials = client.getCredentials(webContext);
+		final ClientCredential credentials = new ClientCredential(openIdCredentials);
 
 		// Retrieve parameters from web session
 		final Service service = (Service) webContext.getSessionAttribute(SERVICE);
@@ -144,11 +143,17 @@ public final class ClientAction extends AbstractAction {
 		saveRequestParameter(webContext, LOCALE);
 		saveRequestParameter(webContext, METHOD);
 
-		final String key = client.getName() + "Url";
+		final String keyRedirectionUrl = this.client.getName() + "Url";
 		final String redirectionUrl = this.client.getRedirectionUrl(webContext);
 		logger.debug("Generated redirection Url", redirectionUrl);
 
-		context.getFlowScope().put(key, redirectionUrl);
+		context.getFlowScope().put(keyRedirectionUrl, redirectionUrl);
+
+		final String keyAuthMethod = this.client.getName() + "OpenIdDefaultAuthenticator";
+		final Boolean keyAuthMethodValue = this.client.isOpenIdDefaultAuthenticator();
+		logger.debug("OpenIdDefaultAuthenticator", keyAuthMethodValue);
+
+		context.getFlowScope().put(keyAuthMethod, keyAuthMethodValue);
 	}
 
 	/**

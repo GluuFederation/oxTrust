@@ -11,7 +11,6 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxauth.client.OpenIdClient;
 import org.gluu.oxauth.client.exception.ConfigurationException;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
@@ -55,12 +54,12 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private FileConfiguration ldapConfiguration;
 	private C appConfiguration;
-	private OpenIdClient openIdClient;
 
 	private String cryptoConfigurationSalt;
 
 	private LdapEntryManager ldapEntryManager;
 
+	@SuppressWarnings("unused")
 	private long ldapFileLastModifiedTime;
 
 	private AtomicBoolean isActive;
@@ -90,8 +89,6 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		} else {
 			logger.info("Configuration loaded successfully.");
 		}
-
-		this.openIdClient = createAuthClient();
 	}
 
 	public void destroy() {
@@ -102,9 +99,23 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private FileConfiguration loadLdapConfiguration() {
 		String ldapConfigurationFileName = getLdapConfigurationFileName();
+		FileConfiguration fileConfiguration = loadLdapConfiguration(ldapConfigurationFileName, false);
+		if (fileConfiguration == null) {
+			ldapConfigurationFileName = getDefaultLdapConfigurationFileName();
+			fileConfiguration = loadLdapConfiguration(ldapConfigurationFileName, true);
+		}
+		
+		return fileConfiguration;
+	}
+
+	public FileConfiguration loadLdapConfiguration(String ldapConfigurationFileName, boolean mandatory) {
 		try {
 			if (StringHelper.isEmpty(ldapConfigurationFileName)) {
-				throw new ConfigurationException("Failed to load Ldap configuration file!");
+				if (mandatory) {
+					throw new ConfigurationException("Failed to load Ldap configuration file!");
+				} else {
+					return null;
+				}
 			}
 
 			String ldapConfigurationFilePath = DIR + ldapConfigurationFileName;
@@ -123,7 +134,11 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 			throw new ConfigurationException("Failed to load Ldap configuration from " + ldapConfigurationFileName, ex);
 		}
 
-		throw new ConfigurationException("Failed to load Ldap configuration from " + ldapConfigurationFileName);
+		if (mandatory) {
+			throw new ConfigurationException("Failed to load Ldap configuration from " + ldapConfigurationFileName);
+		}
+		
+		return null;
 	}
 
 	private String loadCryptoConfigurationSalt() {
@@ -151,7 +166,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		try {
 			final L ldapConf = loadConfigurationFromLdap();
 			if (ldapConf != null) {
-				this.appConfiguration = initAppConfiguration(ldapConf);
+				this.appConfiguration = (C) ldapConf.getApplication();
 				return true;
 			}
 		} catch (Exception ex) {
@@ -163,7 +178,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private L loadConfigurationFromLdap(String... returnAttributes) {
 		try {
-			final String dn = getLdapConfiguration().getString("configurationEntryDN");
+			final String dn = getLdapConfiguration().getString(getApplicationConfigurationPropertyName());
 
 			final L ldapConf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
 			return ldapConf;
@@ -195,13 +210,6 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		}
 	}
 
-	private OpenIdClient createAuthClient() {
-		OpenIdClient openIdClient = new OpenIdClient(this.appConfiguration);
-		openIdClient.init();
-
-		return openIdClient;
-	}
-
 	public FileConfiguration getLdapConfiguration() {
 		return ldapConfiguration;
 	}
@@ -210,14 +218,18 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		return cryptoConfigurationSalt;
 	}
 
-	public OpenIdClient getOpenIdClient() {
-		return openIdClient;
+	protected String getDefaultLdapConfigurationFileName() {
+		return "ox-ldap.properties";
+	}
+
+	public C getAppConfiguration() {
+		return appConfiguration;
 	}
 
 	protected abstract String getLdapConfigurationFileName();
 
 	protected abstract Class<L> getAppConfigurationType();
 
-	protected abstract C initAppConfiguration(L ldapAppConfiguarion);
+	protected abstract String getApplicationConfigurationPropertyName();
 
 }

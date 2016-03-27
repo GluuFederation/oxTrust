@@ -56,20 +56,21 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 ApplicationConfiguration applicationConfiguration = ((OxTrustConfiguration)Component.getInstance(OxTrustConfiguration.class)).getApplicationConfiguration();
 
                 // Create custom attributes
-                GluuAttribute customFirst = null;  // String, not multi-valued
-                if (attributeService.getAttributeByName("customFirst") == null) {
-                    customFirst = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "customFirst", "Custom First", "First custom attribute", GluuAttributeDataType.STRING, OxMultivalued.FALSE);
+                GluuAttribute scimCustomFirst = null;  // String, not multi-valued
+                if (attributeService.getAttributeByName("scimCustomFirst") == null) {
+                    scimCustomFirst = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "scimCustomFirst", "Custom First", "First custom attribute", GluuAttributeDataType.STRING, OxMultivalued.FALSE);
                 }
-                GluuAttribute customSecond = null;  // Date, multi-valued
-                if (attributeService.getAttributeByName("customSecond") == null) {
-                    customSecond = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "customSecond", "Custom Second", "Second custom attribute", GluuAttributeDataType.DATE, OxMultivalued.TRUE);
+                GluuAttribute scimCustomSecond = null;  // Date, multi-valued
+                if (attributeService.getAttributeByName("scimCustomSecond") == null) {
+                    scimCustomSecond = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "scimCustomSecond", "Custom Second", "Second custom attribute", GluuAttributeDataType.DATE, OxMultivalued.TRUE);
                 }
-                GluuAttribute customThird = null;  // Numeric, not multi-valued
-                if (attributeService.getAttributeByName("customThird") == null) {
-                    customThird = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "customThird", "Custom Third", "Third custom attribute", GluuAttributeDataType.NUMERIC, OxMultivalued.FALSE);
+                GluuAttribute scimCustomThird = null;  // Numeric, not multi-valued
+                if (attributeService.getAttributeByName("scimCustomThird") == null) {
+                    scimCustomThird = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "scimCustomThird", "Custom Third", "Third custom attribute", GluuAttributeDataType.NUMERIC, OxMultivalued.FALSE);
                 }
 
-                String CREATEJSON = "{\"schemas\":[\"urn:ietf:params:scim:schemas:core:2.0:User\",\"urn:ietf:params:scim:schemas:extension:gluu:2.0:User\"],\"urn:ietf:params:scim:schemas:extension:gluu:2.0:User\": {\"customFirst\":\"[1000,2000]\",\"customSecond\":[\"2016-02-23T15:35:22Z\"],\"customThird\":3000},\"externalId\":\"scimclient\",\"userName\":\"userjson.add.username\",\"name\":{\"givenName\":\"json\",\"familyName\":\"json\",\"middleName\":\"N/A\",\"honorificPrefix\":\"N/A\",\"honorificSuffix\":\"N/A\"},\"displayName\":\"json json\",\"nickName\":\"json\",\"profileUrl\":\"http://www.gluu.org/\",\"emails\":[{\"value\":\"json@gluu.org\",\"type\":\"work\",\"primary\":\"true\"},{\"value\":\"json2@gluu.org\",\"type\":\"home\",\"primary\":\"false\"}],\"addresses\":[{\"type\":\"work\",\"streetAddress\":\"621 East 6th Street Suite 200\",\"locality\":\"Austin\",\"region\":\"TX\",\"postalCode\":\"78701\",\"country\":\"US\",\"formatted\":\"621 East 6th Street Suite 200  Austin , TX 78701 US\",\"primary\":\"true\"}],\"phoneNumbers\":[{\"value\":\"646-345-2346\",\"type\":\"work\"}],\"ims\":[{\"value\":\"nynytest_user\",\"type\":\"Skype\"}],\"userType\":\"CEO\",\"title\":\"CEO\",\"preferredLanguage\":\"en-us\",\"locale\":\"en_US\",\"active\":\"true\",\"password\":\"secret\",\"roles\":[{\"value\":\"Owner\"}],\"entitlements\":[{\"value\":\"full access\"}],\"x509Certificates\":[{\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFa MH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bc1FLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5iPSi8xO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1+GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"}],\"meta\":{\"created\":\"2010-01-23T04:56:22Z\",\"lastModified\":\"2011-05-13T04:42:34Z\",\"version\":\"aversion\",\"location\":\"http://localhost:8080/identity/seam/resource/restv1/Users/8c4b6c26-efaf-4840-bddf-c0146a8eb2a9\"}}";
+                // String CREATEJSON = "{\"schemas\":[\"urn:ietf:params:scim:schemas:core:2.0:User\",\"urn:ietf:params:scim:schemas:extension:gluu:2.0:User\"],\"urn:ietf:params:scim:schemas:extension:gluu:2.0:User\": {\"scimCustomFirst\":\"[1000,2000]\",\"scimCustomSecond\":[\"2016-02-23T15:35:22Z\"],\"scimCustomThird\":3000},\"externalId\":\"scimclient\",\"userName\":\"userjson.add.username\",\"name\":{\"givenName\":\"json\",\"familyName\":\"json\",\"middleName\":\"N/A\",\"honorificPrefix\":\"N/A\",\"honorificSuffix\":\"N/A\"},\"displayName\":\"json json\",\"nickName\":\"json\",\"profileUrl\":\"http://www.gluu.org/\",\"emails\":[{\"value\":\"json@gluu.org\",\"type\":\"work\",\"primary\":\"true\"},{\"value\":\"json2@gluu.org\",\"type\":\"home\",\"primary\":\"false\"}],\"addresses\":[{\"type\":\"work\",\"streetAddress\":\"621 East 6th Street Suite 200\",\"locality\":\"Austin\",\"region\":\"TX\",\"postalCode\":\"78701\",\"country\":\"US\",\"formatted\":\"621 East 6th Street Suite 200  Austin , TX 78701 US\",\"primary\":\"true\"}],\"phoneNumbers\":[{\"value\":\"646-345-2346\",\"type\":\"work\"}],\"ims\":[{\"value\":\"nynytest_user\",\"type\":\"Skype\"}],\"userType\":\"CEO\",\"title\":\"CEO\",\"preferredLanguage\":\"en-us\",\"locale\":\"en_US\",\"active\":\"true\",\"password\":\"secret\",\"roles\":[{\"value\":\"Owner\"}],\"entitlements\":[{\"value\":\"full access\"}],\"x509Certificates\":[{\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFa MH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bc1FLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5iPSi8xO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1+GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"}],\"meta\":{\"created\":\"2010-01-23T04:56:22Z\",\"lastModified\":\"2011-05-13T04:42:34Z\",\"version\":\"aversion\",\"location\":\"http://localhost:8080/identity/seam/resource/restv1/Users/8c4b6c26-efaf-4840-bddf-c0146a8eb2a9\"}}";
+                String createJson = testData.getString("test.scim2.userext.create_json");
 
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -77,24 +78,26 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 simpleModule.addDeserializer(User.class, new UserDeserializer());
                 mapper.registerModule(simpleModule);
 
-                User user = mapper.readValue(CREATEJSON, User.class);
+                User user = mapper.readValue(createJson, User.class);
+                String testUserName = user.getUserName() + " (" + System.currentTimeMillis() + ")";
+                user.setUserName(testUserName);
 
                 Extension extension = user.getExtension(Constants.USER_EXT_SCHEMA_ID);
                 Assert.assertNotNull("(Deserialization) Custom extension not deserialized.", extension);
 
-                Extension.Field customFirstField = extension.getFields().get("customFirst");
-                Assert.assertNotNull("(Deserialization) \"customFirst\" field not deserialized.", customFirstField);
+                Extension.Field customFirstField = extension.getFields().get("scimCustomFirst");
+                Assert.assertNotNull("(Deserialization) \"scimCustomFirst\" field not deserialized.", customFirstField);
                 Assert.assertEquals("[1000,2000]", customFirstField.getValue());
                 System.out.println("##### (Deserialization) customFirstField.getValue() = " + customFirstField.getValue());
 
-                Extension.Field customSecondField = extension.getFields().get("customSecond");
-                Assert.assertNotNull("(Deserialization) \"customSecond\" field not deserialized.", customSecondField);
+                Extension.Field customSecondField = extension.getFields().get("scimCustomSecond");
+                Assert.assertNotNull("(Deserialization) \"scimCustomSecond\" field not deserialized.", customSecondField);
                 List<Date> dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
                 Assert.assertEquals(1, dateList.size());
                 System.out.println("##### (Deserialization) dateList.get(0) = " + dateList.get(0));
 
-                Extension.Field customThirdField = extension.getFields().get("customThird");
-                Assert.assertNotNull("(Deserialization) \"customThird\" field not deserialized.", customThirdField);
+                Extension.Field customThirdField = extension.getFields().get("scimCustomThird");
+                Assert.assertNotNull("(Deserialization) \"scimCustomThird\" field not deserialized.", customThirdField);
                 Assert.assertEquals(new BigDecimal(3000), new BigDecimal(customThirdField.getValue()));
                 System.out.println("##### (Deserialization) customThirdField.getValue() = " + customThirdField.getValue());
 
@@ -123,19 +126,19 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 extension = newPerson.getExtension(Constants.USER_EXT_SCHEMA_ID);
                 Assert.assertNotNull("(Persistence) Custom extension not persisted.", extension);
 
-                customFirstField = extension.getFields().get("customFirst");
-                Assert.assertNotNull("(Persistence) \"customFirst\" field not persisted.", customFirstField);
+                customFirstField = extension.getFields().get("scimCustomFirst");
+                Assert.assertNotNull("(Persistence) \"scimCustomFirst\" field not persisted.", customFirstField);
                 Assert.assertEquals("[1000,2000]", customFirstField.getValue());
                 System.out.println("##### (Persistence) customFirstField.getValue() = " + customFirstField.getValue());
 
-                customSecondField = extension.getFields().get("customSecond");
-                Assert.assertNotNull("(Persistence) \"customSecond\" field not persisted.", customSecondField);
+                customSecondField = extension.getFields().get("scimCustomSecond");
+                Assert.assertNotNull("(Persistence) \"scimCustomSecond\" field not persisted.", customSecondField);
                 dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
                 Assert.assertEquals(1, dateList.size());
                 System.out.println("##### (Persistence) dateList.get(0) = " + dateList.get(0));
 
-                customThirdField = extension.getFields().get("customThird");
-                Assert.assertNotNull("(Persistence) \"customThird\" field not persisted.", customThirdField);
+                customThirdField = extension.getFields().get("scimCustomThird");
+                Assert.assertNotNull("(Persistence) \"scimCustomThird\" field not persisted.", customThirdField);
                 Assert.assertEquals(new BigDecimal(3000), new BigDecimal(customThirdField.getValue()));
                 System.out.println("##### (Persistence) customThirdField.getValue() = " + customThirdField.getValue());
 
@@ -143,15 +146,15 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 personService.removePerson(retrievedPerson);
 
                 // Remove custom attributes
-                // schemaService.removeAttributeTypeFromObjectClass(customFirst.getOrigin(), customFirst.getName());
-                // schemaService.removeStringAttribute(customFirst.getName());
-                // attributeService.removeAttribute(customFirst);
-                // schemaService.removeAttributeTypeFromObjectClass(customSecond.getOrigin(), customSecond.getName());
-                // schemaService.removeStringAttribute(customSecond.getName());
-                // attributeService.removeAttribute(customSecond);
-                // schemaService.removeAttributeTypeFromObjectClass(customThird.getOrigin(), customThird.getName());
-                // schemaService.removeStringAttribute(customThird.getName());
-                // attributeService.removeAttribute(customThird);
+                // schemaService.removeAttributeTypeFromObjectClass(scimCustomFirst.getOrigin(), scimCustomFirst.getName());
+                // schemaService.removeStringAttribute(scimCustomFirst.getName());
+                // attributeService.removeAttribute(scimCustomFirst);
+                // schemaService.removeAttributeTypeFromObjectClass(scimCustomSecond.getOrigin(), scimCustomSecond.getName());
+                // schemaService.removeStringAttribute(scimCustomSecond.getName());
+                // attributeService.removeAttribute(scimCustomSecond);
+                // schemaService.removeAttributeTypeFromObjectClass(scimCustomThird.getOrigin(), scimCustomThird.getName());
+                // schemaService.removeStringAttribute(scimCustomThird.getName());
+                // attributeService.removeAttribute(scimCustomThird);
             }
         }.run();
     }
@@ -170,17 +173,17 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 ApplicationConfiguration applicationConfiguration = ((OxTrustConfiguration)Component.getInstance(OxTrustConfiguration.class)).getApplicationConfiguration();
 
                 // Create custom attributes
-                GluuAttribute customFirst = null;  // String, not multi-valued
-                if (attributeService.getAttributeByName("customFirst") == null) {
-                    customFirst = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "customFirst", "Custom First", "First custom attribute", GluuAttributeDataType.STRING, OxMultivalued.FALSE);
+                GluuAttribute scimCustomFirst = null;  // String, not multi-valued
+                if (attributeService.getAttributeByName("scimCustomFirst") == null) {
+                    scimCustomFirst = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "scimCustomFirst", "Custom First", "First custom attribute", GluuAttributeDataType.STRING, OxMultivalued.FALSE);
                 }
-                GluuAttribute customSecond = null;  // Date, multi-valued
-                if (attributeService.getAttributeByName("customSecond") == null) {
-                    customSecond = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "customSecond", "Custom Second", "Second custom attribute", GluuAttributeDataType.DATE, OxMultivalued.TRUE);
+                GluuAttribute scimCustomSecond = null;  // Date, multi-valued
+                if (attributeService.getAttributeByName("scimCustomSecond") == null) {
+                    scimCustomSecond = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "scimCustomSecond", "Custom Second", "Second custom attribute", GluuAttributeDataType.DATE, OxMultivalued.TRUE);
                 }
-                GluuAttribute customThird = null;  // Numeric, not multi-valued
-                if (attributeService.getAttributeByName("customThird") == null) {
-                    customThird = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "customThird", "Custom Third", "Third custom attribute", GluuAttributeDataType.NUMERIC, OxMultivalued.FALSE);
+                GluuAttribute scimCustomThird = null;  // Numeric, not multi-valued
+                if (attributeService.getAttributeByName("scimCustomThird") == null) {
+                    scimCustomThird = createCustomAttribute(attributeService, schemaService, applicationConfiguration, "scimCustomThird", "Custom Third", "Third custom attribute", GluuAttributeDataType.NUMERIC, OxMultivalued.FALSE);
                 }
 
                 ObjectMapper mapper = new ObjectMapper();
@@ -213,20 +216,20 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 Extension extension = newPerson.getExtension(Constants.USER_EXT_SCHEMA_ID);
                 Assert.assertNotNull("(Persistence) Custom extension not persisted.", extension);
 
-                Extension.Field customFirstField = extension.getFields().get("customFirst");
-                Assert.assertNotNull("(Persistence) \"customFirst\" field not persisted.", customFirstField);
+                Extension.Field customFirstField = extension.getFields().get("scimCustomFirst");
+                Assert.assertNotNull("(Persistence) \"scimCustomFirst\" field not persisted.", customFirstField);
                 Assert.assertEquals("customFirstValue", customFirstField.getValue());
                 System.out.println("##### (Persistence) customFirstField.getValue() = " + customFirstField.getValue());
 
-                Extension.Field customSecondField = extension.getFields().get("customSecond");
-                Assert.assertNotNull("(Persistence) \"customSecond\" field not persisted.", customSecondField);
+                Extension.Field customSecondField = extension.getFields().get("scimCustomSecond");
+                Assert.assertNotNull("(Persistence) \"scimCustomSecond\" field not persisted.", customSecondField);
                 List<Date> dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
                 Assert.assertEquals(2, dateList.size());
                 System.out.println("##### (Persistence) dateList.get(0) = " + dateList.get(0));
                 System.out.println("##### (Persistence) dateList.get(1) = " + dateList.get(1));
 
-                Extension.Field customThirdField = extension.getFields().get("customThird");
-                Assert.assertNotNull("(Persistence) \"customThird\" field not persisted.", customThirdField);
+                Extension.Field customThirdField = extension.getFields().get("scimCustomThird");
+                Assert.assertNotNull("(Persistence) \"scimCustomThird\" field not persisted.", customThirdField);
                 Assert.assertEquals(new BigDecimal(3000), new BigDecimal(customThirdField.getValue()));
                 System.out.println("##### (Persistence) customThirdField.getValue() = " + customThirdField.getValue());
 
@@ -234,15 +237,15 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
                 personService.removePerson(retrievedPerson);
 
                 // Remove custom attributes
-                // schemaService.removeAttributeTypeFromObjectClass(customFirst.getOrigin(), customFirst.getName());
-                // schemaService.removeStringAttribute(customFirst.getName());
-                // attributeService.removeAttribute(customFirst);
-                // schemaService.removeAttributeTypeFromObjectClass(customSecond.getOrigin(), customSecond.getName());
-                // schemaService.removeStringAttribute(customSecond.getName());
-                // attributeService.removeAttribute(customSecond);
-                // schemaService.removeAttributeTypeFromObjectClass(customThird.getOrigin(), customThird.getName());
-                // schemaService.removeStringAttribute(customThird.getName());
-                // attributeService.removeAttribute(customThird);
+                // schemaService.removeAttributeTypeFromObjectClass(scimCustomFirst.getOrigin(), scimCustomFirst.getName());
+                // schemaService.removeStringAttribute(scimCustomFirst.getName());
+                // attributeService.removeAttribute(scimCustomFirst);
+                // schemaService.removeAttributeTypeFromObjectClass(scimCustomSecond.getOrigin(), scimCustomSecond.getName());
+                // schemaService.removeStringAttribute(scimCustomSecond.getName());
+                // attributeService.removeAttribute(scimCustomSecond);
+                // schemaService.removeAttributeTypeFromObjectClass(scimCustomThird.getOrigin(), scimCustomThird.getName());
+                // schemaService.removeStringAttribute(scimCustomThird.getName());
+                // attributeService.removeAttribute(scimCustomThird);
             }
         }.run();
     }
@@ -251,7 +254,11 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
 
         User user = new User();
 
+
         user.setUserName("userjson.add.username");
+        String testUserName = user.getUserName() + " (" + System.currentTimeMillis() + ")";
+        user.setUserName(testUserName);
+
         user.setPassword("test");
         user.setDisplayName("Scim2DisplayName");
 
@@ -287,10 +294,10 @@ public class UserExtensionsTest extends AbstractAuthorizationTest {
 
         // User Extensions
         Extension.Builder extensionBuilder = new Extension.Builder(Constants.USER_EXT_SCHEMA_ID);
-        extensionBuilder.setField("customFirst", "customFirstValue");
-        // extensionBuilder.setFieldAsList("customSecond", Arrays.asList(new String[]{"2016-02-23T03:35:22Z", "2016-02-24T01:52:05Z"}));
-        extensionBuilder.setFieldAsList("customSecond", Arrays.asList(new Date[]{(new DateTime("1969-01-02")).toDate(), (new DateTime("2016-02-27")).toDate()}));
-        extensionBuilder.setField("customThird", new BigDecimal(3000));
+        extensionBuilder.setField("scimCustomFirst", "customFirstValue");
+        // extensionBuilder.setFieldAsList("scimCustomSecond", Arrays.asList(new String[]{"2016-02-23T03:35:22Z", "2016-02-24T01:52:05Z"}));
+        extensionBuilder.setFieldAsList("scimCustomSecond", Arrays.asList(new Date[]{(new DateTime("1969-01-02")).toDate(), (new DateTime("2016-02-27")).toDate()}));
+        extensionBuilder.setField("scimCustomThird", new BigDecimal(3000));
         user.addExtension(extensionBuilder.build());
 
         return user;

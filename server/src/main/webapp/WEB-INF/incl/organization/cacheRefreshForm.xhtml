@@ -9,7 +9,8 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions">
+    xmlns:gluufn="http://www.gluu.org/jsf/functions"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <h:outputStylesheet>
         .paddning4 {
@@ -53,8 +54,10 @@
                 <ul class="nav nav-tabs">
                   <li class="active"><a href="#cache-refresh" data-toggle="tab">Cache Refresh</a></li>
                   <li><a href="#key-attributes" data-toggle="tab">Customer Backend Key/Attributes</a></li>
-                    <li><a href="#ldap-servers" data-toggle="tab">Source Backend LDAP Servers</a></li>
-                    <li><a href="#Inum" data-toggle="tab">Inum LDAP Server</a></li>
+                    <li><a href="#ldap-servers" data-toggle="tab">Source Backend LDAP Servers</a></li> 
+                    <c:if test="#{!_configureCacheRefreshAction.appliance.useDefaultCacheRefreshInumServer}">                   
+                    	<li><a href="#Inum" data-toggle="tab">Inum LDAP Server</a></li>
+                    </c:if>                 
                 </ul>
         <s:validateAll />
          <div class="tab-content">
@@ -149,6 +152,12 @@
 										<s:convertEnum />
 									</h:selectOneMenu>
 			</s:decorate>
+			
+			<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+                <ui:define name="label">Use Default Inum settings</ui:define>
+                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.appliance.useDefaultCacheRefreshInumServer}" >
+				</h:selectBooleanCheckbox>
+            </s:decorate>
 
             </h:panelGroup>
             

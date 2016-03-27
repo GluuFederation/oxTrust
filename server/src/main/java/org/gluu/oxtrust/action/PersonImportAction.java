@@ -403,6 +403,29 @@ public class PersonImportAction implements Serializable {
 		// Convert to GluuCustomPerson and set right DN
 		List<GluuCustomPerson> persons = personService.createEntities(entriesAttributes);
 		log.info("Found {0} persons in input Excel file", persons.size());
+		
+		for(GluuCustomPerson person  : persons){
+			for (String key : entriesAttributes.keySet()){
+				boolean flag = false;
+				for(AttributeData AttributeData : entriesAttributes.get(key) ){
+					if(AttributeData.getName().equalsIgnoreCase("uid")){
+						if(person.getUid().equalsIgnoreCase(AttributeData.getValue())){
+							for(AttributeData AttributeData1 : entriesAttributes.get(key) ){
+								if(AttributeData1.getName().equalsIgnoreCase("userPassword")){
+									person.setUserPassword(AttributeData1.getValue());
+									flag=true;
+									break;
+								}
+							}						
+						}
+					}else{
+						if(flag)break;
+					}
+				}
+				if(flag)break;
+			}
+			
+		}
 
 		return persons;
 	}
