@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
+import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -26,9 +27,9 @@ import org.jboss.seam.log.Log;
  * @author Dmitry Ognyannikov
  */
 @Scope(ScopeType.SESSION)
-@Name("asimbaAddIDPAction")
+@Name("asimbaAddSPAction")
 @Restrict("#{identity.loggedIn}")
-public class AsimbaAddIDPAction implements Serializable {
+public class AsimbaAddSPAction implements Serializable {
 
     private static final long serialVersionUID = -1024167091985943689L;
     
@@ -41,24 +42,24 @@ public class AsimbaAddIDPAction implements Serializable {
     @In
     private AsimbaService asimbaService;
     
-    private IDPEntry idp;
+    private RequestorEntry spRequestor;
     
-    private String idpURL;
+    private String spURL;
     
     @Create
     public void init() {        
-        log.info("init() IDP call");
+        log.info("init() SP call");
     }
     
     public void refresh() {
-        log.info("refresh() IDP call");
+        log.info("refresh() SP call");
         
-        idp = new IDPEntry();
+        spRequestor = new RequestorEntry();
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
-        log.info("add new IDP", idp);
+        log.info("add new SP", spRequestor);
         // save
         synchronized (svnSyncTimer) {
             //TODO
@@ -69,37 +70,37 @@ public class AsimbaAddIDPAction implements Serializable {
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
-        log.info("cancel IDP", idp);
+        log.info("cancel SP", spRequestor);
         
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
     /**
-     * @return the idp
+     * @return the spURL
      */
-    public IDPEntry getIdp() {
-        return idp;
+    public String getSpURL() {
+        return spURL;
     }
 
     /**
-     * @param idp the idp to set
+     * @param spURL the spURL to set
      */
-    public void setIdp(IDPEntry idp) {
-        this.idp = idp;
+    public void setSpURL(String spURL) {
+        this.spURL = spURL;
     }
 
     /**
-     * @return the idpURL
+     * @return the spRequestor
      */
-    public String getIdpURL() {
-        return idpURL;
+    public RequestorEntry getSpRequestor() {
+        return spRequestor;
     }
 
     /**
-     * @param idpURL the idpURL to set
+     * @param spRequestor the spRequestor to set
      */
-    public void setIdpURL(String idpURL) {
-        this.idpURL = idpURL;
+    public void setSpRequestor(RequestorEntry spRequestor) {
+        this.spRequestor = spRequestor;
     }
     
 }
