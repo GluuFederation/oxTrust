@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ldap.service;
 import com.unboundid.ldap.sdk.Filter;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +46,7 @@ import org.xdi.util.StringHelper;
 @Name("asimbaService")
 @AutoCreate
 @Scope(ScopeType.APPLICATION)
-public class AsimbaService {
+public class AsimbaService implements Serializable {
     public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     public static String METADATA_SP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     

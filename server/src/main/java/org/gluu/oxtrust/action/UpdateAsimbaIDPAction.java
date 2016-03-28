@@ -8,7 +8,6 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
@@ -28,6 +27,7 @@ import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
+import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.jboss.seam.annotations.Create;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
@@ -68,6 +68,9 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     @In
     private AsimbaService asimbaService;
+    
+    @In
+    private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
     
     private IDPEntry idp;
     
@@ -162,6 +165,19 @@ public class UpdateAsimbaIDPAction implements Serializable {
             idp.setMetadataFile(filepath);
         } catch (Exception e) {
             log.info("IDP metadata - uploadFile() exception", e);
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public String uploadCertificateFile(FileUploadEvent event) {
+        log.info("uploadCertificateFile() call for IDP");
+        try {
+            UploadedFile uploadedFile = event.getUploadedFile();
+            String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile);
+            //TODO: display message
+        } catch (Exception e) {
+            log.info("IDP certificate - uploadCertificateFile() exception", e);
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }

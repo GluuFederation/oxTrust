@@ -20,6 +20,7 @@ import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
+import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -72,6 +73,9 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     @In
     private AsimbaService asimbaService;
+    
+    @In
+    private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
     
     private RequestorEntry spRequestor;
     
@@ -193,6 +197,19 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             spRequestor.setMetadataFile(filepath);
         } catch (Exception e) {
             log.info("Requestor metadata - uploadFile() exception", e);
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
+    
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public String uploadCertificateFile(FileUploadEvent event) {
+        log.info("uploadCertificateFile() Requestor", spRequestor);
+        try {
+            UploadedFile uploadedFile = event.getUploadedFile();
+            String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile);
+            //TODO: display message
+        } catch (Exception e) {
+            log.info("Requestor certificate - uploadCertificateFile() exception", e);
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
