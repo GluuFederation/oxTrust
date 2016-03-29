@@ -29,6 +29,7 @@ import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.jboss.seam.annotations.Create;
+import org.jboss.seam.international.StatusMessage;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 
@@ -163,8 +164,10 @@ public class UpdateAsimbaIDPAction implements Serializable {
             UploadedFile uploadedFile = event.getUploadedFile();
             String filepath = asimbaService.saveIDPMetadataFile(uploadedFile);
             idp.setMetadataFile(filepath);
+            facesMessages.add(StatusMessage.Severity.INFO, "File uploaded");
         } catch (Exception e) {
-            log.info("IDP metadata - uploadFile() exception", e);
+            log.error("IDP metadata - uploadFile() exception", e);
+            facesMessages.add(StatusMessage.Severity.ERROR, "Requestor metadata - uploadFile exception", e);
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -174,8 +177,14 @@ public class UpdateAsimbaIDPAction implements Serializable {
         log.info("uploadCertificateFile() call for IDP");
         try {
             UploadedFile uploadedFile = event.getUploadedFile();
-            String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile);
-            //TODO: display message
+            // TODO: check alias for valid url
+            String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, idp.getId());
+            // display message
+            if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
+                facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+            } else {
+                facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+            }
         } catch (Exception e) {
             log.info("IDP certificate - uploadCertificateFile() exception", e);
         }

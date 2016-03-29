@@ -31,6 +31,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
 import org.richfaces.event.FileUploadEvent;
@@ -195,8 +196,10 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             UploadedFile uploadedFile = event.getUploadedFile();
             String filepath = asimbaService.saveSPRequestorMetadataFile(uploadedFile);
             spRequestor.setMetadataFile(filepath);
+            facesMessages.add(StatusMessage.Severity.INFO, "File uploaded");
         } catch (Exception e) {
-            log.info("Requestor metadata - uploadFile() exception", e);
+            log.error("Requestor metadata - uploadFile() exception", e);
+            facesMessages.add(StatusMessage.Severity.ERROR, "Requestor metadata - uploadFile exception", e);
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -206,8 +209,14 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         log.info("uploadCertificateFile() Requestor", spRequestor);
         try {
             UploadedFile uploadedFile = event.getUploadedFile();
-            String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile);
-            //TODO: display message
+            // TODO: check alias for valid url
+            String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, spRequestor.getId());
+            // display message
+            if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
+                facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+            } else {
+                facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+            }
         } catch (Exception e) {
             log.info("Requestor certificate - uploadCertificateFile() exception", e);
         }
