@@ -54,10 +54,10 @@
                 <ul class="nav nav-tabs">
                   <li class="active"><a href="#cache-refresh" data-toggle="tab">Cache Refresh</a></li>
                   <li><a href="#key-attributes" data-toggle="tab">Customer Backend Key/Attributes</a></li>
-                    <li><a href="#ldap-servers" data-toggle="tab">Source Backend LDAP Servers</a></li> 
-                    <c:if test="#{!_configureCacheRefreshAction.appliance.useDefaultCacheRefreshInumServer}">                   
-                    	<li><a href="#Inum" data-toggle="tab">Inum LDAP Server</a></li>
-                    </c:if>                 
+                    <li><a href="#ldap-servers" data-toggle="tab">Source Backend LDAP Servers</a></li>                    
+                    <h:panelGroup rendered="#{!_configureCacheRefreshAction.appliance.useDefaultCacheRefreshInumServer}">                 
+                    	<li><a href="#Inum" data-toggle="tab">Inum LDAP Server</a></li> 
+                    </h:panelGroup>              
                 </ul>
         <s:validateAll />
          <div class="tab-content">
