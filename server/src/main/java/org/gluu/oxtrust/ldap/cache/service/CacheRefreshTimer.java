@@ -1028,17 +1028,21 @@ public class CacheRefreshTimer {
 	}
 
 	private LdapServerConnection prepareLdapServerConnection(CacheRefreshConfiguration cacheRefreshConfiguration, GluuLdapConfiguration ldapConfiguration) {
-		String ldapConfig = ldapConfiguration.getConfigId();
-		Properties ldapProperties = toLdapProperties(ldapConfiguration);
-
-		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties, cryptoConfigurationSalt));
-
-		if (!ldapConnectionProvider.isConnected()) {
-			log.error("Failed to connect to LDAP server using configuration {0}", ldapConfig);
-			return null;
+		if(ApplianceService.instance().getAppliance().isUseDefaultCacheRefreshInumServer()){
+			return new LdapServerConnection(OxTrustConstants.inum, ldapEntryManager, new String[] {OxTrustConstants.CACHE_REFRESH_DEFAULT_BASE_DN});
+		}else{
+			String ldapConfig = ldapConfiguration.getConfigId();
+			Properties ldapProperties = toLdapProperties(ldapConfiguration);
+	
+			LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties, cryptoConfigurationSalt));
+	
+			if (!ldapConnectionProvider.isConnected()) {
+				log.error("Failed to connect to LDAP server using configuration {0}", ldapConfig);
+				return null;
+			}
+			
+				return new LdapServerConnection(ldapConfig, ldapConnectionProvider, getBaseDNs(ldapConfiguration));
 		}
-
-		return new LdapServerConnection(ldapConfig, ldapConnectionProvider, getBaseDNs(ldapConfiguration));
 	}
 
 	private void closeLdapServerConnection(LdapServerConnection... ldapServerConnections) {
@@ -1102,6 +1106,13 @@ public class CacheRefreshTimer {
 			this.ldapEntryManager = new LdapEntryManager(new OperationsFacade(connectionProvider));
 			this.baseDns = baseDns;
 		}
+		
+		protected LdapServerConnection(String sourceServerName, LdapEntryManager ldapEntryManager , String[] baseDns) {
+			   this.sourceServerName = sourceServerName;
+			   this.connectionProvider = null;
+			   this.ldapEntryManager = ldapEntryManager;
+			   this.baseDns = baseDns;
+			  }
 
 		public final String getSourceServerName() {
 			return sourceServerName;
