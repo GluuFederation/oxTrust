@@ -154,21 +154,21 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-                                                                        <li id="subMenuLinkAsimba3"><h:commandLink
+                                                                        <li id="subMenuLinkAsimba2"><h:commandLink
 											value="SP Pools"
 											action="#{menuAction.endConversation('/asimba/spPools.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-                                                                        <li id="subMenuLinkAsimba5"><h:commandLink
+                                                                        <li id="subMenuLinkAsimba3"><h:commandLink
 											value="SP Requestors"
 											action="#{menuAction.endConversation('/asimba/spRequestors.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-                                                                        <li id="subMenuLinkAsimba7"><h:commandLink
+                                                                        <li id="subMenuLinkAsimba4"><h:commandLink
 											value="Selectors"
 											action="#{menuAction.endConversation('/asimba/selectors.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access')}">
@@ -413,12 +413,46 @@
 									$('#subMenuLinkSAML2').addClass('active');
 								}
 
+								//Menu Highlights - SAML Asimba
+								if(window.location.href.indexOf("asimba/idps") > -1 || window.location.href.indexOf("asimba/editIDP") > -1){
+									$('#subMenuSAML').css('display', 'block');
+									$('#menuSAML').addClass('active');
+									$('#subMenuLinkAsimba1').addClass('active');
+								}
+								if(window.location.href.indexOf("asimba/spPools") > -1 || window.location.href.indexOf("asimba/editSPPool") > -1){
+									$('#subMenuSAML').css('display', 'block');
+									$('#menuSAML').addClass('active');
+									$('#subMenuLinkAsimba2').addClass('active');
+								}
+								if(window.location.href.indexOf("asimba/spRequestors") > -1 || window.location.href.indexOf("asimba/editSPRequestor") > -1){
+									$('#subMenuSAML').css('display', 'block');
+									$('#menuSAML').addClass('active');
+									$('#subMenuLinkAsimba3').addClass('active');
+								}
+								if(window.location.href.indexOf("asimba/selectors") > -1 || window.location.href.indexOf("asimba/editSelector") > -1){
+									$('#subMenuSAML').css('display', 'block');
+									$('#menuSAML').addClass('active');
+									$('#subMenuLinkAsimba4').addClass('active');
+								}
+                                                                
+
 								//Menu Highlights - OpenID Connect
 								if (window.location.href.indexOf("scope/inventory") > -1 || window.location.href.indexOf("scope/manage/add") > -1 || window.location.href.indexOf("scope/manage/update") > -1) {
 									$('#subMenuOpenID').css('display', 'block');
 									$('#menuOpenID').addClass('active');
 									$('#subMenuLinkOpenID1').addClass('active');
 								}
+								if (window.location.href.indexOf("client/inventory")) {
+									$('#subMenuOpenID').css('display', 'block');
+									$('#menuOpenID').addClass('active');
+									$('#subMenuLinkOpenID2').addClass('active');
+								}
+								if (window.location.href.indexOf("identity/sectoridentifier")) {
+									$('#subMenuOpenID').css('display', 'block');
+									$('#menuOpenID').addClass('active');
+									$('#subMenuLinkOpenID3').addClass('active');
+								}
+                                                                
 								//Menu Highlights - Federation Connect
 								
 								if (window.location.href.indexOf("federation/proposal/inventory") > -1 || window.location.href.indexOf("federation/hosted/add") > -1 || window.location.href.indexOf("federation/proposal/view") > -1) {
