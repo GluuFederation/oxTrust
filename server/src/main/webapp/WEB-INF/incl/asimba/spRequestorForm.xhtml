@@ -163,6 +163,25 @@
             </s:decorate>
             </h:panelGroup>
             
+            <h:panelGroup id="spRequestorEditTrustCertificateFileGroupId">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                    id="spRequestorEditTrustCertificateFile"
+                    rendered="true">
+                <ui:define name="label">Trust Certificate File</ui:define>
+
+                <h:outputLabel 
+                    title="Add certificate file"
+                    value="Add certificate file"/>
+                
+                <!-- upload file button -->
+                <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" 
+                                 acceptedTypes="crt" ontyperejected="alert('Only CRT files are accepted');"
+                                     maxFilesQuantity="1" 
+                                     immediateUpload="true"
+                                     listHeight="60px" styleClass="uploadFile" />
+            </s:decorate>
+            </h:panelGroup>
+            
             <h:panelGroup id="spRequestorEditAdditionalPropertiesGroupId">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spRequestorEditAdditionalProperties"
@@ -177,8 +196,6 @@
                         value="#{_updateAsimbaSPRequestorAction.spRequestorAdditionalProperties}" tabindex="5" />
             </s:decorate>
             </h:panelGroup>
-            
-            
             
             <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">
                 <tbody>
