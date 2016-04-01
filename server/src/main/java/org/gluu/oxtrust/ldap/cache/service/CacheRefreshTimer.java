@@ -63,7 +63,6 @@ import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuDummyEntry;
 import org.xdi.ldap.model.GluuStatus;
-import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.ObjectSerializationService;
 import org.xdi.service.SchemaService;
@@ -246,7 +245,17 @@ public class CacheRefreshTimer {
 
 		// Prepare and check connections to LDAP servers
 		LdapServerConnection[] sourceServerConnections = prepareLdapServerConnections(cacheRefreshConfiguration, cacheRefreshConfiguration.getSourceConfigs());
-		LdapServerConnection inumDbServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration, cacheRefreshConfiguration.getInumConfig());
+
+		LdapServerConnection inumDbServerConnection;
+		if (ApplianceService.instance().getAppliance().isUseDefaultCacheRefreshInumServer()) {
+			GluuLdapConfiguration ldapInumConfiguration = new GluuLdapConfiguration();
+			ldapInumConfiguration.setConfigId("local_inum");
+			ldapInumConfiguration.setBaseDNsStringsList(Arrays.asList(new String[] { OxTrustConstants.CACHE_REFRESH_DEFAULT_BASE_DN }));
+
+			inumDbServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration, ldapInumConfiguration, true);
+		} else {
+			inumDbServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration, cacheRefreshConfiguration.getInumConfig());
+		}
 
 		boolean isVdsUpdate = CacheRefreshUpdateMethod.VDS.equals(updateMethod);
 		LdapServerConnection targetServerConnection = null;
@@ -1028,21 +1037,26 @@ public class CacheRefreshTimer {
 	}
 
 	private LdapServerConnection prepareLdapServerConnection(CacheRefreshConfiguration cacheRefreshConfiguration, GluuLdapConfiguration ldapConfiguration) {
-		if(ApplianceService.instance().getAppliance().isUseDefaultCacheRefreshInumServer()){
-			return new LdapServerConnection(OxTrustConstants.inum, ldapEntryManager, new String[] {OxTrustConstants.CACHE_REFRESH_DEFAULT_BASE_DN});
-		}else{
-			String ldapConfig = ldapConfiguration.getConfigId();
-			Properties ldapProperties = toLdapProperties(ldapConfiguration);
-	
-			LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties, cryptoConfigurationSalt));
-	
-			if (!ldapConnectionProvider.isConnected()) {
-				log.error("Failed to connect to LDAP server using configuration {0}", ldapConfig);
-				return null;
-			}
-			
-				return new LdapServerConnection(ldapConfig, ldapConnectionProvider, getBaseDNs(ldapConfiguration));
+		return prepareLdapServerConnection(cacheRefreshConfiguration, ldapConfiguration, false);
+	}
+
+	private LdapServerConnection prepareLdapServerConnection(CacheRefreshConfiguration cacheRefreshConfiguration, GluuLdapConfiguration ldapConfiguration, boolean useLocalConnection) {
+		String ldapConfig = ldapConfiguration.getConfigId();
+
+		if (useLocalConnection) {
+			return new LdapServerConnection(ldapConfig, ldapEntryManager, getBaseDNs(ldapConfiguration));
 		}
+
+		Properties ldapProperties = toLdapProperties(ldapConfiguration);
+
+		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties, cryptoConfigurationSalt));
+
+		if (!ldapConnectionProvider.isConnected()) {
+			log.error("Failed to connect to LDAP server using configuration {0}", ldapConfig);
+			return null;
+		}
+		
+		return new LdapServerConnection(ldapConfig, ldapConnectionProvider, getBaseDNs(ldapConfiguration));
 	}
 
 	private void closeLdapServerConnection(LdapServerConnection... ldapServerConnections) {
