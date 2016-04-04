@@ -37,7 +37,7 @@ import org.xdi.util.StringHelper;
  * <p>
  * This filter allows you to specify the following parameters (at either the context-level or the filter-level):
  * <ul>
- * <li><code>oAuthServerAuthorizeUrl</code> - the url to authorize OAuth client, i.e. https://localhost/oxauth/authorize.seam</li>
+ * <li><code>oAuthServerAuthorizeUrl</code> - the url to authorize OAuth client, i.e. https://localhost/oxauth/authorize</li>
  * </ul>
  *
  * <p>Please see AbstractOAuthFilter for additional properties</p>
