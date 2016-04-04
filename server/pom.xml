@@ -303,7 +303,6 @@
 		<dependency>
 			<groupId>com.wordnik</groupId>
 			<artifactId>swagger-annotations</artifactId>
-			<version>1.5.1-M2</version>
 		</dependency>
 
 		<dependency>
@@ -890,15 +889,28 @@
 
 	<profiles>
 		<profile>
-			<id>set-configuration-name</id>
+			<id>swagger</id>
 			<activation>
 				<property>
-					<name>!cfg</name>
+					<name>swagger-enabled</name>
 				</property>
 			</activation>
 			<properties>
-				<cfg>default</cfg>
 			</properties>
+			<build>
+				<plugins>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>com.wordnik</groupId>
+					<artifactId>swagger-jaxrs_2.10</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>com.wordnik</groupId>
+					<artifactId>swagger-servlet_2.9.1</artifactId>
+				</dependency>
+			</dependencies>
 		</profile>
 		<profile>
 			<id>enable-seam-debug</id>
@@ -963,12 +975,12 @@
 											-Xmx512m -XX:PermSize=128m -XX:MaxPermSize=512m -Xdebug
 											-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8001</argLine>
 
-                                        <!-- Needed as we have both junit and testng -->
+										<!-- Needed as we have both junit and testng -->
 										<testNGArtifactName>none:none</testNGArtifactName>
 										<failIfNoTests>false</failIfNoTests>
 										<trimStackTrace>false</trimStackTrace>
 										<skip>false</skip>
-                                        <!-- exclude selenium tests -->
+										<!-- exclude selenium tests -->
 										<excludes>
 											<exclude>**/selenium/*</exclude>
 											<exclude>**/webdriver/*</exclude>
@@ -1016,8 +1028,8 @@
 												<filtersfile
 													file="profiles/${cfg}/config-oxtrust-test.properties" />
 											</filterset>
-											<filterset id="oxTrustTestDataFilterSet" begintoken="${"
-												endtoken="}">
+											<filterset id="oxTrustTestDataFilterSet"
+												begintoken="${" endtoken="}">
 												<filtersfile
 													file="profiles/${cfg}/config-oxtrust-test-data.properties" />
 											</filterset>
