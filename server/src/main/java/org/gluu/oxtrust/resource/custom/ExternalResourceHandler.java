@@ -27,8 +27,8 @@ public class ExternalResourceHandler extends ResourceResolver {
 	private static final LogProvider log = Logging.getLogProvider(ExternalResourceHandler.class);
 
     private ResourceResolver parent;
-    private String basePath;
-	private File externalResourceBaseFolder;
+
+    private File externalResourceBaseFolder;
 	private boolean useExternalResourceBase;
 
     public ExternalResourceHandler(ResourceResolver parent) {
