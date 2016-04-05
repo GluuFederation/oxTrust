@@ -11,11 +11,10 @@ import org.gluu.site.ldap.persistence.annotation.LdapDN;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.ldap.model.Entry;
 
 @LdapEntry
 @LdapObjectClass(values = {"top", "oxIdpConfiguration"})
-public class LdapAppConfiguration extends Entry {
+public class LdapAppConfiguration {
 
 	private static final long serialVersionUID = 1847361642302974184L;
 
