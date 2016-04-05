@@ -26,7 +26,7 @@ public class RecaptchaService implements Serializable {
 		return RecaptchaUtils.createRecaptchaHtml("Error");
 	}
 	
-	public boolean getRecaptchaResponse() throws Exception {
+	public boolean getRecaptchaResponse() {
 		return RecaptchaUtils.getGoogleRecaptchaFromServletContext();
 	}
 
