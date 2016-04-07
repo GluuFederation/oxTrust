@@ -18,6 +18,7 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
+import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -84,7 +85,7 @@ public class EntityIDMonitoringService {
 					String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
 							+ Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
-					List<String> entityIds = Shibboleth2ConfService.instance().getEntityIdFromMetadataFile(metadataFile);
+					List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 					
 					log.trace("entityIds from metadata: " + Utils.iterableToString(entityIds)); 
 					Set<String> entityIdSet = new TreeSet<String>();

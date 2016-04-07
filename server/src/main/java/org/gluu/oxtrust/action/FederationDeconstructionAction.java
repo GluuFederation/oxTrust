@@ -19,6 +19,7 @@ import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -179,7 +180,7 @@ public class FederationDeconstructionAction implements Serializable {
 			String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
 					+ Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator;
 			File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
-			for (String entity : shibboleth2ConfService.getEntityIdFromMetadataFile(metadataFile)) {
+			for (String entity : SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile)) {
 				if (entity.toLowerCase().contains(filterString.toLowerCase())) {
 					filteredEntities.add(entity);
 				}

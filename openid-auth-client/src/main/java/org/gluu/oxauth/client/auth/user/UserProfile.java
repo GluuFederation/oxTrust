@@ -46,4 +46,11 @@ public class UserProfile implements Serializable {
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("UserProfile [id=").append(id).append(", attributes=").append(attributes).append("]");
+		return builder.toString();
+	}
+
 }

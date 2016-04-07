@@ -53,9 +53,6 @@ public class UpdateAsimbaIDPAction implements Serializable {
     private ApplicationConfiguration applicationConfiguration;
 
     @In
-    private Identity identity;
-
-    @In
     private SvnSyncTimer svnSyncTimer;
     
     @In

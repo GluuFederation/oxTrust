@@ -46,6 +46,12 @@
             <scope>provided</scope>
         </dependency>
 
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxLdap</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
         <dependency>
             <groupId>org.xdi</groupId>
             <artifactId>openid-auth-client</artifactId>

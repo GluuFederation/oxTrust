@@ -17,6 +17,7 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OrganizationalUnit;
@@ -54,6 +55,9 @@ public @Data class PasswordReminderAction implements Serializable {
 	@In
 	private LdapEntryManager ldapEntryManager;
 	
+	@In(create = true,required = false, value = "recaptcha")
+	private RecaptchaService recaptchaService;
+	
 	private static String MESSAGE_NOT_FOUND = "You (or someone else) entered this email when trying to change the password of %1$s identity server account.\n\n" 
 											+ "However this email address is not on our database of registered users and therefore the attempted password change has failed.\n\n"
 											+ "If you are a %1$s identity server user and were expecting this email, please try again using the email address you gave when registering your account.\n\n"
@@ -75,8 +79,8 @@ public @Data class PasswordReminderAction implements Serializable {
 
 
 	public String requestReminder() throws Exception {
-		ReCaptchaResponse reCaptchaResponse = RecaptchaUtils.getRecaptchaResponseFromServletContext();
-		if (reCaptchaResponse.isValid() && enabled()) {
+		boolean reCaptchaResponse = recaptchaService.getRecaptchaResponse();
+		if (reCaptchaResponse && enabled()) {
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
 			ApplicationConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
@@ -137,6 +141,14 @@ public @Data class PasswordReminderAction implements Serializable {
 					&& appliance.getPasswordResetAllowed().isBooleanValue();
 
 		
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 }

@@ -33,6 +33,7 @@ import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
+import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 /**
@@ -68,6 +69,7 @@ public class OxTrustConfiguration {
     public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
 	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
+	public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "ox-ldap.properties";
 	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxtrust-central-ldap.properties";
 
 	public static final String APPLICATION_CONFIGURATION = "oxtrust-config.json";
@@ -92,6 +94,7 @@ public class OxTrustConfiguration {
 
     private AtomicBoolean isActive;
 
+	private String prevLdapFileName;
     private long ldapFileLastModifiedTime = -1;
     private long ldapCentralFileLastModifiedTime = -1;
 
@@ -103,7 +106,8 @@ public class OxTrustConfiguration {
         this.isActive = new AtomicBoolean(true);
     	try {
 			log.info("Creating oxTrustConfiguration");
-			loadLdapConfiguration();
+        	String ldapFileName = determineLdapConfigurationFileName();
+        	this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
 			loadLdapCentralConfiguration();
 	    	this.confDir = confDir();
 	
@@ -155,11 +159,12 @@ public class OxTrustConfiguration {
 
     private void reloadConfiguration() {
         // Reload LDAP configuration if needed
-        File ldapFile = new File(LDAP_PROPERTIES_FILE);
+    	String ldapFileName = determineLdapConfigurationFileName();
+        File ldapFile = new File(ldapFileName);
         if (ldapFile.exists()) {
             final long lastModified = ldapFile.lastModified();
-            if (lastModified > ldapFileLastModifiedTime) { // reload configuration only if it was modified
-            	loadLdapConfiguration();
+            if (!StringHelper.equalsIgnoreCase(this.prevLdapFileName, ldapFileName) || (lastModified > ldapFileLastModifiedTime)) { // reload configuration only if it was modified
+            	this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
                 Events.instance().raiseAsynchronousEvent(LDAP_CONFIGUARION_RELOAD_EVENT_TYPE);
             }
         }
@@ -279,13 +284,24 @@ public class OxTrustConfiguration {
 		return null;
 	}
 
-	private void loadLdapConfiguration() {
-		this.ldapConfiguration = createFileConfiguration(LDAP_PROPERTIES_FILE, true);
+	private String loadLdapConfiguration(String ldapFileName) {
+		this.ldapConfiguration = createFileConfiguration(ldapFileName, true);
 
-		File ldapFile = new File(LDAP_PROPERTIES_FILE);
+		File ldapFile = new File(ldapFileName);
 		if (ldapFile.exists()) {
 			this.ldapFileLastModifiedTime = ldapFile.lastModified();
 		}
+
+		return ldapFileName;
+	}
+
+	private String determineLdapConfigurationFileName() {
+		File ldapFile = new File(LDAP_PROPERTIES_FILE);
+		if (ldapFile.exists()) {
+			return LDAP_PROPERTIES_FILE;
+		}
+		
+		return LDAP_DEFAULT_PROPERTIES_FILE;
 	}
 
 	private void loadLdapCentralConfiguration() {
@@ -353,7 +369,7 @@ public class OxTrustConfiguration {
 	}
 
 	public String getConfigurationDn() {
-		return getLdapConfiguration().getString("configurationEntryDN");
+		return getLdapConfiguration().getString("oxtrust_ConfigurationEntryDN");
 	}
 	
 	// issue 102 - begin : changed by shekhar

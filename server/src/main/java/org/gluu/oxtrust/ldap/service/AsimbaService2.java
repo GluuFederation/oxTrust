@@ -43,10 +43,10 @@ import org.xdi.util.StringHelper;
  * 
  * @author Dmitry Ognyannikov, 2016
  */
-@Name("asimbaService")
+@Name("asimbaService2")
 @AutoCreate
 @Scope(ScopeType.APPLICATION)
-public class AsimbaService implements Serializable {
+public class AsimbaService2 implements Serializable {
     public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     public static String METADATA_SP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     
@@ -56,19 +56,22 @@ public class AsimbaService implements Serializable {
     @In
     private LdapEntryManager ldapEntryManager;
     
+//    @In
+//    ApplianceService applianceService;
+    
     @In
-    ApplianceService applianceService;
+    OrganizationService organizationService;
      
     @Create
     public void init() {
     }
     
     @Destroy
-    public void destroy() {        
+    public void destroy() {
     }
     
     public LdapOxAsimbaConfiguration loadAsimbaConfiguration() {
-        String applianceDn = applianceService.getDnForAppliance();
+        String applianceDn = organizationService.getDnForOrganization();
         LdapOxAsimbaConfiguration ldapConfiguration = ldapEntryManager.find(LdapOxAsimbaConfiguration.class, "ou=oxasimba,ou=configuration,"+applianceDn, null);
         
         return ldapConfiguration;
@@ -234,7 +237,7 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     public String getDnForLdapIDPEntry(String inum) {
-        String applianceDn = applianceService.getDnForAppliance();
+        String applianceDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
                 return String.format("ou=idps,ou=oxasimba,ou=configuration,%s", applianceDn);
         }
@@ -249,7 +252,7 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     public String getDnForLDAPApplicationSelectorEntry(String inum) {
-        String applianceDn = applianceService.getDnForAppliance();
+        String applianceDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
                 return String.format("ou=selectors,ou=oxasimba,ou=configuration,%s", applianceDn);
         }
@@ -264,7 +267,7 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     public String getDnForLDAPRequestorEntry(String inum) {
-        String applianceDn = applianceService.getDnForAppliance();
+        String applianceDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
                 return String.format("ou=requestors,ou=oxasimba,ou=configuration,%s", applianceDn);
         }
@@ -279,7 +282,7 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     public String getDnForLDAPRequestorPoolEntry(String inum) {
-        String applianceDn = applianceService.getDnForAppliance();
+        String applianceDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
                 return String.format("ou=requestorpools,ou=oxasimba,ou=configuration,%s", applianceDn);
         }
@@ -293,7 +296,7 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     private String generateInumImpl() {
-        String orgInum = applianceService.getApplianceInum();
+        String orgInum = organizationService.getDnForOrganization();
         return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(8);
     }
     

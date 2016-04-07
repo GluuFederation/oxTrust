@@ -19,12 +19,12 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -44,6 +44,9 @@ public @Data class PasswordResetAction implements Serializable {
 
 	@In
 	private LdapEntryManager ldapEntryManager;
+	
+	@In(create = true,required = false, value = "recaptcha")
+	private RecaptchaService recaptchaService;
 
 	
 	@Logger
@@ -85,9 +88,9 @@ public @Data class PasswordResetAction implements Serializable {
 		
 	}
 	
-	public String update() throws ParseException{
-		ReCaptchaResponse reCaptchaResponse = RecaptchaUtils.getRecaptchaResponseFromServletContext();
-		if (reCaptchaResponse.isValid()) {
+	public String update() throws ParseException{		
+		boolean reCaptchaResponse = recaptchaService.getRecaptchaResponse();
+		if (reCaptchaResponse) {
 			GluuAppliance appliance = ApplianceService.instance().getAppliance();
 			this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
 			Calendar requestCalendarExpiry = Calendar.getInstance();
