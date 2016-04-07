@@ -21,22 +21,23 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.log.Log;
+import org.jboss.seam.log.Logging;
 import org.jboss.seam.web.ServletContexts;
 
 /**
  * User: Dejan Maric
  */
 public class RecaptchaUtils {
+	private final static Log log = Logging.getLog(RecaptchaUtils.class);
 
 	private static final String PUBLIC_KEY = "6Ld9oM0SAAAAAHnAjeCniZz6FJ3REl5ImpvKcRqU";
 	private static final String PRIVATE_KEY = "6Ld9oM0SAAAAAFBuuYMTXGr-Y3OSAFsbUmIZ0-lE";
-	
-	public static final String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify";
-    
-    public static final String SITE_KEY = "6LcYpRsTAAAAAFqRBoHmjJEE72-0Ey-GbZV-6vqC";
-    public static final String SECRET_KEY = "6LcYpRsTAAAAAEnaFe4KFkwQ6GzyZqEZ2fcs4SNq";
 	
 	private static ReCaptcha reCaptcha = ReCaptchaFactory.newReCaptcha(PUBLIC_KEY, PRIVATE_KEY, false);
 
@@ -62,20 +63,20 @@ public class RecaptchaUtils {
 				request.getRemoteAddr());
 	}
 	
-	public static boolean getGoogleRecaptchaFromServletContext() {
+	public boolean getGoogleRecaptchaFromServletContext(String url , String secretKey) {
 		HttpServletRequest httpServletRequest = ServletContexts.instance().getRequest();
 		String gRecaptchaResponse = httpServletRequest.getParameter("g-recaptcha-response");
 		if((gRecaptchaResponse != null) && !(gRecaptchaResponse.trim().equals("")))
-			return verifyGoogleRecaptcha(gRecaptchaResponse);
+			return verifyGoogleRecaptcha(gRecaptchaResponse,url , secretKey);
 		
 		return false;
 	}
 
-	public static boolean verifyGoogleRecaptcha(String gRecaptchaResponse) {
+	public boolean verifyGoogleRecaptcha(String gRecaptchaResponse,String url , String secretKey) {
 		boolean result = false;
 		try {
-			ClientRequest request = new ClientRequest(CAPTCHA_URL);
-			request.formParameter("secret", SECRET_KEY);
+			ClientRequest request = new ClientRequest(url);
+			request.formParameter("secret", secretKey);
 			request.formParameter("response", gRecaptchaResponse);
 			request.accept("application/json");
 
@@ -89,7 +90,7 @@ public class RecaptchaUtils {
 					});
 			return Boolean.parseBoolean(map.get("success"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception happened while verifying recaptcha ", e);
 			return result;
 		}
 	}

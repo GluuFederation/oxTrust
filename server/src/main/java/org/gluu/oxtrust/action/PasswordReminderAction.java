@@ -151,8 +151,4 @@ public @Data class PasswordReminderAction implements Serializable {
 		this.email = email;
 	}
 	
-	public String getCaptchaSiteKey() {
-		return RecaptchaUtils.SITE_KEY;
-	}
-	
 }
