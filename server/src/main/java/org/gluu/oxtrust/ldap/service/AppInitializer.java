@@ -140,7 +140,7 @@ public class AppInitializer {
 
 		// Initialize local LDAP Authentication connection provider
 		initiateLDAPAuthConf();
-		createConnectionAuthProvider("ldapAuthConfig", OxTrustConfiguration.LDAP_PROPERTIES_FILE, "localLdapAuthConfiguration", "authConnectionProvider");
+		createConnectionAuthProvider("ldapAuthConfig", oxTrustConfiguration.getLdapConfiguration().getFileName(), "localLdapAuthConfiguration", "authConnectionProvider");
 
 		// Initialize central LDAP connection provider
 		if ((oxTrustConfiguration.getLdapCentralConfiguration() != null) && oxTrustConfiguration.getApplicationConfiguration().isUpdateApplianceStatus()) {
@@ -214,7 +214,7 @@ public class AppInitializer {
 	private void createConnectionAuthProvider(String configurationLdapConfigComponentName, String fileName, String configurationComponentName, String connectionProviderComponentName) {
 		FileConfiguration configuration = new FileConfiguration(fileName);
 		Contexts.getApplicationContext().set(configurationComponentName, configuration);
-		
+
 		//
 		Properties properties = configuration.getProperties();
 		if (this.ldapConfig != null) {
@@ -237,7 +237,7 @@ public class AppInitializer {
 		if (servers == null) {
 			return sb.toString();
 		}
-		
+
 		boolean first = true;
 		for (SimpleProperty server : servers) {
 			if (first) {
@@ -253,12 +253,10 @@ public class AppInitializer {
 	}
 
 	private void startMetadataValidator() {
-
 		// Schedule first check after 60 seconds
 		final Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.SECOND, 60);
 		metadataValidationTimer.scheduleValidation(calendar.getTime(), VALIDATION_INTERVAL);
-
 	}
 	
 	private boolean createShibbolethConfiguration() {
@@ -450,7 +448,7 @@ public class AppInitializer {
     	LdapEntryManager oldLdapAuthEntryManager = (LdapEntryManager) Component.getInstance(LDAP_AUTH_ENTRY_MANAGER_NAME);
 
     	// Recreate components
-		createConnectionAuthProvider("ldapAuthConfig", OxTrustConfiguration.LDAP_PROPERTIES_FILE, "localLdapAuthConfiguration", "authConnectionProvider");
+		createConnectionAuthProvider("ldapAuthConfig", oxTrustConfiguration.getLdapConfiguration().getFileName(), "localLdapAuthConfiguration", "authConnectionProvider");
 
         // Destroy old components
     	Contexts.getApplicationContext().remove(LDAP_AUTH_ENTRY_MANAGER_NAME);
