@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
-import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;

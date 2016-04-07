@@ -25,6 +25,7 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.oxtrust.util.GluuErrorHandler;
+import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -167,7 +168,7 @@ public class MetadataValidationTimer {
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					
 					
-					List<String> entityIdList = Shibboleth2ConfService.instance().getEntityIdFromMetadataFile(metadataFile);
+					List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 					Set<String> entityIdSet = new TreeSet<String>();
 					Set<String> duplicatesSet = new TreeSet<String>(); 
 					if(entityIdList != null && ! entityIdList.isEmpty()){
@@ -209,7 +210,7 @@ public class MetadataValidationTimer {
 					String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator + Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					
-					List<String> entityIdList = Shibboleth2ConfService.instance().getEntityIdFromMetadataFile(metadataFile);
+					List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 					Set<String> duplicatesSet = new TreeSet<String>(); 
 					Set<String> entityIdSet = new TreeSet<String>();
 

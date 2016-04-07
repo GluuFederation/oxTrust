@@ -20,10 +20,10 @@ public enum GluuMetadataSourceType implements LdapEnum {
 
 	FILE("file", "File"), URI("uri", "URI"), GENERATE("generate", "Generate"), FEDERATION("federation", "Federation");
 
-	private String value;
-	private String displayName;
+	private final String value;
+	private final String displayName;
 
-	private static Map<String, GluuMetadataSourceType> mapByValues = new HashMap<String, GluuMetadataSourceType>();
+	private static final Map<String, GluuMetadataSourceType> mapByValues = new HashMap<String, GluuMetadataSourceType>();
 	static {
 		for (GluuMetadataSourceType enumType : values()) {
 			mapByValues.put(enumType.getValue(), enumType);
@@ -35,6 +35,7 @@ public enum GluuMetadataSourceType implements LdapEnum {
 		this.displayName = displayName;
 	}
 
+        @Override
 	public String getValue() {
 		return value;
 	}
@@ -47,6 +48,7 @@ public enum GluuMetadataSourceType implements LdapEnum {
 		return mapByValues.get(value);
 	}
 
+        @Override
 	public Enum<? extends LdapEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}

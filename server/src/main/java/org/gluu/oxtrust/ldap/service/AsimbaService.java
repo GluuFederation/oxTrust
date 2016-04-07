@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.gluu.asimba.util.ldap.LDAPUtility;
-import org.gluu.asimba.util.ldap.LdapConfigurationEntry;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.idp.LdapIDPEntry;
 import org.gluu.asimba.util.ldap.selector.ApplicationSelectorEntry;
@@ -35,6 +34,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.richfaces.model.UploadedFile;
+import org.xdi.config.oxtrust.LdapOxAsimbaConfiguration;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -67,9 +67,9 @@ public class AsimbaService implements Serializable {
     public void destroy() {        
     }
     
-    public LdapConfigurationEntry loadAsimbaConfiguration() {
+    public LdapOxAsimbaConfiguration loadAsimbaConfiguration() {
         String applianceDn = applianceService.getDnForAppliance();
-        LdapConfigurationEntry ldapConfiguration = ldapEntryManager.find(LdapConfigurationEntry.class, "ou=oxasimba,ou=configuration,"+applianceDn, null);
+        LdapOxAsimbaConfiguration ldapConfiguration = ldapEntryManager.find(LdapOxAsimbaConfiguration.class, "ou=oxasimba,ou=configuration,"+applianceDn, null);
         
         return ldapConfiguration;
     }

@@ -84,6 +84,7 @@ import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
+import org.gluu.saml.metadata.SAMLMetadataParser;
 
 /**
  * Action class for updating and adding the trust relationships
@@ -405,7 +406,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				+ Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator;
 		File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 		
-		List<String> entityIdList = Shibboleth2ConfService.instance().getEntityIdFromMetadataFile(metadataFile);
+		List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 		Set<String> entityIdSet = new TreeSet<String>();
 		if(entityIdList != null && ! entityIdList.isEmpty()){
 			Set<String> duplicatesSet = new TreeSet<String>(); 

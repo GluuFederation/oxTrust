@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.ldap.service.staus.ldap;
+package org.gluu.oxtrust.ldap.service.status.ldap;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

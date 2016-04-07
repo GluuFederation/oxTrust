@@ -45,7 +45,8 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
-import org.gluu.oxtrust.util.EntityIDHandler;
+import org.gluu.saml.metadata.EntityIDHandler;
+import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.oxtrust.util.GluuErrorHandler;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
@@ -285,7 +286,7 @@ public class Shibboleth2ConfService implements Serializable {
 				                            + SHIB2_IDP_METADATA_FOLDER
 				                            + File.separator;
 				File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
-				List<String> entityIds = getEntityIdFromMetadataFile(metadataFile);
+				List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 				// if for some reason metadata is corrupted or missing - mark
 				// trust relationship INACTIVE
 				// user will be able to fix this in UI
@@ -425,64 +426,7 @@ public class Shibboleth2ConfService implements Serializable {
 		return attrParams;
 	}
 
-	public List<String> getEntityIdFromMetadataFile(File metadataFile) {
-		if (!metadataFile.isFile()) {
-			return null;
-		}
-		EntityIDHandler handler = parseMetadata(metadataFile);
-
-		List<String> entityIds = handler.getEntityIDs();
-
-		if (entityIds == null || entityIds.isEmpty()) {
-			log.error("Failed to find entityId in metadata file '{0}'", metadataFile.getAbsolutePath());
-		}
-
-		return entityIds;
-	}
-
-	public List<String> getSpEntityIdFromMetadataFile(File metadataFile) {
-		EntityIDHandler handler = parseMetadata(metadataFile);
-
-		List<String> entityIds = handler.getSpEntityIDs();
-
-		if (entityIds == null || entityIds.isEmpty()) {
-			log.error("Failed to find entityId in metadata file '{0}'", metadataFile.getAbsolutePath());
-		}
-
-		return entityIds;
-	}
-
-	private EntityIDHandler parseMetadata(File metadataFile) {
-		if (!metadataFile.exists()) {
-			log.error("Failed to get entityId from metadata file '{0}'", metadataFile.getAbsolutePath());
-			return null;
-		}
-
-		InputStream is = null;
-		InputStreamReader isr = null;
-		EntityIDHandler handler = null;
-		try {
-			is = FileUtils.openInputStream(metadataFile);
-			SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-			SAXParser saxParser = saxParserFactory.newSAXParser();
-
-			handler = new EntityIDHandler();
-			is = FileUtils.openInputStream(metadataFile);
-			saxParser.parse(is, handler);
-
-		} catch (IOException ex) {
-			log.error("Failed to read metadata file '{0}'", ex, metadataFile.getAbsolutePath());
-		} catch (ParserConfigurationException e) {
-			log.error("Failed to confugure SAX parser for file '{0}'", e, metadataFile.getAbsolutePath());
-		} catch (SAXException e) {
-			log.error("Failed to parse file '{0}'", e, metadataFile.getAbsolutePath());
-		} finally {
-			IOUtils.closeQuietly(isr);
-			IOUtils.closeQuietly(is);
-		}
-
-		return handler;
-	}
+	
 
 	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams,
 			String idpMetadataFolder) {
@@ -750,7 +694,7 @@ public class Shibboleth2ConfService implements Serializable {
 		String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator + SHIB2_IDP_METADATA_FOLDER
 				+ File.separator;
 		File metadataFile = new File(idpMetadataFolder + spMetadataFileName);
-		List<String> entityId = getSpEntityIdFromMetadataFile(metadataFile);
+		List<String> entityId = SAMLMetadataParser.getSpEntityIdFromMetadataFile(metadataFile);
 		return (entityId != null) && !entityId.isEmpty();
 	}
 
@@ -1122,7 +1066,7 @@ public class Shibboleth2ConfService implements Serializable {
 		String metadataFolder = applicationConfiguration.getShibboleth2FederationRootDir() + File.separator + SHIB2_IDP_METADATA_FOLDER
 				+ File.separator;
 		File metadataFile = new File(metadataFolder + spMetaDataFN);
-		List<String> entityId = getEntityIdFromMetadataFile(metadataFile);
+		List<String> entityId = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 		return (entityId != null) && !entityId.isEmpty();
 	}
 
