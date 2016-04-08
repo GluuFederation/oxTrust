@@ -24,7 +24,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
-import org.gluu.oxtrust.util.GluuErrorHandler;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -40,6 +39,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.util.StringHelper;
+import org.xdi.xml.GluuErrorHandler;
 
 /**
  * @author �Oleksiy Tataryn�
@@ -140,7 +140,7 @@ public class MetadataValidationTimer {
 				GluuErrorHandler handler = null;
 				List<String> validationLog = null;
 				try {
-					handler = Shibboleth2ConfService.instance().validateMetadata(new FileInputStream(metadata));
+					handler = Shibboleth2ConfService.validateMetadata(new FileInputStream(metadata));
 				} catch (Exception e) {
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);

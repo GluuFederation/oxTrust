@@ -21,14 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -45,9 +40,7 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
-import org.gluu.saml.metadata.EntityIDHandler;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.gluu.oxtrust.util.GluuErrorHandler;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -78,6 +71,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
+import org.xdi.xml.GluuErrorHandler;
+import org.xdi.xml.XMLValidator;
 
 /**
  * Provides operations with attributes
@@ -1215,30 +1210,15 @@ public class Shibboleth2ConfService implements Serializable {
 	 * @throws IOException
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
+         * @return GluuErrorHandler
 	 */
-	public synchronized GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException,
-			IOException {
-		DocumentBuilderFactory newFactory = DocumentBuilderFactory.newInstance();
-		newFactory.setCoalescing(false);
-		newFactory.setExpandEntityReferences(true);
-		newFactory.setIgnoringComments(false);
-
-		newFactory.setIgnoringElementContentWhitespace(false);
-		newFactory.setNamespaceAware(true);
-		newFactory.setValidating(false);
-		DocumentBuilder xmlParser = newFactory.newDocumentBuilder();
-		Document xmlDoc = xmlParser.parse(stream);
+	public static GluuErrorHandler validateMetadata(InputStream stream) 
+                    throws ParserConfigurationException, SAXException, IOException {
 		String schemaDir = OxTrustConfiguration.DIR + "shibboleth2" + File.separator
 		                        + "idp" + File.separator + "schema" + File.separator;
 		Schema schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
-		Validator validator = schema.newValidator();
-		GluuErrorHandler handler = new GluuErrorHandler();
-		validator.setErrorHandler(handler);
-		validator.validate(new DOMSource(xmlDoc));
-
-
-		return handler;
-
+                
+		return XMLValidator.validateMetadata(stream, schema);
 	}
 
 }
