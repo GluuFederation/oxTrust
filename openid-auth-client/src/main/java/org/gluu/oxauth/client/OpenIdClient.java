@@ -305,6 +305,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 		logger.trace("userInfoResponse.getStatus(): '{}'", userInfoResponse.getStatus());
 		logger.trace("userInfoResponse.getErrorType(): '{}'", userInfoResponse.getErrorType());
+		logger.debug("userInfoResponse.getClaims(): '{}'", userInfoResponse.getClaims());
 
 		return userInfoResponse;
 	}

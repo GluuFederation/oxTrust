@@ -121,9 +121,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			String dateString = df.format(calendar.getTime());
 			stats.put(dateString, 0L);
 			calendar.add(Calendar.DATE, -1);
-
 		}
-		
+
 		if ((metrics == null) || (metrics.size() == 0)) {
 			return stats;
 		}
