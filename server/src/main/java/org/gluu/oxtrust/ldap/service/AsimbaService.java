@@ -56,20 +56,23 @@ public class AsimbaService implements Serializable {
     @In
     private LdapEntryManager ldapEntryManager;
     
+//    @In
+//    ApplianceService applianceService;
+    
     @In
-    ApplianceService applianceService;
+    OrganizationService organizationService;
      
     @Create
     public void init() {
     }
     
     @Destroy
-    public void destroy() {        
+    public void destroy() {
     }
     
     public LdapOxAsimbaConfiguration loadAsimbaConfiguration() {
-        String applianceDn = applianceService.getDnForAppliance();
-        LdapOxAsimbaConfiguration ldapConfiguration = ldapEntryManager.find(LdapOxAsimbaConfiguration.class, "ou=oxasimba,ou=configuration,"+applianceDn, null);
+        String organizationDn = organizationService.getDnForOrganization();
+        LdapOxAsimbaConfiguration ldapConfiguration = ldapEntryManager.find(LdapOxAsimbaConfiguration.class, "ou=oxasimba,"+organizationDn, null);
         
         return ldapConfiguration;
     }
@@ -234,11 +237,11 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     public String getDnForLdapIDPEntry(String inum) {
-        String applianceDn = applianceService.getDnForAppliance();
+        String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
-                return String.format("ou=idps,ou=oxasimba,ou=configuration,%s", applianceDn);
+                return String.format("ou=idps,ou=oxasimba,%s", organizationDn);
         }
-        return String.format("inum=%s,ou=idps,ou=oxasimba,ou=configuration,%s", inum, applianceDn);
+        return String.format("inum=%s,ou=idps,ou=oxasimba,%s", inum, organizationDn);
     }
     
     /**
@@ -249,11 +252,11 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     public String getDnForLDAPApplicationSelectorEntry(String inum) {
-        String applianceDn = applianceService.getDnForAppliance();
+        String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
-                return String.format("ou=selectors,ou=oxasimba,ou=configuration,%s", applianceDn);
+                return String.format("ou=selectors,ou=oxasimba,%s", organizationDn);
         }
-        return String.format("inum=%s,ou=selectors,ou=oxasimba,ou=configuration,%s", inum, applianceDn);
+        return String.format("inum=%s,ou=selectors,ou=oxasimba,%s", inum, organizationDn);
     }
     
     /**
@@ -264,11 +267,11 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     public String getDnForLDAPRequestorEntry(String inum) {
-        String applianceDn = applianceService.getDnForAppliance();
+        String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
-                return String.format("ou=requestors,ou=oxasimba,ou=configuration,%s", applianceDn);
+                return String.format("ou=requestors,ou=oxasimba,%s", organizationDn);
         }
-        return String.format("inum=%s,ou=requestors,ou=oxasimba,ou=configuration,%s", inum, applianceDn);
+        return String.format("inum=%s,ou=requestors,ou=oxasimba,%s", inum, organizationDn);
     }
     
     /**
@@ -279,11 +282,11 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     public String getDnForLDAPRequestorPoolEntry(String inum) {
-        String applianceDn = applianceService.getDnForAppliance();
+        String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
-                return String.format("ou=requestorpools,ou=oxasimba,ou=configuration,%s", applianceDn);
+                return String.format("ou=requestorpools,ou=oxasimba,%s", organizationDn);
         }
-        return String.format("inum=%s,ou=requestorpools,ou=oxasimba,ou=configuration,%s", inum, applianceDn);
+        return String.format("inum=%s,ou=requestorpools,ou=oxasimba,%s", inum, organizationDn);
     }
     
     /**
@@ -293,7 +296,7 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     private String generateInumImpl() {
-        String orgInum = applianceService.getApplianceInum();
+        String orgInum = organizationService.getDnForOrganization();
         return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(8);
     }
     
