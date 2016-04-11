@@ -332,7 +332,10 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 			profile.setLocale(getFirstClaim(userInfoResponse, JwtClaimName.LOCALE));
 		} else {
 			for (ClaimToAttributeMapping mapping : claimMappings) {
-				profile.addAttribute(mapping.getAttribute(), getFirstClaim(userInfoResponse, mapping.getClaim()));
+				String attribute = mapping.getAttribute();
+				String value = getFirstClaim(userInfoResponse, mapping.getClaim());
+				profile.addAttribute(attribute, value);
+				logger.info("Adding attribute '{}' with value '{}'", attribute, value);
 			}
 		}
 
