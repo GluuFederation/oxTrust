@@ -946,7 +946,6 @@
         }
     },
     "required": [
-        "mode",
         "issuer",
         "loginPage",
         "authorizationPage",
