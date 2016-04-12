@@ -118,10 +118,9 @@ public class RegisterPersonAction implements Serializable {
 	public String initPerson() {
 		String result = sanityCheck();
 		if (result.equals(OxTrustConstants.RESULT_SUCCESS)) {
-					
+
 			if(!externalUserRegistrationService.isEnabled()){
-				redirect.setViewId("/login.xhtml");
-				redirect.execute();
+				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}  
 				
 			this.person = (inum == null) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
