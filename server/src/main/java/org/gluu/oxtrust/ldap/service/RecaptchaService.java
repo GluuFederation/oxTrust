@@ -11,6 +11,7 @@ import java.io.Serializable;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -20,8 +21,9 @@ import org.jboss.seam.log.Log;
 /**
  * User: Dejan Maric
  */
-@Scope(ScopeType.EVENT)
-@Name("recaptcha")
+@Scope(ScopeType.STATELESS)
+@Name("recaptchaService")
+@AutoCreate
 public class RecaptchaService implements Serializable {
 	
 	@In
@@ -32,13 +34,13 @@ public class RecaptchaService implements Serializable {
 
 	private static final long serialVersionUID = 7725720511230443399L;
 
+	@Deprecated
 	public String getHtml() throws Exception {
 		return RecaptchaUtils.createRecaptchaHtml("Error");
 	}
 	
-	public boolean getRecaptchaResponse() {
-		RecaptchaUtils recaptchaUtils = new RecaptchaUtils();
-		return recaptchaUtils.getGoogleRecaptchaFromServletContext(oxTrustConfiguration.getApplicationConfiguration().getRecaptchUrl(),oxTrustConfiguration.getApplicationConfiguration().getRecaptchaSecretKey());
+	public boolean verifyRecaptchaResponse() {
+		return RecaptchaUtils.verifyGoogleRecaptchaFromServletContext(oxTrustConfiguration.getApplicationConfiguration().getRecaptchaSecretKey());
 	}
 
 }
