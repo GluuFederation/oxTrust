@@ -460,6 +460,16 @@
             "type": "string",
             "minLength": 1
         },
+        "recaptchaSiteKey": {
+            "id": "recaptchaSiteKey",
+            "type": "string",
+            "minLength": 1
+        },
+        "recaptchaSecretKey": {
+            "id": "recaptchaSecretKey",
+            "type": "string",
+            "minLength": 1
+        },
         "cssLocation": {
             "id": "cssLocation",
             "type": "string",
@@ -551,6 +561,8 @@
         "umaClientId",
         "umaClientKeyId",
         "umaResourceId",
+        "recaptchaSiteKey",
+        "recaptchaSecretKey",
         "umaScope",
         "cssLocation",
         "jsLocation"
