@@ -55,7 +55,7 @@ public @Data class PasswordReminderAction implements Serializable {
 	@In
 	private LdapEntryManager ldapEntryManager;
 	
-	@In(create = true,required = false, value = "recaptcha")
+	@In
 	private RecaptchaService recaptchaService;
 	
 	private static String MESSAGE_NOT_FOUND = "You (or someone else) entered this email when trying to change the password of %1$s identity server account.\n\n" 
@@ -79,7 +79,7 @@ public @Data class PasswordReminderAction implements Serializable {
 
 
 	public String requestReminder() throws Exception {
-		boolean reCaptchaResponse = recaptchaService.getRecaptchaResponse();
+		boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse();
 		if (reCaptchaResponse && enabled()) {
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);

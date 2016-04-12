@@ -45,7 +45,7 @@ public @Data class PasswordResetAction implements Serializable {
 	@In
 	private LdapEntryManager ldapEntryManager;
 	
-	@In(create = true,required = false, value = "recaptcha")
+	@In
 	private RecaptchaService recaptchaService;
 
 	
@@ -89,7 +89,7 @@ public @Data class PasswordResetAction implements Serializable {
 	}
 	
 	public String update() throws ParseException{		
-		boolean reCaptchaResponse = recaptchaService.getRecaptchaResponse();
+		boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse();
 		if (reCaptchaResponse) {
 			GluuAppliance appliance = ApplianceService.instance().getAppliance();
 			this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
