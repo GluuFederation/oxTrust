@@ -318,11 +318,11 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 			id = getFirstClaim(userInfoResponse, JwtClaimName.SUBJECT_IDENTIFIER);
 		}
 		profile.setId(id);
-		profile.setUserName(id);
 
 		List<ClaimToAttributeMapping> claimMappings = this.appConfiguration.getOpenIdClaimMapping();
 		if ((claimMappings == null) || (claimMappings.size() == 0)) {
 			logger.info("Using default claims to attributes mapping");
+			profile.setUserName(id);
 			profile.setEmail(getFirstClaim(userInfoResponse, JwtClaimName.EMAIL));
 	
 			profile.setDisplayName(getFirstClaim(userInfoResponse, JwtClaimName.NAME));
@@ -335,7 +335,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 				String attribute = mapping.getAttribute();
 				String value = getFirstClaim(userInfoResponse, mapping.getClaim());
 				profile.addAttribute(attribute, value);
-				logger.info("Adding attribute '{}' with value '{}'", attribute, value);
+				logger.trace("Adding attribute '{}' with value '{}'", attribute, value);
 			}
 		}
 
