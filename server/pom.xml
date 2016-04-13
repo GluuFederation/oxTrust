@@ -229,6 +229,13 @@
 					</webResources>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+    			<artifactId>maven-war-plugin</artifactId>
+    			<configuration>
+        		<attachClasses>true</attachClasses>
+    			</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
