@@ -15,7 +15,6 @@
 
 	<properties>
 		<jndiPattern>java:app/oxtrust-ejb/#{ejbName}</jndiPattern>
-
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<buildDate>${maven.build.timestamp}</buildDate>
 	</properties>
@@ -416,6 +415,11 @@
 					<groupId>org.antlr</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>${antlr4.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>

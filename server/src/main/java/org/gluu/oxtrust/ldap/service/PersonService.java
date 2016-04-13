@@ -17,6 +17,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.User;
+import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.AttributeData;
@@ -30,6 +31,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.SortOrder;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -62,6 +64,9 @@ public class PersonService implements Serializable, IPersonService {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+
+	@In
+	private ScimFilterParserService scimFilterParserService;
 
 	private List<GluuCustomAttribute> mandatoryAttributes;
 
@@ -200,6 +205,43 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes)  {
 		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, null);
+
+		return result;
+	}
+
+	@Override
+	public List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, String[] returnAttributes) throws Exception {
+
+		log.info("----------");
+
+		Filter filter = null;
+		if (filterString == null || (filterString != null && filterString.isEmpty())) {
+			filter = Filter.create("inum=*");
+		} else {
+			filter = scimFilterParserService.createFilter(filterString);
+		}
+
+		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
+
+		SortOrder sortOrderEnum = null;
+		if (sortOrder != null && !sortOrder.isEmpty()) {
+			sortOrderEnum = SortOrder.getByValue(sortOrder);
+		} else if (sortBy != null && (sortOrder == null || (sortOrder != null && sortOrder.isEmpty()))) {
+			sortOrderEnum = SortOrder.ASCENDING;
+		} else {
+			sortOrderEnum = SortOrder.ASCENDING;
+		}
+
+		log.info(" filter string = " + filterString);
+		log.info(" parsed string = " + filter.toString());
+		log.info(" startIndex = " + startIndex);
+		log.info(" count = " + count);
+		log.info(" sortBy = " + sortBy);
+		log.info(" sortOrder = " + sortOrderEnum.getValue());
+
+		List<GluuCustomPerson> result = ldapEntryManager.findEntriesVirtualListView(getDnForPerson(null), GluuCustomPerson.class, filter, startIndex, count, sortBy, sortOrderEnum, returnAttributes);
+
+		log.info("----------");
 
 		return result;
 	}

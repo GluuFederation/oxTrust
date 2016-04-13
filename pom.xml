@@ -12,7 +12,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.min-version>3.0.3</maven.min-version>
-
 		<seam.version>2.3.1.Final</seam.version>
 		<richfaces.version>4.3.7.Final</richfaces.version>
 		<hibernate.version>4.1.8.Final</hibernate.version>
@@ -27,6 +26,8 @@
 		<oxcore.version>2.4.3-SNAPSHOT</oxcore.version>
 		<oxauth.version>2.4.3-SNAPSHOT</oxauth.version>
 		<swagger.version>1.5.3-M1</swagger.version>
+		<antlr4.version>4.5.2-1</antlr4.version>
+		<antlr4.visitor>true</antlr4.visitor>
 	</properties>
 
 	<prerequisites>

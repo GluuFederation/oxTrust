@@ -188,13 +188,13 @@ public final class OxTrustConstants extends OxConstants {
      * The HTTP query parameter used in a URI to specify the starting index for
      * page results.
      */
-    public static final String QUERY_PARAMETER_PAGE_START_INDEX = "startIndex";
+    public static final String QUERY_PARAMETER_START_INDEX = "startIndex";
 
     /**
      * The HTTP query parameter used in a URI to specify the maximum size of a
      * page of results.
      */
-    public static final String QUERY_PARAMETER_PAGE_SIZE = "count";
+    public static final String QUERY_PARAMETER_COUNT = "count";
 
     public static final String PRE_REGISTRATION_SCRIPT = "PreRegistrationScript";
 

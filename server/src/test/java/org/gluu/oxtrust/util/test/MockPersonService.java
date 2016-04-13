@@ -59,6 +59,9 @@ public class MockPersonService implements IPersonService {
 	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes) {
 		throw new IllegalStateException("Not Implemented");
 	}
+	public List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, String[] returnAttributes) throws Exception {
+		throw new IllegalStateException("Not Implemented");
+	}
 
 	public List<GluuCustomPerson> findPersonsByUids(List<String> uids, String[] returnAttributes) throws Exception {
 		throw new IllegalStateException("Not Implemented");

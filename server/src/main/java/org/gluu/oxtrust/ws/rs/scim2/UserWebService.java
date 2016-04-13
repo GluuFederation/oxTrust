@@ -60,12 +60,17 @@ public class UserWebService extends BaseScimWebService {
 	private IPersonService personService;
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@ApiOperation(value = "List Users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4)", response = ListResponse.class)
-	public Response listUsers(@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
+	@Produces(MediaType.APPLICATION_JSON)
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "List Users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
+	public Response listUsers(
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
+	    @QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
+	    @QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
+
 		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
@@ -74,29 +79,42 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
-			log.info(" getting a list of all users from LDAP ");
-			List<GluuCustomPerson> personList = personService.findAllPersons(null);
+
+			log.info(" Searching users from LDAP ");
+
+			List<GluuCustomPerson> personList = personService.searchUsers(filterString, startIndex, count, sortBy, sortOrder, null);
+			// List<GluuCustomPerson> personList = personService.findAllPersons(null);
+
 			ListResponse personsListResponse = new ListResponse();
-			if (personList != null) {
-				log.info(" LDAP person list is not empty ");
+			if (personList != null && !personList.isEmpty()) {
+
+				// log.info(" LDAP person list is not empty ");
+
 				for (GluuCustomPerson gluuPerson : personList) {
-					log.info(" copying person from GluuPerson to ScimPerson ");
+
+					// log.info(" copying person from GluuPerson to ScimPerson ");
 					User person = CopyUtils2.copy(gluuPerson, null);
 
-					log.info(" adding ScimPerson to the AllPersonList ");
+					// log.info(" adding ScimPerson to the AllPersonList ");
 					log.info(" person to be added userid : " + person.getUserName());
+
 					personsListResponse.getResources().add(person);
+
 					log.info(" person added? : " + personsListResponse.getResources().contains(person));
 				}
-
 			}
+
 			List<String> schema = new ArrayList<String>();
 			schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+
 			log.info("setting schema");
 			personsListResponse.setSchemas(schema);
 			personsListResponse.setTotalResults(personsListResponse.getResources().size());
+
 			URI location = new URI("/v2/Users/");
+
 			return Response.ok(personsListResponse).location(location).build();
+
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
