@@ -20,6 +20,10 @@
                 margin-bottom: 0px;
             }
         </style>
+        
+        <s:fragment>
+	        <script src="https://www.google.com/recaptcha/api.js" async="async" defer="defer"></script>
+        </s:fragment>
     </ui:define>
 
     <ui:define name="body">
@@ -157,10 +161,8 @@
                                             <!-- End Passwords -->
                                         </div>
                                         <!-- Captcha -->
-                                        <div id="captchaHolder">
-                                            <h:outputText value="#{recaptchaService.html}" escape="false"
-                                                          rendered="#{not registerPersonAction.captchaDisabled}"/>
-                                        </div>
+                                        <h:panelGroup rendered="#{not registerPersonAction.captchaDisabled}"><div class="g-recaptcha" data-sitekey="#{oxTrustConfiguration.applicationConfiguration.recaptchaSiteKey}">
+										</div></h:panelGroup>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div id="updateButtons" style="margin-top: 20px;">
