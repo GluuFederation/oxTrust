@@ -161,8 +161,10 @@
                                             <!-- End Passwords -->
                                         </div>
                                         <!-- Captcha -->
-                                        <h:panelGroup rendered="#{not registerPersonAction.captchaDisabled}"><div class="g-recaptcha" data-sitekey="#{oxTrustConfiguration.applicationConfiguration.recaptchaSiteKey}">
-										</div></h:panelGroup>
+                                        <h:panelGroup rendered="#{not registerPersonAction.captchaDisabled}">
+                                        <div class="g-recaptcha" data-sitekey="#{oxTrustConfiguration.applicationConfiguration.recaptchaSiteKey}">
+										</div>
+										</h:panelGroup>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div id="updateButtons" style="margin-top: 20px;">
