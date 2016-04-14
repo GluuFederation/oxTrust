@@ -247,7 +247,7 @@ public class CacheRefreshTimer {
 		LdapServerConnection[] sourceServerConnections = prepareLdapServerConnections(cacheRefreshConfiguration, cacheRefreshConfiguration.getSourceConfigs());
 
 		LdapServerConnection inumDbServerConnection;
-		if (ApplianceService.instance().getAppliance().isUseDefaultCacheRefreshInumServer()) {
+		if (cacheRefreshConfiguration.isDefaultInumServer()) {
 			GluuLdapConfiguration ldapInumConfiguration = new GluuLdapConfiguration();
 			ldapInumConfiguration.setConfigId("local_inum");
 			ldapInumConfiguration.setBaseDNsStringsList(Arrays.asList(new String[] { OxTrustConstants.CACHE_REFRESH_DEFAULT_BASE_DN }));

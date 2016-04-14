@@ -158,6 +158,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 			cacheRefreshConfiguration.setKeyObjectClasses(new ArrayList<String>());
 			cacheRefreshConfiguration.setSourceAttributes(new ArrayList<String>());
 			cacheRefreshConfiguration.setAttributeMapping(new ArrayList<CacheRefreshAttributeMapping>());
+			cacheRefreshConfiguration.setDefaultInumServer(true);
 		}
 		
 		this.updateMethod = CacheRefreshUpdateMethod.getByValue(cacheRefreshConfiguration.getUpdateMethod());
