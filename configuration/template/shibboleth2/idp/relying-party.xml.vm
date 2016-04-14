@@ -1,28 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-    This file is an EXAMPLE configuration file.
-
-    This file specifies relying party dependent configurations for the IdP, for example, whether SAML assertions to a
-    particular relying party should be signed.  It also includes metadata provider and credential definitions used
-    when answering requests to a relying party.
--->
-
-<rp:RelyingPartyGroup xmlns:rp="urn:mace:shibboleth:2.0:relying-party"
-                   xmlns:saml="urn:mace:shibboleth:2.0:relying-party:saml"
-                   xmlns:metadata="urn:mace:shibboleth:2.0:metadata"
-                   xmlns:resource="urn:mace:shibboleth:2.0:resource"
-                   xmlns:security="urn:mace:shibboleth:2.0:security"
-                   xmlns:samlsec="urn:mace:shibboleth:2.0:security:saml"
-                   xmlns:samlmd="urn:oasis:names:tc:SAML:2.0:metadata"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="urn:mace:shibboleth:2.0:relying-party classpath:/schema/shibboleth-2.0-relying-party.xsd
-                                       urn:mace:shibboleth:2.0:relying-party:saml classpath:/schema/shibboleth-2.0-relying-party-saml.xsd
-                                       urn:mace:shibboleth:2.0:metadata classpath:/schema/shibboleth-2.0-metadata.xsd
-                                       urn:mace:shibboleth:2.0:resource classpath:/schema/shibboleth-2.0-resource.xsd
-                                       urn:mace:shibboleth:2.0:security classpath:/schema/shibboleth-2.0-security.xsd
-                                       urn:mace:shibboleth:2.0:security:saml classpath:/schema/shibboleth-2.0-security-policy-saml.xsd
-                                       urn:oasis:names:tc:SAML:2.0:metadata classpath:/schema/saml-schema-metadata-2.0.xsd">
+<rp:RelyingPartyGroup xmlns:rp="urn:mace:shibboleth:2.0:relying-party" xmlns:saml="urn:mace:shibboleth:2.0:relying-party:saml" 
+                      xmlns:metadata="urn:mace:shibboleth:2.0:metadata" xmlns:resource="urn:mace:shibboleth:2.0:resource" 
+                      xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:samlsec="urn:mace:shibboleth:2.0:security:saml" 
+                      xmlns:samlmd="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                      xsi:schemaLocation="urn:mace:shibboleth:2.0:relying-party classpath:/schema/shibboleth-2.0-relying-party.xsd
+                                          urn:mace:shibboleth:2.0:relying-party:saml classpath:/schema/shibboleth-2.0-relying-party-saml.xsd
+                                          urn:mace:shibboleth:2.0:metadata classpath:/schema/shibboleth-2.0-metadata.xsd
+                                          urn:mace:shibboleth:2.0:resource classpath:/schema/shibboleth-2.0-resource.xsd 
+                                          urn:mace:shibboleth:2.0:security classpath:/schema/shibboleth-2.0-security.xsd
+                                          urn:mace:shibboleth:2.0:security:saml classpath:/schema/shibboleth-2.0-security-policy-saml.xsd
+                                          urn:oasis:names:tc:SAML:2.0:metadata classpath:/schema/saml-schema-metadata-2.0.xsd">
 
     <!-- ========================================== -->
     <!--      Relying Party Configurations          -->
