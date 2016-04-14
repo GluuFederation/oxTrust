@@ -13,6 +13,9 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.Error;
 import org.gluu.oxtrust.model.scim.Errors;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.ErrorResponse;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.annotations.In;
@@ -22,6 +25,9 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.util.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base methods for SCIM web services
@@ -92,4 +98,20 @@ public class BaseScimWebService {
 		return Response.status(statusCode).entity(errors).build();
 	}
 
+	protected Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
+
+		log.info(" Error: " + scimType.getValue() + ", detail = " + detail + ", code = " + status.getStatusCode());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+
+		List<String> schemas = new ArrayList<String>();
+		schemas.add(Constants.ERROR_RESPONSE_URI);
+		errorResponse.setSchemas(schemas);
+
+		errorResponse.setStatus(String.valueOf(status.getStatusCode()));
+		errorResponse.setScimType(scimType);
+		errorResponse.setDetail(detail);
+
+		return Response.status(status).entity(errorResponse).build();
+	}
 }

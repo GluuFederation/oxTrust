@@ -21,5 +21,9 @@ public interface Constants {
 
     String GROUP_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:Group";
     String SERVICE_PROVIDER_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
-    int MAX_RESULT = 100;
+
+    String ERROR_RESPONSE_URI = "urn:ietf:params:scim:api:messages:2.0:Error";
+
+    int DEFAULT_COUNT = 10;
+    int MAX_COUNT = 100;
 }
