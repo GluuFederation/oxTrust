@@ -41,6 +41,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.xdi.ldap.model.VirtualListViewResponse;
 
 /**
  * scim2UserEndpoint Implementation
@@ -82,7 +83,9 @@ public class UserWebService extends BaseScimWebService {
 
 			log.info(" Searching users from LDAP ");
 
-			List<GluuCustomPerson> personList = personService.searchUsers(filterString, startIndex, count, sortBy, sortOrder, null);
+			VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+
+			List<GluuCustomPerson> personList = personService.searchUsers(filterString, startIndex, count, sortBy, sortOrder, vlvResponse, null);
 			// List<GluuCustomPerson> personList = personService.findAllPersons(null);
 
 			ListResponse personsListResponse = new ListResponse();
@@ -109,7 +112,11 @@ public class UserWebService extends BaseScimWebService {
 
 			log.info("setting schema");
 			personsListResponse.setSchemas(schema);
-			personsListResponse.setTotalResults(personsListResponse.getResources().size());
+
+			// Set results info
+			personsListResponse.setTotalResults(vlvResponse.getTotalResults());
+			personsListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
+			personsListResponse.setStartIndex(vlvResponse.getStartIndex());
 
 			URI location = new URI("/v2/Users/");
 
