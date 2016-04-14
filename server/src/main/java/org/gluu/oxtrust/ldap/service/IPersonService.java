@@ -8,6 +8,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.AttributeData;
+import org.xdi.ldap.model.VirtualListViewResponse;
 
 public interface IPersonService {
 
@@ -78,7 +79,7 @@ public interface IPersonService {
 			throws Exception;
 
 	public abstract List<GluuCustomPerson> findAllPersons(String[] returnAttributes);
-	public abstract List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, String[] returnAttributes) throws Exception;
+	public abstract List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String[] returnAttributes) throws Exception;
 
 	public abstract List<GluuCustomPerson> findPersonsByUids(List<String> uids, String[] returnAttributes) throws Exception;
 

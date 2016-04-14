@@ -13,6 +13,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.model.GluuAttribute;
 
 @Scope(ScopeType.STATELESS)
@@ -59,7 +60,7 @@ public class MockPersonService implements IPersonService {
 	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes) {
 		throw new IllegalStateException("Not Implemented");
 	}
-	public List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, String[] returnAttributes) throws Exception {
+	public List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String[] returnAttributes) throws Exception {
 		throw new IllegalStateException("Not Implemented");
 	}
 

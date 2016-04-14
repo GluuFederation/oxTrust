@@ -32,6 +32,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.SortOrder;
+import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -210,7 +211,7 @@ public class PersonService implements Serializable, IPersonService {
 	}
 
 	@Override
-	public List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, String[] returnAttributes) throws Exception {
+	public List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String[] returnAttributes) throws Exception {
 
 		log.info("----------");
 
@@ -239,8 +240,12 @@ public class PersonService implements Serializable, IPersonService {
 		log.info(" sortBy = " + sortBy);
 		log.info(" sortOrder = " + sortOrderEnum.getValue());
 
-		List<GluuCustomPerson> result = ldapEntryManager.findEntriesVirtualListView(getDnForPerson(null), GluuCustomPerson.class, filter, startIndex, count, sortBy, sortOrderEnum, returnAttributes);
+		List<GluuCustomPerson> result = ldapEntryManager.findEntriesVirtualListView(getDnForPerson(null), GluuCustomPerson.class, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, returnAttributes);
 
+		log.info(" ### RESULTS INFO ###");
+		log.info(" totalResults = " + vlvResponse.getTotalResults());
+		log.info(" itemsPerPage = " + vlvResponse.getItemsPerPage());
+		log.info(" startIndex = " + vlvResponse.getStartIndex());
 		log.info("----------");
 
 		return result;
