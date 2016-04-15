@@ -86,7 +86,8 @@ public class UserWebService extends BaseScimWebService {
 
 			if (count > MAX_COUNT) {
 
-				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, "Too many results would be returned; max is " + MAX_COUNT + " only.");
+				String detail = "Too many results would be returned (" + count + "); max is " + MAX_COUNT + " only.";
+				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {
 
@@ -98,7 +99,17 @@ public class UserWebService extends BaseScimWebService {
 				// List<GluuCustomPerson> personList = personService.findAllPersons(null);
 
 				ListResponse personsListResponse = new ListResponse();
-				if (personList != null && !personList.isEmpty()) {
+
+				List<String> schema = new ArrayList<String>();
+				schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+
+				log.info(" setting schema");
+				personsListResponse.setSchemas(schema);
+
+				// Set total
+				personsListResponse.setTotalResults(vlvResponse.getTotalResults());
+
+				if (count > 0 && personList != null && !personList.isEmpty()) {
 
 					// log.info(" LDAP person list is not empty ");
 
@@ -114,18 +125,11 @@ public class UserWebService extends BaseScimWebService {
 
 						log.info(" person added? : " + personsListResponse.getResources().contains(person));
 					}
+
+					// Set the rest of results info
+					personsListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
+					personsListResponse.setStartIndex(vlvResponse.getStartIndex());
 				}
-
-				List<String> schema = new ArrayList<String>();
-				schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
-
-				log.info(" setting schema");
-				personsListResponse.setSchemas(schema);
-
-				// Set results info
-				personsListResponse.setTotalResults(vlvResponse.getTotalResults());
-				personsListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
-				personsListResponse.setStartIndex(vlvResponse.getStartIndex());
 
 				URI location = new URI("/v2/Users/");
 
@@ -133,8 +137,11 @@ public class UserWebService extends BaseScimWebService {
 			}
 
 		} catch (Exception ex) {
+
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			String detail = "Unexpected processing error; please check the input parameters.";
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, detail);
 		}
 	}
 

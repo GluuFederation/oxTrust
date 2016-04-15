@@ -24,6 +24,6 @@ public interface Constants {
 
     String ERROR_RESPONSE_URI = "urn:ietf:params:scim:api:messages:2.0:Error";
 
-    int DEFAULT_COUNT = 10;
+    int DEFAULT_COUNT = 0;
     int MAX_COUNT = 100;
 }
