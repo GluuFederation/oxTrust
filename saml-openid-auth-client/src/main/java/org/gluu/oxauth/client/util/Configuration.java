@@ -68,7 +68,18 @@ public final class Configuration {
 		static Configuration INSTANCE = new Configuration();
 	}
 
+	private AppConfiguration appConfiguration;
+
+	private OpenIdConfigurationResponse openIdConfiguration;
+
 	private Configuration() {
+    	SamlConfiguration samlConfiguration = SamlConfiguration.instance();
+    	this.appConfiguration = samlConfiguration.getAppConfiguration();
+
+    	OpenIdClient<AppConfiguration, LdapAppConfiguration> openIdClient = new OpenIdClient<AppConfiguration, LdapAppConfiguration>(samlConfiguration);
+    	openIdClient.init();
+
+    	this.openIdConfiguration = openIdClient.getOpenIdConfiguration();
 	}
 
 	public static Configuration instance() {
@@ -76,10 +87,6 @@ public final class Configuration {
 	}
 
 	public String getPropertyValue(String propertyName) {
-    	SamlConfiguration samlConfiguration = SamlConfiguration.instance();
-    	AppConfiguration appConfiguration = samlConfiguration.getAppConfiguration();
-    	OpenIdClient<AppConfiguration, LdapAppConfiguration> openIdClient = new OpenIdClient<AppConfiguration, LdapAppConfiguration>(samlConfiguration);
-    	OpenIdConfigurationResponse openIdConfiguration = openIdClient.getOpenIdConfiguration();
 
     	if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, propertyName)) {
     		return openIdConfiguration.getAuthorizationEndpoint();
