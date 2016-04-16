@@ -13,8 +13,6 @@ import java.util.List;
 import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 
-import lombok.EqualsAndHashCode;
-
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
@@ -23,7 +21,6 @@ import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
@@ -38,7 +35,6 @@ import org.xdi.util.security.StringEncrypter;
  */
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuAppliance" })
-@EqualsAndHashCode(callSuper=false)
 public class GluuAppliance extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = -1817003894646725601L;
@@ -227,9 +223,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "passwordResetAllowed")
 	private GluuBoolean passwordResetAllowed;
-	
-	@LdapAttribute(name = "defaultCacheRefreshInumServer")
-	private GluuBoolean defaultCacheRefreshInumServer;
 
 	@LdapAttribute(name = "oxTrustStoreConf")
 	@LdapJsonObject
@@ -788,23 +781,5 @@ public class GluuAppliance extends InumEntry implements Serializable {
     public void setWhitePagesEnabled(GluuBoolean whitePagesEnabled) {
         this.whitePagesEnabled = whitePagesEnabled;
     }
-
-	public GluuBoolean getDefaultCacheRefreshInumServer() {
-		return defaultCacheRefreshInumServer;
-	}
-
-	public void setDefaultCacheRefreshInumServer(
-			GluuBoolean defaultCacheRefreshInumServer) {
-		this.defaultCacheRefreshInumServer = defaultCacheRefreshInumServer;
-	}
-	
-	public boolean isUseDefaultCacheRefreshInumServer() {
-		log.info("defaultCacheRefreshInumServer  :  " + defaultCacheRefreshInumServer);
-		return defaultCacheRefreshInumServer.isBooleanValue();
-	}
-
-	public void setUseDefaultCacheRefreshInumServer(boolean useDefaultCacheRefreshInumServer) {
-		this.defaultCacheRefreshInumServer = useDefaultCacheRefreshInumServer ? GluuBoolean.TRUE : GluuBoolean.FALSE ;
-	}
 
 }

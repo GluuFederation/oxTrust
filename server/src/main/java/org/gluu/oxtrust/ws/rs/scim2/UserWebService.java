@@ -30,6 +30,7 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.util.CopyUtils2;
@@ -42,6 +43,8 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.VirtualListViewResponse;
+
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 
 /**
  * scim2UserEndpoint Implementation
@@ -81,50 +84,64 @@ public class UserWebService extends BaseScimWebService {
 
 		try {
 
-			log.info(" Searching users from LDAP ");
+			if (count > MAX_COUNT) {
 
-			VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+				String detail = "Too many results would be returned (" + count + "); max is " + MAX_COUNT + " only.";
+				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
-			List<GluuCustomPerson> personList = personService.searchUsers(filterString, startIndex, count, sortBy, sortOrder, vlvResponse, null);
-			// List<GluuCustomPerson> personList = personService.findAllPersons(null);
+			} else {
 
-			ListResponse personsListResponse = new ListResponse();
-			if (personList != null && !personList.isEmpty()) {
+				log.info(" Searching users from LDAP ");
 
-				// log.info(" LDAP person list is not empty ");
+				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
-				for (GluuCustomPerson gluuPerson : personList) {
+				List<GluuCustomPerson> personList = personService.searchUsers(filterString, startIndex, count, sortBy, sortOrder, vlvResponse, null);
+				// List<GluuCustomPerson> personList = personService.findAllPersons(null);
 
-					// log.info(" copying person from GluuPerson to ScimPerson ");
-					User person = CopyUtils2.copy(gluuPerson, null);
+				ListResponse personsListResponse = new ListResponse();
 
-					// log.info(" adding ScimPerson to the AllPersonList ");
-					log.info(" person to be added userid : " + person.getUserName());
+				List<String> schema = new ArrayList<String>();
+				schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
 
-					personsListResponse.getResources().add(person);
+				log.info(" setting schema");
+				personsListResponse.setSchemas(schema);
 
-					log.info(" person added? : " + personsListResponse.getResources().contains(person));
+				// Set total
+				personsListResponse.setTotalResults(vlvResponse.getTotalResults());
+
+				if (count > 0 && personList != null && !personList.isEmpty()) {
+
+					// log.info(" LDAP person list is not empty ");
+
+					for (GluuCustomPerson gluuPerson : personList) {
+
+						// log.info(" copying person from GluuPerson to ScimPerson ");
+						User person = CopyUtils2.copy(gluuPerson, null);
+
+						// log.info(" adding ScimPerson to the AllPersonList ");
+						log.info(" person to be added userid : " + person.getUserName());
+
+						personsListResponse.getResources().add(person);
+
+						log.info(" person added? : " + personsListResponse.getResources().contains(person));
+					}
+
+					// Set the rest of results info
+					personsListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
+					personsListResponse.setStartIndex(vlvResponse.getStartIndex());
 				}
+
+				URI location = new URI("/v2/Users/");
+
+				return Response.ok(personsListResponse).location(location).build();
 			}
 
-			List<String> schema = new ArrayList<String>();
-			schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
-
-			log.info("setting schema");
-			personsListResponse.setSchemas(schema);
-
-			// Set results info
-			personsListResponse.setTotalResults(vlvResponse.getTotalResults());
-			personsListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
-			personsListResponse.setStartIndex(vlvResponse.getStartIndex());
-
-			URI location = new URI("/v2/Users/");
-
-			return Response.ok(personsListResponse).location(location).build();
-
 		} catch (Exception ex) {
+
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			String detail = "Unexpected processing error; please check the input parameters.";
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, detail);
 		}
 	}
 

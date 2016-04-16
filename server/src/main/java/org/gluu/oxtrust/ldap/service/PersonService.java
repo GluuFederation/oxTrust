@@ -39,6 +39,9 @@ import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
 
+import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+
 /**
  * Provides operations with persons
  * 
@@ -214,6 +217,12 @@ public class PersonService implements Serializable, IPersonService {
 	public List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String[] returnAttributes) throws Exception {
 
 		log.info("----------");
+		log.info(" ### RAW PARAMS ###");
+		log.info(" filter string = " + filterString);
+		log.info(" startIndex = " + startIndex);
+		log.info(" count = " + count);
+		log.info(" sortBy = " + sortBy);
+		log.info(" sortOrder = " + sortOrder);
 
 		Filter filter = null;
 		if (filterString == null || (filterString != null && filterString.isEmpty())) {
@@ -221,6 +230,11 @@ public class PersonService implements Serializable, IPersonService {
 		} else {
 			filter = scimFilterParserService.createFilter(filterString);
 		}
+
+		count = (count < 1) ? DEFAULT_COUNT : count;
+		count = (count > MAX_COUNT) ? MAX_COUNT : count;
+
+		startIndex = (startIndex < 1) ? 1 : startIndex;
 
 		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
 
@@ -233,8 +247,8 @@ public class PersonService implements Serializable, IPersonService {
 			sortOrderEnum = SortOrder.ASCENDING;
 		}
 
-		log.info(" filter string = " + filterString);
-		log.info(" parsed string = " + filter.toString());
+		log.info(" ### CONVERTED PARAMS ###");
+		log.info(" parsed filter = " + filter.toString());
 		log.info(" startIndex = " + startIndex);
 		log.info(" count = " + count);
 		log.info(" sortBy = " + sortBy);

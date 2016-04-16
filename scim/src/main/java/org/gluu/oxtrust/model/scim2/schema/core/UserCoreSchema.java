@@ -9,7 +9,7 @@ package org.gluu.oxtrust.model.scim2.schema.core;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 
 /**
- * Represents the User Extension schema.
+ * Represents the User Core schema.
  *
  * @author Val Pecaoco
  */
