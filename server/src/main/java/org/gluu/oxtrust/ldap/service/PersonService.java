@@ -17,7 +17,6 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.User;
-import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.AttributeData;
@@ -31,16 +30,11 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
-
-import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 
 /**
  * Provides operations with persons
@@ -68,9 +62,6 @@ public class PersonService implements Serializable, IPersonService {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
-
-	@In
-	private ScimFilterParserService scimFilterParserService;
 
 	private List<GluuCustomAttribute> mandatoryAttributes;
 
@@ -209,58 +200,6 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes)  {
 		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, null);
-
-		return result;
-	}
-
-	@Override
-	public List<GluuCustomPerson> searchUsers(String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String[] returnAttributes) throws Exception {
-
-		log.info("----------");
-		log.info(" ### RAW PARAMS ###");
-		log.info(" filter string = " + filterString);
-		log.info(" startIndex = " + startIndex);
-		log.info(" count = " + count);
-		log.info(" sortBy = " + sortBy);
-		log.info(" sortOrder = " + sortOrder);
-
-		Filter filter = null;
-		if (filterString == null || (filterString != null && filterString.isEmpty())) {
-			filter = Filter.create("inum=*");
-		} else {
-			filter = scimFilterParserService.createFilter(filterString);
-		}
-
-		count = (count < 1) ? DEFAULT_COUNT : count;
-		count = (count > MAX_COUNT) ? MAX_COUNT : count;
-
-		startIndex = (startIndex < 1) ? 1 : startIndex;
-
-		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
-
-		SortOrder sortOrderEnum = null;
-		if (sortOrder != null && !sortOrder.isEmpty()) {
-			sortOrderEnum = SortOrder.getByValue(sortOrder);
-		} else if (sortBy != null && (sortOrder == null || (sortOrder != null && sortOrder.isEmpty()))) {
-			sortOrderEnum = SortOrder.ASCENDING;
-		} else {
-			sortOrderEnum = SortOrder.ASCENDING;
-		}
-
-		log.info(" ### CONVERTED PARAMS ###");
-		log.info(" parsed filter = " + filter.toString());
-		log.info(" startIndex = " + startIndex);
-		log.info(" count = " + count);
-		log.info(" sortBy = " + sortBy);
-		log.info(" sortOrder = " + sortOrderEnum.getValue());
-
-		List<GluuCustomPerson> result = ldapEntryManager.findEntriesVirtualListView(getDnForPerson(null), GluuCustomPerson.class, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, returnAttributes);
-
-		log.info(" ### RESULTS INFO ###");
-		log.info(" totalResults = " + vlvResponse.getTotalResults());
-		log.info(" itemsPerPage = " + vlvResponse.getItemsPerPage());
-		log.info(" startIndex = " + vlvResponse.getStartIndex());
-		log.info("----------");
 
 		return result;
 	}

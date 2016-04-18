@@ -45,6 +45,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.UserFilterVisitor.getLdapAttributeName;
 
 /**
  * scim2UserEndpoint Implementation
@@ -86,7 +87,7 @@ public class UserWebService extends BaseScimWebService {
 
 			if (count > MAX_COUNT) {
 
-				String detail = "Too many results would be returned (" + count + "); max is " + MAX_COUNT + " only.";
+				String detail = "Too many results (=" + count + ") would be returned; max is " + MAX_COUNT + " only.";
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {
@@ -95,7 +96,7 @@ public class UserWebService extends BaseScimWebService {
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
-				List<GluuCustomPerson> personList = personService.searchUsers(filterString, startIndex, count, sortBy, sortOrder, vlvResponse, null);
+				List<GluuCustomPerson> personList = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, getLdapAttributeName(sortBy), sortOrder, vlvResponse, null);
 				// List<GluuCustomPerson> personList = personService.findAllPersons(null);
 
 				ListResponse personsListResponse = new ListResponse();

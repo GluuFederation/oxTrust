@@ -248,7 +248,8 @@ public class CopyUtils2 implements Serializable {
 				destination.setPreferredLanguage(source.getPreferredLanguage());
 			}
 			if (source.getLocale() != null && source.getLocale().length() > 0) {
-				destination.setAttribute("oxTrustLocale", source.getLocale());
+				// destination.setAttribute("oxTrustLocale", source.getLocale());
+				destination.setAttribute("locale", source.getLocale());
 			}
 			if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 				destination.setTimezone(source.getTimezone());
@@ -541,7 +542,8 @@ public class CopyUtils2 implements Serializable {
 					destination.setPreferredLanguage(source.getPreferredLanguage());
 				}
 				if (source.getLocale() != null && source.getLocale().length() > 0) {
-					destination.setAttribute("oxTrustLocale", source.getLocale());
+					// destination.setAttribute("oxTrustLocale", source.getLocale());
+					destination.setAttribute("locale", source.getLocale());
 				}
 				if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 					destination.setTimezone(source.getTimezone());
@@ -827,8 +829,13 @@ public class CopyUtils2 implements Serializable {
 			destination.setTitle(source.getAttribute("oxTrustTitle"));
 		}
 		log.trace(" setting Locale ");
+		/*
 		if (source.getAttribute("oxTrustLocale") != null) {
 			destination.setLocale(source.getAttribute("oxTrustLocale"));
+		}
+		*/
+		if (source.getAttribute("locale") != null) {
+			destination.setLocale(source.getAttribute("locale"));
 		}
 		log.trace(" setting preferredLanguage ");
 		if (source.getPreferredLanguage() != null) {
@@ -1445,7 +1452,8 @@ public class CopyUtils2 implements Serializable {
 			destination.setPreferredLanguage(source.getPreferredLanguage());
 		}
 		if (source.getLocale() != null && source.getLocale().length() > 0) {
-			destination.setAttribute("oxTrustLocale", source.getLocale());
+			// destination.setAttribute("oxTrustLocale", source.getLocale());
+			destination.setAttribute("locale", source.getLocale());
 		}
 		if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 			destination.setTimezone(source.getTimezone());
