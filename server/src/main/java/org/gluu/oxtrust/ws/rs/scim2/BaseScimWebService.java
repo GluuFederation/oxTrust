@@ -36,6 +36,7 @@ import java.util.List;
 
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.UserFilterVisitor.getUserLdapAttributeName;
 
 /**
  * Base methods for SCIM web services
@@ -127,6 +128,9 @@ public class BaseScimWebService {
 
 		startIndex = (startIndex < 1) ? 1 : startIndex;
 
+		if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
+			sortBy = getUserLdapAttributeName(sortBy);
+		}
 		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
 
 		SortOrder sortOrderEnum = null;
