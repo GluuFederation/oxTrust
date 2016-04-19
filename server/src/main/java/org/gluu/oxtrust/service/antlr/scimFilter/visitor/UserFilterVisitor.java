@@ -77,10 +77,52 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
         // logger.info(" UserFilterVisitor.visitATTR_OPER_CRITERIA() ");
 
-        String leftExpr = getLdapAttributeName(ctx.ATTRNAME().getText());
-        logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + leftExpr);
+        String attrName = ctx.ATTRNAME().getText();
+        String[] tokens = attrName.split("\\.");
 
-        return ScimOperator.transform(visit(ctx.operator()), leftExpr, visit(ctx.criteria()));
+        String ldapAttributeName = getLdapAttributeName(tokens[0]);
+        String operator = visit(ctx.operator());
+        String criteria = visit(ctx.criteria());
+
+        // This is already specific implementation. Currently only support up to second level.
+        if (tokens.length == 2) {
+
+            if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+
+                ldapAttributeName = getLdapAttributeName(tokens[1]);
+
+            } else {
+
+                StringBuilder sb = new StringBuilder();
+
+                if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
+                        ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                    sb.append("\"");
+                } else {
+                    sb.append("*\"");
+                }
+
+                sb.append(tokens[1]);
+                sb.append("\":\"");
+                sb.append(criteria);
+
+                if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
+                        ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                    sb.append("\"");
+                } else {
+                    sb.append("\"*");
+                }
+
+                criteria = sb.toString();
+            }
+        }
+
+        logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName + ", criteria = " + criteria);
+
+        String expr = ScimOperator.transform(operator, ldapAttributeName, criteria);
+        logger.info(" ##### expr = " + expr);
+
+        return expr;
     }
 
     /**
@@ -96,10 +138,49 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
         // logger.info(" UserFilterVisitor.visitATTR_OPER_EXPR() ");
 
-        String leftExpr = getLdapAttributeName(ctx.ATTRNAME().getText());
-        logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + leftExpr);
+        String attrName = ctx.ATTRNAME().getText();
+        String[] tokens = attrName.split("\\.");
 
-        return ScimOperator.transform(visit(ctx.operator()), leftExpr, visit(ctx.expression()));
+        String ldapAttributeName = getLdapAttributeName(tokens[0]);
+        String operator = visit(ctx.operator());
+        String expression = visit(ctx.expression());
+
+        // This is already specific implementation. Currently only support up to second level.
+        if (tokens.length == 2) {
+
+            if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+
+                ldapAttributeName = getLdapAttributeName(tokens[1]);
+
+            } else {
+
+                StringBuilder sb = new StringBuilder();
+
+                if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
+                        ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                    sb.append("\"");
+                } else {
+                    sb.append("*\"");
+                }
+
+                sb.append(tokens[1]);
+                sb.append("\":\"");
+                sb.append(expression);
+
+                if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
+                        ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                    sb.append("\"");
+                } else {
+                    sb.append("\"*");
+                }
+
+                expression = sb.toString();
+            }
+        }
+
+        logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName + ", expression = " + expression);
+
+        return ScimOperator.transform(operator, ldapAttributeName, expression);
     }
 
     /**
@@ -115,12 +196,39 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
         // logger.info(" UserFilterVisitor.visitATTR_PR() ");
 
-        StringBuilder result = new StringBuilder("");
-        String ldapAttributeName = getLdapAttributeName(ctx.ATTRNAME().getText());
-        logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
-        result.append(ldapAttributeName);
-        result.append("=*");
+        String attrName = ctx.ATTRNAME().getText();
+        String[] tokens = attrName.split("\\.");
 
-        return result.toString();
+        String ldapAttributeName = getLdapAttributeName(tokens[0]);
+        String pr = "=*";
+
+        // This is already specific implementation. Currently only support up to second level.
+        if (tokens.length == 2) {
+
+            if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+
+                ldapAttributeName = getLdapAttributeName(tokens[1]);
+
+            } else {
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("=*\"");
+                sb.append(tokens[1]);
+                sb.append("\":*");
+                pr = sb.toString();
+            }
+        }
+
+        StringBuilder result = new StringBuilder("");
+
+        logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
+
+        result.append(ldapAttributeName);
+        result.append(pr);
+
+        String expr = result.toString();
+        logger.info(" ##### expr = " + expr);
+
+        return expr;
     }
 }
