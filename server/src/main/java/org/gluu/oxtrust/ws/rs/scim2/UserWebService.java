@@ -70,8 +70,8 @@ public class UserWebService extends BaseScimWebService {
 	public Response listUsers(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
-	    @QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
-	    @QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
 

@@ -128,10 +128,10 @@ public class BaseScimWebService {
 
 		startIndex = (startIndex < 1) ? 1 : startIndex;
 
+		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
 		if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
 			sortBy = getUserLdapAttributeName(sortBy);
 		}
-		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
 
 		SortOrder sortOrderEnum = null;
 		if (sortOrder != null && !sortOrder.isEmpty()) {
