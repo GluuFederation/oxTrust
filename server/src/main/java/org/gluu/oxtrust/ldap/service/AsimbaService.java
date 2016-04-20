@@ -239,7 +239,7 @@ public class AsimbaService implements Serializable {
     public String getDnForLdapIDPEntry(String inum) {
         String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
-                return String.format("ou=idps,ou=oxasimba,%s", organizationDn);
+            return String.format("ou=idps,ou=oxasimba,%s", organizationDn);
         }
         return String.format("inum=%s,ou=idps,ou=oxasimba,%s", inum, organizationDn);
     }
@@ -254,7 +254,7 @@ public class AsimbaService implements Serializable {
     public String getDnForLDAPApplicationSelectorEntry(String inum) {
         String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
-                return String.format("ou=selectors,ou=oxasimba,%s", organizationDn);
+            return String.format("ou=selectors,ou=oxasimba,%s", organizationDn);
         }
         return String.format("inum=%s,ou=selectors,ou=oxasimba,%s", inum, organizationDn);
     }
@@ -269,7 +269,7 @@ public class AsimbaService implements Serializable {
     public String getDnForLDAPRequestorEntry(String inum) {
         String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
-                return String.format("ou=requestors,ou=oxasimba,%s", organizationDn);
+            return String.format("ou=requestors,ou=oxasimba,%s", organizationDn);
         }
         return String.format("inum=%s,ou=requestors,ou=oxasimba,%s", inum, organizationDn);
     }
@@ -284,7 +284,7 @@ public class AsimbaService implements Serializable {
     public String getDnForLDAPRequestorPoolEntry(String inum) {
         String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
-                return String.format("ou=requestorpools,ou=oxasimba,%s", organizationDn);
+            return String.format("ou=requestorpools,ou=oxasimba,%s", organizationDn);
         }
         return String.format("inum=%s,ou=requestorpools,ou=oxasimba,%s", inum, organizationDn);
     }
@@ -295,9 +295,8 @@ public class AsimbaService implements Serializable {
     * @return New inum for Scope
     * @throws Exception
     */
-    private String generateInumImpl() {
-        String orgInum = organizationService.getDnForOrganization();
-        return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(8);
+    private static String generateInum() {
+        return INumGenerator.generate(8);
     }
     
     /**
@@ -311,8 +310,9 @@ public class AsimbaService implements Serializable {
             entry.setLastModified(new Date());
             LdapIDPEntry ldapEntry = new LdapIDPEntry();
             ldapEntry.setEntry(entry);
-            String inum = generateInumImpl();
+            String inum = generateInum();
             ldapEntry.setInum(inum);
+            log.info("getDnForLdapIDPEntry(inum) retsult: " + getDnForLdapIDPEntry(inum));
             ldapEntry.setDn(getDnForLdapIDPEntry(inum));
             ldapEntryManager.persist(ldapEntry);
         } catch (Exception e) {
@@ -364,7 +364,7 @@ public class AsimbaService implements Serializable {
         entry.setLastModified(new Date());
         LDAPRequestorPoolEntry ldapEntry = new LDAPRequestorPoolEntry();
         ldapEntry.setEntry(entry);
-        String inum = generateInumImpl();
+        String inum = generateInum();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPRequestorPoolEntry(inum));
         ldapEntryManager.persist(ldapEntry);
@@ -414,7 +414,7 @@ public class AsimbaService implements Serializable {
         entry.setLastModified(new Date());
         LDAPRequestorEntry ldapEntry = new LDAPRequestorEntry();
         ldapEntry.setEntry(entry);
-        String inum = generateInumImpl();
+        String inum = generateInum();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPRequestorEntry(inum));
         ldapEntryManager.persist(ldapEntry);
@@ -464,7 +464,7 @@ public class AsimbaService implements Serializable {
         entry.setLastModified(new Date());
         LDAPApplicationSelectorEntry ldapEntry = new LDAPApplicationSelectorEntry();
         ldapEntry.setEntry(entry);
-        String inum = generateInumImpl();
+        String inum = generateInum();
         ldapEntry.setInum(inum);
         ldapEntry.setDn(getDnForLDAPApplicationSelectorEntry(inum));
         ldapEntryManager.persist(ldapEntry);
@@ -505,12 +505,15 @@ public class AsimbaService implements Serializable {
     }
     
     public String saveIDPMetadataFile(UploadedFile uploadedFile) throws IOException {
-        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "asimba" + File.separator + "idp";
+        
+        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "webapps" + File.separator + "asimba" 
+                + File.separator + "WEB-INF" + File.separator + "sample-data" + File.separator + "idp";
         return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
     }
     
     public String saveSPRequestorMetadataFile(UploadedFile uploadedFile) throws IOException {
-        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "asimba" + File.separator + "sp";
+        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "webapps" + File.separator + "asimba" 
+                + File.separator + "WEB-INF" + File.separator + "sample-data" + File.separator + "sp";
         return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
     }
     
