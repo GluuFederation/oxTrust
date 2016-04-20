@@ -8,6 +8,7 @@ package org.gluu.oxtrust.model.scim2;
 
 import org.codehaus.jackson.annotate.JsonAnyGetter;
 import org.codehaus.jackson.annotate.JsonAnySetter;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 import java.util.*;
 
@@ -27,27 +28,69 @@ import java.util.*;
 // @XmlAccessorType(XmlAccessType.PROPERTY)
 public class User extends Resource {
 
+    @LdapAttribute(name = "uid")
     private String userName;
+
+    // See @LdapAttribute annotations in class
     private Name name;
+
+    @LdapAttribute(name = "displayName")
     private String displayName;
+
+    @LdapAttribute(name = "nickName")
     private String nickName;
+
+    @LdapAttribute(name = "oxTrustProfileURL")
     private String profileUrl;
+
+    @LdapAttribute(name = "oxTrustTitle")
     private String title;
+
+    @LdapAttribute(name = "oxTrustUserType")
     private String userType;
+
+    @LdapAttribute(name = "preferredLanguage")
     private String preferredLanguage;
+
+    @LdapAttribute(name = "locale")
     private String locale;
+
+    @LdapAttribute(name = "timezone")
     private String timezone;
+
+    @LdapAttribute(name = "oxTrustActive")
     private Boolean active;
+
+    @LdapAttribute(name = "password")
     private String password = "";
+
+    @LdapAttribute(name = "oxTrustEmail")
     private List<Email> emails = new ArrayList<Email>();
+
+    @LdapAttribute(name = "oxTrustPhoneValue")
     private List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
+
+    @LdapAttribute(name = "oxTrustImsValue")
     private List<Im> ims = new ArrayList<Im>();
+
+    @LdapAttribute(name = "oxTrustPhotos")
     private List<Photo> photos = new ArrayList<Photo>();
+
+    @LdapAttribute(name = "oxTrustAddresses")
     private List<Address> addresses = new ArrayList<Address>();
+
+    @LdapAttribute(name = "memberOf")
     private List<GroupRef> groups = new ArrayList<GroupRef>();
+
+    @LdapAttribute(name = "oxTrustEntitlements")
     private List<Entitlement> entitlements = new ArrayList<Entitlement>();
+
+    @LdapAttribute(name = "oxTrustRole")
     private List<Role> roles = new ArrayList<Role>();
+
+    @LdapAttribute(name = "oxTrustx509Certificate")
     private List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
+
     private Map<String, Extension> extensions = new HashMap<String, Extension>();
 	// private List<CustomAttributes> customAttributes = new ArrayList<CustomAttributes>();
 

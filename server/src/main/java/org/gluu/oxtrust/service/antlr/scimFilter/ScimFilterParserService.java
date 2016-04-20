@@ -9,9 +9,12 @@ import com.unboundid.ldap.sdk.Filter;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterLexer;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.exception.ScimFilterErrorHandler;
+import org.gluu.oxtrust.service.antlr.scimFilter.visitor.UserFilterVisitor;
+import org.gluu.oxtrust.service.antlr.scimFilter.visitor.VisitorFactory;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Logger;
@@ -32,7 +35,7 @@ public class ScimFilterParserService implements Serializable {
     @Logger
     private Log log;
 
-    public Filter createFilter(String filterString) throws Exception {
+    public Filter createFilter(String filterString, Class clazz) throws Exception {
 
         log.info(" createFilter() ");
 
@@ -40,7 +43,7 @@ public class ScimFilterParserService implements Serializable {
         if (filterString != null && !filterString.isEmpty()) {
 
             // Visit tree
-            String result = visitTree(filterString);
+            String result = visitTree(filterString, clazz);
 
             filter = Filter.create(result);
 
@@ -51,15 +54,15 @@ public class ScimFilterParserService implements Serializable {
         return filter;
     }
 
-    private String visitTree(String filter) throws Exception {
+    private String visitTree(String filter, Class clazz) throws Exception {
 
         log.info(" visitTree() ");
 
         ParseTree parseTree = getParser(filter).scimFilter();
 
         // Visit tree
-        MainScimFilterVisitor mainScimFilterVisitor = new MainScimFilterVisitor();
-        String result = mainScimFilterVisitor.visit(parseTree);
+        MainScimFilterVisitor visitor = VisitorFactory.getVisitorInstance(clazz);
+        String result = visitor.visit(parseTree);
 
         return result;
     }

@@ -248,7 +248,8 @@ public class CopyUtils2 implements Serializable {
 				destination.setPreferredLanguage(source.getPreferredLanguage());
 			}
 			if (source.getLocale() != null && source.getLocale().length() > 0) {
-				destination.setAttribute("oxTrustLocale", source.getLocale());
+				// destination.setAttribute("oxTrustLocale", source.getLocale());
+				destination.setAttribute("locale", source.getLocale());
 			}
 			if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 				destination.setTimezone(source.getTimezone());
@@ -541,7 +542,8 @@ public class CopyUtils2 implements Serializable {
 					destination.setPreferredLanguage(source.getPreferredLanguage());
 				}
 				if (source.getLocale() != null && source.getLocale().length() > 0) {
-					destination.setAttribute("oxTrustLocale", source.getLocale());
+					// destination.setAttribute("oxTrustLocale", source.getLocale());
+					destination.setAttribute("locale", source.getLocale());
 				}
 				if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 					destination.setTimezone(source.getTimezone());
@@ -767,55 +769,39 @@ public class CopyUtils2 implements Serializable {
 		if (source.getAttribute("oxTrustProfileURL") != null) {
 			destination.setProfileUrl(source.getAttribute("oxTrustProfileURL"));
 		}
-
 		log.trace(" getting emails ");
 		// getting emails
-		if (source.getAttribute("oxTrustEmail") != null) {
+		if (source.getAttributeArray("oxTrustEmail") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<Email> listOfEmails = mapper.readValue(source.getAttribute("oxTrustEmail"),
-					new TypeReference<List<Email>>() {
-			});
-			
+			List<Email> listOfEmails = mapper.readValue(source.getAttribute("oxTrustEmail"), new TypeReference<List<Email>>(){});
 			destination.setEmails(listOfEmails);
 		}
 		log.trace(" getting addresses ");
 		// getting addresses
-
 		if (source.getAttribute("oxTrustAddresses") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<Address> listOfAddresses = mapper.readValue(source.getAttribute("oxTrustAddresses"),
-					new TypeReference<List<Address>>() {
-					});
-
+			List<Address> listOfAddresses = mapper.readValue(source.getAttribute("oxTrustAddresses"), new TypeReference<List<Address>>(){});
 			destination.setAddresses(listOfAddresses);
 		}
 		log.trace(" setting phoneNumber ");
 		// getting user's PhoneNumber
 		if (source.getAttribute("oxTrustPhoneValue") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<PhoneNumber> listOfPhones = mapper.readValue(source.getAttribute("oxTrustPhoneValue"),
-					new TypeReference<List<PhoneNumber>>() {
-					});
+			List<PhoneNumber> listOfPhones = mapper.readValue(source.getAttribute("oxTrustPhoneValue"),	new TypeReference<List<PhoneNumber>>(){});
 			destination.setPhoneNumbers(listOfPhones);
 		}
-
 		log.trace(" getting ims ");
 		// getting ims
 		if (source.getAttribute("oxTrustImsValue") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<Im> listOfIms = mapper.readValue(source.getAttribute("oxTrustImsValue"),
-					new TypeReference<List<Im>>() {
-					});
+			List<Im> listOfIms = mapper.readValue(source.getAttribute("oxTrustImsValue"), new TypeReference<List<Im>>(){});
 			destination.setIms(listOfIms);
 		}
 		log.trace(" setting photos ");
 		// getting photos
-
 		if (source.getAttribute("oxTrustPhotos") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<Photo> listOfPhotos = mapper.readValue(source.getAttribute("oxTrustPhotos"),
-					new TypeReference<List<Photo>>() {
-					});
+			List<Photo> listOfPhotos = mapper.readValue(source.getAttribute("oxTrustPhotos"), new TypeReference<List<Photo>>(){});
 			destination.setPhotos(listOfPhotos);
 		}
 		log.trace(" setting userType ");
@@ -827,8 +813,13 @@ public class CopyUtils2 implements Serializable {
 			destination.setTitle(source.getAttribute("oxTrustTitle"));
 		}
 		log.trace(" setting Locale ");
+		/*
 		if (source.getAttribute("oxTrustLocale") != null) {
 			destination.setLocale(source.getAttribute("oxTrustLocale"));
+		}
+		*/
+		if (source.getAttribute("locale") != null) {
+			destination.setLocale(source.getAttribute("locale"));
 		}
 		log.trace(" setting preferredLanguage ");
 		if (source.getPreferredLanguage() != null) {
@@ -868,17 +859,14 @@ public class CopyUtils2 implements Serializable {
 		// getting roles
 		if (source.getAttribute("oxTrustRole") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<Role> listOfRoles = mapper.readValue(source.getAttribute("oxTrustRole"), new TypeReference<List<Role>>() {
-			});
+			List<Role> listOfRoles = mapper.readValue(source.getAttribute("oxTrustRole"), new TypeReference<List<Role>>(){});
 			destination.setRoles(listOfRoles);
 		}
 		log.trace(" getting entilements ");
 		// getting entitlements
 		if (source.getAttribute("oxTrustEntitlements") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<Entitlement> listOfEnts = mapper.readValue(source.getAttribute("oxTrustEntitlements"),
-					new TypeReference<List<Entitlement>>() {
-					});
+			List<Entitlement> listOfEnts = mapper.readValue(source.getAttribute("oxTrustEntitlements"),	new TypeReference<List<Entitlement>>(){});
 			destination.setEntitlements(listOfEnts);
 		}
 
@@ -886,9 +874,7 @@ public class CopyUtils2 implements Serializable {
 		log.trace(" setting certs ");
 		if (source.getAttribute("oxTrustx509Certificate") != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<X509Certificate> listOfCerts = mapper.readValue(source.getAttribute("oxTrustx509Certificate"),
-					new TypeReference<List<X509Certificate>>() {
-					});
+			List<X509Certificate> listOfCerts = mapper.readValue(source.getAttribute("oxTrustx509Certificate"),	new TypeReference<List<X509Certificate>>(){});
 			destination.setX509Certificates(listOfCerts);
 		}
 
@@ -1445,7 +1431,8 @@ public class CopyUtils2 implements Serializable {
 			destination.setPreferredLanguage(source.getPreferredLanguage());
 		}
 		if (source.getLocale() != null && source.getLocale().length() > 0) {
-			destination.setAttribute("oxTrustLocale", source.getLocale());
+			// destination.setAttribute("oxTrustLocale", source.getLocale());
+			destination.setAttribute("locale", source.getLocale());
 		}
 		if (source.getTimezone() != null && source.getTimezone().length() > 0) {
 			destination.setTimezone(source.getTimezone());

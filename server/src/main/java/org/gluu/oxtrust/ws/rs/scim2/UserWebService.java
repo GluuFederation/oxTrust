@@ -70,8 +70,8 @@ public class UserWebService extends BaseScimWebService {
 	public Response listUsers(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
-	    @QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
-	    @QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
 
@@ -86,7 +86,7 @@ public class UserWebService extends BaseScimWebService {
 
 			if (count > MAX_COUNT) {
 
-				String detail = "Too many results would be returned (" + count + "); max is " + MAX_COUNT + " only.";
+				String detail = "Too many results (=" + count + ") would be returned; max is " + MAX_COUNT + " only.";
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {
@@ -95,7 +95,7 @@ public class UserWebService extends BaseScimWebService {
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
-				List<GluuCustomPerson> personList = personService.searchUsers(filterString, startIndex, count, sortBy, sortOrder, vlvResponse, null);
+				List<GluuCustomPerson> personList = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, null);
 				// List<GluuCustomPerson> personList = personService.findAllPersons(null);
 
 				ListResponse personsListResponse = new ListResponse();
