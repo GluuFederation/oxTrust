@@ -326,7 +326,14 @@ public class Utils implements Serializable {
 				+ OxTrustConstants.INAME_PERSON_OBJECTTYPE;
 	}
         
-    
+    /**
+     * Save uploaded file with random name.
+     * @param uploadedFile
+     * @param baseDir Write to directory. 
+     * @param extension Filename extension.
+     * @return Return full path
+     * @throws IOException 
+     */
     public static String saveUploadedFile(UploadedFile uploadedFile, String baseDir, String extension) throws IOException {
         String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
         
