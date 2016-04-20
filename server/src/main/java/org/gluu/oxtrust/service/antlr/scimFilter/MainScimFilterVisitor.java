@@ -71,14 +71,13 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
         // logger.info(" visitLBRAC_EXPR_RBRAC() ");
 
         StringBuilder result = new StringBuilder("");
-        result.append("(&");
+        result.append("&");
         result.append("(");
         result.append(ctx.ATTRNAME());
         result.append("=*");
         result.append(")");
         result.append("(");
         result.append(visit(ctx.expression()));  // Add check if child attributes belong to the parent
-        result.append(")");
         result.append(")");
 
         return result.toString();

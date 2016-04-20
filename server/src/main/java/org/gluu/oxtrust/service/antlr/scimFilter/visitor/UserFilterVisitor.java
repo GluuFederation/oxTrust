@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class UserFilterVisitor extends MainScimFilterVisitor {
 
-    Logger logger = LoggerFactory.getLogger(UserFilterVisitor.class);
+    private Logger logger = LoggerFactory.getLogger(UserFilterVisitor.class);
 
     private static Class[] annotatedClasses = { User.class, Name.class };
 
@@ -89,7 +89,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_OPER_CRITERIA(ScimFilterParser.ATTR_OPER_CRITERIAContext ctx) {
 
-        // logger.info(" UserFilterVisitor.visitATTR_OPER_CRITERIA() ");
+        logger.info(" UserFilterVisitor.visitATTR_OPER_CRITERIA() ");
 
         String attrName = ctx.ATTRNAME().getText();
         String[] tokens = attrName.split("\\.");
@@ -104,20 +104,24 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
             StringBuilder sb = new StringBuilder();
 
             if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
-                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
                 sb.append("\"");
             } else {
                 sb.append("*\"");
             }
 
             sb.append(tokens[1]);
-            sb.append("\":\"");
+
+            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL)) {
+                sb.append("\":\"");
+            } else {
+                sb.append("\":*");
+            }
+
             sb.append(criteria);
 
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
-                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
-                sb.append("\"");
-            } else {
+            if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
+                  ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
                 sb.append("\"*");
             }
 
@@ -143,7 +147,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_OPER_EXPR(ScimFilterParser.ATTR_OPER_EXPRContext ctx) {
 
-        // logger.info(" UserFilterVisitor.visitATTR_OPER_EXPR() ");
+        logger.info(" UserFilterVisitor.visitATTR_OPER_EXPR() ");
 
         String attrName = ctx.ATTRNAME().getText();
         String[] tokens = attrName.split("\\.");
@@ -158,20 +162,24 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
             StringBuilder sb = new StringBuilder();
 
             if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
-                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
                 sb.append("\"");
             } else {
                 sb.append("*\"");
             }
 
             sb.append(tokens[1]);
-            sb.append("\":\"");
+
+            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL)) {
+                sb.append("\":\"");
+            } else {
+                sb.append("\":*");
+            }
+
             sb.append(expression);
 
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
-                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
-                sb.append("\"");
-            } else {
+            if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
+                  ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
                 sb.append("\"*");
             }
 
@@ -194,7 +202,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_PR(ScimFilterParser.ATTR_PRContext ctx) {
 
-        // logger.info(" UserFilterVisitor.visitATTR_PR() ");
+        logger.info(" UserFilterVisitor.visitATTR_PR() ");
 
         String attrName = ctx.ATTRNAME().getText();
         String[] tokens = attrName.split("\\.");
@@ -223,5 +231,31 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         logger.info(" ##### expr = " + expr);
 
         return expr;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public String visitLBRAC_EXPR_RBRAC(ScimFilterParser.LBRAC_EXPR_RBRACContext ctx) {
+
+        logger.info(" UserFilterVisitor.visitLBRAC_EXPR_RBRAC() ");
+
+        StringBuilder result = new StringBuilder("");
+        result.append("&");
+        result.append("(");
+        result.append(getUserLdapAttributeName(ctx.ATTRNAME().getText()));
+        result.append("=*");
+        result.append(")");
+        result.append("(");
+        result.append(visit(ctx.expression()));  // Add check if child attributes belong to the parent
+        result.append(")");
+
+        return result.toString();
     }
 }
