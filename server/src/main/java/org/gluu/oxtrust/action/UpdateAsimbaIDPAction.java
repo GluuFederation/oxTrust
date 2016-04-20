@@ -23,7 +23,6 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
-import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
@@ -77,6 +76,8 @@ public class UpdateAsimbaIDPAction implements Serializable {
     private String editEntryInum = null;
     
     private List<IDPEntry> idpList = new ArrayList<IDPEntry>();
+    
+    private String idpType;
     
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -285,5 +286,19 @@ public class UpdateAsimbaIDPAction implements Serializable {
      */
     public void setEditEntryInum(String editEntryInum) {
         this.editEntryInum = editEntryInum;
+    }
+
+    /**
+     * @return the idpType
+     */
+    public String getIdpType() {
+        return idpType;
+    }
+
+    /**
+     * @param idpType the idpType to set
+     */
+    public void setIdpType(String idpType) {
+        this.idpType = idpType;
     }
 }

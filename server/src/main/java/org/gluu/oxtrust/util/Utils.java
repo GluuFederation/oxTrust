@@ -7,7 +7,9 @@
 package org.gluu.oxtrust.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -324,27 +326,27 @@ public class Utils implements Serializable {
 				+ OxTrustConstants.INAME_PERSON_OBJECTTYPE;
 	}
         
-        
-        
     
-    /**
-     * Save uploaded file with random name.
-     * @param uploadedFile
-     * @param baseDir Write to directory. 
-     * @param extension Filename extension.
-     * @return Return full path
-     * @throws IOException 
-     */
     public static String saveUploadedFile(UploadedFile uploadedFile, String baseDir, String extension) throws IOException {
-        String filepath = baseDir + File.separator + random.nextLong() + "." + extension;
+        String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
         
-        File dir = new File(filepath);
+        File dir = new File(baseDir);
         if (!dir.exists())
             dir.mkdirs();
         else if (!dir.isDirectory())
             throw new IllegalArgumentException("parameter baseDir should be directory. The value: " + baseDir);
         
-        uploadedFile.write(filepath);
+        InputStream in = uploadedFile.getInputStream();
+        FileOutputStream out = new FileOutputStream(filepath);
+        try {
+            int b;
+            while ((b = in.read()) != -1) {
+                out.write(b);
+            }
+        } finally {
+            out.close();
+            in.close();
+        }
         return filepath;
     }
 
