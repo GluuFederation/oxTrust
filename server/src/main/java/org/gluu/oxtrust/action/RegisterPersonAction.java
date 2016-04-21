@@ -116,6 +116,8 @@ public class RegisterPersonAction implements Serializable {
 	 * @throws Exception
 	 */
 	public String initPerson() {
+		initRecaptcha();
+
 		String result = sanityCheck();
 		if (result.equals(OxTrustConstants.RESULT_SUCCESS)) {
 
@@ -150,22 +152,23 @@ public class RegisterPersonAction implements Serializable {
 		}
 
 		requestParameters.putAll(externalContext.getRequestParameterValuesMap());
-		GluuOrganization organization = organizationService.getOrganization();
-		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
-		boolean registrationCustomized = config != null;
-
-		this.captchaDisabled = registrationCustomized && config.isCaptchaDisabled();
 
 		return OxTrustConstants.RESULT_SUCCESS;
 
 	}
 
-	public String register() throws CloneNotSupportedException {
+	private void initRecaptcha() {
 		GluuOrganization organization = organizationService.getOrganization();
-		RegistrationConfiguration registrationConfig = organization.getOxRegistrationConfiguration();
-		boolean registrationCustomized = registrationConfig != null;
-		this.captchaDisabled = registrationCustomized && (registrationConfig.isCaptchaDisabled() || !recaptchaService.isEnabled());
-		
+		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
+		boolean registrationCustomized = config != null;
+
+		this.captchaDisabled = !recaptchaService.isEnabled();
+		if (!this.captchaDisabled) {
+			this.captchaDisabled = registrationCustomized && config.isCaptchaDisabled();
+		}
+	}
+
+	public String register() throws CloneNotSupportedException {
 		boolean registrationFormValid = StringHelper.equals(password, repeatPassword);
 
 		if (!captchaDisabled) {

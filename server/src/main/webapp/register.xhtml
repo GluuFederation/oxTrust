@@ -21,7 +21,7 @@
             }
         </style>
         
-        <s:fragment rendered="#{not registerPersonAction.captchaDisabled and recaptchaService.enabled}">
+        <s:fragment rendered="#{not registerPersonAction.captchaDisabled}">
 	        <script src="https://www.google.com/recaptcha/api.js" async="async" defer="defer"></script>
         </s:fragment>
     </ui:define>
@@ -161,7 +161,7 @@
                                             <!-- End Passwords -->
                                         </div>
                                         <!-- Captcha -->
-                                        <s:fragment rendered="#{not registerPersonAction.captchaDisabled and recaptchaService.enabled}">
+                                        <s:fragment rendered="#{not registerPersonAction.captchaDisabled}">
 	                                        <s class="g-recaptcha" data-sitekey="#{recaptchaService.recaptchaSiteKey}"/>
                                         </s:fragment>
                                         <div class="row">
