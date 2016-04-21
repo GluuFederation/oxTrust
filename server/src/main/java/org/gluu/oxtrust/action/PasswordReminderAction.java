@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import lombok.Data;
-import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
@@ -24,7 +23,6 @@ import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
