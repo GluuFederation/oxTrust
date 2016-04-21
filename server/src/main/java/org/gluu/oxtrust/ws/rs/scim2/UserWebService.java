@@ -45,6 +45,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.UserFilterVisitor.getUserLdapAttributeName;
 
 /**
  * scim2UserEndpoint Implementation
@@ -73,7 +74,8 @@ public class UserWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		personService = PersonService.instance();
 
@@ -95,7 +97,7 @@ public class UserWebService extends BaseScimWebService {
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
-				List<GluuCustomPerson> personList = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, null);
+				List<GluuCustomPerson> personList = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
 				// List<GluuCustomPerson> personList = personService.findAllPersons(null);
 
 				ListResponse personsListResponse = new ListResponse();

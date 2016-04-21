@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +50,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
     public static String getUserLdapAttributeName(String attrName) {
 
-        String ldapAttributeName = attrName;
-
-        String uri = Constants.USER_CORE_SCHEMA_ID + ":";
-        if (ldapAttributeName.startsWith(uri)) {
-            int index = ldapAttributeName.indexOf(uri) + uri.length();
-            ldapAttributeName = ldapAttributeName.substring(index);
-        }
+        String ldapAttributeName = FilterUtil.stripScimSchema(Constants.USER_CORE_SCHEMA_ID, attrName);
 
         String[] tokens = ldapAttributeName.split("\\.");
 
@@ -81,6 +76,54 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         }
 
         return ldapAttributeName;
+    }
+
+    private String attrOperCriteriaResolver(String attrName, String operator, String criteria) {
+
+        logger.info(" UserFilterVisitor.attrOperCriteriaResolver() ");
+
+        attrName = FilterUtil.stripScimSchema(Constants.USER_CORE_SCHEMA_ID, attrName);
+
+        String[] tokens = attrName.split("\\.");
+
+        String ldapAttributeName = getUserLdapAttributeName(attrName);
+
+        // This is already specific implementation. Currently only support up to second level.
+        if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+
+            StringBuilder sb = new StringBuilder();
+
+            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
+                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                sb.append("\"");
+            } else {
+                sb.append("*\"");
+            }
+
+            sb.append(tokens[1]);
+
+            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL)) {
+                sb.append("\":\"");
+            } else {
+                sb.append("\":*");
+            }
+
+            sb.append(criteria);
+
+            if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
+                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
+                sb.append("\"*");
+            }
+
+            criteria = sb.toString();
+        }
+
+        logger.info(" ##### attrName = " + attrName + ", ldapAttributeName = " + ldapAttributeName + ", criteria = " + criteria);
+
+        String expr = ScimOperator.transform(operator, ldapAttributeName, criteria);
+        logger.info(" ##### expr = " + expr);
+
+        return expr;
     }
 
     /**
@@ -143,52 +186,6 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         }
 
         return attrOperCriteriaResolver(ctx.ATTRNAME().getText(), visit(ctx.operator()), visit(ctx.expression()));
-    }
-
-    private String attrOperCriteriaResolver(String attrName, String operator, String criteria) {
-
-        logger.info(" UserFilterVisitor.attrOperCriteriaResolver() ");
-
-        String[] tokens = attrName.split("\\.");
-
-        String ldapAttributeName = getUserLdapAttributeName(attrName);
-
-        // This is already specific implementation. Currently only support up to second level.
-        if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
-
-            StringBuilder sb = new StringBuilder();
-
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
-                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
-                sb.append("\"");
-            } else {
-                sb.append("*\"");
-            }
-
-            sb.append(tokens[1]);
-
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL)) {
-                sb.append("\":\"");
-            } else {
-                sb.append("\":*");
-            }
-
-            sb.append(criteria);
-
-            if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
-                  ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
-                sb.append("\"*");
-            }
-
-            criteria = sb.toString();
-        }
-
-        logger.info(" ##### attrName = " + attrName + ", ldapAttributeName = " + ldapAttributeName + ", criteria = " + criteria);
-
-        String expr = ScimOperator.transform(operator, ldapAttributeName, criteria);
-        logger.info(" ##### expr = " + expr);
-
-        return expr;
     }
 
     /**

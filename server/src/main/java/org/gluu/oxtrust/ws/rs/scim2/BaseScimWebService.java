@@ -106,7 +106,7 @@ public class BaseScimWebService {
 		}
 	}
 
-	public <T> List<T> search(String dn, Class<T> entryClass, String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String[] returnAttributes) throws Exception {
+	public <T> List<T> search(String dn, Class<T> entryClass, String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String attributesArray) throws Exception {
 
 		log.info("----------");
 		log.info(" ### RAW PARAMS ###");
@@ -115,6 +115,7 @@ public class BaseScimWebService {
 		log.info(" count = " + count);
 		log.info(" sortBy = " + sortBy);
 		log.info(" sortOrder = " + sortOrder);
+		log.info(" attributes = " + attributesArray);
 
 		Filter filter = null;
 		if (filterString == null || (filterString != null && filterString.isEmpty())) {
@@ -123,10 +124,10 @@ public class BaseScimWebService {
 			filter = scimFilterParserService.createFilter(filterString, org.gluu.oxtrust.model.scim2.User.class);
 		}
 
+		startIndex = (startIndex < 1) ? 1 : startIndex;
+
 		count = (count < 1) ? DEFAULT_COUNT : count;
 		count = (count > MAX_COUNT) ? MAX_COUNT : count;
-
-		startIndex = (startIndex < 1) ? 1 : startIndex;
 
 		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
 		if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
@@ -142,14 +143,30 @@ public class BaseScimWebService {
 			sortOrderEnum = SortOrder.ASCENDING;
 		}
 
+		String[] attributes = null;
+		StringBuilder sb = new StringBuilder("");
+		if (attributesArray != null && !attributesArray.isEmpty()) {
+			if (attributesArray.split(",").length > 0) {
+				List<String> attributesList = new ArrayList<String>();
+				for (String attribute : attributesArray.split(",")) {
+					attribute = getUserLdapAttributeName(attribute);
+					attributesList.add(attribute);
+					sb.append(attribute);
+					sb.append(",");
+				}
+				attributes = attributesList.toArray(new String[attributesList.size()]);
+			}
+		}
+
 		log.info(" ### CONVERTED PARAMS ###");
 		log.info(" parsed filter = " + filter.toString());
 		log.info(" startIndex = " + startIndex);
 		log.info(" count = " + count);
 		log.info(" sortBy = " + sortBy);
 		log.info(" sortOrder = " + sortOrderEnum.getValue());
+		log.info(" attributes = " + (!sb.toString().isEmpty() ? sb.toString().substring(0, (sb.toString().length()-1)) : ""));
 
-		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, returnAttributes);
+		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
 
 		log.info(" ### RESULTS INFO ###");
 		log.info(" totalResults = " + vlvResponse.getTotalResults());
