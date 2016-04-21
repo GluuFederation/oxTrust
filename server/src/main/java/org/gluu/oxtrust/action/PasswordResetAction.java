@@ -14,9 +14,6 @@ import java.util.Calendar;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
-import lombok.Data;
-import net.tanesha.recaptcha.ReCaptchaResponse;
-
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
@@ -38,7 +35,7 @@ import org.jboss.seam.log.Log;
  */
 @Scope(ScopeType.CONVERSATION)
 @Name("passwordResetAction")
-public @Data class PasswordResetAction implements Serializable {
+public class PasswordResetAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -89,8 +86,12 @@ public @Data class PasswordResetAction implements Serializable {
 	}
 	
 	public String update() throws ParseException{		
-		boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse();
-		if (reCaptchaResponse) {
+		boolean valid = true;
+		if (recaptchaService.isEnabled()) {
+			valid = recaptchaService.verifyRecaptchaResponse();
+		}
+
+		if (valid) {
 			GluuAppliance appliance = ApplianceService.instance().getAppliance();
 			this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
 			Calendar requestCalendarExpiry = Calendar.getInstance();
@@ -134,6 +135,42 @@ public @Data class PasswordResetAction implements Serializable {
 	@AssertTrue(message = "Different passwords entered!")
 	public boolean isPasswordsEquals() {
 		return password.equals(confirm);
+	}
+
+	public PasswordResetRequest getRequest() {
+		return request;
+	}
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+
+	public String getSecurityQuestion() {
+		return securityQuestion;
+	}
+
+	public void setSecurityQuestion(String securityQuestion) {
+		this.securityQuestion = securityQuestion;
+	}
+
+	public String getSecurityAnswer() {
+		return securityAnswer;
+	}
+
+	public void setSecurityAnswer(String securityAnswer) {
+		this.securityAnswer = securityAnswer;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 }

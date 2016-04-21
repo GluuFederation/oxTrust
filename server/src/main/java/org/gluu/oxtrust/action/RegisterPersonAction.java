@@ -23,6 +23,7 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -47,6 +48,7 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.custom.script.model.CustomScript;
+import org.xdi.util.StringHelper;
 
 /**
  * @author Dejan Maric
@@ -98,6 +100,9 @@ public class RegisterPersonAction implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
+
+	@In
+	private RecaptchaService recaptchaService;
 
 	private List<String> hiddenAttributes;
 
@@ -164,13 +169,14 @@ public class RegisterPersonAction implements Serializable {
 		GluuOrganization organization = organizationService.getOrganization();
 		RegistrationConfiguration registrationConfig = organization.getOxRegistrationConfiguration();
 		boolean registrationCustomized = registrationConfig != null;
-		this.captchaDisabled = registrationCustomized && registrationConfig.isCaptchaDisabled();
-		ReCaptchaResponse reCaptchaResponse = null;
+		this.captchaDisabled = registrationCustomized && (registrationConfig.isCaptchaDisabled() || !recaptchaService.isEnabled());
+		
+		boolean registrationFormValid = StringHelper.equals(password, repeatPassword);
 
 		if (!captchaDisabled) {
-			reCaptchaResponse = RecaptchaUtils.getRecaptchaResponseFromServletContext();
+			boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse();
+			registrationFormValid &= reCaptchaResponse;
 		}
-		boolean registrationFormValid = captchaDisabled || reCaptchaResponse != null && reCaptchaResponse.isValid() && password.equals(repeatPassword);
 
 		if (registrationFormValid) {
 			GluuCustomPerson archivedPerson = (GluuCustomPerson) person.clone();
