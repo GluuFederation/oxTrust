@@ -79,8 +79,12 @@ public @Data class PasswordReminderAction implements Serializable {
 
 
 	public String requestReminder() throws Exception {
-		boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse();
-		if (reCaptchaResponse && enabled()) {
+		boolean valid = true;
+		if (recaptchaService.isEnabled()) {
+			valid = recaptchaService.verifyRecaptchaResponse();
+		}
+
+		if (valid && enabled()) {
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
 			ApplicationConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
