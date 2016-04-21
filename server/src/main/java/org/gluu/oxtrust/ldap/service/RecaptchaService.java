@@ -36,11 +36,6 @@ public class RecaptchaService implements Serializable {
 
 	private static final long serialVersionUID = 7725720511230443399L;
 
-	@Deprecated
-	public String getHtml() throws Exception {
-		return RecaptchaUtils.createRecaptchaHtml("Error");
-	}
-
 	public boolean verifyRecaptchaResponse() {
 		boolean enabled = isEnabled();
 		if (!enabled) {

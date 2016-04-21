@@ -18,8 +18,6 @@ import javax.faces.context.ExternalContext;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import net.tanesha.recaptcha.ReCaptchaResponse;
-
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -28,10 +26,8 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
-import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -47,7 +43,6 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.util.StringHelper;
 
 /**
