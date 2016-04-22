@@ -9,6 +9,7 @@ package org.gluu.oxtrust.ws.rs.scim2;
 import javax.ws.rs.core.Response;
 
 import com.unboundid.ldap.sdk.Filter;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -143,18 +144,11 @@ public class BaseScimWebService {
 			sortOrderEnum = SortOrder.ASCENDING;
 		}
 
-		String[] attributes = null;
-		StringBuilder sb = new StringBuilder("");
-		if (attributesArray != null && !attributesArray.isEmpty()) {
-			if (attributesArray.split(",").length > 0) {
-				List<String> attributesList = new ArrayList<String>();
-				for (String attribute : attributesArray.split(",")) {
-					attribute = getUserLdapAttributeName(attribute);
-					attributesList.add(attribute);
-					sb.append(attribute);
-					sb.append(",");
-				}
-				attributes = attributesList.toArray(new String[attributesList.size()]);
+		ObjectMapper mapper = new ObjectMapper();
+		String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
+		if (attributes != null && attributes.length > 0) {
+			for (int i = 0; i < attributes.length; i++) {
+				attributes[i] = getUserLdapAttributeName(attributes[i]);
 			}
 		}
 
@@ -164,7 +158,7 @@ public class BaseScimWebService {
 		log.info(" count = " + count);
 		log.info(" sortBy = " + sortBy);
 		log.info(" sortOrder = " + sortOrderEnum.getValue());
-		log.info(" attributes = " + (!sb.toString().isEmpty() ? sb.toString().substring(0, (sb.toString().length()-1)) : ""));
+		log.info(" attributes = " + ((attributes != null) ? mapper.writeValueAsString(attributes) : null));
 
 		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
 
