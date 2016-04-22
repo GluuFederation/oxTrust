@@ -985,7 +985,8 @@
 										<trimStackTrace>false</trimStackTrace>
 										<skip>false</skip>
 										<!-- exclude selenium tests -->
-										<excludes>
+										<excludes>											
+						        			<exclude>**/CleanUpTest.java</exclude>
 											<exclude>**/selenium/*</exclude>
 											<exclude>**/webdriver/*</exclude>
 											<exclude>**/xml/*</exclude>
