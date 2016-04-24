@@ -248,6 +248,9 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 		try {
 			FileConfiguration configuration = new FileConfiguration(OxTrustConfiguration.LDAP_PROPERTIES_FILE);
+			if(configuration.getPropertiesConfiguration() == null){
+				configuration = new FileConfiguration(OxTrustConfiguration.LDAP_DEFAULT_PROPERTIES_FILE);
+			}
 			Properties properties = configuration.getProperties();
 			properties.setProperty("bindDN", this.ldapConfig.getBindDN());
 			properties.setProperty("bindPassword", this.ldapConfig.getBindPassword());
