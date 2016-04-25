@@ -248,7 +248,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 		try {
 			FileConfiguration configuration = new FileConfiguration(OxTrustConfiguration.LDAP_PROPERTIES_FILE);
-			if(configuration.getPropertiesConfiguration() == null){
+			if (!configuration.isLoaded()) {
 				configuration = new FileConfiguration(OxTrustConfiguration.LDAP_DEFAULT_PROPERTIES_FILE);
 			}
 			Properties properties = configuration.getProperties();
