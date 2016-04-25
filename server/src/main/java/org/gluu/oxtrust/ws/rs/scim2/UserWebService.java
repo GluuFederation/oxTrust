@@ -25,6 +25,10 @@ import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.*;
 
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -33,6 +37,7 @@ import org.gluu.oxtrust.model.scim.ScimPersonSearch;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -45,7 +50,6 @@ import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.UserFilterVisitor.getUserLdapAttributeName;
 
 /**
  * scim2UserEndpoint Implementation
@@ -135,7 +139,15 @@ public class UserWebService extends BaseScimWebService {
 
 				URI location = new URI("/v2/Users/");
 
-				return Response.ok(personsListResponse).location(location).build();
+				// Serialize to JSON
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+				SimpleModule customScimFilterModule = new SimpleModule("CustomScimFilterModule", new Version(1, 0, 0, ""));
+				customScimFilterModule.addSerializer(User.class, new ListResponseUserSerializer());
+				mapper.registerModule(customScimFilterModule);
+				String json = mapper.writeValueAsString(personsListResponse);
+
+				return Response.ok(json).location(location).build();
 			}
 
 		} catch (Exception ex) {

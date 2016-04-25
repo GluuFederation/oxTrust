@@ -205,24 +205,30 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         String[] tokens = attrName.split("\\.");
 
         String ldapAttributeName = getUserLdapAttributeName(attrName);
-        String pr = "=*";
+
+        StringBuilder result = new StringBuilder("");
 
         // This is already specific implementation. Currently only support up to second level.
         if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
 
-            StringBuilder sb = new StringBuilder("");
-            sb.append("=*\"");
-            sb.append(tokens[1]);
-            sb.append("\":*");
-            pr = sb.toString();
+            result.append("&(");
+            result.append(ldapAttributeName);
+            result.append("=*");
+            result.append(")(");
+
+            result.append(ldapAttributeName);
+            result.append("=*\"");
+            result.append(tokens[1]);
+            result.append("\":\"*");
+            result.append(")");
+
+        } else {
+
+            result.append(ldapAttributeName);
+            result.append("=*");
         }
 
-        StringBuilder result = new StringBuilder("");
-
         logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
-
-        result.append(ldapAttributeName);
-        result.append(pr);
 
         String expr = result.toString();
         logger.info(" ##### expr = " + expr);

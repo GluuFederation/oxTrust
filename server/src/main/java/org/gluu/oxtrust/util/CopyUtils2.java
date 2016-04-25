@@ -752,9 +752,8 @@ public class CopyUtils2 implements Serializable {
 			if (source.getAttribute("oxTrusthonorificPrefix") != null)
 				name.setHonorificPrefix(source.getAttribute("oxTrusthonorificPrefix"));
 			if (source.getAttribute("oxTrusthonorificSuffix") != null) 
-				name.setHonorificSuffix(source.getAttribute("oxTrusthonorificSuffix"));			
+				name.setHonorificSuffix(source.getAttribute("oxTrusthonorificSuffix"));
 			destination.setName(name);
-			
 		}
 
 		log.trace(" getting displayname ");
