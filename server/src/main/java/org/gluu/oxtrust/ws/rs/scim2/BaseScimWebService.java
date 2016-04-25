@@ -32,8 +32,7 @@ import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
@@ -151,6 +150,11 @@ public class BaseScimWebService {
 				attributes[i] = getUserLdapAttributeName(attributes[i]);
 			}
 		}
+		// Eliminate duplicates
+		if (attributes != null && attributes.length > 0) {
+			Set<String> attributesSet = new LinkedHashSet<String>(Arrays.asList(attributes));
+			attributes = attributesSet.toArray(new String[attributesSet.size()]);
+		}
 
 		log.info(" ### CONVERTED PARAMS ###");
 		log.info(" parsed filter = " + filter.toString());
@@ -158,7 +162,7 @@ public class BaseScimWebService {
 		log.info(" count = " + count);
 		log.info(" sortBy = " + sortBy);
 		log.info(" sortOrder = " + sortOrderEnum.getValue());
-		log.info(" attributes = " + ((attributes != null) ? mapper.writeValueAsString(attributes) : null));
+		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? mapper.writeValueAsString(attributes) : null));
 
 		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
 

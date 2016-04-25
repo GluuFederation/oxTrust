@@ -143,7 +143,9 @@ public class UserWebService extends BaseScimWebService {
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 				SimpleModule customScimFilterModule = new SimpleModule("CustomScimFilterModule", new Version(1, 0, 0, ""));
-				customScimFilterModule.addSerializer(User.class, new ListResponseUserSerializer());
+				ListResponseUserSerializer serializer = new ListResponseUserSerializer();
+				serializer.setAttributesArray(attributesArray);
+				customScimFilterModule.addSerializer(User.class, serializer);
 				mapper.registerModule(customScimFilterModule);
 				String json = mapper.writeValueAsString(personsListResponse);
 
