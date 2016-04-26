@@ -34,6 +34,10 @@
             <h:form id="addSPFormId">
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idpURL">
                     <ui:param name="_hideLabel" value="true" />
+                    <h:selectOneMenu value="#{asimbaAddSPAction.idpType}" styleClass="form-control" >
+                        <f:selectItem itemValue="SHIB_IDP" itemLabel="Shibboleth SP" />
+                        <f:selectItem itemValue="OTHER" itemLabel="Other" />
+                    </h:selectOneMenu>
                     <h:inputText value="#{asimbaAddSPAction.spURL}" size="30" maxlength="30" required="true" id="idpURLId" styleClass="form-control" style="width: 50%; float: left;"
                         alt="URL of the " />
                     <h:commandButton value="Add" action="#{asimbaAddSPAction.add}" styleClass="btn btn-primary" style="float: left;" />

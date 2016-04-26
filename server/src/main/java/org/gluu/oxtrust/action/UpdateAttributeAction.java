@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import lombok.Data;
-
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -41,7 +39,7 @@ import org.xdi.util.StringHelper;
 @Scope(ScopeType.CONVERSATION)
 @Name("updateAttributeAction")
 @Restrict("#{identity.loggedIn}")
-public @Data class UpdateAttributeAction implements Serializable {
+public class UpdateAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -2932167044333943687L;
 
@@ -470,5 +468,117 @@ public @Data class UpdateAttributeAction implements Serializable {
 	public void setTooltipToggle(boolean tooltipToggle) {
 		this.tooltipToggle = tooltipToggle;
 	}
+
+    /**
+     * @return the log
+     */
+    public Log getLog() {
+        return log;
+    }
+
+    /**
+     * @param log the log to set
+     */
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
+    /**
+     * @return the attributeService
+     */
+    public AttributeService getAttributeService() {
+        return attributeService;
+    }
+
+    /**
+     * @param attributeService the attributeService to set
+     */
+    public void setAttributeService(AttributeService attributeService) {
+        this.attributeService = attributeService;
+    }
+
+    /**
+     * @return the schemaService
+     */
+    public SchemaService getSchemaService() {
+        return schemaService;
+    }
+
+    /**
+     * @param schemaService the schemaService to set
+     */
+    public void setSchemaService(SchemaService schemaService) {
+        this.schemaService = schemaService;
+    }
+
+    /**
+     * @return the facesMessages
+     */
+    public FacesMessages getFacesMessages() {
+        return facesMessages;
+    }
+
+    /**
+     * @param facesMessages the facesMessages to set
+     */
+    public void setFacesMessages(FacesMessages facesMessages) {
+        this.facesMessages = facesMessages;
+    }
+
+    /**
+     * @return the applicationConfiguration
+     */
+    public ApplicationConfiguration getApplicationConfiguration() {
+        return applicationConfiguration;
+    }
+
+    /**
+     * @param applicationConfiguration the applicationConfiguration to set
+     */
+    public void setApplicationConfiguration(ApplicationConfiguration applicationConfiguration) {
+        this.applicationConfiguration = applicationConfiguration;
+    }
+
+    /**
+     * @param attribute the attribute to set
+     */
+    public void setAttribute(GluuAttribute attribute) {
+        this.attribute = attribute;
+    }
+
+    /**
+     * @param update the update to set
+     */
+    public void setUpdate(boolean update) {
+        this.update = update;
+    }
+
+    /**
+     * @param showAttributeDeleteConfirmation the showAttributeDeleteConfirmation to set
+     */
+    public void setShowAttributeDeleteConfirmation(boolean showAttributeDeleteConfirmation) {
+        this.showAttributeDeleteConfirmation = showAttributeDeleteConfirmation;
+    }
+
+    /**
+     * @param showAttributeExistConfirmation the showAttributeExistConfirmation to set
+     */
+    public void setShowAttributeExistConfirmation(boolean showAttributeExistConfirmation) {
+        this.showAttributeExistConfirmation = showAttributeExistConfirmation;
+    }
+
+    /**
+     * @return the canEdit
+     */
+    public boolean isCanEdit() {
+        return canEdit;
+    }
+
+    /**
+     * @param canEdit the canEdit to set
+     */
+    public void setCanEdit(boolean canEdit) {
+        this.canEdit = canEdit;
+    }
 
 }

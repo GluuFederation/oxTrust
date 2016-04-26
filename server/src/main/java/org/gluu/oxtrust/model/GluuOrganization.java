@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import lombok.Data;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
@@ -25,7 +24,7 @@ import java.io.Serializable;
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "gluuGroup", "oxEntry" })
-public @Data class GluuOrganization extends Entry implements Serializable {
+public class GluuOrganization extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -8284018077740582699L;
 

@@ -8,11 +8,10 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 
-import lombok.Data;
-
-public @Data class ProfileConfiguration implements Serializable {
+public class ProfileConfiguration implements Serializable {
 
 	private static final long serialVersionUID = 7083971450893323016L;
+        
 	private String name;
 	private boolean includeAttributeStatement;
 	private String signResponses;
@@ -107,12 +106,7 @@ public @Data class ProfileConfiguration implements Serializable {
 
 	@Override
 	public String toString() {
-		return String
-				.format("ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, profileConfigurationCertFileName=%s]",
-						name, includeAttributeStatement, signResponses,
-						signAssertions, signRequests, assertionLifetime,
-						assertionProxyCount, encryptNameIds, encryptAssertions,
-						profileConfigurationCertFileName);
+		return String.format("ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, profileConfigurationCertFileName=%s]", getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(), getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(), getProfileConfigurationCertFileName());
 	}
 
 }

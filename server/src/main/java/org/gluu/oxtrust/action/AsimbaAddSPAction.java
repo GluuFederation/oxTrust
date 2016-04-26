@@ -45,6 +45,8 @@ public class AsimbaAddSPAction implements Serializable {
     
     private String spURL;
     
+    private String spType;
+    
     @Create
     public void init() {        
         log.info("init() SP call");
@@ -100,6 +102,20 @@ public class AsimbaAddSPAction implements Serializable {
      */
     public void setSpRequestor(RequestorEntry spRequestor) {
         this.spRequestor = spRequestor;
+    }
+
+    /**
+     * @return the spType
+     */
+    public String getSpType() {
+        return spType;
+    }
+
+    /**
+     * @param spType the spType to set
+     */
+    public void setSpType(String spType) {
+        this.spType = spType;
     }
     
 }

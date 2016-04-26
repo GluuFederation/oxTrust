@@ -10,8 +10,6 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-import lombok.Data;
-
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -42,9 +40,37 @@ import org.xdi.util.StringHelper;
  */
 @Scope(ScopeType.CONVERSATION)
 @Name("passwordReminderAction")
-public @Data class PasswordReminderAction implements Serializable {
+public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+    /**
+     * @return the MESSAGE_NOT_FOUND
+     */
+    public static String getMESSAGE_NOT_FOUND() {
+        return MESSAGE_NOT_FOUND;
+    }
+
+    /**
+     * @param aMESSAGE_NOT_FOUND the MESSAGE_NOT_FOUND to set
+     */
+    public static void setMESSAGE_NOT_FOUND(String aMESSAGE_NOT_FOUND) {
+        MESSAGE_NOT_FOUND = aMESSAGE_NOT_FOUND;
+    }
+
+    /**
+     * @return the MESSAGE_FOUND
+     */
+    public static String getMESSAGE_FOUND() {
+        return MESSAGE_FOUND;
+    }
+
+    /**
+     * @param aMESSAGE_FOUND the MESSAGE_FOUND to set
+     */
+    public static void setMESSAGE_FOUND(String aMESSAGE_FOUND) {
+        MESSAGE_FOUND = aMESSAGE_FOUND;
+    }
 
 	@Email
 	@NotEmpty
@@ -152,5 +178,47 @@ public @Data class PasswordReminderAction implements Serializable {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+    /**
+     * @return the ldapEntryManager
+     */
+    public LdapEntryManager getLdapEntryManager() {
+        return ldapEntryManager;
+    }
+
+    /**
+     * @param ldapEntryManager the ldapEntryManager to set
+     */
+    public void setLdapEntryManager(LdapEntryManager ldapEntryManager) {
+        this.ldapEntryManager = ldapEntryManager;
+    }
+
+    /**
+     * @return the recaptchaService
+     */
+    public RecaptchaService getRecaptchaService() {
+        return recaptchaService;
+    }
+
+    /**
+     * @param recaptchaService the recaptchaService to set
+     */
+    public void setRecaptchaService(RecaptchaService recaptchaService) {
+        this.recaptchaService = recaptchaService;
+    }
+
+    /**
+     * @return the log
+     */
+    public Log getLog() {
+        return log;
+    }
+
+    /**
+     * @param log the log to set
+     */
+    public void setLog(Log log) {
+        this.log = log;
+    }
 	
 }
