@@ -21,7 +21,7 @@
             }
         </style>
         
-        <s:fragment>
+        <s:fragment rendered="#{not registerPersonAction.captchaDisabled}">
 	        <script src="https://www.google.com/recaptcha/api.js" async="async" defer="defer"></script>
         </s:fragment>
     </ui:define>
@@ -161,10 +161,9 @@
                                             <!-- End Passwords -->
                                         </div>
                                         <!-- Captcha -->
-                                        <h:panelGroup rendered="#{not registerPersonAction.captchaDisabled}">
-                                        <div class="g-recaptcha" data-sitekey="#{oxTrustConfiguration.applicationConfiguration.recaptchaSiteKey}">
-										</div>
-										</h:panelGroup>
+                                        <s:fragment rendered="#{not registerPersonAction.captchaDisabled}">
+	                                        <s class="g-recaptcha" data-sitekey="#{recaptchaService.recaptchaSiteKey}"/>
+                                        </s:fragment>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div id="updateButtons" style="margin-top: 20px;">

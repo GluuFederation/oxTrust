@@ -62,51 +62,7 @@ public class UserSerializer extends JsonSerializer<User> {
 
                 if (SchemaTypeMapping.getSchemaTypeInstance(rootNodeEntry.getKey()) instanceof UserExtensionSchema) {
 
-                    AttributeService attributeService = AttributeService.instance();
-                    Extension extension = user.getExtension(rootNodeEntry.getKey());
-
-                    Map<String, Object> list = new HashMap<String, Object>();
-                    for (Map.Entry<String, Extension.Field> extEntry : extension.getFields().entrySet()) {
-
-                        GluuAttribute gluuAttribute = attributeService.getAttributeByName(extEntry.getKey());
-                        GluuAttributeDataType attributeDataType = gluuAttribute.getDataType();
-
-                        if ((gluuAttribute.getOxMultivaluedAttribute() != null) && gluuAttribute.getOxMultivaluedAttribute().equals(OxMultivalued.TRUE)) {
-
-                            if (attributeDataType.equals(GluuAttributeDataType.STRING) || attributeDataType.equals(GluuAttributeDataType.PHOTO)) {
-
-                                List<String> stringList = Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), String[].class));
-                                list.put(extEntry.getKey(), stringList);
-
-                            } else if (attributeDataType.equals(GluuAttributeDataType.DATE)) {
-
-                                List<Date> dateList = Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), Date[].class));
-                                List<String> stringList = new ArrayList<String>();
-                                DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
-                                for (Date date : dateList) {
-                                    String dateString = dateTimeFormatter.print(date.getTime());
-                                    stringList.add(dateString);
-                                }
-                                list.put(extEntry.getKey(), stringList);
-
-                            } else if (attributeDataType.equals(GluuAttributeDataType.NUMERIC)) {
-
-                                List<BigDecimal> numberList = Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), BigDecimal[].class));
-                                list.put(extEntry.getKey(), numberList);
-                            }
-
-                        } else {
-
-                            if (attributeDataType.equals(GluuAttributeDataType.DATE)) {
-                                DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
-                                list.put(extEntry.getKey(), dateTimeFormatter.print(new Long(extEntry.getValue().getValue())));
-                            } else {
-                                list.put(extEntry.getKey(), extEntry.getValue().getValue());
-                            }
-                        }
-                    }
-
-                    jsonGenerator.writeObject(list);
+                    serializeUserExtension(rootNodeEntry, mapper, user, jsonGenerator);
 
                 } else {
 
@@ -120,5 +76,54 @@ public class UserSerializer extends JsonSerializer<User> {
             e.printStackTrace();
             throw new IOException("Unexpected processing error; please check the input parameters.");
         }
+    }
+
+    protected void serializeUserExtension(Map.Entry<String, JsonNode> rootNodeEntry, ObjectMapper mapper, User user, JsonGenerator jsonGenerator) throws Exception {
+
+        AttributeService attributeService = AttributeService.instance();
+        Extension extension = user.getExtension(rootNodeEntry.getKey());
+
+        Map<String, Object> list = new HashMap<String, Object>();
+        for (Map.Entry<String, Extension.Field> extEntry : extension.getFields().entrySet()) {
+
+            GluuAttribute gluuAttribute = attributeService.getAttributeByName(extEntry.getKey());
+            GluuAttributeDataType attributeDataType = gluuAttribute.getDataType();
+
+            if ((gluuAttribute.getOxMultivaluedAttribute() != null) && gluuAttribute.getOxMultivaluedAttribute().equals(OxMultivalued.TRUE)) {
+
+                if (attributeDataType.equals(GluuAttributeDataType.STRING) || attributeDataType.equals(GluuAttributeDataType.PHOTO)) {
+
+                    List<String> stringList = Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), String[].class));
+                    list.put(extEntry.getKey(), stringList);
+
+                } else if (attributeDataType.equals(GluuAttributeDataType.DATE)) {
+
+                    List<Date> dateList = Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), Date[].class));
+                    List<String> stringList = new ArrayList<String>();
+                    DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+                    for (Date date : dateList) {
+                        String dateString = dateTimeFormatter.print(date.getTime());
+                        stringList.add(dateString);
+                    }
+                    list.put(extEntry.getKey(), stringList);
+
+                } else if (attributeDataType.equals(GluuAttributeDataType.NUMERIC)) {
+
+                    List<BigDecimal> numberList = Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), BigDecimal[].class));
+                    list.put(extEntry.getKey(), numberList);
+                }
+
+            } else {
+
+                if (attributeDataType.equals(GluuAttributeDataType.DATE)) {
+                    DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
+                    list.put(extEntry.getKey(), dateTimeFormatter.print(new Long(extEntry.getValue().getValue())));
+                } else {
+                    list.put(extEntry.getKey(), extEntry.getValue().getValue());
+                }
+            }
+        }
+
+        jsonGenerator.writeObject(list);
     }
 }

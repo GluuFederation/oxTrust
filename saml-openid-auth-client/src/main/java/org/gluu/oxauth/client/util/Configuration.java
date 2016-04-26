@@ -87,7 +87,6 @@ public final class Configuration {
 	}
 
 	public String getPropertyValue(String propertyName) {
-
     	if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, propertyName)) {
     		return openIdConfiguration.getAuthorizationEndpoint();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_TOKEN_URL, propertyName)) {

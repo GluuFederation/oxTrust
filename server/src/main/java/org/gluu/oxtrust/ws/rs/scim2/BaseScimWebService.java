@@ -9,6 +9,7 @@ package org.gluu.oxtrust.ws.rs.scim2;
 import javax.ws.rs.core.Response;
 
 import com.unboundid.ldap.sdk.Filter;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -31,8 +32,7 @@ import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
@@ -106,7 +106,7 @@ public class BaseScimWebService {
 		}
 	}
 
-	public <T> List<T> search(String dn, Class<T> entryClass, String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String[] returnAttributes) throws Exception {
+	public <T> List<T> search(String dn, Class<T> entryClass, String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String attributesArray) throws Exception {
 
 		log.info("----------");
 		log.info(" ### RAW PARAMS ###");
@@ -115,6 +115,7 @@ public class BaseScimWebService {
 		log.info(" count = " + count);
 		log.info(" sortBy = " + sortBy);
 		log.info(" sortOrder = " + sortOrder);
+		log.info(" attributes = " + attributesArray);
 
 		Filter filter = null;
 		if (filterString == null || (filterString != null && filterString.isEmpty())) {
@@ -123,12 +124,12 @@ public class BaseScimWebService {
 			filter = scimFilterParserService.createFilter(filterString, org.gluu.oxtrust.model.scim2.User.class);
 		}
 
+		startIndex = (startIndex < 1) ? 1 : startIndex;
+
 		count = (count < 1) ? DEFAULT_COUNT : count;
 		count = (count > MAX_COUNT) ? MAX_COUNT : count;
 
-		startIndex = (startIndex < 1) ? 1 : startIndex;
-
-		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
+		sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "displayName";
 		if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
 			sortBy = getUserLdapAttributeName(sortBy);
 		}
@@ -142,14 +143,28 @@ public class BaseScimWebService {
 			sortOrderEnum = SortOrder.ASCENDING;
 		}
 
+		ObjectMapper mapper = new ObjectMapper();
+		String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
+		if (attributes != null && attributes.length > 0) {
+			for (int i = 0; i < attributes.length; i++) {
+				attributes[i] = getUserLdapAttributeName(attributes[i]);
+			}
+		}
+		// Eliminate duplicates
+		if (attributes != null && attributes.length > 0) {
+			Set<String> attributesSet = new LinkedHashSet<String>(Arrays.asList(attributes));
+			attributes = attributesSet.toArray(new String[attributesSet.size()]);
+		}
+
 		log.info(" ### CONVERTED PARAMS ###");
 		log.info(" parsed filter = " + filter.toString());
 		log.info(" startIndex = " + startIndex);
 		log.info(" count = " + count);
 		log.info(" sortBy = " + sortBy);
 		log.info(" sortOrder = " + sortOrderEnum.getValue());
+		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? mapper.writeValueAsString(attributes) : null));
 
-		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, returnAttributes);
+		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
 
 		log.info(" ### RESULTS INFO ###");
 		log.info(" totalResults = " + vlvResponse.getTotalResults());

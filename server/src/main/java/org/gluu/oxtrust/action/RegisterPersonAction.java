@@ -18,19 +18,16 @@ import javax.faces.context.ExternalContext;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import net.tanesha.recaptcha.ReCaptchaResponse;
-
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
-import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -46,7 +43,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-import org.xdi.model.custom.script.model.CustomScript;
+import org.xdi.util.StringHelper;
 
 /**
  * @author Dejan Maric
@@ -99,6 +96,9 @@ public class RegisterPersonAction implements Serializable {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
+	@In
+	private RecaptchaService recaptchaService;
+
 	private List<String> hiddenAttributes;
 
 	private String inum;
@@ -116,6 +116,8 @@ public class RegisterPersonAction implements Serializable {
 	 * @throws Exception
 	 */
 	public String initPerson() {
+		initRecaptcha();
+
 		String result = sanityCheck();
 		if (result.equals(OxTrustConstants.RESULT_SUCCESS)) {
 
@@ -150,27 +152,29 @@ public class RegisterPersonAction implements Serializable {
 		}
 
 		requestParameters.putAll(externalContext.getRequestParameterValuesMap());
-		GluuOrganization organization = organizationService.getOrganization();
-		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
-		boolean registrationCustomized = config != null;
-
-		this.captchaDisabled = registrationCustomized && config.isCaptchaDisabled();
 
 		return OxTrustConstants.RESULT_SUCCESS;
 
 	}
 
-	public String register() throws CloneNotSupportedException {
+	private void initRecaptcha() {
 		GluuOrganization organization = organizationService.getOrganization();
-		RegistrationConfiguration registrationConfig = organization.getOxRegistrationConfiguration();
-		boolean registrationCustomized = registrationConfig != null;
-		this.captchaDisabled = registrationCustomized && registrationConfig.isCaptchaDisabled();
-		ReCaptchaResponse reCaptchaResponse = null;
+		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
+		boolean registrationCustomized = config != null;
+
+		this.captchaDisabled = !recaptchaService.isEnabled();
+		if (!this.captchaDisabled) {
+			this.captchaDisabled = registrationCustomized && config.isCaptchaDisabled();
+		}
+	}
+
+	public String register() throws CloneNotSupportedException {
+		boolean registrationFormValid = StringHelper.equals(password, repeatPassword);
 
 		if (!captchaDisabled) {
-			reCaptchaResponse = RecaptchaUtils.getRecaptchaResponseFromServletContext();
+			boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse();
+			registrationFormValid &= reCaptchaResponse;
 		}
-		boolean registrationFormValid = captchaDisabled || reCaptchaResponse != null && reCaptchaResponse.isValid() && password.equals(repeatPassword);
 
 		if (registrationFormValid) {
 			GluuCustomPerson archivedPerson = (GluuCustomPerson) person.clone();

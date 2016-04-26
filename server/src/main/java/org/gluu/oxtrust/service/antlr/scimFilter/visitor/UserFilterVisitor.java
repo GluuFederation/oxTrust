@@ -5,10 +5,12 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.visitor;
 
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,20 +50,18 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
     public static String getUserLdapAttributeName(String attrName) {
 
-        String ldapAttributeName = attrName;
-
-        String uri = Constants.USER_CORE_SCHEMA_ID + ":";
-        if (ldapAttributeName.startsWith(uri)) {
-            int index = ldapAttributeName.indexOf(uri) + uri.length();
-            ldapAttributeName = ldapAttributeName.substring(index);
-        }
+        String ldapAttributeName = FilterUtil.stripScimSchema(Constants.USER_CORE_SCHEMA_ID, attrName);
 
         String[] tokens = ldapAttributeName.split("\\.");
 
         // This is already specific implementation. Currently only support up to second level.
         ldapAttributeName = tokens[0];
-        if (tokens.length == 2 && tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
-            ldapAttributeName = tokens[1];
+        if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+            if (tokens.length == 1) {
+                ldapAttributeName = "inum";
+            } else if (tokens.length == 2) {
+                ldapAttributeName = tokens[1];
+            }
         }
 
         if (ldapAttributeName != null && !ldapAttributeName.isEmpty()) {
@@ -78,25 +78,15 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         return ldapAttributeName;
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
-    @Override
-    public String visitATTR_OPER_CRITERIA(ScimFilterParser.ATTR_OPER_CRITERIAContext ctx) {
+    private String attrOperCriteriaResolver(String attrName, String operator, String criteria) {
 
-        logger.info(" UserFilterVisitor.visitATTR_OPER_CRITERIA() ");
+        logger.info(" UserFilterVisitor.attrOperCriteriaResolver() ");
 
-        String attrName = ctx.ATTRNAME().getText();
+        attrName = FilterUtil.stripScimSchema(Constants.USER_CORE_SCHEMA_ID, attrName);
+
         String[] tokens = attrName.split("\\.");
 
         String ldapAttributeName = getUserLdapAttributeName(attrName);
-        String operator = visit(ctx.operator());
-        String criteria = visit(ctx.criteria());
 
         // This is already specific implementation. Currently only support up to second level.
         if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
@@ -104,7 +94,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
             StringBuilder sb = new StringBuilder();
 
             if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
-                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
                 sb.append("\"");
             } else {
                 sb.append("*\"");
@@ -121,14 +111,14 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
             sb.append(criteria);
 
             if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
-                  ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
+                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
                 sb.append("\"*");
             }
 
             criteria = sb.toString();
         }
 
-        logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName + ", criteria = " + criteria);
+        logger.info(" ##### attrName = " + attrName + ", ldapAttributeName = " + ldapAttributeName + ", criteria = " + criteria);
 
         String expr = ScimOperator.transform(operator, ldapAttributeName, criteria);
         logger.info(" ##### expr = " + expr);
@@ -145,50 +135,57 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
      * @param ctx
      */
     @Override
+    public String visitATTR_OPER_CRITERIA(ScimFilterParser.ATTR_OPER_CRITERIAContext ctx) {
+
+        logger.info(" UserFilterVisitor.visitATTR_OPER_CRITERIA() ");
+
+        ParseTree parent = ctx.getParent();
+        while (parent != null) {
+
+            if (parent.getClass().getSimpleName().equalsIgnoreCase(ScimFilterParser.LBRAC_EXPR_RBRACContext.class.getSimpleName())) {
+
+                logger.info("********** PARENT = " + parent.getClass().getSimpleName());
+
+                String attrName = ((ScimFilterParser.LBRAC_EXPR_RBRACContext)parent).ATTRNAME() + "." + ctx.ATTRNAME().getText();
+                return attrOperCriteriaResolver(attrName, visit(ctx.operator()), visit(ctx.criteria()));
+
+            } else {
+                parent = parent.getParent();
+            }
+        }
+
+        return attrOperCriteriaResolver(ctx.ATTRNAME().getText(), visit(ctx.operator()), visit(ctx.criteria()));
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
     public String visitATTR_OPER_EXPR(ScimFilterParser.ATTR_OPER_EXPRContext ctx) {
 
         logger.info(" UserFilterVisitor.visitATTR_OPER_EXPR() ");
 
-        String attrName = ctx.ATTRNAME().getText();
-        String[] tokens = attrName.split("\\.");
+        ParseTree parent = ctx.getParent();
+        while (parent != null) {
 
-        String ldapAttributeName = getUserLdapAttributeName(attrName);
-        String operator = visit(ctx.operator());
-        String expression = visit(ctx.expression());
+            if (parent.getClass().getSimpleName().equalsIgnoreCase(ScimFilterParser.LBRAC_EXPR_RBRACContext.class.getSimpleName())) {
 
-        // This is already specific implementation. Currently only support up to second level.
-        if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+                logger.info("********** PARENT = " + parent.getClass().getSimpleName());
 
-            StringBuilder sb = new StringBuilder();
+                String attrName = ((ScimFilterParser.LBRAC_EXPR_RBRACContext)parent).ATTRNAME() + "." + ctx.ATTRNAME().getText();
+                return attrOperCriteriaResolver(attrName, visit(ctx.operator()), visit(ctx.expression()));
 
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
-                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
-                sb.append("\"");
             } else {
-                sb.append("*\"");
+                parent = parent.getParent();
             }
-
-            sb.append(tokens[1]);
-
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL)) {
-                sb.append("\":\"");
-            } else {
-                sb.append("\":*");
-            }
-
-            sb.append(expression);
-
-            if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
-                  ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
-                sb.append("\"*");
-            }
-
-            expression = sb.toString();
         }
 
-        logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName + ", expression = " + expression);
-
-        return ScimOperator.transform(operator, ldapAttributeName, expression);
+        return attrOperCriteriaResolver(ctx.ATTRNAME().getText(), visit(ctx.operator()), visit(ctx.expression()));
     }
 
     /**
@@ -208,24 +205,30 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         String[] tokens = attrName.split("\\.");
 
         String ldapAttributeName = getUserLdapAttributeName(attrName);
-        String pr = "=*";
+
+        StringBuilder result = new StringBuilder("");
 
         // This is already specific implementation. Currently only support up to second level.
         if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
 
-            StringBuilder sb = new StringBuilder("");
-            sb.append("=*\"");
-            sb.append(tokens[1]);
-            sb.append("\":*");
-            pr = sb.toString();
+            result.append("&(");
+            result.append(ldapAttributeName);
+            result.append("=*");
+            result.append(")(");
+
+            result.append(ldapAttributeName);
+            result.append("=*\"");
+            result.append(tokens[1]);
+            result.append("\":\"*");
+            result.append(")");
+
+        } else {
+
+            result.append(ldapAttributeName);
+            result.append("=*");
         }
 
-        StringBuilder result = new StringBuilder("");
-
         logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
-
-        result.append(ldapAttributeName);
-        result.append(pr);
 
         String expr = result.toString();
         logger.info(" ##### expr = " + expr);
@@ -247,14 +250,14 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         logger.info(" UserFilterVisitor.visitLBRAC_EXPR_RBRAC() ");
 
         StringBuilder result = new StringBuilder("");
-        result.append("&");
-        result.append("(");
-        result.append(getUserLdapAttributeName(ctx.ATTRNAME().getText()));
-        result.append("=*");
-        result.append(")");
-        result.append("(");
-        result.append(visit(ctx.expression()));  // Add check if child attributes belong to the parent
-        result.append(")");
+        // result.append("&");
+        // result.append("(");
+        // result.append(getUserLdapAttributeName(ctx.ATTRNAME().getText()));
+        // result.append("=*");
+        // result.append(")");
+        // result.append("(");
+        result.append(visit(ctx.expression()));  // See this.visitATTR_OPER_CRITERIA()
+        // result.append(")");
 
         return result.toString();
     }

@@ -17,9 +17,11 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.util.StringHelper;
 
 /**
- * User: Dejan Maric
+ * @author Dejan Maric
+ * @author Yuriy Movchan
  */
 @Scope(ScopeType.STATELESS)
 @Name("recaptchaService")
@@ -34,13 +36,25 @@ public class RecaptchaService implements Serializable {
 
 	private static final long serialVersionUID = 7725720511230443399L;
 
-	@Deprecated
-	public String getHtml() throws Exception {
-		return RecaptchaUtils.createRecaptchaHtml("Error");
-	}
-	
 	public boolean verifyRecaptchaResponse() {
-		return RecaptchaUtils.verifyGoogleRecaptchaFromServletContext(oxTrustConfiguration.getApplicationConfiguration().getRecaptchaSecretKey());
+		boolean enabled = isEnabled();
+		if (!enabled) {
+			return false;
+		}
+
+		return RecaptchaUtils.verifyGoogleRecaptchaFromServletContext(getRecaptchaSecretKey());
+	}
+
+	public boolean isEnabled() {
+		return StringHelper.isNotEmpty(getRecaptchaSecretKey()) && StringHelper.isNotEmpty(getRecaptchaSiteKey());
+	}
+
+	public String getRecaptchaSecretKey() {
+		return oxTrustConfiguration.getApplicationConfiguration().getRecaptchaSecretKey();
+	}
+
+	public String getRecaptchaSiteKey() {
+		return oxTrustConfiguration.getApplicationConfiguration().getRecaptchaSiteKey();
 	}
 
 }
