@@ -81,8 +81,6 @@ public class UserWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		personService = PersonService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -98,6 +96,8 @@ public class UserWebService extends BaseScimWebService {
 			} else {
 
 				log.info(" Searching users from LDAP ");
+
+				personService = PersonService.instance();
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
@@ -166,7 +166,6 @@ public class UserWebService extends BaseScimWebService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Find User by id", notes = "Returns a Users on the basis of provided uid as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
 	public Response getUserByUid(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -174,6 +173,8 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
 
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 
@@ -204,8 +205,6 @@ public class UserWebService extends BaseScimWebService {
 	@ApiOperation(value = "Create User", notes = "Create User (https://tools.ietf.org/html/rfc7644#section-3.3)", response = User.class)
 	public Response createUser(@HeaderParam("Authorization") String authorization, @ApiParam(value = "User", required = true) User person) throws Exception {
 
-		personService = PersonService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -220,6 +219,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			log.debug(" generating inum ");
 			String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
 																	// //personService.generateInumForNewPerson();
@@ -268,14 +270,15 @@ public class UserWebService extends BaseScimWebService {
 	@ApiOperation(value = "Update User", notes = "Update User (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
 	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, @ApiParam(value = "User", required = true) User person) throws Exception {
 
-		personService = PersonService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 			if (gluuPerson == null) {
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
@@ -315,7 +318,6 @@ public class UserWebService extends BaseScimWebService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -323,6 +325,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson person = personService.getPersonByInum(uid);
 			if (person == null) {
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
@@ -353,6 +358,7 @@ public class UserWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateUserPatch(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, ScimPersonPatch person) throws Exception {
+
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -365,7 +371,6 @@ public class UserWebService extends BaseScimWebService {
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response personSearch(@HeaderParam("Authorization") String authorization, ScimPersonSearch searchPattern) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -373,6 +378,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson gluuPerson = personService.getPersonByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
@@ -397,7 +405,6 @@ public class UserWebService extends BaseScimWebService {
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response searchPersons(@HeaderParam("Authorization") String authorization, ScimPersonSearch searchPattern) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -405,6 +412,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			List<GluuCustomPerson> personList = personService.getPersonsByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
 			ListResponse personsListResponse = new ListResponse();
 			if (personList != null) {
@@ -432,5 +442,4 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
-
 }

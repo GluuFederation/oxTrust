@@ -129,7 +129,7 @@ public class BaseScimWebService {
 		count = (count < 1) ? DEFAULT_COUNT : count;
 		count = (count > MAX_COUNT) ? MAX_COUNT : count;
 
-		sortBy = (sortBy == null || (sortBy != null && sortBy.isEmpty())) ? "displayName" : sortBy;
+		sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "displayName";
 		if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
 			sortBy = getUserLdapAttributeName(sortBy);
 		}

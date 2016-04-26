@@ -54,7 +54,19 @@ public class Name {
      * @return the formatted name
      */
     public String getFormatted() {
-        return formatted;
+
+        if (formatted != null && !formatted.isEmpty()) {
+            return formatted;
+        }
+
+        StringBuilder formattedName = new StringBuilder("");
+        formattedName.append((honorificPrefix != null && !honorificPrefix.isEmpty()) ? honorificPrefix + " " : "");
+        formattedName.append((givenName != null && !givenName.isEmpty()) ? givenName + " " : "");
+        formattedName.append((middleName != null && !middleName.isEmpty()) ? middleName + " " : "");
+        formattedName.append((familyName != null && !familyName.isEmpty()) ? familyName + " " : "");
+        formattedName.append((honorificSuffix != null && !honorificSuffix.isEmpty()) ? honorificSuffix : "");
+
+        return formattedName.toString().trim();
     }
 
     /**
