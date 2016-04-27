@@ -788,6 +788,19 @@
 				<cfg>default</cfg>
 			</properties>
 		</profile>
+
+        <profile>
+            <id>development-build</id>
+            <activation>
+                <property>
+                    <name>development-build</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <log4j.default.log.level>TRACE</log4j.default.log.level>
+            </properties>
+        </profile>
 	</profiles>
 
 </project>
