@@ -424,7 +424,7 @@ public class ImageRepository {
 			image.setSourceContentType(fileTypeMap.getContentType(image.getSourceName()));
 		}
 
-		return image.getSourceContentType().matches("image/(x-icon|x-ico)");
+		return image.getSourceContentType().matches("image/(x-icon|x-ico|jpeg|jpg)");
 	}
 
 }
