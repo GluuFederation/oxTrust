@@ -1689,7 +1689,11 @@ public class CopyUtils2 implements Serializable {
 	private static void setGluuStatus(User source, GluuCustomPerson destination) {
 		Boolean active = source.isActive();
 		if (active != null) {
-			setGluuStatus(destination, active.toString());
+			if (active.equals(Boolean.TRUE)) {
+				setGluuStatus(destination, GluuBoolean.ACTIVE.getValue());
+			} else {
+				setGluuStatus(destination, GluuBoolean.INACTIVE.getValue());
+			}
 		}
 	}
 
