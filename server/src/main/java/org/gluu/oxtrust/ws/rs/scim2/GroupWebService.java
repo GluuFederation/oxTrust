@@ -33,11 +33,9 @@ import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
-import org.gluu.oxtrust.ws.rs.scim.BaseScimWebService;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -66,19 +64,28 @@ public class GroupWebService extends BaseScimWebService {
 			notes = "Returns a list of Groups (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.4)",
 			response = ListResponse.class
 	)
-	public Response listGroups(@HeaderParam("Authorization") String authorization,
+	public Response listGroups(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 			@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
 			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
 			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
 
-		groupService = GroupService.instance();
-
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			List<GluuGroup> groupList = groupService.getAllGroupsList();
 			ListResponse allGroupList = new ListResponse();
 			if (groupList != null) {
@@ -108,16 +115,26 @@ public class GroupWebService extends BaseScimWebService {
 			notes = "Returns a Group on the basis of provided id as path param (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.4.2.1)",
 			response = Group.class
 	)
-	public Response getGroupById(@HeaderParam("Authorization") String authorization, @PathParam("id") String id) throws Exception {
+	public Response getGroupById(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@PathParam("id") String id) throws Exception {
 
-		groupService = GroupService.instance();
-
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
 				// sets HTTP status code 404 Not Found
@@ -146,10 +163,18 @@ public class GroupWebService extends BaseScimWebService {
 			notes = "Create Group (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.3)",
 			response = Group.class
 	)
-	public Response createGroup(@HeaderParam("Authorization") String authorization,@ApiParam(value = "Group", required = true) Group group) throws Exception {
-		groupService = GroupService.instance();
+	public Response createGroup(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@ApiParam(value = "Group", required = true) Group group) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
@@ -162,6 +187,9 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			log.debug(" generating inum ");
 			String inum = groupService.generateInumForNewGroup();
 			log.debug(" getting DN ");
@@ -200,15 +228,27 @@ public class GroupWebService extends BaseScimWebService {
 			notes = "Update Group (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.3)",
 			response = Group.class
 	)
-	public Response updateGroup(@HeaderParam("Authorization") String authorization, @PathParam("id") String id,@ApiParam(value = "Group", required = true) Group group) throws Exception {
-		groupService = GroupService.instance();
+	public Response updateGroup(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@PathParam("id") String id,
+			@ApiParam(value = "Group", required = true) Group group) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
 				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
@@ -241,15 +281,26 @@ public class GroupWebService extends BaseScimWebService {
 	@ApiOperation(value = "Delete Group",
 			notes = "Delete Group (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.3)"
 	)
-	public Response deleteGroup(@HeaderParam("Authorization") String authorization, @PathParam("id") String id) throws Exception {
-		groupService = GroupService.instance();
+	public Response deleteGroup(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@PathParam("id") String id) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			log.info(" Checking if the group exists ");
 			log.info(" id : " + id);
 			GluuGroup group = groupService.getGroupByInum(id);
@@ -279,5 +330,4 @@ public class GroupWebService extends BaseScimWebService {
 					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
-
 }

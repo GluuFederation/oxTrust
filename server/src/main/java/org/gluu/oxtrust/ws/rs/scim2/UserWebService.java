@@ -74,6 +74,7 @@ public class UserWebService extends BaseScimWebService {
 	@ApiOperation(value = "List Users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response listUsers(
 		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
@@ -81,7 +82,13 @@ public class UserWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
@@ -165,9 +172,18 @@ public class UserWebService extends BaseScimWebService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Find User by id", notes = "Returns a Users on the basis of provided uid as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
-	public Response getUserByUid(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
+	public Response getUserByUid(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@PathParam("uid") String uid) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
@@ -203,9 +219,18 @@ public class UserWebService extends BaseScimWebService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Create User", notes = "Create User (https://tools.ietf.org/html/rfc7644#section-3.3)", response = User.class)
-	public Response createUser(@HeaderParam("Authorization") String authorization, @ApiParam(value = "User", required = true) User person) throws Exception {
+	public Response createUser(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@ApiParam(value = "User", required = true) User person) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
@@ -268,9 +293,18 @@ public class UserWebService extends BaseScimWebService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Update User", notes = "Update User (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
-	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, @ApiParam(value = "User", required = true) User person) throws Exception {
+	public Response updateUser(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@PathParam("uid") String uid, @ApiParam(value = "User", required = true) User person) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
@@ -317,9 +351,18 @@ public class UserWebService extends BaseScimWebService {
 	@DELETE
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
-	public Response deleteUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
+	public Response deleteUser(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@PathParam("uid") String uid) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
@@ -357,9 +400,18 @@ public class UserWebService extends BaseScimWebService {
 	@PATCH
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response updateUserPatch(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, ScimPersonPatch person) throws Exception {
+	public Response updateUserPatch(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@PathParam("uid") String uid, ScimPersonPatch person) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
@@ -370,9 +422,18 @@ public class UserWebService extends BaseScimWebService {
 	@Path("/Search")
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response personSearch(@HeaderParam("Authorization") String authorization, ScimPersonSearch searchPattern) throws Exception {
+	public Response personSearch(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			ScimPersonSearch searchPattern) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
@@ -404,9 +465,18 @@ public class UserWebService extends BaseScimWebService {
 	@Path("/SearchPersons")
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response searchPersons(@HeaderParam("Authorization") String authorization, ScimPersonSearch searchPattern) throws Exception {
+	public Response searchPersons(
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			ScimPersonSearch searchPattern) throws Exception {
 
-		Response authorizationResponse = processAuthorization(authorization);
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}

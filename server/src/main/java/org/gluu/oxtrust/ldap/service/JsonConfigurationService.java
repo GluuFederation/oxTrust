@@ -27,7 +27,13 @@ import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
+import org.xdi.oxauth.client.*;
+import org.xdi.oxauth.model.common.AuthenticationMethod;
+import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.service.JsonService;
+import org.xdi.util.security.StringEncrypter;
+
+import javax.ws.rs.core.Response;
 
 /**
  * Provides operations with JSON oxAuth/oxTrust configuration
@@ -52,6 +58,9 @@ public class JsonConfigurationService implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.configurationDn}")
 	private String configurationDn;
+
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;
 
 	public ApplicationConfiguration getOxTrustApplicationConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
@@ -138,4 +147,93 @@ public class JsonConfigurationService implements Serializable {
 		return (JsonConfigurationService) Component.getInstance(JsonConfigurationService.class);
 	}
 
+	public void processScimTestModeIsTrue(ApplicationConfiguration source, ApplicationConfiguration current) throws Exception {
+
+		ApplicationConfiguration applicationConfiguration = getOxTrustApplicationConfiguration();
+
+		if (current.isScimTestMode()) {
+
+			String clientPassword = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getOxAuthClientPassword(), cryptoConfigurationSalt);
+
+			if (source.getScimTestModeAccessToken() != null && !source.getScimTestModeAccessToken().isEmpty()) {
+
+				// Check if current token is still valid
+
+				String validateTokenEndpoint = applicationConfiguration.getOxAuthTokenValidationUrl();
+
+				ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);
+				ValidateTokenResponse validateTokenResponse = validateTokenClient.execValidateToken(source.getScimTestModeAccessToken());
+
+				log.info(" (JsonConfigurationService) validateToken token = " + current.getScimTestModeAccessToken());
+				log.info(" (JsonConfigurationService) validateToken status = " + validateTokenResponse.getStatus());
+				log.info(" (JsonConfigurationService) validateToken entity = " + validateTokenResponse.getEntity());
+				log.info(" (JsonConfigurationService) validateToken isValid = " + validateTokenResponse.isValid());
+				log.info(" (JsonConfigurationService) validateToken expires = " + validateTokenResponse.getExpiresIn());
+
+				if (!validateTokenResponse.isValid() ||
+					(validateTokenResponse.getExpiresIn() == null || (validateTokenResponse.getExpiresIn() != null && validateTokenResponse.getExpiresIn() <= 0)) ||
+					(validateTokenResponse.getStatus() != Response.Status.OK.getStatusCode())) {
+
+					log.info(" (processScimTestModeIsTrue) Current long-lived token has expired, requesting a new one...");
+
+					//  Request new long-lived access token
+					TokenRequest longLivedTokenRequest = new TokenRequest(GrantType.OXAUTH_EXCHANGE_TOKEN);
+					longLivedTokenRequest.setOxAuthExchangeToken(source.getScimTestModeAccessToken());
+					longLivedTokenRequest.setAuthUsername(applicationConfiguration.getOxAuthClientId());
+					longLivedTokenRequest.setAuthPassword(clientPassword);
+					longLivedTokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
+
+					TokenClient longLivedTokenClient = new TokenClient(current.getOxAuthTokenUrl());
+					longLivedTokenClient.setRequest(longLivedTokenRequest);
+					TokenResponse longLivedTokenResponse = longLivedTokenClient.exec();
+
+					String longLivedAccessToken = longLivedTokenResponse.getAccessToken();
+					log.info(" longLivedAccessToken = " + longLivedAccessToken);
+
+					current.setScimTestModeAccessToken(longLivedAccessToken);
+					source.setScimTestModeAccessToken(longLivedAccessToken);
+
+				} else {
+					log.info(" (processScimTestModeIsTrue) Current long-lived token still valid");
+				}
+
+			} else {
+
+				log.info(" (processScimTestModeIsTrue) Requesting for a first time long-lived access token...");
+
+				// 1. Request short-lived access token
+				TokenRequest tokenRequest = new TokenRequest(GrantType.CLIENT_CREDENTIALS);
+				tokenRequest.setScope(applicationConfiguration.getOxAuthClientScope());
+				tokenRequest.setAuthUsername(applicationConfiguration.getOxAuthClientId());
+				tokenRequest.setAuthPassword(clientPassword);
+				tokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
+
+				TokenClient tokenClient = new TokenClient(applicationConfiguration.getOxAuthTokenUrl());
+				tokenClient.setRequest(tokenRequest);
+				TokenResponse tokenResponse = tokenClient.exec();
+
+				String accessToken = tokenResponse.getAccessToken();
+				log.info(" accessToken = " + accessToken);
+
+				// 2. Exchange for long lived access token
+				TokenRequest longLivedTokenRequest = new TokenRequest(GrantType.OXAUTH_EXCHANGE_TOKEN);
+				longLivedTokenRequest.setOxAuthExchangeToken(accessToken);
+				longLivedTokenRequest.setAuthUsername(applicationConfiguration.getOxAuthClientId());
+				longLivedTokenRequest.setAuthPassword(clientPassword);
+				longLivedTokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
+
+				TokenClient longLivedTokenClient = new TokenClient(current.getOxAuthTokenUrl());
+				longLivedTokenClient.setRequest(longLivedTokenRequest);
+				TokenResponse longLivedTokenResponse = longLivedTokenClient.exec();
+
+				String longLivedAccessToken = longLivedTokenResponse.getAccessToken();
+				log.info(" longLivedAccessToken = " + longLivedAccessToken);
+
+				current.setScimTestModeAccessToken(longLivedAccessToken);
+				source.setScimTestModeAccessToken(longLivedAccessToken);
+			}
+		}
+
+		source.setScimTestMode(current.isScimTestMode());
+	}
 }

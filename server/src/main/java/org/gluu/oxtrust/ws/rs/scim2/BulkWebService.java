@@ -15,12 +15,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,6 +36,7 @@ import org.gluu.oxtrust.model.scim2.BulkResponse;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.util.CopyUtils2;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
@@ -80,14 +76,26 @@ public class BulkWebService extends BaseScimWebService {
 			notes = "SCIM Bulk Operation (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
 			response = BulkResponse.class
 	)
-	public Response bulkOperation(@Context HttpServletRequest request, @Context HttpServletResponse response, @HeaderParam("Authorization") String authorization, @ApiParam(value = "BulkRequest", required = true)BulkRequest bulkRequest) throws WebApplicationException,
-			MalformedURLException, URISyntaxException, JsonGenerationException, JsonMappingException, IOException, Exception {
-		personService = PersonService.instance();
-		groupService = GroupService.instance();
-		Response authorizationResponse = processAuthorization(authorization);
+	public Response bulkOperation(
+			@Context HttpServletRequest request,
+			@Context HttpServletResponse response,
+			@HeaderParam("Authorization") String authorization,
+			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+			@ApiParam(value = "BulkRequest", required = true) BulkRequest bulkRequest) throws Exception {
+
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
+
+		personService = PersonService.instance();
+		groupService = GroupService.instance();
 
 		J2EContext context = new J2EContext(request, response);
 		int removePathLength = "/Bulk".length();

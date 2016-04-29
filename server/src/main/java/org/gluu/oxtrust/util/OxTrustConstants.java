@@ -190,6 +190,8 @@ public final class OxTrustConstants extends OxConstants {
      */
     public static final String QUERY_PARAMETER_START_INDEX = "startIndex";
 
+    public static final String QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN = "access_token";
+
     /**
      * The HTTP query parameter used in a URI to specify the maximum size of a
      * page of results.

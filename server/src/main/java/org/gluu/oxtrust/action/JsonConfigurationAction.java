@@ -6,13 +6,10 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
@@ -26,7 +23,6 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.config.oxtrust.ImportPerson;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
@@ -197,6 +193,8 @@ public class JsonConfigurationAction implements Serializable {
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "mysqlPassword");
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "caCertsPassphrase");
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "oxAuthClientPassword");
+
+			jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration);
 
 			return resultOxTrustApplicationConfiguration;
 		} catch (Exception ex) {

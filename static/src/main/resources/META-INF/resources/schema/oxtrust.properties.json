@@ -344,14 +344,14 @@
             "format": "url",
             "minLength": 1
         },
-        "oxAuthTokenUrl": {
-            "id": "oxAuthTokenUrl",
+        "oxAuthRegisterUrl": {
+            "id": "oxAuthRegisterUrl",
             "type": "string",
             "format": "url",
             "minLength": 1
         },
-        "oxAuthValidateTokenUrl": {
-            "id": "oxAuthValidateTokenUrl",
+        "oxAuthTokenUrl": {
+            "id": "oxAuthTokenUrl",
             "type": "string",
             "format": "url",
             "minLength": 1
@@ -479,6 +479,15 @@
             "id": "jsLocation",
             "type": "string",
             "minLength": 1
+        },
+        "scimTestMode": {
+            "id": "scimTestMode",
+            "type": "boolean"
+        },
+        "scimTestModeAccessToken": {
+            "id": "scimTestModeAccessToken",
+            "type": "string",
+            "readonly": true
         }
     },
     "required": [
@@ -541,8 +550,8 @@
         "servicesRestartTrigger",
         "persistSVN",
         "oxAuthAuthorizeUrl",
+        "oxAuthRegisterUrl",
         "oxAuthTokenUrl",
-        "oxAuthValidateTokenUrl",
         "oxAuthEndSessionUrl",
         "oxAuthLogoutUrl",
         "oxAuthTokenValidationUrl",
@@ -565,6 +574,8 @@
         "recaptchaSecretKey",
         "umaScope",
         "cssLocation",
-        "jsLocation"
+        "jsLocation",
+        "scimTestMode",
+        "scimTestModeAccessToken"
     ]
 }

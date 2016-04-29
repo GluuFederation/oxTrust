@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import com.unboundid.ldap.sdk.Filter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.Error;
@@ -30,6 +31,8 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
+import org.xdi.oxauth.client.ValidateTokenClient;
+import org.xdi.oxauth.client.ValidateTokenResponse;
 import org.xdi.util.Pair;
 
 import java.util.*;
@@ -49,7 +52,10 @@ public class BaseScimWebService {
 	private Log log;
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	protected ApplicationConfiguration applicationConfiguration;
+
+	@In
+	protected JsonConfigurationService jsonConfigurationService;
 
 	@In
 	private ApplianceService applianceService;
@@ -63,13 +69,41 @@ public class BaseScimWebService {
 	@In
 	private ScimFilterParserService scimFilterParserService;
 
+	protected Response processTestModeAuthorization(String token) throws Exception {
+
+		try {
+
+			String validateTokenEndpoint = jsonConfigurationService.getOxTrustApplicationConfiguration().getOxAuthTokenValidationUrl();
+
+			ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);
+			ValidateTokenResponse validateTokenResponse = validateTokenClient.execValidateToken(token);
+
+			log.info(" (BaseScimWebService) validateToken token = " + token);
+			log.info(" (BaseScimWebService) validateToken status = " + validateTokenResponse.getStatus());
+			log.info(" (BaseScimWebService) validateToken entity = " + validateTokenResponse.getEntity());
+			log.info(" (BaseScimWebService) validateToken isValid = " + validateTokenResponse.isValid());
+			log.info(" (BaseScimWebService) validateToken expires = " + validateTokenResponse.getExpiresIn());
+
+			if (!validateTokenResponse.isValid() ||
+				(validateTokenResponse.getExpiresIn() == null || (validateTokenResponse.getExpiresIn() != null && validateTokenResponse.getExpiresIn() <= 0)) ||
+				(validateTokenResponse.getStatus() != Response.Status.OK.getStatusCode())) {
+				return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
+		}
+
+		return null;
+	}
+
 	protected Response processAuthorization(String authorization) throws Exception {
 		boolean authorized = getAuthorizedUser();
 		if (!authorized) {
 			if (!umaAuthenticationService.isEnabledUmaAuthentication()) {
 				return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
 			}
-			
 			Pair<Boolean, Response> rptTokenValidationResult = umaAuthenticationService.validateRptToken(authorization, applicationConfiguration.getUmaResourceId(), applicationConfiguration.getUmaScope());
 			if (rptTokenValidationResult.getFirst()) {
 				if (rptTokenValidationResult.getSecond() != null) {
