@@ -215,7 +215,7 @@ public class JsonConfigurationService implements Serializable {
 				String accessToken = tokenResponse.getAccessToken();
 				log.info(" accessToken = " + accessToken);
 
-				// 2. Exchange for long lived access token
+				// 2. Exchange for long-lived access token
 				TokenRequest longLivedTokenRequest = new TokenRequest(GrantType.OXAUTH_EXCHANGE_TOKEN);
 				longLivedTokenRequest.setOxAuthExchangeToken(accessToken);
 				longLivedTokenRequest.setAuthUsername(applicationConfiguration.getOxAuthClientId());

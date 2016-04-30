@@ -1,10 +1,15 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.provider;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.Resource;
 
@@ -17,13 +22,13 @@ import org.gluu.oxtrust.model.scim2.Resource;
  * >SCIM core schema 20.0, section 5</a>
  * </p>
  */
-public class ServiceProviderConfig extends Resource{
+public class ServiceProviderConfig extends Resource {
 
 	private String documentationUrl = "http://www.gluu.org/docs/";
 	private PatchConfig patch = new PatchConfig(false);
-	private FilterConfig filter = new FilterConfig(false, 0);
+	private FilterConfig filter = new FilterConfig(true, 200);
 	private BulkConfig bulk = new BulkConfig(true, 10, 100);
-	private SortConfig sort = new SortConfig(false);
+	private SortConfig sort = new SortConfig(true);
 	private ChangePasswordConfig changePassword = new ChangePasswordConfig(false);
 	private ETagConfig etag = new ETagConfig(false); 
 	private Collection<AuthenticationScheme> authenticationSchemes;
@@ -33,14 +38,9 @@ public class ServiceProviderConfig extends Resource{
     	userMeta.setResourceType("ServiceProviderConfig");
     	setMeta(userMeta);
     	Set<String> userSchemas = new HashSet<String>();
-    	userSchemas.add("urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig");    	
-		setSchemas(userSchemas );
-		authenticationSchemes = new ArrayList<AuthenticationScheme>();
-		authenticationSchemes.add(AuthenticationScheme.createBasic(true));
-		authenticationSchemes.add(AuthenticationScheme.createOAuth2(true));
-		
+    	userSchemas.add(Constants.SERVICE_PROVIDER_CORE_SCHEMA_ID);
+        setSchemas(userSchemas);
 	}
-
 
 	public String getDocumentationUrl() {
 		return documentationUrl;
@@ -50,64 +50,59 @@ public class ServiceProviderConfig extends Resource{
 		this.documentationUrl = documentationUrl;
 	}
 
-
 	public PatchConfig getPatch() {
 		return patch;
 	}
-
 
 	public void setPatch(PatchConfig patch) {
 		this.patch = patch;
 	}
 
-
 	public FilterConfig getFilter() {
 		return filter;
 	}
-
 
 	public void setFilter(FilterConfig filter) {
 		this.filter = filter;
 	}
 
-
 	public BulkConfig getBulk() {
 		return bulk;
 	}
-
 
 	public void setBulk(BulkConfig bulk) {
 		this.bulk = bulk;
 	}
 
-
 	public SortConfig getSort() {
 		return sort;
 	}
-
 
 	public void setSort(SortConfig sort) {
 		this.sort = sort;
 	}
 
-
 	public ChangePasswordConfig getChangePassword() {
 		return changePassword;
 	}
-
 
 	public void setChangePassword(ChangePasswordConfig changePassword) {
 		this.changePassword = changePassword;
 	}
 
-
 	public ETagConfig getEtag() {
 		return etag;
 	}
-
 
 	public void setEtag(ETagConfig etag) {
 		this.etag = etag;
 	}
 
+	public void setAuthenticationSchemes(Collection<AuthenticationScheme> authenticationSchemes) {
+		this.authenticationSchemes = authenticationSchemes;
+	}
+
+	public Collection<AuthenticationScheme> getAuthenticationSchemes() {
+		return authenticationSchemes;
+	}
 }

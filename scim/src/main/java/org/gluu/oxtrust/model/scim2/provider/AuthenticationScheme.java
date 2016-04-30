@@ -1,3 +1,8 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.provider;
 
 /**
@@ -211,6 +216,13 @@ public class AuthenticationScheme {
 	 */
 	public static AuthenticationScheme createOAuth2(final boolean primary) {
 		return new AuthenticationScheme(
+				"OAuth 2.0", "OAuth2 Access Token Authentication Scheme. Enabled only on 'SCIM Test Mode'.",
+				"http://tools.ietf.org/html/rfc6749", "https://gluu.org/docs/integrate/oauth2grants/",
+				"oauth2", primary);
+	}
+	/*
+	public static AuthenticationScheme createOAuth2(final boolean primary) {
+		return new AuthenticationScheme(
 				"OAuth 2.0",
 				"The OAuth 2.0 Bearer Token Authentication scheme. OAuth enables "
 						+ "clients to access protected resources by obtaining an access "
@@ -219,5 +231,13 @@ public class AuthenticationScheme {
 						+ "rather than using the resource owner's credentials directly.",
 				"http://tools.ietf.org/html/rfc6750", "http://oauth.net/2/",
 				"oauth2", primary);
+	}
+	*/
+
+	public static AuthenticationScheme createUma(final boolean primary) {
+		return new AuthenticationScheme(
+				"UMA 1.0.1", "UMA Authentication Scheme",
+				"https://kantarainitiative.org/confluence/display/uma/UMA+Protocol", "https://gluu.org/docs/integrate/uma/",
+				"uma", primary);
 	}
 }
