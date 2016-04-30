@@ -108,7 +108,7 @@
 
 													<s:decorate
 														template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
-														rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo')}">
+														rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum')}">
 														<ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
 														<div class = "col-sm-11">
 														<rich:inplaceInput value="#{_custAttr.value}"
