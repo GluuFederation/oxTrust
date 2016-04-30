@@ -6,10 +6,7 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -21,8 +18,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
@@ -47,7 +42,6 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.Authorization;
-
 
 /**
  * SCIM Bulk Endpoint Implementation
@@ -453,7 +447,4 @@ public class BulkWebService extends BaseScimWebService {
 		System.out.println(user.getUserName());
 		System.out.println(user.getName().getFormatted());*/
 	}
-	
-	
-
 }

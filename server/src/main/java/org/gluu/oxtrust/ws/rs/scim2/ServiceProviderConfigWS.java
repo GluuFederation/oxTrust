@@ -40,6 +40,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 
 		ArrayList<AuthenticationScheme> authenticationSchemes = new ArrayList<AuthenticationScheme>();
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authenticationSchemes.add(AuthenticationScheme.createOAuth2(true));
 		} else {
 			authenticationSchemes.add(AuthenticationScheme.createUma(true));
