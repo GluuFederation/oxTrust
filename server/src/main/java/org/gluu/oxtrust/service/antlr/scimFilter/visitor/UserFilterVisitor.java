@@ -202,6 +202,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         logger.info(" UserFilterVisitor.visitATTR_PR() ");
 
         String attrName = ctx.ATTRNAME().getText();
+        attrName = FilterUtil.stripScimSchema(Constants.USER_CORE_SCHEMA_ID, attrName);
         String[] tokens = attrName.split("\\.");
 
         String ldapAttributeName = getUserLdapAttributeName(attrName);
