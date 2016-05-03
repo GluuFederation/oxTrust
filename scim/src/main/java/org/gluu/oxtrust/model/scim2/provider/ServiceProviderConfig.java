@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.Resource;
 
 /**
@@ -26,17 +25,14 @@ public class ServiceProviderConfig extends Resource {
 
 	private String documentationUrl = "http://www.gluu.org/docs/";
 	private PatchConfig patch = new PatchConfig(false);
-	private FilterConfig filter = new FilterConfig(true, 200);
+	private FilterConfig filter = new FilterConfig(true, Constants.MAX_COUNT);
 	private BulkConfig bulk = new BulkConfig(true, 10, 100);
 	private SortConfig sort = new SortConfig(true);
-	private ChangePasswordConfig changePassword = new ChangePasswordConfig(false);
+	private ChangePasswordConfig changePassword = new ChangePasswordConfig(true);
 	private ETagConfig etag = new ETagConfig(false); 
 	private Collection<AuthenticationScheme> authenticationSchemes;
 
 	public ServiceProviderConfig() {
-		Meta userMeta = new Meta();
-    	userMeta.setResourceType("ServiceProviderConfig");
-    	setMeta(userMeta);
     	Set<String> userSchemas = new HashSet<String>();
     	userSchemas.add(Constants.SERVICE_PROVIDER_CORE_SCHEMA_ID);
         setSchemas(userSchemas);
