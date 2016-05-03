@@ -31,6 +31,7 @@ import com.wordnik.swagger.annotations.Authorization;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.util.CopyUtils2;
@@ -95,7 +96,7 @@ public class GroupWebService extends BaseScimWebService {
 				}
 			}
 			List<String> schema = new ArrayList<String>();
-			schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+			schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
 			allGroupList.setSchemas(schema);
 			allGroupList.setTotalResults(allGroupList.getResources().size());
 

@@ -376,8 +376,9 @@ public class CopyUtils2 implements Serializable {
 			}
             */
 
-			log.trace("getting meta attributes");
+			// log.trace("getting meta attributes");
 
+			/*
 			if (source.getMeta()!=null && source.getMeta().getAttributes() != null) {
 				log.trace("source.getCustomAttributes() != null");
 				log.trace("getting a list of ScimCustomAttributes");
@@ -390,7 +391,7 @@ public class CopyUtils2 implements Serializable {
 						continue;
 					}
 					destination.setAttribute(oneAttr.replaceAll(" ", ""), "");
-					
+					*/
 					/* NOTE : WRITE CODE FOR THIS
 					int countValues = oneAttr.getValues().size();
 					if (countValues == 0) {
@@ -416,9 +417,10 @@ public class CopyUtils2 implements Serializable {
 						log.trace("setting the list of multivalued attributes");
 						destination.setAttribute(oneAttr.getName().replaceAll(" ", ""), AttrArray);
 					}
-					*/
+					*//*
 				}
 			}
+			*/
 
 		} else {
 

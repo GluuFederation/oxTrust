@@ -34,6 +34,7 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.User;
@@ -114,7 +115,7 @@ public class UserWebService extends BaseScimWebService {
 				ListResponse personsListResponse = new ListResponse();
 
 				List<String> schema = new ArrayList<String>();
-				schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+				schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
 
 				log.info(" setting schema");
 				personsListResponse.setSchemas(schema);

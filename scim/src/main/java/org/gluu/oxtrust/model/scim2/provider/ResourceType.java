@@ -1,3 +1,8 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.provider;
 
 import java.util.ArrayList;
@@ -5,11 +10,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
 
-public class ResourceType extends Resource{
+public class ResourceType extends Resource {
+
 	private String id;
 	private String name;
 	private String endpoint;
@@ -22,8 +29,8 @@ public class ResourceType extends Resource{
     	userMeta.setResourceType("ResourceType");
     	setMeta(userMeta);
     	Set<String> userSchemas = new HashSet<String>();
-    	userSchemas.add("urn:ietf:params:scim:schemas:core:2.0:ResourceType");    	
-		setSchemas(userSchemas );
+    	userSchemas.add(Constants.RESOURCE_TYPE_SCHEMA_ID);
+		setSchemas(userSchemas);
 	}
 	public String getId() {
 		return id;

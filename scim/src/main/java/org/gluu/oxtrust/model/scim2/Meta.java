@@ -7,8 +7,6 @@
 package org.gluu.oxtrust.model.scim2;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.gluu.oxtrust.model.helper.JsonDateSerializer;
 
@@ -31,7 +29,7 @@ public class Meta {
     private Date lastModified;
     private String location;
     private String version;
-    private Set<String> attributes = new HashSet<String>();
+    // private Set<String> attributes = new HashSet<String>();
     private String resourceType;
 
     /**
@@ -79,9 +77,11 @@ public class Meta {
      * 
      * @return a set of attributes to be deleted
      */
+    /*
     public Set<String> getAttributes() {
         return attributes;
     }
+    */
 
     /**
      * Gets the date when the {@link Resource} was created
@@ -132,9 +132,11 @@ public class Meta {
 		this.version = version;
 	}
 
+    /*
 	public void setAttributes(Set<String> attributes) {
 		this.attributes = attributes;
 	}
+	*/
 
 	public void setResourceType(String resourceType) {
 		this.resourceType = resourceType;
@@ -145,7 +147,7 @@ public class Meta {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+        // result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
         result = prime * result + ((created == null) ? 0 : created.hashCode());
         result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
         result = prime * result + ((location == null) ? 0 : location.hashCode());
@@ -166,6 +168,7 @@ public class Meta {
             return false;
         }
         Meta other = (Meta) obj;
+        /*
         if (attributes == null) {
             if (other.attributes != null) {
                 return false;
@@ -173,6 +176,7 @@ public class Meta {
         } else if (!attributes.equals(other.attributes)) {
             return false;
         }
+        */
         if (created == null) {
             if (other.created != null) {
                 return false;

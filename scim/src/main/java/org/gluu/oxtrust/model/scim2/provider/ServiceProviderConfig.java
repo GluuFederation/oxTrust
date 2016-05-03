@@ -5,12 +5,13 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.Resource;
+import org.gluu.oxtrust.model.scim2.Meta;
 
 /**
  * This class represents a ServiceProviderConfig.
@@ -21,7 +22,7 @@ import org.gluu.oxtrust.model.scim2.Resource;
  * >SCIM core schema 20.0, section 5</a>
  * </p>
  */
-public class ServiceProviderConfig extends Resource {
+public class ServiceProviderConfig implements Serializable {
 
 	private String documentationUrl = "http://www.gluu.org/docs/";
 	private PatchConfig patch = new PatchConfig(false);
@@ -31,6 +32,9 @@ public class ServiceProviderConfig extends Resource {
 	private ChangePasswordConfig changePassword = new ChangePasswordConfig(true);
 	private ETagConfig etag = new ETagConfig(false); 
 	private Collection<AuthenticationScheme> authenticationSchemes;
+
+	private Meta meta;
+	private Set<String> schemas = new HashSet<String>();
 
 	public ServiceProviderConfig() {
     	Set<String> userSchemas = new HashSet<String>();
@@ -100,5 +104,21 @@ public class ServiceProviderConfig extends Resource {
 
 	public Collection<AuthenticationScheme> getAuthenticationSchemes() {
 		return authenticationSchemes;
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
+
+	public Set<String> getSchemas() {
+		return schemas;
+	}
+
+	public void setSchemas(Set<String> schemas) {
+		this.schemas = schemas;
 	}
 }
