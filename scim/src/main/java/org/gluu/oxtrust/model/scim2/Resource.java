@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.model.scim2;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -17,7 +18,9 @@ import java.util.Set;
  */
 public abstract class Resource implements Serializable {
 
+    @LdapAttribute(name = "inum")
     private String id;
+
     private String externalId;
     private Meta meta;
 

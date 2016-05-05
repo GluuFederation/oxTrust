@@ -49,7 +49,7 @@ public class UserSerializer extends JsonSerializer<User> {
             jsonGenerator.writeStartObject();
 
             ObjectMapper mapper = new ObjectMapper();
-            mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+            mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 
             JsonNode rootNode = mapper.convertValue(user, JsonNode.class);
 

@@ -5,11 +5,13 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
+import java.io.Serializable;
+
 /**
  * This class represents the AuthenticationSchemes complex attribute in the
  * Service Provider Config.
  */
-public class AuthenticationScheme {
+public class AuthenticationScheme implements Serializable {
 
 	private String name;
 	private String description;

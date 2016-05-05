@@ -7,8 +7,8 @@ package org.gluu.oxtrust.service.antlr.scimFilter.util;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -45,7 +45,7 @@ public class ListResponseUserSerializer extends UserSerializer {
             jsonGenerator.writeStartObject();
 
             ObjectMapper mapper = new ObjectMapper();
-            mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+            mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 
             attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
 

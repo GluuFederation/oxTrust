@@ -5,10 +5,12 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
+import java.io.Serializable;
+
 /**
  * A complex type that specifies FILTER configuration options.
  */
-public class FilterConfig {
+public class FilterConfig implements Serializable {
 
 	private final boolean supported;
 	private final long maxResults;

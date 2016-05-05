@@ -3,17 +3,13 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.model.scim2;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.gluu.oxtrust.model.exception.SCIMDataValidationException;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.google.common.base.Strings;
 
 /**
  * This class represent a Group resource.
@@ -44,10 +40,9 @@ public class Group extends Resource {
     	userMeta.setResourceType("Group");
     	setMeta(userMeta);
     	Set<String> userSchemas = new HashSet<String>();
-    	userSchemas.add("urn:scim:schemas:core:2.0:Group");    	
+    	userSchemas.add(Constants.GROUP_CORE_SCHEMA_ID);
 		setSchemas(userSchemas );
     }
-
 
     /**
      * Gets the human readable name of this {@link Group}.
@@ -86,6 +81,4 @@ public class Group extends Resource {
                 + ", getExternalId()=" + getExternalId() + ", getMeta()=" + getMeta() + ", getSchemas()="
                 + getSchemas() + "]";
     }
-
-    
 }

@@ -1,9 +1,17 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.provider;
+
+import java.io.Serializable;
 
 /**
  * A complex type that specifies Change Password configuration options.
  */
-public class ChangePasswordConfig {
+public class ChangePasswordConfig implements Serializable {
+
 	private final boolean supported;
 
 	/**

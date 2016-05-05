@@ -27,7 +27,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
     private Logger logger = LoggerFactory.getLogger(UserFilterVisitor.class);
 
-    private static Class[] annotatedClasses = { User.class, Name.class };
+    private static Class[] annotatedClasses = { Resource.class, User.class, Name.class };
 
     private static Map<String, String> declaredAnnotations = new HashMap<String, String>();
 

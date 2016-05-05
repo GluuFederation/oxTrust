@@ -1,9 +1,17 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.provider;
+
+import java.io.Serializable;
 
 /**
  * A complex type that specifies BULK configuration options.
  */
-public class BulkConfig {
+public class BulkConfig implements Serializable {
+
 	private final boolean supported;
 	private final long maxOperations;
 	private final long maxPayloadSize;

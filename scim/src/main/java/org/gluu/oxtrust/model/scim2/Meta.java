@@ -3,9 +3,9 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.model.scim2;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.gluu.oxtrust.model.helper.JsonDateSerializer;
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * </p>
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
-public class Meta {
+public class Meta implements Serializable {
 
     @JsonSerialize(using = JsonDateSerializer.class)
     private Date created;

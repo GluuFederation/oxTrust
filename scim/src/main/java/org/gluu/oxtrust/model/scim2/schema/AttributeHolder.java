@@ -99,8 +99,16 @@ public class AttributeHolder implements Serializable {
         return caseExact;
     }
 
+    public void setCaseExact(Boolean caseExact) {
+        this.caseExact = caseExact;
+    }
+
     public String getMutability() {
         return mutability;
+    }
+
+    public void setMutability(String mutability) {
+        this.mutability = mutability;
     }
 
     public String getReturned() {
@@ -109,6 +117,10 @@ public class AttributeHolder implements Serializable {
 
     public String getUniqueness() {
         return uniqueness;
+    }
+
+    public void setUniqueness(String uniqueness) {
+        this.uniqueness = uniqueness;
     }
 
     public List<AttributeHolder> getSubAttributes() {

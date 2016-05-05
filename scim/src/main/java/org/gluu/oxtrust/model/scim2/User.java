@@ -21,9 +21,11 @@ import java.util.*;
  * For more detailed information please look at the <a
  * href="http://tools.ietf.org/html/draft-ietf-scim-core-schema-02#section-6">SCIM core schema 2.0, section 6</a>
  * </p>
- * 
+ *
+ * IMPORTANT: There are several JSON serializers/deserializers dependent on this class, most notably
+ * org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeUserSerializer. The lists must be initialized as
+ * is.
  */
-
 // @XmlRootElement(name = "User")
 // @XmlAccessorType(XmlAccessType.PROPERTY)
 public class User extends Resource {
