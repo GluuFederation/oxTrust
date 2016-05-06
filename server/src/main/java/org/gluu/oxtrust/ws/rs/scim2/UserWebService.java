@@ -28,6 +28,7 @@ import com.wordnik.swagger.annotations.*;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -59,7 +60,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
  */
 @Name("scim2UserEndpoint")
 @Path("/scim/v2/Users")
-@Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = { @Authorization(value = "Authorization", type = "oauth2") })
+@Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = { @Authorization(value = "Authorization", type = "uma") })
 @Produces({ "application/json", "application/xml" })
 public class UserWebService extends BaseScimWebService {
 
@@ -72,7 +73,7 @@ public class UserWebService extends BaseScimWebService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@ApiOperation(value = "List Users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
+	@ApiOperation(value = "List users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response listUsers(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
@@ -149,8 +150,9 @@ public class UserWebService extends BaseScimWebService {
 
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
+				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 				mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-				SimpleModule customScimFilterModule = new SimpleModule("CustomScimFilterModule", new Version(1, 0, 0, ""));
+				SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 				ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 				serializer.setAttributesArray(attributesArray);
 				customScimFilterModule.addSerializer(User.class, serializer);

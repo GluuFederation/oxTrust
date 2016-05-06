@@ -81,76 +81,71 @@ public class ListResponseUserSerializer extends UserSerializer {
                     String[] split = attribute.split("\\.");
 
                     if ((((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase(split[0])) && rootNodeEntry.getKey().equalsIgnoreCase(split[1])) ||
-                            rootNodeEntry.getKey().equalsIgnoreCase(split[0])) {
+                        rootNodeEntry.getKey().equalsIgnoreCase(split[0])) {
 
                         // log.info(" ##### MATCH: " + attribute);
 
-                        if ((rootNodeEntry.getValue() instanceof ObjectNode || rootNodeEntry.getValue() instanceof ArrayNode) &&
-                                !(SchemaTypeMapping.getSchemaTypeInstance(rootNodeEntry.getKey()) instanceof UserExtensionSchema)) {
-
-                            jsonGenerator.writeFieldName(rootNodeEntry.getKey());
-
-                            jsonGenerator.writeStartObject();
-
-                            if (rootNodeEntry.getValue() instanceof ObjectNode) {
-
-                                processNodes(rootNodeEntry.getKey(), rootNodeEntry.getValue(), mapper, user, jsonGenerator);  // Recursion
-
-                            } else if (rootNodeEntry.getValue() instanceof ArrayNode) {
-
-                                ArrayNode arrayNode = (ArrayNode) rootNodeEntry.getValue();
-
-                                for (int i = 0; i < arrayNode.size(); i++) {
-
-                                    JsonNode arrayNodeElement = arrayNode.get(i);
-                                    processNodes(rootNodeEntry.getKey(), arrayNodeElement, mapper, user, jsonGenerator);  // Recursion
-                                }
-                            }
-
-                            jsonGenerator.writeEndObject();
-
-                        } else {
-
-                            jsonGenerator.writeFieldName(rootNodeEntry.getKey());
-
-                            if (SchemaTypeMapping.getSchemaTypeInstance(rootNodeEntry.getKey()) instanceof UserExtensionSchema) {
-
-                                serializeUserExtension(rootNodeEntry, mapper, user, jsonGenerator);
-
-                            } else {
-
-                                jsonGenerator.writeObject(rootNodeEntry.getValue());
-                            }
-                        }
+                        writeStructure(parent, rootNodeEntry, mapper, user, jsonGenerator);
 
                         break;
                     }
                 }
 
             } else {
+                writeStructure(parent, rootNodeEntry, mapper, user, jsonGenerator);
+            }
+        }
+    }
 
-                if (rootNodeEntry.getValue() instanceof ObjectNode && !(SchemaTypeMapping.getSchemaTypeInstance(rootNodeEntry.getKey()) instanceof UserExtensionSchema)) {
+    private void writeStructure(String parent, Map.Entry<String, JsonNode> rootNodeEntry, ObjectMapper mapper, User user, JsonGenerator jsonGenerator) throws Exception {
 
-                    jsonGenerator.writeFieldName(rootNodeEntry.getKey());
+        if (!(SchemaTypeMapping.getSchemaTypeInstance(rootNodeEntry.getKey()) instanceof UserExtensionSchema)) {
 
-                    jsonGenerator.writeStartObject();
-                    processNodes(rootNodeEntry.getKey(), rootNodeEntry.getValue(), mapper, user, jsonGenerator);  // Recursion
-                    jsonGenerator.writeEndObject();
+            if ((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase("groups") && rootNodeEntry.getKey().equalsIgnoreCase("reference")) {
+                jsonGenerator.writeFieldName("$ref");
+            } else {
+                jsonGenerator.writeFieldName(rootNodeEntry.getKey());
+            }
 
-                } else {
+            if (rootNodeEntry.getValue() instanceof ObjectNode) {
 
-                    jsonGenerator.writeFieldName(rootNodeEntry.getKey());
+                jsonGenerator.writeStartObject();
+                processNodes(rootNodeEntry.getKey(), rootNodeEntry.getValue(), mapper, user, jsonGenerator);  // Recursion
+                jsonGenerator.writeEndObject();
 
-                    if (SchemaTypeMapping.getSchemaTypeInstance(rootNodeEntry.getKey()) instanceof UserExtensionSchema) {
+            } else if (rootNodeEntry.getValue() instanceof ArrayNode) {
 
-                        serializeUserExtension(rootNodeEntry, mapper, user, jsonGenerator);
+                ArrayNode arrayNode = (ArrayNode) rootNodeEntry.getValue();
 
-                    } else {
+                jsonGenerator.writeStartArray();
 
-                        jsonGenerator.writeObject(rootNodeEntry.getValue());
+                if (arrayNode.size() > 0) {
+
+                    for (int i = 0; i < arrayNode.size(); i++) {
+
+                        JsonNode arrayNodeElement = arrayNode.get(i);
+
+                        if (arrayNodeElement.isObject()) {
+
+                            jsonGenerator.writeStartObject();
+                            processNodes(rootNodeEntry.getKey(), arrayNodeElement, mapper, user, jsonGenerator);  // Recursion
+                            jsonGenerator.writeEndObject();
+
+                        } else {
+                            jsonGenerator.writeObject(arrayNodeElement);
+                        }
                     }
                 }
+
+                jsonGenerator.writeEndArray();
+
+            } else {
+                jsonGenerator.writeObject(rootNodeEntry.getValue());
             }
+
+        } else {
+            jsonGenerator.writeFieldName(rootNodeEntry.getKey());
+            serializeUserExtension(rootNodeEntry, mapper, user, jsonGenerator);
         }
     }
 

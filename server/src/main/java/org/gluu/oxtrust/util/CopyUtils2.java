@@ -852,6 +852,7 @@ public class CopyUtils2 implements Serializable {
 				GroupRef groupRef = new GroupRef();
 				groupRef.setDisplay(gluuGroup.getDisplayName());
 				groupRef.setValue(gluuGroup.getInum());
+				groupRef.setReference("/v2/Groups/" + gluuGroup.getInum());
 				groupRefList.add(groupRef);
 			}
 			
@@ -1118,11 +1119,15 @@ public class CopyUtils2 implements Serializable {
 					GluuCustomPerson person = personService.getPersonByDn(oneMember);
 					member.setValue(person.getInum());
 					member.setDisplay(person.getDisplayName());
+					member.setReference("/v2/Users/" + person.getInum());
 					members.add(member);
 				}
 				destination.setMembers(members);
 			}
 		}
+
+		destination.getMeta().setLocation("/v2/Groups/" + destination.getId());
+
 		return destination;
 	}
 

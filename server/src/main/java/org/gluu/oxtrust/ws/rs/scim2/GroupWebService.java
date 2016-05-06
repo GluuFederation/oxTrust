@@ -28,12 +28,16 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.Authorization;
 
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerializer;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -42,15 +46,16 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.xdi.ldap.model.VirtualListViewResponse;
+
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
  */
 @Name("scim2GroupEndpoint")
 @Path("/scim/v2/Groups")
-@Api(value = "/v2/Groups", description = "SCIM 2.0 Group Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.4.1)",
-		authorizations = {
-				@Authorization(value = "Authorization", type = "oauth2")})
+@Api(value = "/v2/Groups", description = "SCIM 2.0 Group Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = { @Authorization(value = "Authorization", type = "uma") })
 public class GroupWebService extends BaseScimWebService {
 
 	@Logger
@@ -60,17 +65,18 @@ public class GroupWebService extends BaseScimWebService {
 	private IGroupService groupService;
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@ApiOperation(value = "List Users",
-			notes = "Returns a list of Groups (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.4)",
-			response = ListResponse.class
-	)
+	@Produces(MediaType.APPLICATION_JSON)
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "List groups", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response listGroups(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -85,27 +91,75 @@ public class GroupWebService extends BaseScimWebService {
 
 		try {
 
-			groupService = GroupService.instance();
+			if (count > MAX_COUNT) {
 
-			List<GluuGroup> groupList = groupService.getAllGroupsList();
-			ListResponse allGroupList = new ListResponse();
-			if (groupList != null) {
-				for (GluuGroup gluuGroup : groupList) {
-					Group group = CopyUtils2.copy(gluuGroup, null);
-					allGroupList.getResources().add(group);
+				String detail = "Too many results (=" + count + ") would be returned; max is " + MAX_COUNT + " only.";
+				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
+
+			} else {
+
+				log.info(" Searching groups from LDAP ");
+
+				groupService = GroupService.instance();
+
+				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+
+				List<GluuGroup> groupList = search(groupService.getDnForGroup(null), GluuGroup.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
+				// List<GluuGroup> groupList = groupService.getAllGroupsList();
+
+				ListResponse groupsListResponse = new ListResponse();
+
+				List<String> schema = new ArrayList<String>();
+				schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
+
+				log.info(" setting schema");
+				groupsListResponse.setSchemas(schema);
+
+				// Set total
+				groupsListResponse.setTotalResults(vlvResponse.getTotalResults());
+
+				if (count > 0 && groupList != null && !groupList.isEmpty()) {
+
+					// log.info(" LDAP group list is not empty ");
+
+					for (GluuGroup gluuGroup : groupList) {
+
+						Group group = CopyUtils2.copy(gluuGroup, null);
+
+						log.info(" group to be added userid : " + group.getDisplayName());
+
+						groupsListResponse.getResources().add(group);
+
+						log.info(" group added? : " + groupsListResponse.getResources().contains(group));
+					}
+
+					// Set the rest of results info
+					groupsListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
+					groupsListResponse.setStartIndex(vlvResponse.getStartIndex());
 				}
-			}
-			List<String> schema = new ArrayList<String>();
-			schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
-			allGroupList.setSchemas(schema);
-			allGroupList.setTotalResults(allGroupList.getResources().size());
 
-			URI location = new URI("/v2/Groups/");
-			return Response.ok(allGroupList).location(location).build();
+				URI location = new URI("/v2/Groups/");
+
+				// Serialize to JSON
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+				mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+				SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
+				ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
+				serializer.setAttributesArray(attributesArray);
+				customScimFilterModule.addSerializer(Group.class, serializer);
+				mapper.registerModule(customScimFilterModule);
+				String json = mapper.writeValueAsString(groupsListResponse);
+
+				return Response.ok(json).location(location).build();
+			}
+
 		} catch (Exception ex) {
+
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			String detail = "Unexpected processing error; please check the input parameters.";
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, detail);
 		}
 	}
 

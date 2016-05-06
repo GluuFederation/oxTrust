@@ -18,6 +18,8 @@ public class VisitorFactory {
 
         if (clazz.getName().equals(org.gluu.oxtrust.model.scim2.User.class.getName())) {
             visitor = new UserFilterVisitor();
+        } else if (clazz.getName().equals(org.gluu.oxtrust.model.scim2.Group.class.getName())) {
+            visitor = new GroupFilterVisitor();
         }
 
         return visitor;

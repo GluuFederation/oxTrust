@@ -81,7 +81,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
                                 nameAttributeHolder.setType("string");
 
                                 if (nameRootNodeEntry.getKey().equalsIgnoreCase("formatted")) {
-                                    nameAttributeHolder.setDescription("Formatted name on-the-fly for display. This could not be used as an attribute in a query filter.");
+                                    nameAttributeHolder.setDescription("Formatted name on-the-fly for display. Using this in a query filter is not supported.");
                                     nameAttributeHolder.setMutability("readOnly");
                                 } else {
                                     nameAttributeHolder.setDescription(nameRootNodeEntry.getKey());
@@ -104,7 +104,15 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
                         AttributeHolder arrayNodeAttributeHolder = new AttributeHolder();
                         arrayNodeAttributeHolder.setName(rootNodeEntry.getKey());
-                        arrayNodeAttributeHolder.setDescription(rootNodeEntry.getKey() + " list");
+
+                        if (rootNodeEntry.getKey().equalsIgnoreCase("groups")) {
+                            arrayNodeAttributeHolder.setDescription(rootNodeEntry.getKey() + " list; using sub-attributes in a query filter is not supported (cross-querying)");
+                            arrayNodeAttributeHolder.setCaseExact(Boolean.TRUE);
+                        } else {
+                            arrayNodeAttributeHolder.setDescription(rootNodeEntry.getKey() + " list");
+                            arrayNodeAttributeHolder.setCaseExact(Boolean.FALSE);
+                        }
+
                         arrayNodeAttributeHolder.setRequired(Boolean.FALSE);
                         arrayNodeAttributeHolder.setMultiValued(Boolean.TRUE);
 

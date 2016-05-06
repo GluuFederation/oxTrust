@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 /**
  * This class represent a Group resource.
@@ -25,11 +26,19 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * Some values will be not accepted by the OSIAM server.
  * These specific values have an own client info documentation section.
  * </p>
+ *
+ * ===== IMPORTANT! =====
+ * There might be JSON serializers/deserializers dependent on this class via reflection, most notably
+ * org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerializer. You should consult this file first
+ * before changing anything here.
  */
 @JsonInclude(Include.NON_EMPTY)
 public class Group extends Resource {
 
+    @LdapAttribute(name = "displayName")
     private String displayName;
+
+    @LdapAttribute(name = "member")
     private Set<MemberRef> members = new HashSet<MemberRef>();
 
     /**

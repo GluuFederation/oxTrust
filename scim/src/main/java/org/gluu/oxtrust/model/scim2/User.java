@@ -22,9 +22,11 @@ import java.util.*;
  * href="http://tools.ietf.org/html/draft-ietf-scim-core-schema-02#section-6">SCIM core schema 2.0, section 6</a>
  * </p>
  *
- * IMPORTANT: There are several JSON serializers/deserializers dependent on this class, most notably
- * org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeUserSerializer. The lists must be initialized as
- * is.
+ * ===== IMPORTANT! =====
+ * There might be JSON serializers/deserializers dependent on this class via reflection, most notably
+ * org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeUserSerializer and
+ * org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer. You should consult these files first
+ * before changing anything here.
  */
 // @XmlRootElement(name = "User")
 // @XmlAccessorType(XmlAccessType.PROPERTY)

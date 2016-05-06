@@ -77,6 +77,17 @@ public class UserCoreLoadingStrategy implements LoadingStrategy {
         user.setTimezone("");
         user.setTitle("");
 
+        List<GroupRef> groups = new ArrayList<GroupRef>();
+        GroupRef groupRef = new GroupRef();
+        groupRef.setOperation("");
+        groupRef.setPrimary(false);
+        groupRef.setValue("test");
+        groupRef.setDisplay("");
+        groupRef.setType(GroupRef.Type.DIRECT);
+        groupRef.setReference("");
+        groups.add(groupRef);
+        user.setGroups(groups);
+
         List<Email> emails = new ArrayList<Email>();
         Email email = new Email();
         email.setOperation("");
