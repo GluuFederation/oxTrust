@@ -21,7 +21,9 @@ public abstract class Resource implements Serializable {
     @LdapAttribute(name = "inum")
     private String id;
 
+    @LdapAttribute(name = "oxTrustExternalId")
     private String externalId;
+
     private Meta meta;
 
     @JsonProperty("schemas")
