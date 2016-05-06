@@ -119,6 +119,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
                         if (rootNodeEntry.getKey().equalsIgnoreCase("schemas")) {
                             arrayNodeAttributeHolder.setUniqueness("server");
                             arrayNodeAttributeHolder.setType("string");
+                            arrayNodeAttributeHolder.setCaseExact(Boolean.TRUE);
                         } else {
                             arrayNodeAttributeHolder.setType("complex");
                         }
@@ -196,7 +197,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
                             attributeHolder.setUniqueness("server");
                         }
 
-                        if (rootNodeEntry.getKey().equalsIgnoreCase("id") || rootNodeEntry.getKey().equalsIgnoreCase("password")) {
+                        if (rootNodeEntry.getKey().equalsIgnoreCase("id") || rootNodeEntry.getKey().equalsIgnoreCase("externalId") || rootNodeEntry.getKey().equalsIgnoreCase("password")) {
                             attributeHolder.setCaseExact(Boolean.TRUE);
                         }
 

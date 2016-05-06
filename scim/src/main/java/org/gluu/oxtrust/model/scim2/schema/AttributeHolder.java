@@ -115,6 +115,10 @@ public class AttributeHolder implements Serializable {
         return returned;
     }
 
+    public void setReturned(String returned) {
+        this.returned = returned;
+    }
+
     public String getUniqueness() {
         return uniqueness;
     }

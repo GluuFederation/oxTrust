@@ -266,11 +266,7 @@ public class User extends Resource {
      * For more detailed information please look at the <a
      * href="http://tools.ietf.org/html/draft-ietf-scim-core-schema-02#section-6">SCIM core schema 2.0, section 6</a>
      * </p>
-     * 
-     * <p>
-     * client info: if the actual user is loaded from the OSIAM server the password of the user will always be null
-     * </p>
-     * 
+     *
      * @return the password of the {@link User}
      */
     public String getPassword() {
