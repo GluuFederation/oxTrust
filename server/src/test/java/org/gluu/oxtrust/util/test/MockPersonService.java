@@ -46,6 +46,10 @@ public class MockPersonService implements IPersonService {
 	public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit) {
 		throw new IllegalStateException("Not Implemented");
 	}
+	
+	public List<GluuCustomPerson> searchPersons(String pattern) {
+		throw new IllegalStateException("Not Implemented");
+	}
 
 	public List<GluuCustomPerson> findPersons(GluuCustomPerson person, int sizeLimit) {
 		throw new IllegalStateException("Not Implemented");
