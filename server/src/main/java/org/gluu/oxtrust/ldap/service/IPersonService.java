@@ -49,7 +49,16 @@ public interface IPersonService {
 	 *            Maximum count of results
 	 * @return List of persons
 	 */
-	public abstract List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit);
+	public abstract List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit);	
+	
+	/**
+	 * Search persons by pattern
+	 * 
+	 * @param pattern
+	 *            Pattern
+	 * @return List of persons
+	 */
+	public abstract List<GluuCustomPerson> searchPersons(String pattern) ;	
 
 	/**
 	 * Search persons by sample object

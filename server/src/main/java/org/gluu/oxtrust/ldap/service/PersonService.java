@@ -147,6 +147,23 @@ public class PersonService implements Serializable, IPersonService {
 
 		return result;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#searchPersons(java.lang.String)
+	 */
+	@Override
+	public List<GluuCustomPerson> searchPersons(String pattern) {
+		String[] targetArray = new String[] { pattern };
+		Filter uidFilter = Filter.createSubstringFilter(OxTrustConstants.uid, null, targetArray, null);
+		Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
+		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
+		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
+
+		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, 0);
+
+		return result;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IPersonService#findPersons(org.gluu.oxtrust.model.GluuCustomPerson, int)
