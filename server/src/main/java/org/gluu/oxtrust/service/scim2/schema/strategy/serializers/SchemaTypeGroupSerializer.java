@@ -66,8 +66,14 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
                     arrayNodeAttributeHolder.setName(rootNodeEntry.getKey());
 
                     if (rootNodeEntry.getKey().equalsIgnoreCase("members")) {
+
                         arrayNodeAttributeHolder.setDescription(rootNodeEntry.getKey() + " list; using sub-attributes in a query filter is not supported (cross-querying)");
                         arrayNodeAttributeHolder.setCaseExact(Boolean.TRUE);
+
+                        List<String> referenceTypes = new ArrayList<String>();
+                        referenceTypes.add("User");
+                        arrayNodeAttributeHolder.setReferenceTypes(referenceTypes);
+
                     } else {
                         arrayNodeAttributeHolder.setDescription(rootNodeEntry.getKey() + " list");
                         arrayNodeAttributeHolder.setCaseExact(Boolean.FALSE);

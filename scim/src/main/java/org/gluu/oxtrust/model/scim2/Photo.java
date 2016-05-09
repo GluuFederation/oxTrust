@@ -137,6 +137,11 @@ public class Photo extends MultiValuedAttribute {
         super.setDisplay(display);
     }
 
+    @Override
+    public String getValue() {
+        return super.getValue();
+    }
+
     public void setValue(URI uri) {
         super.setValue(uri.toString());
     }

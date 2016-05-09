@@ -106,8 +106,14 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
                         arrayNodeAttributeHolder.setName(rootNodeEntry.getKey());
 
                         if (rootNodeEntry.getKey().equalsIgnoreCase("groups")) {
+
                             arrayNodeAttributeHolder.setDescription(rootNodeEntry.getKey() + " list; using sub-attributes in a query filter is not supported (cross-querying)");
                             arrayNodeAttributeHolder.setCaseExact(Boolean.TRUE);
+
+                            List<String> referenceTypes = new ArrayList<String>();
+                            referenceTypes.add("Group");
+                            arrayNodeAttributeHolder.setReferenceTypes(referenceTypes);
+
                         } else {
                             arrayNodeAttributeHolder.setDescription(rootNodeEntry.getKey() + " list");
                             arrayNodeAttributeHolder.setCaseExact(Boolean.FALSE);
@@ -160,6 +166,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
                                 if (arrayNodeMapRootNodeEntry.getKey().equalsIgnoreCase("valueAsImageDataURI") || arrayNodeMapRootNodeEntry.getKey().equalsIgnoreCase("valueAsURI")) {
 
+                                    arrayNodeMapAttributeHolder.setMutability("readOnly");
                                     arrayNodeMapAttributeHolder.setType("reference");
 
                                     List<String> referenceTypes = new ArrayList<String>();
