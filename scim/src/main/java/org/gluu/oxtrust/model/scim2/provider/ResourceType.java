@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
 
@@ -25,9 +24,6 @@ public class ResourceType extends Resource {
 	private List<SchemaExtensionHolder> schemaExtensions = new ArrayList<SchemaExtensionHolder>();
 	
 	public ResourceType(){
-		Meta userMeta = new Meta();
-    	userMeta.setResourceType("ResourceType");
-    	setMeta(userMeta);
     	Set<String> userSchemas = new HashSet<String>();
     	userSchemas.add(Constants.RESOURCE_TYPE_SCHEMA_ID);
 		setSchemas(userSchemas);

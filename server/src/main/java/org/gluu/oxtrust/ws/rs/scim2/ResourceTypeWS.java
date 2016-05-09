@@ -42,7 +42,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 		ResourceType userResourceType = new ResourceType();
 		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
-		userResourceType.setEndpoint("/Users");
+		userResourceType.setEndpoint("/v2/Users");
 		userResourceType.setName(Constants.USER_CORE_SCHEMA_NAME);
 		userResourceType.setId(Constants.USER_CORE_SCHEMA_NAME);
 		userResourceType.setSchema(Constants.USER_CORE_SCHEMA_ID);
@@ -61,7 +61,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 		ResourceType groupResourceType = new ResourceType();
 		groupResourceType.setDescription(Constants.GROUP_CORE_SCHEMA_DESCRIPTION);
-		groupResourceType.setEndpoint("/Groups");
+		groupResourceType.setEndpoint("/v2/Groups");
 		groupResourceType.setName(Constants.GROUP_CORE_SCHEMA_NAME);
 		groupResourceType.setId(Constants.GROUP_CORE_SCHEMA_NAME);
 		groupResourceType.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
@@ -87,7 +87,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 		ResourceType userResourceType = new ResourceType();
 		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
-		userResourceType.setEndpoint("/Users");
+		userResourceType.setEndpoint("/v2/Users");
 		userResourceType.setName(Constants.USER_CORE_SCHEMA_NAME);
 		userResourceType.setId(Constants.USER_CORE_SCHEMA_NAME);
 		userResourceType.setSchema(Constants.USER_CORE_SCHEMA_ID);
@@ -120,7 +120,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 		ResourceType groupResourceType = new ResourceType();
 		groupResourceType.setDescription(Constants.GROUP_CORE_SCHEMA_DESCRIPTION);
-		groupResourceType.setEndpoint("/Groups");
+		groupResourceType.setEndpoint("/v2/Groups");
 		groupResourceType.setName(Constants.GROUP_CORE_SCHEMA_NAME);
 		groupResourceType.setId(Constants.GROUP_CORE_SCHEMA_NAME);
 		groupResourceType.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
