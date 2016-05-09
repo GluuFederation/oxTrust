@@ -14,11 +14,10 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim.Error;
 import org.gluu.oxtrust.model.scim.Errors;
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.ErrorResponse;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -39,6 +38,7 @@ import java.util.*;
 
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.GroupFilterVisitor.getGroupLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.UserFilterVisitor.getUserLdapAttributeName;
 
 /**
@@ -155,7 +155,13 @@ public class BaseScimWebService {
 		if (filterString == null || (filterString != null && filterString.isEmpty())) {
 			filter = Filter.create("inum=*");
 		} else {
-			filter = scimFilterParserService.createFilter(filterString, org.gluu.oxtrust.model.scim2.User.class);
+			Class clazz = null;
+			if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
+				clazz = User.class;
+			} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
+				clazz = Group.class;
+			}
+			filter = scimFilterParserService.createFilter(filterString, clazz);
 		}
 
 		startIndex = (startIndex < 1) ? 1 : startIndex;
@@ -166,6 +172,8 @@ public class BaseScimWebService {
 		sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "displayName";
 		if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
 			sortBy = getUserLdapAttributeName(sortBy);
+		}  else if (entryClass.getName().equals(GluuGroup.class.getName())) {
+			sortBy = getGroupLdapAttributeName(sortBy);
 		}
 
 		SortOrder sortOrderEnum = null;
@@ -181,7 +189,11 @@ public class BaseScimWebService {
 		String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
 		if (attributes != null && attributes.length > 0) {
 			for (int i = 0; i < attributes.length; i++) {
-				attributes[i] = getUserLdapAttributeName(attributes[i]);
+				if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
+					attributes[i] = getUserLdapAttributeName(attributes[i]);
+				} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
+					attributes[i] = getGroupLdapAttributeName(attributes[i]);
+				}
 			}
 		}
 		// Eliminate duplicates
