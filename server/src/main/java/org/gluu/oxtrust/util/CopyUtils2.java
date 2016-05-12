@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -46,6 +47,8 @@ import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.*;
@@ -150,7 +153,8 @@ public class CopyUtils2 implements Serializable {
 			}
 			log.trace(" setting middlename ");
 			if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
-				destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
+				// destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
+				destination.setAttribute("middleName", source.getName().getMiddleName());
 			}
 			log.trace(" setting honor");
 			if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
@@ -169,7 +173,8 @@ public class CopyUtils2 implements Serializable {
 			}
 			log.trace(" setting nickname ");
 			if (source.getNickName() != null && source.getNickName().length() > 0) {
-				destination.setAttribute("oxTrustNickName", source.getNickName());
+				// destination.setAttribute("oxTrustNickName", source.getNickName());
+				destination.setAttribute("nickname", source.getNickName());
 			}
 			log.trace(" setting profileURL ");
 			if (source.getProfileUrl() != null && source.getProfileUrl().length() > 0) {
@@ -314,22 +319,6 @@ public class CopyUtils2 implements Serializable {
 			log.trace(" setting extensions ");
 			if (source.getExtensions() != null && (source.getExtensions().size() > 0)) {
 				destination.setExtensions(source.getExtensions());
-			}
-
-			// getting meta
-			log.trace(" setting meta ");			
-			
-			if (source.getMeta()!=null && source.getMeta().getCreated() != null && source.getMeta().getCreated().toString().length() > 0) {
-				destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated().toString());
-			}
-			if (source.getMeta()!=null && source.getMeta().getLastModified() != null && source.getMeta().getLastModified().toString().length() > 0) {
-				destination.setAttribute("oxTrustMetaLastModified", source.getMeta().getLastModified().toString());
-			}
-			if (source.getMeta()!=null && source.getMeta().getVersion() != null && source.getMeta().getVersion().length() > 0) {
-				destination.setAttribute("oxTrustMetaVersion", source.getMeta().getVersion());
-			}
-			if (source.getMeta()!=null && source.getMeta().getLocation() != null && source.getMeta().getLocation().length() > 0) {
-				destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
 			}
 
             /*
@@ -612,22 +601,6 @@ public class CopyUtils2 implements Serializable {
 					destination.setExtensions(source.getExtensions());
 				}
 
-				// getting meta
-				log.trace(" setting meta ");
-
-				if (source.getMeta()!= null && source.getMeta().getCreated() != null && source.getMeta().getCreated().toString().length() > 0) {
-					destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated().toString());
-				}
-				if (source.getMeta()!= null && source.getMeta().getLastModified() != null && source.getMeta().getLastModified().toString().length() > 0) {
-					destination.setAttribute("oxTrustMetaLastModified", source.getMeta().getLastModified().toString());
-				}
-				if (source.getMeta()!= null && source.getMeta().getVersion() != null && source.getMeta().getVersion().length() > 0) {
-					destination.setAttribute("oxTrustMetaVersion", source.getMeta().getVersion());
-				}
-				if (source.getMeta()!= null && source.getMeta().getLocation() != null && source.getMeta().getLocation().length() > 0) {
-					destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
-				}
-
 				/*
 				// getting customAttributes
 				log.trace("getting custom attributes");
@@ -749,8 +722,12 @@ public class CopyUtils2 implements Serializable {
 			name.setGivenName(source.getGivenName());
 			if (source.getSurname() != null)  
 				name.setFamilyName(source.getSurname());
+			if (source.getAttribute("middleName") != null)
+				name.setMiddleName(source.getAttribute("middleName"));
+			/*
 			if (source.getAttribute("oxTrustMiddleName") != null)
 				name.setMiddleName(source.getAttribute("oxTrustMiddleName"));
+			*/
 			if (source.getAttribute("oxTrusthonorificPrefix") != null)
 				name.setHonorificPrefix(source.getAttribute("oxTrusthonorificPrefix"));
 			if (source.getAttribute("oxTrusthonorificSuffix") != null) 
@@ -764,8 +741,13 @@ public class CopyUtils2 implements Serializable {
 			destination.setDisplayName(source.getDisplayName());
 		}
 		log.trace(" getting nickname ");
+		/*
 		if (source.getAttribute("oxTrustNickName") != null) {
 			destination.setNickName(source.getAttribute("oxTrustNickName"));
+		}
+		*/
+		if (source.getAttribute("nickname") != null) {
+			destination.setNickName(source.getAttribute("nickname"));
 		}
 		log.trace(" getting profileURL ");
 		if (source.getAttribute("oxTrustProfileURL") != null) {
@@ -847,12 +829,15 @@ public class CopyUtils2 implements Serializable {
 			List<GroupRef> groupRefList = new ArrayList<GroupRef>();
 			
 			for (String groupDN : listOfGroups) {
+
 				GluuGroup gluuGroup = groupService.getGroupByDn(groupDN);
 				
 				GroupRef groupRef = new GroupRef();
 				groupRef.setDisplay(gluuGroup.getDisplayName());
 				groupRef.setValue(gluuGroup.getInum());
-				groupRef.setReference("/v2/Groups/" + gluuGroup.getInum());
+				String reference = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Groups/" + gluuGroup.getInum();
+				groupRef.setReference(reference);
+
 				groupRefList.add(groupRef);
 			}
 			
@@ -935,32 +920,59 @@ public class CopyUtils2 implements Serializable {
 			}
 		}
 
-		log.trace(" setting meta ");
-		if(source.getAttribute("oxTrustMetaCreated")!=null && source.getAttribute("oxTrustMetaCreated")!="" && source.getAttribute("oxTrustMetaLastModified")!=null && source.getAttribute("oxTrustMetaLastModified")!="")
-		{
-			Meta meta=destination.getMeta()!=null?destination.getMeta():new Meta();	
-			
-			// getting meta data
-			if (source.getAttribute("oxTrustMetaVersion") != null) {
-				meta.setVersion(source.getAttribute("oxTrustMetaVersion"));
+		log.trace(" getting meta ");
+
+		Meta meta = (destination.getMeta() != null) ? destination.getMeta() : new Meta();
+
+		if (source.getAttribute("oxTrustMetaVersion") != null) {
+			meta.setVersion(source.getAttribute("oxTrustMetaVersion"));
+		}
+
+		if (source.getAttribute("oxTrustMetaLocation") != null) {
+
+			String location = source.getAttribute("oxTrustMetaLocation");
+			if (!location.startsWith("https://") && !location.startsWith("http://")) {
+				location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + location;
 			}
-			if (source.getAttribute("oxTrustMetaLocation") != null) {
-				meta.setLocation(source.getAttribute("oxTrustMetaLocation"));
-			}
-			
+
+			meta.setLocation(location);
+		}
+
+		if (source.getAttribute("oxTrustMetaCreated") != null && !source.getAttribute("oxTrustMetaCreated").isEmpty()) {
+
 			try {
-				if (source.getAttribute("oxTrustMetaCreated") != null)
+				DateTime dateTimeUtc = new DateTime(source.getAttribute("oxTrustMetaCreated"), DateTimeZone.UTC);
+				meta.setCreated(dateTimeUtc.toDate());
+			} catch (Exception e) {
+				log.error(" Date parse exception (NEW format), continuing...", e);
+				// For backward compatibility
+				try {
 					meta.setCreated(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaCreated")));
-				
-				if (source.getAttribute("oxTrustMetaLastModified") != null)
-					meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
-			} catch (java.text.ParseException ex) {
-				log.error(" Date parse exception ", ex);				
+				} catch (ParseException pe) {
+					log.error(" Date parse exception (OLD format)", pe);
+				}
 			}
+		}
+
+		if (source.getAttribute("oxTrustMetaLastModified") != null && !source.getAttribute("oxTrustMetaLastModified").isEmpty()) {
+
+			try {
+				DateTime dateTimeUtc = new DateTime(source.getAttribute("oxTrustMetaLastModified"), DateTimeZone.UTC);
+				meta.setLastModified(dateTimeUtc.toDate());
+			} catch (Exception e) {
+				log.error(" Date parse exception (NEW format), continuing...", e);
+				// For backward compatibility
+				try {
+					meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
+				} catch (ParseException pe) {
+					log.error(" Date parse exception (OLD format)", pe);
+				}
+			}
+		}
+
+		destination.setMeta(meta);
 			
-			destination.setMeta(meta);
-			
-			log.trace(" getting custom Attributes ");
+			// log.trace(" getting custom Attributes ");
 			// getting custom Attributes
 			/*AttributeService attributeService = AttributeService.instance();
 			List<GluuAttribute> listOfAttr = attributeService.getSCIMRelatedAttributes();
@@ -987,10 +999,6 @@ public class CopyUtils2 implements Serializable {
 					destination.setMeta(meta);
 				}
 			}*/
-		}
-
-		log.trace(" returning destination ");
-		destination.getMeta().setLocation("/v2/Users/"+destination.getId());
 
 		return destination;
 	}
@@ -1101,32 +1109,94 @@ public class CopyUtils2 implements Serializable {
 	 */
 
 	public static Group copy(GluuGroup source, Group destination) throws Exception {
+
 		if (source == null) {
 			return null;
 		}
 		if (destination == null) {
 			destination = new Group();
 		}
+
 		IPersonService personService = PersonService.instance();
+
 		destination.setDisplayName(source.getDisplayName());
 		destination.setId(source.getInum());
+
 		if (source.getMembers() != null) {
+
 			if (source.getMembers().size() != 0) {
-				Set<MemberRef> members = new HashSet<MemberRef>();
+
+				Set<MemberRef> memberRefSet = new HashSet<MemberRef>();
 				List<String> membersList = source.getMembers();
+
 				for (String oneMember : membersList) {
-					MemberRef member = new MemberRef();
-					GluuCustomPerson person = personService.getPersonByDn(oneMember);
-					member.setValue(person.getInum());
-					member.setDisplay(person.getDisplayName());
-					member.setReference("/v2/Users/" + person.getInum());
-					members.add(member);
+
+					GluuCustomPerson gluuCustomPerson = personService.getPersonByDn(oneMember);
+
+					MemberRef memberRef = new MemberRef();
+					memberRef.setValue(gluuCustomPerson.getInum());
+					memberRef.setDisplay(gluuCustomPerson.getDisplayName());
+					String reference = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + gluuCustomPerson.getInum();
+					memberRef.setReference(reference);
+
+					memberRefSet.add(memberRef);
 				}
-				destination.setMembers(members);
+
+				destination.setMembers(memberRefSet);
 			}
 		}
 
-		destination.getMeta().setLocation("/v2/Groups/" + destination.getId());
+		log.trace(" getting meta ");
+
+		Meta meta = (destination.getMeta() != null) ? destination.getMeta() : new Meta();
+
+		if (source.getAttribute("oxTrustMetaVersion") != null) {
+			meta.setVersion(source.getAttribute("oxTrustMetaVersion"));
+		}
+
+		if (source.getAttribute("oxTrustMetaLocation") != null) {
+
+			String location = source.getAttribute("oxTrustMetaLocation");
+			if (!location.startsWith("https://") && !location.startsWith("http://")) {
+				location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + location;
+			}
+
+			meta.setLocation(location);
+		}
+
+		if (source.getAttribute("oxTrustMetaCreated") != null && !source.getAttribute("oxTrustMetaCreated").isEmpty()) {
+
+			try {
+				DateTime dateTimeUtc = new DateTime(source.getAttribute("oxTrustMetaCreated"), DateTimeZone.UTC);
+				meta.setCreated(dateTimeUtc.toDate());
+			} catch (Exception e) {
+				log.error(" Date parse exception (NEW format), continuing...", e);
+				// For backward compatibility
+				try {
+					meta.setCreated(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaCreated")));
+				} catch (ParseException pe) {
+					log.error(" Date parse exception (OLD format)", pe);
+				}
+			}
+		}
+
+		if (source.getAttribute("oxTrustMetaLastModified") != null && !source.getAttribute("oxTrustMetaLastModified").isEmpty()) {
+
+			try {
+				DateTime dateTimeUtc = new DateTime(source.getAttribute("oxTrustMetaLastModified"), DateTimeZone.UTC);
+				meta.setLastModified(dateTimeUtc.toDate());
+			} catch (Exception e) {
+				log.error(" Date parse exception (NEW format), continuing...", e);
+				// For backward compatibility
+				try {
+					meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
+				} catch (ParseException pe) {
+					log.error(" Date parse exception (OLD format)", pe);
+				}
+			}
+		}
+
+		destination.setMeta(meta);
 
 		return destination;
 	}
@@ -1610,7 +1680,9 @@ public class CopyUtils2 implements Serializable {
 			}
 
 		} else {
+
 			log.trace(" creating a new GroupService instant ");
+
 			IGroupService groupService1 = GroupService.instance();
 			log.trace(" source.getDisplayName() : ", source.getDisplayName());
 
@@ -1627,7 +1699,9 @@ public class CopyUtils2 implements Serializable {
 			log.trace(" source.getMembers().size() : ", source.getMembers().size());
 
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
+
 				IPersonService personService = PersonService.instance();
+
 				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (MemberRef member : members) {
@@ -1635,7 +1709,6 @@ public class CopyUtils2 implements Serializable {
 				}
 
 				destination.setMembers(listMembers);
-
 			}
 
 			/*GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
@@ -1644,11 +1717,9 @@ public class CopyUtils2 implements Serializable {
 			destination.setStatus(GluuStatus.ACTIVE);
 			OrganizationService orgService = OrganizationService.instance();
 			destination.setOrganization(orgService.getDnForOrganization());
-
 		}
 
 		return destination;
-
 	}
 
 	public static boolean isValidData(Group group, boolean isUpdate) {

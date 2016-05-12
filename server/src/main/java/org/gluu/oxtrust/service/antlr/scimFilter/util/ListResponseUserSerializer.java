@@ -11,6 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.LongNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
@@ -19,6 +20,8 @@ import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
 import java.util.*;
@@ -140,7 +143,23 @@ public class ListResponseUserSerializer extends UserSerializer {
                 jsonGenerator.writeEndArray();
 
             } else {
-                jsonGenerator.writeObject(rootNodeEntry.getValue());
+
+                if (parent != null && parent.equalsIgnoreCase("meta")) {
+
+                    if (rootNodeEntry.getValue() instanceof LongNode && (rootNodeEntry.getKey().equalsIgnoreCase("created") || rootNodeEntry.getKey().equalsIgnoreCase("lastModified"))) {
+
+                        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+
+                        // In millis convert to string date
+                        jsonGenerator.writeObject(dateTimeFormatter.print(Long.valueOf(rootNodeEntry.getValue().asText()).longValue()));
+
+                    } else {
+                        jsonGenerator.writeObject(rootNodeEntry.getValue());
+                    }
+
+                } else {
+                    jsonGenerator.writeObject(rootNodeEntry.getValue());
+                }
             }
 
         } else {

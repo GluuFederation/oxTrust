@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -35,10 +36,7 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -49,6 +47,10 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
@@ -84,8 +86,10 @@ public class UserWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
+		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
+
 		Response authorizationResponse = null;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (applicationConfiguration.isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -146,7 +150,7 @@ public class UserWebService extends BaseScimWebService {
 					personsListResponse.setStartIndex(vlvResponse.getStartIndex());
 				}
 
-				URI location = new URI("/v2/Users/");
+				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users/");
 
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
@@ -171,14 +175,15 @@ public class UserWebService extends BaseScimWebService {
 		}
 	}
 
-	@Path("{uid}")
+	@Path("{id}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Find User by id", notes = "Returns a Users on the basis of provided uid as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
 	public Response getUserByUid(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@PathParam("uid") String uid) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -195,22 +200,33 @@ public class UserWebService extends BaseScimWebService {
 
 			personService = PersonService.instance();
 
-			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
+			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
-				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			User person = CopyUtils2.copy(gluuPerson, null);
+			User user = CopyUtils2.copy(gluuPerson, null);
 
-			URI location = new URI("/v2/Users/" + uid);
+			URI location = new URI(user.getMeta().getLocation());
 
-			return Response.ok(person).location(location).build();
+			// Serialize to JSON
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
+			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
+			// serializer.setAttributesArray(attributesArray);
+			customScimFilterModule.addSerializer(User.class, serializer);
+			mapper.registerModule(customScimFilterModule);
+			String json = mapper.writeValueAsString(user);
+
+			return Response.ok(json).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
-			return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			System.out.println("UserWebService Ex: " + ex);
@@ -221,11 +237,13 @@ public class UserWebService extends BaseScimWebService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Create User", notes = "Create User (https://tools.ietf.org/html/rfc7644#section-3.3)", response = User.class)
+	// @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "Create user", notes = "Create user (https://tools.ietf.org/html/rfc7644#section-3.3)", response = User.class)
 	public Response createUser(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@ApiParam(value = "User", required = true) User person) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@ApiParam(value = "User", required = true) User user) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -238,10 +256,8 @@ public class UserWebService extends BaseScimWebService {
 			return authorizationResponse;
 		}
 
-		// Return HTTP response with status code 201 Created
-
 		log.debug(" copying gluuperson ");
-		GluuCustomPerson gluuPerson = CopyUtils2.copy(person, null, false);
+		GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
 		if (gluuPerson == null) {
 			return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
 		}
@@ -255,34 +271,59 @@ public class UserWebService extends BaseScimWebService {
 																	// //personService.generateInumForNewPerson();
 			log.debug(" getting DN ");
 			String dn = personService.getDnForPerson(inum);
+
 			log.debug(" getting iname ");
-			String iname = personService.generateInameForNewPerson(person.getUserName());
+			String iname = personService.generateInameForNewPerson(user.getUserName());
+
 			log.debug(" setting dn ");
 			gluuPerson.setDn(dn);
+
 			log.debug(" setting inum ");
 			gluuPerson.setInum(inum);
+
 			log.debug(" setting iname ");
 			gluuPerson.setIname(iname);
+
 			log.debug(" setting commonName ");
 			gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
+
 			log.info("gluuPerson.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
-			if (person.getGroups().size() > 0) {
+			if (user.getGroups().size() > 0) {
 				log.info(" jumping to groupMemebersAdder ");
 				log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
-
 				Utils.groupMemebersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
-			log.debug("adding new GluuPerson");
+			// As per spec, the SP must be the one to assign the meta attributes
+			log.info(" Setting meta: create user ");
+			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+			Date dateCreated = DateTime.now().toDate();
+			String relativeLocation = "/scim/v2/Users/" + inum;
+			gluuPerson.setAttribute("oxTrustMetaCreated", dateTimeFormatter.print(dateCreated.getTime()));
+			gluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
+			gluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
 
+			log.debug("adding new GluuPerson");
 			personService.addPerson(gluuPerson);
 
-			User newPerson = CopyUtils2.copy(gluuPerson, null);
+			User createdUser = CopyUtils2.copy(gluuPerson, null);
 			// newPerson.setCustomAttributes(person.getCustomAttributes());
 
-			String uri = "/v2/Users/" + newPerson.getId();
-			
-			return Response.created(URI.create(uri)).entity(newPerson).build();
+			URI location = new URI(createdUser.getMeta().getLocation());
+
+			// Serialize to JSON
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
+			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
+			// serializer.setAttributesArray(attributesArray);
+			customScimFilterModule.addSerializer(User.class, serializer);
+			mapper.registerModule(customScimFilterModule);
+			String json = mapper.writeValueAsString(createdUser);
+
+			// Return HTTP response with status code 201 Created
+			return Response.created(location).entity(json).build();
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -291,15 +332,17 @@ public class UserWebService extends BaseScimWebService {
 		}
 	}
 
-	@Path("{uid}")
+	@Path("{id}")
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Update User", notes = "Update User (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
+	// @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "Update user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
 	public Response updateUser(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@PathParam("uid") String uid, @ApiParam(value = "User", required = true) User person) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@PathParam("id") String id, @ApiParam(value = "User", required = true) User person) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -316,48 +359,66 @@ public class UserWebService extends BaseScimWebService {
 
 			personService = PersonService.instance();
 
-			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
+			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 			if (gluuPerson == null) {
-				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
-			GluuCustomPerson newGluuPesron = CopyUtils2.copy(person, gluuPerson, true);
+			GluuCustomPerson updatedGluuPerson = CopyUtils2.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMemebersAdder(newGluuPesron, personService.getDnForPerson(uid));
+				Utils.groupMemebersAdder(updatedGluuPerson, personService.getDnForPerson(id));
 			}
 
-			personService.updatePerson(newGluuPesron);
+			log.info(" Setting meta: update user ");
+			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+			Date dateLastModified = DateTime.now().toDate();
+			updatedGluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
+			if (updatedGluuPerson.getAttribute("oxTrustMetaLocation") == null || (("oxTrustMetaLocation") != null && updatedGluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
+				String relativeLocation = "/scim/v2/Users/" + id;
+				updatedGluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
+			}
+
+			personService.updatePerson(updatedGluuPerson);
 
 			log.debug(" person updated ");
 
-			User newPerson = CopyUtils2.copy(newGluuPesron, null);
+			User updatedUser = CopyUtils2.copy(updatedGluuPerson, null);
 			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
 
-			URI location = new URI("/Users/" + uid);
+			URI location = new URI(updatedUser.getMeta().getLocation());
 
-			return Response.ok(newPerson).location(location).build();
+			// Serialize to JSON
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
+			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
+			// serializer.setAttributesArray(attributesArray);
+			customScimFilterModule.addSerializer(User.class, serializer);
+			mapper.registerModule(customScimFilterModule);
+			String json = mapper.writeValueAsString(updatedUser);
+
+			return Response.ok(json).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
-
 			ex.printStackTrace();
-			return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
-
+			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
-
 			log.error("Exception: ", ex);
 			ex.printStackTrace();
 			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
-	@Path("{uid}")
+	@Path("{id}")
 	@DELETE
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_JSON})
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteUser(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@PathParam("uid") String uid) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -374,14 +435,14 @@ public class UserWebService extends BaseScimWebService {
 
 			personService = PersonService.instance();
 
-			GluuCustomPerson person = personService.getPersonByInum(uid);
+			GluuCustomPerson person = personService.getPersonByInum(id);
 			if (person == null) {
-				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			} else {
 				log.info("person.getMemberOf().size() : " + person.getMemberOf().size());
 				if (person.getMemberOf() != null) {
 					if (person.getMemberOf().size() > 0) {
-						String dn = personService.getDnForPerson(uid);
+						String dn = personService.getDnForPerson(id);
 						log.info("DN : " + dn);
 
 						Utils.deleteUserFromGroup(person, dn);
@@ -389,24 +450,26 @@ public class UserWebService extends BaseScimWebService {
 				}
 				personService.removePerson(person);
 			}
+
 			return Response.ok().build();
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
-			return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
-	@Path("{uid}")
+	@Path("{id}")
 	@PATCH
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateUserPatch(
 			@HeaderParam("Authorization") String authorization,
 			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@PathParam("uid") String uid, ScimPersonPatch person) throws Exception {
+			@PathParam("id") String id, ScimPersonPatch person) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
