@@ -62,8 +62,8 @@ import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
  */
 @Name("scim2UserEndpoint")
 @Path("/scim/v2/Users")
+@Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = { @Authorization(value = "Authorization", type = "uma") })
-@Produces({ "application/json", "application/xml" })
 public class UserWebService extends BaseScimWebService {
 
 	@Logger

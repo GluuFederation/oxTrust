@@ -948,8 +948,8 @@ public class CopyUtils2 implements Serializable {
 				// For backward compatibility
 				try {
 					meta.setCreated(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaCreated")));
-				} catch (ParseException pe) {
-					log.error(" Date parse exception (OLD format)", pe);
+				} catch (Exception ex) {
+					log.error(" Date parse exception (OLD format)", ex);
 				}
 			}
 		}
@@ -964,8 +964,8 @@ public class CopyUtils2 implements Serializable {
 				// For backward compatibility
 				try {
 					meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
-				} catch (ParseException pe) {
-					log.error(" Date parse exception (OLD format)", pe);
+				} catch (Exception ex) {
+					log.error(" Date parse exception (OLD format)", ex);
 				}
 			}
 		}
@@ -1174,8 +1174,8 @@ public class CopyUtils2 implements Serializable {
 				// For backward compatibility
 				try {
 					meta.setCreated(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaCreated")));
-				} catch (ParseException pe) {
-					log.error(" Date parse exception (OLD format)", pe);
+				} catch (Exception ex) {
+					log.error(" Date parse exception (OLD format)", ex);
 				}
 			}
 		}
@@ -1190,8 +1190,8 @@ public class CopyUtils2 implements Serializable {
 				// For backward compatibility
 				try {
 					meta.setLastModified(new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(source.getAttribute("oxTrustMetaLastModified")));
-				} catch (ParseException pe) {
-					log.error(" Date parse exception (OLD format)", pe);
+				} catch (Exception ex) {
+					log.error(" Date parse exception (OLD format)", ex);
 				}
 			}
 		}

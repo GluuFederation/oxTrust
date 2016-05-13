@@ -60,6 +60,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
  */
 @Name("scim2GroupEndpoint")
 @Path("/scim/v2/Groups")
+@Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/v2/Groups", description = "SCIM 2.0 Group Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = { @Authorization(value = "Authorization", type = "uma") })
 public class GroupWebService extends BaseScimWebService {
 

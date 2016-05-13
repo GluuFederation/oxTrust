@@ -35,6 +35,7 @@ import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.UmaPermission;
 import org.xdi.oxauth.model.uma.wrapper.Token;
+import org.xdi.oxauth.model.util.JwksUtil;
 import org.xdi.oxauth.model.util.JwtUtil;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
@@ -234,7 +235,8 @@ public class UmaProtectionService implements Serializable {
 			throw new UmaProtectionException("Failed to load UMA client", ex);
 		}
 
-		org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwtUtil.getPrivateKey(null, umaClient.getJwks(), applicationConfiguration.getUmaClientKeyId());		
+		// org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwtUtil.getPrivateKey(null, umaClient.getJwks(), applicationConfiguration.getUmaClientKeyId());
+		org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwksUtil.getPrivateKey(null, umaClient.getJwks(), applicationConfiguration.getUmaClientKeyId());
 		if (privateKey == null) {
 			throw new UmaProtectionException("There is no keyId in JWKS");
 		}
