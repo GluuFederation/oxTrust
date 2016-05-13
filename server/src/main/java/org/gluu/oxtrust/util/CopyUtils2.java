@@ -928,15 +928,15 @@ public class CopyUtils2 implements Serializable {
 			meta.setVersion(source.getAttribute("oxTrustMetaVersion"));
 		}
 
-		if (source.getAttribute("oxTrustMetaLocation") != null) {
-
-			String location = source.getAttribute("oxTrustMetaLocation");
+		String location = source.getAttribute("oxTrustMetaLocation");
+		if (location != null && !location.isEmpty()) {
 			if (!location.startsWith("https://") && !location.startsWith("http://")) {
 				location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + location;
 			}
-
-			meta.setLocation(location);
+		} else {
+			location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + source.getInum();
 		}
+		meta.setLocation(location);
 
 		if (source.getAttribute("oxTrustMetaCreated") != null && !source.getAttribute("oxTrustMetaCreated").isEmpty()) {
 
@@ -1154,15 +1154,15 @@ public class CopyUtils2 implements Serializable {
 			meta.setVersion(source.getAttribute("oxTrustMetaVersion"));
 		}
 
-		if (source.getAttribute("oxTrustMetaLocation") != null) {
-
-			String location = source.getAttribute("oxTrustMetaLocation");
+		String location = source.getAttribute("oxTrustMetaLocation");
+		if (location != null && !location.isEmpty()) {
 			if (!location.startsWith("https://") && !location.startsWith("http://")) {
 				location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + location;
 			}
-
-			meta.setLocation(location);
+		} else {
+			location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Groups/" + source.getInum();
 		}
+		meta.setLocation(location);
 
 		if (source.getAttribute("oxTrustMetaCreated") != null && !source.getAttribute("oxTrustMetaCreated").isEmpty()) {
 
