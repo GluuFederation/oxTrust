@@ -472,7 +472,7 @@ public class CopyUtils implements Serializable {
 			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new ScimPerson();
 		}
-		destination.getSchemas().add("urn:scim2:schemas:core:1.0");
+		destination.getSchemas().add("urn:scim:schemas:core:1.0");
 		log.trace(" setting ID ");
 		if (source.getInum() != null) {
 			destination.setId(source.getInum());
@@ -879,7 +879,7 @@ public class CopyUtils implements Serializable {
 		IPersonService personService = PersonService.instance();
 
 		List<String> schemas = new ArrayList<String>();
-		schemas.add("urn:scim2:schemas:core:1.0");
+		schemas.add("urn:scim:schemas:core:1.0");
 		destination.setSchemas(schemas);
 		destination.setDisplayName(source.getDisplayName());
 		destination.setId(source.getInum());

@@ -74,7 +74,7 @@ public class GroupWebService extends BaseScimWebService {
 				}
 			}
 			List<String> schema = new ArrayList<String>();
-			schema.add("urn:scim2:schemas:core:1.0");
+			schema.add("urn:scim:schemas:core:1.0");
 			allGroupList.setSchemas(schema);
 			List<ScimGroup> resources = allGroupList.getResources();
 			allGroupList.setTotalResults((long) resources.size());
