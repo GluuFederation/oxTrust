@@ -31,19 +31,21 @@ import org.gluu.oxtrust.model.scim.ScimPerson;
 @XmlRootElement(name = "Resources")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonPropertyOrder({ "totalResults", "schemas", "Resources" })
-@XmlType(propOrder = { "totalResults", "Resources" })
+@XmlType(propOrder = { "totalResults","schemas", "Resources" })
 public class GluuCustomPersonList implements Serializable {
 
 	private static final long serialVersionUID = -1879582184398161112L;
 	@XmlElement
 	private long totalResults;
-	@XmlTransient
+	
 	private List<String> schemas;
 
 	@XmlElementWrapper(name = "Resources")
 	@XmlElement(name = "Resource")
 	@JsonProperty
 	private List<ScimPerson> Resources;
+	
+	@XmlTransient
 	List<Person> personList = new ArrayList<Person>();
 
 	public GluuCustomPersonList() {

@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -46,6 +47,10 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
@@ -55,6 +60,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
  */
 @Name("scim2GroupEndpoint")
 @Path("/scim/v2/Groups")
+@Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/v2/Groups", description = "SCIM 2.0 Group Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = { @Authorization(value = "Authorization", type = "uma") })
 public class GroupWebService extends BaseScimWebService {
 
@@ -78,8 +84,10 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
+		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
+
 		Response authorizationResponse = null;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (applicationConfiguration.isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -138,7 +146,7 @@ public class GroupWebService extends BaseScimWebService {
 					groupsListResponse.setStartIndex(vlvResponse.getStartIndex());
 				}
 
-				URI location = new URI("/v2/Groups/");
+				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Groups/");
 
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
@@ -165,15 +173,13 @@ public class GroupWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@ApiOperation(value = "Find Group by id",
-			notes = "Returns a Group on the basis of provided id as path param (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.4.2.1)",
-			response = Group.class
-	)
+	@Produces(MediaType.APPLICATION_JSON)
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "Find group by id", notes = "Returns a group by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.2.1)", response = Group.class)
 	public Response getGroupById(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@PathParam("id") String id) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -198,33 +204,45 @@ public class GroupWebService extends BaseScimWebService {
 
 			Group group = CopyUtils2.copy(gluuGroup, null);
 
-			URI location = new URI("/Groups/" + id);
+			URI location = new URI(group.getMeta().getLocation());
 
-			return Response.ok(group).location(location).build();
+			// Serialize to JSON
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
+			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
+			// serializer.setAttributesArray(attributesArray);
+			customScimFilterModule.addSerializer(Group.class, serializer);
+			mapper.registerModule(customScimFilterModule);
+			String json = mapper.writeValueAsString(group);
+
+			return Response.ok(json).location(location).build();
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
 	@POST
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@ApiOperation(value = "Create Group",
-			notes = "Create Group (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.3)",
-			response = Group.class
-	)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	// @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "Create group", notes = "Create group (https://tools.ietf.org/html/rfc7644#section-3.3)", response = Group.class)
 	public Response createGroup(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@ApiParam(value = "Group", required = true) Group group) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@ApiParam(value = "Group", required = true) Group group) throws Exception {
+
+		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
 
 		Response authorizationResponse = null;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (applicationConfiguration.isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -233,7 +251,6 @@ public class GroupWebService extends BaseScimWebService {
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
-		// Return HTTP response with status code 201 Created
 
 		log.debug(" copying gluuGroup ");
 		GluuGroup gluuGroup = CopyUtils2.copy(group, null, false);
@@ -247,14 +264,19 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.debug(" generating inum ");
 			String inum = groupService.generateInumForNewGroup();
+
 			log.debug(" getting DN ");
 			String dn = groupService.getDnForGroup(inum);
+
 			log.debug(" getting iname ");
 			String iname = groupService.generateInameForNewGroup(group.getDisplayName().replaceAll(" ", ""));
+
 			log.debug(" setting dn ");
 			gluuGroup.setDn(dn);
+
 			log.debug(" setting inum ");
 			gluuGroup.setInum(inum);
+
 			log.debug(" setting iname ");
 			gluuGroup.setIname(iname);
 
@@ -263,31 +285,54 @@ public class GroupWebService extends BaseScimWebService {
 				Utils.personMemebersAdder(gluuGroup, dn);
 			}
 
+			// As per spec, the SP must be the one to assign the meta attributes
+			log.info(" Setting meta: create group ");
+			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+			Date dateCreated = DateTime.now().toDate();
+			String relativeLocation = "/scim/v2/Groups/" + inum;
+			gluuGroup.setAttribute("oxTrustMetaCreated", dateTimeFormatter.print(dateCreated.getTime()));
+			gluuGroup.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
+			gluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
+
 			log.debug("adding new GluuGroup");
 			groupService.addGroup(gluuGroup);
-			Group newGroup = CopyUtils2.copy(gluuGroup, null);
-			String uri = "/Groups/" + newGroup.getId();
-			return Response.created(URI.create(uri)).entity(newGroup).build();
+
+			Group createdGroup = CopyUtils2.copy(gluuGroup, null);
+
+			URI location = new URI(createdGroup.getMeta().getLocation());
+
+			// Serialize to JSON
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
+			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
+			// serializer.setAttributesArray(attributesArray);
+			customScimFilterModule.addSerializer(Group.class, serializer);
+			mapper.registerModule(customScimFilterModule);
+			String json = mapper.writeValueAsString(createdGroup);
+
+			// Return HTTP response with status code 201 Created
+			return Response.created(location).entity(json).build();
+
 		} catch (Exception ex) {
 			log.error("Failed to add user", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
 	@Path("{id}")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@ApiOperation(value = "Update Group",
-			notes = "Update Group (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.3)",
-			response = Group.class
-	)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	// @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "Update group", notes = "Update group (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = Group.class)
 	public Response updateGroup(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@PathParam("id") String id,
-			@ApiParam(value = "Group", required = true) Group group) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@PathParam("id") String id,
+		@ApiParam(value = "Group", required = true) Group group) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -308,38 +353,60 @@ public class GroupWebService extends BaseScimWebService {
 			if (gluuGroup == null) {
 				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
-			GluuGroup newGluuGroup = CopyUtils2.copy(group, gluuGroup, true);
+			GluuGroup updatedGluuGroup = CopyUtils2.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
-				Utils.personMemebersAdder(newGluuGroup, groupService.getDnForGroup(id));
+				Utils.personMemebersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
 			}
 
-			groupService.updateGroup(newGluuGroup);
-			log.debug(" group updated ");
-			Group newGroup = CopyUtils2.copy(newGluuGroup, null);
+			log.info(" Setting meta: update group ");
+			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+			Date dateLastModified = DateTime.now().toDate();
+			updatedGluuGroup.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
+			if (updatedGluuGroup.getAttribute("oxTrustMetaLocation") == null || (("oxTrustMetaLocation") != null && updatedGluuGroup.getAttribute("oxTrustMetaLocation").isEmpty())) {
+				String relativeLocation = "/scim/v2/Groups/" + id;
+				updatedGluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
+			}
 
-			URI location = new URI("/Groups/" + id);
-			return Response.ok(newGroup).location(location).build();
+			groupService.updateGroup(updatedGluuGroup);
+
+			log.debug(" group updated ");
+
+			Group updatedGroup = CopyUtils2.copy(updatedGluuGroup, null);
+
+			URI location = new URI(updatedGroup.getMeta().getLocation());
+
+			// Serialize to JSON
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
+			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
+			// serializer.setAttributesArray(attributesArray);
+			customScimFilterModule.addSerializer(Group.class, serializer);
+			mapper.registerModule(customScimFilterModule);
+			String json = mapper.writeValueAsString(updatedGroup);
+
+			return Response.ok(json).location(location).build();
+
 		} catch (EntryPersistenceException ex) {
 			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
 	@Path("{id}")
 	@DELETE
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@ApiOperation(value = "Delete Group",
-			notes = "Delete Group (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.3)"
-	)
+	@Produces(MediaType.APPLICATION_JSON)
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@ApiOperation(value = "Delete group", notes = "Delete group (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteGroup(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@PathParam("id") String id) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -375,14 +442,15 @@ public class GroupWebService extends BaseScimWebService {
 				log.info(" removing the group ");
 				groupService.removeGroup(group);
 			}
+
 			return Response.ok().build();
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 }

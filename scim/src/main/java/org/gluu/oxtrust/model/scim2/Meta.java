@@ -19,14 +19,22 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * For more detailed information please look at the <a
  * href="http://tools.ietf.org/html/draft-ietf-scim-core-schema-02">SCIM core schema 2.0</a>
  * </p>
+ *
+ * ===== IMPORTANT! =====
+ * There might be JSON serializers/deserializers dependent on this class via reflection, most notably
+ * org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerializer and
+ * org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer. You should consult these files first
+ * before changing anything here.
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 public class Meta implements Serializable {
 
     @JsonSerialize(using = JsonDateSerializer.class)
     private Date created;
+
     @JsonSerialize(using = JsonDateSerializer.class)
     private Date lastModified;
+
     private String location;
     private String version;
     // private Set<String> attributes = new HashSet<String>();

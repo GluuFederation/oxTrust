@@ -7,12 +7,14 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.gluu.site.ldap.persistence.annotation.LdapAttributesList;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
@@ -67,6 +69,11 @@ public class GluuGroup extends Entry implements Serializable {
 
 	@LdapAttribute(name = "gluuGroupVisibility")
 	private GluuGroupVisibility visibility;
+
+	@LdapAttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
+		@LdapAttribute(name = "inum", ignoreDuringUpdate = true)
+	})
+	private List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
 
 	public String getInum() {
 		return inum;
@@ -172,4 +179,53 @@ public class GluuGroup extends Entry implements Serializable {
 						super.toString());
 	}
 
+	public List<GluuCustomAttribute> getCustomAttributes() {
+		return customAttributes;
+	}
+
+	public void setCustomAttributes(List<GluuCustomAttribute> customAttributes) {
+		this.customAttributes = customAttributes;
+	}
+
+	public String getAttribute(String attributeName) {
+		String value = null;
+		for (GluuCustomAttribute attribute : customAttributes) {
+			if (attribute.getName().equalsIgnoreCase(attributeName)) {
+				value = attribute.getValue();
+				break;
+			}
+		}
+		return value;
+	}
+
+	public String[] getAttributeArray(String attributeName) {
+		GluuCustomAttribute gluuCustomAttribute = getGluuCustomAttribute(attributeName);
+		if (gluuCustomAttribute == null) {
+			return null;
+		} else {
+			return gluuCustomAttribute.getValues();
+		}
+	}
+
+	public GluuCustomAttribute getGluuCustomAttribute(String attributeName) {
+		for (GluuCustomAttribute gluuCustomAttribute : customAttributes) {
+			if (gluuCustomAttribute.getName().equalsIgnoreCase(attributeName)) {
+				return gluuCustomAttribute;
+			}
+		}
+
+		return null;
+	}
+
+	public void setAttribute(String attributeName, String attributeValue) {
+		GluuCustomAttribute attribute = new GluuCustomAttribute(attributeName, attributeValue);
+		customAttributes.remove(attribute);
+		customAttributes.add(attribute);
+	}
+
+	public void setAttribute(String attributeName, String[] attributeValue) {
+		GluuCustomAttribute attribute = new GluuCustomAttribute(attributeName, attributeValue);
+		customAttributes.remove(attribute);
+		customAttributes.add(attribute);
+	}
 }

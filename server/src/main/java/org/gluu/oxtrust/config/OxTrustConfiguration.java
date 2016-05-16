@@ -25,7 +25,6 @@ import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.init.Initialization;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
@@ -225,6 +224,7 @@ public class OxTrustConfiguration {
     private LdapOxTrustConfiguration loadConfigurationFromLdap(String ... returnAttributes) {
     	final LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
     	final String configurationDn = getConfigurationDn();
+		// log.info("########## configurationDn = " + configurationDn);
         try {
             final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn, returnAttributes);
 
@@ -285,6 +285,7 @@ public class OxTrustConfiguration {
 	}
 
 	private String loadLdapConfiguration(String ldapFileName) {
+		log.info("################# ldapFileName = " + ldapFileName);
 		this.ldapConfiguration = createFileConfiguration(ldapFileName, true);
 
 		File ldapFile = new File(ldapFileName);
@@ -317,6 +318,8 @@ public class OxTrustConfiguration {
 		try {
 			FileConfiguration fileConfiguration = new FileConfiguration(fileName);
 			if (fileConfiguration.isLoaded()) {
+				log.info("########## fileName = " + fileConfiguration.getFileName());
+				log.info("########## oxtrust_ConfigurationEntryDN = " + fileConfiguration.getString("oxtrust_ConfigurationEntryDN"));
 				return fileConfiguration;
 			}
 		} catch (Exception ex) {
