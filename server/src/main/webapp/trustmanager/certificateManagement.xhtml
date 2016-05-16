@@ -1,0 +1,106 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <ui:define name="body">
+        <section class="content-header">
+            <h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />SAML 
+                    <i class="fa fa-caret-right" style="color: #333 !important;" /> Certificate Management</small></h1>
+            <ol class="breadcrumb">
+
+                    <li><a href="#{request.contextPath}/trustmanager/certificateManagement"><i
+                            class="fa fa-home"></i> Certificate Management</a></li>
+                    <li class="organization/configuration"><a
+                            href="#{request.contextPath}/trustmanager/addCertificate">Add Certificate</a></li>
+            </ol>
+        </section>
+
+        <section class="content"> 
+            <div style="margin-left: 16px;">
+                <s:link view="/trustmanager/addCertificate" value="Add Certificate" styleClass="addPerson btn btn-primary" propagation="none" />
+            </div>
+
+        <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <richext:spacer height="16" />
+
+        <h:form>
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
+                <ui:param name="_hideLabel" value="true" />
+                <h:inputText value="#{certificateManagementAction.searchPattern}" size="30" maxlength="30" required="true" id="searchPatternId" styleClass="searchParameters form-control" style="width: 50%; float: left;"
+                    alt="search parameters for person like uid,iname,email" />
+                <h:commandButton value="Search" action="#{certificateManagementAction.search}" styleClass="btn btn-primary" style="float: left;" />
+            </s:decorate>
+        </h:form>
+
+        <richext:spacer height="16" />
+
+        <h:form id="asimbaCertificatesFormId">
+            <s:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
+                <richext:spacer height="30" />
+                <h:outputText value="No Search Result Found" />
+            </s:fragment>
+
+
+            <h:dataTable 
+                styleClass="table table-hover rt"
+                value="#{certificateManagementAction.asimbaCertificates}"
+                var="cert" id="asimbaCertificatesListId" width="100%"
+                rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
+
+                <h:column>
+                    <f:facet name="header">  
+                        <div style="text-align: center;"> Alias</div>
+                    </f:facet>
+                    <h:outputText value="#{cert.alias}" class="col-xs-12" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">  
+                        <div style="text-align: center;"> Issuer</div>
+                    </f:facet>
+                    <h:outputText value="#{cert.issuer}" class="col-xs-12" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">  
+                        <div style="text-align: center;"> Subject</div>
+                    </f:facet>
+                    <h:outputText value="#{cert.subject}" class="col-xs-12" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">  
+                        <div style="text-align: center;"> Algorithm</div>
+                    </f:facet>
+                    <h:outputText value="#{cert.algorithm}" class="col-xs-12" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">  
+                        <div style="text-align: center;"> Not Before</div>
+                    </f:facet>
+                    <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">  
+                        <div style="text-align: center;"> Not After</div>
+                    </f:facet>
+                    <h:outputText value="#{cert.notAfterDatetime}" class="col-xs-12" />
+                </h:column>
+            </h:dataTable>
+        </h:form>
+
+
+        </h:panelGrid>
+
+        </section>
+    </ui:define>
+</ui:composition>

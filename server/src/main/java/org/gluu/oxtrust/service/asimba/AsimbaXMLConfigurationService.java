@@ -10,16 +10,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.security.KeyStore;
-import java.security.PublicKey;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -34,6 +27,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.oxtrust.ldap.service.SSLService;
+import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.jboss.seam.annotations.In;
 import org.w3c.dom.Document;
 
@@ -69,7 +63,7 @@ public class AsimbaXMLConfigurationService implements Serializable {
     
     @Create
     public void init() {
-        
+        parse();
     }
     
     /**
@@ -78,13 +72,16 @@ public class AsimbaXMLConfigurationService implements Serializable {
     private String getConfigurationFilePath() {
         String basePath = LDAPUtility.getBaseDirectory();
         
-        StringBuffer configFile = new StringBuffer(basePath);
+        StringBuilder configFile = new StringBuilder(basePath);
         if (!configFile.toString().endsWith(File.separator))
             configFile.append(File.separator);
         configFile.append(ASIMBA_XML_CONFIGURATION_PATH.replaceAll("/", File.separator));
         return configFile.toString();
     }
     
+    /**
+     * Parse Asimba XML configuration file.
+     */
     private void parse() {
         try {
             // parse XML
@@ -111,63 +108,37 @@ public class AsimbaXMLConfigurationService implements Serializable {
     /**
      * Add trust certificate file to Asimba's Keystore 
      * @param uploadedFile Certificate file 
+     * @param alias Certificate alias 
      * @return path
      * @throws IOException 
      */
-    public String addCertificateFile(UploadedFile uploadedFile, String alias) throws IOException {
+    public synchronized String addCertificateFile(UploadedFile uploadedFile, String alias) throws IOException {
         // load certificate
         X509Certificate cert;
         try {
             // load PEM certificate from uploadedFile 
             cert = sslService.getCertificate(uploadedFile.getInputStream());
-            //test
-//            PublicKey key = cert.getPublicKey();
-//            log.info("Certificate parsed in PEM format");
-            
-//            // load canonical PKCS7 crt certificate:
-//            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//            InputStream is = uploadedFile.getInputStream();
-//            X509Certificate cer = (X509Certificate) cf.generateCertificate(is);
-//            // test
-//            key = cer.getPublicKey();
-//            log.info("Certificate parsed in PKCS7 format");
-//            
-//            Collection c = cf.generateCertificates(is);
-//            Iterator<Certificate> i = c.iterator();
-//            while (i.hasNext()) {
-//                Certificate certEntry = i.next();
-//                System.out.println(certEntry);
-//                // test
-//                key = certEntry.getPublicKey();
-//                log.info("Certificate parsed from the list in PKCS7 format");
-//            }
         } catch (Exception e) {
             log.warn("Certificate parsing exception", e);
             return "Certificate parsing exception : " + e.getMessage();
         }
-        // load keystore
+        
+        // update keystore
         try {
             parse();
             
-            KeyStore keystore = KeyStore.getInstance(keystoreType);
-            keystore.load(new FileInputStream(keystoreFilePath), keystorePassword.toCharArray());
-            
-            // check alias
-            if (keystore.containsAlias(alias)) {
-                // nothing now
-            }
-            
-            if (alias.equals(keystore.getCertificateAlias(cert)))
-                return OxTrustConstants.RESULT_SUCCESS; // already exist
-            
-            keystore.setCertificateEntry(alias, cert);
-            
-            keystore.store(new FileOutputStream(keystoreFilePath), keystorePassword.toCharArray());
+            KeystoreWrapper wrapper = getKeystore();
+            wrapper.addCertificate(cert, alias);
+            wrapper.save();
             
             return OxTrustConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             log.error("Add Certificate to keystore exception", e);
             return "Add Certificate to keystore exception : " + e.getMessage();
         }
+    }
+    
+    public KeystoreWrapper getKeystore() throws Exception {
+        return new KeystoreWrapper(keystoreFilePath, keystorePassword, keystoreType);
     }
 }
