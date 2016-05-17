@@ -467,9 +467,9 @@ public class UserWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateUserPatch(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@PathParam("id") String id, ScimPersonPatch person) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@PathParam("id") String id, ScimPersonPatch person) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -489,9 +489,9 @@ public class UserWebService extends BaseScimWebService {
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response personSearch(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			ScimPersonSearch searchPattern) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		ScimPersonSearch searchPattern) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -516,8 +516,22 @@ public class UserWebService extends BaseScimWebService {
 			}
 			// ScimPerson person = CopyUtils.copy(gluuPerson, null);
 			User user = CopyUtils2.copy(gluuPerson, null);
-			URI location = new URI("/Users/" + gluuPerson.getInum());
-			return Response.ok(user).location(location).build();
+
+			URI location = new URI(user.getMeta().getLocation());
+
+			// Serialize to JSON
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
+			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
+			// serializer.setAttributesArray(attributesArray);
+			customScimFilterModule.addSerializer(User.class, serializer);
+			mapper.registerModule(customScimFilterModule);
+			String json = mapper.writeValueAsString(user);
+
+			return Response.ok(json).location(location).build();
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return getErrorResponse("Resource not found", Response.Status.NOT_FOUND.getStatusCode());
@@ -526,7 +540,6 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
-	
 	
 	@Path("/SearchPersons")
 	@POST

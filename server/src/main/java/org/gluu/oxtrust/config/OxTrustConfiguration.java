@@ -285,7 +285,7 @@ public class OxTrustConfiguration {
 	}
 
 	private String loadLdapConfiguration(String ldapFileName) {
-		log.info("################# ldapFileName = " + ldapFileName);
+		log.info("########## ldapFileName = " + ldapFileName);
 		this.ldapConfiguration = createFileConfiguration(ldapFileName, true);
 
 		File ldapFile = new File(ldapFileName);
