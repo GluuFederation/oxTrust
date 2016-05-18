@@ -154,7 +154,13 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
                                 Map.Entry<String, JsonNode> arrayNodeMapRootNodeEntry = arrayNodeMapIterator.next();
 
                                 AttributeHolder arrayNodeMapAttributeHolder = new AttributeHolder();
-                                arrayNodeMapAttributeHolder.setName(arrayNodeMapRootNodeEntry.getKey());
+
+                                if (rootNodeEntry.getKey().equalsIgnoreCase("groups") && arrayNodeMapRootNodeEntry.getKey().equalsIgnoreCase("reference")) {
+                                    arrayNodeMapAttributeHolder.setName("$ref");
+                                } else {
+                                    arrayNodeMapAttributeHolder.setName(arrayNodeMapRootNodeEntry.getKey());
+                                }
+
                                 arrayNodeMapAttributeHolder.setType("string");
                                 arrayNodeMapAttributeHolder.setDescription(arrayNodeMapRootNodeEntry.getKey());
 

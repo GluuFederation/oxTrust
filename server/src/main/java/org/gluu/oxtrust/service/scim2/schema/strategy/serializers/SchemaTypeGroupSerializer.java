@@ -105,7 +105,13 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
                             Map.Entry<String, JsonNode> arrayNodeMapRootNodeEntry = arrayNodeMapIterator.next();
 
                             AttributeHolder arrayNodeMapAttributeHolder = new AttributeHolder();
-                            arrayNodeMapAttributeHolder.setName(arrayNodeMapRootNodeEntry.getKey());
+
+                            if (rootNodeEntry.getKey().equalsIgnoreCase("members") && arrayNodeMapRootNodeEntry.getKey().equalsIgnoreCase("reference")) {
+                                arrayNodeMapAttributeHolder.setName("$ref");
+                            } else {
+                                arrayNodeMapAttributeHolder.setName(arrayNodeMapRootNodeEntry.getKey());
+                            }
+
                             arrayNodeMapAttributeHolder.setType("string");
                             arrayNodeMapAttributeHolder.setDescription(arrayNodeMapRootNodeEntry.getKey());
 

@@ -60,9 +60,14 @@ public class GroupRef extends MultiValuedAttribute {
         return type;
     }
 
-    
+    @Override
     public String getReference() {
         return super.getReference();
+    }
+
+    @Override
+    public String getOperation() {
+        return super.getOperation();
     }
 
     public void setType(Type type) {
@@ -154,5 +159,4 @@ public class GroupRef extends MultiValuedAttribute {
             return super.getValue();
         }
     }
-
 }
