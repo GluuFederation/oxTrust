@@ -12,6 +12,7 @@ import java.io.Serializable;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
@@ -56,8 +57,8 @@ public class JsonConfigurationService implements Serializable {
 	@In
 	private JsonService jsonService;
 
-	@In(value = "#{oxTrustConfiguration.configurationDn}")
-	private String configurationDn;
+	@In
+	private OxTrustConfiguration oxTrustConfiguration;
 
 	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
@@ -78,11 +79,15 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	private LdapOxTrustConfiguration getOxTrustConfiguration() {
+		String configurationDn = oxTrustConfiguration.getConfigurationDn();
+
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = loadOxTrustConfig(configurationDn);
 		return ldapOxTrustConfiguration;
 	}
 
 	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
+		String configurationDn = oxTrustConfiguration.getConfigurationDn();
+
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
 		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
 	}
@@ -112,6 +117,8 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws JsonParseException, JsonMappingException, IOException {
+		String configurationDn = oxTrustConfiguration.getConfigurationDn();
+
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
 		ldapOxAuthConfiguration.setOxAuthConfigDynamic(oxAuthDynamicConfigJson);
 		ldapOxAuthConfiguration.setRevision(ldapOxAuthConfiguration.getRevision() + 1);
