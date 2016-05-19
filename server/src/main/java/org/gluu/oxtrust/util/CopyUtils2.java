@@ -18,6 +18,7 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.*;
 import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.model.scim.ScimEntitlements;
@@ -933,8 +934,10 @@ public class CopyUtils2 implements Serializable {
 				location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + location;
 			}
 		} else {
-			System.out.println("JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + JsonConfigurationService.instance().getOxTrustApplicationConfiguration());
-			System.out.println("JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint());
+			System.out.println("!!!!!!!!!!!!!JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + OxTrustConfiguration.instance());
+			System.out.println("!!!!!!!!!!!!!JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + JsonConfigurationService.instance());
+			System.out.println("!!!!!!!!!!!!!JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + OxTrustConfiguration.instance().getApplicationConfiguration());
+			System.out.println("!!!!!!!!!!!!!JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint());
 			location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + source.getInum();
 		}
 		meta.setLocation(location);
