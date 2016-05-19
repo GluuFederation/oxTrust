@@ -934,11 +934,7 @@ public class CopyUtils2 implements Serializable {
 				location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + location;
 			}
 		} else {
-			System.out.println("!!!!!!!!!!!!!JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + OxTrustConfiguration.instance());
-			System.out.println("!!!!!!!!!!!!!JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + JsonConfigurationService.instance());
-			System.out.println("!!!!!!!!!!!!!JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + OxTrustConfiguration.instance().getApplicationConfiguration());
-			System.out.println("!!!!!!!!!!!!!JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint(): " + JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint());
-			location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + source.getInum();
+			location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + source.getInum();
 		}
 		meta.setLocation(location);
 
