@@ -6,6 +6,9 @@
     "applianceInum":"${config.appliance.inum}",
 
     "baseDN":"o=gluu",
+
+    "baseEndpoint":"https://%(hostname)s/identity/seam/resource/restv1",
+
     "authMode":"oxAuth",
 
     "idpUrl":"${config.host.schema}://${config.host.idp_name}",
