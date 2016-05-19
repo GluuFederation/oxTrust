@@ -835,7 +835,7 @@ public class CopyUtils2 implements Serializable {
 				GroupRef groupRef = new GroupRef();
 				groupRef.setDisplay(gluuGroup.getDisplayName());
 				groupRef.setValue(gluuGroup.getInum());
-				String reference = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Groups/" + gluuGroup.getInum();
+				String reference = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Groups/" + gluuGroup.getInum();
 				groupRef.setReference(reference);
 
 				groupRefList.add(groupRef);
@@ -931,7 +931,7 @@ public class CopyUtils2 implements Serializable {
 		String location = source.getAttribute("oxTrustMetaLocation");
 		if (location != null && !location.isEmpty()) {
 			if (!location.startsWith("https://") && !location.startsWith("http://")) {
-				location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + location;
+				location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + location;
 			}
 		} else {
 			location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + source.getInum();
@@ -1136,7 +1136,7 @@ public class CopyUtils2 implements Serializable {
 					MemberRef memberRef = new MemberRef();
 					memberRef.setValue(gluuCustomPerson.getInum());
 					memberRef.setDisplay(gluuCustomPerson.getDisplayName());
-					String reference = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + gluuCustomPerson.getInum();
+					String reference = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + gluuCustomPerson.getInum();
 					memberRef.setReference(reference);
 
 					memberRefSet.add(memberRef);
@@ -1157,10 +1157,10 @@ public class CopyUtils2 implements Serializable {
 		String location = source.getAttribute("oxTrustMetaLocation");
 		if (location != null && !location.isEmpty()) {
 			if (!location.startsWith("https://") && !location.startsWith("http://")) {
-				location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + location;
+				location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + location;
 			}
 		} else {
-			location = JsonConfigurationService.instance().getOxTrustApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Groups/" + source.getInum();
+			location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Groups/" + source.getInum();
 		}
 		meta.setLocation(location);
 
