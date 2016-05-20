@@ -3,7 +3,6 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.net.URI;
@@ -19,7 +18,9 @@ import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.Api;
 import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.Meta;
+import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
 import org.jboss.seam.annotations.Name;
@@ -39,6 +40,16 @@ public class ResourceTypeWS extends BaseScimWebService {
 	public Response listResources(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
+
+		ListResponse listResponse = new ListResponse();
+
+		List<String> schemas = new ArrayList<String>();
+		schemas.add(Constants.LIST_RESPONSE_SCHEMA_ID);
+		listResponse.setSchemas(schemas);
+
+		listResponse.setTotalResults(2);  // User and Group
+		listResponse.setItemsPerPage(10);
+		listResponse.setStartIndex(1);
 
 		ResourceType userResourceType = new ResourceType();
 		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
@@ -71,11 +82,17 @@ public class ResourceTypeWS extends BaseScimWebService {
 		groupMeta.setResourceType("ResourceType");
 		groupResourceType.setMeta(groupMeta);
 
-		ResourceType[] resourceTypes = new ResourceType[]{userResourceType, groupResourceType};
+		// ResourceType[] resourceTypes = new ResourceType[]{userResourceType, groupResourceType};
+		List<Resource> resourceTypes = new ArrayList<Resource>();
+		resourceTypes.add(userResourceType);
+		resourceTypes.add(groupResourceType);
+
+		listResponse.setResources(resourceTypes);
 
 		URI location = new URI("/v2/ResourceTypes");
 
-		return Response.ok(resourceTypes).location(location).build();
+		// return Response.ok(resourceTypes).location(location).build();
+		return Response.ok(listResponse).location(location).build();
 	}
 
 	@Path("User")
@@ -104,11 +121,12 @@ public class ResourceTypeWS extends BaseScimWebService {
 		schemaExtensions.add(userExtensionSchema);
 		userResourceType.setSchemaExtensions(schemaExtensions);
 
-		ResourceType[] resourceTypes = new ResourceType[]{userResourceType};
+		// ResourceType[] resourceTypes = new ResourceType[]{userResourceType};
 
 		URI location = new URI("/v2/ResourceTypes/User");
 
-		return Response.ok(resourceTypes).location(location).build();
+		// return Response.ok(resourceTypes).location(location).build();
+		return Response.ok(userResourceType).location(location).build();
 	}
 
 	@Path("Group")
@@ -130,10 +148,11 @@ public class ResourceTypeWS extends BaseScimWebService {
 		groupMeta.setResourceType("ResourceType");
 		groupResourceType.setMeta(groupMeta);
 
-		ResourceType[] resourceTypes = new ResourceType[]{groupResourceType};
+		// ResourceType[] resourceTypes = new ResourceType[]{groupResourceType};
 
 		URI location = new URI("/v2/ResourceTypes/Group");
 
-		return Response.ok(resourceTypes).location(location).build();
+		// return Response.ok(resourceTypes).location(location).build();
+		return Response.ok(groupResourceType).location(location).build();
 	}
 }
