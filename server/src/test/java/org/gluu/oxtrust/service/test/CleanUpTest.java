@@ -35,7 +35,7 @@ public class CleanUpTest extends ConfigurableTest {
 	 * Test search 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void cleanUpPersons() throws Exception {
 		new JUnitSeamTest.FacesRequest() {
 
@@ -86,7 +86,7 @@ public class CleanUpTest extends ConfigurableTest {
 	 * Test search 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void cleanUpGroups() throws Exception {
 		new JUnitSeamTest.FacesRequest() {
 

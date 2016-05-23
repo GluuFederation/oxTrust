@@ -355,7 +355,7 @@ public class AppInitializer {
 	 * 
 	 * @throws org.apache.commons.configuration.ConfigurationException
 	 */
-	@Destroy
+//	@Destroy
 	public void destroyApplicationComponents() throws ConfigurationException {
 		log.debug("Destroying application components");
 		LdapEntryManager ldapEntryManager = (LdapEntryManager) Contexts.getApplicationContext().get(LDAP_ENTRY_MANAGER_NAME);

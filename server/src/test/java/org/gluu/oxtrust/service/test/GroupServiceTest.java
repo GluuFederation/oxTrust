@@ -6,41 +6,38 @@
 
 package org.gluu.oxtrust.service.test;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import org.gluu.oxtrust.action.test.ConfigurableTest;
 import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.mock.JUnitSeamTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.jboss.seam.mock.SeamTest;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 /**
  * Test class for GroupService
  *
  * @author Yuriy Movchan Date: 02/06/2014
  */
-@RunWith(Arquillian.class)
 public class GroupServiceTest extends ConfigurableTest {
 
 	@Test
-	public void testIsMemberOrOwner() throws Exception {
-		new JUnitSeamTest.FacesRequest() {
-            @Override
-            public void invokeApplication() throws Exception {
-                IGroupService groupService = (IGroupService) getInstance("groupService");
+	@Parameters({ "test.group.dn", "test.group.dn.ownerDn", "test.group.dn.nonMemberDn" })
+	public void testIsMemberOrOwner(final String groupDn, final String ownerDn, final String nonMemberDn)
+			throws Exception {
+		new SeamTest.FacesRequest() {
+			@Override
+			public void invokeApplication() throws Exception {
+				IGroupService groupService = (IGroupService) getInstance("groupService");
 
-                String groupDn = testData.getString("test.group.dn");
-                String ownerDn = testData.getString("test.group.dn.ownerDn");
-                String nonMemberDn = testData.getString("test.group.dn.nonMemberDn");
-                
+				boolean isMemberOrOwner = groupService.isMemberOrOwner(groupDn, ownerDn);
+				assertTrue(isMemberOrOwner, String.format("Failed to confirm group '%s' owner '%s'", groupDn, ownerDn));
 
-                boolean isMemberOrOwner = groupService.isMemberOrOwner(groupDn, ownerDn);
-                Assert.assertTrue(String.format("Failed to confirm group '%s' owner '%s'", groupDn, ownerDn), isMemberOrOwner);
-
-                boolean isMemberOrOwnerWrong = groupService.isMemberOrOwner(groupDn, nonMemberDn);
-                Assert.assertFalse("Wrong person recognised as group member", isMemberOrOwnerWrong);
-            }
-        }.run();
-    }
+				boolean isMemberOrOwnerWrong = groupService.isMemberOrOwner(groupDn, nonMemberDn);
+				assertFalse(isMemberOrOwnerWrong, "Wrong person recognised as group member");
+			}
+		}.run();
+	}
 
 }

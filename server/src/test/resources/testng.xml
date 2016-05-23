@@ -1,0 +1,21 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="oxTrustServer" parallel="false">
+
+    <!-- Appliance Status Test (embedded) -->
+    <test name="Appliance Status Test (embedded)" enabled="true">
+        <classes>
+            <class name="org.gluu.oxtrust.service.test.ApplianceStatusTest"/>
+        </classes>
+    </test>
+
+    <!-- Group Service Test (embedded) -->
+    <test name="Group Service Test (embedded)" enabled="true">
+        <classes>
+            <class name="org.gluu.oxtrust.service.test.GroupServiceTest/>
+        </classes>
+    </test>
+
+    <parameter name="serverUri" value="https://${test.server.name}"/>
+
+</suite>

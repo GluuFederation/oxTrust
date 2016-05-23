@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
  *
  * @author Yuriy Movchan Date: 10.14.2010
  */
-@RunWith(Arquillian.class)
 public class PersonServiceTest extends AbstractAuthorizationTest {
 
 	/**

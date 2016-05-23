@@ -6,38 +6,89 @@
 
 package org.gluu.oxtrust.action.test;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.ldap.service.util.TestFileConfiguration;
-import org.jboss.seam.mock.JUnitSeamTest;
-import org.junit.Before;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.seam.mock.SeamTest;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.BeforeClass;
+import org.testng.ITestContext;
+import org.testng.Reporter;
+import org.testng.annotations.BeforeSuite;
+import org.xdi.util.StringHelper;
+import org.xdi.util.properties.FileConfiguration;
 
 /**
  * Base class for all seam test which requre external configuration
  * 
- * @author Pankaj Date: 08.24.2010
+ * @author Yuriy Movchan
+ * Date: 05/16/2016
  */
-public abstract class ConfigurableTest extends JUnitSeamTest {
+public abstract class ConfigurableTest extends SeamTest {
 
-	public TestFileConfiguration testData;
+	public static FileConfiguration testData;
+
+    @Deployment
+    public static Archive<?> createDeployment()
+    {
+       return ShrinkWrap.create(WebArchive.class, "test.war")
+    		   .addAsResource(EmptyAsset.INSTANCE, "seam.properties")
+                        .setWebXML("web.xml");
+    }
 
 	/**
-	 * Prepare configuration before executing tests
-	 * 
-	 * @throws Exception
+	 * Prepare configuration before tests execution
 	 */
-	@Before
-	public void initTest() {
-		super.begin();
-		this.testData = new TestFileConfiguration(OxTrustConfiguration.DIR + "oxTrustLdapTest.properties");
+	@BeforeClass
+	public static void initTest() {
+		String propertiesFile = "./target/test-classes/testng.properties";
+		testData = new FileConfiguration(propertiesFile);
 	}
 
-	/**
+    /**
 	 * Get configuration
 	 */
-	public TestFileConfiguration getTestData() {
+	public FileConfiguration getTestData() {
 		return testData;
 	}
+
+	@BeforeSuite
+    public void initTestSuite(ITestContext context) throws FileNotFoundException, IOException {
+        Reporter.log("Invoked init test suite method \n", true);
+
+        String propertiesFile = context.getCurrentXmlTest().getParameter("propertiesFile");
+        if (StringHelper.isEmpty(propertiesFile)) {
+            propertiesFile = "target/test-classes/testng.properties";
+        }
+
+        // Load test paramters
+        //propertiesFile = "/Users/JAVIER/IdeaProjects/oxAuth/Client/target/test-classes/testng.properties";
+        FileInputStream conf = new FileInputStream(propertiesFile);
+        Properties prop = new Properties();
+        prop.load(conf);
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        for (Entry<Object, Object> entry : prop.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (StringHelper.isEmptyString(key) || StringHelper.isEmptyString(value)) {
+                continue;
+            }
+            parameters.put(key.toString(), value.toString());
+        }
+
+        // Overrided test paramters
+        context.getSuite().getXmlSuite().setParameters(parameters);
+    }
 
 }
