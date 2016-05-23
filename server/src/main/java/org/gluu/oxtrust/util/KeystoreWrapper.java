@@ -57,15 +57,7 @@ public class KeystoreWrapper {
             if (cert instanceof X509Certificate) {
                 X509Certificate certX509 = (X509Certificate)cert;
 
-                X509CertificateShortInfo entry = new X509CertificateShortInfo();
-                entry.setAlias(alias);
-                if (certX509.getIssuerDN() != null)
-                    entry.setIssuer(certX509.getIssuerDN().getName());
-                if (certX509.getSubjectDN() != null)
-                    entry.setSubject(certX509.getSubjectDN().getName());
-                entry.setAlgorithm(certX509.getSigAlgName());
-                entry.setNotBeforeDatetime(certX509.getNotBefore());
-                entry.setNotAfterDatetime(certX509.getNotAfter());
+                X509CertificateShortInfo entry = new X509CertificateShortInfo(alias, certX509);
 
                 certs.add(entry);
             }

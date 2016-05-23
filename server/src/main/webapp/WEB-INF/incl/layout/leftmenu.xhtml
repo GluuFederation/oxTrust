@@ -449,6 +449,13 @@
 									$('#subMenuLinkAsimba4').addClass('active');
 								}
                                                                 
+                                                                //Menu Highlights - SAML Certificates
+								if(window.location.href.indexOf("trustmanager/certificateManagement") != -1 || window.location.href.indexOf("trustmanager/addCertificate") != -1){
+									$('#subMenuSAML').css('display', 'block');
+									$('#menuSAML').addClass('active');
+									$('#subMenuLinkCertificates1').addClass('active');
+								}
+                                                                
 
 								//Menu Highlights - OpenID Connect
 								if (window.location.href.indexOf("scope/inventory") != -1 || window.location.href.indexOf("scope/manage/add") != -1 || window.location.href.indexOf("scope/manage/update") != -1) {
