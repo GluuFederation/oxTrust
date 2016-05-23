@@ -8,56 +8,57 @@ package org.gluu.oxtrust.service.test;
 
 import java.util.List;
 
-import org.gluu.oxtrust.action.test.AbstractAuthorizationTest;
+import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.mock.JUnitSeamTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.jboss.seam.mock.SeamTest;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.*;
 
 /**
  * Test class for PersonService
  *
  * @author Yuriy Movchan Date: 10.14.2010
  */
-public class PersonServiceTest extends AbstractAuthorizationTest {
+public class PersonServiceTest extends BaseTest {
 
 	/**
 	 * Test search persons by pattern
 	 * @throws Exception
 	 */
 	@Test
-	public void testSearchPersons() throws Exception {
-		new JUnitSeamTest.FacesRequest() {
+	@Parameters({ "person.search.pattern" })
+	public void testSearchPersons(final String pattern) throws Exception {
+		new SeamTest.FacesRequest() {
 
 			@Override
 			protected void invokeApplication() throws Exception {
 				IPersonService personService = (IPersonService) getInstance("personService");
 
-				String pattern = testData.getString("person.search.pattern");
+				String pattern = testData.getString("");
 				List<GluuCustomPerson> persons = personService.searchPersons(pattern, OxTrustConstants.searchPersonsSizeLimit);
 
-				Assert.assertNotNull("Failed to find persons", persons);
-				Assert.assertTrue("Failed to find persons", persons.size() > 0);
+				assertNotNull(persons, "Failed to find persons");
+				assertTrue(persons.size() > 0, "Failed to find persons");
 			}
 		}.run();
 	}
 
 	@Test
-	public void testGetPersonByUid() throws Exception {
-		new JUnitSeamTest.FacesRequest() {
+	@Parameters({ "person.uid" })
+	public void testGetPersonByUid(final String personUid) throws Exception {
+		new SeamTest.FacesRequest() {
 			@Override
 			protected void invokeApplication() throws Exception {
 				IPersonService personService = (IPersonService) getInstance("personService");
 
-				String personUid = testData.getString("person.uid");
 				GluuCustomPerson person = personService.getPersonByUid(personUid);
 
-				Assert.assertNotNull("Failed to find person", person);
-				Assert.assertEquals(personUid, person.getUid());
+				assertNotNull(person, "Failed to find person");
+				assertEquals(person.getUid(), personUid);
 			}
 		}.run();
 	}

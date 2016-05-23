@@ -22,31 +22,31 @@ public abstract class BaseComponentTest extends BaseTest {
     @BeforeMethod
     @Override
     public void begin() {
-//        Lifecycle.beginCall();
+        Lifecycle.beginCall();
         super.begin();
     }
 
     @AfterMethod
     @Override
     public void end() {
-//        Session.instance().invalidate();
-//        Lifecycle.endCall();
+        Session.instance().invalidate();
+        Lifecycle.endCall();
         super.end();
     }
 
     @BeforeClass
     public void setupClass() throws Exception {
         super.setupClass();
-//        Lifecycle.beginCall();
+        Lifecycle.beginCall();
         beforeClass();
-//        Lifecycle.endCall();
+        Lifecycle.endCall();
     }
 
     @AfterClass
     public void cleanupClass() throws Exception {
-//        Lifecycle.beginCall();
+        Lifecycle.beginCall();
         afterClass();
-//        Lifecycle.endCall();
+        Lifecycle.endCall();
         super.cleanupClass();
     }
 

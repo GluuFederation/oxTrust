@@ -9,6 +9,7 @@ package org.gluu.oxtrust.service.test;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.action.test.ConfigurableTest;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.jboss.seam.mock.SeamTest;
@@ -20,7 +21,7 @@ import org.testng.annotations.Test;
  *
  * @author Yuriy Movchan Date: 02/06/2014
  */
-public class GroupServiceTest extends ConfigurableTest {
+public class GroupServiceTest extends BaseTest {
 
 	@Test
 	@Parameters({ "test.group.dn", "test.group.dn.ownerDn", "test.group.dn.nonMemberDn" })

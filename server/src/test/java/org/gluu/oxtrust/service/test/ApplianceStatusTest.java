@@ -9,6 +9,7 @@ package org.gluu.oxtrust.service.test;
 import static org.testng.Assert.assertEquals;
 
 import org.gluu.oxtrust.action.test.BaseComponentTest;
+import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -18,16 +19,7 @@ import org.testng.annotations.Test;
 /**
  * User: Oleksiy Tataryn
  */
-public class ApplianceStatusTest extends BaseComponentTest {
-
-	@Override
-	public void beforeClass() {
-		
-	}
-
-	@Override
-	public void afterClass() {
-	}
+public class ApplianceStatusTest extends BaseTest {
 
 	 @Test
 	public void testIsApplianceStatus() throws Exception {
