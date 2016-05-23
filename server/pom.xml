@@ -112,7 +112,6 @@
 					<version>2.17</version>
 					<configuration>
 						<argLine>-Dsun.lang.ClassLoader.allowArraySyntax=true
-							-Djava.naming.factory.initial=org.gluu.oxtrust.action.test.TestInitialContextFactory
 							-Dcatalina.base=${project.build.directory}
 							-Dgluu.conf.folder=${project.build.directory}
 							-Dseam.local.test=true

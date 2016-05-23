@@ -12,7 +12,7 @@
     <!-- Group Service Test (embedded) -->
     <test name="Group Service Test (embedded)" enabled="true">
         <classes>
-            <class name="org.gluu.oxtrust.service.test.GroupServiceTest/>
+            <class name="org.gluu.oxtrust.service.test.GroupServiceTest" />
         </classes>
     </test>
 
