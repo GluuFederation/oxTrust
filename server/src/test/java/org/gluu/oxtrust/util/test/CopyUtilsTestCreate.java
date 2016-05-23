@@ -1,9 +1,5 @@
 package org.gluu.oxtrust.util.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +20,8 @@ import org.gluu.oxtrust.model.scim.ScimPersonPhotos;
 import org.gluu.oxtrust.model.scim.ScimRoles;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.util.CopyUtils;
-import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 
 public class CopyUtilsTestCreate extends ConfigurableTest {
@@ -241,18 +236,18 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 				
 				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
 				assertNotNull(copy);
-				assertEquals("userName",copy.getUid());
-				assertEquals("givenName",copy.getGivenName());
-				assertEquals("familyName",copy.getSurname());
-				assertEquals("displayName",copy.getDisplayName());
-				assertEquals("preferredLanguage",copy.getPreferredLanguage());
-				assertEquals("timezone",copy.getTimezone());
-				assertEquals("password",copy.getUserPassword());
+				assertEquals(copy.getUid(), "userName");
+				assertEquals(copy.getGivenName(), "givenName");
+				assertEquals(copy.getSurname(), "familyName");
+				assertEquals(copy.getDisplayName(), "displayName");
+				assertEquals(copy.getPreferredLanguage(), "preferredLanguage");
+				assertEquals(copy.getTimezone(), "timezone");
+				assertEquals(copy.getUserPassword(), "password");
 				assertNotNull(copy.getMemberOf());
-				assertEquals(1,copy.getMemberOf().size());
-				assertEquals("Mocked DN", copy.getMemberOf().get(0));
+				assertEquals(copy.getMemberOf().size(), 1);
+				assertEquals(copy.getMemberOf().get(0), "Mocked DN");
 				
-				assertEquals("true",copy.getAttribute(GLUU_STATUS));				
+				assertEquals(copy.getAttribute(GLUU_STATUS), "true");				
 				assertNull(copy.getAttribute(OX_TRUST_PHOTOS_TYPE));
 				assertNull(copy.getAttribute(OX_TRUST_PHONE_TYPE));
 				assertNull(copy.getAttribute(OX_TRUST_ADDRESS_PRIMARY));

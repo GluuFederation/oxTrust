@@ -75,7 +75,7 @@ public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 			           
         }.run();
         
-        logoutUserFacesRequest();
+//        logoutUserFacesRequest();
     }
 	
 	
