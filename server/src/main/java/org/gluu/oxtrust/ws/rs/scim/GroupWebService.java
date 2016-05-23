@@ -156,7 +156,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.info("group.getMembers().size() : " + group.getMembers().size());
 			if (group.getMembers().size() > 0) {
-				Utils.personMemebersAdder(gluuGroup, dn);
+				Utils.personMembersAdder(gluuGroup, dn);
 			}
 
 			log.debug("adding new GluuGroup");
@@ -191,7 +191,7 @@ public class GroupWebService extends BaseScimWebService {
 			GluuGroup newGluuGroup = CopyUtils.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
-				Utils.personMemebersAdder(newGluuGroup, groupService.getDnForGroup(id));
+				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
 			}
 
 			groupService.updateGroup(newGluuGroup);

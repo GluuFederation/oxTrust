@@ -187,10 +187,10 @@ public class UserWebService extends BaseScimWebService {
 			gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
 			log.info("gluuPerson.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
 			if (person.getGroups().size() > 0) {
-				log.info(" jumping to groupMemebersAdder ");
+				log.info(" jumping to groupMembersAdder ");
 				log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
 
-				Utils.groupMemebersAdder(gluuPerson, gluuPerson.getDn());
+				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
 			log.debug("adding new GluuPerson");
@@ -226,7 +226,7 @@ public class UserWebService extends BaseScimWebService {
 			GluuCustomPerson newGluuPesron = CopyUtils.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMemebersAdder(newGluuPesron, personService.getDnForPerson(uid));
+				Utils.groupMembersAdder(newGluuPesron, personService.getDnForPerson(uid));
 			}
 
 			personService.updatePerson(newGluuPesron);

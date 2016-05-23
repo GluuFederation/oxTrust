@@ -32,8 +32,8 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 @XmlRootElement(name = "Resources")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonPropertyOrder({ "totalResults", "startIndex","itemsPerPage","schemas", "Resources" })
-@XmlType(propOrder = { "totalResults","startIndex","itemsPerPage", "Resources" })
+@JsonPropertyOrder({ "totalResults", "itemsPerPage", "startIndex", "schemas", "Resources" })
+@XmlType(propOrder = { "totalResults", "itemsPerPage", "startIndex", "schemas", "Resources" })
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 public class ListResponse implements Serializable {
 
@@ -44,7 +44,7 @@ public class ListResponse implements Serializable {
 	private int startIndex;
 	@XmlElement
 	private int itemsPerPage;  
-	@XmlTransient
+	// @XmlTransient
 	private List<String> schemas;
 
 	@XmlElementWrapper(name = "Resources")
@@ -53,10 +53,8 @@ public class ListResponse implements Serializable {
 	private List<Resource> Resources;
 
 	public ListResponse() {
-
 		schemas = new ArrayList<String>();
 		Resources = new ArrayList<Resource>();
-
 	}
 
 	public List<String> getSchemas() {

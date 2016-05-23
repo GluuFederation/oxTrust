@@ -7,6 +7,9 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import com.wordnik.swagger.annotations.Api;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeLoadingFactory;
@@ -18,6 +21,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,16 +50,29 @@ public class SchemaWebService extends BaseScimWebService {
 
         log.info(" listSchemas() ");
 
-        List<SchemaType> schemas = SchemaTypeMapping.getSchemaInstances();
+        ListResponse listResponse = new ListResponse();
+
+        List<String> schemas = new ArrayList<String>();
+        schemas.add(Constants.LIST_RESPONSE_SCHEMA_ID);
+        listResponse.setSchemas(schemas);
+
+        List<SchemaType> schemaTypes = SchemaTypeMapping.getSchemaInstances();
+        List<Resource> resources = new ArrayList<Resource>();
 
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
-        for (SchemaType schemaType : schemas) {
-            factory.load(schemaType);
+        for (SchemaType schemaType : schemaTypes) {
+            factory.load(super.applicationConfiguration, schemaType);
+            resources.add(schemaType);
         }
+
+        listResponse.setResources(resources);
+        listResponse.setTotalResults(schemaTypes.size());
+        listResponse.setItemsPerPage(10);
+        listResponse.setStartIndex(1);
 
         URI location = new URI("/v2/Schemas");
 
-        return Response.ok(schemas).location(location).build();
+        return Response.ok(listResponse).location(location).build();
     }
 
     /**
@@ -74,7 +91,7 @@ public class SchemaWebService extends BaseScimWebService {
         log.info(" getSchemaById(), id = '" + id + "'");
 
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
-        SchemaType schemaType = factory.load(id);
+        SchemaType schemaType = factory.load(super.applicationConfiguration, id);
 
         URI location = new URI("/v2/Schemas/" + id);
 

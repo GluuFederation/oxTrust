@@ -9,20 +9,28 @@
       "name" : "Rahat Ali",
       "url" : "http://gluu.org",
       "email" : "rahat@gluu.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
   "host" : "gluu.org",
   "basePath" : "/api",
   "tags" : [ {
-    "name" : "v2Bulk"
+    "name" : "v2Schemas"
   }, {
     "name" : "v2Users"
+  }, {
+    "name" : "v2Bulk"
+  }, {
+    "name" : "v2ResourceTypes"
   }, {
     "name" : "v2Groups"
   } ],
   "schemes" : [ "http", "https" ],
   "paths" : {
-    "/v2/Bulk" : {
+    "/scim/v2/Bulk" : {
       "post" : {
         "tags" : [ "v2Bulk" ],
         "summary" : "Bulk Operation",
@@ -58,7 +66,7 @@
         } ]
       }
     },
-    "/v2/Groups" : {
+    "/scim/v2/Groups" : {
       "get" : {
         "tags" : [ "v2Groups" ],
         "summary" : "List Users",
@@ -134,7 +142,7 @@
         } ]
       }
     },
-    "/v2/Groups/{id}" : {
+    "/scim/v2/Groups/{id}" : {
       "get" : {
         "tags" : [ "v2Groups" ],
         "summary" : "Find Group by id",
@@ -232,7 +240,7 @@
         } ]
       }
     },
-    "/v2/Users" : {
+    "/scim/v2/Users" : {
       "get" : {
         "tags" : [ "v2Users" ],
         "summary" : "List Users",
@@ -308,7 +316,7 @@
         } ]
       }
     },
-    "/v2/Users/{uid}" : {
+    "/scim/v2/Users/{uid}" : {
       "get" : {
         "tags" : [ "v2Users" ],
         "summary" : "Find User by id",
@@ -506,6 +514,23 @@
           "type" : "array",
           "items" : {
             "$ref" : "#/definitions/BulkOperation"
+          }
+        }
+      }
+    },
+    "CustomAttributes" : {
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "values" : {
+          "type" : "array",
+          "xml" : {
+            "name" : "value",
+            "wrapped" : true
+          },
+          "items" : {
+            "type" : "string"
           }
         }
       }
@@ -817,7 +842,11 @@
       }
     },
     "Type" : {
-      "type" : "object"
+      "properties" : {
+        "value" : {
+          "type" : "string"
+        }
+      }
     },
     "User" : {
       "required" : [ "schemas" ],
@@ -927,6 +956,12 @@
           "type" : "array",
           "items" : {
             "$ref" : "#/definitions/X509Certificate"
+          }
+        },
+        "customAttributes" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/CustomAttributes"
           }
         }
       },

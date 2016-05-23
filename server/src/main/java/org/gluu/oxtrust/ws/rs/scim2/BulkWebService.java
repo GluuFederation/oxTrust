@@ -258,7 +258,7 @@ public class BulkWebService extends BaseScimWebService {
 			gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMemebersAdder(gluuPerson, gluuPerson.getDn());
+				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
 			personService.addPerson(gluuPerson);
@@ -282,7 +282,7 @@ public class BulkWebService extends BaseScimWebService {
 			gluuPerson = CopyUtils2.copy(person_update, gluuPerson, true);
 
 			if (person_update.getGroups().size() > 0) {
-				Utils.groupMemebersAdder(gluuPerson, personService.getDnForPerson(uid));
+				Utils.groupMembersAdder(gluuPerson, personService.getDnForPerson(uid));
 			}
 			personService.updatePerson(gluuPerson);
 
@@ -351,7 +351,7 @@ public class BulkWebService extends BaseScimWebService {
 			log.debug("adding new GluuGroup");
 
 			if (group.getMembers().size() > 0) {
-				Utils.personMemebersAdder(gluuGroup, dn);
+				Utils.personMembersAdder(gluuGroup, dn);
 			}
 
 			groupService.addGroup(gluuGroup);
@@ -375,7 +375,7 @@ public class BulkWebService extends BaseScimWebService {
 			GluuGroup newGluuGroup = CopyUtils2.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
-				Utils.personMemebersAdder(newGluuGroup, groupService.getDnForGroup(id));
+				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
 			}
 
 			groupService.updateGroup(newGluuGroup);

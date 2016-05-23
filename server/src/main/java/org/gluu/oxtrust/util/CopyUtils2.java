@@ -184,18 +184,20 @@ public class CopyUtils2 implements Serializable {
 			// getting emails
 			log.trace(" setting emails ");
 			if (source.getEmails() != null && source.getEmails().size() > 0) {
+
 				List<Email> emails = source.getEmails();
+
 				StringWriter listOfEmails = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfEmails, emails);
 
 				destination.setAttribute("oxTrustEmail", listOfEmails.toString());
-
 			}
 
 			// getting addresses
 			log.trace(" setting addresses ");
 			if (source.getAddresses() != null && source.getAddresses().size() > 0) {
+
 				List<Address> addresses = source.getAddresses();
 
 				StringWriter listOfAddresses = new StringWriter();
@@ -208,6 +210,7 @@ public class CopyUtils2 implements Serializable {
 			// getting phone numbers;
 			log.trace(" setting phoneNumbers ");
 			if (source.getPhoneNumbers() != null && source.getPhoneNumbers().size() > 0) {
+
 				List<PhoneNumber> phones = source.getPhoneNumbers();
 
 				StringWriter listOfPhones = new StringWriter();
@@ -269,13 +272,14 @@ public class CopyUtils2 implements Serializable {
 			// getting user groups
 			log.trace(" setting groups ");
 			if (source.getGroups() != null && source.getGroups().size() > 0) {
+
 				IGroupService groupService = GroupService.instance();
 				List<GroupRef> listGroups = source.getGroups();
 				List<String> members = new ArrayList<String>();
 				for (GroupRef group : listGroups) {
-
 					members.add(groupService.getDnForGroup(group.getValue()));
 				}
+
 				destination.setMemberOf(members);
 			}
 
@@ -283,6 +287,7 @@ public class CopyUtils2 implements Serializable {
 
 			log.trace(" setting roles ");
 			if (source.getRoles() != null && source.getRoles().size() > 0) {
+
 				List<Role> roles = source.getRoles();
 
 				StringWriter listOfRoles = new StringWriter();
@@ -295,6 +300,7 @@ public class CopyUtils2 implements Serializable {
 			// getting entitlements
 			log.trace(" setting entilements ");
 			if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
+
 				List<Entitlement> ents = source.getEntitlements();
 
 				StringWriter listOfEnts = new StringWriter();
@@ -307,6 +313,7 @@ public class CopyUtils2 implements Serializable {
 			// getting x509Certificates
 			log.trace(" setting certs ");
 			if (source.getX509Certificates() != null && source.getX509Certificates().size() > 0) {
+
 				List<X509Certificate> certs = source.getX509Certificates();
 
 				StringWriter listOfCerts = new StringWriter();

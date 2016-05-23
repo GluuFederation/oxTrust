@@ -14,6 +14,7 @@ import org.gluu.oxtrust.service.scim2.schema.strategy.GroupCoreLoadingStrategy;
 import org.gluu.oxtrust.service.scim2.schema.strategy.LoadingStrategy;
 import org.gluu.oxtrust.service.scim2.schema.strategy.UserCoreLoadingStrategy;
 import org.gluu.oxtrust.service.scim2.schema.strategy.UserExtensionLoadingStrategy;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
 
 /**
  * Factory for loading a SchemaType.
@@ -23,7 +24,7 @@ import org.gluu.oxtrust.service.scim2.schema.strategy.UserExtensionLoadingStrate
  */
 public class SchemaTypeLoadingFactory {
 
-    public SchemaType load(String id) throws Exception {
+    public SchemaType load(ApplicationConfiguration applicationConfiguration, String id) throws Exception {
 
         SchemaType schemaType = SchemaTypeMapping.getSchemaTypeInstance(id);
 
@@ -31,10 +32,10 @@ public class SchemaTypeLoadingFactory {
             return null;
         }
 
-        return load(schemaType);
+        return load(applicationConfiguration, schemaType);
     }
 
-    public SchemaType load(SchemaType schemaType) throws Exception {
+    public SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
 
         LoadingStrategy loadingStrategy = null;
 
@@ -50,6 +51,6 @@ public class SchemaTypeLoadingFactory {
             return null;
         }
 
-        return loadingStrategy.load(schemaType);
+        return loadingStrategy.load(applicationConfiguration, schemaType);
     }
 }

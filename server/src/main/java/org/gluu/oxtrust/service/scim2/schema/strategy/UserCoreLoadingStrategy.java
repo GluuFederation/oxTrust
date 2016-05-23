@@ -16,6 +16,7 @@ import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeUser
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +33,14 @@ public class UserCoreLoadingStrategy implements LoadingStrategy {
     private static Log log;
 
     @Override
-    public SchemaType load(SchemaType schemaType) throws Exception {
+    public SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
 
         log.info(" load() ");
+
+        Meta meta = new Meta();
+        meta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + schemaType.getId());
+        meta.setResourceType("Schema");
+        schemaType.setMeta(meta);
 
         // Use serializer to walk the class structure
         ObjectMapper mapper = new ObjectMapper();

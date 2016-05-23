@@ -282,7 +282,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.info("group.getMembers().size() : " + group.getMembers().size());
 			if (group.getMembers().size() > 0) {
-				Utils.personMemebersAdder(gluuGroup, dn);
+				Utils.personMembersAdder(gluuGroup, dn);
 			}
 
 			// As per spec, the SP must be the one to assign the meta attributes
@@ -356,7 +356,7 @@ public class GroupWebService extends BaseScimWebService {
 			GluuGroup updatedGluuGroup = CopyUtils2.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
-				Utils.personMemebersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
+				Utils.personMembersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
 			}
 
 			log.info(" Setting meta: update group ");

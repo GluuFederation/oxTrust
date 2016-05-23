@@ -24,7 +24,6 @@ import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
 import org.jboss.seam.annotations.Name;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
@@ -39,17 +38,11 @@ public class ResourceTypeWS extends BaseScimWebService {
 	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response listResources(@HeaderParam("Authorization") String authorization) throws Exception {
 
-		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
-
 		ListResponse listResponse = new ListResponse();
 
 		List<String> schemas = new ArrayList<String>();
 		schemas.add(Constants.LIST_RESPONSE_SCHEMA_ID);
 		listResponse.setSchemas(schemas);
-
-		listResponse.setTotalResults(2);  // User and Group
-		listResponse.setItemsPerPage(10);
-		listResponse.setStartIndex(1);
 
 		ResourceType userResourceType = new ResourceType();
 		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
@@ -59,7 +52,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		userResourceType.setSchema(Constants.USER_CORE_SCHEMA_ID);
 
 		Meta userMeta = new Meta();
-		userMeta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
+		userMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
 		userMeta.setResourceType("ResourceType");
 		userResourceType.setMeta(userMeta);
 
@@ -78,7 +71,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		groupResourceType.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
 
 		Meta groupMeta = new Meta();
-		groupMeta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
+		groupMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
 		groupMeta.setResourceType("ResourceType");
 		groupResourceType.setMeta(groupMeta);
 
@@ -88,6 +81,10 @@ public class ResourceTypeWS extends BaseScimWebService {
 		resourceTypes.add(groupResourceType);
 
 		listResponse.setResources(resourceTypes);
+
+		listResponse.setTotalResults(resourceTypes.size());
+		listResponse.setItemsPerPage(10);
+		listResponse.setStartIndex(1);
 
 		URI location = new URI("/v2/ResourceTypes");
 
@@ -100,8 +97,6 @@ public class ResourceTypeWS extends BaseScimWebService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getResourceTypeUser(@HeaderParam("Authorization") String authorization) throws Exception {
 
-		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
-
 		ResourceType userResourceType = new ResourceType();
 		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
 		userResourceType.setEndpoint("/v2/Users");
@@ -110,7 +105,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		userResourceType.setSchema(Constants.USER_CORE_SCHEMA_ID);
 
 		Meta userMeta = new Meta();
-		userMeta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
+		userMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
 		userMeta.setResourceType("ResourceType");
 		userResourceType.setMeta(userMeta);
 
@@ -134,8 +129,6 @@ public class ResourceTypeWS extends BaseScimWebService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getResourceTypeGroup(@HeaderParam("Authorization") String authorization) throws Exception {
 
-		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
-
 		ResourceType groupResourceType = new ResourceType();
 		groupResourceType.setDescription(Constants.GROUP_CORE_SCHEMA_DESCRIPTION);
 		groupResourceType.setEndpoint("/v2/Groups");
@@ -144,7 +137,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		groupResourceType.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
 
 		Meta groupMeta = new Meta();
-		groupMeta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
+		groupMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
 		groupMeta.setResourceType("ResourceType");
 		groupResourceType.setMeta(groupMeta);
 

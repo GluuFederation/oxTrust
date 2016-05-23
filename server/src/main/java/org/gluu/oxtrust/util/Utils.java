@@ -6,22 +6,23 @@
 
 package org.gluu.oxtrust.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.scim2.Email;
 import org.richfaces.model.UploadedFile;
 
 /**
@@ -142,7 +143,7 @@ public class Utils implements Serializable {
 	 * @return void
 	 * @throws Exception
 	 */
-	public static void personMemebersAdder(GluuGroup gluuGroup, String dn) throws Exception {
+	public static void personMembersAdder(GluuGroup gluuGroup, String dn) throws Exception {
 		IPersonService personService = PersonService.instance();
 
 		List<String> members = gluuGroup.getMembers();
@@ -188,7 +189,7 @@ public class Utils implements Serializable {
 	 * @return void
 	 * @throws Exception
 	 */
-	public static void groupMemebersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
+	public static void groupMembersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
 
 		IGroupService groupService = GroupService.instance();
 
@@ -356,5 +357,13 @@ public class Utils implements Serializable {
         }
         return filepath;
     }
+	
+	public static ObjectMapper getObjectMapper() {
 
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+		return mapper;
+	}
 }

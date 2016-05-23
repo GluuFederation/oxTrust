@@ -7,11 +7,13 @@
 package org.gluu.oxtrust.service.scim2.schema.strategy;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.schema.AttributeHolder;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.log.Log;
+import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 
@@ -30,9 +32,14 @@ public class UserExtensionLoadingStrategy implements LoadingStrategy {
     private static Log log;
 
     @Override
-    public SchemaType load(SchemaType schemaType) throws Exception {
+    public SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
 
         log.info(" load() ");
+
+        Meta meta = new Meta();
+        meta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + schemaType.getId());
+        meta.setResourceType("Schema");
+        schemaType.setMeta(meta);
 
         AttributeService attributeService = AttributeService.instance();
 

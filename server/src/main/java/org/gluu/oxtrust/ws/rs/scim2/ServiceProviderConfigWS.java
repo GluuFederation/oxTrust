@@ -39,12 +39,10 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response listGroups(@HeaderParam("Authorization") String authorization) throws Exception {
 
-		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
-
 		ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
 
 		Meta meta = new Meta();
-		meta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
+		meta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
 		meta.setResourceType("ServiceProviderConfig");
 		serviceProviderConfig.setMeta(meta);
 
