@@ -289,9 +289,9 @@ public class UserWebService extends BaseScimWebService {
 
 			log.info("gluuPerson.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
 			if (user.getGroups().size() > 0) {
-				log.info(" jumping to groupMemebersAdder ");
+				log.info(" jumping to groupMembersAdder ");
 				log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
-				Utils.groupMemebersAdder(gluuPerson, gluuPerson.getDn());
+				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
 			// As per spec, the SP must be the one to assign the meta attributes
@@ -366,7 +366,7 @@ public class UserWebService extends BaseScimWebService {
 			GluuCustomPerson updatedGluuPerson = CopyUtils2.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMemebersAdder(updatedGluuPerson, personService.getDnForPerson(id));
+				Utils.groupMembersAdder(updatedGluuPerson, personService.getDnForPerson(id));
 			}
 
 			log.info(" Setting meta: update user ");
@@ -377,7 +377,7 @@ public class UserWebService extends BaseScimWebService {
 				String relativeLocation = "/scim/v2/Users/" + id;
 				updatedGluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
 			}
-
+			
 			personService.updatePerson(updatedGluuPerson);
 
 			log.debug(" person updated ");
