@@ -27,7 +27,7 @@ public class GroupServiceTest extends BaseTest {
 	@Parameters({ "test.group.dn", "test.group.dn.ownerDn", "test.group.dn.nonMemberDn" })
 	public void testIsMemberOrOwner(final String groupDn, final String ownerDn, final String nonMemberDn)
 			throws Exception {
-		new SeamTest.FacesRequest() {
+		new FacesRequest() {
 			@Override
 			public void invokeApplication() throws Exception {
 				IGroupService groupService = (IGroupService) getInstance("groupService");

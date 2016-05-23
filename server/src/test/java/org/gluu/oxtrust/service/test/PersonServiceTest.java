@@ -32,13 +32,12 @@ public class PersonServiceTest extends BaseTest {
 	@Test
 	@Parameters({ "person.search.pattern" })
 	public void testSearchPersons(final String pattern) throws Exception {
-		new SeamTest.FacesRequest() {
+		new FacesRequest() {
 
 			@Override
 			protected void invokeApplication() throws Exception {
 				IPersonService personService = (IPersonService) getInstance("personService");
 
-				String pattern = testData.getString("");
 				List<GluuCustomPerson> persons = personService.searchPersons(pattern, OxTrustConstants.searchPersonsSizeLimit);
 
 				assertNotNull(persons, "Failed to find persons");
@@ -50,7 +49,7 @@ public class PersonServiceTest extends BaseTest {
 	@Test
 	@Parameters({ "person.uid" })
 	public void testGetPersonByUid(final String personUid) throws Exception {
-		new SeamTest.FacesRequest() {
+		new FacesRequest() {
 			@Override
 			protected void invokeApplication() throws Exception {
 				IPersonService personService = (IPersonService) getInstance("personService");

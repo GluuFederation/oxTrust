@@ -9,6 +9,7 @@ package org.gluu.oxtrust.service.test;
 import java.util.Arrays;
 import java.util.List;
 
+import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.action.test.ConfigurableTest;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -17,10 +18,8 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.Component;
-import org.jboss.seam.mock.JUnitSeamTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runners.Parameterized.Parameters;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 import org.xdi.util.StringHelper;
 
 /**
@@ -28,23 +27,23 @@ import org.xdi.util.StringHelper;
  * @version 0.1, 03/24/2014
  */
 
-public class CleanUpTest extends ConfigurableTest {
+public class CleanUpTest extends BaseTest {
 
 	
 	/**
 	 * Test search 
 	 * @throws Exception
 	 */
-	//@Test
+	@Test
 	public void cleanUpPersons() throws Exception {
-		new JUnitSeamTest.FacesRequest() {
+		new FacesRequest() {
 
 			@Override
 			protected void invokeApplication() throws Exception {
 				System.out.println("cleanup person Test initialted ");
 				IPersonService personService = (IPersonService) getInstance("personService");
 				String usedPersons = testData.getString("test.keep.persons");
-				Assert.assertNotNull(usedPersons);
+				assertNotNull(usedPersons);
 				List<String> usedPersonsList = Arrays.asList(StringHelper.split(usedPersons, ",", true, false));
 				System.out.println("Used persons: " + usedPersonsList);
 				
@@ -59,7 +58,7 @@ public class CleanUpTest extends ConfigurableTest {
 					existsMorePersons = persons.size() == personsResultSetSize;
 					countResults += persons.size();
 			
-					Assert.assertNotNull(persons);
+					assertNotNull(persons);
 					System.out.println("Found persons: " + persons.size());
 					System.out.println("Total persons: " + countResults);
 			
@@ -86,16 +85,16 @@ public class CleanUpTest extends ConfigurableTest {
 	 * Test search 
 	 * @throws Exception
 	 */
-	//@Test
+	@Test
 	public void cleanUpGroups() throws Exception {
-		new JUnitSeamTest.FacesRequest() {
+		new FacesRequest() {
 
 			@Override
 			protected void invokeApplication() throws Exception {
 				System.out.println("cleanup person Test initialted ");
 				IGroupService groupsService = (IGroupService) getInstance("groupService");
 				String usedGroups = testData.getString("test.keep.groups");
-				Assert.assertNotNull(usedGroups);
+				assertNotNull(usedGroups);
 				List<String> usedGroupsList = Arrays.asList(StringHelper.split(usedGroups, ",", true, false));
 				System.out.println("Used Groups: " + usedGroupsList);
 				
@@ -110,7 +109,7 @@ public class CleanUpTest extends ConfigurableTest {
 					existsMoreGroups = groups.size() == groupsResultSetSize;
 					countResults += groups.size();
 			
-					Assert.assertNotNull(groups);
+					assertNotNull(groups);
 					System.out.println("Found groups: " + groups.size());
 					System.out.println("Total groups: " + countResults);
 			

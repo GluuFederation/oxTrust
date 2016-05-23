@@ -11,21 +11,19 @@ import java.util.Map;
 import java.util.Random;
 
 import org.gluu.oxtrust.action.test.AbstractAuthorizationTest;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.mock.JUnitSeamTest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
+import org.testng.annotations.Test;
+
+
 public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 
 	
 	@Test
 	public void testAddPostLogoutRedirectUri() throws Exception {
-		loginAndCheckLoggedInFacesRequest("test.login.user.admin");
+//		loginAndCheckLoggedInFacesRequest("test.login.user.admin");
 		
 		final Map<String, Object> data = new HashMap<String, Object>(6);
-		new JUnitSeamTest.FacesRequest() {
+		new FacesRequest() {
             @Override
             public void invokeApplication() throws Exception {
 //            	TrustService trustService = (TrustService) getInstance("trustService");
@@ -56,7 +54,7 @@ public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
             }
         }.run();
         
-		new JUnitSeamTest.FacesRequest("/trustmanager/update/" + (String) data.get("tr1Inum")) {
+		new FacesRequest("/trustmanager/update/" + (String) data.get("tr1Inum")) {
 //			
 //			  @Override
 //			  protected void processValidations() throws Exception {

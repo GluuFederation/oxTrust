@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
-@RunWith(Arquillian.class)
 public class CopyUtilsTestCreate extends ConfigurableTest {
 	private static final String GLUU_STATUS = "gluuStatus";
 

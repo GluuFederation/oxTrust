@@ -23,7 +23,7 @@ public class ApplianceStatusTest extends BaseTest {
 
 	 @Test
 	public void testIsApplianceStatus() throws Exception {
-		new SeamTest.FacesRequest() {
+		new FacesRequest() {
             @Override
             public void invokeApplication() throws Exception {
             	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
@@ -40,7 +40,7 @@ public class ApplianceStatusTest extends BaseTest {
             }
         }.run();
     
-		new SeamTest.FacesRequest() {
+		new FacesRequest() {
             @Override
             public void invokeApplication() throws Exception {
             	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
@@ -57,7 +57,7 @@ public class ApplianceStatusTest extends BaseTest {
             }
         }.run();
         
-		new SeamTest.FacesRequest() {
+		new FacesRequest() {
             @Override
             public void invokeApplication() throws Exception {
             	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
