@@ -809,7 +809,7 @@
 		<!-- RestEasy -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-atom-provider</artifactId>
+			<artifactId>resteasy-jackson-provider</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
