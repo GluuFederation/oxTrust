@@ -53,7 +53,6 @@ import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
 import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
@@ -522,12 +521,10 @@ public class CopyUtils implements Serializable {
 		}
 
 		log.trace(" getting emails ");
-		// getting emails
+		source = Utils.syncEmailReverse(source, false);
 		if (source.getAttribute(OX_TRUST_EMAIL) != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<ScimPersonEmails> listOfEmails = mapper.readValue(source.getAttribute(OX_TRUST_EMAIL),
-					new TypeReference<List<ScimPersonEmails>>() {
-					});
+			List<ScimPersonEmails> listOfEmails = mapper.readValue(source.getAttribute(OX_TRUST_EMAIL), new TypeReference<List<ScimPersonEmails>>(){});
 			/*
 			 * List<ScimPersonEmails> emails = new
 			 * ArrayList<ScimPersonEmails>(); String[] listEmails =
@@ -735,7 +732,7 @@ public class CopyUtils implements Serializable {
 
 			destination.setRoles(listOfRoles);
 		}
-		log.trace(" getting entilements ");
+		log.trace(" getting entitlements ");
 		// getting entitlements
 		if (source.getAttribute(OX_TRUST_ENTITLEMENTS) != null) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -1235,7 +1232,7 @@ public class CopyUtils implements Serializable {
 		}
 
 		// getting entitlements
-		log.trace(" setting entilements ");
+		log.trace(" setting entitlements ");
 		if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
 			List<ScimEntitlementsPatch> ents = source.getEntitlements();
 			String[] listEnts = new String[source.getEntitlements().size()];

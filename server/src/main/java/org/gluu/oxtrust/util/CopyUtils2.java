@@ -298,7 +298,7 @@ public class CopyUtils2 implements Serializable {
 			}
 
 			// getting entitlements
-			log.trace(" setting entilements ");
+			log.trace(" setting entitlements ");
 			if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
 
 				List<Entitlement> ents = source.getEntitlements();
@@ -580,7 +580,7 @@ public class CopyUtils2 implements Serializable {
 				}
 
 				// getting entitlements
-				log.trace(" setting entilements ");
+				log.trace(" setting entitlements ");
 				if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
 					List<Entitlement> ents = source.getEntitlements();
 
@@ -702,6 +702,9 @@ public class CopyUtils2 implements Serializable {
 	 */
 	public static User copy(GluuCustomPerson source, User destination) throws Exception {
 
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+
 		if (source == null) {
 			return null;
 		}
@@ -760,38 +763,35 @@ public class CopyUtils2 implements Serializable {
 		if (source.getAttribute("oxTrustProfileURL") != null) {
 			destination.setProfileUrl(source.getAttribute("oxTrustProfileURL"));
 		}
+
 		log.trace(" getting emails ");
-		// getting emails
+		source = Utils.syncEmailReverse(source, true);
 		if (source.getAttributeArray("oxTrustEmail") != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<Email> listOfEmails = mapper.readValue(source.getAttribute("oxTrustEmail"), new TypeReference<List<Email>>(){});
 			destination.setEmails(listOfEmails);
 		}
+
 		log.trace(" getting addresses ");
 		// getting addresses
 		if (source.getAttribute("oxTrustAddresses") != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<Address> listOfAddresses = mapper.readValue(source.getAttribute("oxTrustAddresses"), new TypeReference<List<Address>>(){});
 			destination.setAddresses(listOfAddresses);
 		}
 		log.trace(" setting phoneNumber ");
 		// getting user's PhoneNumber
 		if (source.getAttribute("oxTrustPhoneValue") != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<PhoneNumber> listOfPhones = mapper.readValue(source.getAttribute("oxTrustPhoneValue"),	new TypeReference<List<PhoneNumber>>(){});
 			destination.setPhoneNumbers(listOfPhones);
 		}
 		log.trace(" getting ims ");
 		// getting ims
 		if (source.getAttribute("oxTrustImsValue") != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<Im> listOfIms = mapper.readValue(source.getAttribute("oxTrustImsValue"), new TypeReference<List<Im>>(){});
 			destination.setIms(listOfIms);
 		}
 		log.trace(" setting photos ");
 		// getting photos
 		if (source.getAttribute("oxTrustPhotos") != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<Photo> listOfPhotos = mapper.readValue(source.getAttribute("oxTrustPhotos"), new TypeReference<List<Photo>>(){});
 			destination.setPhotos(listOfPhotos);
 		}
@@ -853,14 +853,12 @@ public class CopyUtils2 implements Serializable {
 
 		// getting roles
 		if (source.getAttribute("oxTrustRole") != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<Role> listOfRoles = mapper.readValue(source.getAttribute("oxTrustRole"), new TypeReference<List<Role>>(){});
 			destination.setRoles(listOfRoles);
 		}
-		log.trace(" getting entilements ");
+		log.trace(" getting entitlements ");
 		// getting entitlements
 		if (source.getAttribute("oxTrustEntitlements") != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<Entitlement> listOfEnts = mapper.readValue(source.getAttribute("oxTrustEntitlements"),	new TypeReference<List<Entitlement>>(){});
 			destination.setEntitlements(listOfEnts);
 		}
@@ -868,7 +866,6 @@ public class CopyUtils2 implements Serializable {
 		// getting x509Certificates
 		log.trace(" setting certs ");
 		if (source.getAttribute("oxTrustx509Certificate") != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<X509Certificate> listOfCerts = mapper.readValue(source.getAttribute("oxTrustx509Certificate"),	new TypeReference<List<X509Certificate>>(){});
 			destination.setX509Certificates(listOfCerts);
 		}
@@ -882,9 +879,6 @@ public class CopyUtils2 implements Serializable {
 
 			Map<String, Extension> extensionMap = new HashMap<String, Extension>();
 			Extension.Builder extensionBuilder = new Extension.Builder(Constants.USER_EXT_SCHEMA_ID);
-
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 
 			boolean hasExtension = false;
 
@@ -1566,7 +1560,7 @@ public class CopyUtils2 implements Serializable {
 		}
 
 		// getting entitlements
-		log.trace(" setting entilements ");
+		log.trace(" setting entitlements ");
 		if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
 			List<ScimEntitlementsPatch> ents = source.getEntitlements();
 			String[] listEnts = new String[source.getEntitlements().size()];

@@ -22,6 +22,7 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.scim.ScimPersonEmails;
 import org.gluu.oxtrust.model.scim2.Email;
 import org.richfaces.model.UploadedFile;
 
@@ -357,7 +358,170 @@ public class Utils implements Serializable {
         }
         return filepath;
     }
-	
+
+	/**
+	 * One-way sync from "oxTrustEmail" to "mail". Ultimately this is persisted so "mail" will be
+	 * updated by values from "oxTrustEmail".
+	 *
+	 * @param gluuCustomPerson
+	 * @return
+	 * @throws Exception
+	 */
+	public static GluuCustomPerson syncEmailForward(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
+
+		GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
+		GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
+
+		if (oxTrustEmail != null && oxTrustEmail.getValues().length > 0) {
+
+			String[] oxTrustEmails = oxTrustEmail.getValues();  // JSON array in element 0
+			String[] newMails = null;
+
+			if (isScim2) {
+
+				Email[] emails = getObjectMapper().readValue(oxTrustEmails[0], Email[].class);
+				newMails = new String[emails.length];
+
+				for (int i = 0; i < emails.length; i++) {
+					newMails[i] = emails[i].getValue();
+				}
+
+				if (mail == null) {
+					mail = new GluuCustomAttribute();
+				}
+				mail.setValues(newMails);
+
+			} else {
+
+				ScimPersonEmails[] emails = getObjectMapper().readValue(oxTrustEmails[0], ScimPersonEmails[].class);
+				newMails = new String[emails.length];
+
+				for (int i = 0; i < emails.length; i++) {
+					newMails[i] = emails[i].getValue();
+				}
+
+				if (mail == null) {
+					mail = new GluuCustomAttribute();
+				}
+				mail.setValues(newMails);
+			}
+
+			gluuCustomPerson.setAttribute("mail", newMails);
+
+		/* // Just do nothing if null, same as in UserWebService.updateUser()
+		} else {
+			gluuCustomPerson.setAttribute("mail", new String[0]);
+		*/
+		}
+
+		return gluuCustomPerson;
+	}
+
+	/**
+	 * One-way sync from "mail" to "oxTrustEmail". In the call chain the sync-ing is ultimately
+	 * not persisted so this is for API purposes only. This is the case because both SCIM 2.0 and
+	 * 1.1 persist to the same field "oxTrustEmail" and during runtime the choice whether to
+	 * use SCIM 2.0 or 1.1 is ambiguous.
+	 *
+	 * @param gluuCustomPerson
+	 * @param isScim2
+	 * @return
+	 * @throws Exception
+     */
+	public static GluuCustomPerson syncEmailReverse(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
+
+		GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
+		GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
+
+		if (mail != null && mail.getValues().length > 0) {
+
+			String[] mails = mail.getValues();  // String array
+
+			String[] oxTrustEmails = null;
+			if (oxTrustEmail != null) {
+				oxTrustEmails = oxTrustEmail.getValues();  // JSON array in element 0
+			}
+
+			if (isScim2) {
+
+				List<Email> newOxTrustEmails = new ArrayList<Email>();
+				Email[] emails = new Email[mails.length];
+
+				if (oxTrustEmails != null && oxTrustEmails.length > 0) {
+					emails = getObjectMapper().readValue(oxTrustEmails[0], Email[].class);
+				}
+
+				for (int i = 0; i < mails.length; i++) {
+
+					if (i < emails.length && (emails[i] != null)) {
+
+						Email email = emails[i];
+						email.setDisplay((email.getDisplay() != null && email.getDisplay().equalsIgnoreCase(email.getValue())) ? mails[i] : email.getDisplay());
+						email.setValue(mails[i]);
+
+						newOxTrustEmails.add(email);
+
+					} else {
+
+						Email email = new Email();
+						email.setValue(mails[i]);
+						email.setPrimary(i == 0 ? true : false);
+						email.setDisplay(mails[i]);
+						email.setType(Email.Type.OTHER);
+
+						newOxTrustEmails.add(email);
+					}
+				}
+
+				StringWriter stringWriter = new StringWriter();
+				getObjectMapper().writeValue(stringWriter, newOxTrustEmails);
+				String newOxTrustEmail = stringWriter.toString();
+
+				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmail);
+
+			} else {
+
+				List<ScimPersonEmails> newOxTrustEmails = new ArrayList<ScimPersonEmails>();
+				ScimPersonEmails[] scimPersonEmails = new ScimPersonEmails[mails.length];
+
+				if (oxTrustEmails != null && oxTrustEmails.length > 0) {
+					scimPersonEmails = getObjectMapper().readValue(oxTrustEmails[0], ScimPersonEmails[].class);
+				}
+
+				for (int i = 0; i < mails.length; i++) {
+
+					if (i < scimPersonEmails.length && (scimPersonEmails[i] != null)) {
+
+						ScimPersonEmails scimPersonEmail = scimPersonEmails[i];
+						scimPersonEmail.setValue(mails[i]);
+
+						newOxTrustEmails.add(scimPersonEmail);
+
+					} else {
+
+						ScimPersonEmails scimPersonEmail = new ScimPersonEmails();
+						scimPersonEmail.setValue(mails[i]);
+						scimPersonEmail.setPrimary(i == 0 ? "true" : "false");
+						scimPersonEmail.setType(Email.Type.OTHER.getValue());
+
+						newOxTrustEmails.add(scimPersonEmail);
+					}
+				}
+
+				StringWriter stringWriter = new StringWriter();
+				getObjectMapper().writeValue(stringWriter, newOxTrustEmails);
+				String newOxTrustEmail = stringWriter.toString();
+
+				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmail);
+			}
+
+		} else {
+			gluuCustomPerson.setAttribute("oxTrustEmail", new String[0]);
+		}
+
+		return gluuCustomPerson;
+	}
+
 	public static ObjectMapper getObjectMapper() {
 
 		ObjectMapper mapper = new ObjectMapper();

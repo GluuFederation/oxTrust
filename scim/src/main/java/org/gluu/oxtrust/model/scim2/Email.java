@@ -53,6 +53,22 @@ public class Email extends MultiValuedAttribute {
         return super.isPrimary();
     }
 
+    @Override
+    public String getReference() {
+        return super.getReference();
+    }
+
+    /**
+     * Gets the reference to the actual SCIM Resource.
+     * <p>
+     * <p>
+     * For more detailed information please look at the <a
+     * href="http://tools.ietf.org/html/draft-ietf-scim-core-schema-02#section-8">SCIM core schema 2.0, sections 8</a>
+     * </p>
+     *
+     * @return the reference of the actual resource
+     */
+
     /**
      * Gets the type of the attribute.
      *

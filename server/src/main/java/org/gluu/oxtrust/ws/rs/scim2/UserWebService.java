@@ -303,6 +303,9 @@ public class UserWebService extends BaseScimWebService {
 			gluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
 			gluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
 
+			// Sync email
+			gluuPerson = Utils.syncEmailForward(gluuPerson, true);
+
 			log.debug("adding new GluuPerson");
 			personService.addPerson(gluuPerson);
 
@@ -377,7 +380,10 @@ public class UserWebService extends BaseScimWebService {
 				String relativeLocation = "/scim/v2/Users/" + id;
 				updatedGluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
 			}
-			
+
+			// Sync email
+			updatedGluuPerson = Utils.syncEmailForward(updatedGluuPerson, true);
+
 			personService.updatePerson(updatedGluuPerson);
 
 			log.debug(" person updated ");

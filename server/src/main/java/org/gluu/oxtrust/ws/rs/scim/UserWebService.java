@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
@@ -30,8 +28,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.dom4j.Document;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DocumentSource;
@@ -42,7 +38,6 @@ import org.gluu.oxtrust.model.GluuCustomPersonList;
 import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
-import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -68,16 +63,12 @@ public class UserWebService extends BaseScimWebService {
 	@In
 	private IPersonService personService;
 
-	@In
-	private UmaAuthenticationService umaAuthenticationService;
-
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response listUsers(@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
-		personService = PersonService.instance();
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -85,6 +76,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			log.info(" getting a list of all users from LDAP ");
 			List<GluuCustomPerson> personList = personService.findAllPersons(null);
 			GluuCustomPersonList allPersonList = new GluuCustomPersonList();
@@ -120,7 +114,6 @@ public class UserWebService extends BaseScimWebService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getUserByUid(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -128,6 +121,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
@@ -152,9 +148,7 @@ public class UserWebService extends BaseScimWebService {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response createUser(@HeaderParam("Authorization") String authorization, ScimPerson person) throws WebApplicationException,
-			JsonGenerationException, JsonMappingException, IOException, Exception {
-		personService = PersonService.instance();
+	public Response createUser(@HeaderParam("Authorization") String authorization, ScimPerson person) throws Exception {
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -162,6 +156,8 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		// Return HTTP response with status code 201 Created
+
+		personService = PersonService.instance();
 
 		log.debug(" copying gluuperson ");
 		GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
@@ -193,9 +189,12 @@ public class UserWebService extends BaseScimWebService {
 				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
-			log.debug("adding new GluuPerson");
+			// Sync email
+			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
 
+			log.debug("adding new GluuPerson");
 			personService.addPerson(gluuPerson);
+
 			ScimPerson newPerson = CopyUtils.copy(gluuPerson, null);
 			String uri = "/Users/" + newPerson.getId();
 			return Response.created(URI.create(uri)).entity(newPerson).build();
@@ -211,7 +210,6 @@ public class UserWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, ScimPerson person) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -219,19 +217,25 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 			if (gluuPerson == null) {
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
-			GluuCustomPerson newGluuPesron = CopyUtils.copy(person, gluuPerson, true);
+			GluuCustomPerson newGluuPerson = CopyUtils.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMembersAdder(newGluuPesron, personService.getDnForPerson(uid));
+				Utils.groupMembersAdder(newGluuPerson, personService.getDnForPerson(uid));
 			}
 
-			personService.updatePerson(newGluuPesron);
+			// Sync email
+			newGluuPerson = Utils.syncEmailForward(newGluuPerson, false);
+
+			personService.updatePerson(newGluuPerson);
 			log.debug(" person updated ");
-			ScimPerson newPerson = CopyUtils.copy(newGluuPesron, null);
+			ScimPerson newPerson = CopyUtils.copy(newGluuPerson, null);
 
 			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
 			URI location = new URI("/Users/" + uid);
@@ -250,7 +254,6 @@ public class UserWebService extends BaseScimWebService {
 	@DELETE
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response deleteUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -258,6 +261,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson person = personService.getPersonByInum(uid);
 			if (person == null) {
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
@@ -284,6 +290,7 @@ public class UserWebService extends BaseScimWebService {
 		}
 	}
 
+	/*
 	public Response createUserTestHelper(@HeaderParam("Authorization") String authorization, String person_data) throws Exception {
 		try {
 			ScimPerson person = (ScimPerson) xmlToObject(person_data);
@@ -305,6 +312,7 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse("Data parsing error.", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
+	*/
 
 	private Object xmlToObject(String xml) throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -338,7 +346,6 @@ public class UserWebService extends BaseScimWebService {
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response personSearch(@HeaderParam("Authorization") String authorization, ScimPersonSearch searchPattern) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -346,6 +353,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson gluuPerson = personService.getPersonByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
@@ -369,7 +379,6 @@ public class UserWebService extends BaseScimWebService {
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response searchPersons(@HeaderParam("Authorization") String authorization, ScimPersonSearch searchPattern) throws Exception {
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -377,6 +386,9 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			personService = PersonService.instance();
+
 			List<GluuCustomPerson> personList = personService.getPersonsByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
 			
 			GluuCustomPersonList allPersonList = new GluuCustomPersonList();
