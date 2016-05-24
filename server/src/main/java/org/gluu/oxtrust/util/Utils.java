@@ -514,9 +514,6 @@ public class Utils implements Serializable {
 
 				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmail);
 			}
-
-		} else {
-			gluuCustomPerson.setAttribute("oxTrustEmail", new String[0]);
 		}
 
 		return gluuCustomPerson;
