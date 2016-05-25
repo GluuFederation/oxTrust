@@ -31,6 +31,7 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
+import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -256,19 +257,19 @@ public class UserWebService extends BaseScimWebService {
 			return authorizationResponse;
 		}
 
-		log.debug(" copying gluuperson ");
-		GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
-		if (gluuPerson == null) {
-			return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
-		}
-
 		try {
+
+			log.debug(" copying gluuperson ");
+			GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
+			if (gluuPerson == null) {
+				return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
+			}
 
 			personService = PersonService.instance();
 
 			log.debug(" generating inum ");
 			String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
-																	// //personService.generateInumForNewPerson();
+			// //personService.generateInumForNewPerson();
 			log.debug(" getting DN ");
 			String dn = personService.getDnForPerson(inum);
 
@@ -328,10 +329,16 @@ public class UserWebService extends BaseScimWebService {
 			// Return HTTP response with status code 201 Created
 			return Response.created(location).entity(json).build();
 
+		} catch (PersonRequiredFieldsException ex) {
+
+			log.error("PersonRequiredFieldsException: ", ex);
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, ex.getMessage());
+
 		} catch (Exception ex) {
+
 			ex.printStackTrace();
 			log.error("Failed to add user", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, ex.getMessage());
 		}
 	}
 

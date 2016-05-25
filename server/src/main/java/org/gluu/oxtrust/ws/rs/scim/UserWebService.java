@@ -31,6 +31,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.dom4j.Document;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DocumentSource;
+import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -159,13 +160,14 @@ public class UserWebService extends BaseScimWebService {
 
 		personService = PersonService.instance();
 
-		log.debug(" copying gluuperson ");
-		GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
-		if (gluuPerson == null) {
-			return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
-		}
-
 		try {
+
+			log.debug(" copying gluuperson ");
+			GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
+			if (gluuPerson == null) {
+				return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
+			}
+
 			log.debug(" generating inum ");
 			String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
 																	// //personService.generateInumForNewPerson();
@@ -198,10 +200,16 @@ public class UserWebService extends BaseScimWebService {
 			ScimPerson newPerson = CopyUtils.copy(gluuPerson, null);
 			String uri = "/Users/" + newPerson.getId();
 			return Response.created(URI.create(uri)).entity(newPerson).build();
+
+		} catch (PersonRequiredFieldsException ex) {
+
+			log.error("PersonRequiredFieldsException: ", ex);
+			return getErrorResponse(ex.getMessage(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
 		} catch (Exception ex) {
+
 			log.error("Failed to add user", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 

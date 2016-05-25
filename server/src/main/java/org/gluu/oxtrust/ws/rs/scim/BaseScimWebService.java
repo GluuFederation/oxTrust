@@ -91,5 +91,4 @@ public class BaseScimWebService {
 		errors.getErrors().add(error);
 		return Response.status(statusCode).entity(errors).build();
 	}
-
 }

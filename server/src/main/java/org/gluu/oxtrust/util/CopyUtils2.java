@@ -19,6 +19,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.*;
 import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.model.scim.ScimEntitlements;
@@ -1076,7 +1077,8 @@ public class CopyUtils2 implements Serializable {
 		return true;
 	}
 
-	public static boolean isValidData(User person, boolean isUpdate) {
+	public static boolean isValidData(User person, boolean isUpdate) throws Exception {
+
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
 			// isEmpty(person.getDisplayName())
@@ -1089,8 +1091,12 @@ public class CopyUtils2 implements Serializable {
 				// || (person.getEmails() == null || person.getEmails().size() <
 				// 1)
 				|| isEmpty(person.getPassword())) {
-			return false;
+
+			String message = "There are missing required parameters: userName, givenName, displayName, familyName, or password";
+			throw new PersonRequiredFieldsException(message);
+			// return false;
 		}
+
 		return true;
 	}
 
