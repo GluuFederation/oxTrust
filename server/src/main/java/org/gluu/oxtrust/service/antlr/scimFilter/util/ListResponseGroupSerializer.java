@@ -47,7 +47,8 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
             ObjectMapper mapper = new ObjectMapper();
             mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 
-            attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
+            attributes = (attributesArray != null && !attributesArray.isEmpty()) ? attributesArray.split("\\,") : null;
+            // attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
 
             JsonNode rootNode = mapper.convertValue(group, JsonNode.class);
 

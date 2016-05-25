@@ -149,7 +149,6 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
                             attributeHolder.setUniqueness("server");
                             attributeHolder.setCaseExact(Boolean.TRUE);
                             attributeHolder.setMutability("readOnly");
-                            attributeHolder.setReturned("always");
                         }
 
                         attributeHolders.add(attributeHolder);

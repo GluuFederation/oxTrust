@@ -186,13 +186,16 @@ public class BaseScimWebService {
 		}
 
 		ObjectMapper mapper = new ObjectMapper();
-		String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
+		// String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
+		String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? attributesArray.split("\\,") : null;
 		if (attributes != null && attributes.length > 0) {
 			for (int i = 0; i < attributes.length; i++) {
-				if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
-					attributes[i] = getUserLdapAttributeName(attributes[i]);
-				} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
-					attributes[i] = getGroupLdapAttributeName(attributes[i]);
+				if (attributes[i] != null && !attributes[i].isEmpty()) {
+					if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
+						attributes[i] = getUserLdapAttributeName(attributes[i].trim());
+					} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
+						attributes[i] = getGroupLdapAttributeName(attributes[i].trim());
+					}
 				}
 			}
 		}
