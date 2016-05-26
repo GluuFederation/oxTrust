@@ -94,7 +94,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
             StringBuilder sb = new StringBuilder();
 
             if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
-                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
                 sb.append("\"");
             } else {
                 sb.append("*\"");
@@ -102,7 +102,9 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
             sb.append(tokens[1]);
 
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL)) {
+            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL) ||
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.NOT_EQUAL)) {
                 sb.append("\":\"");
             } else {
                 sb.append("\":*");
@@ -111,7 +113,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
             sb.append(criteria);
 
             if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
-                    ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
                 sb.append("\"*");
             }
 
