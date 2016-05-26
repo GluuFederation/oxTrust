@@ -120,7 +120,7 @@
 					<div
 						style="background: #1E282C; padding: 15px; color: white; font-weight: bold;">Release
 						additional attributes</div>
-					<div style="height: 500px; overflow-y: auto;">
+					<!-- <div style="height: 500px; overflow-y: auto;"> -->
 						
 
 							<rich:tabPanel switchType="client" id="attributeTabPanelId">
@@ -130,7 +130,7 @@
 
 									<rich:tab
 										header="#{_customAttributeAction.originDisplayNames[origin.key]}">
-										
+										<div style="height: 450px; overflow-y: auto;">
 											<ul class="sidebar-menu"> 
 											<c:forEach items="#{origin.value}" var="attr">												
 												<li class="treeview" id="#{_customAttributeAction.attributeIds[attr]}">
@@ -154,12 +154,12 @@
 												</li> 
 											</c:forEach>
 											</ul> 
-										
+										</div>
 									</rich:tab>
 								</c:forEach>
 							</rich:tabPanel>
 
-					</div>
+					<!-- </div> -->
 				</h:panelGroup>
 
 
