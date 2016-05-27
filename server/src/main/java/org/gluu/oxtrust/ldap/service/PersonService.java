@@ -94,7 +94,7 @@ public class PersonService implements Serializable, IPersonService {
 	// TODO: Review this methods. We need to check if uid is unique in outside
 	// method
 	@Override
-	public void addPerson(GluuCustomPerson person) throws DuplicateEntryException {
+	public void addPerson(GluuCustomPerson person) throws Exception {
 		GluuCustomPerson uidPerson = new GluuCustomPerson();
 		uidPerson.setUid(person.getUid());
 		List<GluuCustomPerson> persons = findPersons(uidPerson, 1);
@@ -111,7 +111,6 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public void updatePerson(GluuCustomPerson person) {
 		ldapEntryManager.merge(person);
-
 	}
 
 	/* (non-Javadoc)

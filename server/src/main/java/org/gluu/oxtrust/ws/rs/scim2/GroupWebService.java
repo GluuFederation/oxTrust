@@ -42,6 +42,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerialize
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
+import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -164,10 +165,9 @@ public class GroupWebService extends BaseScimWebService {
 
 		} catch (Exception ex) {
 
-			log.error("Exception: ", ex);
-
-			String detail = "Unexpected processing error; please check the input parameters.";
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, detail);
+			ex.printStackTrace();
+			String detail = "Unexpected processing error; please check the input parameters";
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, detail);
 		}
 	}
 
@@ -220,11 +220,14 @@ public class GroupWebService extends BaseScimWebService {
 			return Response.ok(json).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
@@ -255,7 +258,7 @@ public class GroupWebService extends BaseScimWebService {
 		log.debug(" copying gluuGroup ");
 		GluuGroup gluuGroup = CopyUtils2.copy(group, null, false);
 		if (gluuGroup == null) {
-			return getErrorResponse("Failed to create group", Response.Status.BAD_REQUEST.getStatusCode());
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to create group");
 		}
 
 		try {
@@ -315,9 +318,17 @@ public class GroupWebService extends BaseScimWebService {
 			// Return HTTP response with status code 201 Created
 			return Response.created(location).entity(json).build();
 
+		} catch (DuplicateEntryException ex) {
+
+			log.error("Failed to create group", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.UNIQUENESS, ex.getMessage());
+
 		} catch (Exception ex) {
-			log.error("Failed to add user", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			log.error("Failed to create group", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
@@ -351,8 +362,28 @@ public class GroupWebService extends BaseScimWebService {
 
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
-				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
+				return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
+
+			} else {
+
+				// Validate if attempting to update displayName of a different id
+				if (gluuGroup.getDisplayName() != null) {
+
+					GluuGroup groupToFind = new GluuGroup();
+					groupToFind.setDisplayName(group.getDisplayName());
+
+					List<GluuGroup> foundGroups = groupService.findGroups(groupToFind, 2);
+					if (foundGroups != null && foundGroups.size() > 0) {
+						for (GluuGroup foundGroup : foundGroups) {
+							if (foundGroup != null && !foundGroup.getInum().equalsIgnoreCase(group.getId())) {
+								throw new DuplicateEntryException("Cannot update displayName of a different id: " + group.getDisplayName());
+							}
+						}
+					}
+				}
 			}
+
 			GluuGroup updatedGluuGroup = CopyUtils2.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
@@ -390,11 +421,21 @@ public class GroupWebService extends BaseScimWebService {
 			return Response.ok(json).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
-			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
-		} catch (Exception ex) {
-			log.error("Exception: ", ex);
+
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+
+		} catch (DuplicateEntryException ex) {
+
+			log.error("Failed to update group", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, ex.getMessage());
+
+		} catch (Exception ex) {
+
+			log.error("Failed to update group", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
 
@@ -446,11 +487,14 @@ public class GroupWebService extends BaseScimWebService {
 			return Response.ok().build();
 
 		} catch (EntryPersistenceException ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
 }

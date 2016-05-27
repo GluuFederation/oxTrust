@@ -87,12 +87,12 @@ public class BaseScimWebService {
 			if (!validateTokenResponse.isValid() ||
 				(validateTokenResponse.getExpiresIn() == null || (validateTokenResponse.getExpiresIn() != null && validateTokenResponse.getExpiresIn() <= 0)) ||
 				(validateTokenResponse.getStatus() != Response.Status.OK.getStatusCode())) {
-				return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
+				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
+			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 		}
 
 		return null;
@@ -102,7 +102,8 @@ public class BaseScimWebService {
 		boolean authorized = getAuthorizedUser();
 		if (!authorized) {
 			if (!umaAuthenticationService.isEnabledUmaAuthentication()) {
-				return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
+				log.info("UMA authentication is disabled");
+				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
 			Pair<Boolean, Response> rptTokenValidationResult = umaAuthenticationService.validateRptToken(authorization, applicationConfiguration.getUmaResourceId(), applicationConfiguration.getUmaScope());
 			if (rptTokenValidationResult.getFirst()) {
@@ -110,7 +111,7 @@ public class BaseScimWebService {
 					return rptTokenValidationResult.getSecond();
 				}
 			} else {
-				return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
+				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
 		}
 		return null;
@@ -231,9 +232,11 @@ public class BaseScimWebService {
 		return Response.status(statusCode).entity(errors).build();
 	}
 
-	protected Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
+	protected Response getErrorResponse(Response.Status status, String detail) {
+		return getErrorResponse(status, null, detail);
+	}
 
-		log.info(" Error: " + scimType.getValue() + ", detail = " + detail + ", code = " + status.getStatusCode());
+	protected Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
 
 		ErrorResponse errorResponse = new ErrorResponse();
 

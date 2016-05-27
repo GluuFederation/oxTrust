@@ -31,6 +31,7 @@ import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
+import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -53,11 +54,9 @@ public class GroupWebService extends BaseScimWebService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response listGroups(@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
-
-		groupService = GroupService.instance();
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -65,6 +64,9 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			List<GluuGroup> groupList = groupService.getAllGroupsList();
 			GluuGroupList allGroupList = new GluuGroupList();
 			if (groupList != null) {
@@ -80,11 +82,13 @@ public class GroupWebService extends BaseScimWebService {
 			allGroupList.setTotalResults((long) resources.size());
 
 			URI location = new URI("/Groups/");
+
 			return Response.ok(allGroupList).location(location).build();
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -93,14 +97,15 @@ public class GroupWebService extends BaseScimWebService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getGroupById(@HeaderParam("Authorization") String authorization, @PathParam("id") String id) throws Exception {
 
-		groupService = GroupService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
 				// sets HTTP status code 404 Not Found
@@ -112,13 +117,16 @@ public class GroupWebService extends BaseScimWebService {
 			URI location = new URI("/Groups/" + id);
 
 			return Response.ok(group).location(location).build();
+
 		} catch (EntryPersistenceException ex) {
-			log.error("Exception: ", ex);
+
+			ex.printStackTrace();
 			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -126,7 +134,6 @@ public class GroupWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response createGroup(@HeaderParam("Authorization") String authorization, ScimGroup group) throws Exception {
-		groupService = GroupService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -141,16 +148,24 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			log.debug(" generating inum ");
 			String inum = groupService.generateInumForNewGroup();
+
 			log.debug(" getting DN ");
 			String dn = groupService.getDnForGroup(inum);
+
 			log.debug(" getting iname ");
 			String iname = groupService.generateInameForNewGroup(group.getDisplayName().replaceAll(" ", ""));
+
 			log.debug(" setting dn ");
 			gluuGroup.setDn(dn);
+
 			log.debug(" setting inum ");
 			gluuGroup.setInum(inum);
+
 			log.debug(" setting iname ");
 			gluuGroup.setIname(iname);
 
@@ -161,13 +176,24 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.debug("adding new GluuGroup");
 			groupService.addGroup(gluuGroup);
+
 			ScimGroup newGroup = CopyUtils.copy(gluuGroup, null);
+
 			String uri = "/Groups/" + newGroup.getId();
+
 			return Response.created(URI.create(uri)).entity(newGroup).build();
+
+		} catch (DuplicateEntryException ex) {
+
+			log.error("Failed to create group", ex);
+			ex.printStackTrace();
+			return getErrorResponse(ex.getMessage(), Response.Status.BAD_REQUEST.getStatusCode());
+
 		} catch (Exception ex) {
-			log.error("Failed to add user", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			log.error("Failed to create group", ex);
+			ex.printStackTrace();
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -176,7 +202,6 @@ public class GroupWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateGroup(@HeaderParam("Authorization") String authorization, @PathParam("id") String id, ScimGroup group) throws Exception {
-		groupService = GroupService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -184,10 +209,33 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
+
 				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
+			} else {
+
+				// Validate if attempting to update displayName of a different id
+				if (gluuGroup.getDisplayName() != null) {
+
+					GluuGroup groupToFind = new GluuGroup();
+					groupToFind.setDisplayName(group.getDisplayName());
+
+					List<GluuGroup> foundGroups = groupService.findGroups(groupToFind, 2);
+					if (foundGroups != null && foundGroups.size() > 0) {
+						for (GluuGroup foundGroup : foundGroups) {
+							if (foundGroup != null && !foundGroup.getInum().equalsIgnoreCase(group.getId())) {
+								throw new DuplicateEntryException("Cannot update displayName of a different id: " + group.getDisplayName());
+							}
+						}
+					}
+				}
 			}
+
 			GluuGroup newGluuGroup = CopyUtils.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
@@ -199,14 +247,25 @@ public class GroupWebService extends BaseScimWebService {
 			ScimGroup newGroup = CopyUtils.copy(newGluuGroup, null);
 
 			URI location = new URI("/Groups/" + id);
+
 			return Response.ok(newGroup).location(location).build();
+
 		} catch (EntryPersistenceException ex) {
-			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
-		} catch (Exception ex) {
-			log.error("Exception: ", ex);
+
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
+		} catch (DuplicateEntryException ex) {
+
+			log.error("Failed to update group", ex);
+			ex.printStackTrace();
+			return getErrorResponse(ex.getMessage(), Response.Status.BAD_REQUEST.getStatusCode());
+
+		} catch (Exception ex) {
+
+			log.error("Failed to update group", ex);
+			ex.printStackTrace();
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -214,7 +273,6 @@ public class GroupWebService extends BaseScimWebService {
 	@DELETE
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response deleteGroup(@HeaderParam("Authorization") String authorization, @PathParam("id") String id) throws Exception {
-		groupService = GroupService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -222,6 +280,9 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			log.info(" Checking if the group exists ");
 			log.info(" id : " + id);
 			GluuGroup group = groupService.getGroupByInum(id);
@@ -241,15 +302,18 @@ public class GroupWebService extends BaseScimWebService {
 				log.info(" removing the group ");
 				groupService.removeGroup(group);
 			}
+
 			return Response.ok().build();
+
 		} catch (EntryPersistenceException ex) {
-			log.error("Exception: ", ex);
+
+			ex.printStackTrace();
 			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
-
 }

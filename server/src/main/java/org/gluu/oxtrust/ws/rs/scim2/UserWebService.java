@@ -43,6 +43,7 @@ import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.oxtrust.ws.rs.scim.PATCH;
+import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -169,10 +170,9 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (Exception ex) {
 
-			log.error("Exception: ", ex);
-
-			String detail = "Unexpected processing error; please check the input parameters.";
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, detail);
+			ex.printStackTrace();
+			String detail = "Unexpected processing error; please check the input parameters";
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, detail);
 		}
 	}
 
@@ -226,12 +226,14 @@ public class UserWebService extends BaseScimWebService {
 			return Response.ok(json).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			System.out.println("UserWebService Ex: " + ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
@@ -262,7 +264,7 @@ public class UserWebService extends BaseScimWebService {
 			log.debug(" copying gluuperson ");
 			GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
 			if (gluuPerson == null) {
-				return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
+				return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to create user");
 			}
 
 			personService = PersonService.instance();
@@ -329,16 +331,22 @@ public class UserWebService extends BaseScimWebService {
 			// Return HTTP response with status code 201 Created
 			return Response.created(location).entity(json).build();
 
+		} catch (DuplicateEntryException ex) {
+
+			log.error("Failed to create user", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.UNIQUENESS, ex.getMessage());
+
 		} catch (PersonRequiredFieldsException ex) {
 
 			log.error("PersonRequiredFieldsException: ", ex);
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, ex.getMessage());
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, ex.getMessage());
 
 		} catch (Exception ex) {
 
+			log.error("Failed to create user", ex);
 			ex.printStackTrace();
-			log.error("Failed to add user", ex);
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ErrorScimType.INVALID_SYNTAX, ex.getMessage());
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
@@ -371,8 +379,28 @@ public class UserWebService extends BaseScimWebService {
 
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 			if (gluuPerson == null) {
-				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
+				return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
+
+			} else {
+
+				// Validate if attempting to update userName of a different id
+				if (person.getUserName() != null) {
+
+					GluuCustomPerson personToFind = new GluuCustomPerson();
+					personToFind.setUid(person.getUserName());
+
+					List<GluuCustomPerson> foundPersons = personService.findPersons(personToFind, 2);
+					if (foundPersons != null && foundPersons.size() > 0) {
+						for (GluuCustomPerson foundPerson : foundPersons) {
+							if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(person.getId())) {
+								throw new DuplicateEntryException("Cannot update userName of a different id: " + person.getUserName());
+							}
+						}
+					}
+				}
 			}
+
 			GluuCustomPerson updatedGluuPerson = CopyUtils2.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
@@ -414,12 +442,21 @@ public class UserWebService extends BaseScimWebService {
 			return Response.ok(json).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
+
 			ex.printStackTrace();
-			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+
+		} catch (DuplicateEntryException ex) {
+
+			log.error("Failed to update user", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, ex.getMessage());
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
+
+			log.error("Failed to update user", ex);
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
 
@@ -467,11 +504,14 @@ public class UserWebService extends BaseScimWebService {
 			return Response.ok().build();
 
 		} catch (EntryPersistenceException ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
 
@@ -546,11 +586,14 @@ public class UserWebService extends BaseScimWebService {
 			return Response.ok(json).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Resource not found", Response.Status.NOT_FOUND.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.NOT_FOUND, "Resource not found");
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
 	
@@ -597,11 +640,15 @@ public class UserWebService extends BaseScimWebService {
 			log.info("setting schema");
 			personsListResponse.setSchemas(schema);
 			personsListResponse.setTotalResults(personsListResponse.getResources().size());
+
 			URI location = new URI("/Users/");
+
 			return Response.ok(personsListResponse).location(location).build();
+
 		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
 }

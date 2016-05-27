@@ -14,6 +14,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupVisibility;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.Component;
@@ -59,7 +60,23 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public void addGroup(GluuGroup group) throws Exception {
-		ldapEntryManager.persist(group);
+		GluuGroup displayNameGroup = new GluuGroup();
+		displayNameGroup.setDisplayName(group.getDisplayName());
+		List<GluuGroup> groups= findGroups(displayNameGroup, 1);
+		if (groups == null || groups.size() == 0) {
+			ldapEntryManager.persist(group);
+		} else {
+			throw new DuplicateEntryException("Duplicate displayName: " + group.getDisplayName());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IGroupService#updateGroup(org.gluu.oxtrust.model.GluuGroup)
+	 */
+	@Override
+	public void updateGroup(GluuGroup group) throws Exception {
+		ldapEntryManager.merge(group);
+
 	}
 
 	/* (non-Javadoc)
@@ -138,15 +155,6 @@ public class GroupService implements Serializable, IGroupService {
 		}
 
 		return String.format("inum=%s,ou=groups,%s", inum, orgDn);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.gluu.oxtrust.ldap.service.IGroupService#updateGroup(org.gluu.oxtrust.model.GluuGroup)
-	 */
-	@Override
-	public void updateGroup(GluuGroup group) throws Exception {
-		ldapEntryManager.merge(group);
-
 	}
 
 	/* (non-Javadoc)
@@ -288,4 +296,16 @@ public class GroupService implements Serializable, IGroupService {
 		return null;
 	}
 
+	/**
+	 * Search groups by attributes present in object
+	 *
+	 * @param group
+	 * @param sizeLimit
+	 * @return
+	 */
+	@Override
+	public List<GluuGroup> findGroups(GluuGroup group, int sizeLimit) {
+		group.setBaseDn(getDnForGroup(null));
+		return ldapEntryManager.findEntries(group, 0, sizeLimit);
+	}
 }

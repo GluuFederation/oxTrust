@@ -1,3 +1,8 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
 package org.gluu.oxtrust.ldap.service;
 
 import java.util.List;
@@ -136,4 +141,12 @@ public interface IGroupService {
 	 */
 	public abstract GluuGroup getGroupByDisplayName(String DisplayName) throws Exception;
 
+	/**
+	 * Search groups by attributes present in object
+	 *
+	 * @param group
+	 * @param sizeLimit
+	 * @return
+	 */
+	public abstract List<GluuGroup> findGroups(GluuGroup group, int sizeLimit);
 }
