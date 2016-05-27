@@ -376,7 +376,7 @@ public class GroupWebService extends BaseScimWebService {
 					List<GluuGroup> foundGroups = groupService.findGroups(groupToFind, 2);
 					if (foundGroups != null && foundGroups.size() > 0) {
 						for (GluuGroup foundGroup : foundGroups) {
-							if (foundGroup != null && !foundGroup.getInum().equalsIgnoreCase(group.getId())) {
+							if (foundGroup != null && !foundGroup.getInum().equalsIgnoreCase(gluuGroup.getInum())) {
 								throw new DuplicateEntryException("Cannot update displayName of a different id: " + group.getDisplayName());
 							}
 						}

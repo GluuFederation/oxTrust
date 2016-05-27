@@ -393,7 +393,7 @@ public class UserWebService extends BaseScimWebService {
 					List<GluuCustomPerson> foundPersons = personService.findPersons(personToFind, 2);
 					if (foundPersons != null && foundPersons.size() > 0) {
 						for (GluuCustomPerson foundPerson : foundPersons) {
-							if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(person.getId())) {
+							if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(gluuPerson.getInum())) {
 								throw new DuplicateEntryException("Cannot update userName of a different id: " + person.getUserName());
 							}
 						}

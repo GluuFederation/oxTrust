@@ -229,11 +229,11 @@ public class UserWebService extends BaseScimWebService {
 		}
 	}
 
-	@Path("{uid}")
+	@Path("{id}")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, ScimPerson person) throws Exception {
+	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("id") String id, ScimPerson person) throws Exception {
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -244,10 +244,10 @@ public class UserWebService extends BaseScimWebService {
 
 			personService = PersonService.instance();
 
-			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
+			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 			if (gluuPerson == null) {
 
-				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 
 			} else {
 
@@ -260,7 +260,7 @@ public class UserWebService extends BaseScimWebService {
 					List<GluuCustomPerson> foundPersons = personService.findPersons(personToFind, 2);
 					if (foundPersons != null && foundPersons.size() > 0) {
 						for (GluuCustomPerson foundPerson : foundPersons) {
-							if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(person.getId())) {
+							if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(gluuPerson.getInum())) {
 								throw new DuplicateEntryException("Cannot update userName of a different id: " + person.getUserName());
 							}
 						}
@@ -271,7 +271,7 @@ public class UserWebService extends BaseScimWebService {
 			GluuCustomPerson newGluuPerson = CopyUtils.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMembersAdder(newGluuPerson, personService.getDnForPerson(uid));
+				Utils.groupMembersAdder(newGluuPerson, personService.getDnForPerson(id));
 			}
 
 			// Sync email
@@ -282,14 +282,14 @@ public class UserWebService extends BaseScimWebService {
 			ScimPerson newPerson = CopyUtils.copy(newGluuPerson, null);
 
 			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
-			URI location = new URI("/Users/" + uid);
+			URI location = new URI("/Users/" + id);
 
 			return Response.ok(newPerson).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 
 		} catch (DuplicateEntryException ex) {
 
@@ -305,10 +305,10 @@ public class UserWebService extends BaseScimWebService {
 		}
 	}
 
-	@Path("{uid}")
+	@Path("{id}")
 	@DELETE
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response deleteUser(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
+	public Response deleteUser(@HeaderParam("Authorization") String authorization, @PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -319,14 +319,14 @@ public class UserWebService extends BaseScimWebService {
 
 			personService = PersonService.instance();
 
-			GluuCustomPerson person = personService.getPersonByInum(uid);
+			GluuCustomPerson person = personService.getPersonByInum(id);
 			if (person == null) {
-				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			} else {
 				log.info("person.getMemberOf().size() : " + person.getMemberOf().size());
 				if (person.getMemberOf() != null) {
 					if (person.getMemberOf().size() > 0) {
-						String dn = personService.getDnForPerson(uid);
+						String dn = personService.getDnForPerson(id);
 						log.info("DN : " + dn);
 
 						Utils.deleteUserFromGroup(person, dn);
@@ -340,7 +340,7 @@ public class UserWebService extends BaseScimWebService {
 		} catch (EntryPersistenceException ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
+			return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 
 		} catch (Exception ex) {
 
@@ -387,11 +387,11 @@ public class UserWebService extends BaseScimWebService {
 		return unmarshaller.unmarshal(source);
 	}
 
-	@Path("{uid}")
+	@Path("{id}")
 	@PATCH
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response updateUserPatch(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid, ScimPersonPatch person) throws Exception {
+	public Response updateUserPatch(@HeaderParam("Authorization") String authorization, @PathParam("id") String id, ScimPersonPatch person) throws Exception {
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
