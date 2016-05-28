@@ -105,7 +105,13 @@
 								size="46" />
 						</s:decorate>
 
-						<ox:simplePropertiesList label="Server" labelAdd="server"
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+							<ui:define name="label">Level</ui:define>
+							<rich:inputNumberSpinner value="#{cc.attrs.ldapConfig.level}"
+								inputSize="2" minValue="0" maxValue="100" />
+						</s:decorate>
+
+			<ox:simplePropertiesList label="Server" labelAdd="server"
 							properties="#{cc.attrs.ldapConfig.servers}"
 							propertiesAction="#{cc.attrs.propertiesAction}"
 							inputWidth="#{cc.attrs.inputWidth}" required="true"
