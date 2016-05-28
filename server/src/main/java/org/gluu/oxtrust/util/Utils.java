@@ -112,8 +112,10 @@ public class Utils implements Serializable {
 			List<String> groupMembers = aGroup.getMembers();
 
 			List<String> tempGroupMembers = new ArrayList<String>();
-			for (String aMember : groupMembers) {
-				tempGroupMembers.add(aMember);
+			if (groupMembers != null && !groupMembers.isEmpty()) {
+				for (String aMember : groupMembers) {
+					tempGroupMembers.add(aMember);
+				}
 			}
 
 			for (String oneMember : tempGroupMembers) {
@@ -135,7 +137,6 @@ public class Utils implements Serializable {
 
 			groupService.updateGroup(aGroup);
 		}
-
 	}
 
 	/**
@@ -202,7 +203,7 @@ public class Utils implements Serializable {
 
 			List<String> groupMembers = oneGroup.getMembers();
 
-			if (!isMemberExist(groupMembers, dn)) {
+			if ((groupMembers != null && !groupMembers.isEmpty()) && !isMemberExist(groupMembers, dn)) {
 
 				List<String> cleanGroupMembers = new ArrayList<String>();
 				cleanGroupMembers.add(dn);
@@ -215,7 +216,6 @@ public class Utils implements Serializable {
 				groupService.updateGroup(oneGroup);
 			}
 		}
-
 	}
 
 	/**
