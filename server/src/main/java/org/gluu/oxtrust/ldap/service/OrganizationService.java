@@ -6,10 +6,14 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.faces.context.FacesContext;
 
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -235,4 +239,28 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 		return new InternalExternal[] { InternalExternal.INTERNAL, InternalExternal.EXTERNAL };
 	}
 
+	/**
+	 * Get version for organization
+	 * 
+	 * @return version string for organization
+	 */
+	public String getVersion() {
+		String version  = getClass().getPackage().getImplementationVersion();
+    	if (version==null) {
+    	    Properties prop = new Properties();
+    	    try {
+    	        prop.load(FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/META-INF/MANIFEST.MF"));
+    	        version = prop.getProperty("Implementation-Version");
+    	    } catch (IOException e) {
+    	        log.error(e.toString());
+    	    }
+    	}
+    	log.info("Starting App version "+version);
+    	if(version != null){
+    		version = version.replace("-SNAPSHOT","");
+    		return version;
+    	}    		
+       	return "";
+	}
+	
 }

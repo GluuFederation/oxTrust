@@ -16,10 +16,11 @@
         <s:fragment rendered="#{not empty welcomeTitle and not s:hasPermission('configuration', 'access')}">
             <s:div>
                 <h:outputText value="#{welcomeTitle}" escape="false"/>
+                <h:outputText value="#{organizationService.getVersion()}" escape="false"/>
             </s:div>
            </s:fragment>
            <s:fragment rendered="#{empty welcomeTitle}">
-               <h1>Welcome to your Gluu Identity Appliance!</h1>
+               <h1>Welcome to your Gluu Identity Appliance <h:outputText value="#{organizationService.getVersion()}" escape="false"/>!</h1>                
         </s:fragment>
 		
 		</section>
