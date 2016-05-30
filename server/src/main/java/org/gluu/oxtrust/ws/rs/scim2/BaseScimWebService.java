@@ -190,6 +190,18 @@ public class BaseScimWebService {
 		// String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
 		String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? attributesArray.split("\\,") : null;
 		if (attributes != null && attributes.length > 0) {
+
+			// Add the attributes which are returned by default
+			Set<String> attributesSet = new LinkedHashSet<String>(Arrays.asList(attributes));
+			attributesSet.add("id");
+			attributesSet.add("userName");
+			attributesSet.add("meta.created");
+			attributesSet.add("meta.lastModified");
+			attributesSet.add("meta.location");
+			attributesSet.add("meta.version");
+
+			attributes = attributesSet.toArray(new String[attributesSet.size()]);
+
 			for (int i = 0; i < attributes.length; i++) {
 				if (attributes[i] != null && !attributes[i].isEmpty()) {
 					if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {

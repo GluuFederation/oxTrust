@@ -126,6 +126,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
                             arrayNodeAttributeHolder.setUniqueness("server");
                             arrayNodeAttributeHolder.setType("string");
                             arrayNodeAttributeHolder.setCaseExact(Boolean.TRUE);
+                            arrayNodeAttributeHolder.setReturned("always");
                         } else {
                             arrayNodeAttributeHolder.setType("complex");
                         }
@@ -141,7 +142,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
                         List<AttributeHolder> arrayNodeMapAttributeHolders = new ArrayList<AttributeHolder>();
 
-                        Iterator<JsonNode> arrayNodeIterator = ((ArrayNode)rootNodeEntry.getValue()).getElements();
+                        Iterator<JsonNode> arrayNodeIterator = rootNodeEntry.getValue().getElements();
 
                         while (arrayNodeIterator.hasNext()) {
 
@@ -208,6 +209,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
                         if (rootNodeEntry.getKey().equalsIgnoreCase("id") || rootNodeEntry.getKey().equalsIgnoreCase("userName")) {
                             attributeHolder.setUniqueness("server");
+                            attributeHolder.setReturned("always");
                         }
 
                         if (rootNodeEntry.getKey().equalsIgnoreCase("id") || rootNodeEntry.getKey().equalsIgnoreCase("externalId") || rootNodeEntry.getKey().equalsIgnoreCase("password")) {

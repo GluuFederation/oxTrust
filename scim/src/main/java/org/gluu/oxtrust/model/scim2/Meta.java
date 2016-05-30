@@ -11,6 +11,7 @@ import java.util.Date;
 import org.gluu.oxtrust.model.helper.JsonDateSerializer;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 /**
  * This class represents the meta data of a resource.
@@ -30,15 +31,22 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public class Meta implements Serializable {
 
     @JsonSerialize(using = JsonDateSerializer.class)
+    @LdapAttribute(name = "oxTrustMetaCreated")
     private Date created;
 
     @JsonSerialize(using = JsonDateSerializer.class)
+    @LdapAttribute(name = "oxTrustMetaLastModified")
     private Date lastModified;
 
+    @LdapAttribute(name = "oxTrustMetaLocation")
     private String location;
+
+    @LdapAttribute(name = "oxTrustMetaVersion")
     private String version;
-    // private Set<String> attributes = new HashSet<String>();
+
     private String resourceType;
+
+    // private Set<String> attributes = new HashSet<String>();
 
     /**
      * Default constructor for Jackson

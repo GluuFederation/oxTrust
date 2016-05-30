@@ -46,11 +46,11 @@ public class GroupCoreLoadingStrategy implements LoadingStrategy {
         // Use serializer to walk the class structure
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-        SimpleModule groupCoreLoadingStrategyFilterModule = new SimpleModule("GroupCoreLoadingStrategyFilterModule", new Version(1, 0, 0, ""));
+        SimpleModule groupCoreLoadingStrategyModule = new SimpleModule("GroupCoreLoadingStrategyModule", new Version(1, 0, 0, ""));
         SchemaTypeGroupSerializer serializer = new SchemaTypeGroupSerializer();
         serializer.setSchemaType(schemaType);
-        groupCoreLoadingStrategyFilterModule.addSerializer(Group.class, serializer);
-        mapper.registerModule(groupCoreLoadingStrategyFilterModule);
+        groupCoreLoadingStrategyModule.addSerializer(Group.class, serializer);
+        mapper.registerModule(groupCoreLoadingStrategyModule);
 
         mapper.writeValueAsString(createDummyGroup());
 

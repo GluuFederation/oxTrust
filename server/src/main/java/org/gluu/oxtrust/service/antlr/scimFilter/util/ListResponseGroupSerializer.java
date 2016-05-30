@@ -20,8 +20,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Val Pecaoco
@@ -33,7 +32,7 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
     private static Log log;
 
     private String attributesArray;
-    private String[] attributes;
+    private Set<String> attributes;
 
     @Override
     public void serialize(Group group, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
@@ -47,8 +46,18 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
             ObjectMapper mapper = new ObjectMapper();
             mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 
-            attributes = (attributesArray != null && !attributesArray.isEmpty()) ? attributesArray.split("\\,") : null;
-            // attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
+            attributes = (attributesArray != null && !attributesArray.isEmpty()) ? new LinkedHashSet<String>(Arrays.asList(attributesArray.split("\\,"))) : null;
+            // attributes = (attributesArray != null && !attributesArray.isEmpty()) ? new LinkedHashSet<String>(Arrays.asList(mapper.readValue(attributesArray, String[].class))) : null;
+            if (attributes != null && attributes.size() > 0) {
+                attributes.add("schemas");
+                attributes.add("id");
+                attributes.add("userName");
+                attributes.add("meta.created");
+                attributes.add("meta.lastModified");
+                attributes.add("meta.location");
+                attributes.add("meta.version");
+                attributes.add("meta.resourceType");
+            }
 
             JsonNode rootNode = mapper.convertValue(group, JsonNode.class);
 
@@ -75,7 +84,7 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
             Map.Entry<String, JsonNode> rootNodeEntry = iterator.next();
 
-            if (attributes != null && attributes.length > 0) {
+            if (attributes != null && attributes.size() > 0) {
 
                 for (String attribute : attributes) {
 

@@ -86,13 +86,14 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
                         arrayNodeAttributeHolder.setUniqueness("server");
                         arrayNodeAttributeHolder.setType("string");
                         arrayNodeAttributeHolder.setCaseExact(Boolean.TRUE);
+                        arrayNodeAttributeHolder.setReturned("always");
                     } else {
                         arrayNodeAttributeHolder.setType("complex");
                     }
 
                     List<AttributeHolder> arrayNodeMapAttributeHolders = new ArrayList<AttributeHolder>();
 
-                    Iterator<JsonNode> arrayNodeIterator = ((ArrayNode)rootNodeEntry.getValue()).getElements();
+                    Iterator<JsonNode> arrayNodeIterator = rootNodeEntry.getValue().getElements();
 
                     while (arrayNodeIterator.hasNext()) {
 
@@ -149,6 +150,7 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
                             attributeHolder.setUniqueness("server");
                             attributeHolder.setCaseExact(Boolean.TRUE);
                             attributeHolder.setMutability("readOnly");
+                            attributeHolder.setReturned("always");
                         }
 
                         attributeHolders.add(attributeHolder);
