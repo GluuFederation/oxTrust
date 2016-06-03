@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.service;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ClientService;
@@ -38,9 +40,13 @@ import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.oxauth.model.util.JwksUtil;
 import org.xdi.oxauth.model.util.JwtUtil;
 import org.xdi.service.JsonService;
+import org.xdi.util.FileUtil;
 import org.xdi.util.StringHelper;
 
 import javax.ws.rs.core.Response;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -230,7 +236,14 @@ public class UmaProtectionService implements Serializable {
 
 		String umaClientPrivateKeyPath = applicationConfiguration.getUmaClientPrivateKeyPath();
 		if (StringHelper.isEmpty(umaClientPrivateKeyPath)) {
-			throw new UmaProtectionException("Failed to load UMA JWKS client private key path");
+			throw new UmaProtectionException("UMA JWKS private keys path is empty");
+		}
+
+		String umaClientPrivateKeys;
+		try {
+			umaClientPrivateKeys = FileUtils.readFileToString(new File(umaClientPrivateKeyPath));
+		} catch (IOException ex) {
+			throw new UmaProtectionException("Failed to load UMA JWKS private keys", ex);
 		}
 		
 		OxAuthClient umaClient = null;
@@ -241,7 +254,7 @@ public class UmaProtectionService implements Serializable {
 		}
 
 		// org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwtUtil.getPrivateKey(null, umaClient.getJwks(), applicationConfiguration.getUmaClientKeyId());
-		org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwksUtil.getPrivateKey(null, umaClientPrivateKeyPath, applicationConfiguration.getUmaClientKeyId());
+		org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwksUtil.getPrivateKey(null, umaClientPrivateKeys, applicationConfiguration.getUmaClientKeyId());
 		if (privateKey == null) {
 			throw new UmaProtectionException("There is no keyId in JWKS");
 		}
