@@ -45,11 +45,11 @@ public class UserCoreLoadingStrategy implements LoadingStrategy {
         // Use serializer to walk the class structure
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-        SimpleModule userCoreLoadingStrategyFilterModule = new SimpleModule("UserCoreLoadingStrategyFilterModule", new Version(1, 0, 0, ""));
+        SimpleModule userCoreLoadingStrategyModule = new SimpleModule("UserCoreLoadingStrategyModule", new Version(1, 0, 0, ""));
         SchemaTypeUserSerializer serializer = new SchemaTypeUserSerializer();
         serializer.setSchemaType(schemaType);
-        userCoreLoadingStrategyFilterModule.addSerializer(User.class, serializer);
-        mapper.registerModule(userCoreLoadingStrategyFilterModule);
+        userCoreLoadingStrategyModule.addSerializer(User.class, serializer);
+        mapper.registerModule(userCoreLoadingStrategyModule);
 
         mapper.writeValueAsString(createDummyUser());
 

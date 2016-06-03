@@ -460,6 +460,11 @@
             "type": "string",
             "minLength": 1
         },
+        "umaClientPrivateKeyPath": {
+            "id": "umaClientPrivateKeyPath",
+            "type": "string",
+            "minLength": 1
+        },
         "recaptchaSiteKey": {
             "id": "recaptchaSiteKey",
             "type": "string",
@@ -573,6 +578,7 @@
         "recaptchaSiteKey",
         "recaptchaSecretKey",
         "umaScope",
+        "umaClientPrivateKeyPath",
         "cssLocation",
         "jsLocation",
         "scimTestMode",

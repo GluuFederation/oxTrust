@@ -1131,22 +1131,25 @@ public class CopyUtils2 implements Serializable {
 
 		if (source.getMembers() != null) {
 
-			if (source.getMembers().size() != 0) {
+			if (source.getMembers().size() > 0) {
 
 				Set<MemberRef> memberRefSet = new HashSet<MemberRef>();
 				List<String> membersList = source.getMembers();
 
 				for (String oneMember : membersList) {
 
-					GluuCustomPerson gluuCustomPerson = personService.getPersonByDn(oneMember);
+					if (oneMember != null && !oneMember.isEmpty()) {
 
-					MemberRef memberRef = new MemberRef();
-					memberRef.setValue(gluuCustomPerson.getInum());
-					memberRef.setDisplay(gluuCustomPerson.getDisplayName());
-					String reference = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + gluuCustomPerson.getInum();
-					memberRef.setReference(reference);
+						GluuCustomPerson gluuCustomPerson = personService.getPersonByDn(oneMember);
 
-					memberRefSet.add(memberRef);
+						MemberRef memberRef = new MemberRef();
+						memberRef.setValue(gluuCustomPerson.getInum());
+						memberRef.setDisplay(gluuCustomPerson.getDisplayName());
+						String reference = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + gluuCustomPerson.getInum();
+						memberRef.setReference(reference);
+
+						memberRefSet.add(memberRef);
+					}
 				}
 
 				destination.setMembers(memberRefSet);

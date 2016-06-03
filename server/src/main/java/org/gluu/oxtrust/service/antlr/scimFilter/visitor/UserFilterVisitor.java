@@ -27,7 +27,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
     private Logger logger = LoggerFactory.getLogger(UserFilterVisitor.class);
 
-    private static Class[] annotatedClasses = { Resource.class, User.class, Name.class };
+    private static Class[] annotatedClasses = { Resource.class, Meta.class, User.class, Name.class };
 
     private static Map<String, String> declaredAnnotations = new HashMap<String, String>();
 
@@ -59,6 +59,12 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
             if (tokens.length == 1) {
                 ldapAttributeName = "inum";
+            } else if (tokens.length == 2) {
+                ldapAttributeName = tokens[1];
+            }
+        } else if (tokens[0].equalsIgnoreCase(Meta.class.getSimpleName())) {
+            if (tokens.length == 1) {
+                ldapAttributeName = "meta";
             } else if (tokens.length == 2) {
                 ldapAttributeName = tokens[1];
             }

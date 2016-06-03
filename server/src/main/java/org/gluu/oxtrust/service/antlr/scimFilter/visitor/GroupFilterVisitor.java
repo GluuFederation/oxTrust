@@ -27,7 +27,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
 
     private Logger logger = LoggerFactory.getLogger(GroupFilterVisitor.class);
 
-    private static Class[] annotatedClasses = { Resource.class, Group.class };
+    private static Class[] annotatedClasses = { Resource.class, Meta.class, Group.class };
 
     private static Map<String, String> declaredAnnotations = new HashMap<String, String>();
 
@@ -56,9 +56,9 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
 
         // This is already specific implementation. Currently only support up to second level.
         ldapAttributeName = tokens[0];
-        if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+        if (tokens[0].equalsIgnoreCase(Meta.class.getSimpleName())) {
             if (tokens.length == 1) {
-                ldapAttributeName = "inum";
+                ldapAttributeName = "meta";
             } else if (tokens.length == 2) {
                 ldapAttributeName = tokens[1];
             }

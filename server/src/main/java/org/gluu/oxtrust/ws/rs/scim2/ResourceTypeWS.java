@@ -86,7 +86,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		listResponse.setItemsPerPage(10);
 		listResponse.setStartIndex(1);
 
-		URI location = new URI("/v2/ResourceTypes");
+		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes");
 
 		// return Response.ok(resourceTypes).location(location).build();
 		return Response.ok(listResponse).location(location).build();
@@ -118,7 +118,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 		// ResourceType[] resourceTypes = new ResourceType[]{userResourceType};
 
-		URI location = new URI("/v2/ResourceTypes/User");
+		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
 
 		// return Response.ok(resourceTypes).location(location).build();
 		return Response.ok(userResourceType).location(location).build();
@@ -143,7 +143,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 		// ResourceType[] resourceTypes = new ResourceType[]{groupResourceType};
 
-		URI location = new URI("/v2/ResourceTypes/Group");
+		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
 
 		// return Response.ok(resourceTypes).location(location).build();
 		return Response.ok(groupResourceType).location(location).build();

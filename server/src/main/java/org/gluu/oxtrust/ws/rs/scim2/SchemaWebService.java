@@ -7,12 +7,18 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import com.wordnik.swagger.annotations.Api;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeLoadingFactory;
+import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeAbstractSerializer;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
@@ -20,6 +26,7 @@ import org.jboss.seam.log.Log;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +77,12 @@ public class SchemaWebService extends BaseScimWebService {
         listResponse.setItemsPerPage(10);
         listResponse.setStartIndex(1);
 
-        URI location = new URI("/v2/Schemas");
+        URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas");
 
-        return Response.ok(listResponse).location(location).build();
+        // Serialize to JSON
+        String json = serialize(listResponse);
+
+        return Response.ok(json).location(location).build();
     }
 
     /**
@@ -93,13 +103,29 @@ public class SchemaWebService extends BaseScimWebService {
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
         SchemaType schemaType = factory.load(super.applicationConfiguration, id);
 
-        URI location = new URI("/v2/Schemas/" + id);
-
         if (schemaType == null) {
             log.info(" NOT FOUND: schema with id = '" + id + "'");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        return Response.ok(schemaType).location(location).build();
+        URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + id);
+
+        // Serialize to JSON
+        String json = serialize(schemaType);
+
+        return Response.ok(json).location(location).build();
+    }
+
+    private String serialize(Serializable serializable) throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+        mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+        SimpleModule customSchemaTypeAstractModule = new SimpleModule("CustomSchemaTypeAbstractModule", new Version(1, 0, 0, ""));
+        SchemaTypeAbstractSerializer serializer = new SchemaTypeAbstractSerializer();
+        customSchemaTypeAstractModule.addSerializer(SchemaType.class, serializer);
+        mapper.registerModule(customSchemaTypeAstractModule);
+
+        return mapper.writeValueAsString(serializable);
     }
 }
