@@ -21,6 +21,7 @@ public class X509CertificateShortInfo implements Serializable {
     private static final String HIGHLIGHT_STYLE_VALID = "";
     
     private static final String HIGHLIGHT_STYLE_WARNING = "background-color: rgb(255, 255, 0);";
+    
     /**
      * 3 months in nanoseconds.
      */

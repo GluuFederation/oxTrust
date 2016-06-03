@@ -527,4 +527,41 @@ public class Utils implements Serializable {
 
 		return mapper;
 	}
+        
+        public static void closeQuietly(InputStream is) {
+            try { is.close(); } catch (IOException e) {}
+        }
+        
+        public static void closeQuietly(OutputStream os) {
+            try { os.close(); } catch (IOException e) {}
+        }
+        
+        /**
+	 * Read all bytes from the supplied input stream. Closes the input stream.
+	 *
+	 * @param is
+	 *            Input stream
+	 * @return All bytes
+	 * @throws IOException
+	 *             If an I/O problem occurs
+	 */
+	public static byte[] readFully(InputStream is) throws IOException {
+            ByteArrayOutputStream baos = null;
+
+            try {
+                baos = new ByteArrayOutputStream();
+
+                byte[] buffer = new byte[2048];
+                int read = 0;
+
+                while ((read = is.read(buffer)) != -1) {
+                    baos.write(buffer, 0, read);
+                }
+
+                return baos.toByteArray();
+            } finally {
+                closeQuietly(baos);
+                closeQuietly(is);
+            }
+	}
 }

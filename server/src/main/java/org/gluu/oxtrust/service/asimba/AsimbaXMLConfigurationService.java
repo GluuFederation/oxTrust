@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.service.asimba;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,6 +29,7 @@ import javax.xml.xpath.XPathFactory;
 import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
+import org.gluu.oxtrust.util.Utils;
 import org.jboss.seam.annotations.In;
 import org.w3c.dom.Document;
 
@@ -114,13 +116,26 @@ public class AsimbaXMLConfigurationService implements Serializable {
      */
     public synchronized String addCertificateFile(UploadedFile uploadedFile, String alias) throws IOException {
         // load certificate
-        X509Certificate cert;
+        X509Certificate certs[] = null;
+        byte[] certsBytes = Utils.readFully(uploadedFile.getInputStream());
         try {
             // load PEM certificate from uploadedFile 
-            cert = sslService.getCertificate(uploadedFile.getInputStream());
+            X509Certificate cert = sslService.getCertificate(new ByteArrayInputStream(certsBytes));
+            if (cert != null) {
+                certs = new X509Certificate[1];
+                certs[0] = cert;
+            }
         } catch (Exception e) {
             log.warn("Certificate parsing exception", e);
-            return "Certificate parsing exception : " + e.getMessage();
+        }
+        
+        if (certs == null) {
+            try {
+                certs = SSLService.loadCertificates(certsBytes);
+            } catch (Exception e) {
+                log.warn("Certificate parsing exception", e);
+                return "Certificate parsing exception: " + e.getMessage();
+            }
         }
         
         // update keystore
@@ -128,7 +143,10 @@ public class AsimbaXMLConfigurationService implements Serializable {
             parse();
             
             KeystoreWrapper wrapper = getKeystore();
-            wrapper.addCertificate(cert, alias);
+            for (X509Certificate cert : certs) {
+                wrapper.addCertificate(cert, alias);
+                break;
+            }
             wrapper.save();
             
             return OxTrustConstants.RESULT_SUCCESS;
