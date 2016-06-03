@@ -227,6 +227,11 @@ public class UmaProtectionService implements Serializable {
 		if (umaMetadataConfiguration == null) {
 			return;
 		}
+
+		String umaClientPrivateKeyPath = applicationConfiguration.getUmaClientPrivateKeyPath();
+		if (StringHelper.isEmpty(umaClientPrivateKeyPath)) {
+			throw new UmaProtectionException("Failed to load UMA JWKS client private key path");
+		}
 		
 		OxAuthClient umaClient = null;
 		try {
@@ -236,7 +241,7 @@ public class UmaProtectionService implements Serializable {
 		}
 
 		// org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwtUtil.getPrivateKey(null, umaClient.getJwks(), applicationConfiguration.getUmaClientKeyId());
-		org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwksUtil.getPrivateKey(null, umaClient.getJwks(), applicationConfiguration.getUmaClientKeyId());
+		org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwksUtil.getPrivateKey(null, umaClientPrivateKeyPath, applicationConfiguration.getUmaClientKeyId());
 		if (privateKey == null) {
 			throw new UmaProtectionException("There is no keyId in JWKS");
 		}
