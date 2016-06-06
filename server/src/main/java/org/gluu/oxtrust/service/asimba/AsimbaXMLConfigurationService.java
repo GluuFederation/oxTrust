@@ -120,7 +120,7 @@ public class AsimbaXMLConfigurationService implements Serializable {
         byte[] certsBytes = Utils.readFully(uploadedFile.getInputStream());
         try {
             // load PEM certificate from uploadedFile 
-            X509Certificate cert = sslService.getCertificate(new ByteArrayInputStream(certsBytes));
+            X509Certificate cert = sslService.getPEMCertificate(new ByteArrayInputStream(certsBytes));
             if (cert != null) {
                 certs = new X509Certificate[1];
                 certs[0] = cert;
@@ -130,6 +130,7 @@ public class AsimbaXMLConfigurationService implements Serializable {
         }
         
         if (certs == null) {
+            // try load with other way (.crt certificates, base64 encoded, etc).
             try {
                 certs = SSLService.loadCertificates(certsBytes);
             } catch (Exception e) {

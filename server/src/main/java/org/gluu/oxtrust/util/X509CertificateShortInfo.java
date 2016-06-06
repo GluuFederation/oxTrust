@@ -48,9 +48,11 @@ public class X509CertificateShortInfo implements Serializable {
         algorithm = cert.getSigAlgName();
         notBeforeDatetime = cert.getNotBefore();
         notAfterDatetime = cert.getNotAfter();
+        
+        updateViewStyle();
     }
     
-    public void updateViewStyle() {
+    public final void updateViewStyle() {
         final Date currentTime = new Date();
         final Date time3MonthAfter = new Date(System.currentTimeMillis() + NANOSEC_3_MONTH);
         

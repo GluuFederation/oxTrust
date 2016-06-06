@@ -10,6 +10,7 @@ import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.io.IOUtils;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -528,22 +529,12 @@ public class Utils implements Serializable {
 		return mapper;
 	}
         
-        public static void closeQuietly(InputStream is) {
-            try { is.close(); } catch (IOException e) {}
-        }
-        
-        public static void closeQuietly(OutputStream os) {
-            try { os.close(); } catch (IOException e) {}
-        }
-        
         /**
 	 * Read all bytes from the supplied input stream. Closes the input stream.
 	 *
-	 * @param is
-	 *            Input stream
+	 * @param is Input stream
 	 * @return All bytes
-	 * @throws IOException
-	 *             If an I/O problem occurs
+	 * @throws IOException If an I/O problem occurs
 	 */
 	public static byte[] readFully(InputStream is) throws IOException {
             ByteArrayOutputStream baos = null;
@@ -560,8 +551,8 @@ public class Utils implements Serializable {
 
                 return baos.toByteArray();
             } finally {
-                closeQuietly(baos);
-                closeQuietly(is);
+                IOUtils.closeQuietly(baos);
+                IOUtils.closeQuietly(is);
             }
 	}
 }

@@ -73,7 +73,8 @@ public class KeystoreWrapper {
     public void addCertificate(X509Certificate cert, String alias) throws KeyStoreException {
         // check alias
         if (keystore.containsAlias(alias)) {
-            // nothing
+            // should be replaced if exist
+            keystore.deleteEntry(alias);
         }
         
         keystore.setCertificateEntry(alias, cert);

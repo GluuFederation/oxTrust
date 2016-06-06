@@ -167,7 +167,7 @@ public class ManageCertificateAction implements Serializable {
 	 */
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void getCert(String fileName) {
-		X509Certificate cert = sslService.getCertificate(getTempCertDir() + fileName);
+		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
 		loadCert(cert);
 	}
 
@@ -181,7 +181,7 @@ public class ManageCertificateAction implements Serializable {
 		this.subject = new HashMap<String, String>();
 
 		if (trustStoreCertificate != null) {
-			X509Certificate cert = sslService.getCertificate(new ByteArrayInputStream(trustStoreCertificate.getCertificate().getBytes()));
+			X509Certificate cert = sslService.getPEMCertificate(new ByteArrayInputStream(trustStoreCertificate.getCertificate().getBytes()));
 			loadCert(cert);
 		}
 	}
@@ -243,7 +243,7 @@ public class ManageCertificateAction implements Serializable {
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public boolean compare(String fileName) {
 		KeyPair pair = getKeyPair(fileName);
-		X509Certificate cert = sslService.getCertificate(getTempCertDir() + fileName);
+		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
 
 		boolean noFilesPresent = (pair == null) && (cert == null);
 
@@ -330,7 +330,7 @@ public class ManageCertificateAction implements Serializable {
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public boolean certPresent(String filename) {
 		KeyPair pair = getKeyPair(filename);
-		X509Certificate cert = sslService.getCertificate(getTempCertDir() + filename);
+		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + filename);
 
 		boolean filesPresent = (pair != null) && (cert != null);
 

@@ -429,7 +429,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	 * @throws CertificateEncodingException
 	 */
 	private String getCertForGeneratedSP() {
-		X509Certificate cert = SSLService.instance().getCertificate(certWrapper.getStream());
+		X509Certificate cert = SSLService.instance().getPEMCertificate(certWrapper.getStream());
 		if (cert == null) {
 			facesMessages.add(Severity.INFO,
 					"Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
@@ -478,7 +478,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 //					+ "-shib.crt";
 //			File certFile = new File(certName);
 //			if (certFile.exists()) {
-//				cert = SSLService.instance().getCertificate(certName);
+//				cert = SSLService.instance().getPEMCertificate(certName);
 //			}
 		}
 		String certificate = null;

@@ -60,9 +60,6 @@ public class CertificateManagementAction implements Serializable {
 
     @In
     private ApplianceService applianceService;
-
-    @In
-    private SSLService sslService;
     
     private KeystoreWrapper asimbaKeystore;
     
@@ -146,29 +143,34 @@ public class CertificateManagementAction implements Serializable {
     
         if (trustStoreCertificatesList != null) {
             for (TrustStoreCertificate trustStoreCertificate : trustStoreCertificatesList) {
-                X509Certificate cert = sslService.getCertificate(new ByteArrayInputStream(trustStoreCertificate.getCertificate().getBytes()));
+                try {
+                    X509Certificate certs[] = SSLService.loadCertificates(trustStoreCertificate.getCertificate().getBytes());
 
-                X509CertificateShortInfo entry = new X509CertificateShortInfo(trustStoreCertificate.getName(), cert);
-                entry.updateViewStyle();
-                
-                trustStoreCertificates.add(entry);
+                    for (X509Certificate cert : certs) {
+                        X509CertificateShortInfo entry = new X509CertificateShortInfo(trustStoreCertificate.getName(), cert);
+                        trustStoreCertificates.add(entry);
+                    }
+                } catch (Exception e) { log.error("Certificate load exception", e); }
             }
         }
         
         // load internalCertificates
         internalCertificates = new ArrayList<X509CertificateShortInfo>();
         try {
-            X509Certificate openDJCert = sslService.getCertificate(new FileInputStream(OPENDJ_CERTIFICATE_FILE));
-            internalCertificates.add(new X509CertificateShortInfo("OpenDJ SSL", openDJCert));
-            
-            X509Certificate httpdCert = sslService.getCertificate(new FileInputStream(HTTPD_CERTIFICATE_FILE));
-            internalCertificates.add(new X509CertificateShortInfo("HTTPD SSL", httpdCert));
-            
-            X509Certificate shibIDPCert = sslService.getCertificate(new FileInputStream(SHIB_IDP_CERTIFICATE_FILE));
-            internalCertificates.add(new X509CertificateShortInfo("Shibboleth IDP SSL", shibIDPCert));
-        } catch (IOException e) {
-            log.error("Certificate load exception", e);
-        }
+            X509Certificate openDJCerts[] = SSLService.loadCertificates(new FileInputStream(OPENDJ_CERTIFICATE_FILE));
+            for (X509Certificate openDJCert : openDJCerts)
+                internalCertificates.add(new X509CertificateShortInfo("OpenDJ SSL", openDJCert));
+        } catch (Exception e) { log.error("Certificate load exception", e); }
+        try {
+            X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
+            for (X509Certificate httpdCert : httpdCerts)
+                internalCertificates.add(new X509CertificateShortInfo("HTTPD SSL", httpdCert));
+        } catch (Exception e) { log.error("Certificate load exception", e); }
+        try {
+            X509Certificate shibIDPCerts[] = SSLService.loadCertificates(new FileInputStream(SHIB_IDP_CERTIFICATE_FILE));
+            for (X509Certificate shibIDPCert : shibIDPCerts)
+                internalCertificates.add(new X509CertificateShortInfo("Shibboleth IDP SSL", shibIDPCert));
+        } catch (Exception e) { log.error("Certificate load exception", e); }
         
         // check for warning and search pattern
         final String searchPatternLC = this.searchPattern != null ? this.searchPattern.toLowerCase() : null;
