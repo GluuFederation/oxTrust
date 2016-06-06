@@ -158,7 +158,7 @@
                 
                 <!-- upload file button -->
                 <rich:fileUpload fileUploadListener="#{_updateAsimbaIDPAction.uploadCertificateFile}" 
-                                 acceptedTypes="crt" ontyperejected="alert('Only CRT files are accepted');"
+                                 acceptedTypes="crt, cert, pem, txt" ontyperejected="alert('Only CRT, CERT, PEM, TXT files are accepted');"
                                      maxFilesQuantity="1" 
                                      immediateUpload="true"
                                      listHeight="60px" styleClass="uploadFile" />

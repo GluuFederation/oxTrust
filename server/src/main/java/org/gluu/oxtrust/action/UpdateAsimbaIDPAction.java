@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.context.FacesContext;
@@ -27,6 +28,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
+import org.gluu.oxtrust.util.Utils;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.international.StatusMessage;
 import org.richfaces.event.FileUploadEvent;
@@ -83,6 +85,8 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
     private String searchPattern = "";
     
+    private byte uploadedCertBytes[] = null;
+    
     public UpdateAsimbaIDPAction() {
         
     }
@@ -112,6 +116,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         idp = new IDPEntry();
         editEntryInum = null;
         newEntry = true;
+        uploadedCertBytes = null;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -141,9 +146,18 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update IDP", idp);
+        idp.setId(idp.getId().trim());
         // save
         synchronized (svnSyncTimer) {
             asimbaService.updateIDPEntry(idp);
+        }
+        // save certificate
+        try {
+            if (uploadedCertBytes != null) {
+                String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, idp.getId());
+            }
+        } catch (Exception e) {
+            log.error("Requestor certificate - add CertificateFile exception", e);
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -173,18 +187,30 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadCertificateFile(FileUploadEvent event) {
         log.info("uploadCertificateFile() call for IDP");
-        try {
+         try {
             UploadedFile uploadedFile = event.getUploadedFile();
-            // TODO: check alias for valid url
-            String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, idp.getId());
-            // display message
-            if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
-                facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+            uploadedCertBytes = Utils.readFully(uploadedFile.getInputStream());
+            
+            // check alias for valid url
+            String id = idp.getId();
+            if (id != null && id.trim().toLowerCase().startsWith("http")) {
+                id = id.trim();
+                URL u = new URL(id); // this would check for the protocol
+                u.toURI(); // does the extra checking required for validation of URI 
+                
+                String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, id);
+                // display message
+                if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
+                    facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+                } else {
+                    facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+                }
             } else {
-                facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+                facesMessages.add(StatusMessage.Severity.INFO, "Add valid URL to ID");
             }
         } catch (Exception e) {
             log.info("IDP certificate - uploadCertificateFile() exception", e);
+            facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", e.getMessage());
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }

@@ -108,16 +108,29 @@ public class AsimbaXMLConfigurationService implements Serializable {
     }
     
     /**
-     * Add trust certificate file to Asimba's Keystore 
+     * Add trust certificate file to Asimba's Keystore.
+     * 
      * @param uploadedFile Certificate file 
      * @param alias Certificate alias 
      * @return path
      * @throws IOException 
      */
     public synchronized String addCertificateFile(UploadedFile uploadedFile, String alias) throws IOException {
+        byte[] certsBytes = Utils.readFully(uploadedFile.getInputStream());
+        return addCertificateFile(certsBytes, alias);
+    }
+    
+    /**
+     * Add trust certificate file to Asimba's Keystore.
+     * 
+     * @param certsBytes Certificates as byte array
+     * @param alias Certificate alias 
+     * @return path
+     * @throws IOException 
+     */
+    public synchronized String addCertificateFile(byte[] certsBytes, String alias) throws IOException {
         // load certificate
         X509Certificate certs[] = null;
-        byte[] certsBytes = Utils.readFully(uploadedFile.getInputStream());
         try {
             // load PEM certificate from uploadedFile 
             X509Certificate cert = sslService.getPEMCertificate(new ByteArrayInputStream(certsBytes));

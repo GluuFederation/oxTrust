@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -22,6 +23,7 @@ import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.Utils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
@@ -90,6 +92,8 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     
     private ArrayList<SelectItem> spPoolList;
     
+    private byte uploadedCertBytes[] = null;
+    
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
     private String searchPattern = "";
@@ -132,6 +136,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         spRequestor = new RequestorEntry();
         editEntryInum = null;
         newEntry = true;
+        uploadedCertBytes = null;
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
@@ -164,10 +169,20 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Requestor", spRequestor);
-        spRequestor.setProperties(getProperties());
+        spRequestor.setId(spRequestor.getId().trim());
+        
         synchronized (svnSyncTimer) {
             asimbaService.updateRequestorEntry(spRequestor);
         }
+        // save certificate
+        try {
+            if (uploadedCertBytes != null) {
+                String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, spRequestor.getId());
+            }
+        } catch (Exception e) {
+            log.error("Requestor certificate - add CertificateFile exception", e);
+        }
+        
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -209,16 +224,28 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         log.info("uploadCertificateFile() Requestor", spRequestor);
         try {
             UploadedFile uploadedFile = event.getUploadedFile();
-            // TODO: check alias for valid url
-            String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, spRequestor.getId());
-            // display message
-            if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
-                facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+            uploadedCertBytes = Utils.readFully(uploadedFile.getInputStream());
+            
+            // check alias for valid url
+            String id = spRequestor.getId();
+            if (id != null && id.trim().toLowerCase().startsWith("http")) {
+                id = id.trim();
+                URL u = new URL(id); // this would check for the protocol
+                u.toURI(); // does the extra checking required for validation of URI 
+                
+                String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, spRequestor.getId());
+                // display message
+                if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
+                    facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+                } else {
+                    facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+                }
             } else {
-                facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+                facesMessages.add(StatusMessage.Severity.INFO, "Add valid URL to ID");
             }
         } catch (Exception e) {
             log.info("Requestor certificate - uploadCertificateFile() exception", e);
+            facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", e.getMessage());
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
