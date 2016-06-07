@@ -29,6 +29,7 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
@@ -80,6 +81,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @In
     private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
     
+    @Out
     private RequestorEntry spRequestor;
     
     private boolean newEntry = true;
@@ -211,10 +213,12 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             UploadedFile uploadedFile = event.getUploadedFile();
             String filepath = asimbaService.saveSPRequestorMetadataFile(uploadedFile);
             spRequestor.setMetadataFile(filepath);
+            spRequestor.setMetadataUrl("");
             facesMessages.add(StatusMessage.Severity.INFO, "File uploaded");
         } catch (Exception e) {
             log.error("Requestor metadata - uploadFile() exception", e);
             facesMessages.add(StatusMessage.Severity.ERROR, "Requestor metadata - uploadFile exception", e);
+            return OxTrustConstants.RESULT_FAILURE;
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -246,6 +250,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         } catch (Exception e) {
             log.info("Requestor certificate - uploadCertificateFile() exception", e);
             facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", e.getMessage());
+            return OxTrustConstants.RESULT_VALIDATION_ERROR;
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }

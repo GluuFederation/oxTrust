@@ -505,7 +505,6 @@ public class AsimbaService implements Serializable {
     }
     
     public String saveIDPMetadataFile(UploadedFile uploadedFile) throws IOException {
-        
         String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "webapps" + File.separator + "asimba" 
                 + File.separator + "WEB-INF" + File.separator + "sample-data" + File.separator + "idp";
         return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
