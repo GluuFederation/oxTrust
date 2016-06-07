@@ -145,7 +145,7 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		personService.addCustomObjectClass(this.person);
-		this.person.setStatus(GluuStatus.ACTIVE);
+		//this.person.setStatus(GluuStatus.ACTIVE);
 
 		List<GluuCustomAttribute> removedAttributes = customAttributeAction.detectRemovedAttributes();
 		customAttributeAction.updateOriginCustomAttributes();
