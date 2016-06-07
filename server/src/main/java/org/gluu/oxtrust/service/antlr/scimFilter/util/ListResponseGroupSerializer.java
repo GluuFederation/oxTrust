@@ -78,6 +78,10 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
         // log.info(" ##### PARENT: " + parent);
 
+        if (parent != null) {
+            parent = FilterUtil.stripScimSchema(parent);
+        }
+
         Iterator<Map.Entry<String, JsonNode>> iterator = rootNode.getFields();
 
         while (iterator.hasNext()) {
@@ -88,7 +92,14 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
                 for (String attribute : attributes) {
 
+                    attribute = FilterUtil.stripScimSchema(attribute);
                     String[] split = attribute.split("\\.");
+
+                    if (split.length == 2 && split[1] != null) {
+                        if (split[1].equalsIgnoreCase("$ref")) {
+                            split[1] = "reference";
+                        }
+                    }
 
                     if ((((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase(split[0])) && rootNodeEntry.getKey().equalsIgnoreCase(split[1])) ||
                         rootNodeEntry.getKey().equalsIgnoreCase(split[0])) {

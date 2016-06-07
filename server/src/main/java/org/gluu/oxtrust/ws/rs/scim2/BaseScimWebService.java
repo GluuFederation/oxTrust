@@ -20,6 +20,7 @@ import org.gluu.oxtrust.model.scim.Errors;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.annotations.In;
@@ -186,26 +187,42 @@ public class BaseScimWebService {
 			sortOrderEnum = SortOrder.ASCENDING;
 		}
 
-		ObjectMapper mapper = new ObjectMapper();
 		// String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
 		String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? attributesArray.split("\\,") : null;
 		if (attributes != null && attributes.length > 0) {
 
 			// Add the attributes which are returned by default
-			Set<String> attributesSet = new LinkedHashSet<String>(Arrays.asList(attributes));
-			for (String attribute : attributesSet) {
-				if (attribute.toLowerCase().startsWith("name.")) {
-					attributesSet.add("name.familyName");
-					attributesSet.add("name.middleName");
-					attributesSet.add("name.givenName");
-					attributesSet.add("name.honorificPrefix");
-					attributesSet.add("name.honorificSuffix");
-					attributesSet.add("name.formatted");
-					break;
+
+			List<String> attributesList = new ArrayList<String>(Arrays.asList(attributes));
+			Set<String> attributesSet = new LinkedHashSet<String>();
+
+			for (String attribute : attributesList) {
+
+				if (attribute != null && !attribute.isEmpty()) {
+
+					attribute = FilterUtil.stripScimSchema(attribute);
+
+					if (entryClass.getName().equals(GluuCustomPerson.class.getName()) && attribute.toLowerCase().startsWith("name.")) {
+
+						if (!attributesSet.contains("name.familyName")) {
+							attributesSet.add("name.familyName");
+							attributesSet.add("name.middleName");
+							attributesSet.add("name.givenName");
+							attributesSet.add("name.honorificPrefix");
+							attributesSet.add("name.honorificSuffix");
+							attributesSet.add("name.formatted");
+						}
+
+					} else {
+						attributesSet.add(attribute);
+					}
 				}
 			}
+
 			attributesSet.add("id");
-			attributesSet.add("userName");
+			if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
+				attributesSet.add("userName");
+			}
 			attributesSet.add("meta.created");
 			attributesSet.add("meta.lastModified");
 			attributesSet.add("meta.location");
@@ -223,11 +240,6 @@ public class BaseScimWebService {
 				}
 			}
 		}
-		// Eliminate duplicates
-		if (attributes != null && attributes.length > 0) {
-			Set<String> attributesSet = new LinkedHashSet<String>(Arrays.asList(attributes));
-			attributes = attributesSet.toArray(new String[attributesSet.size()]);
-		}
 
 		log.info(" ### CONVERTED PARAMS ###");
 		log.info(" parsed filter = " + filter.toString());
@@ -235,7 +247,7 @@ public class BaseScimWebService {
 		log.info(" count = " + count);
 		log.info(" sortBy = " + sortBy);
 		log.info(" sortOrder = " + sortOrderEnum.getValue());
-		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? mapper.writeValueAsString(attributes) : null));
+		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? new ObjectMapper().writeValueAsString(attributes) : null));
 
 		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
 

@@ -13,6 +13,8 @@ import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.LongNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserSerializer;
@@ -34,9 +36,6 @@ public class ListResponseUserSerializer extends UserSerializer {
 
     @Logger
     private static Log log;
-
-    private String attributesArray;
-    private Set<String> attributes;
 
     @Override
     public void serialize(User user, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
@@ -82,6 +81,10 @@ public class ListResponseUserSerializer extends UserSerializer {
 
         // log.info(" ##### PARENT: " + parent);
 
+        if (parent != null) {
+            parent = FilterUtil.stripScimSchema(parent);
+        }
+
         Iterator<Map.Entry<String, JsonNode>> iterator = rootNode.getFields();
 
         while (iterator.hasNext()) {
@@ -92,15 +95,26 @@ public class ListResponseUserSerializer extends UserSerializer {
 
                 for (String attribute : attributes) {
 
+                    attribute = FilterUtil.stripScimSchema(attribute);
                     String[] split = attribute.split("\\.");
+
+                    if (split.length == 2 && split[1] != null) {
+                        if (split[1].equalsIgnoreCase("$ref")) {
+                            split[1] = "reference";
+                        }
+                    }
 
                     if ((((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase(split[0])) && rootNodeEntry.getKey().equalsIgnoreCase(split[1])) ||
                         rootNodeEntry.getKey().equalsIgnoreCase(split[0])) {
 
                         // log.info(" ##### MATCH: " + attribute);
+                        writeStructure(parent, rootNodeEntry, mapper, user, jsonGenerator);
+                        break;
+                    }
+
+                    if ((SchemaTypeMapping.getSchemaTypeInstance(rootNodeEntry.getKey()) instanceof UserExtensionSchema)) {
 
                         writeStructure(parent, rootNodeEntry, mapper, user, jsonGenerator);
-
                         break;
                     }
                 }
@@ -133,20 +147,66 @@ public class ListResponseUserSerializer extends UserSerializer {
 
                 jsonGenerator.writeStartArray();
 
-                if (arrayNode.size() > 0) {
+                if (rootNodeEntry.getKey().equalsIgnoreCase("schemas")) {
 
                     for (int i = 0; i < arrayNode.size(); i++) {
 
                         JsonNode arrayNodeElement = arrayNode.get(i);
 
-                        if (arrayNodeElement.isObject()) {
+                        if (arrayNodeElement.getTextValue().equalsIgnoreCase(Constants.USER_EXT_SCHEMA_ID)) {
 
-                            jsonGenerator.writeStartObject();
-                            processNodes(rootNodeEntry.getKey(), arrayNodeElement, mapper, user, jsonGenerator);  // Recursion
-                            jsonGenerator.writeEndObject();
+                            boolean hasUserExtensionsInAttributes = false;
+                            Extension extension = user.getExtension(Constants.USER_EXT_SCHEMA_ID);
+
+                            if (attributes != null && attributes.size() > 0) {
+
+                                for (Map.Entry<String, Extension.Field> extEntry : extension.getFields().entrySet()) {
+
+                                    for (String attribute : attributes) {
+
+                                        attribute = FilterUtil.stripScimSchema(attribute);
+
+                                        if (extEntry.getKey().equalsIgnoreCase(attribute)) {
+
+                                            hasUserExtensionsInAttributes = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                            } else {
+
+                                if (extension != null && !extension.getFields().isEmpty()) {
+                                    hasUserExtensionsInAttributes = true;
+                                }
+                            }
+
+                            if (hasUserExtensionsInAttributes) {
+                                jsonGenerator.writeObject(arrayNodeElement);
+                            }
 
                         } else {
                             jsonGenerator.writeObject(arrayNodeElement);
+                        }
+                    }
+
+                } else {
+
+                    if (arrayNode.size() > 0) {
+
+                        for (int i = 0; i < arrayNode.size(); i++) {
+
+                            JsonNode arrayNodeElement = arrayNode.get(i);
+
+                            if (arrayNodeElement.isObject()) {
+
+                                jsonGenerator.writeStartObject();
+                                processNodes(rootNodeEntry.getKey(), arrayNodeElement, mapper, user, jsonGenerator);  // Recursion
+                                jsonGenerator.writeEndObject();
+
+                            } else {
+                                jsonGenerator.writeObject(arrayNodeElement);
+                            }
                         }
                     }
                 }
@@ -174,12 +234,7 @@ public class ListResponseUserSerializer extends UserSerializer {
             }
 
         } else {
-            jsonGenerator.writeFieldName(rootNodeEntry.getKey());
             serializeUserExtension(rootNodeEntry, mapper, user, jsonGenerator);
         }
-    }
-
-    public void setAttributesArray(String attributesArray) {
-        this.attributesArray = attributesArray;
     }
 }

@@ -5,17 +5,26 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.util;
 
+import org.gluu.oxtrust.model.scim2.schema.SchemaType;
+import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
+
 /**
  * @author Val Pecaoco
  */
 public class FilterUtil {
 
-    public static String stripScimSchema(String schema, String uri) {
+    public static String stripScimSchema(String uri) {
 
-        String path = schema + ":";
-        if (uri.startsWith(path)) {
-            int index = uri.indexOf(path) + path.length();
-            uri = uri.substring(index);
+        for (SchemaType schemaType : SchemaTypeMapping.getSchemaInstances()) {
+
+            String schema = schemaType.getId() + ":";
+
+            if (uri.startsWith(schema)) {
+
+                int index = uri.indexOf(schema) + schema.length();
+                uri = uri.substring(index);
+                break;
+            }
         }
 
         return uri;

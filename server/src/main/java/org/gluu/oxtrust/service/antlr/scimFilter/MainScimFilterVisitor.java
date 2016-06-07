@@ -5,9 +5,12 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.gluu.oxtrust.model.scim2.Name;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterBaseVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +71,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     @Override
     public String visitLBRAC_EXPR_RBRAC(ScimFilterParser.LBRAC_EXPR_RBRACContext ctx) {
 
-        // logger.info(" visitLBRAC_EXPR_RBRAC() ");
+        logger.info(" IN MainScimFilterVisitor.visitLBRAC_EXPR_RBRAC()... ");
 
         StringBuilder result = new StringBuilder("");
         // result.append("&");
@@ -79,6 +82,8 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
         // result.append("(");
         result.append(visit(ctx.expression()));  // Add check if child attributes belong to the parent
         // result.append(")");
+
+        logger.info(" LEAVING MainScimFilterVisitor.visitLBRAC_EXPR_RBRAC()... ");
 
         return result.toString();
     }
@@ -115,17 +120,84 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     @Override
     public String visitEXPR_AND_EXPR(ScimFilterParser.EXPR_AND_EXPRContext ctx) {
 
-        // logger.info(" visitEXPR_AND_EXPR() ");
+        logger.info(" IN MainScimFilterVisitor.visitEXPR_AND_EXPR()... ");
+
+        boolean isMultivalued = false;
+
+        ParseTree parent = ctx.getParent();
+        while (parent != null) {
+
+            if (parent.getClass().getSimpleName().equalsIgnoreCase(ScimFilterParser.LBRAC_EXPR_RBRACContext.class.getSimpleName())) {
+
+                logger.info("********** PARENT = " + parent.getClass().getSimpleName());
+
+                isMultivalued = true;
+                break;
+
+            } else {
+                parent = parent.getParent();
+            }
+        }
+
+        if (!isMultivalued) {
+
+            String leftText = FilterUtil.stripScimSchema(ctx.expression(0).getChild(0).getText());
+            String rightText = FilterUtil.stripScimSchema(ctx.expression(1).getChild(0).getText());
+
+            String[] leftTextTokens = leftText.split("\\.");
+            String[] rightTextTokens = rightText.split("\\.");
+
+            if (leftTextTokens[0].equalsIgnoreCase(rightTextTokens[0]) && !leftTextTokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+                isMultivalued = true;
+            }
+        }
+
+        String leftExp = visit(ctx.expression(0));
+        String rightExp = visit(ctx.expression(1));
 
         StringBuilder result = new StringBuilder("");
-        result.append("&(");
-        result.append(visit(ctx.expression(0)));
-        result.append(")");
-        result.append("(");
-        result.append(visit(ctx.expression(1)));
-        result.append(")");
 
-        return result.toString();
+        if (isMultivalued && !leftExp.startsWith("!(") && !rightExp.startsWith("!(")) {
+
+            if (!leftExp.startsWith("&(") || !leftExp.startsWith("|(")) {
+
+                String[] leftExpTokens = leftExp.split("\\=");
+                String[] rightExpTokens = rightExp.split("\\=");
+
+                if (leftExpTokens[0].equalsIgnoreCase(rightExpTokens[0])) {
+
+                    result.append("&(|(");
+                    result.append(leftExpTokens[0]);
+                    result.append("=");
+                    result.append(leftExpTokens[1]);
+                    result.append("*");
+                    result.append(rightExpTokens[1]);
+                    result.append(")");
+                    result.append("(");
+                    result.append(leftExpTokens[0]);
+                    result.append("=");
+                    result.append(rightExpTokens[1]);
+                    result.append("*");
+                    result.append(leftExpTokens[1]);
+                    result.append("))");
+
+                } else {
+                    result.append(transformToLdapAndFilter(leftExp, rightExp));
+                }
+
+            } else {
+                result.append(transformToLdapAndFilter(leftExp, rightExp));
+            }
+
+        } else {
+            result.append(transformToLdapAndFilter(leftExp, rightExp));
+        }
+
+        logger.info("##### parsed filter = " + result.toString().replaceAll("\\*{2,}","\\*"));
+
+        logger.info(" LEAVING MainScimFilterVisitor.visitEXPR_AND_EXPR()... ");
+
+        return result.toString().replaceAll("\\*{2,}","\\*");
     }
 
     /**
@@ -249,5 +321,83 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
         result = result.replaceAll("\\)", "\29");
 
         return result;
+    }
+
+    public String evaluateMultivaluedCriteria(String criteria, String operator, String[] tokens) {
+
+        // This is already specific implementation. Currently only support up to second level.
+        if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+
+            StringBuilder result = new StringBuilder();
+
+            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
+                result.append("\"");
+            } else {
+                result.append("*\"");
+            }
+
+            result.append(tokens[1]);
+
+            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL) ||
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.NOT_EQUAL)) {
+                result.append("\":\"");
+            } else {
+                result.append("\":*");
+            }
+
+            result.append(criteria);
+
+            if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
+                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
+                result.append("\"*");
+            }
+
+            criteria = result.toString();
+        }
+
+        return criteria;
+    }
+
+    public String evaluateIsPresentCriteria(String ldapAttributeName, String[] tokens) {
+
+        StringBuilder result = new StringBuilder("");
+
+        // This is already specific implementation. Currently only support up to second level.
+        if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+
+            result.append("&(");
+            result.append(ldapAttributeName);
+            result.append("=*");
+            result.append(")(");
+
+            result.append(ldapAttributeName);
+            result.append("=*\"");
+            result.append(tokens[1]);
+            result.append("\":\"*");
+            result.append(")");
+
+        } else {
+
+            result.append(ldapAttributeName);
+            result.append("=*");
+        }
+
+        return result.toString();
+    }
+
+    public String transformToLdapAndFilter(String leftExp, String rightExp) {
+
+        StringBuilder result = new StringBuilder();
+
+        result.append("&(");
+        result.append(leftExp);
+        result.append(")");
+        result.append("(");
+        result.append(rightExp);
+        result.append(")");
+
+        return result.toString();
     }
 }

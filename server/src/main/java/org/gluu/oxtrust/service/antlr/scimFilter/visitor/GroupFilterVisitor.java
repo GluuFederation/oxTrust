@@ -50,7 +50,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
 
     public static String getGroupLdapAttributeName(String attrName) {
 
-        String ldapAttributeName = FilterUtil.stripScimSchema(Constants.GROUP_CORE_SCHEMA_ID, attrName);
+        String ldapAttributeName = FilterUtil.stripScimSchema(attrName);
 
         String[] tokens = ldapAttributeName.split("\\.");
 
@@ -82,43 +82,13 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
 
         logger.info(" GroupFilterVisitor.attrOperCriteriaResolver() ");
 
-        attrName = FilterUtil.stripScimSchema(Constants.GROUP_CORE_SCHEMA_ID, attrName);
+        attrName = FilterUtil.stripScimSchema(attrName);
 
         String[] tokens = attrName.split("\\.");
 
         String ldapAttributeName = getGroupLdapAttributeName(attrName);
 
-        // This is already specific implementation. Currently only support up to second level.
-        if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
-
-            StringBuilder sb = new StringBuilder();
-
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.ENDS_WITH) ||
-                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS)) {
-                sb.append("\"");
-            } else {
-                sb.append("*\"");
-            }
-
-            sb.append(tokens[1]);
-
-            if (ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.EQUAL) ||
-                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
-                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.NOT_EQUAL)) {
-                sb.append("\":\"");
-            } else {
-                sb.append("\":*");
-            }
-
-            sb.append(criteria);
-
-            if (!(ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.STARTS_WITH) ||
-                ScimOperator.getByValue(operator.toLowerCase()).equals(ScimOperator.CONTAINS))) {
-                sb.append("\"*");
-            }
-
-            criteria = sb.toString();
-        }
+        criteria = evaluateMultivaluedCriteria(criteria, operator, tokens);
 
         logger.info(" ##### attrName = " + attrName + ", ldapAttributeName = " + ldapAttributeName + ", criteria = " + criteria);
 
@@ -204,64 +174,32 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
         logger.info(" GroupFilterVisitor.visitATTR_PR() ");
 
         String attrName = ctx.ATTRNAME().getText();
-        attrName = FilterUtil.stripScimSchema(Constants.GROUP_CORE_SCHEMA_ID, attrName);
+
+        ParseTree parent = ctx.getParent();
+        while (parent != null) {
+
+            if (parent.getClass().getSimpleName().equalsIgnoreCase(ScimFilterParser.LBRAC_EXPR_RBRACContext.class.getSimpleName())) {
+
+                logger.info("********** PARENT = " + parent.getClass().getSimpleName());
+
+                attrName = ((ScimFilterParser.LBRAC_EXPR_RBRACContext)parent).ATTRNAME() + "." + ctx.ATTRNAME().getText();
+                break;
+
+            } else {
+                parent = parent.getParent();
+            }
+        }
+
+        attrName = FilterUtil.stripScimSchema(attrName);
         String[] tokens = attrName.split("\\.");
 
         String ldapAttributeName = getGroupLdapAttributeName(attrName);
 
-        StringBuilder result = new StringBuilder("");
-
-        // This is already specific implementation. Currently only support up to second level.
-        if (tokens.length == 2 && !tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
-
-            result.append("&(");
-            result.append(ldapAttributeName);
-            result.append("=*");
-            result.append(")(");
-
-            result.append(ldapAttributeName);
-            result.append("=*\"");
-            result.append(tokens[1]);
-            result.append("\":\"*");
-            result.append(")");
-
-        } else {
-
-            result.append(ldapAttributeName);
-            result.append("=*");
-        }
-
         logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
 
-        String expr = result.toString();
+        String expr = evaluateIsPresentCriteria(ldapAttributeName, tokens);
         logger.info(" ##### expr = " + expr);
 
         return expr;
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
-    @Override
-    public String visitLBRAC_EXPR_RBRAC(ScimFilterParser.LBRAC_EXPR_RBRACContext ctx) {
-
-        logger.info(" GroupFilterVisitor.visitLBRAC_EXPR_RBRAC() ");
-
-        StringBuilder result = new StringBuilder("");
-        // result.append("&");
-        // result.append("(");
-        // result.append(getGroupLdapAttributeName(ctx.ATTRNAME().getText()));
-        // result.append("=*");
-        // result.append(")");
-        // result.append("(");
-        result.append(visit(ctx.expression()));  // See this.visitATTR_OPER_CRITERIA()
-        // result.append(")");
-
-        return result.toString();
     }
 }

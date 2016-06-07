@@ -37,7 +37,7 @@ import org.jboss.seam.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
@@ -71,10 +71,8 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
-
 		Response authorizationResponse = null;
-		if (applicationConfiguration.isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -165,7 +163,8 @@ public class GroupWebService extends BaseScimWebService {
 	public Response getGroupById(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-		@PathParam("id") String id) throws Exception {
+		@PathParam("id") String id,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -182,11 +181,20 @@ public class GroupWebService extends BaseScimWebService {
 
 			groupService = GroupService.instance();
 
-			GluuGroup gluuGroup = groupService.getGroupByInum(id);
-			if (gluuGroup == null) {
+			String filterString = "id eq \"" + id + "\"";
+			VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+
+			List<GluuGroup> groupList = search(groupService.getDnForGroup(null), GluuGroup.class, filterString, 1, 1, "id", SortOrder.ASCENDING.getValue(), vlvResponse, attributesArray);
+			// GluuGroup gluuGroup = groupService.getGroupByInum(id);
+
+			if (groupList == null || groupList.isEmpty() || vlvResponse.getTotalResults() == 0) {
 				// sets HTTP status code 404 Not Found
 				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+			} else {
+				log.info(" Resource " + id + " found ");
 			}
+
+			GluuGroup gluuGroup = groupList.get(0);
 
 			Group group = CopyUtils2.copy(gluuGroup, null);
 
@@ -198,7 +206,7 @@ public class GroupWebService extends BaseScimWebService {
 			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
 			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
-			// serializer.setAttributesArray(attributesArray);
+			serializer.setAttributesArray(attributesArray);
 			customScimFilterModule.addSerializer(Group.class, serializer);
 			mapper.registerModule(customScimFilterModule);
 			String json = mapper.writeValueAsString(group);
@@ -226,12 +234,11 @@ public class GroupWebService extends BaseScimWebService {
 	public Response createGroup(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-		@ApiParam(value = "Group", required = true) Group group) throws Exception {
-
-		ApplicationConfiguration applicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
+		@ApiParam(value = "Group", required = true) Group group,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse = null;
-		if (applicationConfiguration.isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -241,13 +248,13 @@ public class GroupWebService extends BaseScimWebService {
 			return authorizationResponse;
 		}
 
-		log.debug(" copying gluuGroup ");
-		GluuGroup gluuGroup = CopyUtils2.copy(group, null, false);
-		if (gluuGroup == null) {
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to create group");
-		}
-
 		try {
+
+			log.debug(" copying gluuGroup ");
+			GluuGroup gluuGroup = CopyUtils2.copy(group, null, false);
+			if (gluuGroup == null) {
+				return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to create group");
+			}
 
 			groupService = GroupService.instance();
 
@@ -296,7 +303,7 @@ public class GroupWebService extends BaseScimWebService {
 			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
 			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
-			// serializer.setAttributesArray(attributesArray);
+			serializer.setAttributesArray(attributesArray);
 			customScimFilterModule.addSerializer(Group.class, serializer);
 			mapper.registerModule(customScimFilterModule);
 			String json = mapper.writeValueAsString(createdGroup);
@@ -308,7 +315,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.error("Failed to create group", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.UNIQUENESS, ex.getMessage());
+			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
 		} catch (Exception ex) {
 
@@ -329,7 +336,8 @@ public class GroupWebService extends BaseScimWebService {
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@PathParam("id") String id,
-		@ApiParam(value = "Group", required = true) Group group) throws Exception {
+		@ApiParam(value = "Group", required = true) Group group,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -399,7 +407,7 @@ public class GroupWebService extends BaseScimWebService {
 			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
 			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
-			// serializer.setAttributesArray(attributesArray);
+			serializer.setAttributesArray(attributesArray);
 			customScimFilterModule.addSerializer(Group.class, serializer);
 			mapper.registerModule(customScimFilterModule);
 			String json = mapper.writeValueAsString(updatedGroup);
@@ -415,7 +423,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.error("Failed to update group", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, ex.getMessage());
+			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
 		} catch (Exception ex) {
 

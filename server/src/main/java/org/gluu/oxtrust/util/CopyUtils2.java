@@ -144,26 +144,31 @@ public class CopyUtils2 implements Serializable {
 			if (source.getUserName() != null && source.getUserName().length() > 0) {
 				destination.setUid(source.getUserName());
 			}
-			log.trace(" setting givenname ");
-			if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
-				destination.setGivenName(source.getName().getGivenName());
+
+			if (source.getName() != null) {
+
+				log.trace(" setting givenname ");
+				if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
+					destination.setGivenName(source.getName().getGivenName());
+				}
+				log.trace(" setting famillyname ");
+				if (source.getName().getFamilyName() != null && source.getName().getFamilyName().length() > 0) {
+					destination.setSurname(source.getName().getFamilyName());
+				}
+				log.trace(" setting middlename ");
+				if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
+					// destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
+					destination.setAttribute("middleName", source.getName().getMiddleName());
+				}
+				log.trace(" setting honor");
+				if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
+					destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
+				}
+				if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
+					destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
+				}
 			}
-			log.trace(" setting famillyname ");
-			if (source.getName().getFamilyName() != null && source.getName().getFamilyName().length() > 0) {
-				destination.setSurname(source.getName().getFamilyName());
-			}
-			log.trace(" setting middlename ");
-			if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
-				// destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
-				destination.setAttribute("middleName", source.getName().getMiddleName());
-			}
-			log.trace(" setting honor");
-			if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
-				destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
-			}
-			if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
-				destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
-			}
+
 			log.trace(" setting displayname ");
 			if (source.getDisplayName() != null && source.getDisplayName().length() > 0) {
 				destination.setDisplayName(source.getDisplayName());
@@ -433,25 +438,30 @@ public class CopyUtils2 implements Serializable {
 				if (source.getUserName() != null && source.getUserName().length() > 0) {
 					destination.setUid(source.getUserName());
 				}
-				log.trace(" setting givenname ");
-				if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
-					destination.setGivenName(source.getName().getGivenName());
+
+				if (source.getName() != null) {
+
+					log.trace(" setting givenname ");
+					if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
+						destination.setGivenName(source.getName().getGivenName());
+					}
+					log.trace(" setting famillyname ");
+					if (source.getName().getFamilyName() != null && source.getName().getFamilyName().length() > 0) {
+						destination.setSurname(source.getName().getFamilyName());
+					}
+					log.trace(" setting middlename ");
+					if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
+						destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
+					}
+					log.trace(" setting honor");
+					if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
+						destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
+					}
+					if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
+						destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
+					}
 				}
-				log.trace(" setting famillyname ");
-				if (source.getName().getFamilyName() != null && source.getName().getFamilyName().length() > 0) {
-					destination.setSurname(source.getName().getFamilyName());
-				}
-				log.trace(" setting middlename ");
-				if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
-					destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
-				}
-				log.trace(" setting honor");
-				if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
-					destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
-				}
-				if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
-					destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
-				}
+
 				log.trace(" setting displayname ");
 				if (source.getDisplayName() != null && source.getDisplayName().length() > 0) {
 					destination.setDisplayName(source.getDisplayName());
@@ -1252,25 +1262,30 @@ public class CopyUtils2 implements Serializable {
 		if (source.getUserName() != null && source.getUserName().length() > 0) {
 			destination.setUid(source.getUserName());
 		}
-		log.trace(" setting givenname ");
-		if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
-			destination.setGivenName(source.getName().getGivenName());
+
+		if (source.getName() != null) {
+
+			log.trace(" setting givenname ");
+			if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
+				destination.setGivenName(source.getName().getGivenName());
+			}
+			log.trace(" setting famillyname ");
+			if (source.getName().getFamilyName() != null && source.getName().getGivenName().length() > 0) {
+				destination.setSurname(source.getName().getFamilyName());
+			}
+			log.trace(" setting middlename ");
+			if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
+				destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
+			}
+			log.trace(" setting honor");
+			if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
+				destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
+			}
+			if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
+				destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
+			}
 		}
-		log.trace(" setting famillyname ");
-		if (source.getName().getFamilyName() != null && source.getName().getGivenName().length() > 0) {
-			destination.setSurname(source.getName().getFamilyName());
-		}
-		log.trace(" setting middlename ");
-		if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
-			destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
-		}
-		log.trace(" setting honor");
-		if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
-			destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
-		}
-		if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
-			destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
-		}
+
 		log.trace(" setting displayname ");
 		if (source.getDisplayName() != null && source.getDisplayName().length() > 0) {
 			destination.setDisplayName(source.getDisplayName());
