@@ -198,7 +198,7 @@ public class UserWebService extends BaseScimWebService {
 				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
-			// Sync email
+			// Sync email, forward ("oxTrustEmail" -> "mail")
 			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
 
 			log.debug("adding new GluuPerson");
@@ -274,7 +274,7 @@ public class UserWebService extends BaseScimWebService {
 				Utils.groupMembersAdder(newGluuPerson, personService.getDnForPerson(id));
 			}
 
-			// Sync email
+			// Sync email, forward ("oxTrustEmail" -> "mail")
 			newGluuPerson = Utils.syncEmailForward(newGluuPerson, false);
 
 			personService.updatePerson(newGluuPerson);

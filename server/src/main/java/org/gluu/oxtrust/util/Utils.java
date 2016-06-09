@@ -26,18 +26,19 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim.ScimPersonEmails;
 import org.gluu.oxtrust.model.scim2.Email;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * User: Dejan Maric
  */
 public class Utils implements Serializable {
 
-	/**
-     *
-     */
+	private static Logger logger = LoggerFactory.getLogger(Utils.class);
+
 	private static final long serialVersionUID = -2842459224631032594L;
     
-        private static final SecureRandom random = new SecureRandom();
+	private static final SecureRandom random = new SecureRandom();
 
 	/**
 	 * Delete a Group from a Person
@@ -370,41 +371,48 @@ public class Utils implements Serializable {
 	 */
 	public static GluuCustomPerson syncEmailForward(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
 
-		GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
+		logger.info(" IN Utils.syncEmailForward()...");
+
 		GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
 
 		if (oxTrustEmail != null && oxTrustEmail.getValues().length > 0) {
 
 			String[] oxTrustEmails = oxTrustEmail.getValues();  // JSON array in element 0
-			String[] newMails = null;
+			String[] newMails = new String[oxTrustEmails.length];
+
+			ObjectMapper mapper = getObjectMapper();
 
 			if (isScim2) {
 
+				/*
 				Email[] emails = getObjectMapper().readValue(oxTrustEmails[0], Email[].class);
 				newMails = new String[emails.length];
 
 				for (int i = 0; i < emails.length; i++) {
 					newMails[i] = emails[i].getValue();
 				}
+				*/
 
-				if (mail == null) {
-					mail = new GluuCustomAttribute();
+				for (int i = 0; i < oxTrustEmails.length; i++) {
+					Email email = mapper.readValue(oxTrustEmails[i], Email.class);
+					newMails[i] = email.getValue();
 				}
-				mail.setValues(newMails);
 
 			} else {
 
-				ScimPersonEmails[] emails = getObjectMapper().readValue(oxTrustEmails[0], ScimPersonEmails[].class);
+				/*
+				ScimPersonEmails[] emails = mapper.readValue(oxTrustEmails[0], ScimPersonEmails[].class);
 				newMails = new String[emails.length];
 
 				for (int i = 0; i < emails.length; i++) {
 					newMails[i] = emails[i].getValue();
 				}
+				*/
 
-				if (mail == null) {
-					mail = new GluuCustomAttribute();
+				for (int i = 0; i < oxTrustEmails.length; i++) {
+					ScimPersonEmails email = mapper.readValue(oxTrustEmails[i], ScimPersonEmails.class);
+					newMails[i] = email.getValue();
 				}
-				mail.setValues(newMails);
 			}
 
 			gluuCustomPerson.setAttribute("mail", newMails);
@@ -415,14 +423,14 @@ public class Utils implements Serializable {
 		*/
 		}
 
+		logger.info(" LEAVING Utils.syncEmailForward()...");
+
 		return gluuCustomPerson;
 	}
 
 	/**
-	 * One-way sync from "mail" to "oxTrustEmail". In the call chain the sync-ing is ultimately
-	 * not persisted so this is for API purposes only. This is the case because both SCIM 2.0 and
-	 * 1.1 persist to the same field "oxTrustEmail" and during runtime the choice whether to
-	 * use SCIM 2.0 or 1.1 is ambiguous.
+	 * One-way sync from "mail" to "oxTrustEmail". This will persist the email in "oxTrustEmail"
+	 * in SCIM 2.0 format since the SCIM 1.1 format is a subset of SCIM 2.0.
 	 *
 	 * @param gluuCustomPerson
 	 * @param isScim2
@@ -430,6 +438,8 @@ public class Utils implements Serializable {
 	 * @throws Exception
      */
 	public static GluuCustomPerson syncEmailReverse(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
+
+		logger.info(" IN Utils.syncEmailReverse()...");
 
 		GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
 		GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
@@ -440,27 +450,37 @@ public class Utils implements Serializable {
 
 			String[] oxTrustEmails = null;
 			if (oxTrustEmail != null) {
-				oxTrustEmails = oxTrustEmail.getValues();  // JSON array in element 0
+				oxTrustEmails = oxTrustEmail.getValues();  // In the old format, JSON array is in element 0
 			}
 
-			if (isScim2) {
+			ObjectMapper mapper = getObjectMapper();
 
-				List<Email> newOxTrustEmails = new ArrayList<Email>();
-				Email[] emails = new Email[mails.length];
+			// Retain the switch just in case this will be useful in the future
+			// if (isScim2) {
+
+				List<String> newOxTrustEmails = new ArrayList<String>();
+				Email[] emails = null;
 
 				if (oxTrustEmails != null && oxTrustEmails.length > 0) {
-					emails = getObjectMapper().readValue(oxTrustEmails[0], Email[].class);
+
+					// emails = mapper.readValue(oxTrustEmails[0], Email[].class);
+					emails = new Email[oxTrustEmails.length];
+
+					for (int i = 0; i < oxTrustEmails.length; i++) {
+						Email email = mapper.readValue(oxTrustEmails[i], Email.class);
+						emails[i] = email;
+					}
 				}
 
 				for (int i = 0; i < mails.length; i++) {
 
-					if (i < emails.length && (emails[i] != null)) {
+					if (emails != null && (i < emails.length) && (emails[i] != null)) {
 
 						Email email = emails[i];
-						email.setDisplay((email.getDisplay() != null && email.getDisplay().equalsIgnoreCase(email.getValue())) ? mails[i] : email.getDisplay());
+						email.setDisplay((email.getDisplay() != null && !email.getDisplay().equalsIgnoreCase(email.getValue())) ? email.getDisplay() : mails[i]);
 						email.setValue(mails[i]);
 
-						newOxTrustEmails.add(email);
+						newOxTrustEmails.add(mapper.writeValueAsString(email));
 
 					} else {
 
@@ -470,16 +490,19 @@ public class Utils implements Serializable {
 						email.setDisplay(mails[i]);
 						email.setType(Email.Type.OTHER);
 
-						newOxTrustEmails.add(email);
+						newOxTrustEmails.add(mapper.writeValueAsString(email));
 					}
 				}
 
+			    /*
 				StringWriter stringWriter = new StringWriter();
 				getObjectMapper().writeValue(stringWriter, newOxTrustEmails);
 				String newOxTrustEmail = stringWriter.toString();
+				*/
 
-				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmail);
+				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmails.toArray(new String[]{}));
 
+			/*
 			} else {
 
 				List<ScimPersonEmails> newOxTrustEmails = new ArrayList<ScimPersonEmails>();
@@ -515,7 +538,10 @@ public class Utils implements Serializable {
 
 				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmail);
 			}
+			*/
 		}
+
+		logger.info(" LEAVING Utils.syncEmailReverse()...");
 
 		return gluuCustomPerson;
 	}

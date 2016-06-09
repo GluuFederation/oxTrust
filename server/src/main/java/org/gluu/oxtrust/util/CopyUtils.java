@@ -150,6 +150,7 @@ public class CopyUtils implements Serializable {
 	 */
 
 	public static GluuCustomPerson copy(ScimPerson source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
+
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
@@ -159,10 +160,10 @@ public class CopyUtils implements Serializable {
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new GluuCustomPerson();
-
 		}
 
 		if (isUpdate) {
+
 			personService1.addCustomObjectClass(destination);
 
 			if (StringUtils.isNotEmpty(source.getUserName())) {
@@ -194,7 +195,29 @@ public class CopyUtils implements Serializable {
 
 			setOrRemoveOptionalAttribute(destination, source.getProfileUrl(), OX_TRUST_PROFILE_URL);
 
-			setOrRemoveOptionalAttributeList(destination, source.getEmails(), OX_TRUST_EMAIL);
+			// setOrRemoveOptionalAttributeList(destination, source.getEmails(), OX_TRUST_EMAIL);
+			if (source.getEmails() != null && source.getEmails().size() > 0) {
+
+				List<ScimPersonEmails> emails = source.getEmails();
+
+				/*
+				StringWriter listOfEmails = new StringWriter();
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.writeValue(listOfEmails, emails);
+				*/
+
+				List<String> emailList = new ArrayList<String>();
+				for (ScimPersonEmails email : emails) {
+					emailList.add(Utils.getObjectMapper().writeValueAsString(email));
+				}
+
+				// destination.setAttribute("oxTrustEmail", listOfEmails.toString());
+				destination.setAttribute(OX_TRUST_EMAIL, emailList.toArray(new String[]{}));
+
+			} else {
+				log.trace(" removing " + OX_TRUST_EMAIL);
+				destination.removeAttribute(OX_TRUST_EMAIL);
+			}
 
 			setOrRemoveOptionalAttributeList(destination, source.getAddresses(), OX_TRUST_ADDRESSES);
 
@@ -277,7 +300,9 @@ public class CopyUtils implements Serializable {
 			}
 
 		} else {
+
 			try {
+
 				if (personService1.getPersonByUid(source.getUserName()) != null) {
 					return null;
 				}
@@ -313,7 +338,29 @@ public class CopyUtils implements Serializable {
 
 				setOrRemoveOptionalAttribute(destination, source.getProfileUrl(), OX_TRUST_PROFILE_URL);
 
-				setOrRemoveOptionalAttributeList(destination, source.getEmails(), OX_TRUST_EMAIL);
+				// setOrRemoveOptionalAttributeList(destination, source.getEmails(), OX_TRUST_EMAIL);
+				if (source.getEmails() != null && source.getEmails().size() > 0) {
+
+					List<ScimPersonEmails> emails = source.getEmails();
+
+					/*
+					StringWriter listOfEmails = new StringWriter();
+					ObjectMapper mapper = new ObjectMapper();
+					mapper.writeValue(listOfEmails, emails);
+					*/
+
+					List<String> emailList = new ArrayList<String>();
+					for (ScimPersonEmails email : emails) {
+						emailList.add(Utils.getObjectMapper().writeValueAsString(email));
+					}
+
+					// destination.setAttribute("oxTrustEmail", listOfEmails.toString());
+					destination.setAttribute(OX_TRUST_EMAIL, emailList.toArray(new String[]{}));
+
+				} else {
+					log.trace(" removing " + OX_TRUST_EMAIL);
+					destination.removeAttribute(OX_TRUST_EMAIL);
+				}
 
 				setOrRemoveOptionalAttributeList(destination, source.getAddresses(), OX_TRUST_ADDRESSES);
 
@@ -465,9 +512,13 @@ public class CopyUtils implements Serializable {
 	 * @throws Exception
 	 */
 	public static ScimPerson copy(GluuCustomPerson source, ScimPerson destination) throws Exception {
+
 		if (source == null) {
 			return null;
 		}
+
+		ObjectMapper mapper = Utils.getObjectMapper();
+
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new ScimPerson();
@@ -522,10 +573,12 @@ public class CopyUtils implements Serializable {
 		}
 
 		log.trace(" getting emails ");
-		source = Utils.syncEmailReverse(source, false);
-		if (source.getAttribute(OX_TRUST_EMAIL) != null) {
-			ObjectMapper mapper = new ObjectMapper();
-			List<ScimPersonEmails> listOfEmails = mapper.readValue(source.getAttribute(OX_TRUST_EMAIL), new TypeReference<List<ScimPersonEmails>>(){});
+		// source = Utils.syncEmailReverse(source, false);
+		// if (source.getAttribute(OX_TRUST_EMAIL) != null) {
+		if (source.getAttributeArray(OX_TRUST_EMAIL) != null) {
+
+			// List<ScimPersonEmails> listOfEmails = Utils.getObjectMapper().readValue(source.getAttribute(OX_TRUST_EMAIL), new TypeReference<List<ScimPersonEmails>>(){});
+
 			/*
 			 * List<ScimPersonEmails> emails = new
 			 * ArrayList<ScimPersonEmails>(); String[] listEmails =
@@ -539,13 +592,23 @@ public class CopyUtils implements Serializable {
 			 * oneEmail.setPrimary(listEmailPrimary[i]); emails.add(oneEmail); }
 			 */
 
-			destination.setEmails(listOfEmails);
+			// destination.setEmails(listOfEmails);
+
+			String[] emailArray = source.getAttributeArray(OX_TRUST_EMAIL);
+			List<ScimPersonEmails> emails = new ArrayList<ScimPersonEmails>();
+
+			for (String emailStr : emailArray) {
+				ScimPersonEmails email = mapper.readValue(emailStr, ScimPersonEmails.class);
+				emails.add(email);
+			}
+
+			destination.setEmails(emails);
 		}
+
 		log.trace(" getting addresses ");
 		// getting addresses
 
 		if (source.getAttribute(OX_TRUST_ADDRESSES) != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<ScimPersonAddresses> listOfAddresses = mapper.readValue(source.getAttribute(OX_TRUST_ADDRESSES),
 					new TypeReference<List<ScimPersonAddresses>>() {
 					});
@@ -601,7 +664,6 @@ public class CopyUtils implements Serializable {
 		log.trace(" setting phoneNumber ");
 		// getting user's PhoneNumber
 		if (source.getAttribute(OX_TRUST_PHONE_VALUE) != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<ScimPersonPhones> listOfPhones = mapper.readValue(source.getAttribute(OX_TRUST_PHONE_VALUE),
 					new TypeReference<List<ScimPersonPhones>>() {
 					});
@@ -629,7 +691,6 @@ public class CopyUtils implements Serializable {
 		log.trace(" getting ims ");
 		// getting ims
 		if (source.getAttribute(OX_TRUST_IMS_VALUE) != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<ScimPersonIms> listOfIms = mapper.readValue(source.getAttribute(OX_TRUST_IMS_VALUE),
 					new TypeReference<List<ScimPersonIms>>() {
 					});
@@ -649,7 +710,6 @@ public class CopyUtils implements Serializable {
 		// getting photos
 
 		if (source.getAttribute(OX_TRUST_PHOTOS) != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<ScimPersonPhotos> listOfPhotos = mapper.readValue(source.getAttribute(OX_TRUST_PHOTOS),
 					new TypeReference<List<ScimPersonPhotos>>() {
 					});
@@ -718,7 +778,6 @@ public class CopyUtils implements Serializable {
 
 		// getting roles
 		if (source.getAttribute(OX_TRUST_ROLE) != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<ScimRoles> listOfRoles = mapper.readValue(source.getAttribute(OX_TRUST_ROLE),
 					new TypeReference<List<ScimRoles>>() {
 					});
@@ -736,7 +795,6 @@ public class CopyUtils implements Serializable {
 		log.trace(" getting entitlements ");
 		// getting entitlements
 		if (source.getAttribute(OX_TRUST_ENTITLEMENTS) != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<ScimEntitlements> listOfEnts = mapper.readValue(source.getAttribute(OX_TRUST_ENTITLEMENTS),
 					new TypeReference<List<ScimEntitlements>>() {
 					});
@@ -758,7 +816,6 @@ public class CopyUtils implements Serializable {
 		// getting x509Certificates
 		log.trace(" setting certs ");
 		if (source.getAttribute(OX_TRUSTX509_CERTIFICATE) != null) {
-			ObjectMapper mapper = new ObjectMapper();
 			List<Scimx509Certificates> listOfCerts = mapper.readValue(source.getAttribute(OX_TRUSTX509_CERTIFICATE),
 					new TypeReference<List<Scimx509Certificates>>() {
 					});
@@ -844,12 +901,10 @@ public class CopyUtils implements Serializable {
 			// return false;
 			// }
 		} else if (isEmpty(person.getUserName()) || isEmpty(person.getName().getGivenName()) || isEmpty(person.getDisplayName())
-				|| isEmpty(person.getName().getFamilyName())
-				// || (person.getEmails() == null || person.getEmails().size() <
-				// 1)
-				|| isEmpty(person.getPassword())) {
+			// || (person.getEmails() == null || person.getEmails().size() < 1)	|| isEmpty(person.getPassword())) {
+			|| isEmpty(person.getName().getFamilyName())) {
 
-			String message = "There are missing required parameters: userName, givenName, displayName, familyName, or password";
+			String message = "There are missing required parameters: userName, givenName, displayName, or familyName";
 			throw new PersonRequiredFieldsException(message);
 			// return false;
 		}

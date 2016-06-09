@@ -30,8 +30,6 @@ import org.xdi.model.ScimCustomAtribute;
 
 /**
  * Custom deserializer for the SCIM 2.0 User Extension class.
- *
- * This class is package-private by intention. If you need to use it, something went wrong.
  */
 @Name("extensionDeserializer")
 public class ExtensionDeserializer extends JsonDeserializer<Extension> {
@@ -71,7 +69,7 @@ public class ExtensionDeserializer extends JsonDeserializer<Extension> {
 
                 if (gluuAttribute != null) {
 
-                    if (!(gluuAttribute.isCustom() && (gluuAttribute.getOxSCIMCustomAttribute() != null && gluuAttribute.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE)))) {
+                    if (!(gluuAttribute.getOxSCIMCustomAttribute() != null && gluuAttribute.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE))) {
                         log.info(" NOT A CUSTOM ATTRIBUTE: " + gluuAttribute.getName());
                         throw new IllegalArgumentException("NOT A CUSTOM ATTRIBUTE: " + gluuAttribute.getName());
                     }

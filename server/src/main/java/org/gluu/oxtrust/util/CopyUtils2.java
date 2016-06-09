@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -122,12 +121,14 @@ public class CopyUtils2 implements Serializable {
 	 */
 
 	public static GluuCustomPerson copy(User source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
+
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
 
-		IPersonService personService1 = PersonService.instance();
+		ObjectMapper mapper = Utils.getObjectMapper();
 
+		IPersonService personService1 = PersonService.instance();
 
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
@@ -138,6 +139,7 @@ public class CopyUtils2 implements Serializable {
 		destination.setSchemas(source.getSchemas());
 
 		if (isUpdate) {
+
 			personService1.addCustomObjectClass(destination);
 
 			log.trace(" setting userName ");
@@ -193,11 +195,19 @@ public class CopyUtils2 implements Serializable {
 
 				List<Email> emails = source.getEmails();
 
+				/*
 				StringWriter listOfEmails = new StringWriter();
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfEmails, emails);
+				*/
 
-				destination.setAttribute("oxTrustEmail", listOfEmails.toString());
+				List<String> emailList = new ArrayList<String>();
+				for (Email email : emails) {
+					emailList.add(mapper.writeValueAsString(email));
+				}
+
+				// destination.setAttribute("oxTrustEmail", listOfEmails.toString());
+				destination.setAttribute("oxTrustEmail", emailList.toArray(new String[]{}));
 			}
 
 			// getting addresses
@@ -207,7 +217,6 @@ public class CopyUtils2 implements Serializable {
 				List<Address> addresses = source.getAddresses();
 
 				StringWriter listOfAddresses = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfAddresses, addresses);
 
 				destination.setAttribute("oxTrustAddresses", listOfAddresses.toString());
@@ -220,7 +229,6 @@ public class CopyUtils2 implements Serializable {
 				List<PhoneNumber> phones = source.getPhoneNumbers();
 
 				StringWriter listOfPhones = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfPhones, phones);
 
 				destination.setAttribute("oxTrustPhoneValue", listOfPhones.toString());
@@ -233,7 +241,6 @@ public class CopyUtils2 implements Serializable {
 				List<Im> ims = source.getIms();
 
 				StringWriter listOfIms = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfIms, ims);
 
 				destination.setAttribute("oxTrustImsValue", listOfIms.toString());
@@ -246,7 +253,6 @@ public class CopyUtils2 implements Serializable {
 				List<Photo> photos = source.getPhotos();
 
 				StringWriter listOfPhotos = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfPhotos, photos);
 
 				destination.setAttribute("oxTrustPhotos", listOfPhotos.toString());
@@ -297,7 +303,6 @@ public class CopyUtils2 implements Serializable {
 				List<Role> roles = source.getRoles();
 
 				StringWriter listOfRoles = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfRoles, roles);
 
 				destination.setAttribute("oxTrustRole", listOfRoles.toString());
@@ -310,7 +315,6 @@ public class CopyUtils2 implements Serializable {
 				List<Entitlement> ents = source.getEntitlements();
 
 				StringWriter listOfEnts = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfEnts, ents);
 
 				destination.setAttribute("oxTrustEntitlements", listOfEnts.toString());
@@ -323,7 +327,6 @@ public class CopyUtils2 implements Serializable {
 				List<X509Certificate> certs = source.getX509Certificates();
 
 				StringWriter listOfCerts = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
 				mapper.writeValue(listOfCerts, certs);
 
 				destination.setAttribute("oxTrustx509Certificate", listOfCerts.toString());
@@ -482,13 +485,22 @@ public class CopyUtils2 implements Serializable {
 				// getting emails
 				log.trace(" setting emails ");
 				if (source.getEmails() != null && source.getEmails().size() > 0) {
+
 					List<Email> emails = source.getEmails();
+
+					/*
 					StringWriter listOfEmails = new StringWriter();
 					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfEmails, emails);
+					*/
 
-					destination.setAttribute("oxTrustEmail", listOfEmails.toString());
+					List<String> emailList = new ArrayList<String>();
+					for (Email email : emails) {
+						emailList.add(mapper.writeValueAsString(email));
+					}
 
+					// destination.setAttribute("oxTrustEmail", listOfEmails.toString());
+					destination.setAttribute("oxTrustEmail", emailList.toArray(new String[]{}));
 				}
 
 				// getting addresses
@@ -497,7 +509,6 @@ public class CopyUtils2 implements Serializable {
 					List<Address> addresses = source.getAddresses();
 
 					StringWriter listOfAddresses = new StringWriter();
-					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfAddresses, addresses);
 
 					destination.setAttribute("oxTrustAddresses", listOfAddresses.toString());
@@ -509,7 +520,6 @@ public class CopyUtils2 implements Serializable {
 					List<PhoneNumber> phones = source.getPhoneNumbers();
 
 					StringWriter listOfPhones = new StringWriter();
-					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfPhones, phones);
 
 					destination.setAttribute("oxTrustPhoneValue", listOfPhones.toString());
@@ -522,7 +532,6 @@ public class CopyUtils2 implements Serializable {
 					List<Im> ims = source.getIms();
 
 					StringWriter listOfIms = new StringWriter();
-					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfIms, ims);
 
 					destination.setAttribute("oxTrustImsValue", listOfIms.toString());
@@ -535,7 +544,6 @@ public class CopyUtils2 implements Serializable {
 					List<Photo> photos = source.getPhotos();
 
 					StringWriter listOfPhotos = new StringWriter();
-					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfPhotos, photos);
 
 					destination.setAttribute("oxTrustPhotos", listOfPhotos.toString());
@@ -584,7 +592,6 @@ public class CopyUtils2 implements Serializable {
 					List<Role> roles = source.getRoles();
 
 					StringWriter listOfRoles = new StringWriter();
-					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfRoles, roles);
 
 					destination.setAttribute("oxTrustRole", listOfRoles.toString());
@@ -596,7 +603,6 @@ public class CopyUtils2 implements Serializable {
 					List<Entitlement> ents = source.getEntitlements();
 
 					StringWriter listOfEnts = new StringWriter();
-					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfEnts, ents);
 
 					destination.setAttribute("oxTrustEntitlements", listOfEnts.toString());
@@ -608,7 +614,6 @@ public class CopyUtils2 implements Serializable {
 					List<X509Certificate> certs = source.getX509Certificates();
 
 					StringWriter listOfCerts = new StringWriter();
-					ObjectMapper mapper = new ObjectMapper();
 					mapper.writeValue(listOfCerts, certs);
 
 					destination.setAttribute("oxTrustx509Certificate", listOfCerts.toString());
@@ -713,12 +718,12 @@ public class CopyUtils2 implements Serializable {
 	 */
 	public static User copy(GluuCustomPerson source, User destination) throws Exception {
 
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-
 		if (source == null) {
 			return null;
 		}
+
+		ObjectMapper mapper = Utils.getObjectMapper();
+
 		if (destination == null) {
             log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new User();
@@ -776,10 +781,21 @@ public class CopyUtils2 implements Serializable {
 		}
 
 		log.trace(" getting emails ");
-		source = Utils.syncEmailReverse(source, true);
+		// source = Utils.syncEmailReverse(source, true);
 		if (source.getAttributeArray("oxTrustEmail") != null) {
-			List<Email> listOfEmails = mapper.readValue(source.getAttribute("oxTrustEmail"), new TypeReference<List<Email>>(){});
-			destination.setEmails(listOfEmails);
+
+			String[] emailArray = source.getAttributeArray("oxTrustEmail");
+			List<Email> emails = new ArrayList<Email>();
+
+			for (String emailStr : emailArray) {
+				Email email = mapper.readValue(emailStr, Email.class);
+				emails.add(email);
+			}
+
+			// List<Email> listOfEmails = mapper.readValue(source.getAttribute("oxTrustEmail"), new TypeReference<List<Email>>(){});
+			// destination.setEmails(listOfEmails);
+
+			destination.setEmails(emails);
 		}
 
 		log.trace(" getting addresses ");
@@ -1081,7 +1097,8 @@ public class CopyUtils2 implements Serializable {
 			// return false;
 			// }
 		} else if (isEmpty(person.getUserId()) || isEmpty(person.getFirstName()) || isEmpty(person.getDisplayName())
-				|| isEmpty(person.getLastName()) || isEmpty(person.getEmail()) || isEmpty(person.getPassword())) {
+			// || isEmpty(person.getLastName()) || isEmpty(person.getEmail()) || isEmpty(person.getPassword())) {
+			|| isEmpty(person.getLastName()) || isEmpty(person.getEmail())) {
 			return false;
 		}
 		return true;
@@ -1097,12 +1114,10 @@ public class CopyUtils2 implements Serializable {
 			// return false;
 			// }
 		} else if (isEmpty(person.getUserName()) || isEmpty(person.getName().getGivenName()) || isEmpty(person.getDisplayName())
-				|| isEmpty(person.getName().getFamilyName())
-				// || (person.getEmails() == null || person.getEmails().size() <
-				// 1)
-				|| isEmpty(person.getPassword())) {
+			// || (person.getEmails() == null || person.getEmails().size() < 1) || isEmpty(person.getPassword())
+			|| isEmpty(person.getName().getFamilyName())) {
 
-			String message = "There are missing required parameters: userName, givenName, displayName, familyName, or password";
+			String message = "There are missing required parameters: userName, givenName, displayName, or familyName";
 			throw new PersonRequiredFieldsException(message);
 			// return false;
 		}

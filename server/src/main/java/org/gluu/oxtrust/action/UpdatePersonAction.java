@@ -19,6 +19,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -139,7 +140,7 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 */
 	@Restrict("#{s:hasPermission('person', 'access')}")
-	public String save() {
+	public String save() throws Exception {
 		if (!OrganizationService.instance().isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -152,6 +153,9 @@ public class UpdatePersonAction implements Serializable {
 
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
 		this.person.getCustomAttributes().addAll(removedAttributes);
+
+		// Sync email, in reverse ("oxTrustEmail" <- "mail")
+		this.person = Utils.syncEmailReverse(this.person, true);
 
 		if (update) {
 			try {
