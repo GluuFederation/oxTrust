@@ -43,7 +43,8 @@ public class UserExtensionLoadingStrategy implements LoadingStrategy {
 
         AttributeService attributeService = AttributeService.instance();
 
-        List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributesImpl(attributeService.getCustomAttributes());
+        // List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributesImpl(attributeService.getCustomAttributes());
+        List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributes();
 
         List<AttributeHolder> attributeHolders = new ArrayList<AttributeHolder>();
 

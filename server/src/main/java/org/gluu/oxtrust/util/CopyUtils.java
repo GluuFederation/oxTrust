@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+// import org.codehaus.jackson.type.TypeReference;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
@@ -198,13 +198,12 @@ public class CopyUtils implements Serializable {
 			// setOrRemoveOptionalAttributeList(destination, source.getEmails(), OX_TRUST_EMAIL);
 			if (source.getEmails() != null && source.getEmails().size() > 0) {
 
+				/*
 				List<ScimPersonEmails> emails = source.getEmails();
 
-				/*
-				StringWriter listOfEmails = new StringWriter();
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(listOfEmails, emails);
-				*/
+				// StringWriter listOfEmails = new StringWriter();
+				// ObjectMapper mapper = new ObjectMapper();
+				// mapper.writeValue(listOfEmails, emails);
 
 				List<String> emailList = new ArrayList<String>();
 				for (ScimPersonEmails email : emails) {
@@ -213,19 +212,22 @@ public class CopyUtils implements Serializable {
 
 				// destination.setAttribute("oxTrustEmail", listOfEmails.toString());
 				destination.setAttribute(OX_TRUST_EMAIL, emailList.toArray(new String[]{}));
+				*/
 
-			} else {
-				log.trace(" removing " + OX_TRUST_EMAIL);
-				destination.removeAttribute(OX_TRUST_EMAIL);
+				setOrRemoveAttributeListValue(destination, source.getEmails(), OX_TRUST_EMAIL);
 			}
 
-			setOrRemoveOptionalAttributeList(destination, source.getAddresses(), OX_TRUST_ADDRESSES);
+			// setOrRemoveOptionalAttributeList(destination, source.getAddresses(), OX_TRUST_ADDRESSES);
+			setOrRemoveAttributeListValue(destination, source.getAddresses(), OX_TRUST_ADDRESSES);
 
-			setOrRemoveOptionalAttributeList(destination, source.getPhoneNumbers(), OX_TRUST_PHONE_VALUE);
+			// setOrRemoveOptionalAttributeList(destination, source.getPhoneNumbers(), OX_TRUST_PHONE_VALUE);
+			setOrRemoveAttributeListValue(destination, source.getPhoneNumbers(), OX_TRUST_PHONE_VALUE);
 
-			setOrRemoveOptionalAttributeList(destination, source.getIms(), OX_TRUST_IMS_VALUE);
+			// setOrRemoveOptionalAttributeList(destination, source.getIms(), OX_TRUST_IMS_VALUE);
+			setOrRemoveAttributeListValue(destination, source.getIms(), OX_TRUST_IMS_VALUE);
 
-			setOrRemoveOptionalAttributeList(destination, source.getPhotos(), OX_TRUST_PHOTOS);
+			// setOrRemoveOptionalAttributeList(destination, source.getPhotos(), OX_TRUST_PHOTOS);
+			setOrRemoveAttributeListValue(destination, source.getPhotos(), OX_TRUST_PHOTOS);
 
 			setOrRemoveOptionalAttribute(destination, source.getUserType(), OX_TRUST_USER_TYPE);
 
@@ -249,11 +251,14 @@ public class CopyUtils implements Serializable {
 
 			setGroups(source, destination);
 
-			setOrRemoveOptionalAttributeList(destination, source.getRoles(), OX_TRUST_ROLE);
+			// setOrRemoveOptionalAttributeList(destination, source.getRoles(), OX_TRUST_ROLE);
+			setOrRemoveAttributeListValue(destination, source.getRoles(), OX_TRUST_ROLE);
 
-			setOrRemoveOptionalAttributeList(destination, source.getEntitlements(), OX_TRUST_ENTITLEMENTS);
+			// setOrRemoveOptionalAttributeList(destination, source.getEntitlements(), OX_TRUST_ENTITLEMENTS);
+			setOrRemoveAttributeListValue(destination, source.getEntitlements(), OX_TRUST_ENTITLEMENTS);
 
-			setOrRemoveOptionalAttributeList(destination, source.getX509Certificates(), OX_TRUSTX509_CERTIFICATE);
+			// setOrRemoveOptionalAttributeList(destination, source.getX509Certificates(), OX_TRUSTX509_CERTIFICATE);
+			setOrRemoveAttributeListValue(destination, source.getX509Certificates(), OX_TRUSTX509_CERTIFICATE);
 
 			setMetaData(source, destination);
 
@@ -341,13 +346,12 @@ public class CopyUtils implements Serializable {
 				// setOrRemoveOptionalAttributeList(destination, source.getEmails(), OX_TRUST_EMAIL);
 				if (source.getEmails() != null && source.getEmails().size() > 0) {
 
+					/*
 					List<ScimPersonEmails> emails = source.getEmails();
 
-					/*
-					StringWriter listOfEmails = new StringWriter();
-					ObjectMapper mapper = new ObjectMapper();
-					mapper.writeValue(listOfEmails, emails);
-					*/
+					// StringWriter listOfEmails = new StringWriter();
+					// ObjectMapper mapper = new ObjectMapper();
+					// mapper.writeValue(listOfEmails, emails);
 
 					List<String> emailList = new ArrayList<String>();
 					for (ScimPersonEmails email : emails) {
@@ -356,19 +360,22 @@ public class CopyUtils implements Serializable {
 
 					// destination.setAttribute("oxTrustEmail", listOfEmails.toString());
 					destination.setAttribute(OX_TRUST_EMAIL, emailList.toArray(new String[]{}));
+					*/
 
-				} else {
-					log.trace(" removing " + OX_TRUST_EMAIL);
-					destination.removeAttribute(OX_TRUST_EMAIL);
+					setOrRemoveAttributeListValue(destination, source.getEmails(), OX_TRUST_EMAIL);
 				}
 
-				setOrRemoveOptionalAttributeList(destination, source.getAddresses(), OX_TRUST_ADDRESSES);
+				// setOrRemoveOptionalAttributeList(destination, source.getAddresses(), OX_TRUST_ADDRESSES);
+				setOrRemoveAttributeListValue(destination, source.getAddresses(), OX_TRUST_ADDRESSES);
 
-				setOrRemoveOptionalAttributeList(destination, source.getPhoneNumbers(), OX_TRUST_PHONE_VALUE);
+				// setOrRemoveOptionalAttributeList(destination, source.getPhoneNumbers(), OX_TRUST_PHONE_VALUE);
+				setOrRemoveAttributeListValue(destination, source.getPhoneNumbers(), OX_TRUST_PHONE_VALUE);
 
-				setOrRemoveOptionalAttributeList(destination, source.getIms(), OX_TRUST_IMS_VALUE);
+				// setOrRemoveOptionalAttributeList(destination, source.getIms(), OX_TRUST_IMS_VALUE);
+				setOrRemoveAttributeListValue(destination, source.getIms(), OX_TRUST_IMS_VALUE);
 
-				setOrRemoveOptionalAttributeList(destination, source.getPhotos(), OX_TRUST_PHOTOS);
+				// setOrRemoveOptionalAttributeList(destination, source.getPhotos(), OX_TRUST_PHOTOS);
+				setOrRemoveAttributeListValue(destination, source.getPhotos(), OX_TRUST_PHOTOS);
 
 				setOrRemoveOptionalAttribute(destination, source.getUserType(), OX_TRUST_USER_TYPE);
 
@@ -392,12 +399,14 @@ public class CopyUtils implements Serializable {
 
 				setGroups(source, destination);
 
-				setOrRemoveOptionalAttributeList(destination, source.getRoles(), OX_TRUST_ROLE);
+				// setOrRemoveOptionalAttributeList(destination, source.getRoles(), OX_TRUST_ROLE);
+				setOrRemoveAttributeListValue(destination, source.getRoles(), OX_TRUST_ROLE);
 
-				setOrRemoveOptionalAttributeList(destination, source.getEntitlements(), OX_TRUST_ENTITLEMENTS);
+				// setOrRemoveOptionalAttributeList(destination, source.getEntitlements(), OX_TRUST_ENTITLEMENTS);
+				setOrRemoveAttributeListValue(destination, source.getEntitlements(), OX_TRUST_ENTITLEMENTS);
 
-				setOrRemoveOptionalAttributeList(destination, source.getX509Certificates(), OX_TRUSTX509_CERTIFICATE);
-
+				// setOrRemoveOptionalAttributeList(destination, source.getX509Certificates(), OX_TRUSTX509_CERTIFICATE);
+				setOrRemoveAttributeListValue(destination, source.getX509Certificates(), OX_TRUSTX509_CERTIFICATE);
 				
 				setMetaData(source, destination);
 
@@ -577,7 +586,7 @@ public class CopyUtils implements Serializable {
 		// if (source.getAttribute(OX_TRUST_EMAIL) != null) {
 		if (source.getAttributeArray(OX_TRUST_EMAIL) != null) {
 
-			// List<ScimPersonEmails> listOfEmails = Utils.getObjectMapper().readValue(source.getAttribute(OX_TRUST_EMAIL), new TypeReference<List<ScimPersonEmails>>(){});
+			// List<ScimPersonEmails> listOfEmails = mapper.readValue(source.getAttribute(OX_TRUST_EMAIL), new TypeReference<List<ScimPersonEmails>>(){});
 
 			/*
 			 * List<ScimPersonEmails> emails = new
@@ -594,6 +603,7 @@ public class CopyUtils implements Serializable {
 
 			// destination.setEmails(listOfEmails);
 
+			/*
 			String[] emailArray = source.getAttributeArray(OX_TRUST_EMAIL);
 			List<ScimPersonEmails> emails = new ArrayList<ScimPersonEmails>();
 
@@ -601,17 +611,17 @@ public class CopyUtils implements Serializable {
 				ScimPersonEmails email = mapper.readValue(emailStr, ScimPersonEmails.class);
 				emails.add(email);
 			}
+			*/
 
+			List<ScimPersonEmails> emails = getAttributeListValue(source, ScimPersonEmails.class, OX_TRUST_EMAIL);
 			destination.setEmails(emails);
 		}
 
 		log.trace(" getting addresses ");
 		// getting addresses
-
 		if (source.getAttribute(OX_TRUST_ADDRESSES) != null) {
-			List<ScimPersonAddresses> listOfAddresses = mapper.readValue(source.getAttribute(OX_TRUST_ADDRESSES),
-					new TypeReference<List<ScimPersonAddresses>>() {
-					});
+
+			// List<ScimPersonAddresses> listOfAddresses = mapper.readValue(source.getAttribute(OX_TRUST_ADDRESSES), new TypeReference<List<ScimPersonAddresses>>(){});
 
 			/*
 			 * List<ScimPersonAddresses> addresses = new
@@ -659,14 +669,18 @@ public class CopyUtils implements Serializable {
 			 * 
 			 * } }
 			 */
-			destination.setAddresses(listOfAddresses);
+
+			// destination.setAddresses(listOfAddresses);
+
+			List<ScimPersonAddresses> addresses = getAttributeListValue(source, ScimPersonAddresses.class, OX_TRUST_ADDRESSES);
+			destination.setAddresses(addresses);
 		}
+
 		log.trace(" setting phoneNumber ");
 		// getting user's PhoneNumber
 		if (source.getAttribute(OX_TRUST_PHONE_VALUE) != null) {
-			List<ScimPersonPhones> listOfPhones = mapper.readValue(source.getAttribute(OX_TRUST_PHONE_VALUE),
-					new TypeReference<List<ScimPersonPhones>>() {
-					});
+
+			// List<ScimPersonPhones> listOfPhones = mapper.readValue(source.getAttribute(OX_TRUST_PHONE_VALUE), new TypeReference<List<ScimPersonPhones>>(){});
 
 			/*
 			 * List<ScimPersonPhones> phones = new
@@ -685,15 +699,17 @@ public class CopyUtils implements Serializable {
 			 * } }
 			 */
 
-			destination.setPhoneNumbers(listOfPhones);
+			// destination.setPhoneNumbers(listOfPhones);
+
+			List<ScimPersonPhones> phoneNumbers = getAttributeListValue(source, ScimPersonPhones.class, OX_TRUST_PHONE_VALUE);
+			destination.setPhoneNumbers(phoneNumbers);
 		}
 
 		log.trace(" getting ims ");
 		// getting ims
 		if (source.getAttribute(OX_TRUST_IMS_VALUE) != null) {
-			List<ScimPersonIms> listOfIms = mapper.readValue(source.getAttribute(OX_TRUST_IMS_VALUE),
-					new TypeReference<List<ScimPersonIms>>() {
-					});
+
+			// List<ScimPersonIms> listOfIms = mapper.readValue(source.getAttribute(OX_TRUST_IMS_VALUE), new TypeReference<List<ScimPersonIms>>(){});
 
 			/*
 			 * List<ScimPersonIms> ims = new ArrayList<ScimPersonIms>();
@@ -704,15 +720,18 @@ public class CopyUtils implements Serializable {
 			 * null){im.setValue(imValues[i]);im.setType(imTypes[i]);}
 			 * ims.add(im); } }
 			 */
-			destination.setIms(listOfIms);
+
+			// destination.setIms(listOfIms);
+
+			List<ScimPersonIms> ims = getAttributeListValue(source, ScimPersonIms.class, OX_TRUST_IMS_VALUE);
+			destination.setIms(ims);
 		}
+
 		log.trace(" setting photos ");
 		// getting photos
-
 		if (source.getAttribute(OX_TRUST_PHOTOS) != null) {
-			List<ScimPersonPhotos> listOfPhotos = mapper.readValue(source.getAttribute(OX_TRUST_PHOTOS),
-					new TypeReference<List<ScimPersonPhotos>>() {
-					});
+
+			// List<ScimPersonPhotos> listOfPhotos = mapper.readValue(source.getAttribute(OX_TRUST_PHOTOS), new TypeReference<List<ScimPersonPhotos>>(){});
 
 			/*
 			 * List<ScimPersonPhotos> photos = new
@@ -728,8 +747,13 @@ public class CopyUtils implements Serializable {
 			 * null){photo.setValue(photoList[i]);photo.setType(photoTypes[i]);}
 			 * photos.add(photo); } }
 			 */
-			destination.setPhotos(listOfPhotos);
+
+			// destination.setPhotos(listOfPhotos);
+
+			List<ScimPersonPhotos> photos = getAttributeListValue(source, ScimPersonPhotos.class, OX_TRUST_PHOTOS);
+			destination.setPhotos(photos);
 		}
+
 		log.trace(" setting userType ");
 		if (source.getAttribute(OX_TRUST_USER_TYPE) != null) {
 			destination.setUserType(source.getAttribute(OX_TRUST_USER_TYPE));
@@ -778,9 +802,8 @@ public class CopyUtils implements Serializable {
 
 		// getting roles
 		if (source.getAttribute(OX_TRUST_ROLE) != null) {
-			List<ScimRoles> listOfRoles = mapper.readValue(source.getAttribute(OX_TRUST_ROLE),
-					new TypeReference<List<ScimRoles>>() {
-					});
+
+			// List<ScimRoles> listOfRoles = mapper.readValue(source.getAttribute(OX_TRUST_ROLE), new TypeReference<List<ScimRoles>>(){});
 
 			/*
 			 * List<ScimRoles> roles = new ArrayList<ScimRoles>(); String[]
@@ -790,14 +813,17 @@ public class CopyUtils implements Serializable {
 			 * null){role.setValue(listRoles[i]);} roles.add(role); } }
 			 */
 
-			destination.setRoles(listOfRoles);
+			// destination.setRoles(listOfRoles);
+
+			List<ScimRoles> roles = getAttributeListValue(source, ScimRoles.class, OX_TRUST_ROLE);
+			destination.setRoles(roles);
 		}
+
 		log.trace(" getting entitlements ");
 		// getting entitlements
 		if (source.getAttribute(OX_TRUST_ENTITLEMENTS) != null) {
-			List<ScimEntitlements> listOfEnts = mapper.readValue(source.getAttribute(OX_TRUST_ENTITLEMENTS),
-					new TypeReference<List<ScimEntitlements>>() {
-					});
+
+			// List<ScimEntitlements> listOfEnts = mapper.readValue(source.getAttribute(OX_TRUST_ENTITLEMENTS), new TypeReference<List<ScimEntitlements>>(){});
 
 			/*
 			 * List<ScimEntitlements> entitlements = new
@@ -810,15 +836,17 @@ public class CopyUtils implements Serializable {
 			 * } }
 			 */
 
-			destination.setEntitlements(listOfEnts);
+			// destination.setEntitlements(listOfEnts);
+
+			List<ScimEntitlements> entitlements = getAttributeListValue(source, ScimEntitlements.class, OX_TRUST_ENTITLEMENTS);
+			destination.setEntitlements(entitlements);
 		}
 
 		// getting x509Certificates
 		log.trace(" setting certs ");
 		if (source.getAttribute(OX_TRUSTX509_CERTIFICATE) != null) {
-			List<Scimx509Certificates> listOfCerts = mapper.readValue(source.getAttribute(OX_TRUSTX509_CERTIFICATE),
-					new TypeReference<List<Scimx509Certificates>>() {
-					});
+
+			// List<Scimx509Certificates> listOfCerts = mapper.readValue(source.getAttribute(OX_TRUSTX509_CERTIFICATE), new TypeReference<List<Scimx509Certificates>>(){});
 
 			/*
 			 * List<Scimx509Certificates> certificates = new
@@ -832,7 +860,10 @@ public class CopyUtils implements Serializable {
 			 * } }
 			 */
 
-			destination.setX509Certificates(listOfCerts);
+			// destination.setX509Certificates(listOfCerts);
+
+			List<Scimx509Certificates> x509Certificates = getAttributeListValue(source, Scimx509Certificates.class, OX_TRUSTX509_CERTIFICATE);
+			destination.setX509Certificates(x509Certificates);
 		}
 		log.trace(" setting meta ");
 		// getting meta data
@@ -1514,4 +1545,43 @@ public class CopyUtils implements Serializable {
 		}
 	}
 
+	private static <T> void setOrRemoveAttributeListValue(GluuCustomPerson destination, List<T> items, String attributeName) throws Exception {
+
+		if (items == null) {
+
+			log.trace(" removing " + attributeName);
+			destination.removeAttribute(attributeName);
+
+		} else {
+
+			log.trace(" setting " + attributeName);
+
+			ObjectMapper mapper = Utils.getObjectMapper();
+
+			List<String> itemList = new ArrayList<String>();
+			for (T item : items) {
+				itemList.add(mapper.writeValueAsString(item));
+			}
+
+			destination.setAttribute(attributeName, itemList.toArray(new String[]{}));
+		}
+	}
+
+	private static <T> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attributeName) throws Exception {
+
+		ObjectMapper mapper = Utils.getObjectMapper();
+
+		String[] attributeArray = source.getAttributeArray(attributeName);
+		List<T> items = new ArrayList<T>();
+
+		for (String attribute : attributeArray) {
+			T item = mapper.readValue(attribute, clazz);
+			items.add(item);
+		}
+
+		// List<ScimPersonEmails> listOfEmails = mapper.readValue(source.getAttribute(OX_TRUST_EMAIL), new TypeReference<List<ScimPersonEmails>>(){});
+		// destination.setEmails(listOfEmails);
+
+		return items;
+	}
 }
