@@ -40,6 +40,13 @@ public class Utils implements Serializable {
     
 	private static final SecureRandom random = new SecureRandom();
 
+	private static final ObjectMapper mapper = new ObjectMapper();
+
+	static {
+		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
+
 	/**
 	 * Delete a Group from a Person
 	 * 
@@ -547,11 +554,6 @@ public class Utils implements Serializable {
 	}
 
 	public static ObjectMapper getObjectMapper() {
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-
 		return mapper;
 	}
         

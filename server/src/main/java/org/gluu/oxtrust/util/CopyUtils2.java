@@ -126,8 +126,6 @@ public class CopyUtils2 implements Serializable {
 			return null;
 		}
 
-		ObjectMapper mapper = Utils.getObjectMapper();
-
 		IPersonService personService1 = PersonService.instance();
 
 		if (destination == null) {
@@ -643,8 +641,6 @@ public class CopyUtils2 implements Serializable {
 		if (source == null) {
 			return null;
 		}
-
-		ObjectMapper mapper = Utils.getObjectMapper();
 
 		if (destination == null) {
             log.trace(" creating a new GluuCustomPerson instant ");

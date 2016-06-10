@@ -526,8 +526,6 @@ public class CopyUtils implements Serializable {
 			return null;
 		}
 
-		ObjectMapper mapper = Utils.getObjectMapper();
-
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new ScimPerson();
