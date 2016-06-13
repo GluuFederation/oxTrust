@@ -20,7 +20,7 @@ public class ProductInstallationChecker {
     public static final String OXAUTH_PATH = "/opt/tomcat/webapps/oxauth.war";
     public static final String OXTRUST_PATH = "/opt/tomcat/webapps/identity.war";
     public static final String SHIBBOLETH_IDP2_PATH = "/opt/idp/war/idp.war";
-    public static final String SHIBBOLETH_IDP3_PATH = "/opt/shibboleth-idp";
+    public static final String SHIBBOLETH_IDP3_PATH = "/opt/shibboleth-idp/war/idp.war";
     
     public static boolean isGluuCE() {
         return new File(GLUU_CE_PATH).exists();
