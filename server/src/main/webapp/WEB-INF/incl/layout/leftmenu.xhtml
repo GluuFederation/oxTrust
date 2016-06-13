@@ -111,7 +111,7 @@
 
 								</ul></li>
 						</ui:fragment>
-						<ui:fragment rendered="#{s:hasPermission('trust', 'access')}">
+						<ui:fragment rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLMenu}">
 							<li class="treeview" id="menuSAML"><a href="#"> <i
 									class="fa fa-pencil-square-o"></i> <span>SAML</span> <i
 									class="fa fa-angle-left pull-right"></i>
@@ -126,14 +126,14 @@
                                                                         <li id="subMenuLinkSAML1"><h:commandLink
 											value="Trust Relationships"
 											action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
+											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkSAML2"><h:commandLink
 											value="Add Trust Relationships"
 											action="#{menuAction.endConversation('/trustmanager/addTrustRelationship.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
+											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>	
@@ -150,28 +150,28 @@
                                                                         <li id="subMenuLinkAsimba1"><h:commandLink
 											value="IDPs"
 											action="#{menuAction.endConversation('/asimba/idps.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
+											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
                                                                         <li id="subMenuLinkAsimba2"><h:commandLink
 											value="SP Pools"
 											action="#{menuAction.endConversation('/asimba/spPools.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
+											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
                                                                         <li id="subMenuLinkAsimba3"><h:commandLink
 											value="SP Requestors"
 											action="#{menuAction.endConversation('/asimba/spRequestors.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
+											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
                                                                         <li id="subMenuLinkAsimba4"><h:commandLink
 											value="Selectors"
 											action="#{menuAction.endConversation('/asimba/selectors.xhtml')}"
-											rendered="#{s:hasPermission('trust', 'access')}">
+											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
