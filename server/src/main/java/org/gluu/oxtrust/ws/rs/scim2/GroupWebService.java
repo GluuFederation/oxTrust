@@ -189,7 +189,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			if (groupList == null || groupList.isEmpty() || vlvResponse.getTotalResults() == 0) {
 				// sets HTTP status code 404 Not Found
-				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
 			} else {
 				log.info(" Resource " + id + " found ");
 			}
@@ -463,7 +463,7 @@ public class GroupWebService extends BaseScimWebService {
 			GluuGroup group = groupService.getGroupByInum(id);
 			if (group == null) {
 				log.info(" the group is null ");
-				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
 			} else {
 				log.info(" getting started to delete members from groups ");
 				if (group.getMembers() != null) {

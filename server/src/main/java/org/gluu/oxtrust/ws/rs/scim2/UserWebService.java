@@ -197,7 +197,7 @@ public class UserWebService extends BaseScimWebService {
 
 			if (personList == null || personList.isEmpty() || vlvResponse.getTotalResults() == 0) {
 				// sets HTTP status code 404 Not Found
-				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
 			} else {
 				log.info(" Resource " + id + " found ");
 			}
@@ -486,7 +486,7 @@ public class UserWebService extends BaseScimWebService {
 
 			GluuCustomPerson person = personService.getPersonByInum(id);
 			if (person == null) {
-				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
 			} else {
 				log.info("person.getMemberOf().size() : " + person.getMemberOf().size());
 				if (person.getMemberOf() != null) {
@@ -563,8 +563,7 @@ public class UserWebService extends BaseScimWebService {
 			GluuCustomPerson gluuPerson = personService.getPersonByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
-				return getErrorResponse("No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue()
-						+ "' please try again or use another pattern.", Response.Status.NOT_FOUND.getStatusCode());
+				return getErrorResponse(Response.Status.NOT_FOUND, "No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue() + "' please try again or use another pattern.");
 			}
 			// ScimPerson person = CopyUtils.copy(gluuPerson, null);
 			User user = CopyUtils2.copy(gluuPerson, null);
