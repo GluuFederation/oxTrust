@@ -57,6 +57,10 @@
         	height: 450px !important;
         }
     </h:outputStylesheet>
+    
+        <h:form>
+            <a4j:poll id="pollUploadMetadataFile" interval="4000" render="idpEditMetadataFileOutputText" />
+        </h:form>
 
 	<h:form id="editIDPForm">
             <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
@@ -134,15 +138,19 @@
                 <h:outputLabel 
                     title="Provide the absolute location of metadata file."
                     value="The location of the metadata file or empty if none"/>
-                <h:inputText  styleClass="form-control"
+                <h:inputText id="idpEditMetadataFileOutputText" 
+                    styleClass="form-control"
                     title="Provide the absolute location of metadata file."
-                    value="#{_idp.metadataFile}" tabindex="5" />
+                    value="#{_idp.metadataFile}" />
                 
                 <!-- upload file button -->
-                <rich:fileUpload fileUploadListener="#{_updateAsimbaIDPAction.uploadFile}" 
-                                     maxFilesQuantity="1" 
-                                     immediateUpload="true"
-                                     listHeight="60px" styleClass="uploadFile" />
+                <rich:fileUpload id="idpRichUploadMetadataFile"
+                                 fileUploadListener="#{_updateAsimbaIDPAction.uploadFile}" 
+                        maxFilesQuantity="1" 
+                        immediateUpload="true"
+                        listHeight="60px" styleClass="uploadFile" >
+                    <a4j:ajax parent="idpRichUploadMetadataFile" event="uploadcomplete"  render="idpEditMetadataFileOutputText"/>
+                </rich:fileUpload>
             </s:decorate>
             </h:panelGroup>
             
@@ -176,7 +184,7 @@
                         value="The NameIDFormat to be set in the NameIDPolicy or empty if resolved from metadata"/>
                     <h:inputText styleClass="form-control"
                         title="The NameIDFormat to be set in the NameIDPolicy or empty if resolved from metadata"
-                        value="#{_idp.nameIdFormat}" size="100" tabindex="6" />
+                        value="#{_idp.nameIdFormat}" size="100" tabindex="5" />
             </s:decorate>
             </h:panelGroup>
             

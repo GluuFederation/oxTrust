@@ -59,7 +59,11 @@
         
         
     </h:outputStylesheet>
-
+    
+        <h:form>
+            <a4j:poll id="pollUploadMetadataFile" interval="4000" render="spRequestorEditMetadataFileOutputText" />
+        </h:form>
+    
 	<h:form id="editSPRequestorForm">
             <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <input type='hidden' name='cid' value='#{conversation.id}' />
@@ -151,15 +155,19 @@
                     <h:outputLabel 
                         title="The location of the metadata file or empty if none"
                         value="The location of the metadata file or empty if none"/>
-                    <h:inputText  styleClass="form-control"
+                    <h:inputText id="spRequestorEditMetadataFileOutputText" 
+                        styleClass="form-control"       
                         title="The location of the metadata file or empty if none"
-                        value="#{_spRequestor.metadataFile}" tabindex="4" />
+                        value="#{_spRequestor.metadataFile}" />
                     
                     <!-- upload file button -->
-                    <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadFile}" 
-                                     maxFilesQuantity="1" 
-                                     immediateUpload="true" 
-                                     listHeight="60px" />
+                    <rich:fileUpload id="spRequestorRichUploadMetadataFile"
+                        fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadFile}" 
+                            maxFilesQuantity="1" 
+                            immediateUpload="true" 
+                            listHeight="60px" >
+                        <a4j:ajax parent="spRequestorRichUploadMetadataFile" event="uploadcomplete"  render="spRequestorEditMetadataFileOutputText"/>
+                    </rich:fileUpload>
             </s:decorate>
             </h:panelGroup>
             
@@ -193,7 +201,7 @@
                         value="Additional properties"/>
                     <h:inputText styleClass="form-control"
                         title=""
-                        value="#{_updateAsimbaSPRequestorAction.spRequestorAdditionalProperties}" tabindex="5" />
+                        value="#{_updateAsimbaSPRequestorAction.spRequestorAdditionalProperties}" tabindex="4" />
             </s:decorate>
             </h:panelGroup>
             

@@ -12,7 +12,8 @@
     
     <param name="inum" value="#{updateAsimbaIDPAction.editEntryInum}" required="false" />
 
-    <action execute="#{updateAsimbaIDPAction.edit}" if="#{updateAsimbaIDPAction.editEntryInum != null}" on-postback="true" />
+    <action execute="#{updateAsimbaIDPAction.edit}" if="#{updateAsimbaIDPAction.editEntryInum != null or updateAsimbaIDPAction.editEntryInum != updateAsimbaIDPAction.idp.inum}" on-postback="true" />
+    <action execute="#{updateAsimbaIDPAction.clearEdit}" if="#{updateAsimbaIDPAction.editEntryInum == null}"/>
 
     <navigation from-action="#{updateAsimbaIDPAction.add}">
         <rule if-outcome="success">
