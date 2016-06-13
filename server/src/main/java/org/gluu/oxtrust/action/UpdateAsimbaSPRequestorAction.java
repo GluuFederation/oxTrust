@@ -135,6 +135,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     }
     
     public void clearEdit() {
+        log.info("clearEdit() SPRequestor call");
         spRequestor = new RequestorEntry();
         editEntryInum = null;
         newEntry = true;
@@ -184,8 +185,8 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         } catch (Exception e) {
             log.error("Requestor certificate - add CertificateFile exception", e);
         }
+        newEntry = false;
         
-        clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

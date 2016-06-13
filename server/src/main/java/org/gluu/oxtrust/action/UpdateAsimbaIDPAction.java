@@ -115,6 +115,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     }
     
     public void clearEdit() {
+        log.info("clearEdit() IDP call");
         idp = new IDPEntry();
         editEntryInum = null;
         newEntry = true;
@@ -161,6 +162,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         } catch (Exception e) {
             log.error("Requestor certificate - add CertificateFile exception", e);
         }
+        newEntry = false;
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

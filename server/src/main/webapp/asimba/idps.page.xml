@@ -11,6 +11,7 @@
     <rewrite pattern="/asimba/idps" />
     
     <action execute="#{updateAsimbaIDPAction.refresh}"/>
+    <action execute="#{updateAsimbaIDPAction.clearEdit}"/>
 
     <navigation from-action="#{updateAsimbaIDPAction.add}">
         <rule if-outcome="success">

@@ -11,6 +11,7 @@
     <rewrite pattern="/asimba/spRequestors" />
     
     <action execute="#{updateAsimbaSPRequestorAction.refresh}"/>
+    <action execute="#{updateAsimbaSPRequestorAction.clearEdit}"/>
 
     <navigation from-action="#{updateAsimbaSPRequestorAction.add}">
         <rule if-outcome="success">

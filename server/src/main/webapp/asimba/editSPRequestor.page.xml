@@ -12,8 +12,8 @@
     
     <param name="inum" value="#{updateAsimbaSPRequestorAction.editEntryInum}" required="false" />
 
-    <action execute="#{updateAsimbaSPRequestorAction.edit}" if="#{updateAsimbaSPRequestorAction.editEntryInum != null or updateAsimbaSPRequestorAction.editEntryInum != updateAsimbaSPRequestorAction.idp.inum}" on-postback="true" />
-    <action execute="#{updateAsimbaSPRequestorAction.clearEdit}" if="#{updateAsimbaSPRequestorAction.editEntryInum == null}"/>
+    <action execute="#{updateAsimbaSPRequestorAction.edit}" if="#{updateAsimbaSPRequestorAction.editEntryInum != null and updateAsimbaSPRequestorAction.editEntryInum != updateAsimbaSPRequestorAction.spRequestor.inum}" on-postback="true" />
+    <action execute="#{updateAsimbaSPRequestorAction.clearEdit}" if="#{updateAsimbaSPRequestorAction.editEntryInum == null and !updateAsimbaSPRequestorAction.newEntry}"/>
     
     <navigation from-action="#{updateAsimbaSPRequestorAction.add}">
         <rule if-outcome="success">
