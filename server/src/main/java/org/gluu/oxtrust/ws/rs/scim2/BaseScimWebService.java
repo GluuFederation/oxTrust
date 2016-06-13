@@ -260,12 +260,14 @@ public class BaseScimWebService {
 		return result;
 	}
 
+	/*
 	protected Response getErrorResponse(String errMsg, int statusCode) {
 		Errors errors = new Errors();
 		Error error = new org.gluu.oxtrust.model.scim.Error(errMsg, statusCode, "");
 		errors.getErrors().add(error);
 		return Response.status(statusCode).entity(errors).build();
 	}
+	*/
 
 	protected Response getErrorResponse(Response.Status status, String detail) {
 		return getErrorResponse(status, null, detail);
