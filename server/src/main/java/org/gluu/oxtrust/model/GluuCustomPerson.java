@@ -15,9 +15,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
+import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.GluuIMAPData;
 
 /**
  * Person
@@ -45,9 +47,9 @@ public class GluuCustomPerson extends User
     private List<String> associatedClient;
 
     @LdapAttribute
-    private Date oxCreationTimestamp;
+    private Date oxCreationTimestamp;	
 
-    // Value object holders
+	// Value object holders
     private Set<String> schemas = new HashSet<String>();
     private Map<String, Extension> extensions = new HashMap<String, Extension>();
 
@@ -65,6 +67,14 @@ public class GluuCustomPerson extends User
 
     public void setMail(String value) {
         setAttribute("mail", value);
+    }
+    
+    public String getGluuIMAPData() {
+        return getAttribute("gluuIMAPData");
+    }
+
+    public void setGluuIMAPData(String value) {
+        setAttribute("gluuIMAPData", value);
     }
 
     public String getNetworkPoken() {

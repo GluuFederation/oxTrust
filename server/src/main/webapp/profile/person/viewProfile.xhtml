@@ -108,7 +108,7 @@
 
 													<s:decorate
 														template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
-														rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum')}">
+														rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData')}">
 														<ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
 														<div class = "col-sm-11">
 														<rich:inplaceInput value="#{_custAttr.value}"
@@ -180,6 +180,127 @@
 															</h:panelGroup>
 														</h:panelGroup>
 													</s:decorate>
+													
+													<!-- imap data -->
+
+													<h:panelGroup columns="2"
+														columnClasses="alignLeftTop, alignLeftTop" width="100%"
+														border="0" cellpadding="0" cellspacing="0"
+														rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">															
+															<h:outputText value="IMAP DATA Details" />
+															<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+															action="#{userProfileAction.removeImapData(_custAttr.metadata.inum)}"
+															onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+															limitRender="true" render="selectedCustomAttributesId"
+															rendered="#{_custAttr.userCanEdit and (not _mandatory) and s:hasPermission(applianceService.appliance, 'profile_management')}">
+															<!-- <h:graphicImage value="/img/remove.gif" />  -->
+															<f:param name="sv" value="1" />
+														</a4j:commandLink>								
+
+															<s:decorate
+																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
+																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
+																<ui:define name="label">IMAP Host</ui:define>
+																<div class="col-sm-11">
+																	<rich:inplaceInput
+																		value="#{userProfileAction.imapData.imaphost}"
+																		immediate="true"
+																		defaultLabel="click to enter Imap Host"
+																		maxlength="60" inputWidth="300" id="custId"
+																		rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
+																	<h:outputText value="#{_custAttr.value}"
+																		rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
+																	<h:outputText value="&#160;" />
+																</div>
+															</s:decorate>
+
+															<s:decorate
+																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
+																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
+																<ui:define name="label">IMAP Username </ui:define>
+																<div class="col-sm-11">
+																	<rich:inplaceInput
+																		value="#{userProfileAction.imapData.imapusername}"
+																		immediate="true"
+																		defaultLabel="click to enter imap username"
+																		maxlength="60" inputWidth="300" id="custId"
+																		rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
+																	<h:outputText value="#{_custAttr.value}"
+																		rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
+																	<h:outputText value="&#160;" />
+																</div>
+															</s:decorate>
+
+															<s:decorate
+																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
+																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
+																<ui:define name="label">IMAP Port </ui:define>
+																<div class="col-sm-11">
+																	<rich:inplaceInput
+																		value="#{userProfileAction.imapData.imapport}"
+																		immediate="true"
+																		defaultLabel="click to enter imap port"
+																		maxlength="60" inputWidth="300" id="custId"
+																		rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
+																	<h:outputText value="#{_custAttr.value}"
+																		rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
+																	<h:outputText value="&#160;" />
+																</div>
+															</s:decorate>	
+															
+															
+
+															<s:decorate
+																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
+																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
+																<ui:define name="label">IMAP password encrypted String</ui:define>
+																<div class="col-sm-11">
+																	<rich:inplaceInput
+																		value="#{userProfileAction.imapData.imapPassword.encryptedString}"
+																		immediate="true"
+																		defaultLabel="click to enter Imap Password encryptedString"
+																		maxlength="60" inputWidth="300" id="custId"
+																		rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
+																	<h:outputText value="#{_custAttr.value}"
+																		rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
+																	<h:outputText value="&#160;" />
+																</div>
+															</s:decorate>
+															
+															<s:decorate
+																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
+																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
+																<ui:define name="label">IMAP password cipher</ui:define>
+																<div class="col-sm-11">
+																	<rich:inplaceInput
+																		value="#{userProfileAction.imapData.imapPassword.cipher}"
+																		immediate="true"
+																		defaultLabel="click to enter Imap Password encryptedString"
+																		maxlength="60" inputWidth="300" id="custId"
+																		rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
+																	<h:outputText value="#{_custAttr.value}"
+																		rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
+																	<h:outputText value="&#160;" />
+																</div>
+															</s:decorate>
+															
+															<s:decorate
+																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
+																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
+																<ui:define name="label">IMAP password Mode</ui:define>
+																<div class="col-sm-11">
+																	<rich:inplaceInput
+																		value="#{userProfileAction.imapData.imapPassword.mode}"
+																		immediate="true"
+																		defaultLabel="click to enter Imap Password mode"
+																		maxlength="60" inputWidth="300" id="custId"
+																		rendered="#{_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management')}" />
+																	<h:outputText value="#{_custAttr.value}"
+																		rendered="#{not (_custAttr.userCanEdit and s:hasPermission(applianceService.appliance, 'profile_management'))}" />
+																	<h:outputText value="&#160;" />
+																</div>
+															</s:decorate>													
+													</h:panelGroup> 
 												</a4j:repeat>
 											</h:panelGroup>
 										</h:panelGroup>

@@ -245,7 +245,7 @@ public class CustomAttributeAction implements Serializable {
 		return attribute.getOrigin();
 	}
 
-	private GluuCustomAttribute getCustomAttribute(String inum) {
+	public GluuCustomAttribute getCustomAttribute(String inum) {
 		if (StringHelper.isEmpty(inum)) {
 			return null;
 		}
