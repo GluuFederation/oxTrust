@@ -165,6 +165,15 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         synchronized (svnSyncTimer) {
             asimbaService.addRequestorEntry(spRequestor);
         }
+        // save certificate
+        try {
+            if (uploadedCertBytes != null) {
+                String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, spRequestor.getId());
+                log.error("Add CertificateFile: " + message);
+            }
+        } catch (Exception e) {
+            log.error("Requestor certificate - add CertificateFile exception", e);
+        }
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -181,6 +190,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         try {
             if (uploadedCertBytes != null) {
                 String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, spRequestor.getId());
+                log.error("Add CertificateFile: " + message);
             }
         } catch (Exception e) {
             log.error("Requestor certificate - add CertificateFile exception", e);

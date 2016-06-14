@@ -142,6 +142,14 @@ public class UpdateAsimbaIDPAction implements Serializable {
         synchronized (svnSyncTimer) {
             asimbaService.addIDPEntry(idp);
         }
+        // save certificate
+        try {
+            if (uploadedCertBytes != null) {
+                String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, idp.getId());
+            }
+        } catch (Exception e) {
+            log.error("Requestor certificate - add CertificateFile exception", e);
+        }
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
