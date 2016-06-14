@@ -10,15 +10,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
+import org.gluu.oxtrust.ldap.service.ImapDataService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -28,8 +34,11 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuIMAPData;
 import org.xdi.model.GluuImage;
 import org.xdi.model.GluuUserRole;
+import org.xdi.model.ImapPassword;
+import org.xdi.util.StringHelper;
 
 /**
  * Action class for view and update profile actions.
@@ -71,6 +80,9 @@ public class UserProfileAction implements Serializable {
 
 	@In
 	private GluuCustomPerson currentPerson;
+	
+	@In(create = true, value="imapDataService")
+	private ImapDataService imapDataService;
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
@@ -78,6 +90,24 @@ public class UserProfileAction implements Serializable {
 	private GluuCustomPerson person;
 
 	private List<String> optOuts;
+	
+	
+	private GluuIMAPData imapData;
+
+    public GluuIMAPData getImapData() {
+		return imapData;
+	}
+
+	public void setImapData(GluuIMAPData imapData) {
+		this.imapData = imapData;
+	}
+	
+	@Create
+	public void init() {
+		this.imapData = new GluuIMAPData();
+		this.imapData.setImapPassword(new ImapPassword());
+		
+	}
 
 	private static final String photoAttributes[][] = new String[][] { { "gluuPerson", "photo1" }, };
 
@@ -101,6 +131,9 @@ public class UserProfileAction implements Serializable {
 		addOpts();
 		addPhotoAttribute();
 		userPasswordAction.setPerson(this.person);
+		if(this.person.getGluuIMAPData() != null){
+			this.imapData=imapDataService.getGluuIMAPDataFromJson(this.person.getGluuIMAPData());
+		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -108,6 +141,17 @@ public class UserProfileAction implements Serializable {
 	@Restrict("#{s:hasPermission('profile', 'access')}")
 	public String update() {
 		try {
+			if (this.imapData != null) {
+				List<GluuCustomAttribute> customAttributes = this.person
+						.getCustomAttributes();
+				for (GluuCustomAttribute gluuCustomAttribute : customAttributes) {
+					if (gluuCustomAttribute.getName().equals("gluuIMAPData")) {
+						gluuCustomAttribute.setValue(imapDataService
+								.getJsonStringFromImap(this.imapData));
+					}
+				}
+			}
+			
 			GluuCustomPerson person = this.person;
 			// TODO: Reffactor
 			person.setGluuOptOuts(optOuts.size() == 0 ? null : optOuts);
@@ -120,6 +164,11 @@ public class UserProfileAction implements Serializable {
 		customAttributeAction.savePhotos();
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+	
+	public void removeImapData(String inum) {		
+		this.imapData = null;
+		customAttributeAction.removeCustomAttribute(inum);
 	}
 
 //	@Restrict("#{s:hasPermission('person', 'access')}")
