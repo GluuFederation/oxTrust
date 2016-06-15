@@ -11,6 +11,8 @@ package org.gluu.oxtrust.model.scim2;
  */
 public interface Constants {
 
+    String MEDIA_TYPE_SCIM_JSON = "application/scim+json";
+
     String USER_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:User";
     String USER_CORE_SCHEMA_NAME = "User";
     String USER_CORE_SCHEMA_DESCRIPTION = "User Account";

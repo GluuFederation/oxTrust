@@ -7,14 +7,12 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
@@ -25,11 +23,7 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim2.BulkOperation;
-import org.gluu.oxtrust.model.scim2.BulkRequest;
-import org.gluu.oxtrust.model.scim2.BulkResponse;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -50,9 +44,7 @@ import com.wordnik.swagger.annotations.Authorization;
  */
 @Name("scim2BulkEndpoint")
 @Path("/scim/v2/Bulk")
-@Api(value = "/v2/Bulk", description = "SCIM 2.0 Bulk Endpoint (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
-		authorizations = {
-				@Authorization(value = "Authorization", type = "oauth2")})
+@Api(value = "/v2/Bulk", description = "SCIM 2.0 Bulk Endpoint (https://tools.ietf.org/html/rfc7644#section-3.7)", authorizations = {@Authorization(value = "Authorization", type = "uma")})
 public class BulkWebService extends BaseScimWebService {
 
 	private static final Logger log = Logger.getLogger(BulkWebService.class);
@@ -64,18 +56,16 @@ public class BulkWebService extends BaseScimWebService {
 	private IGroupService groupService;
 
 	@POST
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@ApiOperation(value = "Bulk Operation",
-			notes = "SCIM Bulk Operation (https://tools.ietf.org/html/draft-ietf-scim-api-19#section-3.7)",
-			response = BulkResponse.class
-	)
+	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+	@ApiOperation(value = "Bulk Operation",	notes = "Bulk operation (https://tools.ietf.org/html/rfc7644#section-3.7)", response = BulkResponse.class)
 	public Response bulkOperation(
-			@Context HttpServletRequest request,
-			@Context HttpServletResponse response,
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			@ApiParam(value = "BulkRequest", required = true) BulkRequest bulkRequest) throws Exception {
+		@Context HttpServletRequest request,
+		@Context HttpServletResponse response,
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@ApiParam(value = "BulkRequest", required = true) BulkRequest bulkRequest) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
@@ -237,14 +227,14 @@ public class BulkWebService extends BaseScimWebService {
 
 	private boolean createUser(User person) throws Exception {
 
-		personService = PersonService.instance();
-
 		GluuCustomPerson gluuPerson = CopyUtils2.copy(person, null, false);
 		if (gluuPerson == null) {
 			return false;
 		}
 
 		try {
+
+			personService = PersonService.instance();
 
 			String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
 																	// //personService.generateInumForNewPerson();
@@ -271,9 +261,11 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean updateUser(String uid, User person_update) throws Exception {
-		personService = PersonService.instance();
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 			if (gluuPerson == null) {
 				return false;
@@ -298,10 +290,13 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean deleteUser(String uid) throws Exception {
-		personService = PersonService.instance();
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson person = personService.getPersonByInum(uid);
+
 			if (person == null) {
 				return false;
 			} else {
@@ -325,7 +320,6 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean createGroup(Group group) throws Exception {
-		groupService = GroupService.instance();
 
 		// Return HTTP response with status code 201 Created
 
@@ -336,6 +330,9 @@ public class BulkWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			log.debug(" generating inum ");
 			String inum = groupService.generateInumForNewGroup();
 			log.debug(" getting DN ");
@@ -365,9 +362,10 @@ public class BulkWebService extends BaseScimWebService {
 
 	private boolean updateGroup(String id, Group group) throws Exception {
 
-		groupService = GroupService.instance();
-
 		try {
+
+			groupService = GroupService.instance();
+
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
 				return false;
@@ -394,10 +392,13 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean deleteGroup(String id) throws Exception {
-		groupService = GroupService.instance();
 
 		try {
+
+			groupService = GroupService.instance();
+
 			GluuGroup group = groupService.getGroupByInum(id);
+
 			if (group == null) {
 				return false;
 			} else {
@@ -436,15 +437,18 @@ public class BulkWebService extends BaseScimWebService {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.convertValue(object, Group.class);
 	}
-	
+
+    /*
 	public static void main(String []args){
 		LinkedHashMap<Object, Object> map = new LinkedHashMap<Object, Object>();
 		map.put("userName", "Rahat");
 		LinkedHashMap<Object, Object> name= new LinkedHashMap<Object, Object>();
 		name.put("formatted", "formatted");
 		map.put("name", name);
-		/*User user = convert(map);
+		*/
+        /*User user = convert(map);
 		System.out.println(user.getUserName());
-		System.out.println(user.getName().getFormatted());*/
+		System.out.println(user.getName().getFormatted());*//*
 	}
+    */
 }

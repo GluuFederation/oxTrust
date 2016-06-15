@@ -9,20 +9,16 @@ package org.gluu.oxtrust.ws.rs.scim2;
 import java.net.URI;
 import java.util.ArrayList;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
@@ -35,8 +31,8 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 	private Log log;
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response listGroups(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
@@ -55,7 +51,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 		}
 		serviceProviderConfig.setAuthenticationSchemes(authenticationSchemes);
 
-		URI location = new URI("/v2/ServiceProviderConfig");
+		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
 
 		return Response.ok(serviceProviderConfig).location(location).build();
 	}

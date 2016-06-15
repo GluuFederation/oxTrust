@@ -9,11 +9,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.Api;
@@ -34,8 +30,8 @@ import org.jboss.seam.annotations.Name;
 public class ResourceTypeWS extends BaseScimWebService {
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response listResources(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ListResponse listResponse = new ListResponse();
@@ -94,7 +90,8 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 	@Path("User")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response getResourceTypeUser(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ResourceType userResourceType = new ResourceType();
@@ -126,7 +123,8 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 	@Path("Group")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response getResourceTypeGroup(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ResourceType groupResourceType = new ResourceType();

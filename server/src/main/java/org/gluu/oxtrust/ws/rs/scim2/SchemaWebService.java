@@ -8,7 +8,6 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import com.wordnik.swagger.annotations.Api;
 import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
@@ -24,7 +23,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.Serializable;
 import java.net.URI;
@@ -52,7 +50,8 @@ public class SchemaWebService extends BaseScimWebService {
      * @throws Exception
      */
     @GET
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
     public Response listSchemas(@HeaderParam("Authorization") String authorization) throws Exception {
 
         log.info(" listSchemas() ");
@@ -95,7 +94,8 @@ public class SchemaWebService extends BaseScimWebService {
      */
     @GET
     @Path("{id}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
     public Response getSchemaById(@HeaderParam("Authorization") String authorization, @PathParam("id") String id) throws Exception {
 
         log.info(" getSchemaById(), id = '" + id + "'");
@@ -120,7 +120,6 @@ public class SchemaWebService extends BaseScimWebService {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-        mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
         SimpleModule customSchemaTypeAstractModule = new SimpleModule("CustomSchemaTypeAbstractModule", new Version(1, 0, 0, ""));
         SchemaTypeAbstractSerializer serializer = new SchemaTypeAbstractSerializer();
         customSchemaTypeAstractModule.addSerializer(SchemaType.class, serializer);

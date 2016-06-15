@@ -10,7 +10,9 @@ import org.codehaus.jackson.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserSerializer;
@@ -20,7 +22,6 @@ import org.jboss.seam.log.Log;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
@@ -31,8 +32,8 @@ import javax.ws.rs.ext.Provider;
  * @author Val Pecaoco
  */
 @Provider
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
+@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
 @Name("customJacksonProviderScim2")
 public class CustomJacksonProviderScim2 extends JacksonJaxbJsonProvider implements ContextResolver<ObjectMapper> {
 
@@ -46,6 +47,7 @@ public class CustomJacksonProviderScim2 extends JacksonJaxbJsonProvider implemen
         log.info(" CustomJacksonProviderScim2() ");
 
         ObjectMapper mapper = _mapperConfig.getDefaultMapper();
+        mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
         mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         SimpleModule customJacksonModule = new SimpleModule("CustomJacksonModuleScim2", new Version(1, 0, 0, ""));

@@ -10,13 +10,11 @@ import java.net.URI;
 import java.util.*;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.*;
 
 import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
@@ -53,8 +51,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
  */
 @Name("scim2UserEndpoint")
 @Path("/scim/v2/Users")
-@Produces(MediaType.APPLICATION_JSON)
-@Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = { @Authorization(value = "Authorization", type = "uma") })
+@Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = {@Authorization(value = "Authorization", type = "uma")})
 public class UserWebService extends BaseScimWebService {
 
 	@Logger
@@ -64,8 +61,8 @@ public class UserWebService extends BaseScimWebService {
 	private IPersonService personService;
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "List users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response listUsers(
 		@HeaderParam("Authorization") String authorization,
@@ -144,7 +141,6 @@ public class UserWebService extends BaseScimWebService {
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-				mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 				SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 				ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 				serializer.setAttributesArray(attributesArray);
@@ -165,8 +161,8 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
 	public Response getUserByUid(
 		@HeaderParam("Authorization") String authorization,
@@ -211,7 +207,6 @@ public class UserWebService extends BaseScimWebService {
 			// Serialize to JSON
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 			serializer.setAttributesArray(attributesArray);
@@ -234,10 +229,9 @@ public class UserWebService extends BaseScimWebService {
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	// @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Create user", notes = "Create user (https://tools.ietf.org/html/rfc7644#section-3.3)", response = User.class)
 	public Response createUser(
 		@HeaderParam("Authorization") String authorization,
@@ -317,7 +311,6 @@ public class UserWebService extends BaseScimWebService {
 			// Serialize to JSON
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 			serializer.setAttributesArray(attributesArray);
@@ -349,10 +342,9 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	// @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Update user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
 	public Response updateUser(
 		@HeaderParam("Authorization") String authorization,
@@ -430,7 +422,6 @@ public class UserWebService extends BaseScimWebService {
 			// Serialize to JSON
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 			serializer.setAttributesArray(attributesArray);
@@ -461,8 +452,8 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@DELETE
-	@Produces({ MediaType.APPLICATION_JSON})
-	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteUser(
 		@HeaderParam("Authorization") String authorization,
@@ -516,8 +507,9 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@PATCH
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response updateUserPatch(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
@@ -539,7 +531,8 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("/Search")
 	@POST
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response personSearch(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
@@ -573,7 +566,6 @@ public class UserWebService extends BaseScimWebService {
 			// Serialize to JSON
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 			// serializer.setAttributesArray(attributesArray);
@@ -597,7 +589,8 @@ public class UserWebService extends BaseScimWebService {
 	
 	@Path("/SearchPersons")
 	@POST
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response searchPersons(
 			@HeaderParam("Authorization") String authorization,
 			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
