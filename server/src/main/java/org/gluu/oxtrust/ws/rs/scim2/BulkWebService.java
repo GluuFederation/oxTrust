@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
@@ -56,8 +57,8 @@ public class BulkWebService extends BaseScimWebService {
 	private IGroupService groupService;
 
 	@POST
-	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Bulk Operation",	notes = "Bulk operation (https://tools.ietf.org/html/rfc7644#section-3.7)", response = BulkResponse.class)
 	public Response bulkOperation(

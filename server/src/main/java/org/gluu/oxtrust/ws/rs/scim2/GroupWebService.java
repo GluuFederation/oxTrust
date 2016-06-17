@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.*;
@@ -55,7 +56,7 @@ public class GroupWebService extends BaseScimWebService {
 	private IGroupService groupService;
 
 	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "List groups", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response listGroups(
@@ -153,7 +154,7 @@ public class GroupWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Find group by id", notes = "Returns a group by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.2.1)", response = Group.class)
 	public Response getGroupById(
@@ -221,8 +222,8 @@ public class GroupWebService extends BaseScimWebService {
 	}
 
 	@POST
-	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Create group", notes = "Create group (https://tools.ietf.org/html/rfc7644#section-3.3)", response = Group.class)
 	public Response createGroup(
@@ -320,8 +321,8 @@ public class GroupWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@PUT
-	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Update group", notes = "Update group (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = Group.class)
 	public Response updateGroup(
@@ -426,7 +427,7 @@ public class GroupWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@DELETE
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Delete group", notes = "Delete group (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteGroup(

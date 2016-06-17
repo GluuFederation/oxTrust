@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.*;
@@ -61,7 +62,7 @@ public class UserWebService extends BaseScimWebService {
 	private IPersonService personService;
 
 	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "List users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response listUsers(
@@ -161,7 +162,7 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
 	public Response getUserByUid(
@@ -229,8 +230,8 @@ public class UserWebService extends BaseScimWebService {
 	}
 
 	@POST
-	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Create user", notes = "Create user (https://tools.ietf.org/html/rfc7644#section-3.3)", response = User.class)
 	public Response createUser(
@@ -342,8 +343,8 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@PUT
-	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Update user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
 	public Response updateUser(
@@ -452,7 +453,7 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@DELETE
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteUser(
@@ -507,8 +508,8 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@PATCH
-	@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response updateUserPatch(
 		@HeaderParam("Authorization") String authorization,
@@ -531,7 +532,7 @@ public class UserWebService extends BaseScimWebService {
 
 	@Path("/Search")
 	@POST
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response personSearch(
 		@HeaderParam("Authorization") String authorization,
@@ -589,12 +590,12 @@ public class UserWebService extends BaseScimWebService {
 	
 	@Path("/SearchPersons")
 	@POST
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response searchPersons(
-			@HeaderParam("Authorization") String authorization,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-			ScimPersonSearch searchPattern) throws Exception {
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		ScimPersonSearch searchPattern) throws Exception {
 
 		Response authorizationResponse = null;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
