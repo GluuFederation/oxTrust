@@ -197,7 +197,35 @@ public class UpdateClientAction implements Serializable {
         updateContacts();
         updateDefaultAcrValues();
         updateRequestUris();
-
+        
+        if(this.client.getClientUri() != null){
+        	this.client.setClientUri(this.client.getClientUri().trim());
+        }
+        
+        if(this.client.getJwksUri() != null){
+        	this.client.setJwksUri(this.client.getJwksUri().trim());
+        }
+        
+        if(this.client.getLogoUri() != null){
+        	this.client.setLogoUri(this.client.getLogoUri().trim());
+        }
+        
+        if(this.client.getPolicyUri() != null){
+        	this.client.setPolicyUri(this.client.getPolicyUri().trim());
+        }
+        
+        if(this.client.getSectorIdentifierUri() != null){
+        	this.client.setSectorIdentifierUri(this.client.getSectorIdentifierUri().trim());
+        }
+        
+        if(this.client.getTosUri() != null){
+        	this.client.setTosUri(this.client.getTosUri().trim());
+        }
+        
+        if(this.client.getInitiateLoginUri()!= null){
+        	this.client.setInitiateLoginUri(this.client.getInitiateLoginUri().trim());
+        }
+        
         if (update) {
             // Update client
             try {
@@ -466,7 +494,7 @@ public class UpdateClientAction implements Serializable {
 
         List<String> tmpUris = new ArrayList<String>();
         for (String uri : this.loginUris) {
-            tmpUris.add(uri);
+            tmpUris.add(uri.trim());
         }
 
         this.client.setOxAuthRedirectURIs(tmpUris);
@@ -480,7 +508,7 @@ public class UpdateClientAction implements Serializable {
 
         List<String> tmpUris = new ArrayList<String>();
         for (String uri : this.logoutUris) {
-            tmpUris.add(uri);
+            tmpUris.add(uri.trim());
         }
 
         this.client.setOxAuthPostLogoutRedirectURIs(tmpUris);
@@ -495,7 +523,7 @@ public class UpdateClientAction implements Serializable {
 
         List<String> tmpUris = new ArrayList<String>();
         for (String uri : this.clientlogoutUris) {
-            tmpUris.add(uri);
+            tmpUris.add(uri.trim());
         }
 
         this.client.setLogoutUri(tmpUris);
@@ -538,7 +566,7 @@ public class UpdateClientAction implements Serializable {
 
         List<String> tmpRequestUris = new ArrayList<String>();
         for (String requestUri : requestUris) {
-            tmpRequestUris.add(requestUri);
+            tmpRequestUris.add(requestUri.trim());
         }
 
         client.setRequestUris(tmpRequestUris.toArray(new String[tmpRequestUris.size()]));
