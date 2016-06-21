@@ -24,6 +24,7 @@ import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerializer;
+import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -55,11 +56,14 @@ public class GroupWebService extends BaseScimWebService {
 	@In
 	private IGroupService groupService;
 
+	@In
+	private ExternalScimService externalScimService;
+
 	@GET
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	@ApiOperation(value = "List groups", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
-	public Response listGroups(
+	@ApiOperation(value = "Search groups", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
+	public Response searchGroups(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
@@ -285,6 +289,11 @@ public class GroupWebService extends BaseScimWebService {
 			gluuGroup.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
 			gluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
 
+			// For custom script: create group
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimCreateGroupMethods(gluuGroup);
+			}
+
 			log.debug("adding new GluuGroup");
 			groupService.addGroup(gluuGroup);
 
@@ -386,6 +395,11 @@ public class GroupWebService extends BaseScimWebService {
 				updatedGluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
 			}
 
+			// For custom script: update group
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimUpdateGroupMethods(updatedGluuGroup);
+			}
+
 			groupService.updateGroup(updatedGluuGroup);
 
 			log.debug(" group updated ");
@@ -452,22 +466,37 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.info(" Checking if the group exists ");
 			log.info(" id : " + id);
-			GluuGroup group = groupService.getGroupByInum(id);
-			if (group == null) {
+
+			GluuGroup gluuGroup = groupService.getGroupByInum(id);
+
+			if (gluuGroup == null) {
+
 				log.info(" the group is null ");
+
 				return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+
 			} else {
+
+				// For custom script: delete group
+				if (externalScimService.isEnabled()) {
+					externalScimService.executeScimDeleteGroupMethods(gluuGroup);
+				}
+
 				log.info(" getting started to delete members from groups ");
-				if (group.getMembers() != null) {
-					if (group.getMembers().size() > 0) {
+				if (gluuGroup.getMembers() != null) {
+
+					if (gluuGroup.getMembers().size() > 0) {
+
 						log.info(" getting dn for group ");
 						String dn = groupService.getDnForGroup(id);
 						log.info(" DN : " + dn);
-						Utils.deleteGroupFromPerson(group, dn);
+
+						Utils.deleteGroupFromPerson(gluuGroup, dn);
 					}
 				}
+
 				log.info(" removing the group ");
-				groupService.removeGroup(group);
+				groupService.removeGroup(gluuGroup);
 			}
 
 			return Response.ok().build();

@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,12 +26,16 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.context.J2EContext;
 
 import com.wordnik.swagger.annotations.Api;
@@ -55,6 +60,9 @@ public class BulkWebService extends BaseScimWebService {
 
 	@In
 	private IGroupService groupService;
+
+	@In
+	private ExternalScimService externalScimService;
 
 	@POST
 	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
@@ -228,6 +236,8 @@ public class BulkWebService extends BaseScimWebService {
 
 	private boolean createUser(User person) throws Exception {
 
+		log.info(" >>>>> IN createUser()... ");
+
 		GluuCustomPerson gluuPerson = CopyUtils2.copy(person, null, false);
 		if (gluuPerson == null) {
 			return false;
@@ -252,22 +262,44 @@ public class BulkWebService extends BaseScimWebService {
 				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
+			// As per spec, the SP must be the one to assign the meta attributes
+			log.info(" Setting meta: create user ");
+			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+			Date dateCreated = DateTime.now().toDate();
+			String relativeLocation = "/scim/v2/Users/" + inum;
+			gluuPerson.setAttribute("oxTrustMetaCreated", dateTimeFormatter.print(dateCreated.getTime()));
+			gluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
+			gluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
+
+			// Sync email, forward ("oxTrustEmail" -> "mail")
+			gluuPerson = Utils.syncEmailForward(gluuPerson, true);
+
+			// For custom script: create user
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimCreateUserMethods(gluuPerson);
+			}
+
 			personService.addPerson(gluuPerson);
 
+			log.info(" >>>>> LEAVING createUser()... ");
+
 			return true;
+
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			return false;
 		}
 	}
 
-	private boolean updateUser(String uid, User person_update) throws Exception {
+	private boolean updateUser(String id, User person_update) throws Exception {
+
+		log.info(" >>>>> IN updateUser()... ");
 
 		try {
 
 			personService = PersonService.instance();
 
-			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
+			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 			if (gluuPerson == null) {
 				return false;
 			}
@@ -275,11 +307,32 @@ public class BulkWebService extends BaseScimWebService {
 			gluuPerson = CopyUtils2.copy(person_update, gluuPerson, true);
 
 			if (person_update.getGroups().size() > 0) {
-				Utils.groupMembersAdder(gluuPerson, personService.getDnForPerson(uid));
+				Utils.groupMembersAdder(gluuPerson, personService.getDnForPerson(id));
 			}
+
+			log.info(" Setting meta: update user ");
+			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+			Date dateLastModified = DateTime.now().toDate();
+			gluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
+			if (gluuPerson.getAttribute("oxTrustMetaLocation") == null || (("oxTrustMetaLocation") != null && gluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
+				String relativeLocation = "/scim/v2/Users/" + id;
+				gluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
+			}
+
+			// Sync email, forward ("oxTrustEmail" -> "mail")
+			gluuPerson = Utils.syncEmailForward(gluuPerson, true);
+
+			// For custom script: update user
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimUpdateUserMethods(gluuPerson);
+			}
+
 			personService.updatePerson(gluuPerson);
 
+			log.info(" >>>>> LEAVING createUser()... ");
+
 			return true;
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -292,25 +345,40 @@ public class BulkWebService extends BaseScimWebService {
 
 	private boolean deleteUser(String uid) throws Exception {
 
+		log.info(" >>>>> IN deleteUser()... ");
+
 		try {
 
 			personService = PersonService.instance();
 
-			GluuCustomPerson person = personService.getPersonByInum(uid);
+			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 
-			if (person == null) {
+			if (gluuPerson == null) {
+
 				return false;
+
 			} else {
-				if (person.getMemberOf() != null) {
-					if (person.getMemberOf().size() > 0) {
+
+				// For custom script: delete user
+				if (externalScimService.isEnabled()) {
+					externalScimService.executeScimDeleteUserMethods(gluuPerson);
+				}
+
+				if (gluuPerson.getMemberOf() != null) {
+
+					if (gluuPerson.getMemberOf().size() > 0) {
 						String dn = personService.getDnForPerson(uid);
-						Utils.deleteUserFromGroup(person, dn);
+						Utils.deleteUserFromGroup(gluuPerson, dn);
 					}
 				}
-				personService.removePerson(person);
+
+				personService.removePerson(gluuPerson);
 			}
 
+			log.info(" >>>>> LEAVING deleteUser()... ");
+
 			return true;
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -322,7 +390,7 @@ public class BulkWebService extends BaseScimWebService {
 
 	private boolean createGroup(Group group) throws Exception {
 
-		// Return HTTP response with status code 201 Created
+		log.info(" >>>>> IN createGroup()... ");
 
 		log.debug(" copying gluuGroup ");
 		GluuGroup gluuGroup = CopyUtils2.copy(group, null, false);
@@ -352,9 +420,26 @@ public class BulkWebService extends BaseScimWebService {
 				Utils.personMembersAdder(gluuGroup, dn);
 			}
 
+			// As per spec, the SP must be the one to assign the meta attributes
+			log.info(" Setting meta: create group ");
+			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+			Date dateCreated = DateTime.now().toDate();
+			String relativeLocation = "/scim/v2/Groups/" + inum;
+			gluuGroup.setAttribute("oxTrustMetaCreated", dateTimeFormatter.print(dateCreated.getTime()));
+			gluuGroup.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
+			gluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
+
+			// For custom script: create group
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimCreateGroupMethods(gluuGroup);
+			}
+
 			groupService.addGroup(gluuGroup);
 
+			log.info(" >>>>> LEAVING createGroup()... ");
+
 			return true;
+
 		} catch (Exception ex) {
 			log.error("Failed to add user", ex);
 			return false;
@@ -362,6 +447,8 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean updateGroup(String id, Group group) throws Exception {
+
+		log.info(" >>>>> IN updateGroup()... ");
 
 		try {
 
@@ -371,16 +458,34 @@ public class BulkWebService extends BaseScimWebService {
 			if (gluuGroup == null) {
 				return false;
 			}
+
 			GluuGroup newGluuGroup = CopyUtils2.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
 				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
 			}
 
+			log.info(" Setting meta: update group ");
+			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
+			Date dateLastModified = DateTime.now().toDate();
+			newGluuGroup.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
+			if (newGluuGroup.getAttribute("oxTrustMetaLocation") == null || (("oxTrustMetaLocation") != null && newGluuGroup.getAttribute("oxTrustMetaLocation").isEmpty())) {
+				String relativeLocation = "/scim/v2/Groups/" + id;
+				newGluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
+			}
+
+			// For custom script: update group
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimUpdateGroupMethods(newGluuGroup);
+			}
+
 			groupService.updateGroup(newGluuGroup);
 			log.debug(" group updated ");
 
+			log.info(" >>>>> LEAVING updateGroup()... ");
+
 			return true;
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -389,30 +494,44 @@ public class BulkWebService extends BaseScimWebService {
 			ex.printStackTrace();
 			return false;
 		}
-
 	}
 
 	private boolean deleteGroup(String id) throws Exception {
+
+		log.info(" >>>>> IN deleteGroup()... ");
 
 		try {
 
 			groupService = GroupService.instance();
 
-			GluuGroup group = groupService.getGroupByInum(id);
+			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 
-			if (group == null) {
+			if (gluuGroup == null) {
+
 				return false;
+
 			} else {
-				if (group.getMembers() != null) {
-					if (group.getMembers().size() > 0) {
+
+				// For custom script: delete group
+				if (externalScimService.isEnabled()) {
+					externalScimService.executeScimDeleteGroupMethods(gluuGroup);
+				}
+
+				if (gluuGroup.getMembers() != null) {
+
+					if (gluuGroup.getMembers().size() > 0) {
 						String dn = groupService.getDnForGroup(id);
-						Utils.deleteGroupFromPerson(group, dn);
+						Utils.deleteGroupFromPerson(gluuGroup, dn);
 					}
 				}
 
-				groupService.removeGroup(group);
+				groupService.removeGroup(gluuGroup);
 			}
+
+			log.info(" >>>>> LEAVING deleteGroup()... ");
+
 			return true;
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -426,7 +545,6 @@ public class BulkWebService extends BaseScimWebService {
 
 		String str[] = path.split("/");
 		return str[2];
-
 	}
 	
 	private User convertUser(Object object){
