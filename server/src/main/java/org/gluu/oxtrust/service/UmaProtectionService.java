@@ -234,14 +234,14 @@ public class UmaProtectionService implements Serializable {
 			return;
 		}
 
-		String umaClientPrivateKeyPath = applicationConfiguration.getUmaClientPrivateKeyPath();
-		if (StringHelper.isEmpty(umaClientPrivateKeyPath)) {
-			throw new UmaProtectionException("UMA JWKS private keys path is empty");
+		String umaClientKeyStoreFile = applicationConfiguration.getUmaClientKeyStoreFile();
+		if (StringHelper.isEmpty(umaClientKeyStoreFile)) {
+			throw new UmaProtectionException("UMA JKS key store path is empty");
 		}
 
 		String umaClientPrivateKeys;
 		try {
-			umaClientPrivateKeys = FileUtils.readFileToString(new File(umaClientPrivateKeyPath));
+			umaClientPrivateKeys = FileUtils.readFileToString(new File(umaClientKeyStoreFile));
 		} catch (IOException ex) {
 			throw new UmaProtectionException("Failed to load UMA JWKS private keys", ex);
 		}
