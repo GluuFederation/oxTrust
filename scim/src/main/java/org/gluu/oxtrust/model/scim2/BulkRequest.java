@@ -3,34 +3,32 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.model.scim2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * SCIM 2.0 bulk request
  * 
  * @author Rahat Ali Date: 05.08.2015
  */
+public class BulkRequest implements Serializable {
 
-public class BulkRequest {
-	private List<String> schemas;
-	private Integer failOnErrors; 
-	private List<BulkOperation> operations;
+	private Integer failOnErrors;
+
+	private Set<String> schemas = new HashSet<String>();
+	private List<BulkOperation> operations = new LinkedList<BulkOperation>();
 	
 	public BulkRequest() {
-		schemas = new ArrayList<String>();
-		schemas.add("urn:ietf:params:scim:api:messages:2.0:BulkRequest");
-		operations = new ArrayList<BulkOperation>();
+		schemas.add(Constants.BULK_REQUEST_SCHEMA_ID);
 	}
 
-	public List<String> getSchemas() {
+	public Set<String> getSchemas() {
 		return schemas;
 	}
 
-	public void setSchemas(List<String> schemas) {
+	public void setSchemas(Set<String> schemas) {
 		this.schemas = schemas;
 	}
 
@@ -49,5 +47,4 @@ public class BulkRequest {
 	public void setOperations(List<BulkOperation> operations) {
 		this.operations = operations;
 	}
-
 }

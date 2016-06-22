@@ -3,7 +3,6 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.model.scim2;
 
 /**
@@ -24,6 +23,9 @@ public interface Constants {
     String GROUP_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:Group";
     String GROUP_CORE_SCHEMA_NAME = "Group";
     String GROUP_CORE_SCHEMA_DESCRIPTION = "Group";
+
+    String BULK_REQUEST_SCHEMA_ID = "urn:ietf:params:scim:api:messages:2.0:BulkRequest";
+    String BULK_RESPONSE_SCHEMA_ID = "urn:ietf:params:scim:api:messages:2.0:BulkResponse";
 
     String SERVICE_PROVIDER_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
 
