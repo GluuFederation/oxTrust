@@ -465,8 +465,8 @@
             "type": "string",
             "minLength": 1
         },
-        "umaClientkeyStorePassword": {
-            "id": "umaClientkeyStorePassword",
+        "umaClientKeyStorePassword": {
+            "id": "umaClientKeyStorePassword",
             "type": "string",
             "minLength": 1
         },
@@ -582,7 +582,7 @@
         "umaResourceId",
         "umaScope",
         "umaClientKeyStoreFile",
-        "umaClientkeyStorePassword",
+        "umaClientKeyStorePassword",
         "recaptchaSiteKey",
         "recaptchaSecretKey",
         "cssLocation",
