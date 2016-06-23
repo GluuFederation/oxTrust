@@ -31,6 +31,7 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -78,6 +79,16 @@ public class UpdatePersonAction implements Serializable {
 
 	@In
 	private ExternalUpdateUserService externalUpdateUserService;
+	
+	private GluuStatus gluuStatus ;
+
+	public GluuStatus getGluuStatus() {
+		return gluuStatus;
+	}
+
+	public void setGluuStatus(GluuStatus gluuStatus) {
+		this.gluuStatus = gluuStatus;
+	}
 
 	/**
 	 * Initializes attributes for adding new person
@@ -124,6 +135,7 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		initAttributes();
+		this.gluuStatus=this.person.getStatus();
 
 		userPasswordAction.setPerson(this.person);
 
@@ -146,10 +158,17 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		personService.addCustomObjectClass(this.person);
-		//this.person.setStatus(GluuStatus.ACTIVE);
 
 		List<GluuCustomAttribute> removedAttributes = customAttributeAction.detectRemovedAttributes();
 		customAttributeAction.updateOriginCustomAttributes();
+		
+		List<GluuCustomAttribute>  customAttributes = customAttributeAction.getCustomAttributes();
+		for(GluuCustomAttribute customAttribute: customAttributes){
+			if(customAttribute.getName().equalsIgnoreCase("gluuStatus")){
+				customAttribute.setValue(gluuStatus.getValue());
+			}
+			
+		}
 
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
 		this.person.getCustomAttributes().addAll(removedAttributes);
@@ -301,6 +320,10 @@ public class UpdatePersonAction implements Serializable {
 	 */
 	public boolean isUpdate() {
 		return update;
+	}
+	
+	public GluuStatus[] getActiveInactiveStatuses() {
+		return new GluuStatus[] { GluuStatus.ACTIVE, GluuStatus.INACTIVE };
 	}
 
 }
