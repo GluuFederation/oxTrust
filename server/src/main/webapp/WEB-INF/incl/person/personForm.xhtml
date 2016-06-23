@@ -91,9 +91,19 @@
                             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_custAttr.adminCanEdit or _mustEnter}">
                                 <ui:define name="label">#{_custAttr.metadata.displayName}</ui:define>
                              <div class="col-xs-10">   <rich:inplaceInput value="#{_custAttr.values[_valueIdx]}" defaultLabel="Click to enter #{_custAttr.metadata.displayName}" maxlength="60"  id="custId" required="#{_mustEnter and empty param['sv']}"
-                                    rendered="#{_custAttr.adminCanEdit or _mustEnter}">
+                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'gluustatus')}">
                                     <rich:validator event="blur" />
-                                </rich:inplaceInput></div>
+                                </rich:inplaceInput>
+
+									<h:selectOneMenu styleClass="form-control"
+										value="#{updatePersonAction.gluuStatus}" required="true"
+										id="statusId" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'gluustatus')}">
+									<s:selectItems	value="#{updatePersonAction.activeInactiveStatuses}"
+										var="_type" label="#{_type.displayName}" />
+									<!-- <s:convertEnum/> -->
+									<f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+									</h:selectOneMenu>
+								</div>
                                 <h:outputText value="&#160;" />
                               <div class="col-xs-2">  <a4j:commandLink action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}" render="selectedCustomAttributesId"
                                     styleClass="glyphicon glyphicon-remove"  style="margin-top:-18px;margin-left:-44px;" onbegin="changeAttributeVisibility('#{_aid}', true);" rendered="#{_custAttr.adminCanEdit and not _mandatory}">
