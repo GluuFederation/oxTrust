@@ -30,8 +30,10 @@ import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.GrantType;
+import org.xdi.oxauth.model.crypto.OxAuthCryptoProvider;
 import org.xdi.oxauth.model.crypto.signature.ECDSAPrivateKey;
 import org.xdi.oxauth.model.crypto.signature.RSAPrivateKey;
+import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
 import org.xdi.oxauth.model.uma.PermissionTicket;
 import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
@@ -235,15 +237,15 @@ public class UmaProtectionService implements Serializable {
 		}
 
 		String umaClientKeyStoreFile = applicationConfiguration.getUmaClientKeyStoreFile();
-		if (StringHelper.isEmpty(umaClientKeyStoreFile)) {
-			throw new UmaProtectionException("UMA JKS key store path is empty");
+		String umaClientKeyStorePassword = applicationConfiguration.getUmaClientKeyStorePassword();
+		if (StringHelper.isEmpty(umaClientKeyStoreFile) || StringHelper.isEmpty(umaClientKeyStorePassword)) {
+			throw new UmaProtectionException("UMA JKS keystore path or password is empty");
 		}
-
-		String umaClientPrivateKeys;
+		OxAuthCryptoProvider cryptoProvider;
 		try {
-			umaClientPrivateKeys = FileUtils.readFileToString(new File(umaClientKeyStoreFile));
-		} catch (IOException ex) {
-			throw new UmaProtectionException("Failed to load UMA JWKS private keys", ex);
+			cryptoProvider = new OxAuthCryptoProvider(umaClientKeyStoreFile, umaClientKeyStorePassword, null);
+		} catch (Exception ex) {
+			throw new UmaProtectionException("Failed to initialize crypto provider");
 		}
 		
 		OxAuthClient umaClient = null;
@@ -253,25 +255,20 @@ public class UmaProtectionService implements Serializable {
 			throw new UmaProtectionException("Failed to load UMA client", ex);
 		}
 
-		// org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwtUtil.getPrivateKey(null, umaClient.getJwks(), applicationConfiguration.getUmaClientKeyId());
-		org.xdi.oxauth.model.crypto.PrivateKey privateKey = JwksUtil.getPrivateKey(null, umaClientPrivateKeys, applicationConfiguration.getUmaClientKeyId());
-		if (privateKey == null) {
-			throw new UmaProtectionException("There is no keyId in JWKS");
-		}
-
 		try {
 			String clientId = umaClient.getInum();
+			String keyId = applicationConfiguration.getUmaClientKeyId();
 			TokenRequest tokenRequest = TokenRequest.builder().pat().grantType(GrantType.CLIENT_CREDENTIALS).build();
-			if (privateKey instanceof ECDSAPrivateKey) {
-				tokenRequest.setEcPrivateKey((ECDSAPrivateKey) privateKey);
-			} else if (privateKey instanceof RSAPrivateKey) {
-				tokenRequest.setRsaPrivateKey((RSAPrivateKey) privateKey);
-			}
 
 			tokenRequest.setAuthenticationMethod(AuthenticationMethod.PRIVATE_KEY_JWT);
 	        tokenRequest.setAuthUsername(clientId);
-	        tokenRequest.setAlgorithm(privateKey.getSignatureAlgorithm());
-	        tokenRequest.setKeyId(privateKey.getKeyId());
+	        tokenRequest.setCryptoProvider(cryptoProvider);
+
+	        // TODO: Think about should we add application parameter or detect it from key
+	        tokenRequest.setAlgorithm(SignatureAlgorithm.ES256);
+	        if (StringHelper.isNotEmpty(applicationConfiguration.getUmaClientKeyId())) {
+		        tokenRequest.setKeyId(keyId);
+	        }
 	        tokenRequest.setAudience(umaMetadataConfiguration.getTokenEndpoint());
 
 			this.umaPat = UmaClient.request(umaMetadataConfiguration.getTokenEndpoint(), tokenRequest);
