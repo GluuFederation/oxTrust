@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.core.Response;
@@ -249,17 +250,27 @@ public class UmaProtectionService implements Serializable {
 		try {
 			String clientId = umaClient.getInum();
 			String keyId = applicationConfiguration.getUmaClientKeyId();
-			TokenRequest tokenRequest = TokenRequest.builder().pat().grantType(GrantType.CLIENT_CREDENTIALS).build();
+	        if (StringHelper.isEmpty(keyId)) {
+	        	// Get first key
+	        	List<String> aliases = cryptoProvider.getKeyAliases();
+	        	if (aliases.size() > 0) {
+	        		keyId = aliases.get(0);
+	        	}
+	        }
+
+	        if (StringHelper.isEmpty(keyId)) {
+				throw new UmaProtectionException("UMA keyId is empty");
+			}
+	        
+	        SignatureAlgorithm algorithm = cryptoProvider.getSignatureAlgorithm(keyId);
+
+	        TokenRequest tokenRequest = TokenRequest.builder().pat().grantType(GrantType.CLIENT_CREDENTIALS).build();
 
 			tokenRequest.setAuthenticationMethod(AuthenticationMethod.PRIVATE_KEY_JWT);
 	        tokenRequest.setAuthUsername(clientId);
 	        tokenRequest.setCryptoProvider(cryptoProvider);
-
-	        // TODO: Think about should we add application parameter or detect it from key
-	        tokenRequest.setAlgorithm(SignatureAlgorithm.ES256);
-	        if (StringHelper.isNotEmpty(applicationConfiguration.getUmaClientKeyId())) {
-		        tokenRequest.setKeyId(keyId);
-	        }
+	        tokenRequest.setAlgorithm(algorithm);
+	        tokenRequest.setKeyId(keyId);
 	        tokenRequest.setAudience(umaMetadataConfiguration.getTokenEndpoint());
 
 			this.umaPat = UmaClient.request(umaMetadataConfiguration.getTokenEndpoint(), tokenRequest);
