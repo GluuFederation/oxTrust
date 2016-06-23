@@ -6,8 +6,15 @@
 
 package org.gluu.oxtrust.service;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.ws.rs.core.Response;
+
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ClientService;
@@ -31,30 +38,14 @@ import org.xdi.oxauth.client.uma.wrapper.UmaClient;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.crypto.OxAuthCryptoProvider;
-import org.xdi.oxauth.model.crypto.signature.ECDSAPrivateKey;
-import org.xdi.oxauth.model.crypto.signature.RSAPrivateKey;
 import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
 import org.xdi.oxauth.model.uma.PermissionTicket;
 import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.UmaPermission;
 import org.xdi.oxauth.model.uma.wrapper.Token;
-import org.xdi.oxauth.model.util.JwksUtil;
-import org.xdi.oxauth.model.util.JwtUtil;
 import org.xdi.service.JsonService;
-import org.xdi.util.FileUtil;
 import org.xdi.util.StringHelper;
-
-import javax.ws.rs.core.Response;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provide methods to simplify work with UMA Rest services
