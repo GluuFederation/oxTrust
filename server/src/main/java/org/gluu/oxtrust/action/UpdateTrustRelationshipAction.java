@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
@@ -42,7 +43,6 @@ import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.provider.JDKKeyPairGenerator;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
@@ -60,6 +60,7 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -84,7 +85,6 @@ import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
-import org.gluu.saml.metadata.SAMLMetadataParser;
 
 /**
  * Action class for updating and adding the trust relationships
@@ -436,8 +436,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 				Security.addProvider(new BouncyCastleProvider());
 			}
+			
 			try {
-				JDKKeyPairGenerator.RSA keyPairGen = new JDKKeyPairGenerator.RSA(); 
+				
+				KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", "BC"); 
 				keyPairGen.initialize(2048); 
 				KeyPair pair = keyPairGen.generateKeyPair(); 
 				StringWriter keyWriter = new StringWriter(); 

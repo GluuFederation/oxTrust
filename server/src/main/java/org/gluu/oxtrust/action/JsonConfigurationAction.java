@@ -122,6 +122,10 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			log.debug("Saving oxtrust-config.json:" + this.oxTrustConfigJson);
 			this.oxTrustApplicationConfiguration = convertToOxTrustApplicationConfiguration(this.oxTrustConfigJson);
+			
+			// Trim all URI properties
+			trimUriProperties();
+			
 			jsonConfigurationService.saveOxTrustApplicationConfiguration(this.oxTrustApplicationConfiguration);
 			facesMessages.add(Severity.INFO, "oxTrust Configuration is updated.");
 
@@ -132,6 +136,18 @@ public class JsonConfigurationAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
+	}
+
+	private void trimUriProperties() {
+		this.oxTrustApplicationConfiguration.setLogoutRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLogoutRedirectUrl()));
+		this.oxTrustApplicationConfiguration.setLoginRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLoginRedirectUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthAuthorizeUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthAuthorizeUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthEndSessionUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthEndSessionUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthLogoutUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthLogoutUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthRegisterUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthRegisterUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthSectorIdentifierUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthTokenUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthTokenUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthTokenValidationUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthTokenValidationUrl()));
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")

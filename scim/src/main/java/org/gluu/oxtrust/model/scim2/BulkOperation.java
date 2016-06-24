@@ -3,19 +3,19 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.model.scim2;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import java.io.Serializable;
 
 /**
  * SCIM 2.0 Bulk operation
  * 
  * @author Rahat Ali Date: 05.08.2015
  */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BulkOperation {
+public class BulkOperation implements Serializable {
 
 	private String bulkId;
 	private String version;
@@ -89,5 +89,4 @@ public class BulkOperation {
 	public void setResponse(Object response) {
 		this.response = response;
 	}
-
 }

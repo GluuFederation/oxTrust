@@ -22,6 +22,7 @@ import org.jboss.seam.log.Log;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
@@ -32,8 +33,8 @@ import javax.ws.rs.ext.Provider;
  * @author Val Pecaoco
  */
 @Provider
-@Consumes(Constants.MEDIA_TYPE_SCIM_JSON)
-@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 @Name("customJacksonProviderScim2")
 public class CustomJacksonProviderScim2 extends JacksonJaxbJsonProvider implements ContextResolver<ObjectMapper> {
 

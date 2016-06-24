@@ -14,8 +14,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
-import java.security.NoSuchProviderException;
-import java.security.cert.CRLException;
 import java.security.cert.CertPath;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -26,11 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.crypto.CryptoException;
 
-import org.bouncycastle.openssl.PEMReader;
-import org.bouncycastle.openssl.PasswordFinder;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.oxtrust.util.Utils;
 import org.jboss.seam.Component;
@@ -107,15 +103,15 @@ public class SSLService implements Serializable {
     public static X509Certificate getPEMCertificateStatic(InputStream certStream) throws IOException {
         X509Certificate cert = null;
         Reader reader = null;
-        PEMReader r = null;
+        PEMParser r = null;
 
         try {
             reader = new InputStreamReader(certStream);
-            r = new PEMReader(reader, new PasswordFinder() {
+            r = new PEMParser(reader /*, new PasswordFinder() {
                     public char[] getPassword() {
                             return null;
                     }
-            });
+            }*/);
 
             cert = (X509Certificate) r.readObject();
         }  finally {

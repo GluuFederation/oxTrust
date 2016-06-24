@@ -151,7 +151,7 @@
         <appender-ref ref="OX_TRUST_PERSISTENCE_FILE" />
     </logger>
 
-    <logger name="org.gluu.oxtrust.ldap.service.staus.ldap" additivity="false">
+    <logger name="org.gluu.oxtrust.ldap.service.status.ldap" additivity="false">
         <level value="${log4j.default.log.level}"/>
         <appender-ref ref="OX_TRUST_PERSISTENCE_LDAP_STATISTICS_FILE" />
     </logger>

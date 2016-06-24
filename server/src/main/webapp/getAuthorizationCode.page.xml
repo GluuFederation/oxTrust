@@ -21,7 +21,7 @@
         </rule>
 
         <rule if-outcome="no_permissions">
-            <redirect view-id="/home.xhtml">
+            <redirect view-id="/error.xhtml">
                 <message severity="INFO">Login failed, oxTrust wasn't allow to access user data</message>
             </redirect>
         </rule>
