@@ -47,6 +47,8 @@ import org.xdi.oxauth.model.uma.UmaPermission;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
+import org.xdi.util.security.StringEncrypter;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Provide methods to simplify work with UMA Rest services
@@ -88,7 +90,10 @@ public class UmaProtectionService implements Serializable {
 
 	private PermissionRegistrationService resourceSetPermissionRegistrationService;
 	private RptStatusService rptStatusService;
-	
+
+	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	private String cryptoConfigurationSalt;	
+
 	@Create
 	public void init() {
 		if (this.umaMetadataConfiguration != null) {
@@ -233,6 +238,15 @@ public class UmaProtectionService implements Serializable {
 		if (StringHelper.isEmpty(umaClientKeyStoreFile) || StringHelper.isEmpty(umaClientKeyStorePassword)) {
 			throw new UmaProtectionException("UMA JKS keystore path or password is empty");
 		}
+
+		if (umaClientKeyStorePassword != null) {
+			try {
+				umaClientKeyStorePassword = StringEncrypter.defaultInstance().decrypt(umaClientKeyStorePassword, cryptoConfigurationSalt);
+			} catch (EncryptionException ex) {
+				log.error("Failed to decrypt UmaClientKeyStorePassword password", ex);
+			}
+		}
+		
 		OxAuthCryptoProvider cryptoProvider;
 		try {
 			cryptoProvider = new OxAuthCryptoProvider(umaClientKeyStoreFile, umaClientKeyStorePassword, null);
