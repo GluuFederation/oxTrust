@@ -28,6 +28,7 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.hibernate.validator.constraints.Email;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -92,6 +93,18 @@ public class RegisterPersonAction implements Serializable {
 	@NotNull
 	@Size(min = 2, max = 30, message = "Length of password should be between 2 and 30")
 	private String repeatPassword;
+	
+	@NotNull
+	@Email(message = "Plese enter valid email Address.")
+	private String email;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
@@ -212,6 +225,8 @@ public class RegisterPersonAction implements Serializable {
 			// save password
 			this.person.setUserPassword(password);
 			this.person.setOxCreationTimestamp(new Date());
+			this.person.setMail(email);
+			
 
 			try {
 				// Set default message
