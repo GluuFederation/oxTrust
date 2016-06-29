@@ -164,16 +164,18 @@
                                             <s:decorate id="email" style="margin-left: -15px;"
                                                         template="/WEB-INF/incl/layout/edit.xhtml">
                                                 <ui:define name="label">Email </ui:define>
-                                                <h:inputText id="emailValidation" class="form-control"
+                                                <h:inputText id="emailValidation" class="form-control" validator="#{registerPersonAction.validateEmail}" 
                                                                value="#{registerPersonAction.email}"
                                                                maxlength="60"
                                                                size="40" tabindex="7" required="true" redisplay="true"
-                                                               autocomplete="off"
+                                                               autocomplete="off" 
                                                                requiredMessage="Please enter your email address."
-															   validatorMessage="Please enter valid email format"> 
-                                                <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                                                <rich:validator event="keyup"/>                                                   
-                                                </h:inputText>
+                                                               validatorMessage="Please enter valid email format.">                                               
+                                                	<f:validateRegex pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" /> 
+                                                	<f:ajax execute="@this" render="emailMessage" />                                              		 
+                                                <rich:validator event="keyup" />                                                                                                  
+                                                </h:inputText>    
+                                                <h:message id="emailMessage" for="emailValidation" style="color: red"/>                                            
                                                 <h:outputText value="&#160;"/>
                                             </s:decorate>
                                         </div>

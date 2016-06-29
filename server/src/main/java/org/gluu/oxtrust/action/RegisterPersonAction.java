@@ -14,7 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -385,5 +389,15 @@ public class RegisterPersonAction implements Serializable {
     public String getPostRegistrationInformation() {
 		return postRegistrationInformation;
 	}
+    
+    public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+    	  String email = (String) value;    	  
+    	  GluuCustomPerson  gluuCustomPerson = personService.getPersonByEmail(email);
+    	  if(gluuCustomPerson != null){
+    		  FacesMessage message = new FacesMessage(
+    				  "Email Address Already Exist");
+              context.addMessage(component.getClientId(context), message);
+    	  }
+    	}
 
 }
