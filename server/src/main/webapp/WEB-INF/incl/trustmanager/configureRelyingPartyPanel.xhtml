@@ -67,7 +67,7 @@
 
     </h:outputStylesheet>
 
-	<rich:popupPanel id="TRConfigPanel" onmaskclick="#{rich:component('TRConfigPanel')}.hide()" keepVisualState="true" autosized="true" zindex="2000" >
+	<rich:popupPanel id="TRConfigPanel" onmaskclick="#{rich:component('TRConfigPanel')}.hide()" keepVisualState="true" autosized="true" zindex="2000" top="60" >
         <f:facet name="header">
             <h:outputText value="Relying Party configuration" />
         </f:facet>
@@ -80,7 +80,7 @@
             <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <input type='hidden' name='cid' value='#{conversation.id}' />
 
-            <h:panelGrid columns="1" id="RelyingPartyMenu" width="580">
+            <h:panelGrid columns="1" id="RelyingPartyMenu" width="700"  style="margin: 0 auto; ">
                 <rich:pickList id="profileConfigurationSelection" value="#{relyingPartyAction.profileConfigurations}"
                     listsHeight="150" listWidth="230" sourceCaption="Available Profile Configurations" targetCaption="Selected Profile Configurations">
 

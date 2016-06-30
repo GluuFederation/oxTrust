@@ -460,8 +460,13 @@
             "type": "string",
             "minLength": 1
         },
-        "umaClientPrivateKeyPath": {
-            "id": "umaClientPrivateKeyPath",
+        "umaClientKeyStoreFile": {
+            "id": "umaClientKeyStoreFile",
+            "type": "string",
+            "minLength": 1
+        },
+        "umaClientKeyStorePassword": {
+            "id": "umaClientKeyStorePassword",
             "type": "string",
             "minLength": 1
         },
@@ -575,10 +580,11 @@
         "umaClientId",
         "umaClientKeyId",
         "umaResourceId",
+        "umaScope",
+        "umaClientKeyStoreFile",
+        "umaClientKeyStorePassword",
         "recaptchaSiteKey",
         "recaptchaSecretKey",
-        "umaScope",
-        "umaClientPrivateKeyPath",
         "cssLocation",
         "jsLocation",
         "scimTestMode",

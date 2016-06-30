@@ -28,6 +28,7 @@ import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupList;
 import org.gluu.oxtrust.model.scim.ScimGroup;
+import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -50,6 +51,9 @@ public class GroupWebService extends BaseScimWebService {
 
 	@In
 	private IGroupService groupService;
+
+	@In
+	private ExternalScimService externalScimService;
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -174,6 +178,11 @@ public class GroupWebService extends BaseScimWebService {
 				Utils.personMembersAdder(gluuGroup, dn);
 			}
 
+			// For custom script: create group
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimCreateGroupMethods(gluuGroup);
+			}
+
 			log.debug("adding new GluuGroup");
 			groupService.addGroup(gluuGroup);
 
@@ -242,8 +251,14 @@ public class GroupWebService extends BaseScimWebService {
 				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
 			}
 
+			// For custom script: update group
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimUpdateGroupMethods(newGluuGroup);
+			}
+
 			groupService.updateGroup(newGluuGroup);
 			log.debug(" group updated ");
+
 			ScimGroup newGroup = CopyUtils.copy(newGluuGroup, null);
 
 			URI location = new URI("/Groups/" + id);
@@ -285,22 +300,37 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.info(" Checking if the group exists ");
 			log.info(" id : " + id);
-			GluuGroup group = groupService.getGroupByInum(id);
-			if (group == null) {
+
+			GluuGroup gluuGroup = groupService.getGroupByInum(id);
+
+			if (gluuGroup == null) {
+
 				log.info(" the group is null ");
+
 				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
 			} else {
+
+				// For custom script: delete group
+				if (externalScimService.isEnabled()) {
+					externalScimService.executeScimDeleteGroupMethods(gluuGroup);
+				}
+
 				log.info(" getting started to delete members from groups ");
-				if (group.getMembers() != null) {
-					if (group.getMembers().size() > 0) {
+				if (gluuGroup.getMembers() != null) {
+
+					if (gluuGroup.getMembers().size() > 0) {
+
 						log.info(" getting dn for group ");
 						String dn = groupService.getDnForGroup(id);
 						log.info(" DN : " + dn);
-						Utils.deleteGroupFromPerson(group, dn);
+
+						Utils.deleteGroupFromPerson(gluuGroup, dn);
 					}
 				}
+
 				log.info(" removing the group ");
-				groupService.removeGroup(group);
+				groupService.removeGroup(gluuGroup);
 			}
 
 			return Response.ok().build();

@@ -123,41 +123,8 @@ public class JsonConfigurationAction implements Serializable {
 			log.debug("Saving oxtrust-config.json:" + this.oxTrustConfigJson);
 			this.oxTrustApplicationConfiguration = convertToOxTrustApplicationConfiguration(this.oxTrustConfigJson);
 			
-			if(this.oxTrustApplicationConfiguration.getLogoutRedirectUrl() != null){
-				this.oxTrustApplicationConfiguration.setLogoutRedirectUrl(this.oxTrustApplicationConfiguration.getLogoutRedirectUrl().trim());
-			}
-			
-			if(this.oxTrustApplicationConfiguration.getLoginRedirectUrl() != null){
-				this.oxTrustApplicationConfiguration.setLoginRedirectUrl(this.oxTrustApplicationConfiguration.getLoginRedirectUrl().trim());
-			}
-			
-			if(this.oxTrustApplicationConfiguration.getOxAuthAuthorizeUrl() != null){
-				this.oxTrustApplicationConfiguration.setOxAuthAuthorizeUrl(this.oxTrustApplicationConfiguration.getOxAuthAuthorizeUrl().trim());
-			}
-			
-			if(this.oxTrustApplicationConfiguration.getOxAuthEndSessionUrl() != null){
-				this.oxTrustApplicationConfiguration.setOxAuthEndSessionUrl(this.oxTrustApplicationConfiguration.getOxAuthEndSessionUrl().trim());
-			}
-			
-			if(this.oxTrustApplicationConfiguration.getOxAuthLogoutUrl() != null){
-				this.oxTrustApplicationConfiguration.setOxAuthLogoutUrl(this.oxTrustApplicationConfiguration.getOxAuthLogoutUrl().trim());
-			}
-			
-			if(this.oxTrustApplicationConfiguration.getOxAuthRegisterUrl() != null){
-				this.oxTrustApplicationConfiguration.setOxAuthRegisterUrl(this.oxTrustApplicationConfiguration.getOxAuthRegisterUrl().trim());
-			}
-			
-			if(this.oxTrustApplicationConfiguration.getOxAuthSectorIdentifierUrl() != null){
-				this.oxTrustApplicationConfiguration.setOxAuthSectorIdentifierUrl(this.oxTrustApplicationConfiguration.getOxAuthSectorIdentifierUrl().trim());
-			}
-			
-			if(this.oxTrustApplicationConfiguration.getOxAuthTokenUrl() != null){
-				this.oxTrustApplicationConfiguration.setOxAuthTokenUrl(this.oxTrustApplicationConfiguration.getOxAuthTokenUrl().trim());
-			}
-			
-			if(this.oxTrustApplicationConfiguration.getOxAuthTokenValidationUrl() != null){
-				this.oxTrustApplicationConfiguration.setOxAuthTokenValidationUrl(this.oxTrustApplicationConfiguration.getOxAuthTokenValidationUrl().trim());
-			}
+			// Trim all URI properties
+			trimUriProperties();
 			
 			jsonConfigurationService.saveOxTrustApplicationConfiguration(this.oxTrustApplicationConfiguration);
 			facesMessages.add(Severity.INFO, "oxTrust Configuration is updated.");
@@ -169,6 +136,18 @@ public class JsonConfigurationAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
+	}
+
+	private void trimUriProperties() {
+		this.oxTrustApplicationConfiguration.setLogoutRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLogoutRedirectUrl()));
+		this.oxTrustApplicationConfiguration.setLoginRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLoginRedirectUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthAuthorizeUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthAuthorizeUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthEndSessionUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthEndSessionUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthLogoutUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthLogoutUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthRegisterUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthRegisterUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthSectorIdentifierUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthTokenUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthTokenUrl()));
+		this.oxTrustApplicationConfiguration.setOxAuthTokenValidationUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthTokenValidationUrl()));
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")

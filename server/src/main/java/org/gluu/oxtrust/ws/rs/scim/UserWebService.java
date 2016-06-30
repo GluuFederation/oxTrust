@@ -39,6 +39,7 @@ import org.gluu.oxtrust.model.GluuCustomPersonList;
 import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
+import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
@@ -64,6 +65,9 @@ public class UserWebService extends BaseScimWebService {
 
 	@In
 	private IPersonService personService;
+
+	@In
+	private ExternalScimService externalScimService;
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -201,6 +205,11 @@ public class UserWebService extends BaseScimWebService {
 			// Sync email, forward ("oxTrustEmail" -> "mail")
 			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
 
+			// For custom script: create user
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimCreateUserMethods(gluuPerson);
+			}
+
 			log.debug("adding new GluuPerson");
 			personService.addPerson(gluuPerson);
 
@@ -277,8 +286,14 @@ public class UserWebService extends BaseScimWebService {
 			// Sync email, forward ("oxTrustEmail" -> "mail")
 			newGluuPerson = Utils.syncEmailForward(newGluuPerson, false);
 
+			// For custom script: update user
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimUpdateUserMethods(newGluuPerson);
+			}
+
 			personService.updatePerson(newGluuPerson);
 			log.debug(" person updated ");
+
 			ScimPerson newPerson = CopyUtils.copy(newGluuPerson, null);
 
 			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
@@ -319,20 +334,32 @@ public class UserWebService extends BaseScimWebService {
 
 			personService = PersonService.instance();
 
-			GluuCustomPerson person = personService.getPersonByInum(id);
-			if (person == null) {
+			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
+
+			if (gluuPerson == null) {
+
 				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
+
 			} else {
-				log.info("person.getMemberOf().size() : " + person.getMemberOf().size());
-				if (person.getMemberOf() != null) {
-					if (person.getMemberOf().size() > 0) {
+
+				// For custom script: delete user
+				if (externalScimService.isEnabled()) {
+					externalScimService.executeScimDeleteUserMethods(gluuPerson);
+				}
+
+				log.info("person.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
+				if (gluuPerson.getMemberOf() != null) {
+
+					if (gluuPerson.getMemberOf().size() > 0) {
+
 						String dn = personService.getDnForPerson(id);
 						log.info("DN : " + dn);
 
-						Utils.deleteUserFromGroup(person, dn);
+						Utils.deleteUserFromGroup(gluuPerson, dn);
 					}
 				}
-				personService.removePerson(person);
+
+				personService.removePerson(gluuPerson);
 			}
 
 			return Response.ok().build();
@@ -371,7 +398,6 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse("Data parsing error.", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
-	*/
 
 	private Object xmlToObject(String xml) throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -386,6 +412,7 @@ public class UserWebService extends BaseScimWebService {
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		return unmarshaller.unmarshal(source);
 	}
+	*/
 
 	@Path("{id}")
 	@PATCH

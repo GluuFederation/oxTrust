@@ -74,7 +74,7 @@
                                                     <!-- Ordinary Attribute -->
                                                     <s:decorate id="_custAttrIdx" style="margin-left: -15px;"
                                                                 template="/WEB-INF/incl/layout/edit.xhtml"
-                                                                rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')}">
+                                                                rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')  and (_custAttr.metadata.displayName ne 'Email')}">
                                                         <ui:define
                                                                 name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
                                                         <!-- String Attribute -->
@@ -159,6 +159,25 @@
                                                 <h:outputText value="&#160;"/>
                                             </s:decorate>
                                             <!-- End Passwords -->
+                                            
+                                            
+                                            <s:decorate id="email" style="margin-left: -15px;"
+                                                        template="/WEB-INF/incl/layout/edit.xhtml">
+                                                <ui:define name="label">Email </ui:define>
+                                                <h:inputText id="emailValidation" class="form-control" validator="#{registerPersonAction.validateEmail}" 
+                                                               value="#{registerPersonAction.email}"
+                                                               maxlength="60"
+                                                               size="40" tabindex="7" required="true" redisplay="true"
+                                                               autocomplete="off" 
+                                                               requiredMessage="Please enter your email address."
+                                                               validatorMessage="Please enter valid email format.">                                               
+                                                	<f:validateRegex pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" /> 
+                                                	<f:ajax execute="@this" render="emailMessage" />                                              		 
+                                                <rich:validator event="keyup" />                                                                                                  
+                                                </h:inputText>    
+                                                <h:message id="emailMessage" for="emailValidation" style="color: red"/>                                            
+                                                <h:outputText value="&#160;"/>
+                                            </s:decorate>
                                         </div>
                                         <!-- Captcha -->
                                         <s:fragment rendered="#{not registerPersonAction.captchaDisabled}">

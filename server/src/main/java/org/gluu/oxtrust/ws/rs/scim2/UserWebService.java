@@ -3,7 +3,6 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.net.URI;
@@ -27,9 +26,9 @@ import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonSearch;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
+import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
 import org.gluu.oxtrust.ws.rs.scim.PATCH;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
@@ -37,9 +36,6 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
@@ -61,11 +57,14 @@ public class UserWebService extends BaseScimWebService {
 	@In
 	private IPersonService personService;
 
+    @In
+    private Scim2UserService scim2UserService;
+
 	@GET
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	@ApiOperation(value = "List users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
-	public Response listUsers(
+	@ApiOperation(value = "Search users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
+	public Response searchUsers(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
@@ -165,7 +164,7 @@ public class UserWebService extends BaseScimWebService {
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
-	public Response getUserByUid(
+	public Response getUserById(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@PathParam("id") String id,
@@ -194,7 +193,7 @@ public class UserWebService extends BaseScimWebService {
 
 			if (personList == null || personList.isEmpty() || vlvResponse.getTotalResults() == 0) {
 				// sets HTTP status code 404 Not Found
-				return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+				return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 			} else {
 				log.info(" Resource " + id + " found ");
 			}
@@ -220,7 +219,7 @@ public class UserWebService extends BaseScimWebService {
 		} catch (EntryPersistenceException ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
 		} catch (Exception ex) {
 
@@ -253,58 +252,7 @@ public class UserWebService extends BaseScimWebService {
 
 		try {
 
-			log.debug(" copying gluuperson ");
-			GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
-			if (gluuPerson == null) {
-				return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to create user");
-			}
-
-			personService = PersonService.instance();
-
-			log.debug(" generating inum ");
-			String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
-			// //personService.generateInumForNewPerson();
-			log.debug(" getting DN ");
-			String dn = personService.getDnForPerson(inum);
-
-			log.debug(" getting iname ");
-			String iname = personService.generateInameForNewPerson(user.getUserName());
-
-			log.debug(" setting dn ");
-			gluuPerson.setDn(dn);
-
-			log.debug(" setting inum ");
-			gluuPerson.setInum(inum);
-
-			log.debug(" setting iname ");
-			gluuPerson.setIname(iname);
-
-			log.debug(" setting commonName ");
-			gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
-
-			log.info("gluuPerson.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
-			if (user.getGroups().size() > 0) {
-				log.info(" jumping to groupMembersAdder ");
-				log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
-				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
-			}
-
-			// As per spec, the SP must be the one to assign the meta attributes
-			log.info(" Setting meta: create user ");
-			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
-			Date dateCreated = DateTime.now().toDate();
-			String relativeLocation = "/scim/v2/Users/" + inum;
-			gluuPerson.setAttribute("oxTrustMetaCreated", dateTimeFormatter.print(dateCreated.getTime()));
-			gluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
-			gluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
-
-			// Sync email, forward ("oxTrustEmail" -> "mail")
-			gluuPerson = Utils.syncEmailForward(gluuPerson, true);
-
-			log.debug("adding new GluuPerson");
-			personService.addPerson(gluuPerson);
-
-			User createdUser = CopyUtils2.copy(gluuPerson, null);
+			User createdUser = scim2UserService.createUser(user);
 			// newPerson.setCustomAttributes(person.getCustomAttributes());
 
 			URI location = new URI(createdUser.getMeta().getLocation());
@@ -367,55 +315,7 @@ public class UserWebService extends BaseScimWebService {
 
 		try {
 
-			personService = PersonService.instance();
-
-			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-			if (gluuPerson == null) {
-
-				return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
-
-			} else {
-
-				// Validate if attempting to update userName of a different id
-				if (user.getUserName() != null) {
-
-					GluuCustomPerson personToFind = new GluuCustomPerson();
-					personToFind.setUid(user.getUserName());
-
-					List<GluuCustomPerson> foundPersons = personService.findPersons(personToFind, 2);
-					if (foundPersons != null && foundPersons.size() > 0) {
-						for (GluuCustomPerson foundPerson : foundPersons) {
-							if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(gluuPerson.getInum())) {
-								throw new DuplicateEntryException("Cannot update userName of a different id: " + user.getUserName());
-							}
-						}
-					}
-				}
-			}
-
-			GluuCustomPerson updatedGluuPerson = CopyUtils2.copy(user, gluuPerson, true);
-
-			if (user.getGroups().size() > 0) {
-				Utils.groupMembersAdder(updatedGluuPerson, personService.getDnForPerson(id));
-			}
-
-			log.info(" Setting meta: update user ");
-			DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
-			Date dateLastModified = DateTime.now().toDate();
-			updatedGluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
-			if (updatedGluuPerson.getAttribute("oxTrustMetaLocation") == null || (("oxTrustMetaLocation") != null && updatedGluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
-				String relativeLocation = "/scim/v2/Users/" + id;
-				updatedGluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
-			}
-
-			// Sync email, forward ("oxTrustEmail" -> "mail")
-			updatedGluuPerson = Utils.syncEmailForward(updatedGluuPerson, true);
-
-			personService.updatePerson(updatedGluuPerson);
-
-			log.debug(" person updated ");
-
-			User updatedUser = CopyUtils2.copy(updatedGluuPerson, null);
+			User updatedUser = scim2UserService.updateUser(id, user);
 			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
 
 			URI location = new URI(updatedUser.getMeta().getLocation());
@@ -434,8 +334,9 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (EntryPersistenceException ex) {
 
+            log.error("Failed to update user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
 		} catch (DuplicateEntryException ex) {
 
@@ -474,33 +375,19 @@ public class UserWebService extends BaseScimWebService {
 
 		try {
 
-			personService = PersonService.instance();
-
-			GluuCustomPerson person = personService.getPersonByInum(id);
-			if (person == null) {
-				return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
-			} else {
-				log.info("person.getMemberOf().size() : " + person.getMemberOf().size());
-				if (person.getMemberOf() != null) {
-					if (person.getMemberOf().size() > 0) {
-						String dn = personService.getDnForPerson(id);
-						log.info("DN : " + dn);
-
-						Utils.deleteUserFromGroup(person, dn);
-					}
-				}
-				personService.removePerson(person);
-			}
+            scim2UserService.deleteUser(id);
 
 			return Response.ok().build();
 
 		} catch (EntryPersistenceException ex) {
 
+            log.error("Failed to delete user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
 		} catch (Exception ex) {
 
+            log.error("Failed to delete user", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
@@ -557,7 +444,7 @@ public class UserWebService extends BaseScimWebService {
 			GluuCustomPerson gluuPerson = personService.getPersonByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
-				return getErrorResponse(Response.Status.NOT_FOUND, "No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue() + "' please try again or use another pattern.");
+				return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue() + "' please try again or use another pattern.");
 			}
 			// ScimPerson person = CopyUtils.copy(gluuPerson, null);
 			User user = CopyUtils2.copy(gluuPerson, null);
@@ -579,7 +466,7 @@ public class UserWebService extends BaseScimWebService {
 		} catch (EntryPersistenceException ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.NOT_FOUND, "Resource not found");
+			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource not found");
 
 		} catch (Exception ex) {
 
@@ -614,7 +501,8 @@ public class UserWebService extends BaseScimWebService {
 
 			List<GluuCustomPerson> personList = personService.getPersonsByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
 			ListResponse personsListResponse = new ListResponse();
-			if (personList != null) {
+
+            if (personList != null) {
 				log.info(" LDAP person list is not empty ");
 				for (GluuCustomPerson gluuPerson : personList) {
 					log.info(" copying person from GluuPerson to ScimPerson ");
@@ -625,15 +513,14 @@ public class UserWebService extends BaseScimWebService {
 					personsListResponse.getResources().add(person);
 					log.info(" person added? : " + personsListResponse.getResources().contains(person));
 				}
-
 			}
+
 			List<String> schema = new ArrayList<String>();
-			schema.add("urn:ietf:params:scim:api:messages:2.0:ListResponse");
-			log.info("setting schema");
+			schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
 			personsListResponse.setSchemas(schema);
 			personsListResponse.setTotalResults(personsListResponse.getResources().size());
 
-			URI location = new URI("/Users/");
+			URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users/");
 
 			return Response.ok(personsListResponse).location(location).build();
 

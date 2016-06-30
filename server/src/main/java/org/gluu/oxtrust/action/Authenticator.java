@@ -20,6 +20,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -530,6 +532,14 @@ public class Authenticator implements Serializable {
 		// 1. Request access token using the authorization code.
 		log.info("tokenURL : " + applicationConfiguration.getOxAuthTokenUrl());
 		String tokenURL = applicationConfiguration.getOxAuthTokenUrl();
+
+		String result = requestAccessToken(oxAuthHost, authorizationCode, sessionState, idToken, scopes, clientID, clientPassword, tokenURL);
+
+		return result;
+	}
+
+	private String requestAccessToken(String oxAuthHost, String authorizationCode, String sessionState, String idToken, String scopes,
+			String clientID, String clientPassword, String tokenURL) {
 		TokenClient tokenClient1 = new TokenClient(tokenURL);
 
 		log.info("Sending request to token endpoint");
@@ -537,25 +547,30 @@ public class Authenticator implements Serializable {
 		log.info("redirectURI : " + applicationConfiguration.getLoginRedirectUrl());
 		TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID, clientPassword);
 
-		log.info(" tokenResponse : " + tokenResponse);
-		log.info(" tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
+		log.debug(" tokenResponse : " + tokenResponse);
+		if (tokenResponse == null) {
+			log.error("Get empty token response. User rcan't log into application");
+			return OxTrustConstants.RESULT_NO_PERMISSIONS;
+		}
+
+		log.debug(" tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
 
 		String accessToken = tokenResponse.getAccessToken();
-		log.info(" accessToken : " + accessToken);
+		log.debug(" accessToken : " + accessToken);
 
 		// 2. Validate the access token
 		// ValidateTokenClient validateTokenClient = new
 		// ValidateTokenClient(applicationConfiguration.getOxAuthValidateTokenUrl());
 		// ValidateTokenResponse response3 = validateTokenClient
 		// .execValidateToken(accessToken);
-		log.info(" validating AccessToken ");
+		log.debug(" validating AccessToken ");
 
 		String validateUrl = applicationConfiguration.getOxAuthTokenValidationUrl();
 		ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateUrl);
 		ValidateTokenResponse response3 = validateTokenClient.execValidateToken(accessToken);
-		log.info(" response3.getStatus() : " + response3.getStatus());
+		log.debug(" response3.getStatus() : " + response3.getStatus());
 
-		log.info("validate check session status:" + response3.getStatus());
+		log.debug("validate check session status:" + response3.getStatus());
 		if (response3.getErrorDescription() != null) {
 			log.debug("validate token status message:" + response3.getErrorDescription());
 		}
@@ -588,8 +603,10 @@ public class Authenticator implements Serializable {
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
+
 		log.info("Token validation failed. User is NOT logged in");
 		return OxTrustConstants.RESULT_NO_PERMISSIONS;
+		
 	}
 
 	private String getOxAuthHost(String oxAuthAuthorizeUrl) {

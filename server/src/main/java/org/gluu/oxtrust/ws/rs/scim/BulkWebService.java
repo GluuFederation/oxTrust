@@ -6,10 +6,7 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +17,12 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -42,6 +36,7 @@ import org.gluu.oxtrust.model.scim.ScimBulkOperation;
 import org.gluu.oxtrust.model.scim.ScimBulkResponse;
 import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim.ScimPerson;
+import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
@@ -65,11 +60,13 @@ public class BulkWebService extends BaseScimWebService {
 	@In
 	private IGroupService groupService;
 
+	@In
+	private ExternalScimService externalScimService;
+
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response bulkOperation(@Context HttpServletRequest request, @HeaderParam("Authorization") String authorization, ScimBulkOperation operation) throws WebApplicationException,
-			MalformedURLException, URISyntaxException, JsonGenerationException, JsonMappingException, IOException, Exception {
+	public Response bulkOperation(@Context HttpServletRequest request, @HeaderParam("Authorization") String authorization, ScimBulkOperation operation) throws Exception {
 
 		personService = PersonService.instance();
 		groupService = GroupService.instance();
@@ -321,7 +318,6 @@ public class BulkWebService extends BaseScimWebService {
 						bulkResponses.setStatus(result);
 						listResponses.add(bulkResponses);
 					}
-
 				}
 			}
 
@@ -338,14 +334,14 @@ public class BulkWebService extends BaseScimWebService {
 
 	private boolean createUser(ScimPerson person) throws Exception {
 
-		personService = PersonService.instance();
-
 		GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
 		if (gluuPerson == null) {
 			return false;
 		}
 
 		try {
+
+			personService = PersonService.instance();
 
 			String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
 																	// //personService.generateInumForNewPerson();
@@ -362,9 +358,18 @@ public class BulkWebService extends BaseScimWebService {
 				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
+			// Sync email, forward ("oxTrustEmail" -> "mail")
+			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
+
+			// For custom script: create user
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimCreateUserMethods(gluuPerson);
+			}
+
 			personService.addPerson(gluuPerson);
 
 			return true;
+
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -372,9 +377,11 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean updateUser(String uid, ScimPerson person_update) throws Exception {
-		personService = PersonService.instance();
 
 		try {
+
+			personService = PersonService.instance();
+
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 			if (gluuPerson == null) {
 				return false;
@@ -385,9 +392,19 @@ public class BulkWebService extends BaseScimWebService {
 			if (person_update.getGroups().size() > 0) {
 				Utils.groupMembersAdder(gluuPerson, personService.getDnForPerson(uid));
 			}
+
+			// Sync email, forward ("oxTrustEmail" -> "mail")
+			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
+
+			// For custom script: update user
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimUpdateUserMethods(gluuPerson);
+			}
+
 			personService.updatePerson(gluuPerson);
 
 			return true;
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -399,23 +416,37 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean deleteUser(String uid) throws Exception {
-		personService = PersonService.instance();
 
 		try {
-			GluuCustomPerson person = personService.getPersonByInum(uid);
-			if (person == null) {
+
+			personService = PersonService.instance();
+
+			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
+
+			if (gluuPerson == null) {
+
 				return false;
+
 			} else {
-				if (person.getMemberOf() != null) {
-					if (person.getMemberOf().size() > 0) {
+
+				// For custom script: delete user
+				if (externalScimService.isEnabled()) {
+					externalScimService.executeScimDeleteUserMethods(gluuPerson);
+				}
+
+				if (gluuPerson.getMemberOf() != null) {
+
+					if (gluuPerson.getMemberOf().size() > 0) {
 						String dn = personService.getDnForPerson(uid);
-						Utils.deleteUserFromGroup(person, dn);
+						Utils.deleteUserFromGroup(gluuPerson, dn);
 					}
 				}
-				personService.removePerson(person);
+
+				personService.removePerson(gluuPerson);
 			}
 
 			return true;
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -426,9 +457,6 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean createGroup(ScimGroup group) throws Exception {
-		groupService = GroupService.instance();
-
-		// Return HTTP response with status code 201 Created
 
 		log.debug(" copying gluuGroup ");
 		GluuGroup gluuGroup = CopyUtils.copy(group, null, false);
@@ -437,6 +465,9 @@ public class BulkWebService extends BaseScimWebService {
 		}
 
 		try {
+
+			groupService = GroupService.instance();
+
 			log.debug(" generating inum ");
 			String inum = groupService.generateInumForNewGroup();
 			log.debug(" getting DN ");
@@ -455,9 +486,15 @@ public class BulkWebService extends BaseScimWebService {
 				Utils.personMembersAdder(gluuGroup, dn);
 			}
 
+			// For custom script: create group
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimCreateGroupMethods(gluuGroup);
+			}
+
 			groupService.addGroup(gluuGroup);
 
 			return true;
+
 		} catch (Exception ex) {
 			log.error("Failed to add user", ex);
 			return false;
@@ -466,23 +503,31 @@ public class BulkWebService extends BaseScimWebService {
 
 	private boolean updateGroup(String id, ScimGroup group) throws Exception {
 
-		groupService = GroupService.instance();
-
 		try {
+
+			groupService = GroupService.instance();
+
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
 				return false;
 			}
+
 			GluuGroup newGluuGroup = CopyUtils.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
 				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
 			}
 
+			// For custom script: update group
+			if (externalScimService.isEnabled()) {
+				externalScimService.executeScimUpdateGroupMethods(newGluuGroup);
+			}
+
 			groupService.updateGroup(newGluuGroup);
 			log.debug(" group updated ");
 
 			return true;
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -491,27 +536,40 @@ public class BulkWebService extends BaseScimWebService {
 			ex.printStackTrace();
 			return false;
 		}
-
 	}
 
 	private boolean deleteGroup(String id) throws Exception {
-		groupService = GroupService.instance();
 
 		try {
-			GluuGroup group = groupService.getGroupByInum(id);
-			if (group == null) {
+
+			groupService = GroupService.instance();
+
+			GluuGroup gluuGroup = groupService.getGroupByInum(id);
+
+			if (gluuGroup == null) {
+
 				return false;
+
 			} else {
-				if (group.getMembers() != null) {
-					if (group.getMembers().size() > 0) {
+
+				// For custom script: delete group
+				if (externalScimService.isEnabled()) {
+					externalScimService.executeScimDeleteGroupMethods(gluuGroup);
+				}
+
+				if (gluuGroup.getMembers() != null) {
+
+					if (gluuGroup.getMembers().size() > 0) {
 						String dn = groupService.getDnForGroup(id);
-						Utils.deleteGroupFromPerson(group, dn);
+						Utils.deleteGroupFromPerson(gluuGroup, dn);
 					}
 				}
 
-				groupService.removeGroup(group);
+				groupService.removeGroup(gluuGroup);
 			}
+
 			return true;
+
 		} catch (EntryPersistenceException ex) {
 			log.error("Exception: ", ex);
 			return false;
@@ -525,7 +583,5 @@ public class BulkWebService extends BaseScimWebService {
 
 		String str[] = path.split("/");
 		return str[2];
-
 	}
-
 }

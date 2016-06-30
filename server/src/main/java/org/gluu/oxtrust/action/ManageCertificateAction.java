@@ -35,11 +35,11 @@ import javax.security.auth.x500.X500Principal;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
+import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.JCERSAPrivateCrtKey;
-import org.bouncycastle.openssl.PEMReader;
-import org.bouncycastle.openssl.PasswordFinder;
+import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -206,7 +206,7 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
-	public String generateCSR(String fileName) {
+	public String generateCSR(String fileName) throws IOException {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
 		}
@@ -230,7 +230,7 @@ public class ManageCertificateAction implements Serializable {
 			StringBuilder response = new StringBuilder();
 
 			response.append(BEGIN_CERT_REQ + "\n");
-			response.append(WordUtils.wrap(new String(Base64.encode(csr.getDEREncoded())), 64, "\n", true) + "\n");
+			response.append(WordUtils.wrap(new String(Base64.encode(csr.getEncoded(ASN1Encoding.DER))), 64, "\n", true) + "\n");
 			response.append(END_CERT_REQ + "\n");
 
 			result = ResponseHelper.downloadFile("csr.pem", OxTrustConstants.CONTENT_TYPE_TEXT_PLAIN, response.toString().getBytes(),
@@ -261,20 +261,20 @@ public class ManageCertificateAction implements Serializable {
 	private KeyPair getKeyPair(String fileName) {
 		KeyPair pair = null;
 		JCERSAPrivateCrtKey privateKey = null;
-		PEMReader r = null;
+		PEMParser r = null;
 		FileReader fileReader = null;
 
 		File keyFile = new File(getTempCertDir() + fileName.replace("crt", "key"));
 		if (keyFile.isFile()) {
 			try {
 				fileReader = new FileReader(keyFile);
-				r = new PEMReader(fileReader, new PasswordFinder() {
+				r = new PEMParser(fileReader /*, new PasswordFinder() {
 					public char[] getPassword() {
 						// Since keys are stored without a password this
 						// function should not be called.
 						return null;
 					}
-				});
+				}*/);
 
 				Object keys = r.readObject();
 				if (keys == null) {
