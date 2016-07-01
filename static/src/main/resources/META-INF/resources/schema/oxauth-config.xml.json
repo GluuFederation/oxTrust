@@ -165,6 +165,34 @@
             "format": "url",
             "minLength": 1
         },
+        "oxElevenGenerateKeyEndpoint": {
+            "id": "oxElevenGenerateKeyEndpoint",
+            "description": "URL for the oxEleven Generate Key Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "oxElevenSignEndpoint": {
+            "id": "oxElevenSignEndpoint",
+            "description": "URL for the oxEleven Sign Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "oxElevenVerifySignatureEndpoint": {
+            "id": "oxElevenVerifySignatureEndpoint",
+            "description": "URL for the oxEleven Verify Signature Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "oxElevenDeleteKeyEndpoint": {
+            "id": "oxElevenDeleteKeyEndpoint",
+            "description": "URL for the oxEleven Delete Key Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "openidSubAttribute": {
             "id": "openidSubAttribute",
             "description": "LDAP attribute used for the sub claim.",
@@ -995,6 +1023,10 @@
         "introspectionEndpoint",
         "umaConfigurationEndpoint",
         "sectorIdentifierEndpoint",
+        "oxElevenGenerateKeyEndpoint",
+        "oxElevenSignEndpoint",
+        "oxElevenVerifySignatureEndpoint",
+        "oxElevenDeleteKeyEndpoint",
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
