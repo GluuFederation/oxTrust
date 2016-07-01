@@ -996,7 +996,7 @@
         "keyStoreSecret": {
             "id": "keyStoreSecret",
             "description": "The password of the Key Store.",
-            "type": "string",
+            "type": "password",
             "minLength": 1
         }
     },
