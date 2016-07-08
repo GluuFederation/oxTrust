@@ -453,6 +453,9 @@ input:-webkit-autofill {
 	position: relative !important;
 	width: 100% !important;
 	height: 31px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 600px !important;
 }
 
 *.rf-ii-lbl {
