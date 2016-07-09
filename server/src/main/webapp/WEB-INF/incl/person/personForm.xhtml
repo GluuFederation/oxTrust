@@ -112,6 +112,7 @@
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'gluustatus')}">
                                                                 <rich:validator event="blur"/>
+                                                                <f:validateLength maximum="60"/>
                                                             </rich:inplaceInput>
 
                                                             <h:selectOneMenu styleClass="form-control"
