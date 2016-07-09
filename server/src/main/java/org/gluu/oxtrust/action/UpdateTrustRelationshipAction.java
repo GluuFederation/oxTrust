@@ -687,6 +687,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		} else {
 			log.info("Shibboleth2 configuration updated successfully");
 			facesMessages.add(Severity.INFO, "Shibboleth2 configuration updated successfully");
+			facesMessages.add(Severity.WARN, "Please note it may take several minutes before new settings are actually loaded and applied by Shibboleth module!");
 		}
 	}
 
