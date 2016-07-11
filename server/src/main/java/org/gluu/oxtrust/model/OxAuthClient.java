@@ -19,8 +19,11 @@ import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -165,6 +168,9 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxAuthInitiateLoginURI")
     private String initiateLoginUri;
+    
+    @LdapAttribute(name = "oxAuthClientSecretExpiresAt")
+    private Date clientSecretExpiresAt;
 
     @LdapAttribute(name = "oxAuthRequestURI")
     private String[] requestUris;
@@ -525,5 +531,13 @@ public class OxAuthClient extends Entry implements Serializable {
     public String getOxAuthClientSecret() {
         return oxAuthClientSecret;
     }
+
+	public Date getClientSecretExpiresAt() {
+		return clientSecretExpiresAt;
+	}
+
+	public void setClientSecretExpiresAt(Date clientSecretExpiresAt) {
+		this.clientSecretExpiresAt = clientSecretExpiresAt;
+	}
 
 }

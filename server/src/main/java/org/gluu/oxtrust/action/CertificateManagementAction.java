@@ -129,95 +129,111 @@ public class CertificateManagementAction implements Serializable {
      * Apply search pattern.
      */
     private void updateTableView() {
-        for (X509CertificateShortInfo cert : asimbaCertificates) {
-            // check dates
-            cert.updateViewStyle();
+        try {
+            for (X509CertificateShortInfo cert : asimbaCertificates) {
+                // check dates
+                cert.updateViewStyle();
+            }
+        } catch (Exception e) {
+            log.error("Load Asimba keystore configuration exception", e); 
         }
         
-        // load trustStoreCertificates
-        trustStoreCertificates = new ArrayList<X509CertificateShortInfo>();
-            
-        GluuAppliance appliance = applianceService.getAppliance();
-    
-        List<TrustStoreCertificate> trustStoreCertificatesList = appliance.getTrustStoreCertificates();
-    
-        if (trustStoreCertificatesList != null) {
-            for (TrustStoreCertificate trustStoreCertificate : trustStoreCertificatesList) {
-                try {
-                    X509Certificate certs[] = SSLService.loadCertificates(trustStoreCertificate.getCertificate().getBytes());
+        try {
+            // load trustStoreCertificates
+            trustStoreCertificates = new ArrayList<X509CertificateShortInfo>();
 
-                    for (X509Certificate cert : certs) {
-                        X509CertificateShortInfo entry = new X509CertificateShortInfo(trustStoreCertificate.getName(), cert);
-                        trustStoreCertificates.add(entry);
-                    }
-                } catch (Exception e) { log.error("Certificate load exception", e); }
+            GluuAppliance appliance = applianceService.getAppliance();
+
+            List<TrustStoreCertificate> trustStoreCertificatesList = appliance.getTrustStoreCertificates();
+
+            if (trustStoreCertificatesList != null) {
+                for (TrustStoreCertificate trustStoreCertificate : trustStoreCertificatesList) {
+                    try {
+                        X509Certificate certs[] = SSLService.loadCertificates(trustStoreCertificate.getCertificate().getBytes());
+
+                        for (X509Certificate cert : certs) {
+                            X509CertificateShortInfo entry = new X509CertificateShortInfo(trustStoreCertificate.getName(), cert);
+                            trustStoreCertificates.add(entry);
+                        }
+                    } catch (Exception e) { log.error("Certificate load exception", e); }
+                }
             }
+        } catch (Exception e) {
+            log.error("Load trustStoreCertificates configuration exception", e); 
         }
         
-        // load internalCertificates
-        internalCertificates = new ArrayList<X509CertificateShortInfo>();
         try {
-            X509Certificate openDJCerts[] = SSLService.loadCertificates(new FileInputStream(OPENDJ_CERTIFICATE_FILE));
-            for (X509Certificate openDJCert : openDJCerts)
-                internalCertificates.add(new X509CertificateShortInfo("OpenDJ SSL", openDJCert));
-        } catch (Exception e) { log.error("Certificate load exception", e); }
-        try {
-            X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
-            for (X509Certificate httpdCert : httpdCerts)
-                internalCertificates.add(new X509CertificateShortInfo("HTTPD SSL", httpdCert));
-        } catch (Exception e) { log.error("Certificate load exception", e); }
-        try {
-            X509Certificate shibIDPCerts[] = SSLService.loadCertificates(new FileInputStream(SHIB_IDP_CERTIFICATE_FILE));
-            for (X509Certificate shibIDPCert : shibIDPCerts)
-                internalCertificates.add(new X509CertificateShortInfo("Shibboleth IDP SSL", shibIDPCert));
-        } catch (Exception e) { log.error("Certificate load exception", e); }
-        
-        // check for warning and search pattern
-        final String searchPatternLC = this.searchPattern != null ? this.searchPattern.toLowerCase() : null;
-        
-        Iterator<X509CertificateShortInfo> certsIterator = asimbaCertificates.iterator();
-        while (certsIterator.hasNext()) {
-            X509CertificateShortInfo cert = certsIterator.next();
-            // apply warning flag
-            if (searchObsoleteWarning && !cert.isWarning())
-                certsIterator.remove();
-            // apply search pattern
-            if (searchPatternLC != null && !searchPatternLC.isEmpty() &&
-                    cert.getAlias() != null && cert.getIssuer() != null) {
-                if (!cert.getAlias().toLowerCase().contains(searchPatternLC) &&
-                        !cert.getIssuer().toLowerCase().contains(searchPatternLC))
-                    certsIterator.remove();
-            }
+            // load internalCertificates
+            internalCertificates = new ArrayList<X509CertificateShortInfo>();
+            try {
+                X509Certificate openDJCerts[] = SSLService.loadCertificates(new FileInputStream(OPENDJ_CERTIFICATE_FILE));
+                for (X509Certificate openDJCert : openDJCerts)
+                    internalCertificates.add(new X509CertificateShortInfo("OpenDJ SSL", openDJCert));
+            } catch (Exception e) { log.error("Certificate load exception", e); }
+            try {
+                X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
+                for (X509Certificate httpdCert : httpdCerts)
+                    internalCertificates.add(new X509CertificateShortInfo("HTTPD SSL", httpdCert));
+            } catch (Exception e) { log.error("Certificate load exception", e); }
+            try {
+                X509Certificate shibIDPCerts[] = SSLService.loadCertificates(new FileInputStream(SHIB_IDP_CERTIFICATE_FILE));
+                for (X509Certificate shibIDPCert : shibIDPCerts)
+                    internalCertificates.add(new X509CertificateShortInfo("Shibboleth IDP SSL", shibIDPCert));
+            } catch (Exception e) { log.error("Certificate load exception", e); }
+        } catch (Exception e) {
+            log.error("Load internalCertificates configuration exception", e); 
         }
         
-        certsIterator = trustStoreCertificates.iterator();
-        while (certsIterator.hasNext()) {
-            X509CertificateShortInfo cert = certsIterator.next();
-            // apply warning flag
-            if (searchObsoleteWarning && !cert.isWarning())
-                certsIterator.remove();
-            // apply search pattern
-            if (searchPatternLC != null && !searchPatternLC.isEmpty() &&
-                    cert.getAlias() != null && cert.getIssuer() != null) {
-                if (!cert.getAlias().toLowerCase().contains(searchPatternLC) &&
-                        !cert.getIssuer().toLowerCase().contains(searchPatternLC))
+        try {
+            // check for warning and search pattern
+            final String searchPatternLC = this.searchPattern != null ? this.searchPattern.toLowerCase() : null;
+
+            Iterator<X509CertificateShortInfo> certsIterator = asimbaCertificates.iterator();
+            while (certsIterator.hasNext()) {
+                X509CertificateShortInfo cert = certsIterator.next();
+                // apply warning flag
+                if (searchObsoleteWarning && !cert.isWarning())
                     certsIterator.remove();
+                // apply search pattern
+                if (searchPatternLC != null && !searchPatternLC.isEmpty() &&
+                        cert.getAlias() != null && cert.getIssuer() != null) {
+                    if (!cert.getAlias().toLowerCase().contains(searchPatternLC) &&
+                            !cert.getIssuer().toLowerCase().contains(searchPatternLC))
+                        certsIterator.remove();
+                }
             }
-        }
-        
-        certsIterator = internalCertificates.iterator();
-        while (certsIterator.hasNext()) {
-            X509CertificateShortInfo cert = certsIterator.next();
-            // apply warning flag
-            if (searchObsoleteWarning && !cert.isWarning())
-                certsIterator.remove();
-            // apply search pattern
-            if (searchPatternLC != null && !searchPatternLC.isEmpty() &&
-                    cert.getAlias() != null && cert.getIssuer() != null) {
-                if (!cert.getAlias().toLowerCase().contains(searchPatternLC) &&
-                        !cert.getIssuer().toLowerCase().contains(searchPatternLC))
+
+            certsIterator = trustStoreCertificates.iterator();
+            while (certsIterator.hasNext()) {
+                X509CertificateShortInfo cert = certsIterator.next();
+                // apply warning flag
+                if (searchObsoleteWarning && !cert.isWarning())
                     certsIterator.remove();
+                // apply search pattern
+                if (searchPatternLC != null && !searchPatternLC.isEmpty() &&
+                        cert.getAlias() != null && cert.getIssuer() != null) {
+                    if (!cert.getAlias().toLowerCase().contains(searchPatternLC) &&
+                            !cert.getIssuer().toLowerCase().contains(searchPatternLC))
+                        certsIterator.remove();
+                }
             }
+
+            certsIterator = internalCertificates.iterator();
+            while (certsIterator.hasNext()) {
+                X509CertificateShortInfo cert = certsIterator.next();
+                // apply warning flag
+                if (searchObsoleteWarning && !cert.isWarning())
+                    certsIterator.remove();
+                // apply search pattern
+                if (searchPatternLC != null && !searchPatternLC.isEmpty() &&
+                        cert.getAlias() != null && cert.getIssuer() != null) {
+                    if (!cert.getAlias().toLowerCase().contains(searchPatternLC) &&
+                            !cert.getIssuer().toLowerCase().contains(searchPatternLC))
+                        certsIterator.remove();
+                }
+            }
+        } catch (Exception e) {
+            log.error("Update certificates status view exception", e); 
         }
     }
 

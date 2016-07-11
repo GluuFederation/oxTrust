@@ -14,7 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -28,6 +32,7 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.hibernate.validator.constraints.Email;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -92,6 +97,18 @@ public class RegisterPersonAction implements Serializable {
 	@NotNull
 	@Size(min = 2, max = 30, message = "Length of password should be between 2 and 30")
 	private String repeatPassword;
+	
+	@NotNull
+	@Email(message = "Plese enter valid email Address.")
+	private String email;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
@@ -212,6 +229,8 @@ public class RegisterPersonAction implements Serializable {
 			// save password
 			this.person.setUserPassword(password);
 			this.person.setOxCreationTimestamp(new Date());
+			this.person.setMail(email);
+			
 
 			try {
 				// Set default message
@@ -370,5 +389,15 @@ public class RegisterPersonAction implements Serializable {
     public String getPostRegistrationInformation() {
 		return postRegistrationInformation;
 	}
+    
+    public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+    	  String email = (String) value;    	  
+    	  GluuCustomPerson  gluuCustomPerson = personService.getPersonByEmail(email);
+    	  if(gluuCustomPerson != null){
+    		  FacesMessage message = new FacesMessage(
+    				  "Email Address Already Exist");
+              context.addMessage(component.getClientId(context), message);
+    	  }
+    	}
 
 }

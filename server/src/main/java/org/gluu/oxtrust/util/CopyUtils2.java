@@ -410,7 +410,7 @@ public class CopyUtils2 implements Serializable {
 					}
 					log.trace(" setting middlename ");
 					if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
-						destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
+						destination.setAttribute("middleName", source.getName().getMiddleName());
 					}
 					log.trace(" setting honor");
 					if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
@@ -431,7 +431,7 @@ public class CopyUtils2 implements Serializable {
 				}
 				log.trace(" setting nickname ");
 				if (source.getNickName() != null && source.getNickName().length() > 0) {
-					destination.setAttribute("oxTrustNickName", source.getNickName());
+					destination.setAttribute("nickname", source.getNickName());
 				}
 				log.trace(" setting profileURL ");
 				if (source.getProfileUrl() != null && source.getProfileUrl().length() > 0) {
@@ -1218,7 +1218,7 @@ public class CopyUtils2 implements Serializable {
 			}
 			log.trace(" setting middlename ");
 			if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
-				destination.setAttribute("oxTrustMiddleName", source.getName().getMiddleName());
+				destination.setAttribute("middleName", source.getName().getMiddleName());
 			}
 			log.trace(" setting honor");
 			if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
@@ -1239,7 +1239,7 @@ public class CopyUtils2 implements Serializable {
 		}
 		log.trace(" setting nickname ");
 		if (source.getNickName() != null && source.getNickName().length() > 0) {
-			destination.setAttribute("oxTrustNickName", source.getNickName());
+			destination.setAttribute("nickname", source.getNickName());
 		}
 		log.trace(" setting profileURL ");
 		if (source.getProfileUrl() != null && source.getProfileUrl().length() > 0) {
