@@ -110,7 +110,7 @@
                                                                     defaultLabel="Click to enter #{_custAttr.metadata.displayName}"
                                                                     maxlength="60" id="custId"
                                                                     required="#{_mustEnter and empty param['sv']}"
-                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'gluustatus')}">
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Status')}">
                                                                 <rich:validator event="blur"/>
                                                                 <f:validateLength maximum="60"/>
                                                             </rich:inplaceInput>
@@ -119,7 +119,7 @@
                                                                              value="#{updatePersonAction.gluuStatus}"
                                                                              required="true"
                                                                              id="statusId"
-                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'gluustatus')}">
+                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Status')}">
                                                                 <s:selectItems
                                                                         value="#{updatePersonAction.activeInactiveStatuses}"
                                                                         var="_type" label="#{_type.displayName}"/>
