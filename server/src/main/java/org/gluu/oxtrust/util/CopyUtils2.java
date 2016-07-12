@@ -1749,7 +1749,8 @@ public class CopyUtils2 implements Serializable {
 	}
 
 	private static void setGluuStatus(GluuCustomPerson destination, String active) {
-		if (StringHelper.isNotEmpty(active) && (destination.getAttribute("gluuStatus") == null)) {
+		// if (StringHelper.isNotEmpty(active) && (destination.getAttribute("gluuStatus") == null)) {
+		if (StringHelper.isNotEmpty(active)) {
 			GluuBoolean gluuStatus = GluuBoolean.getByValue(org.xdi.util.StringHelper.toLowerCase(active));
 			if (gluuStatus != null) {
 				destination.setAttribute("gluuStatus", gluuStatus.getValue());
