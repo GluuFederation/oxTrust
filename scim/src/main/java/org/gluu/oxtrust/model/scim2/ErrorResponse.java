@@ -41,7 +41,11 @@ public class ErrorResponse implements Serializable {
     }
 
     public String getScimType() {
-        return scimType.getValue();
+        if (scimType != null) {
+            return scimType.getValue();
+        } else {
+            return "";
+        }
     }
 
     protected ErrorScimType getScimTypeEnum() {
