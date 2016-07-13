@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -98,8 +100,6 @@ public class RegisterPersonAction implements Serializable {
 	@Size(min = 2, max = 30, message = "Length of password should be between 2 and 30")
 	private String repeatPassword;
 	
-	@NotNull
-	@Email(message = "Plese enter valid email Address.")
 	private String email;
 
 	public String getEmail() {
@@ -391,12 +391,33 @@ public class RegisterPersonAction implements Serializable {
 	}
     
     public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-    	  String email = (String) value;    	  
+    	  String email = (String) value;
+    	  
+    	  if ( (email == null) || (email.trim().equals(""))) {
+    		  FacesMessage message = new FacesMessage(
+    				  "Please Enter Your Email Address.");
+    		  message.setSeverity(FacesMessage.SEVERITY_ERROR);
+              throw new ValidatorException(message);
+          }
+    	  
+    	  Pattern pattern=Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+  										+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+    	  Matcher matcher = pattern.matcher(email);
+    	  
+    	  if(!(matcher.matches())){
+    		  FacesMessage message = new FacesMessage(
+    				  "Please Enter Valid Email Address.");
+    		  message.setSeverity(FacesMessage.SEVERITY_ERROR);
+              throw new ValidatorException(message);
+    		  
+    	  }
+    	  
     	  GluuCustomPerson  gluuCustomPerson = personService.getPersonByEmail(email);
     	  if(gluuCustomPerson != null){
     		  FacesMessage message = new FacesMessage(
-    				  "Email Address Already Exist");
-              context.addMessage(component.getClientId(context), message);
+    				  "Email Address Already Registered.");
+    		  message.setSeverity(FacesMessage.SEVERITY_ERROR);
+              throw new ValidatorException(message);
     	  }
     	}
 
