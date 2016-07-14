@@ -169,13 +169,10 @@
                                                                maxlength="60"
                                                                size="40" tabindex="7" required="true" redisplay="true"
                                                                autocomplete="off" 
-                                                               requiredMessage="Please enter your email address."
-                                                               validatorMessage="Please enter valid email format.">                                               
-                                                	<f:validateRegex pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" /> 
-                                                	<f:ajax execute="@this" render="emailMessage" />                                              		 
+                                                               requiredMessage="Please Enter Your Email address.">                            
+                                                	                                           		 
                                                 <rich:validator event="keyup" />                                                                                                  
-                                                </h:inputText>    
-                                                <h:message id="emailMessage" for="emailValidation" style="color: red"/>                                            
+                                                </h:inputText>                                               
                                                 <h:outputText value="&#160;"/>
                                             </s:decorate>
                                         </div>
