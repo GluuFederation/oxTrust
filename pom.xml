@@ -24,7 +24,7 @@
 		<drools.version>5.3.3.Final</drools.version>
 		<arquillian.version>1.1.2.Final</arquillian.version>
 		<shibboleth.version>1.1.0</shibboleth.version>
-		<oxCore.version>2.4.4.rc1</oxCore.version>
+		<oxcore.version>2.4.4.rc1</oxcore.version>
 		<oxauth.version>2.4.4.rc1</oxauth.version>
 		<slf4j.version>1.7.2</slf4j.version>
 		<swagger.version>1.5.3-M1</swagger.version>
