@@ -32,7 +32,7 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Javier Rojas Blum
  *
- * @version November 9, 2015
+ * @version July 19, 2016
  */
 
 @Scope(ScopeType.STATELESS)
@@ -376,6 +376,20 @@ public class ClientService implements Serializable {
      */
     public SignatureAlgorithm[] getSignatureAlgorithms() {
         return SignatureAlgorithm.values();
+    }
+
+    public SignatureAlgorithm[] getSignatureAlgorithmsWithoutNone() {
+        return new SignatureAlgorithm[] {
+                SignatureAlgorithm.HS256,
+                SignatureAlgorithm.HS384,
+                SignatureAlgorithm.HS512,
+                SignatureAlgorithm.RS256,
+                SignatureAlgorithm.RS384,
+                SignatureAlgorithm.RS512,
+                SignatureAlgorithm.ES256,
+                SignatureAlgorithm.ES384,
+                SignatureAlgorithm.ES512,
+        };
     }
 
     /**

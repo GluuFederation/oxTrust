@@ -98,7 +98,7 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="idTokenSignedResponseAlg">
                 <ui:define name="label">JWS alg Algorithm for signing the ID Token</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.idTokenSignedResponseAlg}" id="idTokenSignedResponseAlgId" required="false">
-                    <s:selectItems value="#{clientService.signatureAlgorithms}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
+                    <s:selectItems value="#{clientService.signatureAlgorithmsWithoutNone}" var="_type" label="#{_type.displayName}" noSelectionLabel="" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
             </s:decorate>
