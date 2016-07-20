@@ -57,8 +57,8 @@ public class AsimbaXMLConfigurationService implements Serializable {
     @In
     private SSLService sslService;
     
-    private String keystoreFilePath;
-    private String keystoreType;
+    private String keystoreFilePath = null;
+    private String keystoreType = null;
     private String keystorePassword;
     private String asimbaAias;
     private String asimbaAiasPassword;
@@ -86,8 +86,13 @@ public class AsimbaXMLConfigurationService implements Serializable {
      */
     private void parse() {
         try {
+            // check for asimba config availability
+            File configFile = new File(getConfigurationFilePath());
+            if (!configFile.exists())
+                return;
+            
             // parse XML
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(getConfigurationFilePath()));
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(configFile);
             XPath xPath = XPathFactory.newInstance().newXPath();
             keystoreFilePath = xPath.evaluate("/asimba-server/crypto/signing/signingfactory/keystore/file", document);
             log.info("AsimbaXMLConfig keystoreFilePath: " + keystoreFilePath);
@@ -168,6 +173,10 @@ public class AsimbaXMLConfigurationService implements Serializable {
             log.error("Add Certificate to keystore exception", e);
             return "Add Certificate to keystore exception : " + e.getMessage();
         }
+    }
+    
+    public boolean isReady() {
+        return keystoreFilePath != null && keystoreType != null;
     }
     
     public KeystoreWrapper getKeystore() throws Exception {

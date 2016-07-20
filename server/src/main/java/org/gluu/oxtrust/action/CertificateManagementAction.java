@@ -85,14 +85,16 @@ public class CertificateManagementAction implements Serializable {
         log.info("refresh() CertificateManagement call");
         
         try {
-            asimbaKeystore = asimbaXMLConfigurationService.getKeystore();
-            
-            asimbaCertificates = asimbaKeystore.listCertificates();
-            
-            updateTableView();
+            if (asimbaXMLConfigurationService.isReady()) {
+                asimbaKeystore = asimbaXMLConfigurationService.getKeystore();
+
+                asimbaCertificates = asimbaKeystore.listCertificates();
+            }
         } catch (Exception e) {
             log.error("Load Asimba keystore configuration exception", e); 
         }
+        
+        updateTableView();
     }
     
     @Restrict("#{s:hasPermission('trust', 'access')}")
