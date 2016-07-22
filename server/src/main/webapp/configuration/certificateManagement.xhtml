@@ -11,14 +11,13 @@
 
     <ui:define name="body">
         <section class="content-header">
-            <h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />SAML 
-                    <i class="fa fa-caret-right" style="color: #333 !important;" /> Certificate Management</small></h1>
+            <h1 style="color: #333;">Configuration</h1>
             <ol class="breadcrumb">
 
-                    <li><a href="#{request.contextPath}/trustmanager/certificateManagement"><i
+                    <li><a href="#{request.contextPath}/configuration/certificateManagement"><i
                             class="fa fa-home"></i> Certificate Management</a></li>
                     <!--<li class="organization/configuration"><a
-                            href="#{request.contextPath}/trustmanager/addCertificate">Add Certificate</a></li>-->
+                            href="#{request.contextPath}/configuration/addCertificate">Add Certificate</a></li>-->
             </ol>
         </section>
 
@@ -41,13 +40,13 @@
                 <h:commandButton value="Search" action="#{certificateManagementAction.search}" styleClass="btn btn-primary" />
             </s:decorate>
         </h:form>
-
-        <richext:spacer height="16" />
-
-        <H2>Asimba Certificates</H2>
         
-        <h:form id="asimbaCertificatesFormId">
-            <s:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
+        <richext:spacer height="16" />
+        
+        <h:form id="internalCertificatesFormId">
+            <H2>Internal Gluu Certificates</H2>
+            
+            <s:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
                 <richext:spacer height="30" />
                 <h:outputText value="No Search Result Found" />
             </s:fragment>
@@ -55,9 +54,9 @@
 
             <h:dataTable 
                 styleClass="table table-hover rt"
-                value="#{certificateManagementAction.asimbaCertificates}"
+                value="#{certificateManagementAction.internalCertificates}"
                 var="cert" id="asimbaCertificatesListId" width="100%"
-                rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
+                rendered="#{certificateManagementAction.internalCertificates.size gt 0}">
 
                 <h:column>
                     <f:facet name="header">  
@@ -105,8 +104,9 @@
         
         <richext:spacer height="16" />
         
-        <H2>TrustStore Certificates</H2>
-        <h:form id="trustStoreCertificatesFormId">
+        <h:form id="trustStoreCertificatesFormId" rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
+            <H2>TrustStore Certificates</H2>
+            
             <s:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size eq 0}">
                 <richext:spacer height="30" />
                 <h:outputText value="No Search Result Found" />
@@ -165,19 +165,19 @@
         
         <richext:spacer height="16" />
         
-        <H2>Internal Gluu Certificates</H2>
-        <h:form id="internalCertificatesFormId">
-            <s:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
+        <h:form id="asimbaCertificatesFormId" rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
+            <H2>Asimba Certificates</H2>
+            
+            <s:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
                 <richext:spacer height="30" />
                 <h:outputText value="No Search Result Found" />
             </s:fragment>
 
-
             <h:dataTable 
                 styleClass="table table-hover rt"
-                value="#{certificateManagementAction.internalCertificates}"
+                value="#{certificateManagementAction.asimbaCertificates}"
                 var="cert" id="asimbaCertificatesListId" width="100%"
-                rendered="#{certificateManagementAction.internalCertificates.size gt 0}">
+                rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
 
                 <h:column>
                     <f:facet name="header">  
@@ -222,7 +222,6 @@
                 </h:column>
             </h:dataTable>
         </h:form>
-
 
         </h:panelGrid>
 

@@ -108,6 +108,15 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
+                                                                    
+                                                                                                                                    
+                                                                        <li id="subMenuLinkCertificates1"><h:commandLink
+                                                                                      value="Certificates"
+                                                                                      action="#{menuAction.endConversation('/configuration/certificateManagement.xhtml')}"
+                                                                                      rendered="#{s:hasPermission('trust', 'access')}">
+                                                                                      <i class="fa fa-chevron-right"
+                                                                                              style="float: left; margin-top: 2px;"></i>
+                                                                            </h:commandLink></li>
 
 								</ul></li>
 						</ui:fragment>
@@ -177,17 +186,6 @@
 										</h:commandLink></li>
                                                                     </li>
 								</ul>
-                                                            
-                                                            <ul class="treeview-menu" id="subMenuSAMLCertificates">                                                                
-                                                                        <li id="subMenuLinkCertificates1"><h:commandLink
-                                                                                      value="Certificates"
-                                                                                      action="#{menuAction.endConversation('/trustmanager/certificateManagement.xhtml')}"
-                                                                                      rendered="#{s:hasPermission('trust', 'access')}">
-                                                                                      <i class="fa fa-chevron-right"
-                                                                                              style="float: left; margin-top: 2px;"></i>
-                                                                            </h:commandLink></li>
-                                                                
-                                                            </ul>
                                                     </li>
 						</ui:fragment>
 						<ui:fragment rendered="#{s:hasPermission('oxauth', 'access')}">
@@ -446,7 +444,7 @@
 									$('#subMenuLinkAsimba4').addClass('active');
 								}
                                                                 
-                                                                //Menu Highlights - SAML Certificates
+                                                                //Menu Highlights - Certificates
 								if(window.location.href.indexOf("trustmanager/certificateManagement") != -1 || window.location.href.indexOf("trustmanager/addCertificate") != -1){
 									$('#subMenuSAML').css('display', 'block');
 									$('#menuSAML').addClass('active');

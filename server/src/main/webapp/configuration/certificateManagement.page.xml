@@ -4,18 +4,18 @@
     xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
     no-conversation-view-id="/home.xhtml"
     login-required="true"
-    view-id="/trustmanager/certificateManagement.xhtml">
+    view-id="/configuration/certificateManagement.xhtml">
 
     <restrict>#{s:hasPermission('trust', 'access')}</restrict>
 
-    <rewrite pattern="/trustmanager/certificateManagement" />
+    <rewrite pattern="/configuration/certificateManagement" />
     
     <action execute="#{certificateManagementAction.refresh}"/>
 
     <navigation from-action="#{certificateManagementAction.add}">
         <rule if-outcome="success">
             <begin-conversation join="true" flush-mode="manual" />
-            <render view-id="/trustmanager/certificateManagement.xhtml" />
+            <render view-id="/configuration/certificateManagement.xhtml" />
         </rule>
 
         <rule if-outcome="failure">
@@ -28,7 +28,7 @@
 
     <navigation from-action="#{certificateManagementAction.search}">
         <rule if-outcome="success">
-            <redirect view-id="/trustmanager/certificateManagement.xhtml" />
+            <redirect view-id="/configuration/certificateManagement.xhtml" />
         </rule>
 
         <rule if-outcome="failure">
