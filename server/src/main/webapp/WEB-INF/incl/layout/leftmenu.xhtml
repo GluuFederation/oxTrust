@@ -409,6 +409,12 @@
 									$('#subMenuLinkConfiguration11').addClass(
 											'active');
 								}
+                                                                
+								if(window.location.href.indexOf("configuration/certificateManagement") != -1 || window.location.href.indexOf("configuration/addCertificate") != -1){
+									$('#subMenuConfiguration').css('display', 'block');
+									$('#menuConfiguration').addClass('active');
+									$('#subMenuLinkCertificates1').addClass('active');
+								}
 
 								//Menu Highlights - SAML
 								if (window.location.href.indexOf("trustmanager/relationships") != -1 || window.location.href.indexOf("trustmanager/update") != -1) {
@@ -442,13 +448,6 @@
 									$('#subMenuSAML').css('display', 'block');
 									$('#menuSAML').addClass('active');
 									$('#subMenuLinkAsimba4').addClass('active');
-								}
-                                                                
-                                                                //Menu Highlights - Certificates
-								if(window.location.href.indexOf("trustmanager/certificateManagement") != -1 || window.location.href.indexOf("trustmanager/addCertificate") != -1){
-									$('#subMenuSAML').css('display', 'block');
-									$('#menuSAML').addClass('active');
-									$('#subMenuLinkCertificates1').addClass('active');
 								}
                                                                 
 
