@@ -36,6 +36,10 @@
 								LDAP Authentication</a></li>
 						<li><a href="#authentication-method" data-toggle="tab">Default
 								Authentication Method</a></li>
+						<ui:fragment rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
+						<li><a href="#ox-passport" data-toggle="tab">Passport
+								Authentication Method</a></li>
+						</ui:fragment>
 
 					</ul>
 					<div class="tab-content">
@@ -90,9 +94,151 @@
 												var="_name" label="#{_name}" noSelectionLabel="Default" />
 										</h:selectOneMenu>
 									</s:decorate>
+									
+									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+									id="PassportEnabledState">
+									<ui:define name="label">Passport Support</ui:define>									
+									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control" 
+										id="scimEnabledStateId">
+										<s:selectItems
+											value="#{organizationService.booleanSelectionTypes}"
+											var="_type" label="#{_type.displayName}"  noSelectionLabel="Default"/>
+										<s:convertEnum />
+									</h:selectOneMenu>
+								</s:decorate>
 								</h:panelGroup>
 							</div>
 						</div>
+						
+						
+						<div class="tab-pane" id="ox-passport">
+							<ui:param name="_ldapPassport" 	value="#{_action.ldapOxPassportConfiguration}" />							
+							
+							<h:panelGroup layout="block"
+								style="overflow-y:auto;overflow-x:hidden;">
+								<a4j:region>
+									<rich:dataGrid 
+										columns="1" value="#{_ldapPassport.passportConfigurations}"
+										var="_passportConfiguration" style="width: 100%;">										
+											<h:panelGroup 
+												rendered="#{_passportConfiguration.provider eq 'passport'}">
+												<h1 style="color: #333;"><small>Passport Configuration</small></h1>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">serverURI</ui:define>
+													<h:inputText value="#{_passportConfiguration.serverURI}"
+														size="90"														
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">serverWebPort</ui:define>
+													<h:inputText
+														value="#{_passportConfiguration.serverWebPort}" size="90"
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">applicationEndpoint</ui:define>
+													<h:inputText
+														value="#{_passportConfiguration.applicationEndpoint}"
+														size="90"
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">applicationStartpoint</ui:define>
+													<h:inputText
+														value="#{_passportConfiguration.applicationStartpoint}"
+														size="90"
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">applicationSecretKey</ui:define>
+													<h:inputText
+														value="#{_passportConfiguration.applicationSecretKey}"
+														size="90"
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+												<hr></hr>
+											</h:panelGroup>
+									</rich:dataGrid>
+								</a4j:region>
+							</h:panelGroup>
+
+							
+							<h:panelGroup layout="block" style="overflow-y:auto;overflow-x:hidden;"  id="strategyId">
+								<a4j:region>
+									<rich:dataGrid
+										columns="1" value="#{_ldapPassport.passportConfigurations}"
+										var="_passportConfiguration" style="width: 100%;">
+										<h:panelGrid
+											id="#{_action.getId(_passportConfiguration)}"
+											columns="2" columnClasses="alignLeft, removeConfig"
+											width="100%" border="0" cellpadding="0" cellspacing="0">
+											<h:panelGroup
+												rendered="#{_passportConfiguration.provider ne 'passport'}">
+												<h1 style="color: #333;"><small>#{_passportConfiguration.provider}</small></h1>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">Provider</ui:define>
+													<h:inputText value="#{_passportConfiguration.provider}"
+														size="90"
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">clientID</ui:define>
+													<h:inputText value="#{_passportConfiguration.clientID}"
+														size="90"
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">clientSecret;</ui:define>
+													<h:inputText value="#{_passportConfiguration.clientSecret}"
+														size="90"
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+
+												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+													<ui:define name="label">callbackURL</ui:define>
+													<h:inputText value="#{_passportConfiguration.callbackURL}"
+														size="90"
+														styleClass="form-control">
+
+													</h:inputText>
+												</s:decorate>
+												<hr></hr>
+											</h:panelGroup>
+
+										</h:panelGrid>
+										
+									</rich:dataGrid>
+								</a4j:region>
+							</h:panelGroup>							
+							
+							<s:div styleClass="addConfig">
+                        		<a4j:commandLink styleClass="btn btn-link" value="Add Strategy" action="#{_action.addStrategy()}" render="strategyId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
+                   			</s:div>
+						</div>					
 					</div>
 				</div>
 
