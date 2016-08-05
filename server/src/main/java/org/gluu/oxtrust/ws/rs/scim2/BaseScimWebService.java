@@ -15,8 +15,6 @@ import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim.Error;
-import org.gluu.oxtrust.model.scim.Errors;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
@@ -270,10 +268,18 @@ public class BaseScimWebService {
 	*/
 
 	protected Response getErrorResponse(Response.Status status, String detail) {
-		return getErrorResponse(status, null, detail);
+		return getErrorResponse(status.getStatusCode(), null, detail);
 	}
 
-	protected Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
+    protected Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
+        return getErrorResponse(status.getStatusCode(), scimType, detail);
+    }
+
+    protected Response getErrorResponse(int statusCode, String detail) {
+        return getErrorResponse(statusCode, null, detail);
+    }
+
+	protected Response getErrorResponse(int statusCode, ErrorScimType scimType, String detail) {
 
 		ErrorResponse errorResponse = new ErrorResponse();
 
@@ -281,10 +287,10 @@ public class BaseScimWebService {
 		schemas.add(Constants.ERROR_RESPONSE_URI);
 		errorResponse.setSchemas(schemas);
 
-		errorResponse.setStatus(String.valueOf(status.getStatusCode()));
+		errorResponse.setStatus(String.valueOf(statusCode));
 		errorResponse.setScimType(scimType);
 		errorResponse.setDetail(detail);
 
-		return Response.status(status).entity(errorResponse).build();
+		return Response.status(statusCode).entity(errorResponse).build();
 	}
 }

@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 /**
  * Custom serializer for the SCIM 2.0 User class.
  *
@@ -78,7 +80,7 @@ public class UserSerializer extends JsonSerializer<User> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Unexpected processing error; please check the input parameters.");
+            throw new IOException(INTERNAL_SERVER_ERROR_MESSAGE);
         }
     }
 

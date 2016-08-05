@@ -23,7 +23,6 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
-import org.gluu.oxtrust.model.scim.ScimPersonSearch;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
@@ -40,6 +39,7 @@ import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * scim2UserEndpoint Implementation
@@ -153,9 +153,9 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (Exception ex) {
 
+            log.error("Error in searchUsers", ex);
 			ex.printStackTrace();
-			String detail = "Unexpected processing error; please check the input parameters";
-			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, detail);
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -218,13 +218,15 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (EntryPersistenceException ex) {
 
+            log.error("Error in getUserById", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
 		} catch (Exception ex) {
 
+            log.error("Error in getUserById", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -253,7 +255,6 @@ public class UserWebService extends BaseScimWebService {
 		try {
 
 			User createdUser = scim2UserService.createUser(user);
-			// newPerson.setCustomAttributes(person.getCustomAttributes());
 
 			URI location = new URI(createdUser.getMeta().getLocation());
 
@@ -272,7 +273,7 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (DuplicateEntryException ex) {
 
-			log.error("Failed to create user", ex);
+			log.error("DuplicateEntryException", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
@@ -285,7 +286,7 @@ public class UserWebService extends BaseScimWebService {
 
 			log.error("Failed to create user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -316,7 +317,6 @@ public class UserWebService extends BaseScimWebService {
 		try {
 
 			User updatedUser = scim2UserService.updateUser(id, user);
-			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
 
 			URI location = new URI(updatedUser.getMeta().getLocation());
 
@@ -340,7 +340,7 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (DuplicateEntryException ex) {
 
-			log.error("Failed to update user", ex);
+			log.error("DuplicateEntryException", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
@@ -348,7 +348,7 @@ public class UserWebService extends BaseScimWebService {
 
 			log.error("Failed to update user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -383,13 +383,13 @@ public class UserWebService extends BaseScimWebService {
 
             log.error("Failed to delete user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
+			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
 
 		} catch (Exception ex) {
 
             log.error("Failed to delete user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -417,117 +417,67 @@ public class UserWebService extends BaseScimWebService {
 		return null;
 	}
 
-	@Path("/Search")
+	@Path("/.search")
 	@POST
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response personSearch(
+    @ApiOperation(value = "Search users POST /.search", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
+	public Response searchUsersPost(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-		ScimPersonSearch searchPattern) throws Exception {
-
-		Response authorizationResponse = null;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
-			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(token);
-		} else {
-			authorizationResponse = processAuthorization(authorization);
-		}
-		if (authorizationResponse != null) {
-			return authorizationResponse;
-		}
+        @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) throws Exception {
 
 		try {
 
-			personService = PersonService.instance();
+            log.info("IN UserWebService.searchUsersPost()...");
 
-			GluuCustomPerson gluuPerson = personService.getPersonByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
-			if (gluuPerson == null) {
-				// sets HTTP status code 404 Not Found
-				return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue() + "' please try again or use another pattern.");
-			}
-			// ScimPerson person = CopyUtils.copy(gluuPerson, null);
-			User user = CopyUtils2.copy(gluuPerson, null);
+            // Authorization check is done in searchUsers()
+            Response response = searchUsers(
+                authorization,
+                token,
+                searchRequest.getFilter(),
+                searchRequest.getStartIndex(),
+                searchRequest.getCount(),
+                searchRequest.getSortBy(),
+                searchRequest.getSortOrder(),
+                searchRequest.getAttributesArray()
+            );
 
-			URI location = new URI(user.getMeta().getLocation());
+            URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users/.search");
 
-			// Serialize to JSON
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
-			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
-			// serializer.setAttributesArray(attributesArray);
-			customScimFilterModule.addSerializer(User.class, serializer);
-			mapper.registerModule(customScimFilterModule);
-			String json = mapper.writeValueAsString(user);
+            log.info("LEAVING UserWebService.searchUsersPost()...");
 
-			return Response.ok(json).location(location).build();
+            return Response.fromResponse(response).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
 
+            log.error("Error in searchUsersPost", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource not found");
 
 		} catch (Exception ex) {
 
+            log.error("Error in searchUsersPost", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
-	
-	@Path("/SearchPersons")
-	@POST
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response searchPersons(
-		@HeaderParam("Authorization") String authorization,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-		ScimPersonSearch searchPattern) throws Exception {
 
-		Response authorizationResponse = null;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
-			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(token);
-		} else {
-			authorizationResponse = processAuthorization(authorization);
-		}
-		if (authorizationResponse != null) {
-			return authorizationResponse;
-		}
+    @Path("/Me")
+    @GET
+    @Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+    @ApiOperation(value = "GET \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
+    public Response meGet() {
+        return getErrorResponse(501, "Not Implemented");
+    }
 
-		try {
-
-			personService = PersonService.instance();
-
-			List<GluuCustomPerson> personList = personService.getPersonsByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
-			ListResponse personsListResponse = new ListResponse();
-
-            if (personList != null) {
-				log.info(" LDAP person list is not empty ");
-				for (GluuCustomPerson gluuPerson : personList) {
-					log.info(" copying person from GluuPerson to ScimPerson ");
-					User person = CopyUtils2.copy(gluuPerson, null);
-
-					log.info(" adding ScimPerson to the AllPersonList ");
-					log.info(" person to be added userid : " + person.getUserName());
-					personsListResponse.getResources().add(person);
-					log.info(" person added? : " + personsListResponse.getResources().contains(person));
-				}
-			}
-
-			List<String> schema = new ArrayList<String>();
-			schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
-			personsListResponse.setSchemas(schema);
-			personsListResponse.setTotalResults(personsListResponse.getResources().size());
-
-			URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users/");
-
-			return Response.ok(personsListResponse).location(location).build();
-
-		} catch (Exception ex) {
-
-			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
-		}
-	}
+    @Path("/Me")
+    @POST
+    @Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+    @ApiOperation(value = "POST \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
+    public Response mePost() {
+        return getErrorResponse(501, "Not Implemented");
+    }
 }

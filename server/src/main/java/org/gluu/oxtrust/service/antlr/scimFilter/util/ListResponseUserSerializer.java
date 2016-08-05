@@ -28,6 +28,8 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.io.IOException;
 import java.util.*;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 /**
  * @author Val Pecaoco
  */
@@ -70,7 +72,7 @@ public class ListResponseUserSerializer extends UserSerializer {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Unexpected processing error; please check the input parameters.");
+            throw new IOException(INTERNAL_SERVER_ERROR_MESSAGE);
         }
     }
 

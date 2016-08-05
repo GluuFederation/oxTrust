@@ -61,6 +61,8 @@ import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
 import org.xdi.model.GluuUserRole;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 @Name("oxChooserWebService")
 @Path("/scim/v1/Chooser")
 public class OxChooserWebService extends BaseScimWebService {
@@ -283,8 +285,7 @@ public class OxChooserWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 			log.error("Failed to add user", ex);
 
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -324,8 +325,7 @@ public class OxChooserWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -355,8 +355,7 @@ public class OxChooserWebService extends BaseScimWebService {
 			return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 

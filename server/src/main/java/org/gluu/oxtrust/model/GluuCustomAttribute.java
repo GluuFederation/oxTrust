@@ -99,7 +99,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 
 		if (this.values.length > 0 && values[0] != null) {
 			try {
-				return StaticUtils.decodeGeneralizedTime((String) values[0]);
+                return StaticUtils.decodeGeneralizedTime(values[0]);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

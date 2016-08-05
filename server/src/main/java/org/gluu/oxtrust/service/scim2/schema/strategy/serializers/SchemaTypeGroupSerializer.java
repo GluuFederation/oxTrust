@@ -164,7 +164,7 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Unexpected processing error; please check the Group class structure.");
+            throw new IOException("Unexpected processing error; please check the Group class structure");
         }
     }
 

@@ -192,6 +192,8 @@ public final class OxTrustConstants extends OxConstants {
 
     public static final String QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN = "access_token";
 
+    public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Unexpected processing error; please check the input parameters";
+
     /**
      * The HTTP query parameter used in a URI to specify the maximum size of a
      * page of results.
@@ -219,6 +221,4 @@ public final class OxTrustConstants extends OxConstants {
     public static String getGluuBuildNumber() {
         return ((BuildVersion) Component.getInstance(BuildVersion.class)).getBuildNumber();
     }
-
-
 }
