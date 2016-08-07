@@ -46,22 +46,22 @@ public class OxPassportService {
 	
 	
 	public LdapOxPassportConfiguration loadConfigurationFromLdap(String ... returnAttributes) {
-		FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
-		final String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
-    	final LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
-    	//final String configurationDn = "ou=oxpassport,ou=configuration,inum=@!8214.2DD7.3392.F903!0002!1DE1.8947,ou=appliances,o=gluu";
-		log.info("########## configurationDn = " + configurationDn);
-        try {
-            final LdapOxPassportConfiguration conf = ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn, returnAttributes);
-            log.info("########## LdapOxPassportConfiguration  status = " + conf.getStatus());
-            log.info("########## LdapOxPassportConfiguration  size = " + conf.getPassportConfigurations().size());
-            log.info("########## LdapOxPassportConfiguration  provider = " + conf.getPassportConfigurations().get(1).getProvider());
-            log.info("########## LdapOxPassportConfiguration  2 provider = " + conf.getPassportConfigurations().get(2).getProvider());
-            
-            return conf;
-        } catch (LdapMappingException ex) {
-            log.error("Failed to load configuration from LDAP", ex);
-        }
+		try {
+			FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
+			String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
+			log.info("########## configurationDn = " + configurationDn);
+			if ((configurationDn != null)  && !(configurationDn.trim().equals(""))) {
+				LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
+				LdapOxPassportConfiguration conf = ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn,returnAttributes);
+				log.info("########## LdapOxPassportConfiguration  status =  '{0}'"+ conf.getStatus());
+				log.info("########## LdapOxPassportConfiguration  size = '{0}'",conf.getPassportConfigurations().size());
+				return conf;
+			}
+		} catch (LdapMappingException ex) {
+			log.error("Failed to load configuration from LDAP", ex);
+		} catch (Exception ex) {
+			log.error("Exception ", ex);
+		}
         
         return null;
     }
