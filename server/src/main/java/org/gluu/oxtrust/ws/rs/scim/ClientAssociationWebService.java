@@ -38,6 +38,8 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 @Name("clientAssociationWebService")
 @Path("/scim/v1/ClientAssociation")
 public class ClientAssociationWebService extends BaseScimWebService {
@@ -84,8 +86,7 @@ public class ClientAssociationWebService extends BaseScimWebService {
 			return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -122,8 +123,7 @@ public class ClientAssociationWebService extends BaseScimWebService {
 			return getErrorResponse("Resource " + cid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 		} catch (Exception ex) {
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 
 	}
@@ -208,10 +208,8 @@ public class ClientAssociationWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 			log.error("Failed to add Association", ex);
 			// log.info("Failed to add Association" , ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
-
 	}
 
 	@PUT
@@ -355,8 +353,7 @@ public class ClientAssociationWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 			log.info("Exception: ", ex);
 			log.error("Exception: ", ex);
-			return getErrorResponse("Unexpected processing error, please check the input parameters",
-					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 

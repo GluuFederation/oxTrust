@@ -231,7 +231,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Unexpected processing error; please check the User class structure.");
+            throw new IOException("Unexpected processing error; please check the User class structure");
         }
     }
 

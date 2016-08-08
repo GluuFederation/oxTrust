@@ -21,6 +21,7 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.OxPassportService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
@@ -40,6 +41,9 @@ import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
+import org.xdi.config.oxtrust.PassportConfiguration;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
@@ -81,6 +85,9 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	@In(value = "customScriptService")
 	private AbstractCustomScriptService customScriptService;
+	
+	@In(create = true, value="passportService")
+	private OxPassportService oxPassportService ;
 
 	@In
 	private FacesMessages facesMessages;
@@ -96,6 +103,10 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	private boolean initialized;
 	
+	private GluuBoolean passportEnable;
+	
+	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
+	
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
@@ -110,11 +121,12 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 		try {
 			GluuAppliance appliance = applianceService.getAppliance();
-
+			
 			if (appliance == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
+			passportEnable = appliance.getPassportEnabled();
+			log.info("passport enabled value  : '{0}'" , passportEnable);
 			this.customScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 
 			List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
@@ -135,6 +147,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			
 			this.authenticationMode = appliance.getAuthenticationMode();
 			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
+			
+			ldapOxPassportConfiguration = oxPassportService.loadConfigurationFromLdap();
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -159,7 +173,10 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			appliance.setAuthenticationMode(this.authenticationMode);
 			appliance.setOxTrustAuthenticationMode(this.oxTrustAuthenticationMode);
 			
+			appliance.setPassportEnabled(passportEnable);
+			
 			applianceService.updateAppliance(appliance);
+			oxPassportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(Severity.ERROR, "Failed to update appliance");
@@ -360,6 +377,32 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	public boolean isInitialized() {
 		return initialized;
+	}
+
+	public LdapOxPassportConfiguration getLdapOxPassportConfiguration() {
+		return ldapOxPassportConfiguration;
+	}
+
+	public void setLdapOxPassportConfiguration(
+			LdapOxPassportConfiguration ldapOxPassportConfiguration) {
+		this.ldapOxPassportConfiguration = ldapOxPassportConfiguration;
+	}
+	
+	public String getId(Object obj) {
+		return "c" + System.identityHashCode(obj) + "Id";
+	}
+	
+	public void addStrategy(){
+		PassportConfiguration passportConfiguration = new PassportConfiguration();
+		this.ldapOxPassportConfiguration.getPassportConfigurations().add(passportConfiguration);		
+	}
+
+	public GluuBoolean getPassportEnable() {
+		return passportEnable;
+	}
+
+	public void setPassportEnable(GluuBoolean passportEnable) {
+		this.passportEnable = passportEnable;
 	}
 
 }

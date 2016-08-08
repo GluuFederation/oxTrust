@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
-import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +22,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.dom4j.Document;
-import org.dom4j.io.DOMReader;
-import org.dom4j.io.DocumentSource;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -49,7 +40,8 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
-import org.xml.sax.InputSource;
+
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * SCIM UserWebService Implementation
@@ -115,7 +107,7 @@ public class UserWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -153,7 +145,7 @@ public class UserWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -316,7 +308,7 @@ public class UserWebService extends BaseScimWebService {
 
 			log.error("Failed to update user", ex);
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -372,7 +364,7 @@ public class UserWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -463,7 +455,7 @@ public class UserWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 	
@@ -512,7 +504,7 @@ public class UserWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 

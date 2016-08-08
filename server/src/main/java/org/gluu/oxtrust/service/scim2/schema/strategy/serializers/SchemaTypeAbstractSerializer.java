@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 /**
  * @author Val Pecaoco
  */
@@ -59,7 +61,7 @@ public class SchemaTypeAbstractSerializer extends JsonSerializer<SchemaType> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Unexpected processing error; please check the input parameters.");
+            throw new IOException(INTERNAL_SERVER_ERROR_MESSAGE);
         }
     }
 }

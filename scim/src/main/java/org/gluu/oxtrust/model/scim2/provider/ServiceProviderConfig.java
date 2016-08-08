@@ -13,6 +13,9 @@ import java.util.Set;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Meta;
 
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_OPERATIONS;
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_PAYLOAD_SIZE;
+
 /**
  * This class represents a ServiceProviderConfig.
  * 
@@ -27,7 +30,7 @@ public class ServiceProviderConfig implements Serializable {
 	private String documentationUrl = "http://www.gluu.org/docs/";
 	private PatchConfig patch = new PatchConfig(false);
 	private FilterConfig filter = new FilterConfig(true, Constants.MAX_COUNT);
-	private BulkConfig bulk = new BulkConfig(true, 10, 100);
+	private BulkConfig bulk = new BulkConfig(true, MAX_BULK_OPERATIONS, MAX_BULK_PAYLOAD_SIZE);
 	private SortConfig sort = new SortConfig(true);
 	private ChangePasswordConfig changePassword = new ChangePasswordConfig(true);
 	private ETagConfig etag = new ETagConfig(false); 

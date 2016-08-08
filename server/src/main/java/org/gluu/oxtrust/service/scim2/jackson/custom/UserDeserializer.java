@@ -18,6 +18,8 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 /**
  * Custom deserializer for the SCIM 2.0 User class.
  *
@@ -78,7 +80,7 @@ public class UserDeserializer extends JsonDeserializer<User> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Unexpected processing error; please check the input parameters.");
+            throw new IOException(INTERNAL_SERVER_ERROR_MESSAGE);
         }
     }
 }

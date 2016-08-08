@@ -144,6 +144,10 @@ public class Utils implements Serializable {
 
 			aGroup.setMembers(cleanGroupMembers);
 
+            if (aGroup.getMembers() != null && aGroup.getMembers().isEmpty()) {
+                aGroup.setMembers(null);  // Reset to no members
+            }
+
 			groupService.updateGroup(aGroup);
 		}
 	}

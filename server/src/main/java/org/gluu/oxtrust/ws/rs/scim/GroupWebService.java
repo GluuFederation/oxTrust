@@ -39,6 +39,8 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 /**
  * @author Reda Zerrad Date: 04.13.2012
  */
@@ -92,7 +94,7 @@ public class GroupWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -130,7 +132,7 @@ public class GroupWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -202,7 +204,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.error("Failed to create group", ex);
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -280,7 +282,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.error("Failed to update group", ex);
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 
@@ -343,7 +345,7 @@ public class GroupWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			ex.printStackTrace();
-			return getErrorResponse("Unexpected processing error, please check the input parameters", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
 }

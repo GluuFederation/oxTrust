@@ -145,6 +145,9 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "gluuVdsCacheRefreshEnabled")
 	private GluuBoolean vdsCacheRefreshEnabled;
+	
+	@LdapAttribute(name = "gluuPassportEnabled")
+	private GluuBoolean passportEnabled;
 
 	@LdapAttribute(name = "oxTrustCacheRefreshServerIpAddress")
 	private String cacheRefreshServerIpAddress;
@@ -781,5 +784,14 @@ public class GluuAppliance extends InumEntry implements Serializable {
     public void setWhitePagesEnabled(GluuBoolean whitePagesEnabled) {
         this.whitePagesEnabled = whitePagesEnabled;
     }
+
+	public GluuBoolean getPassportEnabled() {
+		return passportEnabled;
+	}
+
+	public void setPassportEnabled(GluuBoolean passportEnabled) {
+		this.passportEnabled = passportEnabled;
+	}
+	
 
 }

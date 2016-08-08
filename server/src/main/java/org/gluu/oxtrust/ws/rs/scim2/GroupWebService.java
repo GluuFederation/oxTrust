@@ -36,6 +36,7 @@ import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
@@ -145,9 +146,9 @@ public class GroupWebService extends BaseScimWebService {
 
 		} catch (Exception ex) {
 
+            log.error("Error in searchGroups", ex);
 			ex.printStackTrace();
-			String detail = "Unexpected processing error; please check the input parameters";
-			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, detail);
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -185,7 +186,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			if (groupList == null || groupList.isEmpty() || vlvResponse.getTotalResults() == 0) {
 				// sets HTTP status code 404 Not Found
-				return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+				return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 			} else {
 				log.info(" Resource " + id + " found ");
 			}
@@ -210,13 +211,15 @@ public class GroupWebService extends BaseScimWebService {
 
 		} catch (EntryPersistenceException ex) {
 
+            log.error("Error in getGroupById", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
 		} catch (Exception ex) {
 
+            log.error("Error in getGroupById", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -263,7 +266,7 @@ public class GroupWebService extends BaseScimWebService {
 
 		} catch (DuplicateEntryException ex) {
 
-			log.error("Failed to create group", ex);
+			log.error("DuplicateEntryException", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
@@ -271,7 +274,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.error("Failed to create group", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -319,12 +322,13 @@ public class GroupWebService extends BaseScimWebService {
 
 		} catch (EntryPersistenceException ex) {
 
+            log.error("Failed to update group", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
 		} catch (DuplicateEntryException ex) {
 
-			log.error("Failed to update group", ex);
+			log.error("DuplicateEntryException", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
@@ -332,7 +336,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.error("Failed to update group", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
 
@@ -365,13 +369,79 @@ public class GroupWebService extends BaseScimWebService {
 
 		} catch (EntryPersistenceException ex) {
 
+            log.error("Failed to delete group", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
 
 		} catch (Exception ex) {
 
+            log.error("Failed to delete group", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
+
+    @Path("/.search")
+    @POST
+    @Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+    @ApiOperation(value = "Search group POST /.search", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
+    public Response searchGroupsPost(
+        @HeaderParam("Authorization") String authorization,
+        @QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+        @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) throws Exception {
+
+        try {
+
+            log.info("IN GroupWebService.searchGroupsPost()...");
+
+            // Authorization check is done in searchGroups()
+            Response response = searchGroups(
+                authorization,
+                token,
+                searchRequest.getFilter(),
+                searchRequest.getStartIndex(),
+                searchRequest.getCount(),
+                searchRequest.getSortBy(),
+                searchRequest.getSortOrder(),
+                searchRequest.getAttributesArray()
+            );
+
+            URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Groups/.search");
+
+            log.info("LEAVING GroupWebService.searchGroupsPost()...");
+
+            return Response.fromResponse(response).location(location).build();
+
+        } catch (EntryPersistenceException ex) {
+
+            log.error("Error in searchGroupsPost", ex);
+            ex.printStackTrace();
+            return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource not found");
+
+        } catch (Exception ex) {
+
+            log.error("Error in searchGroupsPost", ex);
+            ex.printStackTrace();
+            return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, INTERNAL_SERVER_ERROR_MESSAGE);
+        }
+    }
+
+    @Path("/Me")
+    @GET
+    @Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+    @ApiOperation(value = "GET \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
+    public Response meGet() {
+        return getErrorResponse(501, "Not Implemented");
+    }
+
+    @Path("/Me")
+    @POST
+    @Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+    @ApiOperation(value = "POST \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
+    public Response mePost() {
+        return getErrorResponse(501, "Not Implemented");
+    }
 }

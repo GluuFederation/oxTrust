@@ -14,8 +14,11 @@
 .left {
     text-align: left;
 }
+.rf-pp-cntr {
+    width: 60% !important;
+}
     </h:outputStylesheet>
-    <rich:popupPanel id="entityIdSelector" onmaskclick="#{rich:component('entityIdSelector')}.hide()" keepVisualState="true" autosized="true">
+    <rich:popupPanel id="entityIdSelector" onmaskclick="#{rich:component('entityIdSelector')}.hide()" keepVisualState="true" autosized="true" zindex="2000"  >
         <f:facet name="header">
             <h:outputText value="Select entityID of this Trust Relationship" />
         </f:facet>
