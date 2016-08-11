@@ -10,18 +10,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -29,7 +25,8 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuCustomPersonList;
 import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
-import org.gluu.oxtrust.model.scim.ScimPersonSearch;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.GluuCustomPersonListSerializer;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -40,7 +37,9 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.xdi.ldap.model.VirtualListViewResponse;
 
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
@@ -62,11 +61,15 @@ public class UserWebService extends BaseScimWebService {
 	private ExternalScimService externalScimService;
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response listUsers(@HeaderParam("Authorization") String authorization,
+	@Produces({MediaType.APPLICATION_JSON,  MediaType.APPLICATION_XML})
+	@HeaderParam("Accept") @DefaultValue(MediaType.APPLICATION_JSON)
+	public Response searchPersons(@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -75,37 +78,71 @@ public class UserWebService extends BaseScimWebService {
 
 		try {
 
-			personService = PersonService.instance();
+			if (count > MAX_COUNT) {
 
-			log.info(" getting a list of all users from LDAP ");
-			List<GluuCustomPerson> personList = personService.findAllPersons(null);
-			GluuCustomPersonList allPersonList = new GluuCustomPersonList();
-			if (personList != null) {
-				log.info(" LDAP person list is not empty ");
-				for (GluuCustomPerson gluuPerson : personList) {
-					log.info(" copying person from GluuPerson to ScimPerson ");
-					ScimPerson person = CopyUtils.copy(gluuPerson, null);
-					log.info(" adding ScimPerson to the AllPersonList ");
-					log.info(" person to be added userid : " + person.getUserName());
-					allPersonList.getResources().add(person);
-					log.info(" person added? : " + allPersonList.getResources().contains(person));
+				String detail = "Too many results (=" + count + ") would be returned; max is " + MAX_COUNT + " only.";
+				return getErrorResponse(detail, Response.Status.BAD_REQUEST.getStatusCode());
+
+			} else {
+
+				log.info(" Searching persons from LDAP ");
+
+				personService = PersonService.instance();
+
+				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+
+				List<GluuCustomPerson> gluuCustomPersons = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
+				// List<GluuCustomPerson> personList = personService.findAllPersons(null);
+
+				GluuCustomPersonList personsList = new GluuCustomPersonList();
+
+				List<String> schema = new ArrayList<String>();
+				schema.add(Constants.SCIM1_CORE_SCHEMA_ID);
+
+				log.info(" setting schema");
+				personsList.setSchemas(schema);
+
+				// Set total
+				personsList.setTotalResults(vlvResponse.getTotalResults());
+
+				if (count > 0 && gluuCustomPersons != null && !gluuCustomPersons.isEmpty()) {
+
+					// log.info(" LDAP person list is not empty ");
+
+					for (GluuCustomPerson gluuPerson : gluuCustomPersons) {
+
+						ScimPerson person = CopyUtils.copy(gluuPerson, null);
+
+						log.info(" person to be added id : " + person.getUserName());
+
+						personsList.getResources().add(person);
+
+						log.info(" person added? : " + personsList.getResources().contains(person));
+					}
+
+					// Set the rest of results info
+					personsList.setItemsPerPage(vlvResponse.getItemsPerPage());
+					personsList.setStartIndex(vlvResponse.getStartIndex());
 				}
 
+				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v1/Users");
+
+				// Serialize to JSON
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+				SimpleModule customScimFilterModule = new SimpleModule("CustomScim1PersonFilterModule", new Version(1, 0, 0, ""));
+				GluuCustomPersonListSerializer serializer = new GluuCustomPersonListSerializer();
+				serializer.setAttributesArray(attributesArray);
+				customScimFilterModule.addSerializer(ScimPerson.class, serializer);
+				mapper.registerModule(customScimFilterModule);
+				String json = mapper.writeValueAsString(personsList);
+
+				return Response.ok(json).location(location).build();
 			}
-
-			List<String> schema = new ArrayList<String>();
-			schema.add("urn:scim:schemas:core:1.0");
-			log.info(" setting schema ");
-			allPersonList.setSchemas(schema);
-			List<ScimPerson> resources = allPersonList.getResources();
-			allPersonList.setTotalResults((long) resources.size());
-
-			URI location = new URI("/Users/");
-
-			return Response.ok(allPersonList).location(location).build();
 
 		} catch (Exception ex) {
 
+			log.error("Error in searchPersons", ex);
 			ex.printStackTrace();
 			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
@@ -420,6 +457,7 @@ public class UserWebService extends BaseScimWebService {
 		return null;
 	}
 
+	/*
 	@Path("/Search")
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -458,8 +496,7 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
-	
-	
+
 	@Path("/SearchPersons")
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -507,6 +544,7 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
 	}
+	*/
 
 	// todo - Update Password is OPTIONAL and should use PATCH method
 	// (http://www.simplecloud.info/specs/draft-scim-api-00.html, 3.3.2.

@@ -18,7 +18,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 /**
  * SCIM Group
@@ -34,9 +36,17 @@ public class ScimGroup implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 6956480059609846850L;
+
+	@JsonProperty("schemas")
 	private List<String> schemas;
+
+	@LdapAttribute(name = "inum")
 	private String id;
+
+	@LdapAttribute(name = "displayName")
 	private String displayName;
+
+	@LdapAttribute(name = "member")
 	private List<ScimGroupMembers> members;
 
 	@XmlTransient

@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.gluu.oxtrust.model.scim.ScimGroup;
@@ -30,17 +30,19 @@ import org.gluu.oxtrust.model.scim.ScimGroup;
 
 @XmlRootElement(name = "Resources")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonPropertyOrder({ "totalResults", "schemas", "Resources" })
-@XmlType(propOrder = { "totalResults", "Resources" })
+@JsonPropertyOrder({ "totalResults", "itemsPerPage", "startIndex", "schemas", "Resources" })
+@XmlType(propOrder = { "totalResults", "itemsPerPage", "startIndex", "schemas", "Resources" })
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 public class GluuGroupList implements Serializable {
 
-	/**
-     *
-     */
 	private static final long serialVersionUID = 433980309301930837L;
 	@XmlElement
 	private long totalResults;
-	@XmlTransient
+	@XmlElement
+	private int startIndex;
+	@XmlElement
+	private int itemsPerPage;
+	// @XmlTransient
 	private List<String> schemas;
 
 	@XmlElementWrapper(name = "Resources")
@@ -49,10 +51,8 @@ public class GluuGroupList implements Serializable {
 	private List<ScimGroup> Resources;
 
 	public GluuGroupList() {
-
-		schemas = new ArrayList<String>();
 		Resources = new ArrayList<ScimGroup>();
-
+		schemas = new ArrayList<String>();
 	}
 
 	public long getTotalResults() {
@@ -77,5 +77,21 @@ public class GluuGroupList implements Serializable {
 
 	public void setResources(List<ScimGroup> Resources) {
 		this.Resources = Resources;
+	}
+
+	public int getStartIndex() {
+		return startIndex;
+	}
+
+	public void setStartIndex(int startIndex) {
+		this.startIndex = startIndex;
+	}
+
+	public int getItemsPerPage() {
+		return itemsPerPage;
+	}
+
+	public void setItemsPerPage(int itemsPerPage) {
+		this.itemsPerPage = itemsPerPage;
 	}
 }

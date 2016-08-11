@@ -10,24 +10,21 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupList;
 import org.gluu.oxtrust.model.scim.ScimGroup;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.GluuGroupListSerializer;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -38,7 +35,9 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.xdi.ldap.model.VirtualListViewResponse;
 
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
@@ -58,11 +57,15 @@ public class GroupWebService extends BaseScimWebService {
 	private ExternalScimService externalScimService;
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response listGroups(@HeaderParam("Authorization") String authorization,
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@HeaderParam("Accept") @DefaultValue(MediaType.APPLICATION_JSON)
+	public Response searchGroups(@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder) throws Exception {
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -71,28 +74,71 @@ public class GroupWebService extends BaseScimWebService {
 
 		try {
 
-			groupService = GroupService.instance();
+			if (count > MAX_COUNT) {
 
-			List<GluuGroup> groupList = groupService.getAllGroupsList();
-			GluuGroupList allGroupList = new GluuGroupList();
-			if (groupList != null) {
-				for (GluuGroup gluuGroup : groupList) {
-					ScimGroup group = CopyUtils.copy(gluuGroup, null);
-					allGroupList.getResources().add(group);
+				String detail = "Too many results (=" + count + ") would be returned; max is " + MAX_COUNT + " only.";
+				return getErrorResponse(detail, Response.Status.BAD_REQUEST.getStatusCode());
+
+			} else {
+
+				log.info(" Searching groups from LDAP ");
+
+				groupService = GroupService.instance();
+
+				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+
+				List<GluuGroup> gluuGroups = search(groupService.getDnForGroup(null), GluuGroup.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
+				// List<GluuGroup> groupList = groupService.getAllGroupsList();
+
+				GluuGroupList groupsList = new GluuGroupList();
+
+				List<String> schema = new ArrayList<String>();
+				schema.add(Constants.SCIM1_CORE_SCHEMA_ID);
+
+				log.info(" setting schema");
+				groupsList.setSchemas(schema);
+
+				// Set total
+				groupsList.setTotalResults(vlvResponse.getTotalResults());
+
+				if (count > 0 && gluuGroups != null && !gluuGroups.isEmpty()) {
+
+					// log.info(" LDAP group list is not empty ");
+
+					for (GluuGroup gluuGroup : gluuGroups) {
+
+						ScimGroup group = CopyUtils.copy(gluuGroup, null);
+
+						log.info(" group to be added displayName : " + group.getDisplayName());
+
+						groupsList.getResources().add(group);
+
+						log.info(" group added? : " + groupsList.getResources().contains(group));
+					}
+
+					// Set the rest of results info
+					groupsList.setItemsPerPage(vlvResponse.getItemsPerPage());
+					groupsList.setStartIndex(vlvResponse.getStartIndex());
 				}
+
+				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v1/Groups");
+
+				// Serialize to JSON
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+				SimpleModule customScimFilterModule = new SimpleModule("CustomScim1GroupFilterModule", new Version(1, 0, 0, ""));
+				GluuGroupListSerializer serializer = new GluuGroupListSerializer();
+				serializer.setAttributesArray(attributesArray);
+				customScimFilterModule.addSerializer(ScimGroup.class, serializer);
+				mapper.registerModule(customScimFilterModule);
+				String json = mapper.writeValueAsString(groupsList);
+
+				return Response.ok(json).location(location).build();
 			}
-			List<String> schema = new ArrayList<String>();
-			schema.add("urn:scim:schemas:core:1.0");
-			allGroupList.setSchemas(schema);
-			List<ScimGroup> resources = allGroupList.getResources();
-			allGroupList.setTotalResults((long) resources.size());
-
-			URI location = new URI("/Groups/");
-
-			return Response.ok(allGroupList).location(location).build();
 
 		} catch (Exception ex) {
 
+			log.error("Error in searchGroups", ex);
 			ex.printStackTrace();
 			return getErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}

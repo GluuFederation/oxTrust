@@ -3,10 +3,10 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.service.antlr.scimFilter.visitor;
+package org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim1;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
@@ -23,11 +23,11 @@ import java.util.Map;
 /**
  * @author Val Pecaoco
  */
-public class UserFilterVisitor extends MainScimFilterVisitor {
+public class ScimGroupFilterVisitor extends MainScimFilterVisitor {
 
-    private Logger logger = LoggerFactory.getLogger(UserFilterVisitor.class);
+    private Logger logger = LoggerFactory.getLogger(ScimGroupFilterVisitor.class);
 
-    private static Class[] annotatedClasses = { Resource.class, Meta.class, User.class, Name.class };
+    private static Class[] annotatedClasses = { ScimGroup.class };
 
     private static Map<String, String> declaredAnnotations = new HashMap<String, String>();
 
@@ -48,21 +48,15 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         }
     }
 
-    public static String getUserLdapAttributeName(String attrName) {
+    public static String getGroupLdapAttributeName(String attrName) {
 
-        String ldapAttributeName = FilterUtil.stripScimSchema(attrName);
+        String ldapAttributeName = FilterUtil.stripScim1Schema(attrName);
 
         String[] tokens = ldapAttributeName.split("\\.");
 
         // This is already specific implementation. Currently only support up to second level.
         ldapAttributeName = tokens[0];
-        if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
-            if (tokens.length == 1) {
-                ldapAttributeName = "inum";
-            } else if (tokens.length == 2) {
-                ldapAttributeName = tokens[1];
-            }
-        } else if (tokens[0].equalsIgnoreCase(Meta.class.getSimpleName())) {
+        if (tokens[0].equalsIgnoreCase("meta")) {
             if (tokens.length == 1) {
                 ldapAttributeName = "meta";
             } else if (tokens.length == 2) {
@@ -86,13 +80,13 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
     private String attrOperCriteriaResolver(String attrName, String operator, String criteria) {
 
-        logger.info(" UserFilterVisitor.attrOperCriteriaResolver() ");
+        logger.info(" ScimGroupFilterVisitor.attrOperCriteriaResolver() ");
 
-        attrName = FilterUtil.stripScimSchema(attrName);
+        attrName = FilterUtil.stripScim1Schema(attrName);
 
         String[] tokens = attrName.split("\\.");
 
-        String ldapAttributeName = getUserLdapAttributeName(attrName);
+        String ldapAttributeName = getGroupLdapAttributeName(attrName);
 
         criteria = evaluateMultivaluedCriteria(criteria, operator, tokens);
 
@@ -113,9 +107,100 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
      * @param ctx
      */
     @Override
+    public String visitEXPR_AND_EXPR(ScimFilterParser.EXPR_AND_EXPRContext ctx) {
+
+        logger.info(" IN ScimGroupFilterVisitor.visitEXPR_AND_EXPR()... ");
+
+        boolean isMultivalued = false;
+
+        ParseTree parent = ctx.getParent();
+        while (parent != null) {
+
+            if (parent.getClass().getSimpleName().equalsIgnoreCase(ScimFilterParser.LBRAC_EXPR_RBRACContext.class.getSimpleName())) {
+
+                logger.info("********** PARENT = " + parent.getClass().getSimpleName());
+
+                isMultivalued = true;
+                break;
+
+            } else {
+                parent = parent.getParent();
+            }
+        }
+
+        if (!isMultivalued) {
+
+            String leftText = FilterUtil.stripScim1Schema(ctx.expression(0).getChild(0).getText());
+            String rightText = FilterUtil.stripScim1Schema(ctx.expression(1).getChild(0).getText());
+
+            String[] leftTextTokens = leftText.split("\\.");
+            String[] rightTextTokens = rightText.split("\\.");
+
+            if (leftTextTokens[0].equalsIgnoreCase(rightTextTokens[0]) && !leftTextTokens[0].equalsIgnoreCase("name")) {
+                isMultivalued = true;
+            }
+        }
+
+        String leftExp = visit(ctx.expression(0));
+        String rightExp = visit(ctx.expression(1));
+
+        StringBuilder result = new StringBuilder("");
+
+        if (isMultivalued && !leftExp.startsWith("!(") && !rightExp.startsWith("!(")) {
+
+            if (!leftExp.startsWith("&(") || !leftExp.startsWith("|(")) {
+
+                String[] leftExpTokens = leftExp.split("\\=");
+                String[] rightExpTokens = rightExp.split("\\=");
+
+                if (leftExpTokens[0].equalsIgnoreCase(rightExpTokens[0])) {
+
+                    result.append("&(|(");
+                    result.append(leftExpTokens[0]);
+                    result.append("=");
+                    result.append(leftExpTokens[1]);
+                    result.append("*");
+                    result.append(rightExpTokens[1]);
+                    result.append(")");
+                    result.append("(");
+                    result.append(leftExpTokens[0]);
+                    result.append("=");
+                    result.append(rightExpTokens[1]);
+                    result.append("*");
+                    result.append(leftExpTokens[1]);
+                    result.append("))");
+
+                } else {
+                    result.append(transformToLdapAndFilter(leftExp, rightExp));
+                }
+
+            } else {
+                result.append(transformToLdapAndFilter(leftExp, rightExp));
+            }
+
+        } else {
+            result.append(transformToLdapAndFilter(leftExp, rightExp));
+        }
+
+        logger.info("##### parsed filter = " + result.toString().replaceAll("\\*{2,}","\\*"));
+
+        logger.info(" LEAVING ScimGroupFilterVisitor.visitEXPR_AND_EXPR()... ");
+
+        return result.toString().replaceAll("\\*{2,}","\\*");
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
     public String visitATTR_OPER_CRITERIA(ScimFilterParser.ATTR_OPER_CRITERIAContext ctx) {
 
-        logger.info(" UserFilterVisitor.visitATTR_OPER_CRITERIA() ");
+        logger.info(" ScimGroupFilterVisitor.visitATTR_OPER_CRITERIA() ");
 
         ParseTree parent = ctx.getParent();
         while (parent != null) {
@@ -146,7 +231,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_OPER_EXPR(ScimFilterParser.ATTR_OPER_EXPRContext ctx) {
 
-        logger.info(" UserFilterVisitor.visitATTR_OPER_EXPR() ");
+        logger.info(" ScimGroupFilterVisitor.visitATTR_OPER_EXPR() ");
 
         ParseTree parent = ctx.getParent();
         while (parent != null) {
@@ -177,7 +262,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_PR(ScimFilterParser.ATTR_PRContext ctx) {
 
-        logger.info(" UserFilterVisitor.visitATTR_PR() ");
+        logger.info(" ScimGroupFilterVisitor.visitATTR_PR() ");
 
         String attrName = ctx.ATTRNAME().getText();
 
@@ -196,10 +281,10 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
             }
         }
 
-        attrName = FilterUtil.stripScimSchema(attrName);
+        attrName = FilterUtil.stripScim1Schema(attrName);
         String[] tokens = attrName.split("\\.");
 
-        String ldapAttributeName = getUserLdapAttributeName(attrName);
+        String ldapAttributeName = getGroupLdapAttributeName(attrName);
 
         logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
 

@@ -36,6 +36,7 @@ import org.gluu.oxtrust.model.scim.ScimBulkOperation;
 import org.gluu.oxtrust.model.scim.ScimBulkResponse;
 import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim.ScimPerson;
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.Utils;
@@ -323,7 +324,7 @@ public class BulkWebService extends BaseScimWebService {
 
 		}
 		List<String> schemas = new ArrayList<String>();
-		schemas.add("urn:scim:schemas:core:1.0");
+		schemas.add(Constants.SCIM1_CORE_SCHEMA_ID);
 		scimBulkResponse.setSchemas(schemas);
 		scimBulkResponse.setOperations(listResponses);
 

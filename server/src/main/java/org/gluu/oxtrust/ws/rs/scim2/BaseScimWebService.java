@@ -37,8 +37,8 @@ import java.util.*;
 
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.GroupFilterVisitor.getGroupLdapAttributeName;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.UserFilterVisitor.getUserLdapAttributeName;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor.getUserLdapAttributeName;
 
 /**
  * Base methods for SCIM web services
@@ -198,7 +198,7 @@ public class BaseScimWebService {
 
 				if (attribute != null && !attribute.isEmpty()) {
 
-					attribute = FilterUtil.stripScimSchema(attribute);
+					attribute = FilterUtil.stripScim2Schema(attribute);
 
 					if (entryClass.getName().equals(GluuCustomPerson.class.getName()) && attribute.toLowerCase().startsWith("name.")) {
 
@@ -220,6 +220,9 @@ public class BaseScimWebService {
 			attributesSet.add("id");
 			if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
 				attributesSet.add("userName");
+			}
+			if (entryClass.getName().equals(GluuGroup.class.getName())) {
+				attributesSet.add("displayName");
 			}
 			attributesSet.add("meta.created");
 			attributesSet.add("meta.lastModified");

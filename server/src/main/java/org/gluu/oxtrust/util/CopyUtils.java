@@ -18,6 +18,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 // import org.codehaus.jackson.type.TypeReference;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
@@ -51,6 +52,7 @@ import org.gluu.oxtrust.model.scim.ScimRoles;
 import org.gluu.oxtrust.model.scim.ScimRolesPatch;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
+import org.gluu.oxtrust.model.scim2.Constants;
 import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -530,7 +532,7 @@ public class CopyUtils implements Serializable {
 			log.trace(" creating a new GluuCustomPerson instant ");
 			destination = new ScimPerson();
 		}
-		destination.getSchemas().add("urn:scim:schemas:core:1.0");
+		destination.getSchemas().add(Constants.SCIM1_CORE_SCHEMA_ID);
 		log.trace(" setting ID ");
 		if (source.getInum() != null) {
 			destination.setId(source.getInum());
@@ -863,6 +865,7 @@ public class CopyUtils implements Serializable {
 			List<Scimx509Certificates> x509Certificates = getAttributeListValue(source, Scimx509Certificates.class, OX_TRUSTX509_CERTIFICATE);
 			destination.setX509Certificates(x509Certificates);
 		}
+
 		log.trace(" setting meta ");
 		// getting meta data
 		if (source.getAttribute(OX_TRUST_META_CREATED) != null) {
@@ -874,9 +877,19 @@ public class CopyUtils implements Serializable {
 		if (source.getAttribute(OX_TRUST_META_VERSION) != null) {
 			destination.getMeta().setVersion(source.getAttribute(OX_TRUST_META_VERSION));
 		}
-		if (source.getAttribute(OX_TRUST_META_LOCATION) != null) {
-			destination.getMeta().setLocation(source.getAttribute(OX_TRUST_META_LOCATION));
-		}
+		// if (source.getAttribute(OX_TRUST_META_LOCATION) != null) {
+			// destination.getMeta().setLocation(source.getAttribute(OX_TRUST_META_LOCATION));
+			String location = source.getAttribute(OX_TRUST_META_LOCATION);
+			if (location != null && !location.isEmpty()) {
+				if (!location.startsWith("https://") && !location.startsWith("http://")) {
+					location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + location;
+				}
+			} else {
+				location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v1/Users/" + source.getInum();
+			}
+			destination.getMeta().setLocation(location);
+		// }
+
 		log.trace(" getting custom Attributes ");
 		// getting custom Attributes
 
@@ -966,7 +979,7 @@ public class CopyUtils implements Serializable {
 		IPersonService personService = PersonService.instance();
 
 		List<String> schemas = new ArrayList<String>();
-		schemas.add("urn:scim:schemas:core:1.0");
+		schemas.add(Constants.SCIM1_CORE_SCHEMA_ID);
 		destination.setSchemas(schemas);
 		destination.setDisplayName(source.getDisplayName());
 		destination.setId(source.getInum());

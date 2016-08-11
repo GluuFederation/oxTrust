@@ -12,6 +12,8 @@ public interface Constants {
 
     String MEDIA_TYPE_SCIM_JSON = "application/scim+json";
 
+    String SCIM1_CORE_SCHEMA_ID = "urn:scim:schemas:core:1.0";
+
     String USER_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:User";
     String USER_CORE_SCHEMA_NAME = "User";
     String USER_CORE_SCHEMA_DESCRIPTION = "User Account";
