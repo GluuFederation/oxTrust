@@ -468,7 +468,7 @@ public class UserWebService extends BaseScimWebService {
 	@ApiOperation(value = "GET \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
 	public Response meGet() {
 		return getErrorResponse(501, "Not Implemented");
-    }
+	}
 
 	@Path("/Me")
 	@POST
@@ -477,5 +477,5 @@ public class UserWebService extends BaseScimWebService {
 	@ApiOperation(value = "POST \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
 	public Response mePost() {
 		return getErrorResponse(501, "Not Implemented");
-    }
+	}
 }
