@@ -140,8 +140,8 @@
     "rptConnectionPoolUseConnectionPooling":false,
     "rptConnectionPoolMaxTotal":200,
     "rptConnectionPoolDefaultMaxPerRoute":20,
-    "rptConnectionPoolValidateAfterInactivity":10,  // In seconds; will be converted to millis
-    "rptConnectionPoolCustomKeepAliveTimeout":5,  // In seconds; will be converted to millis
+    "rptConnectionPoolValidateAfterInactivity":10,
+    "rptConnectionPoolCustomKeepAliveTimeout":5,
 
     "scimTestMode":false,
     "scimTestModeAccessToken":""
