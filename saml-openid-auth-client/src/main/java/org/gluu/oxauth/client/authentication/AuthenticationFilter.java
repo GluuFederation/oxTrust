@@ -31,6 +31,10 @@ import org.xdi.util.ArrayHelper;
 import org.xdi.util.AssertionHelper;
 import org.xdi.util.StringHelper;
 
+import edu.internet2.middleware.shibboleth.idp.authn.LoginContext;
+import edu.internet2.middleware.shibboleth.idp.session.Session;
+import edu.internet2.middleware.shibboleth.idp.util.HttpServletHelper;
+
 /**
  * Filter implementation to intercept all requests and attempt to authorize
  * the client by redirecting them to OAuth (unless the client has get authorization code).
@@ -146,6 +150,8 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/" + Configuration.OAUTH_AUTH_MODE +"/" + authenticationMode);
 			}
 		}
+		
+		getSPEntityId(request);
 
 		return clientRequest.getUri().replaceAll("%2B", "+");
 	}
@@ -224,6 +230,25 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		Matcher matcher = pattern.matcher(requestUri);
 		if (matcher.find()) {
 			return matcher.group(1);
+		}
+
+		return null;
+	}
+
+	private String getSPEntityId(final HttpServletRequest httpRequest) {
+		final HttpSession session = httpRequest.getSession(false);
+
+		LoginContext loginContext = HttpServletHelper.getLoginContext(httpRequest);
+		System.err.println("!!!! " + loginContext);
+		if (loginContext != null) {
+			System.err.println("!!!! " + loginContext.getRelyingPartyId());
+		}
+		Session idpSession = (Session) httpRequest.getAttribute(Session.HTTP_SESSION_BINDING_ATTRIBUTE);
+		if (idpSession != null) {
+			System.err.println("!!!! " + idpSession);
+			// log.debug("Attempting to get entityId акщь IdP session for " +
+			// idpSession.getPrincipalName());
+			System.err.println("!!!! " + idpSession.getServicesInformation());
 		}
 
 		return null;
