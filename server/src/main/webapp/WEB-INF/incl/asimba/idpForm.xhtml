@@ -200,38 +200,38 @@
                         </td>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="ACS Index. TRUE if ACS should be set as Index"
+                title="Indicates whether the ACS location in the AuthnRequest must be an Index. TRUE if ACS should be set as AssertionConsumerServiceIndex. TRUE if ACS should be set as AssertionConsumerServiceIndex (default). FALSE - AssertionConsumerServiceURL and ProtocolBinding must be set."
                 value="#{_idp.acsIndex}" />
             <h:outputLabel 
-                title="ACS Index. TRUE if ACS should be set as Index"
+                title="Indicates whether the ACS location in the AuthnRequest must be an Index. TRUE if ACS should be set as AssertionConsumerServiceIndex. TRUE if ACS should be set as AssertionConsumerServiceIndex (default). FALSE - AssertionConsumerServiceURL and ProtocolBinding must be set."
                 value="ACS Index"/>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Scoping. TRUE if Scoping element must be send"
+                title="Indicates what the value of Scoping in the AuthnRequest must be. TRUE if Scoping element must be send"
                 value="#{_idp.scoping}" />
             <h:outputLabel 
-                title="Scoping. TRUE if Scoping element must be send"
-                value="Send Scoping"/>
+                title="Indicates what the value of Scoping in the AuthnRequest must be. TRUE if Scoping element must be send"
+                value="Send Scoping in the AuthnRequest"/>
                         </td>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="NameIDPolicy. TRUE if NameIDPolicy element must be send"
+                title="Indicates what the value of NameIDPolicy in the AuthnRequest must be. TRUE if NameIDPolicy element must be send"
                 value="#{_idp.nameIdPolicy}" />
             <h:outputLabel 
-                title="NameIDPolicy. TRUE if NameIDPolicy element must be send"
+                title="Indicates what the value of NameIDPolicy in the AuthnRequest must be. TRUE if NameIDPolicy element must be send"
                 value="Send NameIDPolicy"/>            
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Enable AllowCreate value"
+                title="Indicates what the value of NameIDPolicy in the AuthnRequest must be. Enable AllowCreate value"
                 value="#{_idp.allowCreate}" />
             <h:outputLabel 
-                title="Enable AllowCreate value"
+                title="Indicates what the value of NameIDPolicy in the AuthnRequest must be. Enable AllowCreate value"
                 value="AllowCreate"/>
                         </td>
                         <td colspan="2" rowspan="1">
