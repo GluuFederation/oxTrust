@@ -11,8 +11,10 @@ import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.node.*;
-import org.gluu.oxtrust.model.scim2.Group;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.LongNode;
+import org.codehaus.jackson.node.ObjectNode;
+import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
@@ -27,17 +29,17 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * @author Val Pecaoco
  */
-@Name("listResponseGroupSerializer")
-public class ListResponseGroupSerializer extends JsonSerializer<Group> {
+@Name("gluuCustomPersonListSerializer")
+public class GluuCustomPersonListSerializer extends JsonSerializer<ScimPerson> {
 
     @Logger
     private static Log log;
 
-    private String attributesArray;
-    private Set<String> attributes;
+    protected String attributesArray;
+    protected Set<String> attributes;
 
     @Override
-    public void serialize(Group group, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(ScimPerson scimPerson, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
 
         log.info(" serialize() ");
 
@@ -49,21 +51,21 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
             mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 
             attributes = (attributesArray != null && !attributesArray.isEmpty()) ? new LinkedHashSet<String>(Arrays.asList(attributesArray.split("\\,"))) : null;
-            // attributes = (attributesArray != null && !attributesArray.isEmpty()) ? new LinkedHashSet<String>(Arrays.asList(mapper.readValue(attributesArray, String[].class))) : null;
             if (attributes != null && attributes.size() > 0) {
                 attributes.add("schemas");
                 attributes.add("id");
-                attributes.add("displayName");
+                attributes.add("userName");
+                /*
                 attributes.add("meta.created");
                 attributes.add("meta.lastModified");
                 attributes.add("meta.location");
                 attributes.add("meta.version");
-                attributes.add("meta.resourceType");
+                */
             }
 
-            JsonNode rootNode = mapper.convertValue(group, JsonNode.class);
+            JsonNode rootNode = mapper.convertValue(scimPerson, JsonNode.class);
 
-            processNodes(null, rootNode, jsonGenerator);
+            processNodes(null, rootNode, mapper, scimPerson, jsonGenerator);
 
             jsonGenerator.writeEndObject();
 
@@ -76,12 +78,12 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
     /*
      * This is a recursive method to completely process all the nodes
      */
-    private void processNodes(String parent, JsonNode rootNode, JsonGenerator jsonGenerator) throws Exception {
+    private void processNodes(String parent, JsonNode rootNode, ObjectMapper mapper, ScimPerson scimPerson, JsonGenerator jsonGenerator) throws Exception {
 
         // log.info(" ##### PARENT: " + parent);
 
         if (parent != null) {
-            parent = FilterUtil.stripScim2Schema(parent);
+            parent = FilterUtil.stripScim1Schema(parent);
         }
 
         Iterator<Map.Entry<String, JsonNode>> iterator = rootNode.getFields();
@@ -94,44 +96,32 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
                 for (String attribute : attributes) {
 
-                    attribute = FilterUtil.stripScim2Schema(attribute);
+                    attribute = FilterUtil.stripScim1Schema(attribute);
                     String[] split = attribute.split("\\.");
-
-                    if (split.length == 2 && split[1] != null) {
-                        if (split[1].equalsIgnoreCase("$ref")) {
-                            split[1] = "reference";
-                        }
-                    }
 
                     if ((((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase(split[0])) && rootNodeEntry.getKey().equalsIgnoreCase(split[1])) ||
                         rootNodeEntry.getKey().equalsIgnoreCase(split[0])) {
 
                         // log.info(" ##### MATCH: " + attribute);
-                        writeStructure(parent, rootNodeEntry, jsonGenerator);
+                        writeStructure(parent, rootNodeEntry, mapper, scimPerson, jsonGenerator);
                         break;
                     }
                 }
 
             } else {
-                writeStructure(parent, rootNodeEntry, jsonGenerator);
+                writeStructure(parent, rootNodeEntry, mapper, scimPerson, jsonGenerator);
             }
         }
     }
 
-    private void writeStructure(String parent, Map.Entry<String, JsonNode> rootNodeEntry, JsonGenerator jsonGenerator) throws Exception {
+    private void writeStructure(String parent, Map.Entry<String, JsonNode> rootNodeEntry, ObjectMapper mapper, ScimPerson scimPerson, JsonGenerator jsonGenerator) throws Exception {
 
-        // No Group Extension Schema yet
-
-        if ((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase("members") && rootNodeEntry.getKey().equalsIgnoreCase("reference")) {
-            jsonGenerator.writeFieldName("$ref");
-        } else {
-            jsonGenerator.writeFieldName(rootNodeEntry.getKey());
-        }
+        jsonGenerator.writeFieldName(rootNodeEntry.getKey());
 
         if (rootNodeEntry.getValue() instanceof ObjectNode) {
 
             jsonGenerator.writeStartObject();
-            processNodes(rootNodeEntry.getKey(), rootNodeEntry.getValue(), jsonGenerator);  // Recursion
+            processNodes(rootNodeEntry.getKey(), rootNodeEntry.getValue(), mapper, scimPerson, jsonGenerator);  // Recursion
             jsonGenerator.writeEndObject();
 
         } else if (rootNodeEntry.getValue() instanceof ArrayNode) {
@@ -140,20 +130,31 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
             jsonGenerator.writeStartArray();
 
-            if (arrayNode.size() > 0) {
+            if (rootNodeEntry.getKey().equalsIgnoreCase("schemas")) {
 
                 for (int i = 0; i < arrayNode.size(); i++) {
 
                     JsonNode arrayNodeElement = arrayNode.get(i);
+                    jsonGenerator.writeObject(arrayNodeElement);
+                }
 
-                    if (arrayNodeElement.isObject()) {
+            } else {
 
-                        jsonGenerator.writeStartObject();
-                        processNodes(rootNodeEntry.getKey(), arrayNodeElement, jsonGenerator);  // Recursion
-                        jsonGenerator.writeEndObject();
+                if (arrayNode.size() > 0) {
 
-                    } else {
-                        jsonGenerator.writeObject(arrayNodeElement);
+                    for (int i = 0; i < arrayNode.size(); i++) {
+
+                        JsonNode arrayNodeElement = arrayNode.get(i);
+
+                        if (arrayNodeElement.isObject()) {
+
+                            jsonGenerator.writeStartObject();
+                            processNodes(rootNodeEntry.getKey(), arrayNodeElement, mapper, scimPerson, jsonGenerator);  // Recursion
+                            jsonGenerator.writeEndObject();
+
+                        } else {
+                            jsonGenerator.writeObject(arrayNodeElement);
+                        }
                     }
                 }
             }

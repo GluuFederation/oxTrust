@@ -1039,6 +1039,11 @@
 			<artifactId>shibboleth-jce</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>edu.internet2.middleware</groupId>
+			<artifactId>shibboleth-identityprovider</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>

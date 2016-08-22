@@ -16,12 +16,24 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
+import org.apache.http.HttpResponse;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeaderElementIterator;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
+import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientResponseFailure;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
@@ -92,13 +104,37 @@ public class UmaProtectionService implements Serializable {
 	private RptStatusService rptStatusService;
 
 	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;	
+	private String cryptoConfigurationSalt;
 
 	@Create
 	public void init() {
 		if (this.umaMetadataConfiguration != null) {
-	        this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration);
-			this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration);
+
+			if (applicationConfiguration.isRptConnectionPoolUseConnectionPooling()) {
+
+				// For more information about PoolingHttpClientConnectionManager, please see:
+				// http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/index.html?org/apache/http/impl/conn/PoolingHttpClientConnectionManager.html
+
+				log.info("##### Initializing custom ClientExecutor...");
+				PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+				connectionManager.setMaxTotal(applicationConfiguration.getRptConnectionPoolMaxTotal());
+				connectionManager.setDefaultMaxPerRoute(applicationConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
+				connectionManager.setValidateAfterInactivity(applicationConfiguration.getRptConnectionPoolValidateAfterInactivity() * 1000);
+				CloseableHttpClient client = HttpClients.custom()
+					.setKeepAliveStrategy(connectionKeepAliveStrategy)
+					.setConnectionManager(connectionManager)
+					.build();
+				ClientExecutor clientExecutor = new ApacheHttpClient4Executor(client);
+				log.info("##### Initializing custom ClientExecutor DONE");
+
+				this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration, clientExecutor);
+				this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration, clientExecutor);
+
+			} else {
+
+				this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration);
+				this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration);
+			}
 		}
 	}
 
@@ -149,6 +185,7 @@ public class UmaProtectionService implements Serializable {
 			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
+			ex.printStackTrace();
 		}
 
 		// Validate RPT status response
@@ -318,5 +355,27 @@ public class UmaProtectionService implements Serializable {
 
     }
 
+	private ConnectionKeepAliveStrategy connectionKeepAliveStrategy = new ConnectionKeepAliveStrategy() {
 
+		@Override
+		public long getKeepAliveDuration(HttpResponse httpResponse, HttpContext httpContext) {
+
+			HeaderElementIterator headerElementIterator = new BasicHeaderElementIterator(httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
+
+			while (headerElementIterator.hasNext()) {
+
+				HeaderElement headerElement = headerElementIterator.nextElement();
+
+				String name = headerElement.getName();
+				String value = headerElement.getValue();
+
+				if (value != null && name.equalsIgnoreCase("timeout")) {
+					return Long.parseLong(value) * 1000;
+				}
+			}
+
+			// Set own keep alive duration if server does not have it
+			return applicationConfiguration.getRptConnectionPoolCustomKeepAliveTimeout() * 1000;
+		}
+	};
 }

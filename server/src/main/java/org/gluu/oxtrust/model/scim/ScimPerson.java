@@ -18,7 +18,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 /**
  * SCIM person Entity
@@ -39,31 +41,81 @@ public class ScimPerson implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -4855047769008483029L;
+
+	@JsonProperty("schemas")
 	private List<String> schemas;
+
+	@LdapAttribute(name = "oxTrustExternalId")
 	private String externalId;
+
+	@LdapAttribute(name = "uid")
 	private String userName;
+
+	@LdapAttribute(name = "inum")
 	private String id;
+
+	// See @LdapAttribute annotations in class
 	private ScimName name;
+
+	@LdapAttribute(name = "displayName")
 	private String displayName;
+
+	@LdapAttribute(name = "nickName")
 	private String nickName;
+
+	@LdapAttribute(name = "oxTrustProfileURL")
 	private String profileUrl;
+
+	@LdapAttribute(name = "oxTrustTitle")
 	private String title;
+
+	@LdapAttribute(name = "oxTrustUserType")
 	private String userType;
+
+	@LdapAttribute(name = "password")
 	private String password;
+
+	@LdapAttribute(name = "oxTrustEmail")
 	private List<ScimPersonEmails> emails;
+
+	@LdapAttribute(name = "oxTrustPhoneValue")
 	private List<ScimPersonPhones> phoneNumbers;
+
+	@LdapAttribute(name = "oxTrustImsValue")
 	private List<ScimPersonIms> ims;
+
+	@LdapAttribute(name = "oxTrustPhotos")
 	private List<ScimPersonPhotos> photos;
+
+	@LdapAttribute(name = "oxTrustx509Certificate")
 	private List<Scimx509Certificates> x509Certificates;
+
+	@LdapAttribute(name = "oxTrustAddresses")
 	private List<ScimPersonAddresses> addresses;
+
+	@LdapAttribute(name = "timezone")
 	private String timezone;
+
+	@LdapAttribute(name = "locale")
 	private String locale;
+
+	@LdapAttribute(name = "preferredLanguage")
 	private String preferredLanguage;
+
+	@LdapAttribute(name = "memberOf")
 	private List<ScimPersonGroups> groups;
+
+	@LdapAttribute(name = "oxTrustActive")
 	private String active;
+
+	@LdapAttribute(name = "oxTrustRole")
 	private List<ScimRoles> roles;
+
 	private PersonMeta meta;
+
+	@LdapAttribute(name = "oxTrustEntitlements")
 	private List<ScimEntitlements> entitlements;
+
 	private List<ScimCustomAttributes> customAttributes;
 
 	@XmlTransient

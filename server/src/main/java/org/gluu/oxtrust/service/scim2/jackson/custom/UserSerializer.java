@@ -98,7 +98,7 @@ public class UserSerializer extends JsonSerializer<User> {
 
                 for (String attribute : attributes) {
 
-                    attribute = FilterUtil.stripScimSchema(attribute);
+                    attribute = FilterUtil.stripScim2Schema(attribute);
 
                     if (extEntry.getKey().equalsIgnoreCase(attribute)) {
 

@@ -117,7 +117,7 @@ public class GroupWebService extends BaseScimWebService {
 
 						Group group = CopyUtils2.copy(gluuGroup, null);
 
-						log.info(" group to be added userid : " + group.getDisplayName());
+						log.info(" group to be added displayName : " + group.getDisplayName());
 
 						groupsListResponse.getResources().add(group);
 
@@ -134,7 +134,7 @@ public class GroupWebService extends BaseScimWebService {
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-				SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
+				SimpleModule customScimFilterModule = new SimpleModule("CustomScim2GroupFilterModule", new Version(1, 0, 0, ""));
 				ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
 				serializer.setAttributesArray(attributesArray);
 				customScimFilterModule.addSerializer(Group.class, serializer);

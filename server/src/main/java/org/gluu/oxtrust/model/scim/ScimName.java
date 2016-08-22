@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.model.scim;
 
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -15,10 +17,19 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ScimName {
 
-	private String givenName;
+	@LdapAttribute(name = "sn")
 	private String familyName;
+
+	@LdapAttribute(name = "givenName")
+	private String givenName;
+
+	@LdapAttribute(name = "middleName")
 	private String middleName;
+
+	@LdapAttribute(name = "oxTrusthonorificPrefix")
 	private String honorificPrefix;
+
+	@LdapAttribute(name = "oxTrusthonorificSuffix")
 	private String honorificSuffix;
 
 	public String getGivenName() {

@@ -490,6 +490,48 @@
             "type": "string",
             "minLength": 1
         },
+        "rptConnectionPoolUseConnectionPooling": {
+            "id": "rptConnectionPoolUseConnectionPooling",
+            "type": "boolean"
+        },
+        "rptConnectionPoolMaxTotal": {
+            "id": "rptConnectionPoolMaxTotal",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "rptConnectionPoolDefaultMaxPerRoute": {
+            "id": "rptConnectionPoolDefaultMaxPerRoute",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "rptConnectionPoolValidateAfterInactivity": {
+            "id": "rptConnectionPoolValidateAfterInactivity",
+            "description": "Value must be in seconds",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "rptConnectionPoolCustomKeepAliveTimeout": {
+            "id": "rptConnectionPoolCustomKeepAliveTimeout",
+            "description": "Value must be in seconds",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
         "scimTestMode": {
             "id": "scimTestMode",
             "type": "boolean"
@@ -587,6 +629,11 @@
         "recaptchaSecretKey",
         "cssLocation",
         "jsLocation",
+        "rptConnectionPoolUseConnectionPooling",
+        "rptConnectionPoolMaxTotal",
+        "rptConnectionPoolDefaultMaxPerRoute",
+        "rptConnectionPoolValidateAfterInactivity",
+        "rptConnectionPoolCustomKeepAliveTimeout",
         "scimTestMode",
         "scimTestModeAccessToken"
     ]

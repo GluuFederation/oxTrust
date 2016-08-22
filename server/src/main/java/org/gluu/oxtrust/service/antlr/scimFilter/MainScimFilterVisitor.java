@@ -141,8 +141,8 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
 
         if (!isMultivalued) {
 
-            String leftText = FilterUtil.stripScimSchema(ctx.expression(0).getChild(0).getText());
-            String rightText = FilterUtil.stripScimSchema(ctx.expression(1).getChild(0).getText());
+            String leftText = FilterUtil.stripScim2Schema(ctx.expression(0).getChild(0).getText());
+            String rightText = FilterUtil.stripScim2Schema(ctx.expression(1).getChild(0).getText());
 
             String[] leftTextTokens = leftText.split("\\.");
             String[] rightTextTokens = rightText.split("\\.");

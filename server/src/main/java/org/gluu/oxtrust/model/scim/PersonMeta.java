@@ -9,6 +9,7 @@ package org.gluu.oxtrust.model.scim;
 import javax.xml.bind.annotation.XmlType;
 
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 /**
  * SCIM person MetaData
@@ -19,10 +20,17 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 @XmlType(propOrder = { "created", "lastModified", "version", "location" })
 public class PersonMeta {
 
+	@LdapAttribute(name = "oxTrustMetaCreated")
 	private String created;
+
+	@LdapAttribute(name = "oxTrustMetaLastModified")
 	private String lastModified;
-	private String version;
+
+	@LdapAttribute(name = "oxTrustMetaLocation")
 	private String location;
+
+	@LdapAttribute(name = "oxTrustMetaVersion")
+	private String version;
 
 	public PersonMeta() {
 		created = "";

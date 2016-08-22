@@ -11,8 +11,10 @@ import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.node.*;
-import org.gluu.oxtrust.model.scim2.Group;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.LongNode;
+import org.codehaus.jackson.node.ObjectNode;
+import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
@@ -27,8 +29,8 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * @author Val Pecaoco
  */
-@Name("listResponseGroupSerializer")
-public class ListResponseGroupSerializer extends JsonSerializer<Group> {
+@Name("gluuGroupListSerializer")
+public class GluuGroupListSerializer extends JsonSerializer<ScimGroup> {
 
     @Logger
     private static Log log;
@@ -37,7 +39,7 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
     private Set<String> attributes;
 
     @Override
-    public void serialize(Group group, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(ScimGroup scimGroup, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
 
         log.info(" serialize() ");
 
@@ -49,19 +51,20 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
             mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 
             attributes = (attributesArray != null && !attributesArray.isEmpty()) ? new LinkedHashSet<String>(Arrays.asList(attributesArray.split("\\,"))) : null;
-            // attributes = (attributesArray != null && !attributesArray.isEmpty()) ? new LinkedHashSet<String>(Arrays.asList(mapper.readValue(attributesArray, String[].class))) : null;
             if (attributes != null && attributes.size() > 0) {
                 attributes.add("schemas");
                 attributes.add("id");
                 attributes.add("displayName");
+                /*
                 attributes.add("meta.created");
                 attributes.add("meta.lastModified");
                 attributes.add("meta.location");
                 attributes.add("meta.version");
                 attributes.add("meta.resourceType");
+                */
             }
 
-            JsonNode rootNode = mapper.convertValue(group, JsonNode.class);
+            JsonNode rootNode = mapper.convertValue(scimGroup, JsonNode.class);
 
             processNodes(null, rootNode, jsonGenerator);
 
@@ -81,7 +84,7 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
         // log.info(" ##### PARENT: " + parent);
 
         if (parent != null) {
-            parent = FilterUtil.stripScim2Schema(parent);
+            parent = FilterUtil.stripScim1Schema(parent);
         }
 
         Iterator<Map.Entry<String, JsonNode>> iterator = rootNode.getFields();
@@ -94,14 +97,8 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
                 for (String attribute : attributes) {
 
-                    attribute = FilterUtil.stripScim2Schema(attribute);
+                    attribute = FilterUtil.stripScim1Schema(attribute);
                     String[] split = attribute.split("\\.");
-
-                    if (split.length == 2 && split[1] != null) {
-                        if (split[1].equalsIgnoreCase("$ref")) {
-                            split[1] = "reference";
-                        }
-                    }
 
                     if ((((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase(split[0])) && rootNodeEntry.getKey().equalsIgnoreCase(split[1])) ||
                         rootNodeEntry.getKey().equalsIgnoreCase(split[0])) {
@@ -120,13 +117,7 @@ public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
     private void writeStructure(String parent, Map.Entry<String, JsonNode> rootNodeEntry, JsonGenerator jsonGenerator) throws Exception {
 
-        // No Group Extension Schema yet
-
-        if ((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase("members") && rootNodeEntry.getKey().equalsIgnoreCase("reference")) {
-            jsonGenerator.writeFieldName("$ref");
-        } else {
-            jsonGenerator.writeFieldName(rootNodeEntry.getKey());
-        }
+        jsonGenerator.writeFieldName(rootNodeEntry.getKey());
 
         if (rootNodeEntry.getValue() instanceof ObjectNode) {
 

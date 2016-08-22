@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.service.antlr.scimFilter.visitor;
+package org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.gluu.oxtrust.model.scim2.*;
@@ -23,11 +23,11 @@ import java.util.Map;
 /**
  * @author Val Pecaoco
  */
-public class GroupFilterVisitor extends MainScimFilterVisitor {
+public class UserFilterVisitor extends MainScimFilterVisitor {
 
-    private Logger logger = LoggerFactory.getLogger(GroupFilterVisitor.class);
+    private Logger logger = LoggerFactory.getLogger(UserFilterVisitor.class);
 
-    private static Class[] annotatedClasses = { Resource.class, Meta.class, Group.class };
+    private static Class[] annotatedClasses = { Resource.class, Meta.class, User.class, Name.class };
 
     private static Map<String, String> declaredAnnotations = new HashMap<String, String>();
 
@@ -48,15 +48,21 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
         }
     }
 
-    public static String getGroupLdapAttributeName(String attrName) {
+    public static String getUserLdapAttributeName(String attrName) {
 
-        String ldapAttributeName = FilterUtil.stripScimSchema(attrName);
+        String ldapAttributeName = FilterUtil.stripScim2Schema(attrName);
 
         String[] tokens = ldapAttributeName.split("\\.");
 
         // This is already specific implementation. Currently only support up to second level.
         ldapAttributeName = tokens[0];
-        if (tokens[0].equalsIgnoreCase(Meta.class.getSimpleName())) {
+        if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
+            if (tokens.length == 1) {
+                ldapAttributeName = "inum";
+            } else if (tokens.length == 2) {
+                ldapAttributeName = tokens[1];
+            }
+        } else if (tokens[0].equalsIgnoreCase(Meta.class.getSimpleName())) {
             if (tokens.length == 1) {
                 ldapAttributeName = "meta";
             } else if (tokens.length == 2) {
@@ -80,13 +86,13 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
 
     private String attrOperCriteriaResolver(String attrName, String operator, String criteria) {
 
-        logger.info(" GroupFilterVisitor.attrOperCriteriaResolver() ");
+        logger.info(" UserFilterVisitor.attrOperCriteriaResolver() ");
 
-        attrName = FilterUtil.stripScimSchema(attrName);
+        attrName = FilterUtil.stripScim2Schema(attrName);
 
         String[] tokens = attrName.split("\\.");
 
-        String ldapAttributeName = getGroupLdapAttributeName(attrName);
+        String ldapAttributeName = getUserLdapAttributeName(attrName);
 
         criteria = evaluateMultivaluedCriteria(criteria, operator, tokens);
 
@@ -109,7 +115,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_OPER_CRITERIA(ScimFilterParser.ATTR_OPER_CRITERIAContext ctx) {
 
-        logger.info(" GroupFilterVisitor.visitATTR_OPER_CRITERIA() ");
+        logger.info(" UserFilterVisitor.visitATTR_OPER_CRITERIA() ");
 
         ParseTree parent = ctx.getParent();
         while (parent != null) {
@@ -140,7 +146,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_OPER_EXPR(ScimFilterParser.ATTR_OPER_EXPRContext ctx) {
 
-        logger.info(" GroupFilterVisitor.visitATTR_OPER_EXPR() ");
+        logger.info(" UserFilterVisitor.visitATTR_OPER_EXPR() ");
 
         ParseTree parent = ctx.getParent();
         while (parent != null) {
@@ -171,7 +177,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_PR(ScimFilterParser.ATTR_PRContext ctx) {
 
-        logger.info(" GroupFilterVisitor.visitATTR_PR() ");
+        logger.info(" UserFilterVisitor.visitATTR_PR() ");
 
         String attrName = ctx.ATTRNAME().getText();
 
@@ -190,10 +196,10 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
             }
         }
 
-        attrName = FilterUtil.stripScimSchema(attrName);
+        attrName = FilterUtil.stripScim2Schema(attrName);
         String[] tokens = attrName.split("\\.");
 
-        String ldapAttributeName = getGroupLdapAttributeName(attrName);
+        String ldapAttributeName = getUserLdapAttributeName(attrName);
 
         logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
 

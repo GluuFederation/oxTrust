@@ -145,7 +145,7 @@
                 
                 <!-- upload file button -->
                 <rich:fileUpload id="idpRichUploadMetadataFile"
-                                 fileUploadListener="#{_updateAsimbaIDPAction.uploadFile}" 
+                                 fileUploadListener="#{_updateAsimbaIDPAction.uploadFile}"  addLabel="Upload"
                         maxFilesQuantity="1" 
                         immediateUpload="true"
                         listHeight="60px" styleClass="uploadFile" >
@@ -165,7 +165,7 @@
                     value="Add certificate file"/>
                 
                 <!-- upload file button -->
-                <rich:fileUpload fileUploadListener="#{_updateAsimbaIDPAction.uploadCertificateFile}" 
+                <rich:fileUpload fileUploadListener="#{_updateAsimbaIDPAction.uploadCertificateFile}" addLabel="Upload"
                                  acceptedTypes="crt, cert, pem, txt" ontyperejected="alert('Only CRT, CERT, PEM, TXT files are accepted');"
                                      maxFilesQuantity="1" 
                                      immediateUpload="true"

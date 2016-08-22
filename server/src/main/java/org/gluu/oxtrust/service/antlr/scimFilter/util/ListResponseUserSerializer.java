@@ -84,7 +84,7 @@ public class ListResponseUserSerializer extends UserSerializer {
         // log.info(" ##### PARENT: " + parent);
 
         if (parent != null) {
-            parent = FilterUtil.stripScimSchema(parent);
+            parent = FilterUtil.stripScim2Schema(parent);
         }
 
         Iterator<Map.Entry<String, JsonNode>> iterator = rootNode.getFields();
@@ -97,7 +97,7 @@ public class ListResponseUserSerializer extends UserSerializer {
 
                 for (String attribute : attributes) {
 
-                    attribute = FilterUtil.stripScimSchema(attribute);
+                    attribute = FilterUtil.stripScim2Schema(attribute);
                     String[] split = attribute.split("\\.");
 
                     if (split.length == 2 && split[1] != null) {
@@ -166,7 +166,7 @@ public class ListResponseUserSerializer extends UserSerializer {
 
                                     for (String attribute : attributes) {
 
-                                        attribute = FilterUtil.stripScimSchema(attribute);
+                                        attribute = FilterUtil.stripScim2Schema(attribute);
 
                                         if (extEntry.getKey().equalsIgnoreCase(attribute)) {
 
