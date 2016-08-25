@@ -69,7 +69,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -129,17 +129,10 @@ public class GroupWebService extends BaseScimWebService {
 					groupsListResponse.setStartIndex(vlvResponse.getStartIndex());
 				}
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Groups");
-
 				// Serialize to JSON
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-				SimpleModule customScimFilterModule = new SimpleModule("CustomScim2GroupFilterModule", new Version(1, 0, 0, ""));
-				ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
-				serializer.setAttributesArray(attributesArray);
-				customScimFilterModule.addSerializer(Group.class, serializer);
-				mapper.registerModule(customScimFilterModule);
-				String json = mapper.writeValueAsString(groupsListResponse);
+				String json = serializeToJson(groupsListResponse, attributesArray);
+
+				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Groups");
 
 				return Response.ok(json).location(location).build();
 			}
@@ -163,7 +156,7 @@ public class GroupWebService extends BaseScimWebService {
 		@PathParam("id") String id,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -195,17 +188,10 @@ public class GroupWebService extends BaseScimWebService {
 
 			Group group = CopyUtils2.copy(gluuGroup, null);
 
-			URI location = new URI(group.getMeta().getLocation());
-
 			// Serialize to JSON
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
-			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
-			serializer.setAttributesArray(attributesArray);
-			customScimFilterModule.addSerializer(Group.class, serializer);
-			mapper.registerModule(customScimFilterModule);
-			String json = mapper.writeValueAsString(group);
+			String json = serializeToJson(group, attributesArray);
+
+			URI location = new URI(group.getMeta().getLocation());
 
 			return Response.ok(json).location(location).build();
 
@@ -234,7 +220,7 @@ public class GroupWebService extends BaseScimWebService {
 		@ApiParam(value = "Group", required = true) Group group,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -249,17 +235,10 @@ public class GroupWebService extends BaseScimWebService {
 
 			Group createdGroup = scim2GroupService.createGroup(group);
 
-			URI location = new URI(createdGroup.getMeta().getLocation());
-
 			// Serialize to JSON
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
-			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
-			serializer.setAttributesArray(attributesArray);
-			customScimFilterModule.addSerializer(Group.class, serializer);
-			mapper.registerModule(customScimFilterModule);
-			String json = mapper.writeValueAsString(createdGroup);
+			String json = serializeToJson(createdGroup, attributesArray);
+
+			URI location = new URI(createdGroup.getMeta().getLocation());
 
 			// Return HTTP response with status code 201 Created
 			return Response.created(location).entity(json).build();
@@ -291,7 +270,7 @@ public class GroupWebService extends BaseScimWebService {
 		@ApiParam(value = "Group", required = true) Group group,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -306,17 +285,10 @@ public class GroupWebService extends BaseScimWebService {
 
 			Group updatedGroup = scim2GroupService.updateGroup(id, group);
 
-			URI location = new URI(updatedGroup.getMeta().getLocation());
-
 			// Serialize to JSON
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScimGroupFilterModule", new Version(1, 0, 0, ""));
-			ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
-			serializer.setAttributesArray(attributesArray);
-			customScimFilterModule.addSerializer(Group.class, serializer);
-			mapper.registerModule(customScimFilterModule);
-			String json = mapper.writeValueAsString(updatedGroup);
+			String json = serializeToJson(updatedGroup, attributesArray);
+
+			URI location = new URI(updatedGroup.getMeta().getLocation());
 
 			return Response.ok(json).location(location).build();
 
@@ -350,7 +322,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@PathParam("id") String id) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -365,7 +337,7 @@ public class GroupWebService extends BaseScimWebService {
 
             scim2GroupService.deleteGroup(id);
 
-			return Response.ok().build();
+			return Response.noContent().build();
 
 		} catch (EntryPersistenceException ex) {
 
@@ -444,4 +416,17 @@ public class GroupWebService extends BaseScimWebService {
     public Response mePost() {
         return getErrorResponse(501, "Not Implemented");
     }
+
+	private String serializeToJson(Object object, String attributesArray) throws Exception {
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+		SimpleModule customScimFilterModule = new SimpleModule("CustomScim2GroupFilterModule", new Version(1, 0, 0, ""));
+		ListResponseGroupSerializer serializer = new ListResponseGroupSerializer();
+		serializer.setAttributesArray(attributesArray);
+		customScimFilterModule.addSerializer(Group.class, serializer);
+		mapper.registerModule(customScimFilterModule);
+
+		return mapper.writeValueAsString(object);
+	}
 }

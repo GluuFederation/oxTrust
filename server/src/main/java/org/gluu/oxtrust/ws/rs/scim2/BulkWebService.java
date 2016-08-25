@@ -90,7 +90,7 @@ public class BulkWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@ApiParam(value = "BulkRequest", required = true) BulkRequest bulkRequest) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);

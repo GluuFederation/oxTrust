@@ -15,7 +15,9 @@ import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
@@ -39,6 +41,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor.getUserLdapAttributeName;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor.getFidoDeviceLdapAttributeName;
 
 /**
  * Base methods for SCIM web services
@@ -151,15 +154,21 @@ public class BaseScimWebService {
 		log.info(" sortOrder = " + sortOrder);
 		log.info(" attributes = " + attributesArray);
 
-		Filter filter = null;
+		Filter filter;
 		if (filterString == null || (filterString != null && filterString.isEmpty())) {
-			filter = Filter.create("inum=*");
+			if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
+				filter = Filter.create("oxId=*");
+			} else {
+				filter = Filter.create("inum=*");
+			}
 		} else {
 			Class clazz = null;
 			if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
 				clazz = User.class;
 			} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
 				clazz = Group.class;
+			} else if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
+				clazz = FidoDevice.class;
 			}
 			filter = scimFilterParserService.createFilter(filterString, clazz);
 		}
@@ -169,14 +178,19 @@ public class BaseScimWebService {
 		count = (count < 1) ? DEFAULT_COUNT : count;
 		count = (count > MAX_COUNT) ? MAX_COUNT : count;
 
-		sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "displayName";
-		if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
-			sortBy = getUserLdapAttributeName(sortBy);
-		}  else if (entryClass.getName().equals(GluuGroup.class.getName())) {
-			sortBy = getGroupLdapAttributeName(sortBy);
+		if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
+			sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "id";
+			sortBy = getFidoDeviceLdapAttributeName(sortBy);
+		} else {
+			sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "displayName";
+			if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
+				sortBy = getUserLdapAttributeName(sortBy);
+			}  else if (entryClass.getName().equals(GluuGroup.class.getName())) {
+				sortBy = getGroupLdapAttributeName(sortBy);
+			}
 		}
 
-		SortOrder sortOrderEnum = null;
+		SortOrder sortOrderEnum;
 		if (sortOrder != null && !sortOrder.isEmpty()) {
 			sortOrderEnum = SortOrder.getByValue(sortOrder);
 		} else if (sortBy != null && (sortOrder == null || (sortOrder != null && sortOrder.isEmpty()))) {
@@ -224,6 +238,10 @@ public class BaseScimWebService {
 			if (entryClass.getName().equals(GluuGroup.class.getName())) {
 				attributesSet.add("displayName");
 			}
+			if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
+				attributesSet.add("creationDate");  // For meta.created
+				attributesSet.add("displayName");
+			}
 			attributesSet.add("meta.created");
 			attributesSet.add("meta.lastModified");
 			attributesSet.add("meta.location");
@@ -237,6 +255,8 @@ public class BaseScimWebService {
 						attributes[i] = getUserLdapAttributeName(attributes[i].trim());
 					} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
 						attributes[i] = getGroupLdapAttributeName(attributes[i].trim());
+					} else if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
+						attributes[i] = getFidoDeviceLdapAttributeName(attributes[i].trim());
 					}
 				}
 			}
