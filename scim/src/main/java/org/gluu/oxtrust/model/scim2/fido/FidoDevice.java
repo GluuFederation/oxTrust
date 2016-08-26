@@ -57,9 +57,9 @@ public class FidoDevice extends Resource {
     private String description;
 
     public FidoDevice() {
-        Meta meta = new Meta();
-        meta.setResourceType("FidoDevice");
-        setMeta(meta);
+        Meta fidoDeviceMeta = new Meta();
+        fidoDeviceMeta.setResourceType("FidoDevice");
+        setMeta(fidoDeviceMeta);
         Set<String> fidoDeviceSchemas = new HashSet<String>();
         fidoDeviceSchemas.add(Constants.FIDO_DEVICES_CORE_SCHEMA_ID);
         setSchemas(fidoDeviceSchemas);

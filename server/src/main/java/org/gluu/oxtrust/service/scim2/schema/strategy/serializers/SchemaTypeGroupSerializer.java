@@ -86,6 +86,7 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
                         arrayNodeAttributeHolder.setUniqueness("server");
                         arrayNodeAttributeHolder.setType("string");
                         arrayNodeAttributeHolder.setCaseExact(Boolean.TRUE);
+                        arrayNodeAttributeHolder.setMutability("readOnly");
                         arrayNodeAttributeHolder.setReturned("always");
                     } else {
                         arrayNodeAttributeHolder.setType("complex");
@@ -153,6 +154,10 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
                             attributeHolder.setReturned("always");
                         }
 
+                        if (rootNodeEntry.getKey().equalsIgnoreCase("displayName")) {
+                            attributeHolder.setReturned("always");
+                        }
+
                         attributeHolders.add(attributeHolder);
                     }
                 }
@@ -164,7 +169,7 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Unexpected processing error; please check the Group class structure");
+            throw new IOException("Unexpected processing error; please check the Group class structure.");
         }
     }
 
