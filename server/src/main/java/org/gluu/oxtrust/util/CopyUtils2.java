@@ -21,6 +21,7 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.*;
 import org.gluu.oxtrust.model.*;
+import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.scim.ScimEntitlements;
 import org.gluu.oxtrust.model.scim.ScimEntitlementsPatch;
 import org.gluu.oxtrust.model.scim.ScimGroup;
@@ -43,6 +44,7 @@ import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -1730,6 +1732,104 @@ public class CopyUtils2 implements Serializable {
 
 		return destination;
 
+	}
+
+	public static FidoDevice copy(GluuCustomFidoDevice source, FidoDevice destination) {
+
+		if (source == null) {
+			return null;
+		}
+
+		if (destination == null) {
+			destination = new FidoDevice();
+		}
+
+		destination.setId(source.getId());
+		destination.setCreationDate(source.getCreationDate());
+		destination.setApplication(source.getApplication());
+		destination.setCounter(source.getCounter());
+		destination.setDeviceData(source.getDeviceData());
+		destination.setDeviceHashCode(source.getDeviceHashCode());
+		destination.setDeviceKeyHandle(source.getDeviceKeyHandle());
+		destination.setDeviceRegistrationConf(source.getDeviceRegistrationConf());
+		destination.setLastAccessTime(source.getLastAccessTime());
+		destination.setStatus(source.getStatus());
+		destination.setDisplayName(source.getDisplayName());
+		destination.setDescription(source.getDescription());
+
+		if (source.getDn() != null) {
+			String[] dnArray = source.getDn().split("\\,");
+			for (String e : dnArray) {
+				if (e.startsWith("inum=")) {
+					String[] inumArray = e.split("\\=");
+					if (inumArray.length > 1) {
+						destination.setUserId(inumArray[1]);
+					}
+				}
+			}
+		}
+
+		Meta meta = (destination.getMeta() != null) ? destination.getMeta() : new Meta();
+
+		if (source.getMetaVersion() != null) {
+			meta.setVersion(source.getMetaVersion());
+		}
+
+		String location = source.getMetaLocation();
+		if (location != null && !location.isEmpty()) {
+			if (!location.startsWith("https://") && !location.startsWith("http://")) {
+				location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + location;
+			}
+		} else {
+			location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/FidoDevices/" + source.getId();
+		}
+		meta.setLocation(location);
+
+		if (source.getCreationDate() != null && !source.getCreationDate().isEmpty()) {
+
+			try {
+				meta.setCreated(new SimpleDateFormat("yyyyMMddHHmmss.SSS'Z'").parse(source.getCreationDate()));
+			} catch (Exception e) {
+				log.error(" Date parse exception (OLD format)", e);
+			}
+		}
+
+		if (source.getMetaLastModified() != null && !source.getMetaLastModified().isEmpty()) {
+
+			try {
+				DateTime dateTimeUtc = new DateTime(source.getMetaLastModified(), DateTimeZone.UTC);
+				meta.setLastModified(dateTimeUtc.toDate());
+			} catch (Exception e) {
+				log.error(" Date parse exception (NEW format), continuing...", e);
+				try {
+					meta.setLastModified(new SimpleDateFormat("yyyyMMddHHmmss.SSS'Z'").parse(source.getMetaLastModified()));
+				} catch (Exception ex) {
+					log.error(" Date parse exception (OLD format)", ex);
+				}
+			}
+		}
+
+		destination.setMeta(meta);
+
+		return destination;
+	}
+
+	public static GluuCustomFidoDevice updateGluuCustomFidoDevice(FidoDevice source, GluuCustomFidoDevice destination) {
+
+		if (source == null) {
+			return null;
+		}
+
+		if (destination == null) {
+			destination = new GluuCustomFidoDevice();
+		}
+
+		// Only update displayName and description
+		// All the other fields are not editable
+		destination.setDisplayName(source.getDisplayName());
+		destination.setDescription(source.getDescription());
+
+		return destination;
 	}
 
 	private static void setGluuStatus(User source, GluuCustomPerson destination) {

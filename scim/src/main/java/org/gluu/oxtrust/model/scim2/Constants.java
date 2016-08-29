@@ -26,6 +26,10 @@ public interface Constants {
     String GROUP_CORE_SCHEMA_NAME = "Group";
     String GROUP_CORE_SCHEMA_DESCRIPTION = "Group";
 
+    String FIDO_DEVICES_CORE_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:FidoDevice";
+    String FIDO_DEVICES_CORE_SCHEMA_NAME = "FidoDevice";
+    String FIDO_DEVICES_CORE_SCHEMA_DESCRIPTION = "Fido Device";
+
     String BULK_REQUEST_SCHEMA_ID = "urn:ietf:params:scim:api:messages:2.0:BulkRequest";
     String BULK_RESPONSE_SCHEMA_ID = "urn:ietf:params:scim:api:messages:2.0:BulkResponse";
 

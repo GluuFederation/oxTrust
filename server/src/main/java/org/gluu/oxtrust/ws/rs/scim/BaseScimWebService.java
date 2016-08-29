@@ -128,7 +128,7 @@ public class BaseScimWebService {
 				clazz = ScimPerson.class;
 			} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
 				clazz = ScimGroup.class;
-			}
+		    }
 			filter = scimFilterParserService.createFilter(filterString, clazz);
 		}
 

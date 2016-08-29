@@ -44,7 +44,7 @@
         <richext:spacer height="16" />
         
         <h:form id="internalCertificatesFormId">
-            <H2>Internal Gluu Certificates</H2>
+            <H3>Internal Gluu Certificates</H3>
             
             <s:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
                 <richext:spacer height="30" />
@@ -105,7 +105,7 @@
         <richext:spacer height="16" />
         
         <h:form id="trustStoreCertificatesFormId" rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
-            <H2>TrustStore Certificates</H2>
+            <H3>TrustStore Certificates</H3>
             
             <s:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size eq 0}">
                 <richext:spacer height="30" />
@@ -166,7 +166,7 @@
         <richext:spacer height="16" />
         
         <h:form id="asimbaCertificatesFormId" rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
-            <H2>Asimba Certificates</H2>
+            <H3>Asimba Certificates</H3>
             
             <s:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
                 <richext:spacer height="30" />

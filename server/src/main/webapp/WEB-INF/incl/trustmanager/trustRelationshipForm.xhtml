@@ -186,15 +186,34 @@
 								rows="3" size="40" maxlength="4000"
 								required="#{empty param['sv']}" id="descriptionId" />
 						</s:decorate>
-
-						<a4j:region>
+						
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+								id="entityType">
+								<ui:define name="label">Entity Type</ui:define>
+								<h:selectOneMenu styleClass="form-control"
+									value="#{_trustRelationshipAction.entityType}"
+									required="#{empty param['sv']}" id="entityTypeId">
+									<s:selectItems value="#{_trustRelationshipAction.entityTypeList}"
+										noSelectionLabel="Entity type" var="_type"
+										label="#{_type.displayName}" />
+									<!-- <s:convertEnum/> -->
+									<f:converter
+										converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+									<a4j:ajax event="change"
+										render="metadataType, spSingleGroup"
+										execute="@this" />
+								</h:selectOneMenu>
+							</s:decorate>
+						
+						<h:panelGroup id="metadataType">
+						<a4j:region>												
 							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 								id="spMetaDataSourceType">
-								<ui:define name="label">Metadata Type</ui:define>
+								<ui:define name="label">Metadata Location</ui:define>
 								<h:selectOneMenu styleClass="form-control"
 									value="#{_trustRelationship.spMetaDataSourceType}"
 									required="#{empty param['sv']}" id="spMetaDataSourceTypeId">
-									<s:selectItems value="#{trustService.metadataSourceTypes}"
+									<s:selectItems value="#{_trustRelationshipAction.metadataSourceTypesList}"
 										noSelectionLabel="Metadata type" var="_type"
 										label="#{_type.displayName}" />
 									<!-- <s:convertEnum/> -->
@@ -205,7 +224,7 @@
                                                 FederationWizardEntitySelection, urlId"
 										limitRender="true" execute="@this" />
 								</h:selectOneMenu>
-							</s:decorate>
+							</s:decorate>						
 							<a4j:region>
 
 								<h:panelGroup id="urlId">
@@ -264,6 +283,7 @@
 								</h:panelGroup>
 							</a4j:region>
 						</a4j:region>
+						</h:panelGroup>						
 
 						<h:panelGroup id="MetadataOperations">
 
@@ -328,7 +348,9 @@
 									required="#{empty param['sv']}" id="spMetaDataURLId" />
 							</s:decorate>
 						</h:panelGroup>
-
+						
+						<h:panelGroup id="spSingleGroup">
+						<h:panelGroup id="spSingleGroupId" rendered="#{_trustRelationshipAction.entityType.displayName eq 'Single SP'}">
 						<h:panelGroup id="LogoutUrlGroupId">
 							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 								id="LogoutUrlId">
@@ -452,7 +474,8 @@
 								</rich:accordion>
 							</h:panelGroup>
 						</s:decorate>
-
+						</h:panelGroup>
+						</h:panelGroup>
 						<a4j:commandLink style="margin-left: 165px;"
 							id="additionalTRParams" value="Configure MetadataFilters"
 							rendered="#{(not _new) and (_trustRelationship.containerFederation eq null)}"

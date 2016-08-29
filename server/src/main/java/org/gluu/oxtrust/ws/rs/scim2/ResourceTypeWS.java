@@ -40,6 +40,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		schemas.add(Constants.LIST_RESPONSE_SCHEMA_ID);
 		listResponse.setSchemas(schemas);
 
+		// START: User
 		ResourceType userResourceType = new ResourceType();
 		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
 		userResourceType.setEndpoint("/v2/Users");
@@ -59,6 +60,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		schemaExtensions.add(userExtensionSchema);
 		userResourceType.setSchemaExtensions(schemaExtensions);
 
+		// START: Group
 		ResourceType groupResourceType = new ResourceType();
 		groupResourceType.setDescription(Constants.GROUP_CORE_SCHEMA_DESCRIPTION);
 		groupResourceType.setEndpoint("/v2/Groups");
@@ -71,10 +73,24 @@ public class ResourceTypeWS extends BaseScimWebService {
 		groupMeta.setResourceType("ResourceType");
 		groupResourceType.setMeta(groupMeta);
 
+		// START: FidoDevice
+		ResourceType fidoDeviceResourceType = new ResourceType();
+		fidoDeviceResourceType.setDescription(Constants.FIDO_DEVICES_CORE_SCHEMA_DESCRIPTION);
+		fidoDeviceResourceType.setEndpoint("/v2/FidoDevices");
+		fidoDeviceResourceType.setName(Constants.FIDO_DEVICES_CORE_SCHEMA_NAME);
+		fidoDeviceResourceType.setId(Constants.FIDO_DEVICES_CORE_SCHEMA_NAME);
+		fidoDeviceResourceType.setSchema(Constants.FIDO_DEVICES_CORE_SCHEMA_ID);
+
+		Meta fidoDeviceMeta = new Meta();
+		fidoDeviceMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
+		fidoDeviceMeta.setResourceType("ResourceType");
+		fidoDeviceResourceType.setMeta(fidoDeviceMeta);
+
 		// ResourceType[] resourceTypes = new ResourceType[]{userResourceType, groupResourceType};
 		List<Resource> resourceTypes = new ArrayList<Resource>();
 		resourceTypes.add(userResourceType);
 		resourceTypes.add(groupResourceType);
+		resourceTypes.add(fidoDeviceResourceType);
 
 		listResponse.setResources(resourceTypes);
 
@@ -145,5 +161,28 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 		// return Response.ok(resourceTypes).location(location).build();
 		return Response.ok(groupResourceType).location(location).build();
+	}
+
+	@Path("FidoDevice")
+	@GET
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+	public Response getResourceTypeFidoDevice(@HeaderParam("Authorization") String authorization) throws Exception {
+
+		ResourceType fidoDeviceResourceType = new ResourceType();
+		fidoDeviceResourceType.setDescription(Constants.FIDO_DEVICES_CORE_SCHEMA_DESCRIPTION);
+		fidoDeviceResourceType.setEndpoint("/v2/FidoDevices");
+		fidoDeviceResourceType.setName(Constants.FIDO_DEVICES_CORE_SCHEMA_NAME);
+		fidoDeviceResourceType.setId(Constants.FIDO_DEVICES_CORE_SCHEMA_NAME);
+		fidoDeviceResourceType.setSchema(Constants.FIDO_DEVICES_CORE_SCHEMA_ID);
+
+		Meta fidoDeviceMeta = new Meta();
+		fidoDeviceMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
+		fidoDeviceMeta.setResourceType("ResourceType");
+		fidoDeviceResourceType.setMeta(fidoDeviceMeta);
+
+		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
+
+		return Response.ok(fidoDeviceResourceType).location(location).build();
 	}
 }

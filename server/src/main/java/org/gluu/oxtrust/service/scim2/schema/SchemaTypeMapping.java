@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.core.GroupCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.core.UserCoreSchema;
+import org.gluu.oxtrust.model.scim2.schema.core.fido.FidoDeviceCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 
 import java.util.*;
@@ -26,6 +27,7 @@ public class SchemaTypeMapping {
     static {
         schemaInstances.put(Constants.GROUP_CORE_SCHEMA_ID, new GroupCoreSchema(Constants.GROUP_CORE_SCHEMA_ID, Constants.GROUP_CORE_SCHEMA_NAME, Constants.GROUP_CORE_SCHEMA_DESCRIPTION));
         schemaInstances.put(Constants.USER_CORE_SCHEMA_ID, new UserCoreSchema(Constants.USER_CORE_SCHEMA_ID, Constants.USER_CORE_SCHEMA_NAME, Constants.USER_CORE_SCHEMA_DESCRIPTION));
+        schemaInstances.put(Constants.FIDO_DEVICES_CORE_SCHEMA_ID, new FidoDeviceCoreSchema(Constants.FIDO_DEVICES_CORE_SCHEMA_ID, Constants.FIDO_DEVICES_CORE_SCHEMA_NAME, Constants.FIDO_DEVICES_CORE_SCHEMA_DESCRIPTION));
         schemaInstances.put(Constants.USER_EXT_SCHEMA_ID, new UserExtensionSchema(Constants.USER_EXT_SCHEMA_ID, Constants.USER_EXT_SCHEMA_NAME, Constants.USER_EXT_SCHEMA_DESCRIPTION));
     }
 

@@ -201,7 +201,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
                         attributeHolder.setDescription(rootNodeEntry.getKey());
 
-                        if (rootNodeEntry.getKey().equalsIgnoreCase("userName") || rootNodeEntry.getKey().equalsIgnoreCase("password") || rootNodeEntry.getKey().equalsIgnoreCase("displayName")) {
+                        if (rootNodeEntry.getKey().equalsIgnoreCase("userName") || rootNodeEntry.getKey().equalsIgnoreCase("displayName")) {
                             attributeHolder.setRequired(Boolean.TRUE);
                         } else {
                             attributeHolder.setRequired(Boolean.FALSE);
@@ -231,7 +231,7 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Unexpected processing error; please check the User class structure");
+            throw new IOException("Unexpected processing error; please check the User class structure.");
         }
     }
 

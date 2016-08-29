@@ -161,7 +161,7 @@
                         value="#{_spRequestor.metadataFile}" />
                     
                     <!-- upload file button -->
-                    <rich:fileUpload id="spRequestorRichUploadMetadataFile"
+                    <rich:fileUpload id="spRequestorRichUploadMetadataFile" addLabel="Upload"
                         fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadFile}" 
                             maxFilesQuantity="1" 
                             immediateUpload="true" 
@@ -182,7 +182,7 @@
                     value="Add certificate file"/>
                 
                 <!-- upload file button -->
-                <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" 
+                <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" addLabel="Upload" 
                                  acceptedTypes="crt, cert, pem, txt" ontyperejected="alert('Only CRT, CERT, PEM, TXT files are accepted');"
                                      maxFilesQuantity="1" 
                                      immediateUpload="true"

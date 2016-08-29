@@ -137,7 +137,7 @@ public class Scim2GroupService implements Serializable {
         DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
         Date dateLastModified = DateTime.now().toDate();
         updatedGluuGroup.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
-        if (updatedGluuGroup.getAttribute("oxTrustMetaLocation") == null || (("oxTrustMetaLocation") != null && updatedGluuGroup.getAttribute("oxTrustMetaLocation").isEmpty())) {
+        if (updatedGluuGroup.getAttribute("oxTrustMetaLocation") == null || (updatedGluuGroup.getAttribute("oxTrustMetaLocation") != null && updatedGluuGroup.getAttribute("oxTrustMetaLocation").isEmpty())) {
             String relativeLocation = "/scim/v2/Groups/" + id;
             updatedGluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
         }

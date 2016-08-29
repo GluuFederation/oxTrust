@@ -74,7 +74,7 @@ public class UserWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -134,17 +134,10 @@ public class UserWebService extends BaseScimWebService {
 					usersListResponse.setStartIndex(vlvResponse.getStartIndex());
 				}
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users");
-
 				// Serialize to JSON
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-				SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
-				ListResponseUserSerializer serializer = new ListResponseUserSerializer();
-				serializer.setAttributesArray(attributesArray);
-				customScimFilterModule.addSerializer(User.class, serializer);
-				mapper.registerModule(customScimFilterModule);
-				String json = mapper.writeValueAsString(usersListResponse);
+				String json = serializeToJson(usersListResponse, attributesArray);
+
+				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users");
 
 				return Response.ok(json).location(location).build();
 			}
@@ -168,7 +161,7 @@ public class UserWebService extends BaseScimWebService {
 		@PathParam("id") String id,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -200,17 +193,10 @@ public class UserWebService extends BaseScimWebService {
 
 			User user = CopyUtils2.copy(gluuPerson, null);
 
-			URI location = new URI(user.getMeta().getLocation());
-
 			// Serialize to JSON
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
-			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
-			serializer.setAttributesArray(attributesArray);
-			customScimFilterModule.addSerializer(User.class, serializer);
-			mapper.registerModule(customScimFilterModule);
-			String json = mapper.writeValueAsString(user);
+			String json = serializeToJson(user, attributesArray);
+
+			URI location = new URI(user.getMeta().getLocation());
 
 			return Response.ok(json).location(location).build();
 
@@ -239,7 +225,7 @@ public class UserWebService extends BaseScimWebService {
 		@ApiParam(value = "User", required = true) User user,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -254,17 +240,10 @@ public class UserWebService extends BaseScimWebService {
 
 			User createdUser = scim2UserService.createUser(user);
 
-			URI location = new URI(createdUser.getMeta().getLocation());
-
 			// Serialize to JSON
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
-			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
-			serializer.setAttributesArray(attributesArray);
-			customScimFilterModule.addSerializer(User.class, serializer);
-			mapper.registerModule(customScimFilterModule);
-			String json = mapper.writeValueAsString(createdUser);
+			String json = serializeToJson(createdUser, attributesArray);
+
+			URI location = new URI(createdUser.getMeta().getLocation());
 
 			// Return HTTP response with status code 201 Created
 			return Response.created(location).entity(json).build();
@@ -301,7 +280,7 @@ public class UserWebService extends BaseScimWebService {
 		@ApiParam(value = "User", required = true) User user,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -316,17 +295,10 @@ public class UserWebService extends BaseScimWebService {
 
 			User updatedUser = scim2UserService.updateUser(id, user);
 
-			URI location = new URI(updatedUser.getMeta().getLocation());
-
 			// Serialize to JSON
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
-			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
-			serializer.setAttributesArray(attributesArray);
-			customScimFilterModule.addSerializer(User.class, serializer);
-			mapper.registerModule(customScimFilterModule);
-			String json = mapper.writeValueAsString(updatedUser);
+			String json = serializeToJson(updatedUser, attributesArray);
+
+			URI location = new URI(updatedUser.getMeta().getLocation());
 
 			return Response.ok(json).location(location).build();
 
@@ -360,7 +332,7 @@ public class UserWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@PathParam("id") String id) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -375,7 +347,7 @@ public class UserWebService extends BaseScimWebService {
 
             scim2UserService.deleteUser(id);
 
-			return Response.ok().build();
+			return Response.noContent().build();
 
 		} catch (EntryPersistenceException ex) {
 
@@ -401,7 +373,7 @@ public class UserWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@PathParam("id") String id, ScimPersonPatch person) throws Exception {
 
-		Response authorizationResponse = null;
+		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
@@ -477,5 +449,18 @@ public class UserWebService extends BaseScimWebService {
 	@ApiOperation(value = "POST \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
 	public Response mePost() {
 		return getErrorResponse(501, "Not Implemented");
+	}
+
+	private String serializeToJson(Object object, String attributesArray) throws Exception {
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+		SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
+		ListResponseUserSerializer serializer = new ListResponseUserSerializer();
+		serializer.setAttributesArray(attributesArray);
+		customScimFilterModule.addSerializer(User.class, serializer);
+		mapper.registerModule(customScimFilterModule);
+
+		return mapper.writeValueAsString(object);
 	}
 }

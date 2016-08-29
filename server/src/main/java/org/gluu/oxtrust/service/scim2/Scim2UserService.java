@@ -145,7 +145,7 @@ public class Scim2UserService implements Serializable {
         DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
         Date dateLastModified = DateTime.now().toDate();
         updatedGluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
-        if (updatedGluuPerson.getAttribute("oxTrustMetaLocation") == null || (("oxTrustMetaLocation") != null && updatedGluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
+        if (updatedGluuPerson.getAttribute("oxTrustMetaLocation") == null || (updatedGluuPerson.getAttribute("oxTrustMetaLocation") != null && updatedGluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
             String relativeLocation = "/scim/v2/Users/" + id;
             updatedGluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
         }
