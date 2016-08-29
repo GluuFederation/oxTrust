@@ -150,8 +150,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/" + Configuration.OAUTH_AUTH_MODE +"/" + authenticationMode);
 			}
 		}
-		
-		getSPEntityId(request);
 
 		return clientRequest.getUri().replaceAll("%2B", "+");
 	}
@@ -230,25 +228,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		Matcher matcher = pattern.matcher(requestUri);
 		if (matcher.find()) {
 			return matcher.group(1);
-		}
-
-		return null;
-	}
-
-	private String getSPEntityId(final HttpServletRequest httpRequest) {
-		final HttpSession session = httpRequest.getSession(false);
-
-		LoginContext loginContext = HttpServletHelper.getLoginContext(httpRequest);
-		System.err.println("!!!! " + loginContext);
-		if (loginContext != null) {
-			System.err.println("!!!! " + loginContext.getRelyingPartyId());
-		}
-		Session idpSession = (Session) httpRequest.getAttribute(Session.HTTP_SESSION_BINDING_ATTRIBUTE);
-		if (idpSession != null) {
-			System.err.println("!!!! " + idpSession);
-			// log.debug("Attempting to get entityId акщь IdP session for " +
-			// idpSession.getPrincipalName());
-			System.err.println("!!!! " + idpSession.getServicesInformation());
 		}
 
 		return null;

@@ -20,7 +20,7 @@ import org.jboss.resteasy.client.ClientResponse;
  * Listener to detect when an HTTP session is destroyed and remove it from the map of
  * managed sessions.  Also allows for the programmatic removal of sessions.
  * <p>
- * Enables the CAS Single Sign out feature.
+ * Enables the SAML Single Sign out feature.
  *
  * @author Yuriy Movchan
  * @version 0.1, 03/20/2013
@@ -57,7 +57,7 @@ public final class SignOutHandler {
         // TODO: Validate access token
         ClientRequest clientRequest = new ClientRequest(Configuration.instance().getPropertyValue(Configuration.OAUTH_PROPERTY_LOGOUT_URL));
 
-		clientRequest.queryParameter(Configuration.OAUTH_ID_TOKEN_HINT, oAuthData.getAccessToken());
+		clientRequest.queryParameter(Configuration.OAUTH_ID_TOKEN_HINT, oAuthData.getIdToken());
 		clientRequest.queryParameter(Configuration.OAUTH_POST_LOGOUT_REDIRECT_URI, constructRedirectUrl(request));
 
 		// Remove OAuth data from session
