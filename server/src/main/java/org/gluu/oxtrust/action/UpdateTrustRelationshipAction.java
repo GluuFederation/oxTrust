@@ -22,6 +22,7 @@ import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,6 +57,7 @@ import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TemplateService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
+import org.gluu.oxtrust.model.GluuEntityType;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxAuthClient;
@@ -172,9 +174,24 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	private String filterString;
 	private List<String> availableEntitiesFiltered;
-	
+	private GluuEntityType entityType;	
+
 	@In
 	 private ResourceLoader resourceLoader;
+	
+	public List <GluuMetadataSourceType> getMetadataSourceTypesList() {
+		List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
+		if((entityType != null) && (entityType.getDisplayName().equalsIgnoreCase("Federation/Aggregate"))){
+			List<GluuMetadataSourceType> GluuMetadataSourceTypeSubList  = new  ArrayList <GluuMetadataSourceType> ();
+			for (GluuMetadataSourceType enumType : GluuMetadataSourceType.values()) {
+				if((!enumType.getDisplayName().equalsIgnoreCase("Generate"))  &&  (!enumType.getDisplayName().equalsIgnoreCase("federation")))
+					GluuMetadataSourceTypeSubList.add(enumType);
+				}		
+			return GluuMetadataSourceTypeSubList;
+		}else{
+			return metadataSourceTypesList;			
+		}
+	}
 
 	@Restrict("#{s:hasPermission('trust', 'access')}")
 	public String add() {
@@ -1297,5 +1314,17 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public List<GluuSAMLTrustRelationship> getFederatedSites() {
 		return federatedSites;
 	}
+	
+	public GluuEntityType getEntityType() {
+		return entityType;
+	}
 
+	public void setEntityType(GluuEntityType entityType) {
+		this.entityType = entityType;
+	}
+	
+	public GluuEntityType[] getEntityTypeList() {
+		return GluuEntityType.values();
+	}
+	
 }
