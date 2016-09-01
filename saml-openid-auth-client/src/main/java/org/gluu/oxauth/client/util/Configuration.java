@@ -99,7 +99,7 @@ public final class Configuration {
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_LOGOUT_URL, propertyName)) {
     		return openIdConfiguration.getEndSessionEndpoint();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_LOGOUT_REDIRECT_URL, propertyName)) {
-    		return appConfiguration.getPostLogoutRedirectUri();
+    		return appConfiguration.getOpenIdPostLogoutRedirectUri();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_CLIENT_ID, propertyName)) {
     		return appConfiguration.getOpenIdClientId();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, propertyName)) {
