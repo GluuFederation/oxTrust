@@ -72,25 +72,34 @@ public final class SignOutHandler {
 		return null;
     }
 
-    protected final String constructRedirectUrl(final HttpServletRequest request) {
+    public final String constructRedirectUrl(final HttpServletRequest request) {
     	log.trace("Starting constructRedirectUrl");
-    	String redirectUri = null;
-    	String[] redirectUriParameters = (String[])request.getParameterMap().get(Configuration.OAUTH_POST_LOGOUT_REDIRECT_URI);
-    	if(redirectUriParameters != null && redirectUriParameters.length > 0){
-    		redirectUri = redirectUriParameters[0];
-    	}
     	
-    	log.trace("redirectUri from request = " + redirectUri);
-    	if(redirectUri == null || redirectUri.equals("")){
-	    	int serverPort = request.getServerPort();
-	    	if ((serverPort == 80) || (serverPort == 443)) {
-	    		redirectUri = String.format("%s://%s%s", request.getScheme(), request.getServerName(), "/identity/authentication/finishlogout");
-	    	} else {
-	    		redirectUri = String.format("%s://%s:%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), "/identity");
-	    	}
-	    
+    	String redirectUri = Configuration.instance().getPropertyValue(Configuration.OAUTH_PROPERTY_LOGOUT_REDIRECT_URL);
+		if ((redirectUri != null) && !redirectUri.equals("")) {
+	    	log.trace("redirectUri from configuration: " + redirectUri);
+			return redirectUri;
+		}
+    	
+    	String[] redirectUriParameters = (String[])request.getParameterMap().get(Configuration.OAUTH_POST_LOGOUT_REDIRECT_URI);
+		if ((redirectUriParameters != null) && (redirectUriParameters.length > 0)) {
+			redirectUri = redirectUriParameters[0];
+		}
+
+		if ((redirectUri != null) && !redirectUri.equals("")) {
+	    	log.trace("redirectUri from request: " + redirectUri);
+			return redirectUri;
+		}
+    	
+    	int serverPort = request.getServerPort();
+    	if ((serverPort == 80) || (serverPort == 443)) {
+    		redirectUri = String.format("%s://%s%s", request.getScheme(), request.getServerName(), "/identity/authentication/finishlogout");
+    	} else {
+    		redirectUri = String.format("%s://%s:%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), "/identity");
     	}
-    	log.trace("Final redirectUri = " + redirectUri);
+    
+    	log.trace("Default redirectUri: " + redirectUri);
+
     	return redirectUri;
     }
 }
