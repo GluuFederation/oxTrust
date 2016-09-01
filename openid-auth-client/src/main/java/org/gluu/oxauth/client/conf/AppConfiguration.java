@@ -29,7 +29,7 @@ public class AppConfiguration implements Serializable {
 	private List<String> openIdScopes;
 	private String openIdRedirectUrl;
 	
-	private String postLogoutRedirectUri;
+	private String openIdPostLogoutRedirectUri;
 
 	private List<ClaimToAttributeMapping> openIdClaimMapping;
 
@@ -89,12 +89,12 @@ public class AppConfiguration implements Serializable {
 		this.openIdClaimMapping = openIdClaimMapping;
 	}
 
-	public String getPostLogoutRedirectUri() {
-		return postLogoutRedirectUri;
+	public String getOpenIdPostLogoutRedirectUri() {
+		return openIdPostLogoutRedirectUri;
 	}
 
-	public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
-		this.postLogoutRedirectUri = postLogoutRedirectUri;
+	public void setOpenIdPostLogoutRedirectUri(String openIdPostLogoutRedirectUri) {
+		this.openIdPostLogoutRedirectUri = openIdPostLogoutRedirectUri;
 	}
 
 }
