@@ -58,6 +58,7 @@ public final class Configuration {
 	public static final String OAUTH_PROPERTY_TOKEN_VALIDATION_URL = "oxauth.token.validation.url";
 	public static final String OAUTH_PROPERTY_USERINFO_URL = "oxauth.userinfo.url";
 	public static final String OAUTH_PROPERTY_LOGOUT_URL = "oxauth.logout.url";
+	public static final String OAUTH_PROPERTY_LOGOUT_REDIRECT_URL = "oxauth.logout.redirect_url";
 	public static final String OAUTH_PROPERTY_CLIENT_ID = "oxauth.client.id";
 	public static final String OAUTH_PROPERTY_CLIENT_PASSWORD = "oxauth.client.password";
 	public static final String OAUTH_PROPERTY_CLIENT_SCOPE = "oxauth.client.scope";
@@ -97,6 +98,8 @@ public final class Configuration {
     		return openIdConfiguration.getUserInfoEndpoint();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_LOGOUT_URL, propertyName)) {
     		return openIdConfiguration.getEndSessionEndpoint();
+    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_LOGOUT_REDIRECT_URL, propertyName)) {
+    		return appConfiguration.getOpenIdPostLogoutRedirectUri();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_CLIENT_ID, propertyName)) {
     		return appConfiguration.getOpenIdClientId();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, propertyName)) {

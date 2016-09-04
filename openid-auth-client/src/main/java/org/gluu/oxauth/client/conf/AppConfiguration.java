@@ -28,6 +28,8 @@ public class AppConfiguration implements Serializable {
 	private String openIdClientPassword;
 	private List<String> openIdScopes;
 	private String openIdRedirectUrl;
+	
+	private String openIdPostLogoutRedirectUri;
 
 	private List<ClaimToAttributeMapping> openIdClaimMapping;
 
@@ -85,6 +87,14 @@ public class AppConfiguration implements Serializable {
 
 	public void setOpenIdClaimMapping(List<ClaimToAttributeMapping> openIdClaimMapping) {
 		this.openIdClaimMapping = openIdClaimMapping;
+	}
+
+	public String getOpenIdPostLogoutRedirectUri() {
+		return openIdPostLogoutRedirectUri;
+	}
+
+	public void setOpenIdPostLogoutRedirectUri(String openIdPostLogoutRedirectUri) {
+		this.openIdPostLogoutRedirectUri = openIdPostLogoutRedirectUri;
 	}
 
 }
