@@ -55,6 +55,17 @@
 
                     <h:column>
                         <f:facet name="header">  
+                            <div style="text-align: center;"> </div>
+                        </f:facet>
+                        <h:commandLink action="#{updateAsimbaIDPAction.moveIdpUp}">
+                            <h:outputText value="^" />
+                            <f:param name="idpID" value="#{idp.id}" />
+                            <f:setPropertyActionListener target="#{updateAsimbaIDPAction.selectedIdpId}" value="#{idp.id}" />
+                        </h:commandLink>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">  
                             <div style="text-align: center;"> ID</div>
                         </f:facet>
                         <s:link view="/asimba/editIDP.xhtml" value="#{idp.id}" propagation="none">
@@ -79,7 +90,6 @@
                     </h:column>
                 </h:dataTable>
             </h:form>
-
 
         </h:panelGrid>
 

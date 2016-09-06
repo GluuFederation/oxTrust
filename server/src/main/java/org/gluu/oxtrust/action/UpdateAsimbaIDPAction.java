@@ -9,6 +9,8 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.validation.constraints.NotNull;
@@ -75,6 +77,8 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Out
     private IDPEntry idp;
     
+    private String selectedIdpId = "";
+    
     private boolean newEntry = true;
     
     private String editEntryInum = null;
@@ -108,6 +112,19 @@ public class UpdateAsimbaIDPAction implements Serializable {
         if (searchPattern == null || "".equals(searchPattern)) {
             // list loading
             idpList = asimbaService.loadIDPs();
+            
+            // sort by priority field
+            try {
+                Collections.sort(idpList, new Comparator<IDPEntry>() {
+                    @Override
+                    public int compare(IDPEntry entry1, IDPEntry entry2) {
+                        return (entry1.getViewPriorityIndex() > entry2.getViewPriorityIndex()) ? -1 : (entry1.getViewPriorityIndex() < entry2.getViewPriorityIndex()) ? 1 : 0;
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("sort exception", e);
+            }
         } else {
             // search mode, clear pattern
             searchPattern = null;
@@ -257,6 +274,46 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
+    @Restrict("#{s:hasPermission('trust', 'access')}")
+    public void moveIdpUp() {
+        log.info("moveIdpUp()");
+        log.info("selectedIdpId: " + selectedIdpId);
+        
+        if (selectedIdpId == null || "".equals(selectedIdpId))
+            return;
+        
+        IDPEntry idp = null;
+        
+        // serch entry
+        for (IDPEntry entry : idpList)
+            if (selectedIdpId.equals(entry.getId())) {
+                idp = entry;
+                break;
+            }
+        
+        int index = idpList.lastIndexOf(idp);
+        
+        //move entry priority to 1 step topest 
+        idp.setViewPriorityIndex(index-1);
+        int priorityLevel = idp.getViewPriorityIndex();
+        if (priorityLevel > 0)
+            priorityLevel--; 
+        
+        // move other entries to 1 step lowest
+        if (index > 0) {
+            for (int i=index-1; i<idpList.size(); i++) {
+                IDPEntry entry = idpList.get(i);
+                if (entry.equals(idp))
+                    continue;
+                
+                if (i<index) {
+                    entry.setViewPriorityIndex(i+1);
+                } else {
+                    entry.setViewPriorityIndex(i);
+                }
+            }
+        }
+    }
     
 
     /**
@@ -341,5 +398,19 @@ public class UpdateAsimbaIDPAction implements Serializable {
      */
     public void setIdpType(String idpType) {
         this.idpType = idpType;
+    }
+
+    /**
+     * @return the selectedIdpId
+     */
+    public String getSelectedIdpId() {
+        return selectedIdpId;
+    }
+
+    /**
+     * @param selectedIdpId the selectedIdpId to set
+     */
+    public void setSelectedIdpId(String selectedIdpId) {
+        this.selectedIdpId = selectedIdpId;
     }
 }
