@@ -46,9 +46,11 @@
     <web:rewrite-filter view-mapping="*.htm" />
 
     <!-- Inum DB configuration --> 
+<!--
     <persistence:entity-manager-factory name="inumEntryManagerFactory" persistence-unit-name="inumDatabase" auto-create="false"/>
     <persistence:managed-persistence-context name="inumEntryManager" entity-manager-factory="#{inumEntryManagerFactory}" auto-create="false"/>
     <factory name="inumHibernateSession" scope="STATELESS" value="#{inumEntryManager.delegate}" auto-create="false"/>   
+-->
     <!-- Inum DB configuration --> 
 
     <drools:rule-base name="securityRules">
