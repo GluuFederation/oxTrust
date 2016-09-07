@@ -195,6 +195,23 @@
 								<include>**/*.properties</include>
 							</includes>
 						</resource>
+						<resource>
+							<directory>src/main/webapp</directory>
+							<filtering>false</filtering>
+							<includes>
+								<include>**/*.xhtml</include>
+								<include>**/*.jsp</include>
+								<include>**/*.html</include>
+								<include>**/*.pdf</include>
+								<include>**/*.js</include>
+								<include>**/*.css</include>
+								<include>**/*.xcss</include>
+								<include>**/*.png</include>
+								<include>**/*.jpg</include>
+								<include>**/*.gif</include>
+								<include>**/*.ico</include>
+							</includes>
+						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
