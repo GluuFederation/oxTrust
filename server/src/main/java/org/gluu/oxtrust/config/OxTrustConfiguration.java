@@ -53,7 +53,9 @@ public class OxTrustConfiguration {
 	private final static int DEFAULT_INTERVAL = 30; // 30 seconds
 
     static {
-        if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
+        if (System.getProperty("gluu.conf.folder") != null) {
+            BASE_DIR = System.getProperty("gluu.conf.folder");
+        } else if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
             BASE_DIR = System.getProperty("catalina.base");
         } else if (System.getProperty("catalina.home") != null) {
             BASE_DIR = System.getProperty("catalina.home");
@@ -237,7 +239,7 @@ public class OxTrustConfiguration {
     }
 
     public String confDir() {
-        final String confDir = getLdapConfiguration().getString("confDir");
+        final String confDir = getLdapConfiguration().getString("confDir", null);
         if (StringUtils.isNotBlank(confDir)) {
             return confDir;
         }
