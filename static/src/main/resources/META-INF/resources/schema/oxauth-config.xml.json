@@ -1039,6 +1039,7 @@
         "responseTypesSupported",
         "grantTypesSupported",
         "subjectTypesSupported",
+        "defaultSubjectType",
         "userInfoSigningAlgValuesSupported",
         "userInfoEncryptionAlgValuesSupported",
         "userInfoEncryptionEncValuesSupported",
