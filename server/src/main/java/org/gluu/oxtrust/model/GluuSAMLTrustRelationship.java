@@ -118,6 +118,9 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	@LdapAttribute(name = "researchAndScholarshipEnabled")
 	private String researchBundleEnabled;
+	
+	@LdapAttribute(name = "gluuEntityType")
+	private GluuEntityType entityType;
 
 	
 
@@ -422,4 +425,12 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
     public void setResearchBundle(boolean researchBundle) {
         this.researchBundleEnabled = Boolean.toString(researchBundle);
     }
+
+	public GluuEntityType getEntityType() {
+		return entityType;
+	}
+
+	public void setEntityType(GluuEntityType entityType) {
+		this.entityType = entityType;
+	}
 }

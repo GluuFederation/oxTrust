@@ -191,7 +191,7 @@
 								id="entityType">
 								<ui:define name="label">Entity Type</ui:define>
 								<h:selectOneMenu styleClass="form-control"
-									value="#{_trustRelationshipAction.entityType}"
+									value="#{_trustRelationship.entityType}"
 									required="#{empty param['sv']}" id="entityTypeId">
 									<s:selectItems value="#{_trustRelationshipAction.entityTypeList}"
 										noSelectionLabel="Entity type" var="_type"
@@ -350,7 +350,7 @@
 						</h:panelGroup>
 						
 						<h:panelGroup id="spSingleGroup">
-						<h:panelGroup id="spSingleGroupId" rendered="#{_trustRelationshipAction.entityType.displayName eq 'Single SP'}">
+						<h:panelGroup id="spSingleGroupId" rendered="#{_trustRelationship.entityType.displayName eq 'Single SP'}">
 						<h:panelGroup id="LogoutUrlGroupId">
 							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 								id="LogoutUrlId">
