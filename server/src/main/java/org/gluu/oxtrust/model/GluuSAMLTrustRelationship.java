@@ -105,7 +105,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	@LdapAttribute(name = "gluuSpecificRelyingPartyConfig")
 	private String gluuSpecificRelyingPartyConfig;
 
-	@Pattern(regexp="^(http|https)\\://[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,4}(:[a-zA-Z0-9]*)?/?$", message = "Please enter a valid SP url, including protocol (http/https)")
+	@Pattern(regexp="^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "Please enter a valid SP url, including protocol (http/https)")
 	@LdapAttribute(name = "url")
 	private String url;
 	
