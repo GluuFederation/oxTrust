@@ -171,6 +171,25 @@
 	             </h:panelGroup>
              </h:panelGroup>
              
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="minlength">
+                <ui:define name="label">Minimum Length</ui:define>
+                <h:inputText styleClass="form-control" value="#{_attribute.attributeValidation.minLength}"  converter="javax.faces.Integer" size="40" maxlength="4000"  id="minlengthid" disabled="#{not _attributeAction.canEdit()}">
+            	<f:validateLongRange maximum="10" minimum="1" />
+            	</h:inputText>
+             </s:decorate>
+             
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="maxlength">
+                <ui:define name="label">Maximum Length</ui:define>
+                <h:inputText styleClass="form-control"  value="#{_attribute.attributeValidation.maxLength}" converter="javax.faces.Integer" size="40" maxlength="4000" id="maxlengthid" disabled="#{not _attributeAction.canEdit()}">
+            		<f:validateLongRange maximum="10" minimum="1" />
+            	</h:inputText>
+             </s:decorate>
+             
+             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="regex">
+                <ui:define name="label">Regex Pattern</ui:define>
+                <h:inputText styleClass="form-control" value="#{_attribute.attributeValidation.regexp}" size="40" maxlength="4000" id="regexid" disabled="#{not _attributeAction.canEdit()}"/>
+             </s:decorate>
+             
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="status">
                 <ui:define name="label">Status</ui:define>
                 <h:selectOneMenu styleClass="form-control" value="#{_attribute.status}" required="true" id="statusId" rendered="#{_attributeAction.canEdit()}">

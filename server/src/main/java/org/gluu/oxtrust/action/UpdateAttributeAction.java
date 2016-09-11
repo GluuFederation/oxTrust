@@ -25,6 +25,7 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.AttributeValidation;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
@@ -68,7 +69,7 @@ public class UpdateAttributeAction implements Serializable {
 	private boolean tooltipToggle;
 
 	private boolean canEdit;
-
+	
 	@Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String add() {
 		if (this.attribute != null) {
@@ -81,6 +82,8 @@ public class UpdateAttributeAction implements Serializable {
 		this.showAttributeExistConfirmation = false;
 
 		this.attribute = new GluuAttribute();
+		attribute.setAttributeValidation(new AttributeValidation());
+		
 		this.attribute.setStatus(GluuStatus.ACTIVE);
 		this.attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
 		this.attribute.setOrigin(attributeService.getCustomOrigin());
