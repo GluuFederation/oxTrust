@@ -105,11 +105,11 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	@LdapAttribute(name = "gluuSpecificRelyingPartyConfig")
 	private String gluuSpecificRelyingPartyConfig;
 
-	@Pattern(regexp="^(http|https)\\://[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,4}(:[a-zA-Z0-9]*)?/?$", message = "Please enter a valid SP url, including protocol (http/https)")
+	@Pattern(regexp="^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "Please enter a valid SP url, including protocol (http/https)")
 	@LdapAttribute(name = "url")
 	private String url;
 	
-	@Pattern(regexp="^$|(^(http|https)\\://[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,4}(:[a-zA-Z0-9]*)?/?$)", message = "Please enter a valid url, including protocol (http/https)")
+	@Pattern(regexp="^$|(^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])", message = "Please enter a valid url, including protocol (http/https)")
 	@LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
 	private String spLogoutURL;
 
@@ -118,6 +118,9 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	@LdapAttribute(name = "researchAndScholarshipEnabled")
 	private String researchBundleEnabled;
+	
+	@LdapAttribute(name = "gluuEntityType")
+	private GluuEntityType entityType;
 
 	
 
@@ -422,4 +425,12 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
     public void setResearchBundle(boolean researchBundle) {
         this.researchBundleEnabled = Boolean.toString(researchBundle);
     }
+
+	public GluuEntityType getEntityType() {
+		return entityType;
+	}
+
+	public void setEntityType(GluuEntityType entityType) {
+		this.entityType = entityType;
+	}
 }
