@@ -997,7 +997,12 @@
             "description": "The password of the Key Store.",
             "type": "string",
             "minLength": 1
-        }
+        },
+        "endSessionWithAccessToken": {
+            "id": "endSessionWithAccessToken",
+            "description": "Accept access token to call end_session enpoint",
+            "type": "boolean"
+        }        
     },
     "required": [
         "issuer",
@@ -1101,6 +1106,7 @@
         "webKeysStorage",
         "dnName",
         "keyStoreFile",
-        "keyStoreSecret"
+        "keyStoreSecret",
+        "endSessionWithAccessToken"
     ]
 }
