@@ -109,20 +109,6 @@
             "format": "url",
             "minLength": 1
         },
-        "federationMetadataEndpoint": {
-            "id": "federationMetadataEndpoint",
-            "description": "URL for the Federation Metadata Endpoint.",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "federationEndpoint": {
-            "id": "federationEndpoint",
-            "description": "URL for the Federation Endpoint.",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
         "openIdDiscoveryEndpoint": {
             "id": "openIdDiscoveryEndpoint",
             "description": "URL for the Discovery Endpoint.",
@@ -658,16 +644,6 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
-        "federationCheckInterval": {
-            "id": "federationCheckInterval",
-            "description": "The federation check interval in seconds.",
-            "type": "integer",
-            "multipleOf": 1,
-            "maximum": 2147483647,
-            "minimum": 1,
-            "exclusiveMaximum": false,
-            "exclusiveMinimum": false
-        },
         "keyRegenerationEnabled": {
             "id": "keyRegenerationEnabled",
             "description": "Boolean value specifying whether to regenerate keys.",
@@ -751,50 +727,6 @@
         "dynamicRegistrationCustomObjectClass": {
             "id": "dynamicRegistrationCustomObjectClass",
             "description": "LDAP custom object class for dynamic registration.",
-            "type": "string",
-            "minLength": 1
-        },
-        "federationEnabled": {
-            "id": "federationEnabled",
-            "description": "Boolean value specifying whether federation is enabled.",
-            "type": "boolean"
-        },
-        "federationSkipPolicy": {
-            "id": "federationSkipPolicy",
-            "description": "Boolean value specifying whether to skip federation policy.",
-            "type": "string",
-            "enum": [
-                "OR",
-                "AND"
-            ]
-        },
-        "federationScopePolicy": {
-            "id": "federationScopePolicy",
-            "description": "The federation scope policy.",
-            "type": "string",
-            "enum": [
-                "join"
-            ]
-        },
-        "federationSigningAlg": {
-            "id": "federationSigningAlg",
-            "description": "The federation signing algorithm.",
-            "type": "string",
-            "enum": [
-                "HS256",
-                "HS384",
-                "HS512",
-                "RS256",
-                "RS384",
-                "RS512",
-                "ES256",
-                "ES384",
-                "ES512"
-            ]
-        },
-        "federationSigningKid": {
-            "id": "federationSigningKid",
-            "description": "The federation signing key ID.",
             "type": "string",
             "minLength": 1
         },
@@ -1028,8 +960,6 @@
         "jwksUri",
         "registrationEndpoint",
         "validateTokenEndpoint",
-        "federationMetadataEndpoint",
-        "federationEndpoint",
         "openIdDiscoveryEndpoint",
         "openIdConfigurationEndpoint",
         "idGenerationEndpoint",
@@ -1077,7 +1007,6 @@
         "umaAddScopesAutomatically",
         "umaKeepClientDuringResourceSetRegistration",
         "cleanServiceInterval",
-        "federationCheckInterval",
         "keyRegenerationEnabled",
         "keyRegenerationInterval",
         "defaultSignatureAlgorithm",
@@ -1090,11 +1019,6 @@
         "trustedClientEnabled",
         "dynamicRegistrationScopesParamEnabled",
         "dynamicRegistrationCustomObjectClass",
-        "federationEnabled",
-        "federationSkipPolicy",
-        "federationScopePolicy",
-        "federationSigningAlg",
-        "federationSigningKid",
         "authenticationFiltersEnabled",
         "clientAuthenticationFiltersEnabled",
         "authenticationFilters",
