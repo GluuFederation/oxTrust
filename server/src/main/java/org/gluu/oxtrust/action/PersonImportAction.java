@@ -155,7 +155,7 @@ public class PersonImportAction implements Serializable {
 
 		}
 
-		log.info("All persons {0} added successfully", fileDataToImport.getPersons().size());
+		log.info("All {0} persons added successfully", fileDataToImport.getPersons().size());
 
 		removeFileToImport();
 
