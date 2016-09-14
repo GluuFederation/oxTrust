@@ -11,6 +11,7 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.gluu.oxtrust.action.UpdateTrustRelationshipAction;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
@@ -239,4 +241,15 @@ public class MetadataValidationTimer {
 
 		return result;
 	}
+	
+	@Asynchronous
+	public void newThreadSaveSpMetaDataFileSourceTypeURI(UpdateTrustRelationshipAction updateTrustRelationshipAction){
+	  	 try {
+	   		boolean result = updateTrustRelationshipAction.saveSpMetaDataFileSourceTypeURI();
+	   		log.info("Download metadata for TR " + updateTrustRelationshipAction.getTrustRelationship().getDisplayName() + "  : result   :  " + result);
+	 		} catch (IOException e) {
+	 			log.info("Failed to Download metadata for TR   :" + updateTrustRelationshipAction.getTrustRelationship().getDisplayName());
+	 			e.printStackTrace();
+	 		}
+	    }
 }

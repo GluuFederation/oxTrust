@@ -70,6 +70,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
@@ -116,6 +117,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	@In
 	protected AttributeService attributeService;
+	
+	@In
+	private MetadataValidationTimer metadataValidationTimer;
 
 	@In
 	private TrustService trustService;
@@ -283,13 +287,19 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				break;
 			case URI:
 				try {
-					if (saveSpMetaDataFileSourceTypeURI()) {
+					//if (saveSpMetaDataFileSourceTypeURI()) {
 //						setEntityId();
-						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
-					} else {
+					boolean result = shibboleth2ConfService.existsResourceUri(trustRelationship.getSpMetaDataURL());
+					if(result){
+						metadataValidationTimer.newThreadSaveSpMetaDataFileSourceTypeURI(this);
+					}else{
+						log.info("There is no resource found Uri : {0}", trustRelationship.getSpMetaDataURL());
+					}
+					this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+					/*} else {
 						log.error("Failed to save SP meta-data file {0}", fileWrapper);
 						return OxTrustConstants.RESULT_FAILURE;
-					}
+					}*/
 				} catch (Exception e) {
 					return "unable_download_metadata";
 				}
@@ -781,7 +791,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	}
 
-	private boolean saveSpMetaDataFileSourceTypeURI() throws IOException {
+	public boolean saveSpMetaDataFileSourceTypeURI() throws IOException {
 		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
 		boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
 
@@ -1318,5 +1328,4 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public GluuEntityType[] getEntityTypeList() {
 		return GluuEntityType.values();
 	}
-	
 }

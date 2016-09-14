@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -71,6 +73,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
+
 import org.xdi.xml.GluuErrorHandler;
 import org.xdi.xml.XMLValidator;
 
@@ -1220,5 +1223,21 @@ public class Shibboleth2ConfService implements Serializable {
                 
 		return XMLValidator.validateMetadata(stream, schema);
 	}
+	
+	public  boolean existsResourceUri(String URLName){
+	    try {
+	      HttpURLConnection.setFollowRedirects(false);
+	      // note : you may also need
+	      //        HttpURLConnection.setInstanceFollowRedirects(false)
+	      HttpURLConnection con =
+	         (HttpURLConnection) new URL(URLName).openConnection();
+	      con.setRequestMethod("HEAD");
+	      return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+	    }
+	    catch (Exception e) {
+	       e.printStackTrace();
+	       return false;
+	    }
+	  }
 
 }
