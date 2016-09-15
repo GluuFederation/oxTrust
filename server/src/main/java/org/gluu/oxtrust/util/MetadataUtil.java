@@ -26,7 +26,7 @@ import org.xml.sax.InputSource;
  */
 public class MetadataUtil {
     private static final String METADATA_ENTITY_ID_XPATH = "/*/@entityID";
-    
+    /*
     public static String parseMetadata(File xmlDocument) {
         try {
             if (xmlDocument == null)// test 
@@ -99,5 +99,5 @@ public class MetadataUtil {
             ex.printStackTrace();
             return null;
         }
-    }
+    }*/
 }
