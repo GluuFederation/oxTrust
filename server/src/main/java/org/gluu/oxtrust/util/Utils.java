@@ -342,14 +342,37 @@ public class Utils implements Serializable {
 	}
         
     /**
-     * Save uploaded file with random name.
+     * Copy uploaded file to byte array.
+     * 
      * @param uploadedFile
+     * @return byte array
+     * @throws IOException 
+     */
+    public static byte[] copyUploadedFile(UploadedFile uploadedFile) throws IOException {
+        
+        InputStream in = uploadedFile.getInputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            int b;
+            while ((b = in.read()) != -1) {
+                out.write(b);
+            }
+        } finally {
+            out.close();
+            in.close();
+        }
+        return out.toByteArray();
+    }
+    
+    /**
+     * Save file with random name with provided base directory and extension.
+     * @param array binary content of file.
      * @param baseDir Write to directory. 
      * @param extension Filename extension.
      * @return Return full path
      * @throws IOException 
      */
-    public static String saveUploadedFile(UploadedFile uploadedFile, String baseDir, String extension) throws IOException {
+    public static String saveRandomFile(byte[] array, String baseDir, String extension) throws IOException {
         String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
         
         File dir = new File(baseDir);
@@ -358,7 +381,7 @@ public class Utils implements Serializable {
         else if (!dir.isDirectory())
             throw new IllegalArgumentException("parameter baseDir should be directory. The value: " + baseDir);
         
-        InputStream in = uploadedFile.getInputStream();
+        InputStream in = new ByteArrayInputStream(array);
         FileOutputStream out = new FileOutputStream(filepath);
         try {
             int b;
@@ -370,6 +393,20 @@ public class Utils implements Serializable {
             in.close();
         }
         return filepath;
+    }
+        
+    /**
+     * Save uploaded file with random name.
+     * @param uploadedFile
+     * @param baseDir Write to directory. 
+     * @param extension Filename extension.
+     * @return Return full path
+     * @throws IOException 
+     */
+    public static String saveUploadedFile(UploadedFile uploadedFile, String baseDir, String extension) throws IOException {
+        byte[] fileContent = copyUploadedFile(uploadedFile);
+        
+        return saveRandomFile(fileContent, baseDir, extension);
     }
 
 	/**

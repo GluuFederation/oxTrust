@@ -118,7 +118,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
                 Collections.sort(idpList, new Comparator<IDPEntry>() {
                     @Override
                     public int compare(IDPEntry entry1, IDPEntry entry2) {
-                        return (entry1.getViewPriorityIndex() > entry2.getViewPriorityIndex()) ? -1 : (entry1.getViewPriorityIndex() < entry2.getViewPriorityIndex()) ? 1 : 0;
+                        return (entry1.getViewPriorityIndex() < entry2.getViewPriorityIndex()) ? -1 : (entry1.getViewPriorityIndex() > entry2.getViewPriorityIndex()) ? 1 : 0;
                     }
                 });
             } catch (Exception e) {
@@ -203,7 +203,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         log.info("uploadFile() call for IDP");
         try {
             UploadedFile uploadedFile = event.getUploadedFile();
-            String filepath = asimbaService.saveIDPMetadataFile(uploadedFile);
+            String filepath = asimbaService.saveIDPMetadataFile(uploadedFile, idp);
             idp.setMetadataFile(filepath);
             idp.setMetadataUrl("");
             facesMessages.add(StatusMessage.Severity.INFO, "File uploaded");
@@ -293,26 +293,28 @@ public class UpdateAsimbaIDPAction implements Serializable {
         
         int index = idpList.lastIndexOf(idp);
         
-        //move entry priority to 1 step topest 
-        idp.setViewPriorityIndex(index-1);
-        int priorityLevel = idp.getViewPriorityIndex();
-        if (priorityLevel > 0)
-            priorityLevel--; 
-        
-        // move other entries to 1 step lowest
-        if (index > 0) {
-            for (int i=index-1; i<idpList.size(); i++) {
+        if (index > 0) {            
+            // move other entries to 1 step lowest
+            for (int i=0; i<idpList.size(); i++) {
                 IDPEntry entry = idpList.get(i);
-                if (entry.equals(idp))
-                    continue;
                 
-                if (i<index) {
+                if (i == index-1) {
+                    // position to swap
                     entry.setViewPriorityIndex(i+1);
+                } else if (i == index) {
+                    // target idp to up
+                    //move entry priority to 1 step topest 
+                    entry.setViewPriorityIndex(i-1);
                 } else {
+                    // before and after new idp position
                     entry.setViewPriorityIndex(i);
                 }
+                
+                asimbaService.updateIDPEntry(entry);
             }
         }
+        
+        selectedIdpId = null;
     }
     
 

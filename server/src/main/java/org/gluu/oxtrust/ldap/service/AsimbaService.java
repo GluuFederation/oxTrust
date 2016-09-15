@@ -504,10 +504,16 @@ public class AsimbaService implements Serializable {
         return result.getEntry();
     }
     
-    public String saveIDPMetadataFile(UploadedFile uploadedFile) throws IOException {
+    public String saveIDPMetadataFile(UploadedFile uploadedFile, IDPEntry idp) throws IOException {
         String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "webapps" + File.separator + "asimba" 
                 + File.separator + "WEB-INF" + File.separator + "sample-data" + File.separator + "idp";
-        return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
+        
+        byte[] fileContent = Utils.copyUploadedFile(uploadedFile);
+        
+        // save copy to LDAP:
+        idp.setMetadataXMLText(new String(fileContent, "UTF8"));
+        
+        return Utils.saveRandomFile(fileContent, baseDir, "xml");
     }
     
     public String saveSPRequestorMetadataFile(UploadedFile uploadedFile) throws IOException {
