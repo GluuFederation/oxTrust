@@ -23,6 +23,7 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
+import org.gluu.oxtrust.model.scim.ScimPersonSearch;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
@@ -39,7 +40,6 @@ import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * scim2UserEndpoint Implementation
@@ -100,38 +100,40 @@ public class UserWebService extends BaseScimWebService {
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
-				List<GluuCustomPerson> gluuCustomPersons = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
+				List<GluuCustomPerson> personList = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
 				// List<GluuCustomPerson> personList = personService.findAllPersons(null);
 
-				ListResponse usersListResponse = new ListResponse();
+				ListResponse personsListResponse = new ListResponse();
 
 				List<String> schema = new ArrayList<String>();
 				schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
 
 				log.info(" setting schema");
-				usersListResponse.setSchemas(schema);
+				personsListResponse.setSchemas(schema);
 
 				// Set total
-				usersListResponse.setTotalResults(vlvResponse.getTotalResults());
+				personsListResponse.setTotalResults(vlvResponse.getTotalResults());
 
-				if (count > 0 && gluuCustomPersons != null && !gluuCustomPersons.isEmpty()) {
+				if (count > 0 && personList != null && !personList.isEmpty()) {
 
 					// log.info(" LDAP person list is not empty ");
 
-					for (GluuCustomPerson gluuPerson : gluuCustomPersons) {
+					for (GluuCustomPerson gluuPerson : personList) {
 
-						User user = CopyUtils2.copy(gluuPerson, null);
+						// log.info(" copying person from GluuPerson to ScimPerson ");
+						User person = CopyUtils2.copy(gluuPerson, null);
 
-						log.info(" user to be added id : " + user.getUserName());
+						// log.info(" adding ScimPerson to the AllPersonList ");
+						log.info(" person to be added userid : " + person.getUserName());
 
-						usersListResponse.getResources().add(user);
+						personsListResponse.getResources().add(person);
 
-						log.info(" user added? : " + usersListResponse.getResources().contains(user));
+						log.info(" person added? : " + personsListResponse.getResources().contains(person));
 					}
 
 					// Set the rest of results info
-					usersListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
-					usersListResponse.setStartIndex(vlvResponse.getStartIndex());
+					personsListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
+					personsListResponse.setStartIndex(vlvResponse.getStartIndex());
 				}
 
 				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users");
@@ -139,21 +141,21 @@ public class UserWebService extends BaseScimWebService {
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-				SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
+				SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 				ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 				serializer.setAttributesArray(attributesArray);
 				customScimFilterModule.addSerializer(User.class, serializer);
 				mapper.registerModule(customScimFilterModule);
-				String json = mapper.writeValueAsString(usersListResponse);
+				String json = mapper.writeValueAsString(personsListResponse);
 
 				return Response.ok(json).location(location).build();
 			}
 
 		} catch (Exception ex) {
 
-            log.error("Error in searchUsers", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, INTERNAL_SERVER_ERROR_MESSAGE);
+			String detail = "Unexpected processing error; please check the input parameters";
+			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, detail);
 		}
 	}
 
@@ -205,7 +207,7 @@ public class UserWebService extends BaseScimWebService {
 			// Serialize to JSON
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 			serializer.setAttributesArray(attributesArray);
 			customScimFilterModule.addSerializer(User.class, serializer);
@@ -216,15 +218,13 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (EntryPersistenceException ex) {
 
-            log.error("Error in getUserById", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
 		} catch (Exception ex) {
 
-            log.error("Error in getUserById", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
@@ -253,13 +253,14 @@ public class UserWebService extends BaseScimWebService {
 		try {
 
 			User createdUser = scim2UserService.createUser(user);
+			// newPerson.setCustomAttributes(person.getCustomAttributes());
 
 			URI location = new URI(createdUser.getMeta().getLocation());
 
 			// Serialize to JSON
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 			serializer.setAttributesArray(attributesArray);
 			customScimFilterModule.addSerializer(User.class, serializer);
@@ -271,7 +272,7 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (DuplicateEntryException ex) {
 
-			log.error("DuplicateEntryException", ex);
+			log.error("Failed to create user", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
@@ -284,7 +285,7 @@ public class UserWebService extends BaseScimWebService {
 
 			log.error("Failed to create user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
@@ -315,13 +316,14 @@ public class UserWebService extends BaseScimWebService {
 		try {
 
 			User updatedUser = scim2UserService.updateUser(id, user);
+			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
 
 			URI location = new URI(updatedUser.getMeta().getLocation());
 
 			// Serialize to JSON
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-			SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
 			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
 			serializer.setAttributesArray(attributesArray);
 			customScimFilterModule.addSerializer(User.class, serializer);
@@ -338,7 +340,7 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (DuplicateEntryException ex) {
 
-			log.error("DuplicateEntryException", ex);
+			log.error("Failed to update user", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
@@ -346,7 +348,7 @@ public class UserWebService extends BaseScimWebService {
 
 			log.error("Failed to update user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
 
@@ -381,13 +383,13 @@ public class UserWebService extends BaseScimWebService {
 
             log.error("Failed to delete user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
 		} catch (Exception ex) {
 
             log.error("Failed to delete user", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
 
@@ -415,67 +417,117 @@ public class UserWebService extends BaseScimWebService {
 		return null;
 	}
 
-	@Path("/.search")
+	@Path("/Search")
 	@POST
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	@ApiOperation(value = "Search users POST /.search", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
-	public Response searchUsersPost(
+	public Response personSearch(
 		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
-		@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) throws Exception {
+		ScimPersonSearch searchPattern) throws Exception {
+
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
+		if (authorizationResponse != null) {
+			return authorizationResponse;
+		}
 
 		try {
 
-			log.info("IN UserWebService.searchUsersPost()...");
+			personService = PersonService.instance();
 
-			// Authorization check is done in searchUsers()
-			Response response = searchUsers(
-				authorization,
-				token,
-				searchRequest.getFilter(),
-				searchRequest.getStartIndex(),
-				searchRequest.getCount(),
-				searchRequest.getSortBy(),
-				searchRequest.getSortOrder(),
-				searchRequest.getAttributesArray()
-			);
+			GluuCustomPerson gluuPerson = personService.getPersonByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
+			if (gluuPerson == null) {
+				// sets HTTP status code 404 Not Found
+				return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "No result found for search pattern '" + searchPattern.getAttribute() + " = " + searchPattern.getValue() + "' please try again or use another pattern.");
+			}
+			// ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			User user = CopyUtils2.copy(gluuPerson, null);
 
-			URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users/.search");
+			URI location = new URI(user.getMeta().getLocation());
 
-			log.info("LEAVING UserWebService.searchUsersPost()...");
+			// Serialize to JSON
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+			SimpleModule customScimFilterModule = new SimpleModule("CustomScimUserFilterModule", new Version(1, 0, 0, ""));
+			ListResponseUserSerializer serializer = new ListResponseUserSerializer();
+			// serializer.setAttributesArray(attributesArray);
+			customScimFilterModule.addSerializer(User.class, serializer);
+			mapper.registerModule(customScimFilterModule);
+			String json = mapper.writeValueAsString(user);
 
-			return Response.fromResponse(response).location(location).build();
+			return Response.ok(json).location(location).build();
 
 		} catch (EntryPersistenceException ex) {
 
-			log.error("Error in searchUsersPost", ex);
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource not found");
 
 		} catch (Exception ex) {
 
-			log.error("Error in searchUsersPost", ex);
 			ex.printStackTrace();
-			return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, INTERNAL_SERVER_ERROR_MESSAGE);
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
 		}
 	}
-
-	@Path("/Me")
-	@GET
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	@ApiOperation(value = "GET \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
-	public Response meGet() {
-		return getErrorResponse(501, "Not Implemented");
-	}
-
-	@Path("/Me")
+	
+	@Path("/SearchPersons")
 	@POST
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	@ApiOperation(value = "POST \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
-	public Response mePost() {
-		return getErrorResponse(501, "Not Implemented");
+	public Response searchPersons(
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		ScimPersonSearch searchPattern) throws Exception {
+
+		Response authorizationResponse = null;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
+		if (authorizationResponse != null) {
+			return authorizationResponse;
+		}
+
+		try {
+
+			personService = PersonService.instance();
+
+			List<GluuCustomPerson> personList = personService.getPersonsByAttribute(searchPattern.getAttribute(), searchPattern.getValue());
+			ListResponse personsListResponse = new ListResponse();
+
+            if (personList != null) {
+				log.info(" LDAP person list is not empty ");
+				for (GluuCustomPerson gluuPerson : personList) {
+					log.info(" copying person from GluuPerson to ScimPerson ");
+					User person = CopyUtils2.copy(gluuPerson, null);
+
+					log.info(" adding ScimPerson to the AllPersonList ");
+					log.info(" person to be added userid : " + person.getUserName());
+					personsListResponse.getResources().add(person);
+					log.info(" person added? : " + personsListResponse.getResources().contains(person));
+				}
+			}
+
+			List<String> schema = new ArrayList<String>();
+			schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
+			personsListResponse.setSchemas(schema);
+			personsListResponse.setTotalResults(personsListResponse.getResources().size());
+
+			URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users/");
+
+			return Response.ok(personsListResponse).location(location).build();
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected processing error, please check the input parameters");
+		}
 	}
 }
