@@ -10,6 +10,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
+
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -324,6 +329,20 @@ public class UpdatePersonAction implements Serializable {
 	
 	public GluuStatus[] getActiveInactiveStatuses() {
 		return new GluuStatus[] { GluuStatus.ACTIVE, GluuStatus.INACTIVE };
+	}
+	
+	public void validateConfirmPassword(FacesContext context, UIComponent comp,
+			Object value){
+		String confirmPassword = (String) value;
+		String password = this.person.getAttribute("userPassword");
+		
+		if ((confirmPassword == null)  ||  !confirmPassword.equals(password)) {	
+			((UIInput) comp).setValid(false);
+		      FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Password and Confirm Password should be same!", "Password and Confirm Password should be same!");
+		      context.addMessage(comp.getClientId(context), message);
+		}
+		
+		
 	}
 
 }

@@ -115,7 +115,7 @@
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status')}">
                                                                 <rich:validator event="blur"/>
                                                                	
-                                                            </rich:inplaceInput>
+                                                            </rich:inplaceInput>                                                      
 
                                                             <h:selectOneMenu styleClass="form-control"
                                                                              value="#{updatePersonAction.gluuStatus}"
@@ -130,8 +130,8 @@
                                                                         converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
                                                             </h:selectOneMenu>
                                                         </div>
-                                                        <h:outputText value="&#160;"/>
-
+                                                        <h:outputText value="&#160;"/>                                                        
+                                                        
                                                         <div class="col-xs-2">
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
@@ -169,7 +169,26 @@
                                                             <h:graphicImage value="/img/remove.gif"/>
                                                             <f:param name="sv" value="1"/>
                                                         </a4j:commandLink>
-                                                    </s:decorate>
+                                                        </s:decorate>
+                                                        
+                                                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">>
+                                                        <ui:define
+                                                                name="label">Confirm Password</ui:define>
+														<div class="col-xs-10">                                                                                           
+                                                            
+                                                            <rich:inplaceInput       
+                                                                    defaultLabel="Click to enter Confirm Pasword"
+                                                                    maxlength="400" id="custconfirmpasswordId"
+                                                                    validator="#{updatePersonAction.validateConfirmPassword}"
+                                                                    required="#{_mustEnter and empty param['sv']}"
+                                                                    requiredMessage="Please enter Confirm Password" 
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+                                                                <rich:validator event="blur"/>
+                                                               	
+                                                            </rich:inplaceInput>                                                             
+                                                        </div>
+                                                     </s:decorate>                                                        
+                                                  
                                                 </a4j:repeat>
                                             </h:panelGroup>
                                         </a4j:repeat>
