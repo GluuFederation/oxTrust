@@ -9,7 +9,6 @@ package org.gluu.oxauth.client.util;
 import java.io.IOException;
 import java.security.Principal;
 
-import javax.activation.FileTypeMap;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -39,9 +38,11 @@ import org.gluu.oxauth.client.session.OAuthData;
  */
 public final class HttpServletRequestWrapperFilter extends AbstractConfigurationFilter {
 
+    @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
     }
 
+    @Override
     public void destroy() {
     }
 
@@ -50,6 +51,7 @@ public final class HttpServletRequestWrapperFilter extends AbstractConfiguration
      * <code>request.getRemoteUser</code> to the underlying OAuthData object
      * stored in the user session.
      */
+    @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
         final SimplePrincipal principal = retrievePrincipalFromSessionOrRequest(servletRequest);
         
@@ -85,10 +87,12 @@ public final class HttpServletRequestWrapperFilter extends AbstractConfiguration
             this.principal = principal;
         }
 
+        @Override
         public Principal getUserPrincipal() {
             return this.principal;
         }
 
+        @Override
         public String getRemoteUser() {
             return principal != null ? this.principal.getName() : null;
         }

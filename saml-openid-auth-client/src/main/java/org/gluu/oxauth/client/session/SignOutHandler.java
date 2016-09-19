@@ -8,13 +8,11 @@ package org.gluu.oxauth.client.session;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.gluu.oxauth.client.util.Configuration;
 import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
 
 /**
  * Listener to detect when an HTTP session is destroyed and remove it from the map of

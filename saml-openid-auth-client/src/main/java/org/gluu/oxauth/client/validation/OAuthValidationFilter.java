@@ -11,7 +11,6 @@ import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
 import org.xdi.oxauth.client.*;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
-import org.xdi.util.AssertionHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
@@ -34,9 +33,11 @@ import java.util.List;
  */
 public class OAuthValidationFilter extends AbstractOAuthFilter {
 
+    @Override
     public final void init(final FilterConfig filterConfig) throws ServletException {
     }
 
+    @Override
     public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
             throws IOException, ServletException {
         log.debug("Attempting to validate grants");
@@ -172,6 +173,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         return null;
     }
 
+    @Override
     public void destroy() {
     }
 

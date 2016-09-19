@@ -28,9 +28,11 @@ import org.gluu.oxauth.client.util.OAuthDataHolder;
  */
 public final class OAuthThreadLocalFilter implements Filter {
 
+    @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
     }
 
+    @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final HttpSession session = request.getSession(false);
@@ -44,6 +46,7 @@ public final class OAuthThreadLocalFilter implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
     }
 }

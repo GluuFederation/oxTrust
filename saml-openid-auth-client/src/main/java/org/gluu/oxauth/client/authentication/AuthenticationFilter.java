@@ -9,7 +9,6 @@ package org.gluu.oxauth.client.authentication;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,12 +27,8 @@ import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
 import org.jboss.resteasy.client.ClientRequest;
 import org.xdi.util.ArrayHelper;
-import org.xdi.util.AssertionHelper;
 import org.xdi.util.StringHelper;
 
-import edu.internet2.middleware.shibboleth.idp.authn.LoginContext;
-import edu.internet2.middleware.shibboleth.idp.session.Session;
-import edu.internet2.middleware.shibboleth.idp.util.HttpServletHelper;
 
 /**
  * Filter implementation to intercept all requests and attempt to authorize
@@ -57,12 +52,15 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 
 	private final Pattern authModePattern = Pattern.compile(".+/acr_values/([\\d\\w]+)$");
 
+        @Override
 	public final void init(final FilterConfig filterConfig) throws ServletException {
 	}
 
+        @Override
 	public final void destroy() {
 	}
 
+        @Override
 	public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
 			throws IOException, ServletException {
 		// TODO: check chain

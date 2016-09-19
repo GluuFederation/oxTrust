@@ -11,7 +11,6 @@ import javax.servlet.FilterConfig;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.gluu.oxauth.client.OpenIdClient;
 import org.xdi.util.StringHelper;
 
 /**
