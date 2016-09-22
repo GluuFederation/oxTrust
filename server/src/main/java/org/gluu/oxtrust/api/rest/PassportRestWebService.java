@@ -60,6 +60,7 @@ public class PassportRestWebService {
 		try{
 			
 			String umaMetaDataUrl = applicationConfiguration.getUmaIssuer();
+			log.info(" umaMetaDataUrl : {0}  ", umaMetaDataUrl );
 			UmaConfiguration metadataConfiguration = UmaClientFactory.instance().createMetaDataConfigurationService(umaMetaDataUrl).getMetadataConfiguration();
 			RptStatusService rptStatusService = UmaClientFactory.instance().createRptStatusService(metadataConfiguration);			
 			String umaPatClientId = applicationConfiguration.getOxAuthClientId();
