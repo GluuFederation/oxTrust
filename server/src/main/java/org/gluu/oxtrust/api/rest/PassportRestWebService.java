@@ -8,8 +8,8 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.OxPassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
@@ -53,15 +53,14 @@ public class PassportRestWebService {
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
+	@In(value = "umaMetadataConfiguration")
+	private UmaConfiguration metadataConfiguration;
+	
 	@POST
 	@Produces({MediaType.APPLICATION_JSON})
-	public PassportConfigResponse getPassportConfig(@FormParam(OxTrustConstants.OXAUTH_ACCESS_TOKEN) final String rpt) throws Exception{
+	public Response getPassportConfig(@FormParam(OxTrustConstants.OXAUTH_ACCESS_TOKEN) final String rpt) throws Exception{
 		PassportConfigResponse passportConfigResponse = null;
 		try{
-			
-			String umaMetaDataUrl = applicationConfiguration.getUmaIssuer();
-			log.info(" umaMetaDataUrl : {0}  ", umaMetaDataUrl );
-			UmaConfiguration metadataConfiguration = UmaClientFactory.instance().createMetaDataConfigurationService(umaMetaDataUrl).getMetadataConfiguration();
 			RptStatusService rptStatusService = UmaClientFactory.instance().createRptStatusService(metadataConfiguration);			
 			String umaPatClientId = applicationConfiguration.getOxAuthClientId();
 			String umaPatClientSecret = applicationConfiguration.getOxAuthClientPassword();
@@ -100,21 +99,23 @@ public class PassportRestWebService {
 						}					
 					}	
 					passportConfigResponse.setPassportStrategies(PassportConfigurationsMap);
+					return Response.status(Response.Status.OK).entity(passportConfigResponse).build();
 					
 				}else{
-					log.info("Invalid GAT/RPT token. ");					
+					log.info("Invalid GAT/RPT token. ");
+					return Response.status(Response.Status.UNAUTHORIZED).build();
 				}
 				
 			}else{
-				log.info("Unable to get PAT token. ");				
+				log.info("Unable to get PAT token. ");	
+				return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
 			}
 			
 		}catch(Exception e){
 			log.error("Exception Occured : {0} ", e.getMessage());
 			e.printStackTrace();			
-		}
-		
-		return passportConfigResponse;
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}	
 	}
 
 }
