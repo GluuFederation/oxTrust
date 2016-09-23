@@ -943,7 +943,31 @@
             "id": "endSessionWithAccessToken",
             "description": "Accept access token to call end_session enpoint",
             "type": "boolean"
-        }        
+        },
+        "clientWhiteList": {
+            "id": "clientWhiteList",
+            "description": "White List for Client Redirection URIs",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "clientBlackList": {
+            "id": "clientBlackList",
+            "description": "Black List for Client Redirection URIs",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        }
     },
     "required": [
         "issuer",
