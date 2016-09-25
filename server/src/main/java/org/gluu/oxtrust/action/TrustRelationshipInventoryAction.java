@@ -54,7 +54,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
-	private String searchPattern;
+	private String searchPattern="";
 
 	private String oldSearchPattern;
 
