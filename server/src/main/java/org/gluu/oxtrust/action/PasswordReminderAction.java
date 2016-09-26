@@ -90,13 +90,10 @@ public class PasswordReminderAction implements Serializable {
 											+ "%1$s Identity Server Support";
 	
 	private static String MESSAGE_FOUND = "Hello %1$s\n\n" 
-											+ "We've sent this message because you requested that your %2$s identity server password be reset.\n\n"
-											+ "To complete the password reset sequence please navigate to:\n"
-											+ "%3$s \n"
-											+ "and follow instructions there.\n\n"
-											+ "If you have not requested password reset for %2$s identity server please ignore this email.\n\n"
-											+ "Kind regards,\n"
-											+ "%2$s Identity Server Support";
+			+ "We received a request to reset your password.You may click the button below to choose your new password.\n"
+			+ "If you did not make this request, you can safely ignore this message. \n\n"
+			+ "<a href='%3$s'> <button>Reset Password</button></a>";
+			
 	
 	@Logger
 	private Log log;
