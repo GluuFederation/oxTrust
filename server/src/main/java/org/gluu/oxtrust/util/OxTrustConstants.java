@@ -205,6 +205,8 @@ public final class OxTrustConstants extends OxConstants {
     public static final String POST_REGISTRATION_SCRIPT = "PostRegistrationScript";
 
     public static final String INIT_REGISTRATION_SCRIPT = "InitRegistrationScript";
+    
+    public static final String CONFIRM_REGISTRATION_SCRIPT = "ConfirmRegistrationScript";
 
     public static String getGluuRevisionVersion() {
         return ((BuildVersion) Component.getInstance(BuildVersion.class)).getRevisionVersion();
