@@ -87,10 +87,10 @@ public class PasswordReminderAction implements Serializable {
 											+ "If you are a %1$s identity server user and were expecting this email, please try again using the email address you gave when registering your account.\n\n"
 											+ "If you are not %1$s identity server user, please ignore this email.\n\n"
 											+ "Kind regards,\n"
-											+ "%1$s Identity Server Support";
+											+ "Support Team";
 	
 	private static String MESSAGE_FOUND = "Hello %1$s\n\n" 
-			+ "We received a request to reset your password.You may click the button below to choose your new password.\n"
+			+ "We received a request to reset your password. You may click the button below to choose your new password.\n"
 			+ "If you did not make this request, you can safely ignore this message. \n\n"
 			+ "<a href='%3$s'> <button>Reset Password</button></a>";
 			
