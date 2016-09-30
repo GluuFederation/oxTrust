@@ -41,7 +41,7 @@ public class LdapStatusTimer {
 
     @Observer("org.jboss.seam.postInitialization")
     public void init() {
-        log.debug("Initializing LdapStatusTimer");
+        log.info("Initializing LdapStatusTimer");
         this.isActive = new AtomicBoolean(false);
 
         Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(DEFAULT_INTERVAL, DEFAULT_INTERVAL));
@@ -78,7 +78,7 @@ public class LdapStatusTimer {
     		if (ldapConnectionProvider.getConnectionPool() == null) {
             	log.error("{0} is empty", connectionProvider);
             } else {
-            	log.debug("{0} statistics: {1}", connectionProvider, ldapConnectionProvider.getConnectionPool().getConnectionPoolStatistics());
+            	log.info("{0} statistics: {1}", connectionProvider, ldapConnectionProvider.getConnectionPool().getConnectionPoolStatistics());
             }
         }
 
@@ -88,7 +88,7 @@ public class LdapStatusTimer {
             if (bindLdapConnectionProvider.getConnectionPool() == null) {
             	log.error("{0} is empty", bindConnectionProvider);
             } else {
-            	log.debug("{0} statistics: {1}", bindConnectionProvider, bindLdapConnectionProvider.getConnectionPool().getConnectionPoolStatistics());
+            	log.info("{0} statistics: {1}", bindConnectionProvider, bindLdapConnectionProvider.getConnectionPool().getConnectionPoolStatistics());
             }
         }
 	}
