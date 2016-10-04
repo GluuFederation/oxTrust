@@ -194,15 +194,16 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	
 	public List <GluuMetadataSourceType> getMetadataSourceTypesList() {
 		List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
-		if((trustRelationship.getEntityType() != null) && (trustRelationship.getEntityType().getDisplayName().equalsIgnoreCase("Federation/Aggregate"))){
-			List<GluuMetadataSourceType> GluuMetadataSourceTypeSubList  = new  ArrayList <GluuMetadataSourceType> ();
+		if (GluuEntityType.FederationAggregate.equals(trustRelationship.getEntityType())) {
+			List<GluuMetadataSourceType> GluuMetadataSourceTypeSubList = new ArrayList<GluuMetadataSourceType>();
 			for (GluuMetadataSourceType enumType : GluuMetadataSourceType.values()) {
-				if((!enumType.getDisplayName().equalsIgnoreCase("Generate"))  &&  (!enumType.getDisplayName().equalsIgnoreCase("federation")))
+				if (!GluuMetadataSourceType.GENERATE.equals(enumType) && !GluuMetadataSourceType.FEDERATION.equals(enumType)) {
 					GluuMetadataSourceTypeSubList.add(enumType);
-				}		
+				}
+			}
 			return GluuMetadataSourceTypeSubList;
-		}else{
-			return metadataSourceTypesList;			
+		} else {
+			return metadataSourceTypesList;
 		}
 	}
 
