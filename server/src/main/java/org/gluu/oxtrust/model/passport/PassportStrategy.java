@@ -7,19 +7,9 @@ package org.gluu.oxtrust.model.passport;
 
 public class PassportStrategy {
 	
-	private String provider;
 	private String clientID;
-	private String clientSecret;
-	private String callbackURL;
+	private String clientSecret;	
 	
-	
-	
-	public String getProvider() {
-		return provider;
-	}
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
 	public String getClientID() {
 		return clientID;
 	}
@@ -32,12 +22,5 @@ public class PassportStrategy {
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
 	}
-	public String getCallbackURL() {
-		return callbackURL;
-	}
-	public void setCallbackURL(String callbackURL) {
-		this.callbackURL = callbackURL;
-	}
-
 }
 

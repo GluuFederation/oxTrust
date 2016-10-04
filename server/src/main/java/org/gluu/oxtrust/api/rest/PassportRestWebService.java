@@ -88,14 +88,15 @@ public class PassportRestWebService {
 					Map  <String ,PassportStrategy> PassportConfigurationsMap = new HashMap<String, PassportStrategy>();
 					for(org.xdi.config.oxtrust.PassportConfiguration passportConfiguration : passportConfigurations){			
 						if(passportConfiguration.getProvider().equalsIgnoreCase("passport")){
-							passportConfigResponse.setApplicationEndpoint(passportConfiguration.getApplicationEndpoint());				
+							passportConfigResponse.setApplicationEndpoint((passportConfiguration.getApplicationEndpoint()==null) ? "" : passportConfiguration.getApplicationEndpoint() );	
+							passportConfigResponse.setAuthenticationUrl((passportConfiguration.getServerURI()==null) ? "" : passportConfiguration.getServerURI());
+							passportConfigResponse.setApplicationStartpoint((passportConfiguration.getApplicationStartpoint()==null) ? "" : passportConfiguration.getApplicationStartpoint());
+							
 						}else{
-							PassportStrategy passportStrategy = new PassportStrategy();
-							passportStrategy.setCallbackURL(passportConfiguration.getCallbackURL());
-							passportStrategy.setClientID(passportConfiguration.getClientID());
-							passportStrategy.setClientSecret(passportConfiguration.getClientSecret());
-							passportStrategy.setProvider(passportConfiguration.getProvider());
-							PassportConfigurationsMap.put(passportStrategy.getProvider(), passportStrategy);
+							PassportStrategy passportStrategy = new PassportStrategy();							
+							passportStrategy.setClientID((passportConfiguration.getClientID()==null) ? "" : passportConfiguration.getClientID());
+							passportStrategy.setClientSecret((passportConfiguration.getClientSecret()==null) ? "" : passportConfiguration.getClientSecret());
+							PassportConfigurationsMap.put((passportConfiguration.getProvider()==null) ? "" : passportConfiguration.getProvider(), passportStrategy);
 						}					
 					}	
 					passportConfigResponse.setPassportStrategies(PassportConfigurationsMap);

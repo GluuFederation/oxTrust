@@ -112,6 +112,31 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 
 		return result;
 	}
+	
+	public boolean executeExternalConfirmRegistrationMethods(GluuCustomPerson user, Map<String, String[]> requestParameters) {
+		boolean result = true;
+		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+			result &= executeExternalConfirmRegistrationMethod(customScriptConfiguration, user, requestParameters);
+			if (!result) {
+				return result;
+			}
+		}
+
+		return result;
+	}
+	
+	public boolean executeExternalConfirmRegistrationMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, Map<String, String[]> requestParameters) {
+		try {
+			log.debug("Executing python 'confirmRegistration' method");
+			UserRegistrationType externalType = (UserRegistrationType) customScriptConfiguration.getExternalType();
+			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+			return externalType.confirmRegistration(user, requestParameters, configurationAttributes);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
+
+		return false;
+	}
 
 	public static ExternalUserRegistrationService instance() {
 		return (ExternalUserRegistrationService) Component.getInstance(ExternalUserRegistrationService.class);

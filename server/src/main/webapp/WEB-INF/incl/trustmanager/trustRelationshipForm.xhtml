@@ -382,7 +382,7 @@
 								</h:panelGrid>
 							</a4j:region>
 						</s:decorate>
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{oxTrustConfiguration.applicationConfiguration.oxIncommonFlag  eq 'true'}"
 							id="enableInCommon">
 							<ui:define name="label">Enable InCommon R&amp;S</ui:define>
 							<h:panelGrid columns="2">

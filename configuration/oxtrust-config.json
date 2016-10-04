@@ -144,5 +144,6 @@
     "rptConnectionPoolCustomKeepAliveTimeout":5,
 
     "scimTestMode":false,
-    "scimTestModeAccessToken":""
+    "scimTestModeAccessToken":"",
+    "oxIncommonFlag":false
 }
