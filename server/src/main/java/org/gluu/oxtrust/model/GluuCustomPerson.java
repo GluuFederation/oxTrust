@@ -45,8 +45,19 @@ public class GluuCustomPerson extends User
 
     @LdapAttribute(name = "associatedClient")
     private List<String> associatedClient;
+    
+    @LdapAttribute(name = "oxPPID")
+    private List<String> oxPPID;
 
-    @LdapAttribute
+    public List<String> getOxPPID() {
+		return oxPPID;
+	}
+
+	public void setOxPPID(List<String> oxPPID) {
+		this.oxPPID = oxPPID;
+	}
+
+	@LdapAttribute
     private Date oxCreationTimestamp;	
 
 	// Value object holders
