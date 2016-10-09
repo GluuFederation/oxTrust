@@ -91,8 +91,19 @@ public class User extends Resource {
 
     @LdapAttribute(name = "oxTrustRole")
     private List<Role> roles = new ArrayList<Role>();
+    
+    @LdapAttribute(name = "oxPPID")
+    private List<String> pairwiseIdentitifers = new ArrayList<String>();
 
-    @LdapAttribute(name = "oxTrustx509Certificate")
+	public List<String> getPairwiseIdentitifers() {
+		return pairwiseIdentitifers;
+	}
+
+	public void setPairwiseIdentitifers(List<String> pairwiseIdentitifers) {
+		this.pairwiseIdentitifers = pairwiseIdentitifers;
+	}
+
+	@LdapAttribute(name = "oxTrustx509Certificate")
     private List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
 
     private Map<String, Extension> extensions = new HashMap<String, Extension>();

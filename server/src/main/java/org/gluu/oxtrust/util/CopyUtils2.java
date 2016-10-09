@@ -734,6 +734,10 @@ public class CopyUtils2 implements Serializable {
 			List<PhoneNumber> phoneNumbers = getAttributeListValue(source, PhoneNumber.class, "oxTrustPhoneValue");
 			destination.setPhoneNumbers(phoneNumbers);
 		}
+		
+		if ((source.getOxPPID()) != null) {
+			destination.setPairwiseIdentitifers(source.getOxPPID());
+		}
 
 		log.trace(" getting ims ");
 		// getting ims
