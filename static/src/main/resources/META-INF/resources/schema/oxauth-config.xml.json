@@ -973,7 +973,7 @@
         },
         "webKeysStorage": {
             "id": "webKeysStorage",
-            "description": "Web Key Storage Type",
+            "description": "Web Key Storage Type.",
             "type": "string",
             "enum": [
                 "keystore",
@@ -1000,9 +1000,38 @@
         },
         "endSessionWithAccessToken": {
             "id": "endSessionWithAccessToken",
-            "description": "Accept access token to call end_session enpoint",
+            "description": "Accept access token to call end_session endpoint.",
             "type": "boolean"
-        }        
+        },
+        "clientWhiteList": {
+            "id": "clientWhiteList",
+            "description": "White List for Client Redirection URIs.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "clientBlackList": {
+            "id": "clientBlackList",
+            "description": "Black List for Client Redirection URIs.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "legacyIdTokenClaims": {
+            "id": "legacyIdTokenClaims",
+            "description": "Include Claims in ID Token.",
+            "type": "boolean"
+        }
     },
     "required": [
         "issuer",
@@ -1107,6 +1136,7 @@
         "dnName",
         "keyStoreFile",
         "keyStoreSecret",
-        "endSessionWithAccessToken"
+        "endSessionWithAccessToken",
+        "legacyIdTokenClaims"
     ]
 }
