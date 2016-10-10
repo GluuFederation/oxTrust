@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -17,11 +18,14 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
+import org.jboss.seam.async.TimerSchedule;
+import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
@@ -29,6 +33,10 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 @Scope(ScopeType.APPLICATION)
 @Name("statusCheckerDaily")
 public class StatusCheckerDaily {
+
+    private final static String EVENT_TYPE = "StatusCheckerDailyTimerEvent";
+	// Group count and person count will now be checked daily
+	public static final long STATUS_CHECKER_DAILY = (long) (1000L * 60 * 60 * 24);
 
 	@Logger
 	private Log log;
@@ -48,16 +56,38 @@ public class StatusCheckerDaily {
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
 
+    private AtomicBoolean isActive;
+
 	@Create
 	public void create() {
 		// Initialization Code
 	}
 
-	@Asynchronous
-	public QuartzTriggerHandle scheduleStatusChecking(@Expiration Date when, @IntervalDuration Long interval) {
-		process(when, interval);
-		return null;
-	}
+    @Observer("org.jboss.seam.postInitialization")
+    public void init() {
+        log.info("Initializing daily status checker timer");
+        this.isActive = new AtomicBoolean(false);
+
+        Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(60 * 1000L, STATUS_CHECKER_DAILY));
+    }
+
+    @Observer(EVENT_TYPE)
+    @Asynchronous
+    public void process() {
+        if (this.isActive.get()) {
+            return;
+        }
+
+        if (!this.isActive.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            processInt();
+        } finally {
+            this.isActive.set(false);
+        }
+    }
 
 	/**
 	 * Gather periodically site and server status
@@ -67,7 +97,7 @@ public class StatusCheckerDaily {
 	 * @param interval
 	 *            Interval
 	 */
-	private void process(Date when, Long interval) {
+	private void processInt() {
 		log.debug("Starting daily status checker");
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		if (!applicationConfiguration.isUpdateApplianceStatus()) {
