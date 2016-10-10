@@ -113,7 +113,7 @@
 					<configuration>
 						<argLine>-Dsun.lang.ClassLoader.allowArraySyntax=true
 							-Dcatalina.base=${project.build.directory}
-							-Dgluu.conf.folder=${project.build.directory}
+							-Dgluu.base=${project.build.directory}
 							-Dseam.local.test=true
 						</argLine>
 
@@ -1044,6 +1044,10 @@
 					<artifactId>slf4j-api</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -1073,6 +1077,12 @@
 		<dependency>
 			<groupId>edu.internet2.middleware</groupId>
 			<artifactId>shibboleth-identityprovider</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
