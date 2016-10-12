@@ -170,7 +170,7 @@ public class ClientService implements Serializable {
 	 */
 	private String generateInumForNewClientImpl() {
 		String orgInum = OrganizationService.instance().getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + "0008" + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
+		return orgInum + OxTrustConstants.inumDelimiter + "0008" + OxTrustConstants.inumDelimiter + INumGenerator.generate(4);
 
 	}
 
