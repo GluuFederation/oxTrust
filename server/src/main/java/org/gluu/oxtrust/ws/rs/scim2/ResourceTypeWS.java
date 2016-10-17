@@ -30,7 +30,7 @@ import org.jboss.seam.annotations.Name;
 public class ResourceTypeWS extends BaseScimWebService {
 
 	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response listResources(@HeaderParam("Authorization") String authorization) throws Exception {
 
@@ -90,7 +90,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 	@Path("User")
 	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response getResourceTypeUser(@HeaderParam("Authorization") String authorization) throws Exception {
 
@@ -123,7 +123,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 	@Path("Group")
 	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response getResourceTypeGroup(@HeaderParam("Authorization") String authorization) throws Exception {
 
