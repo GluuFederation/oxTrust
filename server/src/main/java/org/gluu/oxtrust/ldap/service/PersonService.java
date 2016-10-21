@@ -361,7 +361,7 @@ public class PersonService implements Serializable, IPersonService {
 		String inum = "";
 		long value;
 		while (true) {
-			inum = INumGenerator.generate(2);
+			inum = INumGenerator.generate(4);
 			try {
 				value = Long.parseLong(inum.replace(".", ""), 16);
 				if (value < 7) {

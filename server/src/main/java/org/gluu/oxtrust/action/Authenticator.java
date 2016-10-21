@@ -318,6 +318,7 @@ public class Authenticator implements Serializable {
 
 		ClientRequest clientRequest = new ClientRequest(applicationConfiguration.getOxAuthLogoutUrl());
 
+		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI, applicationConfiguration.getLogoutRedirectUrl());
 
