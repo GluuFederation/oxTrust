@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:encoder="urn:mace:shibboleth:2.0:attribute:encoder" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" targetNamespace="urn:mace:shibboleth:2.0:attribute:encoder" elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/>
+
+    <!-- Encoders that produce SAML 1 or SAML 2 Attribtues -->
+    <complexType name="SAML1String">
+        <annotation>
+            <documentation>Defines a SAML 1 string encoder for an attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="namespace" type="string">
+                    <annotation>
+                        <documentation>The SAML 1 Namespace of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1Base64">
+        <annotation>
+            <documentation>Defines a SAML 1 Base64 encoder for an attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="namespace" type="string">
+                    <annotation>
+                        <documentation>The SAML 1 Namespace of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SAML1XMLObject">
+        <annotation>
+            <documentation>Defines a SAML 1 Base64 encoder for an attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="namespace" type="string">
+                    <annotation>
+                        <documentation>The SAML 1 Namespace of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2String">
+        <annotation>
+            <documentation>Defines a SAML 2 string encoder for an attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="friendlyName" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2Base64">
+        <annotation>
+            <documentation>Defines a SAML 2 Base64 encoder for an attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="friendlyName" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SAML2XMLObject">
+        <annotation>
+            <documentation>Defines a SAML 2 Base64 encoder for an attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="friendlyName" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="BaseScopedAttributeEncoderType">
+        <annotation>
+            <documentation>Defines an encoder for a scoped attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="scopeType" type="string" use="optional">
+                    <annotation>
+                        <documentation>
+                            The type of scoping to use for the encoded attribute. Valid values are "inline" or
+                            "attribute".
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="scopeDelimiter" type="string" use="optional">
+                    <annotation>
+                        <documentation>
+                            If scopeType is "inline", this is the delimeter used between the attribute value and
+                            scope.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="scopeAttribute" type="string" use="optional">
+                    <annotation>
+                        <documentation>
+                            If scopeType is "attribute", this is the name of the name of the attribute used to carry the
+                            scope value.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1ScopedString">
+        <annotation>
+            <documentation>Defines a SAML 1 string encoder for a scoped attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="encoder:BaseScopedAttributeEncoderType">
+                <attribute name="namespace" type="string">
+                    <annotation>
+                        <documentation>The SAML 1 Namespace of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2ScopedString">
+        <annotation>
+            <documentation>Defines a SAML 2 string encoder for a scoped attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="encoder:BaseScopedAttributeEncoderType">
+                <attribute name="nameFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="friendlyName" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+<!-- Encoders that produce SAML 1 or 2 name identifiers -->
+    <complexType name="SAML1StringNameIdentifier">
+        <annotation>
+            <documentation>Defines a SAML 1 string encoder for a NameIdentifier.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 1 NameFormat of the NameIdentifier.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 1 NameQualfier of the NameIdentifier.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2StringNameID">
+        <annotation>
+            <documentation>Defines a SAML 2 string encoder for a NameID.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 NameQualfier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

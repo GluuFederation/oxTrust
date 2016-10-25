@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" targetNamespace="urn:mace:shibboleth:2.0:resolver:ad" elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/>
+
+    <complexType name="Simple">
+        <annotation>
+            <documentation>A basic attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="PrincipalName">
+        <annotation>
+            <documentation>Exposes the principal's name as an attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="PrincipalAuthenticationMethod">
+        <annotation>
+            <documentation>Exposes the principal's authentication method as an attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="TransientId">
+        <annotation>
+            <documentation>A attribute definition used to construct transient subject identifiers.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="storageServiceRef" type="string" default="shibboleth.StorageService">
+                    <annotation>
+                        <documentation>Storage service used to store created identifiers</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="lifetime" type="string">
+                    <annotation>
+                        <documentation>Lifetime of issued identifiers</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="CryptoTransientId">
+        <annotation>
+            <documentation>An attribute definition used to construct stateless transient subject identifiers.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="dataSealerRef" type="string" use="required">
+                    <annotation>
+                        <documentation>Object used to protect and encrypt identifiers</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="lifetime" type="string">
+                    <annotation>
+                        <documentation>Lifetime of issued identifiers</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Scoped">
+        <annotation>
+            <documentation>A basic attribute definition which supports attribute scoping.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="scope" type="string" use="required">
+                    <annotation>
+                        <documentation>Value to use for scoping the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="Prescoped">
+        <annotation>
+            <documentation>
+                An attribute definition that splits the values of the source attribute into an attribute value 
+                with a value and scope.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="scopeDelimiter" type="string">
+                    <annotation>
+                        <documentation>Delimiter between the value and scope.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="RegexSplit">
+        <annotation>
+            <documentation>An attribute definition that splits the source attribute's values based on a regular expression.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="regex" type="string" use="required">
+                    <annotation>
+                        <documentation>The regular expression used to split a value.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="caseSensitive" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating the case sensitivity of the regular expression.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1NameIdentifier">
+        <annotation>
+            <documentation>An attribute definition that creates attributes whose values are SAML 1 NameIdentifiers.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="nameIdFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 1 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 1 NameQualifier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2NameID">
+        <annotation>
+            <documentation>An attribute definition that creates attributes whose values are SAML 2 NameIDs.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="nameIdFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 NameQualifier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdSPQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 SPNameQualifier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Script">
+        <annotation>
+            <documentation>
+                An attribute definition that constructs its attributes by means of a script supported by JSR-223. The
+                script is provided all the edu.internet2.middleware.shibboleth.common.attribute.Attribute object
+                resolved from all the definitions dependencies. The resultant attribute definition must then be bound to
+                a script attribute corresponding to the script variable whose name is the ID of the definition. This
+                variable is injected into the script by the attribute definition.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <choice>
+                    <element name="Script" type="string">
+                        <annotation>
+                            <documentation>The script to evaluate to construct the attribute.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="ScriptFile" type="string">
+                        <annotation>
+                            <documentation>
+                                The filesystem path to the script to evaluate to construct the attribute.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
+                <attribute name="language" type="string">
+                    <annotation>
+                        <documentation>
+                            The JSR-233 name for the scripting language that will be used. By default "javascript" is
+                            supported.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="customObjectRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of a bean defined somewhere else which will be injected into the script as an
+                            object called "custom".  If not supplied, nothing is injected.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Mapped">
+        <annotation>
+            <documentation>
+                The mapped attribute definition performs a many to many mapping from source attributes values provided
+                by the definition's dependencies to values which are returned. Each source value is passed through each
+                defined ValueMap which may result in one or more resulting values. If no ValueMaps match the source
+                value and a DefaultValue is defined, the DefaultValue is used.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <sequence>
+                    <element name="DefaultValue" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                A source value is mapped to the DefaultValue if none of the ValueMaps result in a match.
+                                This string may not contain regular expression back references.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="passThru" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                If true, the source value is passed thru unmodified. If passThru is
+                                                enabled, DefaultValue may not contain a string value.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                    <element name="ValueMap" type="ad:ValueMapType" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ValueMapType">
+        <annotation>
+            <documentation>
+                Performs many to one mapping of source values to a return value. SourceValue strings may include regular
+                expressions and the ReturnValue may include back references to capturing groups as supported by
+                java.util.regex.Pattern.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="ReturnValue" type="string">
+                <annotation>
+                    <documentation>The value to be returned from this value map.</documentation>
+                </annotation>
+            </element>
+            <element name="SourceValue" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>A regular expression string to be matched against the incoming value.</documentation>
+                </annotation>
+                <complexType>
+                    <simpleContent>
+                        <extension base="string">
+                            <attribute name="ignoreCase" type="string">
+                                <annotation>
+                                    <documentation>If true, value matching will be case-insensitive.</documentation>
+                                </annotation>
+                            </attribute>
+                            <attribute name="partialMatch" type="string">
+                                <annotation>
+                                    <documentation>
+                                        If true, the SourceValue may match only a substring of the incoming value. By
+                                        default, it must match the entire value.
+                                    </documentation>
+                                </annotation>
+                            </attribute>
+                        </extension>
+                    </simpleContent>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="Template">
+        <annotation>
+            <documentation>
+                An Attribute Definition that constructs its values based on the values of its dependencies using the
+                Velocity Template Language. Dependencies may have multiple values, however multiple dependencies must
+                have the same number of values. In the case of multi-valued dependencies, the template will be evaluated
+                multiples times, iterating over each dependency.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <sequence>
+                    <element name="Template" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                Template specified in the Velocity Template Language used to construct attribute values.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="SourceAttribute" type="string" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Attribute IDs which should be used in this definition, rather than the sourceAttributeID
+                                attribute. Each source attribute is available to be used in the Template as
+                                ${attribute_name}. If the source attribute has multiple values, only one value is
+                                available to the template at a time, but the template will be evaluated once for each
+                                value.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="velocityEngine" type="string">
+                    <annotation>
+                        <documentation>Name of the velocity engine defined within the application.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

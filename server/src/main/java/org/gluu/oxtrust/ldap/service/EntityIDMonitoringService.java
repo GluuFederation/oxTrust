@@ -83,7 +83,7 @@ public class EntityIDMonitoringService {
 				log.trace("isValidated:" + isValidated);
 				if (meatadataAvailable && correctType && isValidated) {
 					String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
-							+ Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator;
+							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 					

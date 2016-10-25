@@ -1,0 +1,880 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:sec="urn:mace:shibboleth:2.0:security" targetNamespace="urn:mace:shibboleth:2.0:resolver:dc" elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/>
+        
+    <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
+
+    <complexType name="Static">
+        <annotation>
+            <documentation>
+                A data connector that gets its information from a static list of attributes and values specified within
+                this configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <sequence>
+                    <element name="Attribute" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Specifies an attribute, and its values, to be exposed by this connector.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element name="Value" type="string" maxOccurs="unbounded">
+                                    <annotation>
+                                        <documentation>
+                                            A value of the attribute. If the value contains characters that would
+                                            otherwise need to be XML encoded you may wrap the value in a CDATA section.
+                                        </documentation>
+                                    </annotation>
+                                </element>
+                            </sequence>
+                            <attribute name="id" type="string" use="required">
+                                <annotation>
+                                    <documentation>The ID of the attribute.</documentation>
+                                </annotation>
+                            </attribute>
+                        </complexType>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Script">
+        <annotation>
+            <documentation>
+                A data connector that constructs attributes by means of a script supported by JSR-223.  Populated 
+                Attributes are added to the java.util.Collection "connectorResults". 
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <choice>
+                    <element name="Script" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>The script to evaluate to construct the attribute.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="ScriptFile" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                The filesystem path to the script to evaluate to construct the attribute.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
+                <attribute name="language" type="string">
+                    <annotation>
+                        <documentation>
+                            The JSR-233 name for the scripting language that will be used. By default "javascript" is
+                            supported.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="customObjectRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of a bean defined somewhere else which will be injected into the script as an
+                            object called "custom".  If not supplied, nothing is injected.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ComputedId">
+        <annotation>
+            <documentation>
+                An ID created by taking the SHA-1 hash of the requesting entity's ID, an attribute value (usually a user identifier), and a salt.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <attribute name="generatedAttributeID" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute produced by this data connector.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceAttributeID" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute which should be used to as input to the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="salt" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            A salt, of at least 16 bytes, used in the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StoredId">
+        <annotation>
+            <documentation>
+                A connector that either generates a persistent ID by hashing or by looking it up in a database.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <choice minOccurs="0">
+                    <element ref="dc:ContainerManagedConnection">
+                        <annotation>
+                            <documentation>
+                                A connection, or pool of connections, to the database managed by the application
+                                container.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="dc:ApplicationManagedConnection">
+                        <annotation>
+                            <documentation>
+                                A connection, or pool of connections, to the database managed by the data connector.
+                            </documentation>
+                        </annotation>
+                    </element>
+                        <element name="BeanManagedConnection" type="string">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database configured in a Spring bean.
+                                </documentation>
+                            </annotation>
+                        </element>
+                </choice>
+                <attribute name="queryTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            Timeout for the queries made to the database.
+                            Timeout is given in ISO8601 duration form.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="transactionRetries" type="string">
+                    <annotation>
+                        <documentation>
+                            Number of retries if insert fails (defaults to 3).
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="failFast" type="string">
+                    <annotation>
+                        <documentation>
+                            Whether to fail if the store cannot be verified at startup (defaults to false).
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="retryableErrors">
+                    <annotation>
+                        <documentation>
+                            A space-delimited list of SQLState codes to treat as retryable (indicating
+                            a duplicate insert error occurred).
+                        </documentation>
+                    </annotation>
+                    <simpleType>
+                        <list itemType="string"/>
+                    </simpleType>
+                </attribute>
+                <attribute name="generatedAttributeID" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute produced by this data connector.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceAttributeID" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute which should be used to as input to the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="salt" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            A salt, of at least 16 bytes, used in the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="RelationalDatabase">
+        <annotation>
+            <documentation>
+                A data connector definition that uses JDBC version 3 to connect to and pull information from a
+                relational database.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <sequence>
+                    <choice minOccurs="0">
+                        <element ref="dc:ContainerManagedConnection">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database managed by the application
+                                    container.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element ref="dc:ApplicationManagedConnection">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database managed by the data connector.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="BeanManagedConnection" type="string">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database configured in a Spring bean.
+                                </documentation>
+                            </annotation>
+                        </element>
+                    </choice>
+                    <element name="QueryTemplate" type="string"  minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                A template that will be used to create the SQL query thats pulls information from the
+                                database.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="Column" type="dc:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
+                    <choice minOccurs="0">
+                        <element name="ResultCache" type="dc:CacheConfigType"/>
+                        <element name="ResultCacheBean" type="string"/>
+                    </choice>
+                </sequence>
+                <attribute name="readOnlyConnection" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag that determines whether the connection to the database is read-only, if the
+                            value is true, or read-write if the value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="queryUsesStoredProcedure" type="string">
+                    <annotation>
+                        <documentation>
+                            No longer supported.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="queryTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            Timeout for the queries made to the database.
+                            Timeout is given in ISO8601 duration form.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="noResultIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning no results should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="multipleResultsIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning more than one result should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheResults" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag that determines whether to cache results.
+                            
+                            This option is no longer supported, use the ResultCache element instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="templateEngine" type="string">
+                    <annotation>
+                        <documentation>
+                            Name of the template engine defined within the application.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mappingStrategyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the MappingStrategy implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="validatorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Validator implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="ContainerManagedConnection" type="dc:ContainerManagedConnectionType">
+        <annotation>
+            <documentation>
+                Describes a database connection source that is managed by the application container.
+            </documentation>
+        </annotation>
+    </element>
+    <complexType name="ContainerManagedConnectionType">
+        <sequence>
+            <element name="JNDIConnectionProperty" type="dc:PropertyType" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>
+                        A property used when constructing a JNDI initial context which in turn is used to lookup the
+                        database DataSource.
+                    </documentation>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="resourceName" type="string" use="required">
+            <annotation>
+                <documentation>The resource name the DataSource is bound to in the JNDI tree.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <element name="ApplicationManagedConnection" type="dc:ApplicationManagedConnectionType">
+        <annotation>
+            <documentation>
+                Describes a database connection source that is managed by the attribute resolver data connector.
+            </documentation>
+        </annotation>
+    </element>
+    <complexType name="ApplicationManagedConnectionType">
+        <attribute name="jdbcDriver" type="string" use="required">
+            <annotation>
+                <documentation>
+                    This is the full qualified class name of the JDBC driver used to connect to the database.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcURL" type="string" use="required">
+            <annotation>
+                <documentation>
+                    The JDBC URL for the database. These are usually of the form
+                    jdbc:databaseProduceName:databaseSpecificInformation. For example, jdbc:hsql:mem:MyDatabase
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcUserName" type="string">
+            <annotation>
+                <documentation>The user name to use while connecting to the database.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcPassword" type="string">
+            <annotation>
+                <documentation>The password to use while connecting to the database.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAcquireIncrement" type="string">
+            <annotation>
+                <documentation>
+                    The number of new connections that will be created when the pool is exhausted.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAcquireRetryAttempts" type="string">
+            <annotation>
+                <documentation>
+                    The number of times the pool will try to establish a connection to a database.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAcquireRetryDelay" type="string">
+            <annotation>
+                <documentation>
+                    The amount of time, in milliseconds, the pool will wait before trying to retrieve a new connection
+                    after it has failed.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolBreakAfterAcquireFailure" type="string">
+            <annotation>
+                <documentation>
+                    A boolean flag that indicates whether the pool should be marked as permanently unavailable if a new
+                    connection can not be established after the acquire retry attempts is reached.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMinSize" type="string">
+            <annotation>
+                <documentation>
+                    The minimum number of connections the pool will establish with the database. A value of zero means
+                    there is no minimum.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMaxSize" type="string">
+            <annotation>
+                <documentation>
+                    The maximum number of connections the pool will establish with the database. A value of zero means
+                    there is no maximum.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMaxIdleTime" type="string">
+            <annotation>
+                <documentation>
+                    The maximum time, in seconds, that an established connection will remain idle before it is closed.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolIdleTestPeriod" type="string">
+            <annotation>
+                <documentation>
+                    The interval, in seconds, that the pool will scan idle established connections, using the validation
+                    query, for liveness.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <complexType name="PropertyType">
+        <attribute name="name" type="string" use="required">
+            <annotation>
+                <documentation>The name of the property.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="value" type="string" use="required">
+            <annotation>
+                <documentation>The value of the property,</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <complexType name="ColumnType">
+        <attribute name="columnName" type="string" use="required">
+            <annotation>
+                <documentation>The name of the database column.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="attributeID" type="string">
+            <annotation>
+                <documentation>The name of the attribute that data from this column should be added to.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="type" type="dc:ColumnDataType">
+            <annotation>
+                <documentation>The Java data type data in the column should be extracted as.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <simpleType name="ColumnDataType">
+        <restriction base="string">
+            <enumeration value="BigDecimal"/>
+            <enumeration value="Boolean"/>
+            <enumeration value="Byte"/>
+            <enumeration value="ByteArray"/>
+            <enumeration value="Date"/>
+            <enumeration value="Double"/>
+            <enumeration value="Float"/>
+            <enumeration value="Integer"/>
+            <enumeration value="Long"/>
+            <enumeration value="Object"/>
+            <enumeration value="Short"/>
+            <enumeration value="String"/>
+            <enumeration value="Time"/>
+            <enumeration value="Timestamp"/>
+            <enumeration value="URL"/>
+        </restriction>
+    </simpleType>
+    
+    <complexType name="LDAPDirectory">
+        <annotation>
+            <documentation>
+                A data connector that can pull information from an LDAP, version 3, directory.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <sequence>
+                    <element name="FilterTemplate" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                A template used to construct the LDAP filter used to query the directory.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="ReturnAttributes" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                A space separated list of attributes that should be returned from the query.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="LDAPProperty" type="dc:PropertyType" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                LDAP connection properties relevant to the underlying provider being used.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="StartTLSTrustCredential" type="sec:X509Credential" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="StartTLSAuthenticationCredential" type="sec:X509Credential" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                The X.509 client authentication information to use when connecting to the directory over LDAPS or startTLS.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="ConnectionPool" type="dc:LdapPoolConfigType" minOccurs="0"/>
+                    <element name="Column" type="dc:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
+                    <choice minOccurs="0">
+                        <element name="ResultCache" type="dc:CacheConfigType"/>
+                        <element name="ResultCacheBean" type="string"/>
+                    </choice>
+                </sequence>
+                <attribute name="ldapURL" type="string">
+                    <annotation>
+                        <documentation>
+                        The URL to the LDAP server.
+                        If the search scope is set to ONELEVEL only the entries 
+                        within this node will be searched, if SUBTREE is specified entries within this node and descendant 
+                        nodes will be searched.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="connectionStrategy" type="dc:ConnectionStrategyType">
+                    <annotation>
+                        <documentation>
+                            The LDAP connection strategy. Acceptable values are DEFAULT, ACTIVE_PASSIVE, ROUND_ROBIN, and RANDOM.
+                            Default value is ACTIVE_PASSIVE.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="baseDN" type="string">
+                    <annotation>
+                        <documentation>
+                            The base DN from which attribute search filtering occurs
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="principal" type="string">
+                    <annotation>
+                        <documentation>The DN for the principal connecting to the LDAP directory.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="principalCredential" type="string">
+                    <annotation>
+                        <documentation>
+                            The credential for the principal connecting to the LDAP directory.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="authenticationType" type="dc:AuthenticationType">
+                    <annotation>
+                        <documentation>
+                            The LDAP authentication type. Acceptable values are ANONYMOUS, SIMPLE, STRONG, EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI.
+                            Default value is SIMPLE.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchScope" type="dc:SearchScopeType">
+                    <annotation>
+                        <documentation>
+                            The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTREE.
+                            Default value is SUBTREE.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="useStartTLS" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether startTLS should be used when connecting to the LDAP.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="poolInitialSize" type="string">
+                    <annotation>
+                        <documentation>
+                            This attribute is deprecated, use LdapPoolConfig#minPoolSize instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="poolMaxIdleSize" type="string">
+                    <annotation>
+                        <documentation>
+                            This attribute is deprecated, use LdapPoolConfig#maxPoolSize instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchTimeLimit" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time to wait for search results. If this limit is
+                            reached a timeout error is raised. Default value is 3 seconds.
+                            Time is expressed in ISO8601 duration format.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxResultSize" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum number of results that may be returned from a query.
+                            Default value is 1.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheResults" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating that search results should be cached for the duration of a user's
+                            session.
+
+                            This option is no longer supported, use the ResultCache element instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mergeResults" type="string">
+                    <annotation>
+                        <documentation>
+                            No longer supported.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="noResultIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning no results should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="multipleResultsIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning more than one result should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="lowercaseAttributeNames" type="string">
+                    <annotation>
+                        <documentation>
+                            Whether to lowercase LDAP attribute names used as IDs for shibboleth attributes
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="templateEngine" type="string">
+                    <annotation>
+                        <documentation>Name of the template engine defined within the application.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mappingStrategyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the MappingStrategy implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="validatorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Validator implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <simpleType name="ConnectionStrategyType">
+        <annotation>
+            <documentation>Supported connection strategies.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="DEFAULT"/>
+            <enumeration value="ACTIVE_PASSIVE"/>
+            <enumeration value="ROUND_ROBIN"/>
+            <enumeration value="RANDOM"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="AuthenticationType">
+        <annotation>
+            <documentation>Supported authentication types.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="ANONYMOUS"/>
+            <enumeration value="SIMPLE"/>
+            <enumeration value="STRONG"/>
+            <enumeration value="EXTERNAL"/>
+            <enumeration value="DIGEST_MD5"/>
+            <enumeration value="CRAM_MD5"/>
+            <enumeration value="GSSAPI"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="SearchScopeType">
+        <annotation>
+            <documentation>Supported search scopes.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="SUBTREE"/>
+            <enumeration value="ONELEVEL"/>
+            <enumeration value="OBJECT"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="LdapPoolConfigType">
+        <attribute name="minPoolSize" type="string">
+            <annotation>
+                <documentation>
+                    The minimum number of ldap connections that should always be available in the pool.
+                    Note that these connections are provisioned as soon as the pool is initialized.
+                    Default value is 0.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="maxPoolSize" type="string">
+            <annotation>
+                <documentation>
+                    The maximum number of ldap connections that should ever be available in the pool.
+                    Note that when this threshold is reach the pool will begin blocking until a connection
+                    is available.
+                    Default value is 3.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="blockWhenEmpty" type="string">
+            <annotation>
+                <documentation>
+                    Whether the pool should block when maxPoolSize objects are in use.
+                    If false, pool will grow beyond the maxPoolSize value.
+                    Note that a properly configured blocking pool will yield better performance. 
+                    Default value is true.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="blockWaitTime" type="string">
+            <annotation>
+                <documentation>
+                    Amount of time to block while waiting for a connection from the pool.  If no
+                    wait time is given, callers will block indefinitely.
+                    
+                    Values are expressed in ISO8601 duration format.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="validatePeriodically" type="string">
+            <annotation>
+                <documentation>
+                    Whether each ldap connection should be checked on a periodic basis.
+                    Default value is false.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="validateTimerPeriod" type="string">
+            <annotation>
+                <documentation>
+                    Time that the periodic pool validation process should repeat.
+                    Ldap objects are pruned when they have been idle beyond the expiration time.
+                    The pool is not pruned below the minimum pool size.
+                    Default value is 30 minutes.
+                    
+                    Period is expressed in ISO8601 duration format.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="validateDN" type="string">
+            <annotation>
+                <documentation>
+                    Ldap compare DN to use for connection validation.
+                    Used in conjunction with validateFilter to perform a compare.
+                    Default value is empty.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="validateFilter" type="string">
+            <annotation>
+                <documentation>
+                    Ldap compare filter to use for connection validation.
+                    Used in conjuction with validateDN to perform a compare.
+                    Default value is (objectClass=*).
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="expirationTime" type="string">
+            <annotation>
+                <documentation>
+                    Time in that an object in the pool should be considered stale and ready for removal.
+                    Time is expressed in ISO8601 duration format.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="failFastInitialize" type="string">
+            <annotation>
+                <documentation>
+                    A boolean flag indicating whether pool initialization should fail if configuration criteria is not met.
+                    Default value is true.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <complexType name="CacheConfigType">
+        <attribute name="cacheManagerRef" type="string">
+        <annotation>
+                <documentation>
+                    Name of the CacheManager bean that will manage the result cache.  This is not used.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="elementTimeToLive" type="string">
+        <annotation>
+                <documentation>
+                    Length of time a result will be cached.
+
+                    Duration is expressed in ISO8601 duration notation.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="maximumCachedElements" type="string">
+        <annotation>
+                <documentation>
+                   Maximum number of results that will be held in cache.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    
+</schema>

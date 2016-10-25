@@ -40,7 +40,7 @@ public class SvnSyncTimer {
 	Log log;
 
 	@In
-	private Shibboleth2ConfService shibboleth2ConfService;
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@In
 	private SubversionService subversionService;
@@ -77,7 +77,7 @@ public class SvnSyncTimer {
 		synchronized (this) {
 			List<SubversionFile> subversionFiles = new ArrayList<SubversionFile>();
 			try {
-				subversionFiles = subversionService.getDifferentFiles(shibboleth2ConfService
+				subversionFiles = subversionService.getDifferentFiles(shibboleth3ConfService
 						.getConfigurationFilesForSubversion(trustRelationships));
 			} catch (IOException e) {
 				log.error("Failed to prepare files list to be persisted in svn", e);
@@ -87,7 +87,7 @@ public class SvnSyncTimer {
 			while (!removedTrustRelationship.isEmpty()) {
 				Pair<GluuSAMLTrustRelationship, String> removedRelationship = removedTrustRelationship.poll();
 
-				SubversionFile file = shibboleth2ConfService.getConfigurationFileForSubversion(removedRelationship.getValue0());
+				SubversionFile file = shibboleth3ConfService.getConfigurationFileForSubversion(removedRelationship.getValue0());
 				if (file != null) {
 					removeSubversionFiles.add(file);
 				}

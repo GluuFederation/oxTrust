@@ -61,7 +61,7 @@ public class FilterService {
 	private TemplateService templateService;
 
 	@In
-	private Shibboleth2ConfService shibboleth2ConfService;
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
 		File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth2"
@@ -164,7 +164,7 @@ public class FilterService {
 		if (trustRelationship.getMetadataFilters().get("signatureValidation") != null) {
 			String filterCertFileName = StringHelper.removePunctuation(trustRelationship.getInum());
 			if (filterCertWrapper.getStream() != null) {
-				shibboleth2ConfService.saveFilterCert(filterCertFileName, filterCertWrapper.getStream());
+				shibboleth3ConfService.saveFilterCert(filterCertFileName, filterCertWrapper.getStream());
 				trustRelationship.getMetadataFilters().get("signatureValidation")
 						.setFilterCertFileName(StringHelper.removePunctuation(trustRelationship.getInum()));
 			}

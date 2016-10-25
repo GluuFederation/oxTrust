@@ -246,24 +246,35 @@ public class AppInitializer {
 	}
 	
 	private boolean createShibbolethConfiguration() {
+
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		boolean createConfig = applicationConfiguration.isConfigGeneration();
 		log.info("IDP config generation is set to " + createConfig);
 		
 		if (createConfig) {
-			String gluuSPInum = null;
+
+			String gluuSPInum;
 			GluuSAMLTrustRelationship gluuSP;
+
 			try {
+
 				gluuSPInum = ApplianceService.instance().getAppliance().getGluuSPTR();
+
+				// log.info("########## gluuSPInum = " + gluuSPInum);
+
 				gluuSP = new GluuSAMLTrustRelationship();
 				gluuSP.setDn(TrustService.instance().getDnForTrustRelationShip(gluuSPInum));
+
 			} catch (EntryPersistenceException ex) {
 				log.error("Failed to determine SP inum", ex);
 				return false;
 			}
 
+			// log.info("########## gluuSP.getDn() = " + gluuSP.getDn());
+
 			boolean servicesNeedRestarting = false;
 			if (gluuSPInum == null || ! TrustService.instance().containsTrustRelationship(gluuSP)) {
+
 				log.info("No trust relationships exist in LDAP. Adding gluuSP");
 //				GluuAppliance appliance = ApplianceService.instance().getAppliance();
 //				appliance.setGluuSPTR(null);
@@ -271,20 +282,37 @@ public class AppInitializer {
 				TrustService.instance().addGluuSP();
 				servicesNeedRestarting = true;
 			}
-			gluuSP = TrustService.instance().getRelationshipByInum(
-					ApplianceService.instance().getAppliance().getGluuSPTR());
+
+			gluuSP = TrustService.instance().getRelationshipByInum(ApplianceService.instance().getAppliance().getGluuSPTR());
 
 			List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
+
+			/*
+			if (trustRelationships != null && !trustRelationships.isEmpty()) {
+				for (GluuSAMLTrustRelationship gluuSAMLTrustRelationship : trustRelationships) {
+					log.info("########## gluuSAMLTrustRelationship.getDn() = " + gluuSAMLTrustRelationship.getDn());
+				}
+			}
+			*/
+
+			String shibbolethVersion = applicationConfiguration.getShibbolethVersion();
+			log.info("########## shibbolethVersion = " + shibbolethVersion);
+
+			Shibboleth3ConfService.instance().generateMetadataFiles(gluuSP);
+			Shibboleth3ConfService.instance().generateConfigurationFiles(trustRelationships);
+
+			/*
 			Shibboleth2ConfService.instance().generateIdpConfigurationFiles();
 			Shibboleth2ConfService.instance().generateConfigurationFiles(trustRelationships);
 			Shibboleth2ConfService.instance().generateMetadataFiles(gluuSP);
+			*/
 
-			Shibboleth2ConfService.instance().removeUnusedCredentials();
-			Shibboleth2ConfService.instance().removeUnusedMetadata();
+			Shibboleth3ConfService.instance().removeUnusedCredentials();
+			Shibboleth3ConfService.instance().removeUnusedMetadata();
+
 			if (servicesNeedRestarting) {
 				ApplianceService.instance().restartServices();
 			}
-
 		}
 
 		return true;

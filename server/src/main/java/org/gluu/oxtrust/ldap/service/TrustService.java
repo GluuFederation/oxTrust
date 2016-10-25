@@ -64,7 +64,7 @@ public class TrustService {
 	LdapEntryManager ldapEntryManager;
 
 	@In
-	private Shibboleth2ConfService shibboleth2ConfService;
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@In
 	private AttributeService attributeService;
@@ -292,7 +292,7 @@ public class TrustService {
 	 */
 	public void addGluuSP() {
 	    String gluuSPInum = generateInumForNewTrustRelationship();
-	    String metadataFN = shibboleth2ConfService.getSpNewMetadataFileName(gluuSPInum);
+	    String metadataFN = shibboleth3ConfService.getSpNewMetadataFileName(gluuSPInum);
 	    GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
 		gluuSP.setInum(gluuSPInum);
 		gluuSP.setDisplayName("gluu SP on appliance");
@@ -307,8 +307,8 @@ public class TrustService {
 		boolean result = false;
 		try {
 			certificate = FileUtils.readFileToString(new File(applicationConfiguration.getGluuSpCert())).replaceAll("-{5}.*?-{5}", "");
-			shibboleth2ConfService.generateSpMetadataFile(gluuSP, certificate);
-			result = shibboleth2ConfService.isCorrectSpMetadataFile(gluuSP.getSpMetaDataFN());
+			shibboleth3ConfService.generateSpMetadataFile(gluuSP, certificate);
+			result = shibboleth3ConfService.isCorrectSpMetadataFile(gluuSP.getSpMetaDataFN());
 
 		} catch (IOException e) {
 			log.error("Failed to gluu SP read certificate file.", e);
@@ -401,7 +401,7 @@ public class TrustService {
 	 */
 	public boolean isFederation(GluuSAMLTrustRelationship trustRelationship) {
 	    //TODO: optimize this method. should not take so long
-		return shibboleth2ConfService.isFederationMetadata(trustRelationship.getSpMetaDataFN());
+		return shibboleth3ConfService.isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	}
 
 	public List<TrustContact> getContacts(GluuSAMLTrustRelationship trustRelationship) {

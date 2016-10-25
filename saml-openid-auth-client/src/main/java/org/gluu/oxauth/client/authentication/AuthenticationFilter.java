@@ -9,6 +9,7 @@ package org.gluu.oxauth.client.authentication;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,8 +62,8 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	}
 
         @Override
-	public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
-			throws IOException, ServletException {
+	public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+
 		// TODO: check chain
 		if (!preFilter(servletRequest, servletResponse, filterChain)) {
 			log.debug("Execute validation filter");
@@ -74,6 +75,12 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 
 		final HttpServletRequest request = (HttpServletRequest) servletRequest;
 		final HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+		String conversation = request.getParameter("conversation");
+		log.info("########## PARAM conversation = " + conversation);
+
+		HttpSession session = request.getSession(false);
+		session.setAttribute("conversation", conversation);
 
 		String urlToRedirectTo;
 		try {
@@ -91,8 +98,8 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	/**
 	 * Determine filter execution conditions
 	 */
-	protected final boolean preFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
-			final FilterChain filterChain) throws IOException, ServletException {
+	protected final boolean preFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+
 		final HttpServletRequest request = (HttpServletRequest) servletRequest;
 
 		final HttpSession session = request.getSession(false);
@@ -118,6 +125,7 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	}
 
 	public String getOAuthRedirectUrl(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
 		String oAuthAuthorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
 
 		String oAuthClientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
@@ -138,12 +146,12 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		Cookie currentShibstateCookie = getCurrentShibstateCookie(request);
 		if (currentShibstateCookie != null) {
 			String requestUri = decodeCookieValue(currentShibstateCookie.getValue());
-			log.debug("requestUri\"" + requestUri + "\"");
+			log.debug("requestUri = \"" + requestUri + "\"");
 	
 			String authenticationMode = determineAuthenticationMode(requestUri);
 	
 			if (StringHelper.isNotEmpty(authenticationMode)) {
-				log.debug("auth_mode\"" + authenticationMode + "\"");
+				log.debug("auth_mode = \"" + authenticationMode + "\"");
 				clientRequest.queryParameter(Configuration.OAUTH_AUTH_MODE, authenticationMode);
 				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/" + Configuration.OAUTH_AUTH_MODE +"/" + authenticationMode);
 			}

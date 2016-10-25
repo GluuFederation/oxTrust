@@ -68,7 +68,7 @@
 
     "velocityLog":"${base.root}/opt/tomcat/logs/velocity.log",
 
-    "spMetadataPath":"${base.root}/opt/idp/metadata",
+    "spMetadataPath":"${base.root}/opt/shibboleth-idp/metadata",
 
     "logoLocation":"${base.root}/var/photos",
 
@@ -145,5 +145,12 @@
 
     "scimTestMode":false,
     "scimTestModeAccessToken":"",
-    "oxIncommonFlag":false
+    "oxIncommonFlag":false,
+
+    "shibbolethVersion":"",
+    "shibboleth3IdpRootDir":"",
+    "shibboleth3SpConfDir":"",
+    "organizationName":"",
+    "idp3SigningCert":"/etc/certs/idp-signing.crt",
+    "idp3EncryptionCert":"/etc/certs/idp-encryption.crt"
 }

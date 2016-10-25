@@ -51,7 +51,7 @@ public class ProfileConfigurationService {
 	private static final String SAML2_ATTRIBUTE_QUERY = "SAML2AttributeQuery";
 
 	@In
-	private Shibboleth2ConfService shibboleth2ConfService;
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@In
 	private TemplateService templateService;
@@ -415,7 +415,7 @@ public class ProfileConfigurationService {
 	private void saveCertificate(GluuSAMLTrustRelationship trustRelationship, Map<String, FileUploadWrapper> fileWrappers, String name) {
 		if (fileWrappers.get(name) != null && fileWrappers.get(name).getStream() != null) {
 			String profileConfigurationCertFileName = StringHelper.removePunctuation(name + trustRelationship.getInum());
-			shibboleth2ConfService.saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
+			shibboleth3ConfService.saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
 			trustRelationship.getProfileConfigurations().get(name)
 					.setProfileConfigurationCertFileName(StringHelper.removePunctuation(profileConfigurationCertFileName));
 		}

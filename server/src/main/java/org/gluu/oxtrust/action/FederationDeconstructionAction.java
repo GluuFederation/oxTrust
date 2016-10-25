@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.Shibboleth2ConfService;
+import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
@@ -45,9 +45,6 @@ public class FederationDeconstructionAction implements Serializable {
 	@Logger
 	private Log log;
 	
-	@In
-	private Shibboleth2ConfService shibboleth2ConfService;
-
 	private List<String> bulkFiltered;
 
 	private List<String> managedFiltered;
@@ -178,7 +175,7 @@ public class FederationDeconstructionAction implements Serializable {
 		if (StringHelper.isNotEmpty(filterString)) {
 			filteredEntities = new ArrayList<String>();
 			String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
-					+ Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator;
+					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 			File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 			for (String entity : SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile)) {
 				if (entity.toLowerCase().contains(filterString.toLowerCase())) {

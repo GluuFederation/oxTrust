@@ -66,6 +66,7 @@ public class TemplateService implements Serializable {
 			FileUtils.writeStringToFile(new File(confFile), conf, "UTF-8");
 		} catch (IOException ex) {
 			log.error("Failed to write IDP configuration file '{0}'", ex, confFile);
+			ex.printStackTrace();
 			return false;
 		}
 
@@ -89,22 +90,22 @@ public class TemplateService implements Serializable {
 
 			// Set right folder for file loader
 			if (loaderType.indexOf("file") == 0) {
-				String folder1 = OxTrustConfiguration.DIR + "shibboleth2"
+				String folder1 = OxTrustConfiguration.DIR + "shibboleth3"
 						+ File.separator + "idp";
-				String folder2 = OxTrustConfiguration.DIR + "shibboleth2"
+				String folder2 = OxTrustConfiguration.DIR + "shibboleth3"
 						+ File.separator + "sp";
 				String folder3 = OxTrustConfiguration.DIR + "ldif";
-				String folder4 = OxTrustConfiguration.DIR + "shibboleth2"
+				String folder4 = OxTrustConfiguration.DIR + "shibboleth3"
 						+ File.separator + "idp" + File.separator + "MetadataFilter";
-				String folder5 = OxTrustConfiguration.DIR + "shibboleth2"
+				String folder5 = OxTrustConfiguration.DIR + "shibboleth3"
 						+ File.separator + "idp" + File.separator + "ProfileConfiguration";
 				String folder6 = OxTrustConfiguration.DIR + "template"
 						+ File.separator + "conf";
 				String folder7 = OxTrustConfiguration.DIR + "template"
-						+ File.separator + "shibboleth2";
+						+ File.separator + "shibboleth3";
 				properties.setProperty("file.resource.loader.path", folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
 						+ folder5 + ", " + folder6  + ", " + folder7);
-				log.info("file.resource.loader.path" + folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
+				log.info("file.resource.loader.path = " + folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
 						+ folder5 + ", " + folder6 + ", " + folder7);
 			}
 		} catch (IOException ex) {
