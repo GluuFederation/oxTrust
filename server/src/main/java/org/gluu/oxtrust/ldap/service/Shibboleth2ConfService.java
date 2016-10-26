@@ -424,8 +424,6 @@ public class Shibboleth2ConfService implements Serializable {
 		return attrParams;
 	}
 
-	
-
 	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams,
 			String idpMetadataFolder) {
 		VelocityContext context = new VelocityContext();
@@ -947,8 +945,7 @@ public class Shibboleth2ConfService implements Serializable {
 				obsoleteMetadata
 						.add(new SubversionFile(SHIB2_IDP + File.separator + SHIB2_IDP_METADATA_FOLDER, metadata.getAbsolutePath()));
 			}
-			SubversionService.instance().commitShibboleth2ConfigurationFiles(OrganizationService.instance().getOrganization(),
-					new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Metadata files that are no longer used");
+			// SubversionService.instance().commitShibboleth2ConfigurationFiles(OrganizationService.instance().getOrganization(), new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Metadata files that are no longer used");
 			for (SubversionFile file : obsoleteMetadata) {
 				new File(file.getLocalFile()).delete();
 			}
@@ -986,8 +983,7 @@ public class Shibboleth2ConfService implements Serializable {
 				obsoleteMetadata.add(new SubversionFile(SHIB2_IDP + File.separator + SHIB2_IDP_METADATA_CREDENTIALS_FOLDER, credential
 						.getAbsolutePath()));
 			}
-			SubversionService.instance().commitShibboleth2ConfigurationFiles(OrganizationService.instance().getOrganization(),
-					new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Credentials files that are no longer used");
+			// SubversionService.instance().commitShibboleth2ConfigurationFiles(OrganizationService.instance().getOrganization(), new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Credentials files that are no longer used");
 			for (SubversionFile file : obsoleteMetadata) {
 				new File(file.getLocalFile()).delete();
 			}

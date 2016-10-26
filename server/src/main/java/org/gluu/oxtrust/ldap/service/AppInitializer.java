@@ -84,28 +84,17 @@ public class AppInitializer {
 
 	// We are going to start connection checker every 120 seconds
 	public static final long CONNECTION_CHECKER_INTERVAL = (long) (1000L * 60 * 2);
-	// We are going to start status checker every 60 seconds
-	public static final long STATUS_CHECKER_INTERVAL = (long) (1000L * 61 * 1);
 	// We are going to start svn synchronization every 5 minutes
 	public static final long SVN_SYNC_INTERVAL = (long) (1000L * 62 * 5);
 
 	private static final long VALIDATION_INTERVAL = (long) (1000L * 63 * 1);
 	private static final long LOG_MONITOR_INTERVAL = (long) (1000L * 60 * 64 * 24);
 
-	// Group count and person count will now be checked daily
-	public static final long STATUS_CHECKER_DAILY = (long) (1000L * 60 * 65 * 24);
-
 	@Logger
 	private Log log;
 
 	@In
 	private SvnSyncTimer svnSyncTimer;
-
-	@In
-	private StatusCheckerTimer statusCheckerTimer;
-
-	@In
-	private StatusCheckerDaily statusCheckerDaily;
 
 	@In
 	private MetadataValidationTimer metadataValidationTimer;
@@ -158,9 +147,6 @@ public class AppInitializer {
 
 //		checkAndUpdateLdapbaseConfiguration(); // We do not need to create ldapbase configuration any more because we 
 											   //supply working ldap data with either dashboard or python setup sript.
-		
-		startStatusChecker();
-		startDailyStatusChecker();
 		startSvnSync();
 		// Asynchronous metadata validation service
 		startMetadataValidator();
@@ -260,24 +246,35 @@ public class AppInitializer {
 	}
 	
 	private boolean createShibbolethConfiguration() {
+
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		boolean createConfig = applicationConfiguration.isConfigGeneration();
 		log.info("IDP config generation is set to " + createConfig);
 		
 		if (createConfig) {
-			String gluuSPInum = null;
+
+			String gluuSPInum;
 			GluuSAMLTrustRelationship gluuSP;
+
 			try {
+
 				gluuSPInum = ApplianceService.instance().getAppliance().getGluuSPTR();
+
+				// log.info("########## gluuSPInum = " + gluuSPInum);
+
 				gluuSP = new GluuSAMLTrustRelationship();
 				gluuSP.setDn(TrustService.instance().getDnForTrustRelationShip(gluuSPInum));
+
 			} catch (EntryPersistenceException ex) {
 				log.error("Failed to determine SP inum", ex);
 				return false;
 			}
 
+			// log.info("########## gluuSP.getDn() = " + gluuSP.getDn());
+
 			boolean servicesNeedRestarting = false;
 			if (gluuSPInum == null || ! TrustService.instance().containsTrustRelationship(gluuSP)) {
+
 				log.info("No trust relationships exist in LDAP. Adding gluuSP");
 //				GluuAppliance appliance = ApplianceService.instance().getAppliance();
 //				appliance.setGluuSPTR(null);
@@ -285,20 +282,37 @@ public class AppInitializer {
 				TrustService.instance().addGluuSP();
 				servicesNeedRestarting = true;
 			}
-			gluuSP = TrustService.instance().getRelationshipByInum(
-					ApplianceService.instance().getAppliance().getGluuSPTR());
+
+			gluuSP = TrustService.instance().getRelationshipByInum(ApplianceService.instance().getAppliance().getGluuSPTR());
 
 			List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
+
+			/*
+			if (trustRelationships != null && !trustRelationships.isEmpty()) {
+				for (GluuSAMLTrustRelationship gluuSAMLTrustRelationship : trustRelationships) {
+					log.info("########## gluuSAMLTrustRelationship.getDn() = " + gluuSAMLTrustRelationship.getDn());
+				}
+			}
+			*/
+
+			String shibbolethVersion = applicationConfiguration.getShibbolethVersion();
+			log.info("########## shibbolethVersion = " + shibbolethVersion);
+
+			Shibboleth3ConfService.instance().generateMetadataFiles(gluuSP);
+			Shibboleth3ConfService.instance().generateConfigurationFiles(trustRelationships);
+
+			/*
 			Shibboleth2ConfService.instance().generateIdpConfigurationFiles();
 			Shibboleth2ConfService.instance().generateConfigurationFiles(trustRelationships);
 			Shibboleth2ConfService.instance().generateMetadataFiles(gluuSP);
+			*/
 
-			Shibboleth2ConfService.instance().removeUnusedCredentials();
-			Shibboleth2ConfService.instance().removeUnusedMetadata();
+			Shibboleth3ConfService.instance().removeUnusedCredentials();
+			Shibboleth3ConfService.instance().removeUnusedMetadata();
+
 			if (servicesNeedRestarting) {
 				ApplianceService.instance().restartServices();
 			}
-
 		}
 
 		return true;
@@ -318,25 +332,6 @@ public class AppInitializer {
 				.getProperties(), oxTrustConfiguration.getCryptoConfigurationSalt()));
 		}
 		Contexts.getApplicationContext().set(connectionProviderComponentName, connectionProvider);
-	}
-
-	/**
-	 * Schedule status checker
-	 */
-	private void startStatusChecker() {
-		// Schedule first check after 60 seconds
-		final Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, 60);
-
-		statusCheckerTimer.scheduleStatusChecking(calendar.getTime(), STATUS_CHECKER_INTERVAL);
-	}
-
-	private void startDailyStatusChecker() {
-		// Schedule first check after 60 seconds
-		final Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, 10*60);
-
-		statusCheckerDaily.scheduleStatusChecking(calendar.getTime(), STATUS_CHECKER_DAILY);
 	}
 
 	private void startSvnSync() {

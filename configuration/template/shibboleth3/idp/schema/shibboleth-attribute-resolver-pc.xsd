@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:pc="urn:mace:shibboleth:2.0:resolver:pc" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" targetNamespace="urn:mace:shibboleth:2.0:resolver:pc" elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/>
+        
+    <import namespace="urn:mace:shibboleth:2.0:resolver:dc" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd"/>
+
+    <complexType name="Transient">
+        <annotation>
+            <documentation>
+                A principal connector that returns the SAML name identifier value as the principal name.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BasePrincipalConnectorType">
+                <attribute name="storageServiceRef" type="string" default="shibboleth.StorageService">
+                    <annotation>
+                        <documentation>
+                            The identifier of the storage service used to store and retrieve principal names.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="noResultIsError" type="boolean">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning no results should be considered an error. 
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="CryptoTransient">
+        <annotation>
+            <documentation>
+                A principal connector that decrypts the SAML name identifier value as the principal name.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BasePrincipalConnectorType">
+                <attribute name="dataSealerRef" type="string" use="required">
+                    <annotation>
+                        <documentation>Object used to decrypt identifiers</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="StoredId">
+        <annotation>
+            <documentation>
+                A principal connector that returns the SAML name identifier value as the principal name.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BasePrincipalConnectorType">
+                <attribute name="storedIdDataConnectorRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the StoredId data connector that created the ID to be resolved.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Direct">
+        <annotation>
+            <documentation>
+                A principal connector that returns the SAML name identifier value as the principal name.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BasePrincipalConnectorType"/>
+        </complexContent>
+    </complexType>
+    
+</schema>

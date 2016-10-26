@@ -36,7 +36,6 @@ public class LdapStatusTimer {
     @Logger
     private Log log;
 
-
     private AtomicBoolean isActive;
 
     @Observer("org.jboss.seam.postInitialization")

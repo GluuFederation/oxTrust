@@ -540,6 +540,36 @@
             "id": "scimTestModeAccessToken",
             "type": "string",
             "readonly": true
+        },
+        "shibbolethVersion": {
+            "id": "shibbolethVersion",
+            "type": "string",
+            "readonly": true
+        },
+        "shibboleth3IdpRootDir": {
+            "id": "shibboleth3IdpRootDir",
+            "type": "string",
+            "readonly": true
+        },
+        "shibboleth3SpConfDir": {
+            "id": "shibboleth3SpConfDir",
+            "type": "string",
+            "readonly": true
+        },
+        "organizationName": {
+            "id": "organizationName",
+            "type": "string",
+            "readonly": true
+        },
+        "idp3SigningCert": {
+            "id": "idp3SigningCert",
+            "type": "string",
+            "readonly": true
+        },
+        "idp3EncryptionCert": {
+            "id": "idp3EncryptionCert",
+            "type": "string",
+            "readonly": true
         }
     },
     "required": [
@@ -635,6 +665,12 @@
         "rptConnectionPoolValidateAfterInactivity",
         "rptConnectionPoolCustomKeepAliveTimeout",
         "scimTestMode",
-        "scimTestModeAccessToken"
+        "scimTestModeAccessToken",
+        "shibbolethVersion",
+        "shibboleth3IdpRootDir",
+        "shibboleth3SpConfDir",
+        "organizationName",
+        "idp3SigningCert",
+        "idp3EncryptionCert"
     ]
 }

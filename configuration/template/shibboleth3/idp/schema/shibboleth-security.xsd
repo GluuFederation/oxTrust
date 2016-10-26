@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sec="urn:mace:shibboleth:2.0:security" targetNamespace="urn:mace:shibboleth:2.0:security" elementFormDefault="qualified">
+        
+    <!-- CREDENTIAL RELATED OBJECTS -->
+    <element name="Credential" type="sec:CredentialType"/>
+
+    <complexType name="X509Inline">
+        <annotation>
+            <documentation>
+                Allows credentials to be components to be specified as content within the child elements. Keys,
+                Certificates, and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:X509Credential"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="X509Filesystem">
+        <annotation>
+            <documentation>
+                Allows credential components to be specified by filesystem path. Keys, Certificates, and CRLs may be
+                PKCS#12, DER, or PEM encoded and may be encrypted or not.
+                
+                This credential is deprecated in favor of X509ResourceBacked
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:X509Credential"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="X509ResourceBacked">
+        <annotation>
+            <documentation>
+                Allows credential components to be loaded from a Spring Resource. Keys, Certificates, and CRLs may be
+                PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:X509Credential"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="X509Credential" abstract="true">
+        <annotation>
+            <documentation>
+                Defines the components of an X.509 credential.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:CredentialType">
+                <sequence>
+                    <element name="PrivateKey" minOccurs="0">
+                        <annotation>
+                            <documentation>Credential's RSA/DSA private key.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="Certificate" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Certificate associated with the credential. More than one certificate
+                                may be present within a single element, if the encoding form used allows
+                                it, or multiple certificate elements may be used, or both.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="CRL" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Certificate revocation list associated with the Credential. More than
+                                one CRL may be present within a single element, if the encoding form
+                                used allows it, or multiple CRL elements may be used, or both.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="BasicInline">
+        <annotation>
+            <documentation>
+                Allows credentials to be components to be specified as content within the child elements.
+                Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:BasicCredential"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="BasicFilesystem">
+        <annotation>
+            <documentation>
+                Allows credential components to be specified by filesystem path.
+                Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+                
+                This is deprecated in favor of BasicResourceBacked
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:BasicCredential"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="BasicResourceBacked">
+        <annotation>
+            <documentation>
+                Allows credential components to be specified by Spring Resource specification.
+                Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:BasicCredential"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="BasicCredential" abstract="true">
+        <annotation>
+            <documentation>
+                Defines the components of a basic credential containing either a 
+                public key and optional private key, or a symmetric (secret) key.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:CredentialType">
+                <sequence>
+                    <choice>
+                        <element name="SecretKey">
+                            <annotation>
+                                <documentation>Credential's symmetric key.</documentation>
+                            </annotation>
+                            <complexType>
+                                <simpleContent>
+                                    <extension base="string">
+                                        <attribute name="algorithm" type="string" use="required">
+                                            <annotation>
+                                                <documentation>
+                                                    The JCA key algorithm identifier.
+                                                </documentation>
+                                            </annotation>
+                                        </attribute>
+                                        <attribute name="encoding" use="required">
+                                            <annotation>
+                                                <documentation>
+                                                    The encoded format of the key data. Defaults to: base64.
+                                                </documentation>
+                                            </annotation>
+                                            <simpleType>
+                                                <restriction base="string">
+                                                    <enumeration value="binary" />
+                                                    <enumeration value="hex" />
+                                                    <enumeration value="base64" />
+                                                </restriction>
+                                            </simpleType>
+                                        </attribute>
+                                    </extension>
+                                </simpleContent>
+                            </complexType>
+                        </element>
+                        <sequence>
+                            <element name="PrivateKey" minOccurs="0">
+                                <annotation>
+                                    <documentation>Credential's RSA/DSA private key.</documentation>
+                                </annotation>
+                            </element>
+                            <element name="PublicKey">
+                                <annotation>
+                                    <documentation>Credential's RSA/DSA public key.</documentation>
+                                </annotation>
+                            </element>
+                        </sequence>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="CredentialType" abstract="true">
+        <annotation>
+            <documentation>Base type for credential information.</documentation>
+        </annotation>
+        <sequence>
+            <element name="KeyName" type="string" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>Name(s) of the key this credential represents.</documentation>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="id" type="string">
+            <annotation>
+                <documentation>Unique id for this credential.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="entityID" type="string">
+            <annotation>
+                <documentation>Identifier for the entity which owns this credential.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="usage" type="sec:CredentialUsageType">
+            <annotation>
+                <documentation>
+                    Usage type for this credential. Acceptable values are "Encryption" or "Signing". If no usage type is
+                    given components may choose to use the credential for either encryption or signing operations.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <simpleType name="CredentialUsageType">
+        <restriction base="string">
+            <enumeration value="Encryption"/>
+            <enumeration value="Signing"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="PasswordBearingString">
+        <simpleContent>
+            <extension base="string">
+                <attribute name="password" type="string">
+                    <annotation>
+                        <documentation>
+                            Password associated with the resource identified by elements of this type.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </simpleContent>
+    </complexType>
+    
+    <!-- VALIDATION RELATED OBJECTS, FOR EXAMPLE PKIX INFO -->
+    <element name="ValidationInfo" type="sec:ValidationInfoType"/>
+    
+    <element name="ValidationOptions" type="sec:ValidationOptionsType"/>
+    
+    <complexType name="PKIXInline">
+        <annotation>
+            <documentation>
+                Allows PKIX validation info components to be specified as content within the child elements.
+                Certificates and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:PKIXValidationInfoType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PKIXFilesystem">
+        <annotation>
+            <documentation>
+                Allows PKIX validation info components to be specified by filesystem path.
+                Certificates, and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+                
+                This method is deprecated in favor of the PKIXResourceBacked type employing a filesystem resource.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:PKIXValidationInfoType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PKIXResourceBacked">
+        <annotation>
+            <documentation>
+                Allows PKIX validation info components to be specified by a Spring Resource specification.
+                Certificates, and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:PKIXValidationInfoType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PKIXValidationInfoType" abstract="true">
+        <annotation>
+            <documentation>
+                Defines the components of a set of PKIX validation information.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:ValidationInfoType">
+                <sequence>
+                    <element name="Certificate" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Trusted certificates, typically of root and intermediate CA's , which are used
+                                as input to the PKIX validation process.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="CRL" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Certificate revocation lists which are used as input to the PKIX validation process.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="verifyDepth" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum path verification depth to consider when constructing a PKIX cert path.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="ValidationInfoType" abstract="true">
+        <annotation>
+            <documentation>Base type for validation information.</documentation>
+        </annotation>
+        <attribute name="id" type="string" use="required">
+            <annotation>
+                <documentation>Unique id for this validation info set.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    
+    <complexType name="ValidationOptionsType">
+        <annotation>
+            <documentation>Type for basic PKIX validation options set for PKIX trust engines.</documentation>
+        </annotation>
+        <attribute name="processEmptyCRLs" type="string">
+            <annotation>
+                <documentation>Flag as to whether empty CRL's will be processed. Defaults to true.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="processExpiredCRLs" type="string">
+            <annotation>
+                <documentation>Flag as to whether expired CRL's will be processed. Defaults to true.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="processCredentialCRLs" type="string">
+            <annotation>
+                <documentation>
+                    Flag as to whether CRL's supplied in the untrusted credential 
+                    being evaluated will be processed. Defaults to true.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="defaultVerificationDepth" type="string">
+            <annotation>
+                <documentation>Default PKIX path verification depth. Defaults to 1.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    
+    <complexType name="CertPathValidationOptionsType">
+        <annotation>
+            <documentation>
+                Type specialization for PKIX validation options set for PKIX trust engines 
+                using the Java CertPath API.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:ValidationOptionsType">
+                <sequence>
+                    <element name="PolicyOID" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Sets the initial policy identifiers (OID strings) for the underlying CertPath Provider,
+                                i.e. those policies that are acceptable to the certificate user.
+                                See also RFC 5280, section 6.1.1 (c).
+                                If no policy identifier is specified, any policy is considered acceptable.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="forceRevocationEnabled" type="string">
+                    <annotation>
+                        <documentation>
+                            If true, the revocation behavior of the underlying CertPath provider will be forced to the
+                            value supplied by the revocationEnabled attribute. If false, the revocation behavior
+                            of the underlying provider will be determined by the PKIXTrustEvaluator implementation.
+                            Defaults to false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="revocationEnabled" type="string">
+                    <annotation>
+                        <documentation>
+                            If the attribute forceRevocationEnabled is true, the revocation behavior of the underlying CertPath
+                            Provider will be forced to this value. If the former is false, the revocation behavior
+                            of the underlying provider will be determined by the PKIXTrustEvaluator implementation.
+                            Defaults to true.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="policyMappingInhibit" type="string">
+                    <annotation>
+                        <documentation>
+                            Sets the policy mapping inhibited flag for the underlying CertPath Provider.
+                            See also RFC 5280, section 6.1.1 (e).
+                            Defaults to false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="anyPolicyInhibit" type="string">
+                    <annotation>
+                        <documentation>
+                            Sets the any policy inhibited flag for the underlying CertPath Provider.
+                            See also RFC 5280, section 6.1.1 (g).
+                            Defaults to false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+            </complexContent>
+    </complexType>
+    
+    <!-- TRUST ENGINE RELATED OBJECTS -->
+    <element name="TrustEngine" type="sec:TrustEngineType"/>
+    
+    <complexType name="Chaining">
+        <annotation>
+            <documentation>
+                Trust engine which chains together other trust engine instances, evaluating a token
+                against each engine in chain order.
+                
+                If the token to be evaluated can be established as trusted by one member of the chain,
+                then the token is trusted.  Otherwise it is evaluated as untrusted.
+                
+                Trust chain members must all evaluate tokens of a compatible type,
+                for example a Credential or Signature.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <choice minOccurs="1" maxOccurs="unbounded">
+                    <element ref="sec:TrustEngine"/>
+                    <element name="TrustEngineRef">
+                        <annotation>
+                            <documentation>Reference to a trust engine.</documentation>
+                        </annotation>
+                        <complexType>
+                            <attribute name="ref">
+                                <annotation>
+                                    <documentation>Bean reference id for a trust engine declared elsewhere.</documentation>
+                                </annotation>
+                            </attribute>
+                        </complexType>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SignatureChaining">
+        <annotation>
+            <documentation>
+                Trust engine which chains together other signature trust engine instances, evaluating the signature
+                against each engine in chain order.
+                
+                If the signature to be evaluated can be established as trusted by one member of the chain,
+                then the signature is trusted.  Otherwise it is evaluated as untrusted.
+                
+                Trust chain members must all evaluate signatures.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <choice minOccurs="1" maxOccurs="unbounded">
+                    <element ref="sec:TrustEngine"/>
+                    <element name="TrustEngineRef">
+                        <annotation>
+                            <documentation>Reference to a trust engine.</documentation>
+                        </annotation>
+                        <complexType>
+                            <attribute name="ref">
+                                <annotation>
+                                    <documentation>Bean reference id for a trust engine declared elsewhere.</documentation>
+                                </annotation>
+                            </attribute>
+                        </complexType>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <!-- Trust engines which use metadata provider-based resolvers -->
+    <complexType name="MetadataExplicitKey">
+        <annotation>
+            <documentation>
+                Trust engine used to validate a key against trusted keys obtained from metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the metadata provider used to look up trust information.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="MetadataPKIXX509Credential">
+        <annotation>
+            <documentation>
+                Trust engine used to validate an X509 credential against PKIX information from metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <sequence>
+                    <element ref="sec:ValidationOptions" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                Set of options to influence PKIX trust validation processing.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the metadata provider used to look up trust information.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="MetadataExplicitKeySignature">
+        <annotation>
+            <documentation>
+                Trust engine used to validate signatures with keys from metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the metadata provider used to look up trust information.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="MetadataPKIXSignature">
+        <annotation>
+            <documentation>
+                Trust engine used to validate signatures with PKIX-validated certificates from metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <sequence>
+                    <element ref="sec:ValidationOptions" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                Set of options to influence PKIX trust validation processing.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the metadata provider used to look up trust information.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <!-- Trust engines which use resolvers configured via static information -->
+    <complexType name="StaticExplicitKey">
+        <annotation>
+            <documentation>
+                Trust engine used to validate a key against statically-configured trusted keys.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <sequence>
+                    <element ref="sec:Credential" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A trusted credential to be included in the static trusted credential set.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StaticPKIXX509Credential">
+        <annotation>
+            <documentation>
+                Trust engine used to validate an X509 credential against statically-configured PKIX information.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <sequence>
+                    <element name="TrustedName" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Specifies a trusted name against which the target entity 
+                                certificate's public key must be bound for trust processing to be successful.
+                                
+                                Supported trusted name formats are:
+                                1) Subject DN in RFC 2253 or RFC 1779 format
+                                2) CN component of subject DN
+                                3) Subject alt names (DNS and URI types)
+                                
+                                If multiple instances of this element are present, trust processing
+                                is successful if the target entity certificate matches at least one of them.
+                                
+                                Trusted names are ignored and therefore optional if trustedNameCheckEnabled = false.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="sec:ValidationInfo" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                PKIX validation info against which to validate an X509 credential.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="sec:ValidationOptions" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                Set of options to influence PKIX trust validation processing.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="trustedNameCheckEnabled" type="string">
+                    <annotation>
+                        <documentation>
+                            If true, the candidate X509Crednetial's certificate must match one of the 
+                            names indicated via the TrustedName child elements.
+                            Defaults to true.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StaticExplicitKeySignature">
+        <annotation>
+            <documentation>
+                Trust engine used to validate a signature against statically-configured trusted keys.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <sequence>
+                    <element ref="sec:Credential" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A trusted credential to be included in the static trusted credential set.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StaticPKIXSignature">
+        <annotation>
+            <documentation>
+                Trust engine used to validate signatures against statically-configured PKIX information.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <sequence>
+                    <element name="TrustedName" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Specifies a trusted name against which the target entity 
+                                certificate's public key must be bound for trust processing to be successful.
+                                
+                                Supported trusted name formats are:
+                                1) Subject DN in RFC 2253 or RFC 1779 format
+                                2) CN component of subject DN
+                                3) Subject alt names (DNS and URI types)
+                                
+                                If multiple instances of this element are present, trust processing
+                                is successful if the target entity certificate matches at least one of them.
+                                
+                                Trusted names are ignored and therefore optional if trustedNameCheckEnabled=false.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="sec:ValidationInfo" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                PKIX validation info against which to validate a signature.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="sec:ValidationOptions" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                Set of options to influence PKIX trust validation processing.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="trustedNameCheckEnabled" type="string">
+                    <annotation>
+                        <documentation>
+                            If true, the candidate X509Crednetial's certificate must match one of the 
+                            names indicated via the TrustedName child elements.
+                            Defaults to true.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="TrustEngineType" abstract="true">
+        <attribute name="id" type="string" use="required">
+            <annotation>
+                <documentation>
+                    Unique ID of the trust engine.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    
+    <!-- SECURITY POLICY RELATED OBJECTS -->
+    <element name="SecurityPolicy" type="sec:SecurityPolicyType"/>
+    <complexType name="SecurityPolicyType">
+        <annotation>
+            <documentation>
+                Security policies define a set of rules that are evaluated against incoming messages to
+                determine whether the messages should be processed.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element ref="sec:Rule" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="id" type="string" use="required">
+            <annotation>
+                <documentation>
+                    A unique ID for the policy.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <element name="Rule" type="sec:SecurityPolicyRuleType"/>
+    
+    <complexType name="MandatoryMessageAuthentication">
+        <annotation>
+            <documentation>
+                A security rule that requires that an incoming message be authenticated.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="ClientCertAuth">
+        <annotation>
+            <documentation>
+                A security rule that validates a client certificate, available from the inbound transport, with a trust engine.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType">
+                <attribute name="trustEngineRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            Reference to the trust engine used to validate the signature. 
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SecurityPolicyRuleType" abstract="true">
+        <annotation>
+            <documentation>
+                Base type of security policy rules.
+            </documentation>
+        </annotation>
+    </complexType>
+</schema>

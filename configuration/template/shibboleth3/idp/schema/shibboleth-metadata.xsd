@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata" xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
+    xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:res="urn:mace:shibboleth:2.0:resource" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" elementFormDefault="qualified">
+
+    <annotation>
+        <documentation>Schema describing metadata providers and filters.</documentation>
+    </annotation>
+
+    <import namespace="urn:oasis:names:tc:SAML:2.0:assertion"
+        schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd"/>
+    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata"
+        schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:resource"
+        schemaLocation="http://shibboleth.net/schema/idp/shibboleth-resource.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:security"
+        schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
+
+    <element name="MetadataProvider" type="shibmd:MetadataProviderType">
+        <annotation>
+            <documentation>Defines a provider of SAML 2 metadata information.</documentation>
+        </annotation>
+    </element>
+    <complexType name="ChainingMetadataProvider">
+        <annotation>
+            <documentation>
+                A metadata provider that composes other metadata providers. During a lookup operation member providers
+                are searched in the order they listed in this providers configuration until one provides a response to
+                the lookup. That response is then returned, no subsequent member providers are inspected. Note, that
+                metadata filters and the require valid metadata flag expressed on this configuration overrides those
+                settings on member providers.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <sequence>
+                    <element ref="shibmd:MetadataProvider" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A member metadata provider that will be searched for information.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ResourceBackedMetadataProvider">
+        <annotation>
+            <documentation>A metadata provider that reads metadata from a Resource.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:ReloadingMetadataProviderType">
+                <sequence>
+                    <element name="MetadataResource" type="res:ResourceType">
+                        <annotation>
+                            <documentation>The resource from which metadata will be read.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="maxCacheDuration" type="string">
+                    <annotation>
+                        <documentation>This property is deprecated, use maxRefreshDelay instead.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="InlineMetadataProvider">
+        <annotation>
+            <documentation>A metadata provider that allows SAML 2 metadata to be specified inline.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <choice>
+                    <element ref="md:EntitiesDescriptor">
+                        <annotation>
+                            <documentation>A SAML 2 metadata EntitiesDescriptor declaration.</documentation>
+                        </annotation>
+                    </element>
+                    <element ref="md:EntityDescriptor">
+                        <annotation>
+                            <documentation>A SAML 2 metadata EntitiesDescriptor declaration.</documentation>
+                        </annotation>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="FileBackedHTTPMetadataProvider">
+        <annotation>
+            <documentation>
+                A metadata provider that periodically pulls metadata from a given URL. If the metadata is valid it is
+                stored to disk. If the provided URL can not be reached or the metadata retrieved is invalid this
+                provider will fall back to its on-disk copy.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:HTTPMetadataProvider">
+                <attribute name="backingFile" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The path to the temporary file used to store valid metadata on-disk.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="HTTPMetadataProvider">
+        <annotation>
+            <documentation>A metadata provider that periodically pulls metadata from a given URL.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:ReloadingMetadataProviderType">
+                <sequence>
+                    <element name="TLSTrustEngine"  minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                                This element conflicts with and is overridden by the tlsTrustEngineRef attribute.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element ref="security:TrustEngine" minOccurs="1" maxOccurs="1" />
+                            </sequence>
+                        </complexType>
+                    </element>
+                </sequence>
+                <attribute name="httpClientRef" type="string">
+                    <annotation>
+                        <documentation>
+	                        The reference to an externally defined Spring bean which specifies an
+	                        org.apache.http.client.HttpClient object.
+	                        
+	                        This attribute conflicts with all other settings except metadata URL
+                       </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="metadataURL" type="string" use="required">
+                    <annotation>
+                        <documentation>The URL from which to retrieve the metadata.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="disregardSslCertificate" type="string">
+                    <annotation>
+                        <documentation>This is deprecated, use disregardTLSCertificate instead.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="disregardTLSCertificate" type="string">
+                    <annotation>
+                        <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maintainExpiredMetadata" type="string">
+                    <annotation>
+                        <documentation>This is deprecated, use requireValidMetadata instead.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheDuration" type="string">
+                    <annotation>
+                        <documentation> This is deprecated, use maxRefreshDelay instead.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="requestTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time to wait for the remote server to response.
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyHost" type="string">
+                    <annotation>
+                        <documentation>
+                            Hostname of the HTTP proxy through which connections will be made.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyPort" type="string">
+                    <annotation>
+                        <documentation>Port of the HTTP proxy through which connections will be made.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyUser" type="string">
+                    <annotation>
+                        <documentation>User name used with the HTTP proxy through which connections will be made.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyPassword" type="string">
+                    <annotation>
+                        <documentation>Password used with the HTTP proxy through which connections will be made.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="basicAuthUser" type="string">
+                    <annotation>
+                        <documentation>
+                            The user name to provide, during basic authentication, when connecting to the remote server.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="basicAuthPassword" type="string">
+                    <annotation>
+                        <documentation>
+                            The password to provide, during basic authentication, when connecting to the remote server.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
+                    <annotation>
+                        <documentation>The type of HttpClient caching to perform. Defaults to 'none'.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpCacheDirectory" type="string">
+                    <annotation>
+                        <documentation>
+                            The path to the HttpClient cache directory. Only used if caching type is 'file'.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpMaxCacheEntries" type="string">
+                    <annotation>
+                        <documentation>The maximum number of responses to cache.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpMaxCacheEntrySize" type="string">
+                    <annotation>
+                        <documentation>The maximum response body size which may be cached, in bytes.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="tlsTrustEngineRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally-defined Spring bean which specifies an
+                            instance of TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                            This attribute conflicts with and overrides the TLSTrustEngine child element.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <!-- Need to deal with socket factory -->
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <simpleType name="HttpClientCachingType">
+        <restriction base="string">
+            <enumeration value="none"/>
+            <enumeration value="file"/>
+            <enumeration value="memory"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="FilesystemMetadataProvider">
+        <annotation>
+            <documentation>A metadata provider that reads SAML2 metadata from the filesystem.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:ReloadingMetadataProviderType">
+                <attribute name="metadataFile" type="string" use="required">
+                    <annotation>
+                        <documentation>The path to the metadata file.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maintainExpiredMetadata" type="string">
+                    <annotation>
+                        <documentation>This is deprecated, use requireValidMetadata instead.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="DynamicHTTPMetadataProvider">
+        <annotation>
+            <documentation>
+                A metadata provider that dynamically fetches metadata from an HTTP server.
+                
+                Four strategies are supported for constructing the metadata request URL based on the requested entityID.
+                Only one strategy may be configured for any given instance of a metadata provider.
+                
+                Three correspond directly to the 3 child element types of the this type: Template, Regex and MetadataQueryProtocol.
+                See those individual elements for details.
+                
+                The fourth, used when none of the above 3 child elements is present, is to treat an HTTP or HTTPS entityID as the
+                metadata request URL.  This corresponds to the "well-known location" mechanism, as defined in the SAML 2.0
+                Metadata specification, section 4.1.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:AbstractDynamicHTTPMetadataProviderType">
+                <choice minOccurs="0" maxOccurs="1">
+                    <element name="Template">
+                        <annotation>
+                            <documentation>
+                                Constructs the metadata request URL by means of a simple transform on the
+                                template specified by this element. The entityID is substituted into the
+                                template parameter "${entityID}". If the element contains an encoded attribute
+                                set to "false", the value will be replaced directly, otherwise it will be URL-encoded.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="velocityEngine" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Name of the Velocity Engine defined within the application.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                    <attribute name="encoded" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Boolean flag indicating whether the entityID should be encoded
+                                                before substitution into the template.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                    <attribute name="transformRef" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Reference to an optional transform function for the entity ID.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                    <element name="Regex">
+                        <annotation>
+                            <documentation>
+                                Constructs the metadata request URL by means of a complex transform containing a match attribute containing a 
+                                regular expression against which the entityID value is applied, and whose element content contains a 
+                                replacement expression to run based on the results of the match. 
+                                Only numeric/positional group references (e.g. $1) are supported.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="match" type="string" use="required">
+                                        <annotation>
+                                            <documentation>
+                                                Regular expression against which the entityID is evaluated.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                    <element name="MetadataQueryProtocol">
+                        <annotation>
+                            <documentation>
+                                Constructs a metadata request URL based on the requirements of the Metadata Query Protocol.
+                                The content of this element will be used as the "Base URL" as defined in that specification.
+                                
+                                Base protocol: https://datatracker.ietf.org/doc/draft-young-md-query/
+                                
+                                SAML profile: http://datatracker.ietf.org/doc/draft-young-md-query-saml/
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="transformRef" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Reference to an optional transform function for the entity ID.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+                
+    <complexType name="AbstractDynamicHTTPMetadataProviderType" abstract="true">
+        <annotation>
+            <documentation>A metadata provider that dynamically fetches metadata from an HTTP server.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:DynamicMetadataProviderType"> 
+                <sequence>
+                    <element name="TLSTrustEngine"  minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                                This element conflicts with and is overridden by the tlsTrustEngineRef attribute.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element ref="security:TrustEngine" minOccurs="1" maxOccurs="1" />
+                            </sequence>
+                        </complexType>
+                    </element>
+                </sequence>
+                <attribute name="httpClientRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally defined Spring bean which specifies an
+                            org.apache.http.client.HttpClient object.
+                            
+                            This attribute conflicts with and overrides the other HttpClient-related properties: 
+                            disregardSslCertificate, disregardTLSCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
+                       </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="supportedContentTypes" type="shibmd:MIMETypeListType">
+                    <annotation>
+                        <documentation>
+                            MIME types which are supported by this provider when requesting metadata from the
+                            HTTP server. The HTTP response Content-Type will also be validated against this list.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="disregardSslCertificate" type="string">
+                    <annotation>
+                        <documentation>This is deprecated, use disregardTLSCertificate instead.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="disregardTLSCertificate" type="string">
+                    <annotation>
+                        <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="requestTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time to wait for the remote server to respond.
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyHost" type="string">
+                    <annotation>
+                        <documentation>Hostname of the HTTP proxy through which connections will be made.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyPort" type="string">
+                    <annotation>
+                        <documentation>Port of the HTTP proxy through which connections will be made.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyUser" type="string">
+                    <annotation>
+                        <documentation>User name for the HTTP proxy through which connections will be made.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyPassword" type="string">
+                    <annotation>
+                        <documentation>Password for the HTTP proxy through which connections will be made.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="basicAuthUser" type="string">
+                    <annotation>
+                        <documentation>
+                            The user name to provide, during basic authentication, when connecting to the remote server.
+                            This is a convenience property for the case of a single basic auth user credential, and is 
+                            mutually exclusive with setting a credentialsProviderRef.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="basicAuthPassword" type="string">
+                    <annotation>
+                        <documentation>
+                            The password to provide, during basic authentication, when connecting to the remote server.
+                            This is a convenience property for the case of a single basic auth user credential, and is 
+                            mutually exclusive with setting a credentialsProviderRef.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="credentialsProviderRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally defined Spring bean which specifies an instance of
+                            org.apache.http.client.CredentialsProvider.  Setting a credential provider here overrides
+                            the single credential implied by the attributes basicAuthUser and basicAuthPassword.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
+                    <annotation>
+                        <documentation>
+                            The type of HttpClient caching to perform. Defaults to 'memory'.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpCacheDirectory" type="string">
+                    <annotation>
+                        <documentation>
+                            The path to the HttpClient cache directory. Only used if caching type is 'file'.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpMaxCacheEntries" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum number of responses to cache.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpMaxCacheEntrySize" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum response body size which may be cached, in bytes.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="tlsTrustEngineRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally-defined Spring bean which specifies an
+                            instance of TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                            This attribute conflicts with and overrides the TLSTrustEngine child element.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <!-- Need to deal with socket factory -->
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <simpleType name="MIMETypeListType">
+        <list itemType="string"/>
+    </simpleType>
+
+    <complexType name="DynamicMetadataProviderType" abstract="true">
+        <annotation>
+            <documentation>A metadata provider that fetches metadata dynamically on demand.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <attribute name="parserPoolRef" type="string">
+                    <annotation>
+                        <documentation>ID of the parser pool used to parse incoming metadata.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="taskTimerRef" type="string">
+                    <annotation>
+                        <documentation>ID of the task timer used to schedule background refresh jobs.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="refreshDelayFactor" type="string">
+                    <annotation>
+                        <documentation>
+                            Factor applied to metadata's expiration time in order to determine next refresh
+                            time. Must be between 0.0 and 1.0, exclusive.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="minCacheDuration" type="string">
+                    <annotation>
+                        <documentation>
+                            The minimum duration for which metadata will be cached before it is refreshed.
+                            This value is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxCacheDuration" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum duration for which metadata will be cached before it is refreshed.
+                            This value is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxIdleEntityData" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum duration for which metadata will be allowed to be idle (no requests for it) 
+                            before it is removed from the cache. This value is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="removeIdleEntityData" type="string">
+                    <annotation>
+                        <documentation>A boolean flag indicating whether idle metadata should be removed.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cleanupTaskInterval" type="string">
+                    <annotation>
+                        <documentation>
+                            The interval at which the intern cleanup task should run.  This task performs
+                            background maintenance tasks, such as the removal of expired and idle metadata.
+                            This value is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="ReloadingMetadataProviderType" abstract="true">
+        <annotation>
+            <documentation>A metadata provider that periodically reloads a cached metadata document.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <attribute name="parserPoolRef" type="string">
+                    <annotation>
+                        <documentation>ID of the parser pool used to parse incoming metadata.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="taskTimerRef" type="string">
+                    <annotation>
+                        <documentation>ID of the task timer used to schedule background refresh jobs.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="refreshDelayFactor" type="string">
+                    <annotation>
+                        <documentation>
+                            Factor applied to metadata's expiration time in order to determine next refresh
+                            time. Must be between 0.0 and 1.0, exclusive.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxRefreshDelay" type="string">
+                    <annotation>
+                        <documentation>
+                            Maximum amount time, from the previous, before a metadata refresh cycle runs.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="minRefreshDelay" type="string">
+                    <annotation>
+                        <documentation>
+                            Minimum amount of time, from the previous, before a metadata refresh cycle runs.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="MetadataProviderType" abstract="true">
+        <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="shibmd:MetadataFilter">
+                <annotation>
+                    <documentation>
+                        A filter to be applied to metadata after it has been parsed and validated.
+                    </documentation>
+                </annotation>
+            </element>
+            <element ref="security:TrustEngine">
+                <annotation>
+                    <documentation>Trust engines used by a filter.  This is deprecated.  Place the engine inside the validation filter</documentation>
+                </annotation>
+            </element>
+        </choice>
+        <attribute name="id" type="ID" use="required">
+            <annotation>
+                <documentation>A unique identifier that may be used to identify a particular provider.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="requireValidMetadata" type="string">
+            <annotation>
+                <documentation>
+                    A boolean flag indicating whether the metadata retrieved must be valid. At a minimum, metadata is
+                    valid only if the date expressed in entity's validUntil attribute has not passed. Specific
+                    implementations may add additional constraints.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="failFastInitialization" type="string">
+            <annotation>
+                <documentation>
+                    Determines if the metadata provider "fails fast" during initialization. This means that
+                    if there is a problem initializing the metadata provider it will stop the IdP from starting.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="sortKey" type="string">
+            <annotation>
+                <documentation>
+                    This Integer value determines the processing order for top level Metadata providers.
+                    A top level metadata provider is either the topmost element in a file or the single
+                    metadata provider inside a RelyinPartyGroup.  The metadata processing consults the
+                    provider tree with the lowest sortKey first. 
+                </documentation>
+            </annotation>
+        
+        </attribute> 
+    </complexType>
+
+    <element name="MetadataFilter" type="shibmd:MetadataFilterType">
+        <annotation>
+            <documentation>
+                Defines a filter that is applied to SAML2 metadata after it has been parsed and validated.
+                Filters may be used to remove unnecessary information or perform other transformative logic.
+            </documentation>
+        </annotation>
+    </element>
+
+    <complexType name="ChainingFilter">
+        <annotation>
+            <documentation>
+                A filter that executes other filters in the order they appear in the configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <sequence>
+                    <element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A filter to be applied to metadata after it has been parsed and validated.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RequiredValidUntil">
+        <annotation>
+            <documentation>
+                A filter that requires the presence of a validUntil attribute on the root of the metadata and,
+                optionally, requires that that date not be more than some amount of time in the future.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <attribute name="maxValidityInterval" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time, from now, which the validUntil attribute may be set.
+                            This provides an upper limit to the lifetime of any metadata.
+
+                            Interval is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SchemaValidation">
+        <annotation>
+            <documentation>
+                A filter that performs XML schema validation on incoming metadata documents being processed.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <sequence>
+                    <element name="ExtensionSchema" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Classpath location of schema files that will be used, in addition to those included in
+                                OpenSAML, to validate an incoming metadata file.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="schemaBuilderRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The reference to an externally defined Spring bean which specifies a
+                            org.opensaml.saml.common.xml.SAMLSchemaBuilder object.
+                            
+                            In the absence of this object the bean called shibboleth.SchemaBuilder is used.
+                       </documentation>
+                    </annotation>
+                </attribute>            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SignatureValidation">
+        <annotation>
+            <documentation>
+                A filter that checks, and optionally requires, the signature on the top level of the incoming metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <choice minOccurs="0" maxOccurs="1"> 
+                    <element name="PublicKey" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>The PEM of the public key used to sign the metadata.</documentation>
+                        </annotation>
+                    </element>
+                    <element ref="security:TrustEngine">
+                        <annotation>
+                            <documentation>Trust engines used by a filter.</documentation>
+                        </annotation>
+                    </element>
+                </choice>
+                <attribute name="trustEngineRef" type="string">
+                    <annotation>
+                        <documentation>The ID of the trust engine used to validate the signature.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="requireSignedRoot" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a signature is required on the incoming metadata's root element.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="requireSignedMetadata" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a signature is required on the incoming metadata's root element.
+                            Deprecated: Use 'requireSignedRoot' instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="certificateFile" type="string">
+                    <annotation>
+                        <documentation>
+                            The location of a file containing a certificate with the public key to test against.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="defaultCriteriaRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The ID of the optional set of static criteria supplied to the trust engine.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="signaturePrevalidatorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The ID of the optional signature prevalidator used to validate some
+                            non-cryptographic aspects of the signature, prior to cryptographic verification.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="dynamicTrustedNamesStrategyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The ID of the optional strategy used to build at runtime the set of dynamic
+                            PKIX trusted names supplied to the trust engine via the passed criteria set.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="EntityRoleWhiteList">
+        <annotation>
+            <documentation>
+                A filter that removes roles from an EntityDescriptor that do not appear in the filter's whitelist.
+                Optionally an EntityDescriptor may be completely removed if it does not contain at least one role after
+                the filter. EntitiesDescriptors may be removed if they do not contain at least one entity or entities
+                descriptor after the filtering.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <sequence>
+                    <element name="RetainedRole" type="QName" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                The effective QName for the roles which should not NOT be removed by the filter. The
+                                effective name is the element name for those roles defined within the SAML metadata
+                                specification and the schema type name for those that are not.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="removeRolelessEntityDescriptors" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating that entity descriptors that do not contain at least one role,
+                            after filtering, should be removed.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="removeEmptyEntitiesDescriptors" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating that entities descriptors that do not contain at least one entity
+                            or entities descriptor, after filtering, should be removed.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="EntityAttributes">
+        <annotation>
+            <documentation>
+                A filter that adds SAML EntityAttribute extension content to metadata in order to drive software
+                behavior based on them. Sequences of Attribute elements are supplied, and when an Entity or
+                ConditionRef is encountered, the preceding Attributes are applied to the corresponding entities.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <choice minOccurs="0" maxOccurs="unbounded">
+                    <element ref="saml:Attribute">
+                        <annotation>
+                            <documentation>
+                                An Attribute to add to an EntityAttributes extension. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="Entity" type="string">
+                        <annotation>
+                            <documentation>
+                                An entityID to identify an EntityDescriptor to add all the preceding
+                                Attribute elements to. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="ConditionRef" type="string">
+                        <annotation>
+                            <documentation>
+                                The ID of a Spring bean to inject as a condition Predicate to identify one
+                                or more EntityDescriptors to add all the preceding Attribute elements to. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Predicate">
+        <annotation>
+            <documentation>
+                A filter that whitelists or blacklists EntityDescriptors based on the result of applying a Predicate
+                to each EntityDescriptor in the source. Limited syntax is provided for common cases, along with the
+                ability to reference a Spring bean as the Predicate. EntitiesDescriptors may be removed if they do not
+                contain at least one entity or entities descriptor after the filtering.
+                
+                All predicates implicitly or explicitly combined are a conjunction (OR). For alternative strategies,
+                use conditionRef alone. 
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <choice minOccurs="0" maxOccurs="unbounded">
+                    <element name="Entity" type="string">
+                        <annotation>
+                            <documentation>
+                                An entityID to use in a predicate that matches on entityID. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="Group" type="string">
+                        <annotation>
+                            <documentation>
+                                A name to use in a predicate that matches on EntitiesDescriptor group/containment. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="Tag">
+                        <annotation>
+                            <documentation>
+                                A rule to use in a predicate that matches on EntityAttributes extensions.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element name="Value" type="string" maxOccurs="unbounded"/>
+                            </sequence>
+                            <attribute name="name" type="string" use="required" />
+                            <attribute name="nameFormat" type="string"/>
+                        </complexType>
+                    </element>
+                </choice>
+                <attribute name="direction" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            One of the values "include" or "exclude" indicating whether to whitelist or blacklist
+                            entities that satisfy the Predicate used.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="conditionRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The ID of a Spring bean to inject as a condition Predicate.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="trim" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a Predicate based on EntityAttribute extensions
+                            should trim values before comparison. Defaults to false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="removeEmptyEntitiesDescriptors" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating that entities descriptors that do not contain at least one entity
+                            or entities descriptor, after filtering, should be removed.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="NodeProcessing">
+        <annotation>
+            <documentation>
+                A metadata filter that applies a sequence of node processor plugins to the tree.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <sequence>
+                    <element ref="shibmd:MetadataNodeProcessor" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>A node processor to be applied.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="MetadataFilterType" abstract="true"/>
+    
+    <element name="MetadataNodeProcessor" type="shibmd:MetadataNodeProcessorType">
+        <annotation>
+            <documentation>
+                Defines a plugin that walks the tree of objects in an unmarshalled metadata instance.
+            </documentation>
+        </annotation>
+    </element>
+    
+    <complexType name="EntitiesDescriptorName">
+        <annotation>
+            <documentation>
+                A node processor that attaches Name information from enclosing EntitiesDescriptors to
+                an entity via an extension object, to maintain group information while flattening the tree.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataNodeProcessorType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="KeyAuthority">
+        <annotation>
+            <documentation>
+                A node processor that processes KeyAuthority extensions and attaches the parsed PKIX
+                information via an extension object.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataNodeProcessorType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="MetadataNodeProcessorType" abstract="true"/>
+</schema>

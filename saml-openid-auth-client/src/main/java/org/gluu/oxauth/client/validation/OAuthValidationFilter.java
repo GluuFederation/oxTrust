@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -38,9 +39,9 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
     }
 
     @Override
-    public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
-            throws IOException, ServletException {
-        log.debug("Attempting to validate grants");
+    public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+
+		log.info("Attempting to validate grants");
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
 
@@ -55,7 +56,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         final String code = getParameter(request, Configuration.OAUTH_CODE);
         final String idToken = getParameter(request, Configuration.OAUTH_ID_TOKEN);
 
-        log.debug("Attempting to validate code: " + code + " and id_token: " + idToken);
+        log.info("Attempting to validate code: " + code + " and id_token: " + idToken);
         try {
             OAuthData oAuthData = getOAuthData(request, code, idToken);
             session.setAttribute(Configuration.SESSION_OAUTH_DATA, oAuthData);
@@ -66,7 +67,13 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
             throw new ServletException(ex);
         }
 
-        filterChain.doFilter(request, response);
+		String conversation = (String)session.getAttribute("conversation");
+		log.info("########## SESSION conversation = " + conversation);
+
+		CustomHttpServletRequest customRequest = new CustomHttpServletRequest(request);
+		customRequest.addCustomParameter("conversation", conversation);
+
+        filterChain.doFilter(customRequest, response);
     }
 
     /**
@@ -90,6 +97,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
     }
 
     private OAuthData getOAuthData(HttpServletRequest request, String authorizationCode, String idToken) throws Exception {
+
         String oAuthAuthorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
         String oAuthHost = getOAuthHost(oAuthAuthorizeUrl);
 
@@ -108,26 +116,26 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         }
 
         String scopes = getParameter(request, Configuration.OAUTH_SCOPE);
-        log.trace("scopes : " + scopes);
+        log.info("scopes : " + scopes);
 
         // 1. Request access token using the authorization code
-        log.trace("Getting access token");
+        log.info("Getting access token");
         TokenClient tokenClient1 = new TokenClient(oAuthTokenUrl);
 
         String redirectURL = constructRedirectUrl(request);
         TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, oAuthClientId, oAuthClientPassword);
 
-        log.trace("tokenResponse : " + tokenResponse);
-        log.trace("tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
+        log.info("tokenResponse : " + tokenResponse);
+        log.info("tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
 
         String accessToken = tokenResponse.getAccessToken();
-        log.trace("accessToken : " + accessToken);
+        log.info("accessToken : " + accessToken);
 
         // 2. Validate the access token
         log.trace("Validating access token ");
         ValidateTokenClient validateTokenClient = new ValidateTokenClient(oAuthValidationUrl);
         ValidateTokenResponse tokenValidationResponse = validateTokenClient.execValidateToken(accessToken);
-        log.trace(" response3.getStatus() : " + tokenValidationResponse.getStatus());
+        log.info(" response3.getStatus() : " + tokenValidationResponse.getStatus());
 
         log.info("validate check session status:" + tokenValidationResponse.getStatus());
         if (tokenValidationResponse.getErrorDescription() != null) {
@@ -154,7 +162,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
             oAuthData.setScopes(scopes);
             oAuthData.setIdToken(idToken);
 
-            log.trace("User uid:" + oAuthData.getUserUid());
+            log.info("User uid:" + oAuthData.getUserUid());
             return oAuthData;
         }
 

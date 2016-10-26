@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,11 +43,14 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
+import org.jboss.seam.async.TimerSchedule;
+import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.ArrayHelper;
@@ -62,6 +66,9 @@ import org.xdi.util.process.ProcessHelper;
 @Scope(ScopeType.APPLICATION)
 @Name("statusCheckerTimer")
 public class StatusCheckerTimer {
+
+    private final static String EVENT_TYPE = "StatusCheckerTimerEvent";
+    private final static long STATUS_CHECKER_INTERVAL = 60 * 1000L; // 1 minute
 
 	@Logger
 	private Log log;
@@ -83,16 +90,38 @@ public class StatusCheckerTimer {
 
 	private NumberFormat numberFormat;
 
+    private AtomicBoolean isActive;
+
 	@Create
 	public void create() {
 		this.numberFormat = NumberFormat.getNumberInstance(Locale.US);
 	}
 
-	@Asynchronous
-	public QuartzTriggerHandle scheduleStatusChecking(@Expiration Date when, @IntervalDuration Long interval) {
-		process(when, interval);
-		return null;
-	}
+    @Observer("org.jboss.seam.postInitialization")
+    public void init() {
+        log.info("Initializing update appliance status timer");
+        this.isActive = new AtomicBoolean(false);
+
+        Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(60 * 1000L, STATUS_CHECKER_INTERVAL));
+    }
+
+    @Observer(EVENT_TYPE)
+    @Asynchronous
+    public void process() {
+        if (this.isActive.get()) {
+            return;
+        }
+
+        if (!this.isActive.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            processInt();
+        } finally {
+            this.isActive.set(false);
+        }
+    }
 
 	/**
 	 * Gather periodically site and server status
@@ -102,7 +131,7 @@ public class StatusCheckerTimer {
 	 * @param interval
 	 *            Interval
 	 */
-	private void process(Date when, Long interval) {
+	private void processInt() {
 		log.debug("Starting update of appliance status");
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		if (!applicationConfiguration.isUpdateApplianceStatus()) {

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:res="urn:mace:shibboleth:2.0:resource" targetNamespace="urn:mace:shibboleth:2.0:resource" elementFormDefault="qualified">
+
+    <complexType name="ClasspathResource">
+        <complexContent>
+            <extension base="res:ResourceType">
+                <attribute name="file" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The file, within the JVM classpath, this resource represents.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="FilesystemResource">
+        <complexContent>
+            <extension base="res:ResourceType">
+                <attribute name="file" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The file this resource represents.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="HttpResource">
+        <complexContent>
+            <extension base="res:ResourceType">
+                <attribute name="url" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The URL this resource represents.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="FileBackedHttpResource">
+        <complexContent>
+            <extension base="res:ResourceType">
+                <attribute name="url" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The URL this resource represents.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="file" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The file the resource will be saved to and read from when the URL resource is not available.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SVNResource">
+        <complexContent>
+            <extension base="res:ResourceType">
+                <attribute name="repositoryURL" type="string" use="required"/>
+                <attribute name="connectionTimeout" type="string"/>
+                <attribute name="readTimeout" type="string"/>
+                <attribute name="workingCopyDirectory" type="string" use="required"/>
+                <attribute name="revision" type="string"/>
+                <attribute name="resourceFile" type="string" use="required"/>
+                <attribute name="username" type="string"/>
+                <attribute name="password" type="string"/>
+                <attribute name="proxyHost" type="string"/>
+                <attribute name="proxyPort" type="string"/>
+                <attribute name="proxyUsername" type="string"/>
+                <attribute name="proxyPassword" type="string"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="ResourceType" abstract="true">
+        <sequence>
+            <element ref="res:ResourceFilter" minOccurs="0"/>
+        </sequence>
+    </complexType>
+    
+    <complexType name="PropertyReplacement">
+        <annotation>
+            <documentation>
+                A resource filter that replaces ${KEY} macros with the values associated with the KEY in a property 
+                file.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="res:ResourceFilterType">
+                <attribute name="propertyFile" type="string" use="required">
+                    <annotation>
+                        <documentation> Path to the Java property file used during macro expansion.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="Chaining">
+        <annotation>
+            <documentation>A resource filter that executes the child filters in the order they defined.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="res:ResourceFilterType">
+                <sequence>
+                    <element ref="res:ResourceFilter" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <element name="ResourceFilter" type="res:ResourceFilterType"/>
+    <complexType name="ResourceFilterType" abstract="true"/>
+    
+</schema>

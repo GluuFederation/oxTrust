@@ -35,7 +35,7 @@ public class FederationService {
 	LdapEntryManager ldapEntryManager;
 
 	@In
-	private Shibboleth2ConfService shibboleth2ConfService;
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
@@ -152,12 +152,12 @@ public class FederationService {
 		if (federationProposal.isFederation()) {
 			for (GluuSAMLFederationProposal proposal : getAllFederationProposals()) {
 				if (proposal.getContainerFederation() != null && proposal.getContainerFederation().equals(federationProposal)) {
-					shibboleth2ConfService.removeMetadataFile(proposal.getSpMetaDataFN());
+					shibboleth3ConfService.removeMetadataFile(proposal.getSpMetaDataFN());
 					removeFederationProposal(proposal);
 				}
 			}
 		} else {
-			shibboleth2ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
+			shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
 		}
 
 		String[] clusterMembers = applicationConfiguration.getClusteredInums();
@@ -273,7 +273,7 @@ public class FederationService {
 	// public boolean isFederation(GluuSAMLTrustRelationship trustRelationship)
 	// {
 	// return
-	// shibboleth2ConfService.isFederationMetadata(trustRelationship.getSpMetaDataFN());
+	// shibboleth3ConfService.isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	// }
 	//
 	// public List<TrustContact> getContacts(GluuSAMLTrustRelationship

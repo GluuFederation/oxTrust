@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+	targetNamespace="urn:mace:shibboleth:2.0:resolver" elementFormDefault="qualified"
+	version="3.0">
+
+	<import namespace="http://www.w3.org/XML/1998/namespace"
+		schemaLocation="http://www.w3.org/2001/xml.xsd" />
+
+	<annotation>
+		<documentation>Shibboleth 2.0 Attribute Resolver configuration schema
+		</documentation>
+	</annotation>
+
+	<element name="AttributeResolver" type="resolver:AttributeResolverType">
+		<annotation>
+			<documentation>Root of the attribute resolver configuration file.
+			</documentation>
+		</annotation>
+	</element>
+	<complexType name="AttributeResolverType">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element ref="resolver:AttributeDefinition" />
+			<element ref="resolver:DataConnector" />
+			<element ref="resolver:PrincipalConnector" />
+		</choice>
+		<attribute name="id" type="string">
+			<annotation>
+				<documentation>A unique identifier for this Resolver.
+				</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+
+	<element name="AttributeDefinition" type="resolver:BaseAttributeDefinitionType">
+		<annotation>
+			<documentation>Defines an attribute definition within this resolver.
+			</documentation>
+		</annotation>
+	</element>
+	<complexType name="BaseAttributeDefinitionType">
+		<annotation>
+			<documentation>
+				Attribute definition define the finished attributes to be released by the
+				resolver.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="resolver:BaseResolutionPlugInType">
+				<sequence>
+					<element name="DisplayName" type="resolver:LocalizedStringType"
+						minOccurs="0" maxOccurs="unbounded">
+						<annotation>
+							<documentation>
+								A human readable name of for this attribute. This name may, for
+								example, be displayed to the user with an attribute release approval
+								request.
+
+								If multiple display names are used they should bear an xml:lang
+								attribute to distinguish them.
+							</documentation>
+						</annotation>
+					</element>
+					<element name="DisplayDescription" type="resolver:LocalizedStringType"
+						minOccurs="0" maxOccurs="unbounded">
+						<annotation>
+							<documentation>
+								A human readable description of for this attribute. This name
+								may, for example, be displayed to the user with an attribute release
+								approval request.
+
+								If multiple display descriptions are used they should bear an
+								xml:lang attribute to distinguish them.
+							</documentation>
+						</annotation>
+					</element>
+					<element ref="resolver:AttributeEncoder" minOccurs="0"
+						maxOccurs="unbounded" />
+				</sequence>
+				<attribute name="dependencyOnly" type="string">
+					<annotation>
+						<documentation>
+							A boolean flag that indicates whether this attribute definition is
+							only defined becaue its	data is needed elsewhere within the resolver
+							and as such should not be released outside the resolver.
+						</documentation>
+					</annotation>
+				</attribute>
+				<attribute name="sourceAttributeID" type="string">
+					<annotation>
+						<documentation>
+							The name of the attribute from a data connector dependency which should be
+							used to populate this attribute definition.
+                            
+                            Whether this attribute is required or optional depends on whether the dependency
+                            set contains data connectors or attribute definitions. It may be left out for
+                            attribute dependencies but MUST be set if there are data connector dependencies.
+                            
+                            This was a flawed schema design and may eventually be altered.
+						</documentation>
+					</annotation>
+				</attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<element name="AttributeEncoder" type="resolver:BaseAttributeEncoderType">
+		<annotation>
+			<documentation>Defines an encoder for an attribute.</documentation>
+		</annotation>
+	</element>
+	<complexType name="BaseAttributeEncoderType">
+		<annotation>
+			<documentation>
+				An attribute encoder is responsible for converting an attribute, and it's values,
+				into a protocol specific representation such as a SAML 1 Attribute or a SAML 2 NameID.
+			</documentation>
+		</annotation>
+		<attribute name="name" type="string" />
+		<attribute name="encodeType" type="string">
+			<annotation>
+				<documentation>
+					A boolean indicating whether the encoding should include type information. This is
+					encoding-specific (e.g., for XML it likely involves xsi:type).
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="activationConditionRef" type="string">
+			<annotation>
+				<documentation>
+					The reference to a Predicate which controls whether this encoder will run
+				</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+
+	<element name="DataConnector" type="resolver:BaseDataConnectorType">
+		<annotation>
+			<documentation>
+				Defines a data connector which is used to pull information from local
+				infrastructure.
+			</documentation>
+		</annotation>
+	</element>
+	<complexType name="BaseDataConnectorType">
+		<annotation>
+			<documentation>
+				Data connectors pull information from local infrastructure, such as
+				databases and LDAP directories, and	make these raw attributes available
+				to attribute definitions for finishing.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="resolver:BaseResolutionPlugInType">
+				<sequence>
+					<element ref="resolver:FailoverDataConnector" minOccurs="0" />
+				</sequence>
+                <attribute name="noRetryDelay" type="string">
+                    <annotation>
+                        <documentation>Time to bypass connector after a failure before trying it again.</documentation>
+                    </annotation>
+                </attribute>
+				<attribute name="springResources" type="string">
+					<annotation>
+						<documentation>Locations of Spring resource configurations.</documentation>
+					</annotation>
+				</attribute>
+                <attribute name="springResourcesRef" type="string">
+                    <annotation>
+                        <documentation>Bean Name of locations of Spring resource configurations.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="factoryPostProcessorsRef" type="string">
+                    <annotation>
+                        <documentation>Bean Name of locations of bean factory post processors resource configurations.  Defaults to shibboleth.PropertySourcesPlaceholderConfigurer.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="postProcessorsRef" type="string">
+                    <annotation>
+                        <documentation>Bean Name of a list of bean post processors.</documentation>
+                    </annotation>
+                </attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<element name="PrincipalConnector" type="resolver:BasePrincipalConnectorType">
+		<annotation>
+			<documentation>
+				Principal connectors convert a subject's NameID into an internal principal
+				name for use within attribute definitions and data connectors.
+			</documentation>
+		</annotation>
+	</element>
+	<complexType name="BasePrincipalConnectorType">
+		<annotation>
+			<documentation>
+				Principal connectors convert a subject's NameID into an internal principal
+				name for use within attribute definitions and data connectors.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="resolver:BaseResolutionPlugInType">
+				<sequence>
+					<element name="RelyingParty" type="string" minOccurs="0"
+						maxOccurs="unbounded">
+						<annotation>
+							<documentation>
+								The relying party for which this connector is valid.
+							</documentation>
+						</annotation>
+					</element>
+				</sequence>
+				<attribute name="nameIDFormat" type="string" use="required">
+					<annotation>
+						<documentation>
+							The format of the NameID for which this connector is valid.
+						</documentation>
+					</annotation>
+				</attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="BaseResolutionPlugInType" abstract="true">
+		<annotation>
+			<documentation>
+				A base type for all attribute resolver plugins: data and principal
+				connectors and attribute definitions
+			</documentation>
+		</annotation>
+		<sequence>
+			<element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="id" type="string" use="required">
+			<annotation>
+				<documentation>A unique identifier for this definition.</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="activationConditionRef" type="string">
+			<annotation>
+				<documentation>
+					A reference to a predicate to decide whether this plugin is applicable
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="profileContextStrategyRef" type="string">
+			<annotation>
+				<documentation>
+					A reference to a function to locate the profile context
+				</documentation>
+			</annotation>
+		</attribute>
+
+	</complexType>
+
+	<element name="Dependency" type="resolver:PluginDependencyType">
+		<annotation>
+			<documentation>
+				Defines a dependency on a specific resolution plug-in.
+			</documentation>
+		</annotation>
+	</element>
+	<element name="FailoverDataConnector" type="resolver:PluginDependencyType">
+		<annotation>
+			<documentation>
+				Defines a data connector to use should the parent data connector fail.
+			</documentation>
+		</annotation>
+	</element>
+	<complexType name="PluginDependencyType">
+		<annotation>
+			<documentation>A type that represents a reference to another plugin</documentation>
+		</annotation>
+		<attribute name="ref" type="string" use="required" />
+	</complexType>
+
+	<complexType name="LocalizedStringType">
+		<simpleContent>
+			<extension base="string">
+				<attribute ref="xml:lang" />
+			</extension>
+		</simpleContent>
+	</complexType>
+
+</schema>

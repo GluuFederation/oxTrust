@@ -86,9 +86,9 @@ public class MetadataValidationTimer {
 	private void process(Date when, Long interval) {
 		log.debug("Starting metadata validation");
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		boolean result = validateMetadata(applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
-				+ Shibboleth2ConfService.SHIB2_IDP_TEMPMETADATA_FOLDER + File.separator, applicationConfiguration
-				.getShibboleth2IdpRootDir() + File.separator + Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator);
+		boolean result = validateMetadata(applicationConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator, applicationConfiguration
+				.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator);
 		log.debug("Metadata validation finished with result: '{0}'", result);
 		
 		if (result) {
@@ -103,7 +103,7 @@ public class MetadataValidationTimer {
 		
 		if (createConfig) {
 			List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
-			Shibboleth2ConfService.instance().generateConfigurationFiles(trustRelationships);
+			Shibboleth3ConfService.instance().generateConfigurationFiles(trustRelationships);
 
 			log.info("IDP config generation files finished. TR count: '{0}'", trustRelationships.size());
 		}
@@ -111,10 +111,10 @@ public class MetadataValidationTimer {
 	}
 
 	/**
-	 * @param shib2IdpTempmetadataFolder
-	 * @param shib2IdpMetadataFolder
+	 * @param shib3IdpTempmetadataFolder
+	 * @param shib3IdpMetadataFolder
 	 */
-	private boolean validateMetadata(String shib2IdpTempmetadataFolder, String shib2IdpMetadataFolder) {
+	private boolean validateMetadata(String shib3IdpTempmetadataFolder, String shib3IdpMetadataFolder) {
 		boolean result = false;
 		log.trace("Starting metadata validation process.");
 		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
@@ -128,10 +128,10 @@ public class MetadataValidationTimer {
 
 		synchronized (this) {
 			if (StringHelper.isNotEmpty(metadataFN)) {
-				File metadata = new File(shib2IdpTempmetadataFolder + metadataFN);
-				File target = new File(shib2IdpMetadataFolder + metadataFN.replaceAll(".{4}\\..{4}$", ""));
+				File metadata = new File(shib3IdpTempmetadataFolder + metadataFN);
+				File target = new File(shib3IdpMetadataFolder + metadataFN.replaceAll(".{4}\\..{4}$", ""));
 				GluuSAMLTrustRelationship tr = TrustService.instance().getTrustByUnpunctuatedInum(
-						metadataFN.split("-" + Shibboleth2ConfService.SHIB2_IDP_SP_METADATA_FILE)[0]);
+						metadataFN.split("-" + Shibboleth3ConfService.SHIB3_IDP_SP_METADATA_FILE)[0]);
 				if (tr == null) {
 					metadataUpdates.add(metadataFN);
 					return false;
@@ -142,7 +142,7 @@ public class MetadataValidationTimer {
 				GluuErrorHandler handler = null;
 				List<String> validationLog = null;
 				try {
-					handler = Shibboleth2ConfService.validateMetadata(new FileInputStream(metadata));
+					handler = Shibboleth3ConfService.validateMetadata(new FileInputStream(metadata));
 				} catch (Exception e) {
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);
@@ -165,8 +165,8 @@ public class MetadataValidationTimer {
 					}
 					boolean federation = TrustService.instance().isFederation(tr);
 					tr.setFederation(federation);
-					String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
-							+ Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator;
+					String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator
+							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					
 					
@@ -209,7 +209,7 @@ public class MetadataValidationTimer {
 					}
 					boolean federation = TrustService.instance().isFederation(tr);
 					tr.setFederation(federation);
-					String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator + Shibboleth2ConfService.SHIB2_IDP_METADATA_FOLDER + File.separator;
+					String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					
 					List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);

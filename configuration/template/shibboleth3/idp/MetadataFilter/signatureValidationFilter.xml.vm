@@ -1,0 +1,5 @@
+<MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata"
+    trustEngineRef="$trustEngine"
+    requireSignedMetadata="$requireSignedMetadata"
+    /> 
+

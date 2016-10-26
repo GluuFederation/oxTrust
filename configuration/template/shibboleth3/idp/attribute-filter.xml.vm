@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+        xmlns="urn:mace:shibboleth:2.0:afp"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
+
+#foreach( $trustRelationship in $trustParams.trusts )
+    #set ($isFederation = ($trustParams.trustEntityIds.get($trustRelationship.inum).size() > 1))
+    #if ($trustParams.trustIds.get($trustRelationship.inum))
+
+    <!-- Release some attributes to an SP. -->
+    <AttributeFilterPolicy id="SiteApp$trustParams.trustIds.get($trustRelationship.inum)">
+
+        #if ($trustRelationship.isResearchBundle())
+        <PolicyRequirementRule xsi:type="AND">
+            <Rule xsi:type="EntityAttributeExactMatch"
+                        attributeName="http://macedir.org/entity-category"
+                        attributeValue="http://refeds.org/category/research-and-scholarship"/>
+            <Rule xsi:type="EntityAttributeExactMatch"
+                        attributeName="http://macedir.org/entity-category"
+                        attributeValue="http://id.incommon.org/category/registered-by-incommon"/>
+            #if ($isFederation)
+
+                <Rule xsi:type="OR">
+                    #foreach( $entityId in $trustParams.trustEntityIds.get($trustRelationship.inum) )
+                        <Rule xsi:type="Requester" value="$entityId" />
+                    #end
+                </Rule>
+            #else
+
+                <Rule xsi:type="Requester" value="$trustParams.trustEntityIds.get($trustRelationship.inum).get(0)" />
+            #end
+        </PolicyRequirementRule>
+        #else
+            #if ($isFederation)
+
+        <PolicyRequirementRule xsi:type="OR">
+            #foreach( $entityId in $trustParams.trustEntityIds.get($trustRelationship.inum) )
+                <Rule xsi:type="Requester" value="$entityId" />
+            #end
+        </PolicyRequirementRule>
+            #else
+
+        <PolicyRequirementRule xsi:type="Requester" value="$trustParams.trustEntityIds.get($trustRelationship.inum).get(0)" />
+            #end
+        #end
+
+        #foreach( $attribute in $trustRelationship.releasedCustomAttributes )
+
+        <AttributeRule attributeID="$attribute.name">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        #end
+
+    </AttributeFilterPolicy>
+    #end
+#end
+
+#foreach( $trustRelationship in $trustParams.deconstructed )
+    <AttributeFilterPolicy id="FederatedSiteApp$trustParams.deconstructedIds.get($trustRelationship.entityId)">
+
+        <PolicyRequirementRule xsi:type="Requester" value="$trustRelationship.entityId" />
+        #foreach( $attribute in $trustRelationship.releasedCustomAttributes )
+
+        <AttributeRule attributeID="$attribute.name">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        #end
+    </AttributeFilterPolicy>
+#end
+
+</AttributeFilterPolicyGroup>

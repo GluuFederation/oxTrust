@@ -19,7 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.Shibboleth2ConfService;
+import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -53,7 +53,7 @@ public class JoinFederationAction implements Serializable {
 	private FederationService federationService;
 
 	@In
-	private Shibboleth2ConfService shibboleth2ConfService;
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@In
 	private FacesMessages facesMessages;
@@ -165,12 +165,12 @@ public class JoinFederationAction implements Serializable {
 			return result;
 		}
 
-		if (shibboleth2ConfService.isCorrectMetadataFile(federationProposal.getSpMetaDataFN())) {
+		if (shibboleth3ConfService.isCorrectMetadataFile(federationProposal.getSpMetaDataFN())) {
 			return true;
 		}
 
 		facesMessages.add(Severity.ERROR, "Failed to parse meta-data file. Please check if you provide correct file");
-		shibboleth2ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
+		shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
 
 		return false;
 	}
@@ -185,7 +185,7 @@ public class JoinFederationAction implements Serializable {
 			}
 
 			// Admin doesn't provide new file. Check if we already has this file
-			String filePath = shibboleth2ConfService.getMetadataFilePath(metadataFileName);
+			String filePath = shibboleth3ConfService.getMetadataFilePath(metadataFileName);
 			if (filePath == null) {
 				return false;
 			}
@@ -201,12 +201,12 @@ public class JoinFederationAction implements Serializable {
 
 		if (emptySpMetadataFileName) {
 			// Generate new file name
-			metadataFileName = shibboleth2ConfService.getNewMetadataFileName(this.federationProposal,
+			metadataFileName = shibboleth3ConfService.getNewMetadataFileName(this.federationProposal,
 					federationService.getAllFederationProposals());
 		}
 
 		// Save new file
-		boolean result = shibboleth2ConfService.saveMetadataFile(metadataFileName, fileWrapper.getStream());
+		boolean result = shibboleth3ConfService.saveMetadataFile(metadataFileName, fileWrapper.getStream());
 		if (result) {
 			federationProposal.setSpMetaDataFN(metadataFileName);
 		}
@@ -221,11 +221,11 @@ public class JoinFederationAction implements Serializable {
 
 		if (emptyMetadataFileName) {
 			// Generate new file name
-			metadataFileName = shibboleth2ConfService.getNewMetadataFileName(this.federationProposal,
+			metadataFileName = shibboleth3ConfService.getNewMetadataFileName(this.federationProposal,
 					federationService.getAllFederationProposals());
 		}
 
-		boolean result = shibboleth2ConfService.saveMetadataFile(federationProposal.getSpMetaDataURL(), metadataFileName);
+		boolean result = shibboleth3ConfService.saveMetadataFile(federationProposal.getSpMetaDataURL(), metadataFileName);
 		if (result) {
 			federationProposal.setSpMetaDataFN(metadataFileName);
 		}
@@ -261,7 +261,7 @@ public class JoinFederationAction implements Serializable {
 		String filename = federationProposal.getSpMetaDataFN();
 		File metadataFile = null;
 		if (!StringUtils.isEmpty(filename)) {
-			metadataFile = new File(shibboleth2ConfService.getMetadataFilePath(filename));
+			metadataFile = new File(shibboleth3ConfService.getMetadataFilePath(filename));
 
 			if (metadataFile.exists()) {
 				return FileUtils.readFileToString(metadataFile);
@@ -279,7 +279,7 @@ public class JoinFederationAction implements Serializable {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			Shibboleth2ConfService shibboleth2ConfService = Shibboleth2ConfService.instance();
+			Shibboleth3ConfService shibboleth3ConfService = Shibboleth3ConfService.instance();
 			ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
 			String head = String
 					.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<EntitiesDescriptor Name=\"%s\"  xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\">\n",
@@ -289,7 +289,7 @@ public class JoinFederationAction implements Serializable {
 				if (proposal.getContainerFederation() != null && proposal.getContainerFederation().equals(federation)) {
 					String filename = proposal.getSpMetaDataFN();
 					if (!StringUtils.isEmpty(filename)) {
-						File metadataFile = new File(shibboleth2ConfService.getMetadataFilePath(filename));
+						File metadataFile = new File(shibboleth3ConfService.getMetadataFilePath(filename));
 						InputStream is = FileUtils.openInputStream(metadataFile);
 						ExcludeFilterInputStream filtered = new ExcludeFilterInputStream(is, "<?", "?>");
 						IOUtils.copy(filtered, bos);

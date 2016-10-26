@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MetadataProvider id="ShibbolethMetadata" xsi:type="ChainingMetadataProvider"
+    xmlns="urn:mace:shibboleth:2.0:metadata"
+    xmlns:resource="urn:mace:shibboleth:2.0:resource"
+    xmlns:security="urn:mace:shibboleth:2.0:security"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
+                        urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd 
+                        urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
+                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
+                        
+    <!-- ========================================================================================== -->
+    <!--                             Metadata Configuration                                         -->
+    <!--                                                                                            -->
+    <!--  Below you place the mechanisms which define how to load the metadata for the SP you will  -->
+    <!--  provide a service to.                                                                     -->
+    <!--                                                                                            -->
+    <!--  The Shibboleth Documentation at                                                           -->
+    <!--  https://wiki.shibboleth.net/confluence/display/IDP30/MetadataConfiguration                -->
+    <!--  provides more details.                                                                    --> 
+    <!--                                                                                            -->
+    <!--  NOTE.  This file SHOULD NOT contain the metadata for this IdP.                            -->
+    <!--                                                                                            -->
+    <!-- ========================================================================================== -->
+
+#foreach( $trustRelationship in $trustParams.trusts )
+    #if($trustRelationship.specificRelyingPartyConfig and (not $trustRelationship.isFederation()))
+
+        #set ($profileConfigMap = $trustRelationship.profileConfigurations)
+        #if(!$profileConfigMap.isEmpty())
+
+            #* #set($providerId = $StringHelper.removePunctuation($trustRelationship.inum)) *#
+            #* #set($providerUrl = $trustParams.trustEntityIds.get($trustRelationship.inum).get(0)) *#
+            #* #set($providerId = $providerUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "")) *#
+
+            #if($trustRelationship.spMetaDataSourceType.value == "file" || $trustRelationship.spMetaDataSourceType.value == "generate")
+
+    <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
+                      xsi:type="FilesystemMetadataProvider"
+                      metadataFile="$medataFolder$trustRelationship.spMetaDataFN">
+
+            #elseif($trustRelationship.spMetaDataSourceType.value == "uri")
+
+    <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
+                      xsi:type="FileBackedHTTPMetadataProvider"
+                      maxRefreshDelay="$trustRelationship.maxRefreshDelay"
+                      metadataURL="$trustRelationship.spMetaDataURL"
+                      backingFile="$medataFolder$trustRelationship.spMetaDataFN">
+
+            #end
+
+            #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
+
+        <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
+                #foreach( $filter in $trustRelationship.getGluuSAMLMetaDataFilter() )
+            $filter
+                #end
+        </MetadataFilter>
+
+            #end
+
+            #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == "generate" || $trustRelationship.spMetaDataSourceType.value == 'uri')
+    </MetadataProvider>
+            #end
+
+        #end
+    #end
+#end
+
+</MetadataProvider>
