@@ -148,13 +148,7 @@ public class UserSerializer extends JsonSerializer<User> {
                     }
 
                 } else {
-
-                    if (attributeDataType.equals(GluuAttributeDataType.DATE)) {
-                        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
-                        list.put(extEntry.getKey(), dateTimeFormatter.print(new Long(extEntry.getValue().getValue())));
-                    } else {
-                        list.put(extEntry.getKey(), extEntry.getValue().getValue());
-                    }
+                    list.put(extEntry.getKey(), extEntry.getValue().getValue());
                 }
             }
         }

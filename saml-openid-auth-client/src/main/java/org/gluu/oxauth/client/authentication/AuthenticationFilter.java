@@ -77,9 +77,9 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		final HttpServletResponse response = (HttpServletResponse) servletResponse;
 
 		String conversation = request.getParameter("conversation");
-		log.info("########## PARAM conversation = " + conversation);
+		log.debug("########## PARAM conversation = " + conversation);
 
-		HttpSession session = request.getSession(false);
+		final HttpSession session = request.getSession(false);
 		session.setAttribute("conversation", conversation);
 
 		String urlToRedirectTo;
@@ -238,5 +238,4 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 
 		return null;
 	}
-
 }

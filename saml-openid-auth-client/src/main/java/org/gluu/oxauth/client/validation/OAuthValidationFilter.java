@@ -41,7 +41,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
     @Override
     public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
 
-		log.info("Attempting to validate grants");
+		log.debug("Attempting to validate grants");
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
 
@@ -53,13 +53,27 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
 
         final HttpSession session = request.getSession(false);
 
+		String conversation = null;
+		if (session != null) {
+
+			conversation = (String)session.getAttribute("conversation");
+			if (conversation == null || conversation.isEmpty()) {
+				throw new ServletException("IDP v3 conversation param is null or empty");
+			}
+
+			log.debug("########## SESSION conversation = " + conversation);
+
+		} else {
+			log.error("Session not created yet");
+		}
+
         final String code = getParameter(request, Configuration.OAUTH_CODE);
         final String idToken = getParameter(request, Configuration.OAUTH_ID_TOKEN);
 
-        log.info("Attempting to validate code: " + code + " and id_token: " + idToken);
-        try {
-            OAuthData oAuthData = getOAuthData(request, code, idToken);
-            session.setAttribute(Configuration.SESSION_OAUTH_DATA, oAuthData);
+		log.debug("Attempting to validate code: " + code + " and id_token: " + idToken);
+		try {
+			OAuthData oAuthData = getOAuthData(request, code, idToken);
+			session.setAttribute(Configuration.SESSION_OAUTH_DATA, oAuthData);
         } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             log.warn("Failed to validate code and id_token", ex);
@@ -67,13 +81,10 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
             throw new ServletException(ex);
         }
 
-		String conversation = (String)session.getAttribute("conversation");
-		log.info("########## SESSION conversation = " + conversation);
-
 		CustomHttpServletRequest customRequest = new CustomHttpServletRequest(request);
 		customRequest.addCustomParameter("conversation", conversation);
 
-        filterChain.doFilter(customRequest, response);
+		filterChain.doFilter(customRequest, response);
     }
 
     /**
@@ -116,26 +127,26 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         }
 
         String scopes = getParameter(request, Configuration.OAUTH_SCOPE);
-        log.info("scopes : " + scopes);
+        log.trace("scopes : " + scopes);
 
         // 1. Request access token using the authorization code
-        log.info("Getting access token");
+        log.trace("Getting access token");
         TokenClient tokenClient1 = new TokenClient(oAuthTokenUrl);
 
         String redirectURL = constructRedirectUrl(request);
         TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, oAuthClientId, oAuthClientPassword);
 
-        log.info("tokenResponse : " + tokenResponse);
-        log.info("tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
+        log.trace("tokenResponse : " + tokenResponse);
+        log.trace("tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
 
         String accessToken = tokenResponse.getAccessToken();
-        log.info("accessToken : " + accessToken);
+        log.trace("accessToken : " + accessToken);
 
         // 2. Validate the access token
         log.trace("Validating access token ");
         ValidateTokenClient validateTokenClient = new ValidateTokenClient(oAuthValidationUrl);
         ValidateTokenResponse tokenValidationResponse = validateTokenClient.execValidateToken(accessToken);
-        log.info(" response3.getStatus() : " + tokenValidationResponse.getStatus());
+        log.trace(" response3.getStatus() : " + tokenValidationResponse.getStatus());
 
         log.info("validate check session status:" + tokenValidationResponse.getStatus());
         if (tokenValidationResponse.getErrorDescription() != null) {
@@ -162,7 +173,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
             oAuthData.setScopes(scopes);
             oAuthData.setIdToken(idToken);
 
-            log.info("User uid:" + oAuthData.getUserUid());
+            log.trace("User uid: " + oAuthData.getUserUid());
             return oAuthData;
         }
 
