@@ -43,6 +43,7 @@ import org.gluu.oxtrust.model.scim.ScimRolesPatch;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
 import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.Extension.Builder;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.hibernate.internal.util.StringHelper;
@@ -1195,408 +1196,6 @@ public class CopyUtils2 implements Serializable {
 		return destination;
 	}
 
-	public static GluuCustomPerson patch(ScimPersonPatch source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
-		if (source == null || !isValidData(source, isUpdate)) {
-			return null;
-		}
-		if (destination == null) {
-			log.trace(" creating a new Scimperson instant ");
-			destination = new GluuCustomPerson();
-
-		}
-
-		log.trace(" setting userName ");
-		log.trace(" source.getUserName() :" + source.getUserName() + "h");
-		log.trace("  userName length : " + source.getUserName().length());
-		if (source.getUserName() != null && source.getUserName().length() > 0) {
-			destination.setUid(source.getUserName());
-		}
-
-		if (source.getName() != null) {
-
-			log.trace(" setting givenname ");
-			if (source.getName().getGivenName() != null && source.getName().getGivenName().length() > 0) {
-				destination.setGivenName(source.getName().getGivenName());
-			}
-			log.trace(" setting famillyname ");
-			if (source.getName().getFamilyName() != null && source.getName().getGivenName().length() > 0) {
-				destination.setSurname(source.getName().getFamilyName());
-			}
-			log.trace(" setting middlename ");
-			if (source.getName().getMiddleName() != null && source.getName().getMiddleName().length() > 0) {
-				destination.setAttribute("middleName", source.getName().getMiddleName());
-			}
-			log.trace(" setting honor");
-			if (source.getName().getHonorificPrefix() != null && source.getName().getHonorificPrefix().length() > 0) {
-				destination.setAttribute("oxTrusthonorificPrefix", source.getName().getHonorificPrefix());
-			}
-			if (source.getName().getHonorificSuffix() != null && source.getName().getHonorificSuffix().length() > 0) {
-				destination.setAttribute("oxTrusthonorificSuffix", source.getName().getHonorificSuffix());
-			}
-		}
-
-		log.trace(" setting displayname ");
-		if (source.getDisplayName() != null && source.getDisplayName().length() > 0) {
-			destination.setDisplayName(source.getDisplayName());
-		}
-		log.trace(" setting externalID ");
-		if (source.getExternalId() != null && source.getExternalId().length() > 0) {
-			destination.setAttribute("oxTrustExternalId", source.getExternalId());
-		}
-		log.trace(" setting nickname ");
-		if (source.getNickName() != null && source.getNickName().length() > 0) {
-			destination.setAttribute("nickname", source.getNickName());
-		}
-		log.trace(" setting profileURL ");
-		if (source.getProfileUrl() != null && source.getProfileUrl().length() > 0) {
-			destination.setAttribute("oxTrustProfileURL", source.getProfileUrl());
-		}
-
-		// getting emails
-		log.trace(" setting emails ");
-		if (source.getEmails() != null && source.getEmails().size() > 0) {
-			List<ScimPersonEmailsPatch> emails = source.getEmails();
-			String[] emailsList = new String[source.getEmails().size()];
-			String[] emailsTypes = new String[source.getEmails().size()];
-			String[] emailsPrimary = new String[source.getEmails().size()];
-
-			int emailsSize = 0;
-			if (destination.getAttributes("oxTrustEmail") != null && destination.getAttributes("oxTrustEmail").length > 0) {
-				emailsList = destination.getAttributes("oxTrustEmail");
-				emailsTypes = destination.getAttributes("oxTrustEmailType");
-				emailsPrimary = destination.getAttributes("oxTrustEmailPrimary");
-				// emailsSize =
-				// destination.getAttributes("oxTrustEmail").length;
-			}
-
-			boolean emailIsFound = false;
-			while (emailIsFound != true) {
-				if (emails.get(0).getPrimary() == "true") {
-					for (String oneEmail : emailsList) {
-						if (oneEmail == emails.get(0).getValue()) {
-							if (emails.get(0).getPrimary() != null && emails.get(0).getPrimary().length() > 0) {
-								emailsPrimary[emailsSize] = emails.get(0).getPrimary();
-							}
-							emailIsFound = true;
-						}
-						emailsSize++;
-					}
-					emailsSize = 0;
-					for (String onePrimary : emailsPrimary) {
-						if (onePrimary == emails.get(0).getPrimary()) {
-							if (emails.get(0).getPrimary() != null && emails.get(0).getPrimary().length() > 0) {
-								emailsPrimary[emailsSize] = "false";
-							}
-						}
-						emailsSize++;
-					}
-					if (emails.get(0).getValue() != null && emails.get(0).getValue().length() > 0) {
-						emailsList[emailsSize] = emails.get(0).getValue();
-					}
-					if (emails.get(0).getType() != null && emails.get(0).getType().length() > 0) {
-						emailsTypes[emailsSize] = emails.get(0).getType();
-					}
-					if (emails.get(0).getPrimary() != null && emails.get(0).getPrimary().length() > 0) {
-						emailsPrimary[emailsSize] = emails.get(0).getPrimary();
-					}
-					emailIsFound = true;
-				}
-				if (emails.get(0).getPrimary() == "false") {
-					emailsSize = emailsList.length;
-					if (emails.get(0).getValue() != null && emails.get(0).getValue().length() > 0) {
-						emailsList[emailsSize] = emails.get(0).getValue();
-					}
-					if (emails.get(0).getType() != null && emails.get(0).getType().length() > 0) {
-						emailsTypes[emailsSize] = emails.get(0).getType();
-					}
-					if (emails.get(0).getPrimary() != null && emails.get(0).getPrimary().length() > 0) {
-						emailsPrimary[emailsSize] = emails.get(0).getPrimary();
-					}
-					emailIsFound = true;
-				}
-			}
-
-			destination.setAttribute("oxTrustEmail", emailsList);
-			destination.setAttribute("oxTrustEmailType", emailsTypes);
-			destination.setAttribute("oxTrustEmailPrimary", emailsPrimary);
-		}
-
-		// getting addresses
-		log.trace(" settting addresses ");
-		if (source.getAddresses() != null && source.getAddresses().size() == 2) {
-			List<ScimPersonAddressesPatch> addresses = source.getAddresses();
-			String[] street = new String[source.getAddresses().size()];
-			String[] formatted = new String[source.getAddresses().size()];
-			String[] locality = new String[source.getAddresses().size()];
-			String[] region = new String[source.getAddresses().size()];
-			String[] postalCode = new String[source.getAddresses().size()];
-			String[] country = new String[source.getAddresses().size()];
-			String[] addressType = new String[source.getAddresses().size()];
-			String[] addressPrimary = new String[source.getAddresses().size()];
-
-			int addressSize = 0;
-
-			if (destination.getAttributes("oxTrustStreet") != null && destination.getAttributes("oxTrustStreet").length > 0) {
-				street = destination.getAttributes("oxTrustStreet");
-				formatted = destination.getAttributes("oxTrustAddressFormatted");
-				locality = destination.getAttributes("oxTrustLocality");
-				region = destination.getAttributes("oxTrustRegion");
-				postalCode = destination.getAttributes("oxTrustPostalCode");
-				country = destination.getAttributes("oxTrustCountry");
-				addressType = destination.getAttributes("oxTrustAddressType");
-				addressPrimary = destination.getAttributes("oxTrustAddressPrimary");
-				// addressSize =
-				// destination.getAttributes("oxTrustStreet").length;
-			}
-
-			for (String oneStreet : street) {
-				if (oneStreet == addresses.get(0).getStreetAddress()) {
-					if (addresses.get(1).getStreetAddress() != null && addresses.get(1).getStreetAddress().length() > 0) {
-						street[addressSize] = addresses.get(1).getStreetAddress();
-					}
-					if (addresses.get(1).getFormatted() != null && addresses.get(1).getFormatted().length() > 0) {
-						formatted[addressSize] = addresses.get(1).getFormatted();
-					}
-					if (addresses.get(1).getLocality() != null && addresses.get(1).getLocality().length() > 0) {
-						locality[addressSize] = addresses.get(1).getLocality();
-					}
-					if (addresses.get(1).getRegion() != null && addresses.get(1).getRegion().length() > 0) {
-						region[addressSize] = addresses.get(1).getRegion();
-					}
-					if (addresses.get(1).getPostalCode() != null && addresses.get(1).getPostalCode().length() > 0) {
-						postalCode[addressSize] = addresses.get(1).getPostalCode();
-					}
-					if (addresses.get(1).getCountry() != null && addresses.get(1).getCountry().length() > 0) {
-						country[addressSize] = addresses.get(1).getCountry();
-					}
-					if (addresses.get(1).getType() != null && addresses.get(1).getType().length() > 0) {
-						addressType[addressSize] = addresses.get(1).getType();
-					}
-					if (addresses.get(1).getPrimary() != null && addresses.get(1).getPrimary().length() > 0) {
-						addressPrimary[addressSize] = addresses.get(1).getPrimary();
-					}
-				}
-				addressSize++;
-			}
-
-			destination.setAttribute("oxTrustStreet", street);
-			destination.setAttribute("oxTrustLocality", locality);
-			destination.setAttribute("oxTrustRegion", region);
-			destination.setAttribute("oxTrustPostalCode", postalCode);
-			destination.setAttribute("oxTrustCountry", country);
-			destination.setAttribute("oxTrustAddressFormatted", formatted);
-			destination.setAttribute("oxTrustAddressPrimary", addressPrimary);
-			destination.setAttribute("oxTrustAddressType", addressType);
-		}
-
-		// getting phone numbers;
-		log.trace(" setting phoneNumbers ");
-		if (source.getPhoneNumbers() != null && source.getPhoneNumbers().size() > 0) {
-			List<ScimPersonPhonesPatch> phones = source.getPhoneNumbers();
-			String[] phoneNumber = new String[source.getPhoneNumbers().size()];
-			String[] phoneType = new String[source.getPhoneNumbers().size()];
-
-			int phoneSize = 0;
-
-			if (destination.getAttributes("oxTrustPhoneValue") != null && destination.getAttributes("oxTrustPhoneValue").length > 0) {
-				phoneNumber = destination.getAttributes("oxTrustPhoneValue");
-				phoneType = destination.getAttributes("oxTrustPhoneType");
-				// phoneSize =
-				// destination.getAttributes("oxTrustPhoneValue").length;
-			}
-
-			for (ScimPersonPhones phone : phones) {
-				if (phone.getValue() != null && phone.getValue().length() > 0) {
-					phoneNumber[phoneSize] = phone.getValue();
-				}
-				if (phone.getType() != null && phone.getType().length() > 0) {
-					phoneType[phoneSize] = phone.getType();
-				}
-				phoneSize++;
-			}
-			destination.setAttribute("oxTrustPhoneValue", phoneNumber);
-			destination.setAttribute("oxTrustPhoneType", phoneType);
-		}
-
-		// getting ims
-		log.trace(" setting ims ");
-		if (source.getIms() != null && source.getIms().size() > 0) {
-			List<ScimPersonImsPatch> ims = source.getIms();
-			String[] imValue = new String[source.getIms().size()];
-			String[] imType = new String[source.getIms().size()];
-
-			int imSize = 0;
-			if (destination.getAttributes("oxTrustImsValue") != null && destination.getAttributes("oxTrustImsValue").length > 0) {
-				imValue = destination.getAttributes("oxTrustImsValue");
-				imType = destination.getAttributes("oxTrustImsType");
-				imSize = destination.getAttributes("oxTrustImsValue").length;
-			}
-
-			for (ScimPersonIms im : ims) {
-				if (im.getValue() != null && im.getValue().length() > 0) {
-					imValue[imSize] = im.getValue();
-				}
-				if (im.getType() != null && im.getType().length() > 0) {
-					imType[imSize] = im.getType();
-				}
-				imSize++;
-			}
-			destination.setAttribute("oxTrustImsValue", imValue);
-			destination.setAttribute("oxTrustImsType", imType);
-		}
-
-		// getting Photos
-		log.trace(" setting photos ");
-		if (source.getPhotos() != null && source.getPhotos().size() > 0) {
-			List<ScimPersonPhotosPatch> photos = source.getPhotos();
-			String[] photoType = new String[source.getPhotos().size()];
-			String[] photoValue = new String[source.getPhotos().size()];
-
-			int photoSize = 0;
-			if (destination.getAttributes("oxTrustPhotos") != null && destination.getAttributes("oxTrustPhotos").length > 0) {
-				photoType = destination.getAttributes("oxTrustPhotosType");
-				photoValue = destination.getAttributes("oxTrustPhotos");
-				photoSize = destination.getAttributes("oxTrustPhotosType").length;
-			}
-
-			for (ScimPersonPhotos photo : photos) {
-				if (photo.getType() != null && photo.getType().length() > 0) {
-					photoType[photoSize] = photo.getType();
-				}
-				if (photo.getValue() != null && photo.getValue().length() > 0) {
-					photoValue[photoSize] = photo.getValue();
-				}
-				photoSize++;
-			}
-			destination.setAttribute("oxTrustPhotosType", photoType);
-			destination.setAttribute("oxTrustPhotos", photoValue);
-		}
-
-		if (source.getUserType() != null && source.getUserType().length() > 0) {
-			destination.setAttribute("oxTrustUserType", source.getUserType());
-		}
-		if (source.getTitle() != null && source.getTitle().length() > 0) {
-			destination.setAttribute("oxTrustTitle", source.getTitle());
-		}
-		if (source.getPreferredLanguage() != null && source.getPreferredLanguage().length() > 0) {
-			destination.setPreferredLanguage(source.getPreferredLanguage());
-		}
-		if (source.getLocale() != null && source.getLocale().length() > 0) {
-			// destination.setAttribute("oxTrustLocale", source.getLocale());
-			destination.setAttribute("locale", source.getLocale());
-		}
-		if (source.getTimezone() != null && source.getTimezone().length() > 0) {
-			destination.setTimezone(source.getTimezone());
-		}
-		if (source.getActive() != null && source.getActive().length() > 0) {
-			destination.setAttribute("oxTrustActive", source.getActive());
-		}
-		if (source.getPassword() != null && source.getPassword().length() > 0) {
-			destination.setUserPassword(source.getPassword());
-		}
-
-		// getting user groups
-		log.trace(" setting groups ");
-		if (source.getGroups() != null && source.getGroups().size() > 0) {
-			IGroupService groupService = GroupService.instance();
-			List<ScimPersonGroupsPatch> listGroups = source.getGroups();
-			List<String> members = new ArrayList<String>();
-			for (ScimPersonGroups group : listGroups) {
-
-				members.add(groupService.getDnForGroup(group.getValue()));
-			}
-			destination.setMemberOf(members);
-		}
-
-		// getting roles
-
-		log.trace(" setting roles ");
-		if (source.getRoles() != null && source.getRoles().size() > 0) {
-			List<ScimRolesPatch> roles = source.getRoles();
-			String[] scimRole = new String[source.getRoles().size()];
-
-			int rolesSize = 0;
-
-			if (destination.getAttributes("oxTrustRole") != null && destination.getAttributes("oxTrustRole").length > 0) {
-				scimRole = destination.getAttributes("oxTrustRole");
-				rolesSize = destination.getAttributes("oxTrustRole").length;
-			}
-
-			for (ScimRoles role : roles) {
-
-				if (role.getValue() != null && role.getValue().length() > 0) {
-					scimRole[rolesSize] = role.getValue();
-				}
-				rolesSize++;
-			}
-			destination.setAttribute("oxTrustRole", scimRole);
-		}
-
-		// getting entitlements
-		log.trace(" setting entitlements ");
-		if (source.getEntitlements() != null && source.getEntitlements().size() > 0) {
-			List<ScimEntitlementsPatch> ents = source.getEntitlements();
-			String[] listEnts = new String[source.getEntitlements().size()];
-
-			int entsSize = 0;
-
-			if (destination.getAttributes("oxTrustEntitlements") != null && destination.getAttributes("oxTrustEntitlements").length > 0) {
-				listEnts = destination.getAttributes("oxTrustEntitlements");
-				entsSize = destination.getAttributes("oxTrustEntitlements").length;
-			}
-
-			for (ScimEntitlements ent : ents) {
-				if (ent.getValue() != null && ent.getValue().length() > 0) {
-					listEnts[entsSize] = ent.getValue();
-				}
-				entsSize++;
-			}
-			destination.setAttribute("oxTrustEntitlements", listEnts);
-		}
-
-		// getting x509Certificates
-		log.trace(" setting certs ");
-		if (source.getX509Certificates() != null && source.getX509Certificates().size() > 0) {
-			List<Scimx509CertificatesPatch> certs = source.getX509Certificates();
-			String[] listCerts = new String[source.getX509Certificates().size()];
-			int certsSize = 0;
-			if (destination.getAttributes("oxTrustx509Certificate") != null
-					&& destination.getAttributes("oxTrustx509Certificate").length > 0) {
-				listCerts = destination.getAttributes("oxTrustx509Certificate");
-				certsSize = destination.getAttributes("oxTrustx509Certificate").length;
-			}
-
-			for (Scimx509Certificates cert : certs) {
-				if (cert.getValue() != null && cert.getValue().length() > 0) {
-					listCerts[certsSize] = cert.getValue();
-				}
-				certsSize++;
-			}
-
-			destination.setAttribute("oxTrustx509Certificate", listCerts);
-		}
-
-		// getting meta
-		log.trace(" setting meta ");
-
-		if (source.getMeta().getCreated() != null && source.getMeta().getCreated().length() > 0) {
-			destination.setAttribute("oxTrustMetaCreated", source.getMeta().getCreated());
-		}
-		if (source.getMeta().getLastModified() != null && source.getMeta().getLastModified().length() > 0) {
-			destination.setAttribute("oxTrustMetaLastModified", source.getMeta().getLastModified());
-		}
-		if (source.getMeta().getVersion() != null && source.getMeta().getVersion().length() > 0) {
-			destination.setAttribute("oxTrustMetaVersion", source.getMeta().getVersion());
-		}
-		if (source.getMeta().getLocation() != null && source.getMeta().getLocation().length() > 0) {
-			destination.setAttribute("oxTrustMetaLocation", source.getMeta().getLocation());
-		}
-
-		setGluuStatus(source, destination);
-
-		return destination;
-	}
-
 	private static boolean isValidData(ScimPersonPatch person, boolean isUpdate) {
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
@@ -1836,7 +1435,7 @@ public class CopyUtils2 implements Serializable {
 		return destination;
 	}
 
-	private static void setGluuStatus(User source, GluuCustomPerson destination) {
+	protected static void setGluuStatus(User source, GluuCustomPerson destination) {
 		Boolean active = source.isActive();
 		if (active != null) {
 			if (active.equals(Boolean.TRUE)) {
@@ -1862,7 +1461,7 @@ public class CopyUtils2 implements Serializable {
 		}
 	}
 
-	private static <T extends MultiValuedAttribute> void setAttributeListValue(GluuCustomPerson destination, List<T> items, String attributeName) throws Exception {
+	protected static <T extends MultiValuedAttribute> void setAttributeListValue(GluuCustomPerson destination, List<T> items, String attributeName) throws Exception {
 
 		ObjectMapper mapper = Utils.getObjectMapper();
 
@@ -1874,12 +1473,15 @@ public class CopyUtils2 implements Serializable {
 		destination.setAttribute(attributeName, itemList.toArray(new String[]{}));
 	}
 
-	private static <T extends MultiValuedAttribute> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attributeName) throws Exception {
+	protected static <T extends MultiValuedAttribute> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attributeName) throws Exception {
 
 		ObjectMapper mapper = Utils.getObjectMapper();
 
 		String[] attributeArray = source.getAttributeArray(attributeName);
 		List<T> items = new ArrayList<T>();
+		if(attributeArray == null) {
+			return null;
+		}
 
 		for (String attribute : attributeArray) {
 			T item = mapper.readValue(attribute, clazz);
@@ -1891,4 +1493,5 @@ public class CopyUtils2 implements Serializable {
 
 		return items;
 	}
+	
 }

@@ -463,4 +463,63 @@ public class UserWebService extends BaseScimWebService {
 
 		return mapper.writeValueAsString(object);
 	}
+	
+	
+	//  PATCH WEBSERVICES
+	@Path("{id}")
+	@PUT
+	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+	@ApiOperation(value = "patch user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
+	public Response patchUser(
+		@HeaderParam("Authorization") String authorization,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
+		@PathParam("id") String id,
+		@ApiParam(value = "User", required = true) ScimPatchUser user,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
+
+		Response authorizationResponse;
+		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+			log.info(" ##### SCIM Test Mode is ACTIVE");
+			authorizationResponse = processTestModeAuthorization(token);
+		} else {
+			authorizationResponse = processAuthorization(authorization);
+		}
+		if (authorizationResponse != null) {
+			return authorizationResponse;
+		}
+
+		try {
+
+			User updatedUser = scim2UserService.patchUser(id, user);
+
+			// Serialize to JSON
+			String json = serializeToJson(updatedUser, attributesArray);
+
+			URI location = new URI(updatedUser.getMeta().getLocation());
+
+			return Response.ok(json).location(location).build();
+
+		} catch (EntryPersistenceException ex) {
+
+            log.error("Failed to update user", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
+
+		} catch (DuplicateEntryException ex) {
+
+			log.error("DuplicateEntryException", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
+
+		} catch (Exception ex) {
+
+			log.error("Failed to update user", ex);
+			ex.printStackTrace();
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+		}
+	}
+	  
+	 //
 }

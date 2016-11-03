@@ -8,9 +8,12 @@ package org.gluu.oxtrust.service.scim2;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.scim2.Operation;
+import org.gluu.oxtrust.model.scim2.ScimPatchUser;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils2;
+import org.gluu.oxtrust.util.PatchUtils;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
@@ -198,4 +201,110 @@ public class Scim2UserService implements Serializable {
             personService.removePerson(gluuPerson);
         }
     }
+    
+
+    public User patchUser(String id, ScimPatchUser patchUser) throws Exception {
+    	
+    	for(Operation operation : patchUser.getOperatons()){
+    		String val = operation.getOperationName();
+    		
+    		if(val.equalsIgnoreCase("replace")){
+    			replaceUserPatch(operation,id);
+    		}
+    		
+    		if(val.equalsIgnoreCase("remove")){
+    			removeUserPatch(operation,id);
+    		}
+    		
+    		if(val.equalsIgnoreCase("add")){
+    			addUserPatch(operation,id);
+    		}       
+    		
+    	}
+    	personService = PersonService.instance();
+    	GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
+    	User updatedUser = CopyUtils2.copy(gluuPerson, null);   	
+    	
+		return updatedUser;  	
+    	
+    }
+    
+   private void removeUserPatch(Operation operation,String id) throws Exception{	   
+	   User user = operation.getValue();	
+		
+		GluuCustomPerson updatedGluuPerson = PatchUtils.removePatch(user, validUsernameByInum(user, id));
+		log.info(" Setting meta: removeUserPatch update user ");
+		setMeta(updatedGluuPerson);    	
+    }
+   
+	private void replaceUserPatch(Operation operation, String id) throws Exception {
+		User user = operation.getValue();		
+		
+		GluuCustomPerson updatedGluuPerson = PatchUtils.replacePatch(user, validUsernameByInum(user, id));
+		log.info(" Setting meta: replaceUserPatch update user ");
+		setMeta(updatedGluuPerson);
+	}
+   
+	private void addUserPatch(Operation operation, String id) throws Exception {
+		User user = operation.getValue();		
+		
+		GluuCustomPerson updatedGluuPerson = PatchUtils.addPatch(user, validUsernameByInum(user, id));
+		log.info(" Setting meta: addUserPatch update user ");
+		setMeta(updatedGluuPerson);
+	}
+	
+	private GluuCustomPerson validUsernameByInum(User user,String id) throws DuplicateEntryException{
+		personService = PersonService.instance();
+
+		GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
+		if (gluuPerson == null) {
+
+			throw new EntryPersistenceException("Scim2UserService.updateUser(): " + "Resource " + id + " not found");
+
+		} else {
+
+			// Validate if attempting to update userName of a different id
+			if (user.getUserName() != null) {
+
+				GluuCustomPerson personToFind = new GluuCustomPerson();
+				personToFind.setUid(user.getUserName());
+
+				List<GluuCustomPerson> foundPersons = personService	.findPersons(personToFind, 2);
+				if (foundPersons != null && foundPersons.size() > 0) {
+					for (GluuCustomPerson foundPerson : foundPersons) {
+						if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(gluuPerson.getInum())) {
+							throw new DuplicateEntryException("Cannot update userName of a different id: "+ user.getUserName());
+						}
+					}
+				}
+			}
+		}
+		return gluuPerson;
+		
+	}
+	
+	private void setMeta(GluuCustomPerson updatedGluuPerson) throws Exception{
+		
+		DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC(); // Date should be in UTC format
+		Date dateLastModified = DateTime.now().toDate();
+		updatedGluuPerson.setAttribute("oxTrustMetaLastModified",dateTimeFormatter.print(dateLastModified.getTime()));
+		if (updatedGluuPerson.getAttribute("oxTrustMetaLocation") == null 
+				|| (updatedGluuPerson.getAttribute("oxTrustMetaLocation") != null 
+				&& updatedGluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
+
+			String relativeLocation = "/scim/v2/Users/" + updatedGluuPerson.getInum();
+			updatedGluuPerson.setAttribute("oxTrustMetaLocation",relativeLocation);
+		}
+		updatedGluuPerson = Utils.syncEmailForward(updatedGluuPerson, true);
+
+		// For custom script: update user
+		if (externalScimService.isEnabled()) {
+			externalScimService.executeScimUpdateUserMethods(updatedGluuPerson);
+		}
+		personService.updatePerson(updatedGluuPerson);
+
+		log.debug(" person updated ");
+		
+	}
+    
 }
