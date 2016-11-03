@@ -73,10 +73,6 @@ public class TemplateService implements Serializable {
 		return true;
 	}
 
-	public boolean writeApplicationConfFile(String confFile, String conf) {
-		return writeConfFile(OxTrustConfiguration.DIR + confFile, conf);
-	}
-
 	/*
 	 * Load Velocity configuration from classpath
 	 */
@@ -90,18 +86,19 @@ public class TemplateService implements Serializable {
 
 			// Set right folder for file loader
 			if (loaderType.indexOf("file") == 0) {
-				String folder1 = OxTrustConfiguration.DIR + "shibboleth3"
+				String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
+				String folder1 = idpTemplatesLocation + "shibboleth3"
 						+ File.separator + "idp";
-				String folder2 = OxTrustConfiguration.DIR + "shibboleth3"
+				String folder2 = idpTemplatesLocation + "shibboleth3"
 						+ File.separator + "sp";
-				String folder3 = OxTrustConfiguration.DIR + "ldif";
-				String folder4 = OxTrustConfiguration.DIR + "shibboleth3"
+				String folder3 = idpTemplatesLocation + "ldif";
+				String folder4 = idpTemplatesLocation + "shibboleth3"
 						+ File.separator + "idp" + File.separator + "MetadataFilter";
-				String folder5 = OxTrustConfiguration.DIR + "shibboleth3"
+				String folder5 = idpTemplatesLocation + "shibboleth3"
 						+ File.separator + "idp" + File.separator + "ProfileConfiguration";
-				String folder6 = OxTrustConfiguration.DIR + "template"
+				String folder6 = idpTemplatesLocation + "template"
 						+ File.separator + "conf";
-				String folder7 = OxTrustConfiguration.DIR + "template"
+				String folder7 = idpTemplatesLocation + "template"
 						+ File.separator + "shibboleth3";
 				properties.setProperty("file.resource.loader.path", folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
 						+ folder5 + ", " + folder6  + ", " + folder7);
