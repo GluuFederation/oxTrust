@@ -315,6 +315,10 @@ public class GluuCustomPerson extends User
     public Map<String, Extension> getExtensions() {
         return Collections.unmodifiableMap(extensions);
     }
+    
+    public Map<String, Extension> fetchExtensions() {
+        return extensions;
+    }
 
     public void setExtensions(Map<String, Extension> extensions) throws Exception {
 
