@@ -395,10 +395,10 @@ public class OxTrustConfiguration {
 		String jetyBase = System.getProperty("jetty.base");
 		
 		if (StringHelper.isEmpty(jetyBase)) {
-			return jetyBase + File.separator + "conf" + File.separator;
+			return OxTrustConfiguration.DIR;
 		}
-		
-		return OxTrustConfiguration.DIR;
+
+		return jetyBase + File.separator + "conf" + File.separator;
 	}
 
 }
