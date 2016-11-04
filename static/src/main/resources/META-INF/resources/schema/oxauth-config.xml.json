@@ -250,6 +250,15 @@
                 ]
             }
         },
+        "defaultSubjectType": {
+            "id": "defaultSubjectType",
+            "description": "Default Subject Type used for Dynamic Client Registration.",
+            "type": "string",
+            "enum": [
+                "public",
+                "pairwise"
+            ]
+        },
         "userInfoSigningAlgValuesSupported": {
             "id": "userInfoSigningAlgValuesSupported",
             "description": "A list of the JWS signing algorithms (alg values) JWA supported by the UserInfo Endpoint to encode the Claims in a JWT.",
@@ -1064,6 +1073,7 @@
         "responseTypesSupported",
         "grantTypesSupported",
         "subjectTypesSupported",
+        "defaultSubjectType",
         "userInfoSigningAlgValuesSupported",
         "userInfoEncryptionAlgValuesSupported",
         "userInfoEncryptionEncValuesSupported",
