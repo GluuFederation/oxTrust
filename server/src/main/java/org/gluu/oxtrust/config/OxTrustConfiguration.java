@@ -390,5 +390,15 @@ public class OxTrustConfiguration {
 	public static OxTrustConfiguration instance() {
 		return (OxTrustConfiguration) Component.getInstance(OxTrustConfiguration.class);
 	}
+	
+	public String getIDPTemplatesLocation() {
+		String jetyBase = System.getProperty("jetty.base");
+		
+		if (StringHelper.isEmpty(jetyBase)) {
+			return OxTrustConfiguration.DIR;
+		}
+
+		return jetyBase + File.separator + "conf" + File.separator;
+	}
 
 }
