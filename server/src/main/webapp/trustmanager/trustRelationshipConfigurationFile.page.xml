@@ -16,13 +16,13 @@
 
         <rule if-outcome="no_permissions">
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">You don't have permissions to download Shibboleth2 configuration files</message>
+                <message severity="ERROR">You don't have permissions to download Shibboleth3 configuration files</message>
             </redirect>
         </rule>
 
         <rule if-outcome="failure">
             <redirect view-id="/home.xhtml">
-                <message severity="ERROR">Failed to prepare Shibboleth2 configuration files for download</message>
+                <message severity="ERROR">Failed to prepare Shibboleth3 configuration files for download</message>
             </redirect>
         </rule>
     </navigation>

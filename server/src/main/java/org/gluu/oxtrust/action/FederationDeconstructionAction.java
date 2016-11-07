@@ -174,7 +174,7 @@ public class FederationDeconstructionAction implements Serializable {
 		filteredEntities = null;
 		if (StringHelper.isNotEmpty(filterString)) {
 			filteredEntities = new ArrayList<String>();
-			String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
+			String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator
 					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 			File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 			for (String entity : SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile)) {

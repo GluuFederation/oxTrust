@@ -153,10 +153,10 @@ public class SsoLoginAction implements Serializable {
 	}
 
 	public String logout() {
-		boolean isShib2Authentication = OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH2.equals(Contexts.getSessionContext().get(
+		boolean isShib3Authentication = OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3.equals(Contexts.getSessionContext().get(
 				OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE));
 
-		if (isShib2Authentication) {
+		if (isShib3Authentication) {
 			// After this redirect we should invalidate this session
 			try {
 				HttpServletResponse userResponse = (HttpServletResponse) facesContext.getExternalContext().getResponse();
@@ -173,7 +173,7 @@ public class SsoLoginAction implements Serializable {
 			}
 		}
 
-		return isShib2Authentication ? OxTrustConstants.RESULT_LOGOUT_SSO : OxTrustConstants.RESULT_LOGOUT;
+		return isShib3Authentication ? OxTrustConstants.RESULT_LOGOUT_SSO : OxTrustConstants.RESULT_LOGOUT;
 	}
 
 	public String getUserName() {

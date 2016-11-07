@@ -347,7 +347,7 @@ public class TrustService {
 		if (result) {
 			ApplianceService.instance().updateAppliance(appliance);
 			log.warn("gluuSP EntityID set to " + StringHelper.removePunctuation(gluuSP.getInum())
-					+ ". shibboleth2 configuration should be updated.");
+					+ ". Shibboleth3 configuration should be updated.");
 			// ApplianceService.instance().restartServices();
 		} else {
 			log.error("IDP configuration update failed. GluuSP was not generated.");

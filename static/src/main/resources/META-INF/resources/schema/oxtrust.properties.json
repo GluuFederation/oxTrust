@@ -158,16 +158,6 @@
             "type": "string",
             "minLength": 1
         },
-        "shibboleth2IdpRootDir": {
-            "id": "shibboleth2IdpRootDir",
-            "type": "string",
-            "minLength": 1
-        },
-        "shibboleth2SpConfDir": {
-            "id": "shibboleth2SpConfDir",
-            "type": "string",
-            "minLength": 1
-        },
         "pokenApplicationSecret": {
             "id": "pokenApplicationSecret",
             "type": "string"
@@ -292,8 +282,8 @@
             "id": "mysqlPassword",
             "type": "string"
         },
-        "shibboleth2FederationRootDir": {
-            "id": "shibboleth2FederationRootDir",
+        "shibboleth3FederationRootDir": {
+            "id": "shibboleth3FederationRootDir",
             "type": "string",
             "minLength": 1
         },
@@ -595,8 +585,6 @@
         "photoRepositoryCountFoldersPerLevel",
         "authMode",
         "ldifStore",
-        "shibboleth2IdpRootDir",
-        "shibboleth2SpConfDir",
         "pokenApplicationSecret",
         "updateApplianceStatus",
         "svnConfigurationStoreRoot",
@@ -622,7 +610,7 @@
         "mysqlUrl",
         "mysqlUser",
         "mysqlPassword",
-        "shibboleth2FederationRootDir",
+        "shibboleth3FederationRootDir",
         "cacheRefreshEnabled",
         "cacheRefreshIntervalMinutes",
         "caCertsLocation",

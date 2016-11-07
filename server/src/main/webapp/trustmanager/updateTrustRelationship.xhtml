@@ -53,7 +53,7 @@
 			</ui:define>
               
                 <ui:define name="configurationLink">
-                    <s:link value="Download Shibboleth2 configuration files" target="_blank" 
+                    <s:link value="Download Shibboleth3 configuration files" target="_blank"
                         view="/trustmanager/trustRelationshipConfigurationFile.xhtml"    immediate="true" 
                         rendered="#{(not _trustRelationship.isFederation()) and
                             (_trustRelationship.containerFederation eq null) and (_trustRelationship.spMetaDataSourceType eq 'GENERATE' or _trustRelationship.spMetaDataSourceType eq 'FILE')}"/>

@@ -58,7 +58,7 @@ public class ProfileConfigurationService {
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
 		File profileConfigurationFolder = new File(OxTrustConfiguration.DIR
-				+ "shibboleth2" + File.separator + "idp" + File.separator + "ProfileConfiguration");
+				+ "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 		File[] profileConfigurationTemplates = null;
 		if (profileConfigurationFolder.exists() && profileConfigurationFolder.isDirectory()) {
 			profileConfigurationTemplates = profileConfigurationFolder.listFiles(new FilenameFilter() {

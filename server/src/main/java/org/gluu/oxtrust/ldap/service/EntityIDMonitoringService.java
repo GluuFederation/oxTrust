@@ -82,7 +82,7 @@ public class EntityIDMonitoringService {
 				boolean isValidated = GluuValidationStatus.VALIDATION_SUCCESS.equals(tr.getValidationStatus());
 				log.trace("isValidated:" + isValidated);
 				if (meatadataAvailable && correctType && isValidated) {
-					String idpMetadataFolder = applicationConfiguration.getShibboleth2IdpRootDir() + File.separator
+					String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator
 							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);

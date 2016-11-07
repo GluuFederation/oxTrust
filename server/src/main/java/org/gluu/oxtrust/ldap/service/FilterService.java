@@ -64,7 +64,7 @@ public class FilterService {
 	private Shibboleth3ConfService shibboleth3ConfService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
-		File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth2"
+		File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth3"
 				+ File.separator + "idp" + File.separator + "MetadataFilter");
 		File[] filterTemplates = null;
 		if (filterFolder.exists() && filterFolder.isDirectory()) {
@@ -170,12 +170,11 @@ public class FilterService {
 			}
 
 			if (StringHelper.isNotEmpty(trustRelationship.getMetadataFilters().get("signatureValidation").getFilterCertFileName())) {
-				boolean requireSignedMetadata = trustRelationship.getMetadataFilters().get("signatureValidation")
-						.getRequireSignedMetadata();
+				boolean requireSignedMetadata = trustRelationship.getMetadataFilters().get("signatureValidation").getRequireSignedMetadata();
 				context.put("trustEngine", "shibboleth.FedTrustEngine");
 				context.put("requireSignedMetadata", requireSignedMetadata);
 			} else {
-				log.warn("signatureValidation filter on " + trustRelationship.getIname() + "is invalid. Removing it.");
+				log.warn("signatureValidation filter on " + trustRelationship.getIname() + " is invalid. Removing it.");
 				trustRelationship.getMetadataFilters().remove("signatureValidation");
 			}
 		}

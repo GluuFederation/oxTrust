@@ -127,9 +127,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	@In
 	private SvnSyncTimer svnSyncTimer;
 
-	// @In
-	// private Shibboleth2ConfService shibboleth2ConfService;
-
 	@In
 	private Shibboleth3ConfService shibboleth3ConfService;
 	
@@ -925,10 +922,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			context.put("orgInum", StringHelper.removePunctuation(OrganizationService.instance().getOrganizationInum()));
 			context.put("orgSupportEmail", applicationConfiguration.getOrgSupportEmail());
 
-			String spShibboleth2FilePath = shibboleth3ConfService.getSpShibboleth3FilePath();
+			String spShibboleth3FilePath = shibboleth3ConfService.getSpShibboleth3FilePath();
 			String shibConfig = templateService.generateConfFile(Shibboleth3ConfService.SHIB3_SP_SHIBBOLETH2_FILE, context);
 			if (!ResponseHelper.addFileContentToZip(shibConfig, zos, Shibboleth3ConfService.SHIB3_SP_SHIBBOLETH2_FILE)) {
-				log.error("Failed to add " + spShibboleth2FilePath + " to zip");
+				log.error("Failed to add " + spShibboleth3FilePath + " to zip");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 

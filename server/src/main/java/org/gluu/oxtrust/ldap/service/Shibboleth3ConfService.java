@@ -783,9 +783,9 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	/**
-	 * Get shibboleth2ConfService instance
+	 * Get shibboleth3ConfService instance
 	 * 
-	 * @return Shibboleth2ConfService instance
+	 * @return Shibboleth3ConfService instance
 	 */
 	public static Shibboleth3ConfService instance() {
 		return (Shibboleth3ConfService) Component.getInstance(Shibboleth3ConfService.class);
@@ -1041,7 +1041,7 @@ public class Shibboleth3ConfService implements Serializable {
 				obsoleteMetadata.add(new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_FOLDER, metadata.getAbsolutePath()));
 			}
 
-			// SubversionService.instance().commitShibboleth2ConfigurationFiles(OrganizationService.instance().getOrganization(), new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Metadata files that are no longer used");
+			// SubversionService.instance().commitShibboleth3ConfigurationFiles(OrganizationService.instance().getOrganization(), new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Metadata files that are no longer used");
 
 			for (SubversionFile file : obsoleteMetadata) {
 				new File(file.getLocalFile()).delete();
@@ -1089,7 +1089,7 @@ public class Shibboleth3ConfService implements Serializable {
 				obsoleteMetadata.add(new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER, credential.getAbsolutePath()));
 			}
 
-			// SubversionService.instance().commitShibboleth2ConfigurationFiles(OrganizationService.instance().getOrganization(), new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Credentials files that are no longer used");
+			// SubversionService.instance().commitShibboleth3ConfigurationFiles(OrganizationService.instance().getOrganization(), new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Credentials files that are no longer used");
 
 			for (SubversionFile file : obsoleteMetadata) {
 				new File(file.getLocalFile()).delete();
@@ -1169,11 +1169,11 @@ public class Shibboleth3ConfService implements Serializable {
 
 	public boolean isCorrectMetadataFile(String spMetaDataFN) {
 
-		if (applicationConfiguration.getShibboleth2FederationRootDir() == null) {
+		if (applicationConfiguration.getShibboleth3FederationRootDir() == null) {
 			throw new InvalidConfigurationException("Failed to check meta-data file due to undefined federation root folder");
 		}
 
-		String metadataFolder = applicationConfiguration.getShibboleth2FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER	+ File.separator;
+		String metadataFolder = applicationConfiguration.getShibboleth3FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER	+ File.separator;
 		File metadataFile = new File(metadataFolder + spMetaDataFN);
 		List<String> entityId = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 		return (entityId != null) && !entityId.isEmpty();
@@ -1181,11 +1181,11 @@ public class Shibboleth3ConfService implements Serializable {
 
 	public void removeMetadataFile(String spMetaDataFN) {
 
-		if (applicationConfiguration.getShibboleth2FederationRootDir() == null) {
+		if (applicationConfiguration.getShibboleth3FederationRootDir() == null) {
 			throw new InvalidConfigurationException("Failed to remove meta-data file due to undefined federation root folder");
 		}
 
-		String metadataFolder = applicationConfiguration.getShibboleth2FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String metadataFolder = applicationConfiguration.getShibboleth3FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
 		File spMetadataFile = new File(metadataFolder + spMetaDataFN);
 
 		if (spMetadataFile.exists()) {
@@ -1195,11 +1195,11 @@ public class Shibboleth3ConfService implements Serializable {
 
 	public String getMetadataFilePath(String metadataFileName) {
 
-		if (applicationConfiguration.getShibboleth2FederationRootDir() == null) {
+		if (applicationConfiguration.getShibboleth3FederationRootDir() == null) {
 			throw new InvalidConfigurationException("Failed to return meta-data file due to undefined federation root folder");
 		}
 
-		String metadataFolderName = applicationConfiguration.getShibboleth2FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String metadataFolderName = applicationConfiguration.getShibboleth3FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
 		File metadataFolder = new File(metadataFolderName);
 		if (!metadataFolder.exists()) {
 			metadataFolder.mkdirs();
@@ -1216,12 +1216,12 @@ public class Shibboleth3ConfService implements Serializable {
 
 	public boolean saveMetadataFile(String metadataFileName, InputStream stream) {
 
-		if (applicationConfiguration.getShibboleth2FederationRootDir() == null) {
+		if (applicationConfiguration.getShibboleth3FederationRootDir() == null) {
 			IOUtils.closeQuietly(stream);
 			throw new InvalidConfigurationException("Failed to save meta-data file due to undefined federation root folder");
 		}
 
-		String idpMetadataFolderName = applicationConfiguration.getShibboleth2FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolderName = applicationConfiguration.getShibboleth3FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
 		File idpMetadataFolder = new File(idpMetadataFolderName);
 		if (!idpMetadataFolder.exists()) {
 			idpMetadataFolder.mkdirs();
@@ -1359,7 +1359,7 @@ public class Shibboleth3ConfService implements Serializable {
 	 */
 	public static GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
 
-		String schemaDir = OxTrustConfiguration.DIR + "shibboleth2" + File.separator + "idp" + File.separator + "schema" + File.separator;
+		String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
 		Schema schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
                 
 		return XMLValidator.validateMetadata(stream, schema);

@@ -60,8 +60,8 @@ public class SubversionService {
 
 	final private static String baseSvnDir = "/var/gluu/svn";
 
-	public boolean commitShibboleth2ConfigurationFiles(GluuOrganization organization, List<SubversionFile> newSubversionFiles,
-			List<SubversionFile> removeSubversionFiles, String svnComment) {
+	public boolean commitShibboleth3ConfigurationFiles(GluuOrganization organization, List<SubversionFile> newSubversionFiles,
+													   List<SubversionFile> removeSubversionFiles, String svnComment) {
 		// Retrieve properties and derive applianceSvnHome
 		String svnUrl = applicationConfiguration.getSvnConfigurationStoreRoot();
 		String inumFN = StringHelper.removePunctuation(applicationConfiguration.getApplianceInum());

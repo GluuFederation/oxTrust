@@ -70,10 +70,10 @@ public class SvnSyncTimer {
 	}
 
 	private void process(Date when, Long interval) {
-		commitShibboleth2Configuration(TrustService.instance().getAllActiveTrustRelationships());
+		commitShibboleth3Configuration(TrustService.instance().getAllActiveTrustRelationships());
 	}
 
-	private void commitShibboleth2Configuration(List<GluuSAMLTrustRelationship> trustRelationships) {
+	private void commitShibboleth3Configuration(List<GluuSAMLTrustRelationship> trustRelationships) {
 		synchronized (this) {
 			List<SubversionFile> subversionFiles = new ArrayList<SubversionFile>();
 			try {
@@ -120,15 +120,15 @@ public class SvnSyncTimer {
 			log.debug("Files to be persisted in repository: " + StringHelper.toString(subversionFiles.toArray(new SubversionFile[] {})));
 			log.debug("Files to be removed from repository: "
 					+ StringHelper.toString(removeSubversionFiles.toArray(new SubversionFile[] {})));
-			if (!subversionService.commitShibboleth2ConfigurationFiles(OrganizationService.instance().getOrganization(), subversionFiles,
+			if (!subversionService.commitShibboleth3ConfigurationFiles(OrganizationService.instance().getOrganization(), subversionFiles,
 					removeSubversionFiles, svnComment + idpSvnComment)) {
-				log.error("Failed to commit Shibboleth2 configuration to SVN repository");
-				facesMessages.add(Severity.ERROR, "Failed to commit Shibboleth2 configuration to SVN repository");
+				log.error("Failed to commit Shibboleth3 configuration to SVN repository");
+				facesMessages.add(Severity.ERROR, "Failed to commit Shibboleth3 configuration to SVN repository");
 			} else {
 				svnComment = "";
 				alteredTrustRelations.clear();
-				log.info("Shibboleth2 configuration commited successfully to SVN repository");
-				facesMessages.add(Severity.INFO, "Shibboleth2 configuration comited successfully to SVN repository");
+				log.info("Shibboleth3 configuration commited successfully to SVN repository");
+				facesMessages.add(Severity.INFO, "Shibboleth3 configuration comited successfully to SVN repository");
 			}
 		}
 	}

@@ -301,12 +301,6 @@ public class AppInitializer {
 			Shibboleth3ConfService.instance().generateMetadataFiles(gluuSP);
 			Shibboleth3ConfService.instance().generateConfigurationFiles(trustRelationships);
 
-			/*
-			Shibboleth2ConfService.instance().generateIdpConfigurationFiles();
-			Shibboleth2ConfService.instance().generateConfigurationFiles(trustRelationships);
-			Shibboleth2ConfService.instance().generateMetadataFiles(gluuSP);
-			*/
-
 			Shibboleth3ConfService.instance().removeUnusedCredentials();
 			Shibboleth3ConfService.instance().removeUnusedMetadata();
 

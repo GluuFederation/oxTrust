@@ -82,7 +82,7 @@ public final class OxTrustConstants extends OxConstants {
     public static final String RESULT_CAPTCHA_VALIDATION_FAILED = "captcha_validation_failed";
 
     public static final String APPLICATION_AUTHORIZATION_TYPE = "applicationAuthorizationType";
-    public static final String APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH2 = "applicationAuthorizationName_Shibboleth2";
+    public static final String APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3 = "applicationAuthorizationName_Shibboleth3";
 
     public static final String CONTENT_TYPE_OCTET_STREAM = "application/octet-stream";
     public static final String CONTENT_TYPE_TEXT_PLAIN = "text/plain";

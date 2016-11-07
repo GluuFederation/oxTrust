@@ -126,9 +126,9 @@ public class TemplateService implements Serializable {
 	}
 
 	/**
-	 * Get shibboleth2ConfService instance
+	 * Get TemplateService instance
 	 * 
-	 * @return Shibboleth2ConfService instance
+	 * @return TemplateService instance
 	 */
 	public static TemplateService instance() {
 		return (TemplateService) Component.getInstance(TemplateService.class);

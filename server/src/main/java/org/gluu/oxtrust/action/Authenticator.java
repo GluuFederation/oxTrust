@@ -20,8 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLHandshakeException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -334,7 +332,7 @@ public class Authenticator implements Serializable {
 	/**
 	 * Authenticate using credentials passed from web request header
 	 */
-	public boolean shibboleth2Authenticate() {
+	public boolean Shibboleth3Authenticate() {
 		log.debug("Checking if user authenticated with shibboleth already");
 		boolean result = false;
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
@@ -393,7 +391,7 @@ public class Authenticator implements Serializable {
 			postLogin(user);
 	
 			Contexts.getSessionContext().set(OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE,
-					OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH2);
+					OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3);
 	
 			result = true;
 			if (Events.exists()) {
@@ -415,7 +413,7 @@ public class Authenticator implements Serializable {
 			return true;
 		}
 
-		if (shibboleth2Authenticate()) {
+		if (Shibboleth3Authenticate()) {
 
 			return true;
 		}

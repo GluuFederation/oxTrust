@@ -62,9 +62,7 @@
     "photoRepositoryCountLeveles":3,
     "photoRepositoryCountFoldersPerLevel":20,
 
-    "shibboleth2IdpRootDir":"${base.root}/opt/idp",
-    "shibboleth2SpConfDir":"${base.root}/etc/shibboleth",
-    "shibboleth2FederationRootDir":"${base.root}/opt/shibboleth-federation",
+    "shibboleth3FederationRootDir":"${base.root}/opt/shibboleth-federation",
 
     "velocityLog":"${base.root}/opt/tomcat/logs/velocity.log",
 
