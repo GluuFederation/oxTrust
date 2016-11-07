@@ -81,10 +81,6 @@ public class TrustRelationshipInventoryAction implements Serializable {
 	public String search() {
 		try {
 			
-			if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
-				return OxTrustConstants.RESULT_SUCCESS;
-			}
-			
 			this.trustedSpList = trustService.searchSAMLTrustRelationships(searchPattern,100);
 			this.oldSearchPattern = this.searchPattern;
 
