@@ -258,6 +258,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				this.trustRelationship.setInum(this.inum);
 			} else {
 				this.inum = this.trustRelationship.getInum();
+				update=true;
 			}
 
 			boolean updateShib2Configuration = applicationConfiguration.isConfigGeneration();
@@ -279,7 +280,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					update = true;
 					updateSpMetaDataCert(certWrapper);
 //					setEntityId();
-					this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+					if(!update){
+						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+					}
 				} else {
 					log.error("Failed to save SP meta-data file {0}", fileWrapper);
 					return OxTrustConstants.RESULT_FAILURE;
@@ -296,7 +299,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					}else{
 						log.info("There is no resource found Uri : {0}", trustRelationship.getSpMetaDataURL());
 					}
-					this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+					if(!update){
+						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+					}
 					/*} else {
 						log.error("Failed to save SP meta-data file {0}", fileWrapper);
 						return OxTrustConstants.RESULT_FAILURE;
@@ -306,7 +311,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				}
 				break;
 			case FEDERATION:
-				this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+				if(!update){
+					this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+				}
 				if (this.trustRelationship.getEntityId() == null) {
 					return "invalid_entity_id";
 				}
