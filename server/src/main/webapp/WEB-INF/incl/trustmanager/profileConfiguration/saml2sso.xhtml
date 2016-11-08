@@ -32,8 +32,6 @@ This profile configuration enables and configures the SAML 2 SSO profile.
             <h:panelGrid columns="2">
                 <h:outputText value="assertionLifetime: " />
                 <rich:inputNumberSpinner value="#{_profileConfigurationSelected.assertionLifetime}" step="300000" maxValue="2147483647" />
-                <h:outputText value="assertionProxyCount: " />
-                <rich:inputNumberSpinner value="#{_profileConfigurationSelected.assertionProxyCount}" step="1" maxValue="999" />
                 <h:outputText value="signResponses: " />
                 <h:selectOneMenu value="#{_profileConfigurationSelected.signResponses}">
                     <f:selectItem itemLabel="never" itemValue="never" />
