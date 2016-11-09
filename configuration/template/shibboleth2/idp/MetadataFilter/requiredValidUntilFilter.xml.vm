@@ -1,3 +1,0 @@
-<MetadataFilter xsi:type="RequiredValidUntil" xmlns="urn:mace:shibboleth:2.0:metadata" 
-maxValidityInterval="$maxValidityInterval" 
-/>

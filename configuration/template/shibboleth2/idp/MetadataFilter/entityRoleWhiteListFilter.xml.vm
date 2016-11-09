@@ -1,9 +1,0 @@
-<MetadataFilter xsi:type="EntityRoleWhiteList" xmlns="urn:mace:shibboleth:2.0:metadata"
-    removeRolelessEntityDescriptors="$removeRolelessEntityDescriptors"
-    removeEmptyEntitiesDescriptors="$removeEmptyEntitiesDescriptors"
->
-#foreach( $retainedRole in $retainedRoles ) 
-    <RetainedRole>$retainedRole</RetainedRole>
-#end
-</MetadataFilter> 
-

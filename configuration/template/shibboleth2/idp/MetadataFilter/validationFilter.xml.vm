@@ -1,6 +1,0 @@
-<MetadataFilter xsi:type="SchemaValidation" xmlns="urn:mace:shibboleth:2.0:metadata">
-#foreach( $extensionSchema in $extensionSchemas )
-   <ExtensionSchema>$extensionSchema</ExtensionSchema> 
-#end
-</MetadataFilter> 
-
