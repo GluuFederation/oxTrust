@@ -1381,4 +1381,13 @@ public class Shibboleth3ConfService implements Serializable {
 			return false;
 		}
 	}
+
+	public boolean isIdpInstalled() {
+
+		if (applicationConfiguration.getShibbolethVersion() != null && !applicationConfiguration.getShibbolethVersion().isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

@@ -6,6 +6,8 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+
+import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -41,13 +43,11 @@ public class ProductInstallationCheckerAction implements Serializable {
     public void init() {        
         log.info("init() ProductInstallationCheckerAction call");
         
-        showSAMLMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled() 
-                || ProductInstallationChecker.isShibbolethIDP2Installed() || ProductInstallationChecker.isShibbolethIDP2Installed();
+        showSAMLMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled() || Shibboleth3ConfService.instance().isIdpInstalled();
         
         showAsimbaSubmenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled();
         
-        showSAMLSubmenu = !ProductInstallationChecker.isGluuCE()
-                || ProductInstallationChecker.isShibbolethIDP2Installed() || ProductInstallationChecker.isShibbolethIDP2Installed();
+        showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || Shibboleth3ConfService.instance().isIdpInstalled();
     }
 
     /**
