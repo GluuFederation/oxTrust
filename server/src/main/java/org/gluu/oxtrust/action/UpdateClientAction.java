@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import org.apache.commons.lang.StringUtils;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -27,6 +28,7 @@ import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
+import org.xdi.oxauth.model.util.URLPatternList;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
@@ -63,6 +65,9 @@ public class UpdateClientAction implements Serializable {
 
     @In
     private FacesMessages facesMessages;
+    
+    @In
+	private OxTrustConfiguration oxTrustConfiguration;
 
     private String inum;
 
@@ -360,8 +365,11 @@ public class UpdateClientAction implements Serializable {
             return;
         }
 
-        if (!this.loginUris.contains(this.availableLoginUri)) {
+        if (!this.loginUris.contains(this.availableLoginUri)  &&  checkWhiteListRedirectUris(availableLoginUri) && checkBlackListRedirectUris(availableLoginUri)) {
+        	
             this.loginUris.add(this.availableLoginUri);
+        }else{
+        	facesMessages.add(Severity.ERROR, "The URL is not valid or may be Blacklisted.");
         }
 
         this.availableLoginUri = "https://";
@@ -372,8 +380,10 @@ public class UpdateClientAction implements Serializable {
             return;
         }
 
-        if (!this.logoutUris.contains(this.availableLogoutUri)) {
+        if (!this.logoutUris.contains(this.availableLogoutUri)   &&  checkWhiteListRedirectUris(availableLogoutUri) && checkBlackListRedirectUris(availableLogoutUri)) {
             this.logoutUris.add(this.availableLogoutUri);
+        }else{
+        	facesMessages.add(Severity.ERROR, "The URL is not valid or may be Blacklisted.");
         }
 
         this.availableLogoutUri = "https://";
@@ -940,6 +950,46 @@ public class UpdateClientAction implements Serializable {
 	 */
 	public void setClientlogoutUris(List<String> clientlogoutUris) {
 		this.clientlogoutUris = clientlogoutUris;
+	}
+	
+	
+	/**
+	 * All the Redirect Uris must match to return true.
+	 */
+	private boolean checkWhiteListRedirectUris(String redirectUri) {
+		try {
+			boolean valid = true;
+			List<String> whiteList = oxTrustConfiguration.getApplicationConfiguration().getClientWhiteList();
+			URLPatternList urlPatternList = new URLPatternList(whiteList);
+
+			// for (String redirectUri : redirectUris) {
+			valid &= urlPatternList.isUrlListed(redirectUri);
+			// }
+
+			return valid;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * None of the Redirect Uris must match to return true.
+	 */
+	private boolean checkBlackListRedirectUris(String redirectUri) {
+		try {
+			boolean valid = true;
+			List<String> blackList = oxTrustConfiguration.getApplicationConfiguration().getClientBlackList();
+			URLPatternList urlPatternList = new URLPatternList(blackList);
+
+			// for (String redirectUri : redirectUris) {
+			valid &= !urlPatternList.isUrlListed(redirectUri);
+			// }
+
+			return valid;
+		} catch (Exception e) {
+			return false;
+		}
+
 	}
 
 }

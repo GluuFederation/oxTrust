@@ -560,6 +560,30 @@
             "id": "idp3EncryptionCert",
             "type": "string",
             "readonly": true
+        },
+        "clientWhiteList": {
+            "id": "clientWhiteList",
+            "description": "White List for Client Redirection URIs.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "clientBlackList": {
+            "id": "clientBlackList",
+            "description": "Black List for Client Redirection URIs.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
         }
     },
     "required": [
