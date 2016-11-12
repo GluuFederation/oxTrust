@@ -30,6 +30,8 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.web.ServletContexts;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
@@ -43,6 +45,9 @@ import org.xdi.util.StringHelper;
 public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+    @In
+    private FacesMessages facesMessages;
 
     /**
      * @return the MESSAGE_NOT_FOUND
@@ -100,12 +105,8 @@ public class PasswordReminderAction implements Serializable {
 
 
 	public String requestReminder() throws Exception {
-		boolean valid = true;
-		if (recaptchaService.isEnabled()) {
-			valid = recaptchaService.verifyRecaptchaResponse();
-		}
 
-		if (valid && enabled()) {
+		if (enabled()) {
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
 			ApplicationConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
@@ -157,14 +158,23 @@ public class PasswordReminderAction implements Serializable {
 	
 	public boolean enabled(){
 		GluuAppliance appliance = ApplianceService.instance().getAppliance();
-		return 	appliance.getSmtpHost() != null 
+		boolean valid =	appliance.getSmtpHost() != null 
 					&& appliance.getSmtpPort() != null 
 					&&((! appliance.isRequiresAuthentication()) 
 							|| (appliance.getSmtpUserName() != null 
 								&& appliance.getSmtpPasswordStr() != null))
 					&& appliance.getPasswordResetAllowed()!=null 
 					&& appliance.getPasswordResetAllowed().isBooleanValue();
-
+		if(valid){
+			if (recaptchaService.isEnabled()) {
+				valid = recaptchaService.verifyRecaptchaResponse();
+				if(!valid)
+					facesMessages.add(Severity.ERROR, "Please check your input and CAPTCHA answer.");
+			}			
+		}else{
+			facesMessages.add(Severity.ERROR, "Sorry the Password Reminder functionality is not enabled.Please contact to administrator.");
+		}
+		return valid;
 		
 	}
 
