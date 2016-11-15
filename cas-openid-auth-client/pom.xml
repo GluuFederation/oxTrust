@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.xdi</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>2.4.4</version>
+		<version>2.4.4.scim_utf8</version>
 	</parent>
 
 		<properties>
