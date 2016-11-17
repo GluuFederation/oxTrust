@@ -64,8 +64,11 @@ public class FilterService {
 	private Shibboleth3ConfService shibboleth3ConfService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
-		File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth3"
-				+ File.separator + "idp" + File.separator + "MetadataFilter");
+
+		String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
+		// File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
+		File filterFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
+
 		File[] filterTemplates = null;
 		if (filterFolder.exists() && filterFolder.isDirectory()) {
 			filterTemplates = filterFolder.listFiles(new FilenameFilter() {

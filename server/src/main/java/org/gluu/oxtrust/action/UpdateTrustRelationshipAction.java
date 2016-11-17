@@ -261,7 +261,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				update=true;
 			}
 
-			boolean updateShib2Configuration = applicationConfiguration.isConfigGeneration();
+			boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration();
 			switch (trustRelationship.getSpMetaDataSourceType()) {
 			case GENERATE:
 				String certificate = getCertForGeneratedSP();
@@ -351,7 +351,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				this.update = true;
 			}
 
-			if (updateShib2Configuration) {
+			if (updateShib3Configuration) {
 				List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 				updateShibboleth3Configuration(trustRelationships);
 			}
