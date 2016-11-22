@@ -6,14 +6,7 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.io.StringWriter;
+import java.io.*;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -34,6 +27,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -68,6 +62,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
+import org.jboss.seam.web.ServletContexts;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
@@ -180,8 +175,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private List<String> availableEntitiesFiltered;
 	//private GluuEntityType entityType;	
 
-	@In
-	 private ResourceLoader resourceLoader;
+	// @In
+	// private ResourceLoader resourceLoader;
 	
 	public List <GluuMetadataSourceType> getMetadataSourceTypesList() {
 		List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
@@ -938,17 +933,24 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 			String spReadMeResourceName = shibboleth3ConfService.getSpReadMeResourceName();
 			String fileName = (new File(spReadMeResourceName)).getName();
-			InputStream is = resourceLoader.getResourceAsStream(spReadMeResourceName);
+			// InputStream is = resourceLoader.getResourceAsStream(spReadMeResourceName);
 			//InputStream is = this.getClass().getClassLoader().getResourceAsStream(spReadMeResourceName);
-			if (!ResponseHelper.addResourceToZip(is, fileName , zos)) {
+
+			ServletContext ctx = ServletContexts.instance().getRequest().getServletContext();
+			InputStream is = ctx.getResourceAsStream(spReadMeResourceName);
+
+			if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
 				log.error("Failed to add " + spReadMeResourceName + " to zip");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
 			String spReadMeWindowsResourceName = shibboleth3ConfService.getSpReadMeWindowsResourceName();
 			fileName = (new File(spReadMeWindowsResourceName)).getName();
-			is = resourceLoader.getResourceAsStream(spReadMeWindowsResourceName);
-			if (!ResponseHelper.addResourceToZip(is, fileName , zos)) {
+			// is = resourceLoader.getResourceAsStream(spReadMeWindowsResourceName);
+
+			is = ctx.getResourceAsStream(spReadMeWindowsResourceName);
+
+			if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
 				log.error("Failed to add " + spReadMeWindowsResourceName + " to zip");
 				return OxTrustConstants.RESULT_FAILURE;
 			}

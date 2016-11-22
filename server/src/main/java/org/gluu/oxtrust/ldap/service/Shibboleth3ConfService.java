@@ -102,8 +102,8 @@ public class Shibboleth3ConfService implements Serializable {
 	public static final String SHIB3_IDP_SP_METADATA_FILE = "sp-metadata.xml";
 	public static final String SHIB3_SP_ATTRIBUTE_MAP_FILE = "attribute-map.xml";
 	public static final String SHIB3_SP_SHIBBOLETH2_FILE = "shibboleth2.xml";
-	private static final String SHIB3_SP_READ_ME = "WEB-INF/resources/doc/README_SP.pdf";
-	private static final String SHIB3_SP_READ_ME_WINDOWS = "WEB-INF/resources/doc/README_SP_windows.pdf";
+	private static final String SHIB3_SP_READ_ME = "/WEB-INF/resources/doc/README_SP.pdf";
+	private static final String SHIB3_SP_READ_ME_WINDOWS = "/WEB-INF/resources/doc/README_SP_windows.pdf";
 
 	private static final String SHIB3_SP_METADATA_FILE_PATTERN = "%s-sp-metadata.xml";
 	// private static final String SHIB3_IDP_METADATA_FILE_PATTERN = "%s-idp-metadata.xml";
@@ -143,7 +143,7 @@ public class Shibboleth3ConfService implements Serializable {
 	
 	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
-	
+
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
 	 */
