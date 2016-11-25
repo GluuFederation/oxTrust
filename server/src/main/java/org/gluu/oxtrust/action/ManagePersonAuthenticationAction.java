@@ -6,13 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -39,7 +32,6 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.config.oxtrust.PassportConfiguration;
@@ -55,6 +47,13 @@ import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Action class for configuring person authentication
@@ -129,15 +128,9 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			log.info("passport enabled value  : '{0}'" , passportEnable);
 			this.customScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 
-			List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
-			if (idpConfs != null) {
-				for (OxIDPAuthConf idpConf : idpConfs) {
-					if (idpConf.getType().equalsIgnoreCase("auth")) {
-						this.ldapConfig = mapLdapConfig(idpConf.getConfig());
-						break;
-					}
-				}
-			}
+			OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
+			if(idpConf != null)
+				this.ldapConfig = mapLdapConfig(idpConf.getConfig());
 
 			this.existLdapConfigIdpAuthConf = this.ldapConfig != null;
 
@@ -166,13 +159,30 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			// Reload entry to include latest changes
 			GluuAppliance appliance = applianceService.getAppliance();
 
+			boolean updateAuthenticationMode = false;
+			boolean updateOxTrustAuthenticationMode = false;
+			OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
+			if(idpConf != null && idpConf.getName() != null){
+				if(idpConf.getName().equals(this.authenticationMode))
+					updateAuthenticationMode = true;
+				if(idpConf.getName().equals(this.oxTrustAuthenticationMode))
+					updateOxTrustAuthenticationMode = true;
+			}
+			
 			this.ldapConfig.updateStringsLists();
 
 			updateAuthConf(appliance);
+
+			if(updateAuthenticationMode)
+				appliance.setAuthenticationMode(this.ldapConfig.getConfigId());
+			else
+				appliance.setAuthenticationMode(this.authenticationMode);
 			
-			appliance.setAuthenticationMode(this.authenticationMode);
-			appliance.setOxTrustAuthenticationMode(this.oxTrustAuthenticationMode);
-			
+			if(updateOxTrustAuthenticationMode)
+				appliance.setOxTrustAuthenticationMode(this.ldapConfig.getConfigId());
+			else
+				appliance.setOxTrustAuthenticationMode(this.oxTrustAuthenticationMode);
+
 			appliance.setPassportEnabled(passportEnable);
 			
 			applianceService.updateAppliance(appliance);
@@ -253,8 +263,11 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 					this.customAuthenticationConfigNames.add(customScript.getName());
 				}
 			}
-			
-			this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
+
+			if(ldapConfig != null)
+				this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
+			else
+				this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
 		}
 
 		return this.customAuthenticationConfigNames;
@@ -405,4 +418,15 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 		this.passportEnable = passportEnable;
 	}
 
+	private OxIDPAuthConf getIDPAuthConfOrNull(GluuAppliance appliance) {
+		List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
+		if (idpConfs != null) {
+			for (OxIDPAuthConf idpConf : idpConfs) {
+				if (idpConf.getType().equalsIgnoreCase("auth")) {
+					return idpConf;
+				}
+			}
+		}
+		return null;
+	}
 }
