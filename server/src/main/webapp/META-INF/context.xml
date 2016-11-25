@@ -6,8 +6,5 @@
                driverClassName="com.mysql.jdbc.Driver"
                username="inumbase" password="InUmB@53"
                url="jdbc:mysql://${db.inumdb.host}:3306/inumbase?autoReconnect=true" validationQuery="select 1"/>
-               
-	<Loader className="org.apache.catalina.loader.VirtualWebappLoader"
-            virtualClasspath="${gluu.external.resource.base}/oxtrust/libs/*.jar"/>
   
 </Context>
