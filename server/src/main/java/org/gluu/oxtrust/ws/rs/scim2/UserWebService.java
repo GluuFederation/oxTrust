@@ -466,7 +466,7 @@ public class UserWebService extends BaseScimWebService {
 	
 	
 	//  PATCH WEBSERVICES
-	@Path("{id}")
+	@Path("/patch/{id}")
 	@PUT
 	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
@@ -520,6 +520,4 @@ public class UserWebService extends BaseScimWebService {
 			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
-	  
-	 //
 }
