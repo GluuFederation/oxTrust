@@ -226,7 +226,7 @@
 </div></div>
  <div class="box-footer">
 					
-							<rich:notifyMessages stayTime="2000" nonblocking="true" rendered="#{showGlobalMessages != 'false'}"/>
+							<rich:notifyMessages stayTime="2000" nonblocking="true" rendered="#{showGlobalMessages == 'false'}"/>
 							
 							 <h:commandButton styleClass="btn btn-primary" value="Update" action="#{configureCacheRefreshAction.update}" />
                         <h:commandButton styleClass="btn btn-primary" value="Cancel" action="#{configureCacheRefreshAction.cancel}" immediate="true" style="margin-left:5px" />
