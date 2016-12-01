@@ -170,9 +170,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			ScopeDescription exampleScopeDescription = new ScopeDescription();
 			exampleScopeDescription.setDn(scopeDescriptionService.getDnForScopeDescription(null));
 			exampleScopeDescription.setId(scopeDescription.getId());
-			if (InternalExternal.INTERNAL.equals(scopeDescription.getType()) && scopeDescriptionService.containsScopeDescription(exampleScopeDescription)) {
-				return OxTrustConstants.RESULT_DUPLICATE;
-			}
 
 			// Prepare score description
 			this.scopeDescription.setRevision(String.valueOf(0));

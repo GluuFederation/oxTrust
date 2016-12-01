@@ -81,22 +81,6 @@
                         </s:decorate>
                     </h:panelGroup>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="type">
-                        <ui:define name="label">Type</ui:define>
-                        <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scopeDescription.type}">
-                    	<s:selectItems value="#{updateScopeDescriptionAction.internalExternalList}" var="_type" label="#{_type.displayName}" />
-                    		<f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
-                		</h:selectOneMenu>
-                        
-                        <!-- <h:selectOneMenu styleClass="form-control" value="#{_scopeDescription.type}" id="typeId">
-                            <s:selectItems value="#{organizationService.internalExternalTypes}" var="_type" label="#{_type.displayName}"
-                                noSelectionLabel="Type"/>
-                            <s:convertEnum/> <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter"/>
-                            <a4j:ajax event="change" render="internalTypeGroupId, externalTypeGroupId" execute="@this" limitRender="true"/>
-                        </h:selectOneMenu> -->
-                    </s:decorate>
-
-
                     <h:panelGroup id="externalTypeGroupId">
                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
                             <ui:define name="label">Icon Uri</ui:define>
