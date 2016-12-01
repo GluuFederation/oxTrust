@@ -33,7 +33,9 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
 	static {
-		if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
+        if (System.getProperty("gluu.base") != null) {
+            BASE_DIR = System.getProperty("gluu.base");
+        } else if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
 			BASE_DIR = System.getProperty("catalina.base");
 		} else if (System.getProperty("catalina.home") != null) {
 			BASE_DIR = System.getProperty("catalina.home");
