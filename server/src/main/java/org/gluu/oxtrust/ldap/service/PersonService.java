@@ -9,6 +9,7 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +100,7 @@ public class PersonService implements Serializable, IPersonService {
 		uidPerson.setUid(person.getUid());
 		List<GluuCustomPerson> persons = findPersons(uidPerson, 1);
 		if (persons == null || persons.size() == 0) {
+			person.setOxCreationTimestamp(new Date());
 			ldapEntryManager.persist(person);
 		} else {
 			throw new DuplicateEntryException("Duplicate UID value: " + person.getUid());
@@ -110,6 +112,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public void updatePerson(GluuCustomPerson person) {
+		person.setOxUpdatedAt(new Date().toString());
 		ldapEntryManager.merge(person);
 	}
 
