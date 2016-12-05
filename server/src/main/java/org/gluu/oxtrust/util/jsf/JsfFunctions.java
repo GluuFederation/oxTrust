@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.util.jsf;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.gluu.oxtrust.model.User;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
@@ -105,6 +106,14 @@ public class JsfFunctions {
 	public static String getColor(String color, String defaultColor) {
 		String tmpColor = StringHelper.isEmpty(color) ? defaultColor : color;
 		return "#" + tmpColor + ";";
+	}
+
+	public static String getPersonDisplayName(User person) {
+		if (StringHelper.isEmpty(person.getDisplayName())) {
+			return person.getUid();
+		}
+
+		return person.getDisplayName();
 	}
 
 }
