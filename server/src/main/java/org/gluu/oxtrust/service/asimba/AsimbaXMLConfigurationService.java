@@ -26,12 +26,15 @@ import org.richfaces.model.UploadedFile;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.io.FileUtils;
 import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.Utils;
 import org.jboss.seam.annotations.In;
 import org.w3c.dom.Document;
+import org.xdi.service.XmlService;
 
 /**
  * Asimba XML configuration service.
@@ -56,6 +59,9 @@ public class AsimbaXMLConfigurationService implements Serializable {
     
     @In
     private SSLService sslService;
+
+    @In
+    private XmlService xmlService;
     
     private String keystoreFilePath = null;
     private String keystoreType = null;
@@ -92,7 +98,7 @@ public class AsimbaXMLConfigurationService implements Serializable {
                 return;
             
             // parse XML
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(configFile);
+            Document document = xmlService.getXmlDocument(FileUtils.readFileToByteArray(configFile));
             XPath xPath = XPathFactory.newInstance().newXPath();
             keystoreFilePath = xPath.evaluate("/asimba-server/crypto/signing/signingfactory/keystore/file", document);
             log.info("AsimbaXMLConfig keystoreFilePath: " + keystoreFilePath);

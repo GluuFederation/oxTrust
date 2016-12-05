@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,16 +14,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.DOMReader;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.FileData;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
@@ -37,7 +33,7 @@ import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
 import org.jboss.seam.log.Log;
-import org.xml.sax.InputSource;
+import org.xdi.service.XmlService;
 
 @AutoCreate
 @Scope(ScopeType.APPLICATION)
@@ -49,6 +45,9 @@ public class LogFileSizeChecker {
 
 	@In
 	ApplianceService applianceService;
+
+	@In
+	private XmlService xmlService;
 
 	@Create
 	public void create() {
@@ -154,9 +153,7 @@ public class LogFileSizeChecker {
 	private List<LogDir> readConfig(String source) {
 		List<LogDir> logDirs = new ArrayList<LogDir>();
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			org.w3c.dom.Document document = builder.parse(new InputSource(new FileInputStream(new File(source))));
+			org.w3c.dom.Document document = xmlService.getXmlDocument(FileUtils.readFileToByteArray(new File(source)));
 			DOMReader reader = new DOMReader();
 			Document doc = reader.read(document);
 			Element element = doc.getRootElement();

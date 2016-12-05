@@ -38,6 +38,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.VirtualListViewResponse;
+import org.xdi.service.XmlService;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
@@ -59,6 +60,9 @@ public class UserWebService extends BaseScimWebService {
 
 	@In
 	private ExternalScimService externalScimService;
+
+    @In
+    private XmlService xmlService;
 
 	@GET
 	@Produces({MediaType.APPLICATION_JSON,  MediaType.APPLICATION_XML})
@@ -429,9 +433,7 @@ public class UserWebService extends BaseScimWebService {
 	}
 
 	private Object xmlToObject(String xml) throws Exception {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		org.w3c.dom.Document document = builder.parse(new InputSource(new StringReader(xml)));
+		org.w3c.dom.Document document = xmlService.getXmlDocument(new InputSource(new StringReader(xml)));
 		DOMReader reader = new DOMReader();
 		Document doc = reader.read(document);
 

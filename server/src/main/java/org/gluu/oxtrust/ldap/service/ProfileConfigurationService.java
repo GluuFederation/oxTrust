@@ -30,6 +30,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xdi.service.XmlService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xml.sax.SAXException;
@@ -55,6 +56,9 @@ public class ProfileConfigurationService {
 
 	@In
 	private TemplateService templateService;
+
+	@In
+	private XmlService xmlService;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
 
@@ -145,8 +149,7 @@ public class ProfileConfigurationService {
 			ParserConfigurationException, FactoryConfigurationError, XPathExpressionException {
 		if (trustRelationship.getGluuProfileConfiguration() != null) {
 			for (String profileConfigurationXML : trustRelationship.getGluuProfileConfiguration()) {
-				Document xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-						.parse(new java.io.ByteArrayInputStream(profileConfigurationXML.getBytes()));
+				Document xmlDocument = xmlService.getXmlDocument(profileConfigurationXML.getBytes());
 				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SHIBBOLETH_SSO)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SHIBBOLETH_SSO);
 

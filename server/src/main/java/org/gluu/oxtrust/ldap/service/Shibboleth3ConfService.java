@@ -60,6 +60,7 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
 import org.xdi.service.SchemaService;
+import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
@@ -143,6 +144,9 @@ public class Shibboleth3ConfService implements Serializable {
 	
 	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
+
+	@In
+	private XmlService xmlService;
 
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
@@ -343,7 +347,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 						try {
 
-							xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new java.io.ByteArrayInputStream(filterXML.getBytes()));
+							xmlDocument = xmlService.getXmlDocument(filterXML.getBytes());
 
 						} catch (Exception e) {
 							log.error("GluuSAMLMetaDataFilter contains invalid value.", e);
@@ -576,7 +580,7 @@ public class Shibboleth3ConfService implements Serializable {
 			is = FileUtils.openInputStream(relyingPartyFile);
 			isr = new InputStreamReader(is, "UTF-8");
 			try {
-				xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(isr));
+				xmlDocument = xmlService.getXmlDocument(new InputSource(isr));
 			} catch (Exception ex) {
 				log.error("Failed to parse relying party file '{0}'", ex, relyingPartyFile.getAbsolutePath());
 				ex.printStackTrace();
@@ -902,7 +906,7 @@ public class Shibboleth3ConfService implements Serializable {
 			is = FileUtils.openInputStream(spMetaDataFile);
 			isr = new InputStreamReader(is, "UTF-8");
 			try {
-				xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(isr));
+				xmlDocument = xmlService.getXmlDocument(new InputSource(isr));
 			} catch (Exception ex) {
 				log.error("Failed to parse metadata file '{0}'", ex, spMetaDataFile.getAbsolutePath());
 				ex.printStackTrace();
