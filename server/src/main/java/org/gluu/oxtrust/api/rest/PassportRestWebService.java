@@ -12,8 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.exception.UmaProtectionException;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.OxPassportService;
+import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
 import org.gluu.oxtrust.model.passport.PassportStrategy;
 import org.gluu.oxtrust.service.uma.PassportUmaProtectionService;
@@ -41,7 +40,7 @@ public class PassportRestWebService {
 	private Log log;
 
 	@In
-	private OxPassportService passportService;
+	private PassportService passportService;
 	
 	@In
 	private PassportUmaProtectionService pasportUmaProtectionService;
@@ -60,20 +59,13 @@ public class PassportRestWebService {
 		PassportConfigResponse passportConfigResponse = null;
 		passportConfigResponse = new PassportConfigResponse();
 		LdapOxPassportConfiguration ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-		List<org.xdi.config.oxtrust.PassportConfiguration>  passportConfigurations  =ldapOxPassportConfiguration.getPassportConfigurations();
+		List<org.xdi.model.passport.PassportConfiguration>  passportConfigurations  =ldapOxPassportConfiguration.getPassportConfigurations();
 		Map  <String ,PassportStrategy> PassportConfigurationsMap = new HashMap<String, PassportStrategy>();
-		for(org.xdi.config.oxtrust.PassportConfiguration passportConfiguration : passportConfigurations){			
-			if(passportConfiguration.getProvider().equalsIgnoreCase("passport")){
-				passportConfigResponse.setApplicationEndpoint((passportConfiguration.getApplicationEndpoint()==null) ? "" : passportConfiguration.getApplicationEndpoint() );	
-				passportConfigResponse.setAuthenticationUrl((passportConfiguration.getServerURI()==null) ? "" : passportConfiguration.getServerURI());
-				passportConfigResponse.setApplicationStartpoint((passportConfiguration.getApplicationStartpoint()==null) ? "" : passportConfiguration.getApplicationStartpoint());
-				
-			}else{
-				PassportStrategy passportStrategy = new PassportStrategy();							
-				passportStrategy.setClientID((passportConfiguration.getClientID()==null) ? "" : passportConfiguration.getClientID());
-				passportStrategy.setClientSecret((passportConfiguration.getClientSecret()==null) ? "" : passportConfiguration.getClientSecret());
-				PassportConfigurationsMap.put((passportConfiguration.getProvider()==null) ? "" : passportConfiguration.getProvider(), passportStrategy);
-			}					
+		for(org.xdi.model.passport.PassportConfiguration passportConfiguration : passportConfigurations){			
+			PassportStrategy passportStrategy = new PassportStrategy();							
+			passportStrategy.setClientID((passportConfiguration.getClientID()==null) ? "" : passportConfiguration.getClientID());
+			passportStrategy.setClientSecret((passportConfiguration.getClientSecret()==null) ? "" : passportConfiguration.getClientSecret());
+			PassportConfigurationsMap.put((passportConfiguration.getProvider()==null) ? "" : passportConfiguration.getProvider(), passportStrategy);
 		}	
 		passportConfigResponse.setPassportStrategies(PassportConfigurationsMap);
 		return Response.status(Response.Status.OK).entity(passportConfigResponse).build();
