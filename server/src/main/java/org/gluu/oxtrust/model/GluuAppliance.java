@@ -145,9 +145,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "gluuVdsCacheRefreshEnabled")
 	private GluuBoolean vdsCacheRefreshEnabled;
-	
-	@LdapAttribute(name = "gluuPassportEnabled")
-	private GluuBoolean passportEnabled;
 
 	@LdapAttribute(name = "oxTrustCacheRefreshServerIpAddress")
 	private String cacheRefreshServerIpAddress;
@@ -166,6 +163,9 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "gluuScimEnabled")
 	private GluuBoolean scimEnabled;
+
+	@LdapAttribute(name = "gluuPassportEnabled")
+	private GluuBoolean passportEnabled;
 
 	@LdapAttribute(name = "oxTrustEmail")
 	private String contactEmail;

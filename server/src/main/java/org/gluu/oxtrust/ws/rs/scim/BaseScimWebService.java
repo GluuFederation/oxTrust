@@ -6,9 +6,19 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
+import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim1.ScimGroupFilterVisitor.getGroupLdapAttributeName;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim1.ScimPersonFilterVisitor.getUserLdapAttributeName;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.ws.rs.core.Response;
 
-import com.unboundid.ldap.sdk.Filter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -18,9 +28,10 @@ import org.gluu.oxtrust.model.scim.Error;
 import org.gluu.oxtrust.model.scim.Errors;
 import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim.ScimPerson;
-import org.gluu.oxtrust.service.UmaAuthenticationService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
+import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
+import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.annotations.In;
@@ -31,14 +42,10 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
+import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 
-import java.util.*;
-
-import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim1.ScimGroupFilterVisitor.getGroupLdapAttributeName;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim1.ScimPersonFilterVisitor.getUserLdapAttributeName;
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * Base methods for SCIM web services
@@ -57,7 +64,10 @@ public class BaseScimWebService {
 	private ApplianceService applianceService;
 
 	@In
-	private UmaAuthenticationService umaAuthenticationService;
+	private ScimUmaProtectionService scimUmaProtectionService;
+
+	@In
+	private UmaPermissionService umaPermissionService;
 
 	@In
 	private LdapEntryManager ldapEntryManager;
@@ -68,11 +78,12 @@ public class BaseScimWebService {
 	protected Response processAuthorization(String authorization) throws Exception {
 		boolean authorized = getAuthorizedUser();
 		if (!authorized) {
-			if (!umaAuthenticationService.isEnabledUmaAuthentication()) {
+			if (!scimUmaProtectionService.isEnabled()) {
 				return getErrorResponse("User isn't authorized", Response.Status.FORBIDDEN.getStatusCode());
 			}
 			
-			Pair<Boolean, Response> rptTokenValidationResult = umaAuthenticationService.validateRptToken(authorization, applicationConfiguration.getUmaResourceId(), applicationConfiguration.getUmaScope());
+			Token patToken = scimUmaProtectionService.getPatToken();
+			Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, scimUmaProtectionService.getUmaResourceId(), scimUmaProtectionService.getUmaScope());
 			if (rptTokenValidationResult.getFirst()) {
 				if (rptTokenValidationResult.getSecond() != null) {
 					return rptTokenValidationResult.getSecond();
