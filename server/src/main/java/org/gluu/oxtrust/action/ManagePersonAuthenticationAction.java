@@ -64,7 +64,8 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @Name("managePersonAuthenticationAction")
 @Scope(ScopeType.CONVERSATION)
 @Restrict("#{identity.loggedIn}")
-public class ManagePersonAuthenticationAction implements SimplePropertiesListModel, LdapConfigurationModel, Serializable {
+public class ManagePersonAuthenticationAction
+		implements SimplePropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
 
@@ -85,7 +86,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 	@In(value = "customScriptService")
 	private AbstractCustomScriptService customScriptService;
-	
+
 	@In
 	private PassportService passportService;
 
@@ -102,17 +103,17 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 	private List<String> customAuthenticationConfigNames;
 
 	private boolean initialized;
-	
+
 	private GluuBoolean passportEnable;
-	
+
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
-	
+
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
-	
+
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify() {
 		if (this.initialized) {
@@ -121,13 +122,14 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 		try {
 			GluuAppliance appliance = applianceService.getAppliance();
-			
+
 			if (appliance == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			passportEnable = appliance.getPassportEnabled();
-			log.info("passport enabled value  : '{0}'" , passportEnable);
-			this.customScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
+			log.info("passport enabled value  : '{0}'", passportEnable);
+			this.customScripts = customScriptService.findCustomScripts(
+					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 
 			List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
 			if (idpConfs != null) {
@@ -144,11 +146,14 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			if (this.ldapConfig == null) {
 				this.ldapConfig = new GluuLdapConfiguration();
 			}
-			
+
 			this.authenticationMode = appliance.getAuthenticationMode();
 			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
-			
+
 			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
+			if (ldapOxPassportConfiguration == null) {
+				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
+			}
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -169,12 +174,12 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			this.ldapConfig.updateStringsLists();
 
 			updateAuthConf(appliance);
-			
+
 			appliance.setAuthenticationMode(this.authenticationMode);
 			appliance.setOxTrustAuthenticationMode(this.oxTrustAuthenticationMode);
-			
+
 			appliance.setPassportEnabled(passportEnable);
-			
+
 			applianceService.updateAppliance(appliance);
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (LdapMappingException ex) {
@@ -192,8 +197,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 		this.customAuthenticationConfigNames = null;
 	}
 
-
-	private GluuLdapConfiguration mapLdapConfig(String config) throws JsonParseException, JsonMappingException, IOException {
+	private GluuLdapConfiguration mapLdapConfig(String config)
+			throws JsonParseException, JsonMappingException, IOException {
 		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
 	}
 
@@ -201,7 +206,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 	public void cancel() throws Exception {
 	}
 
-	private Object jsonToObject(String json, Class<?> clazz) throws JsonParseException, JsonMappingException, IOException {
+	private Object jsonToObject(String json, Class<?> clazz)
+			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		Object clazzObject = mapper.readValue(json, clazz);
 		return clazzObject;
@@ -226,7 +232,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 				ldapConfigIdpAuthConf.setName(this.ldapConfig.getConfigId());
 				ldapConfigIdpAuthConf.setEnabled(this.ldapConfig.isEnabled());
 				ldapConfigIdpAuthConf.setConfig(objectToJson(this.ldapConfig));
-	
+
 				idpConf.add(ldapConfigIdpAuthConf);
 			}
 
@@ -236,7 +242,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -249,11 +255,11 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 					if (StringHelper.isEmpty(name)) {
 						continue;
 					}
-	
+
 					this.customAuthenticationConfigNames.add(customScript.getName());
 				}
 			}
-			
+
 			this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
 		}
 
@@ -273,7 +279,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			properties.setProperty("bindPassword", this.ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(this.ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(this.ldapConfig.isUseSSL()));
-			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(properties, cryptoConfigurationSalt));
+			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(
+					PropertiesDecrypter.decryptProperties(properties, cryptoConfigurationSalt));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -294,7 +301,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 		if (servers == null) {
 			return sb.toString();
 		}
-		
+
 		boolean first = true;
 		for (SimpleProperty server : servers) {
 			if (first) {
@@ -312,7 +319,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 	public void updateLdapBindPassword() {
 		String encryptedLdapBindPassword = null;
 		try {
-			encryptedLdapBindPassword = StringEncrypter.defaultInstance().encrypt(this.ldapConfig.getBindPassword(), cryptoConfigurationSalt);
+			encryptedLdapBindPassword = StringEncrypter.defaultInstance().encrypt(this.ldapConfig.getBindPassword(),
+					cryptoConfigurationSalt);
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt LDAP bind password", ex);
 		}
@@ -383,22 +391,21 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 		return ldapOxPassportConfiguration;
 	}
 
-	public void setLdapOxPassportConfiguration(
-			LdapOxPassportConfiguration ldapOxPassportConfiguration) {
+	public void setLdapOxPassportConfiguration(LdapOxPassportConfiguration ldapOxPassportConfiguration) {
 		this.ldapOxPassportConfiguration = ldapOxPassportConfiguration;
 	}
-	
+
 	public String getId(Object obj) {
 		return "c" + System.identityHashCode(obj) + "Id";
 	}
-	
-	public void addStrategy(){
+
+	public void addStrategy() {
 		PassportConfiguration passportConfiguration = new PassportConfiguration();
-		if(this.ldapOxPassportConfiguration.getPassportConfigurations() == null){
+		if (this.ldapOxPassportConfiguration.getPassportConfigurations() == null) {
 			List<PassportConfiguration> passportConfigurations = new ArrayList<PassportConfiguration>();
 			this.ldapOxPassportConfiguration.setPassportConfigurations(passportConfigurations);
 		}
-		this.ldapOxPassportConfiguration.getPassportConfigurations().add(passportConfiguration);	
+		this.ldapOxPassportConfiguration.getPassportConfigurations().add(passportConfiguration);
 	}
 
 	public GluuBoolean getPassportEnable() {
