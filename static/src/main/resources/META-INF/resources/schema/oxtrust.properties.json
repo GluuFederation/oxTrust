@@ -460,6 +460,36 @@
             "type": "string",
             "minLength": 1
         },
+        "passportUmaClientId": {
+            "id": "passportUmaClientId",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaClientKeyId": {
+            "id": "passportUmaClientKeyId",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaResourceId": {
+            "id": "passportUmaResourceId",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaScope": {
+            "id": "passportUmaScope",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaClientKeyStoreFile": {
+            "id": "passportUmaClientKeyStoreFile",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaClientKeyStorePassword": {
+            "id": "passportUmaClientKeyStorePassword",
+            "type": "string",
+            "minLength": 1
+        },
         "recaptchaSiteKey": {
             "id": "recaptchaSiteKey",
             "type": "string",
@@ -584,6 +614,10 @@
                 "type": "string",
                 "minLength": 1
             }
+        },
+        "oxIncommonFlag": {
+            "id": "oxIncommonFlag",
+            "type": "boolean"
         }
     },
     "required": [
@@ -667,6 +701,12 @@
         "umaScope",
         "umaClientKeyStoreFile",
         "umaClientKeyStorePassword",
+        "passportUmaClientId",
+        "passportUmaClientKeyId",
+        "passportUmaResourceId",
+        "passportUmaScope",
+        "passportUmaClientKeyStoreFile",
+        "passportUmaClientKeyStorePassword",
         "recaptchaSiteKey",
         "recaptchaSecretKey",
         "cssLocation",
@@ -683,6 +723,7 @@
         "shibboleth3SpConfDir",
         "organizationName",
         "idp3SigningCert",
-        "idp3EncryptionCert"
+        "idp3EncryptionCert",
+        "oxIncommonFlag"
     ]
 }
