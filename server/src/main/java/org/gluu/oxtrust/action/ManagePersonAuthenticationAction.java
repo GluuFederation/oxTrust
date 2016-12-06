@@ -153,7 +153,6 @@ public class ManagePersonAuthenticationAction
 			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 			if (ldapOxPassportConfiguration == null) {
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
-				ldapOxPassportConfiguration.setDn(passportService.geConfigurationDn());
 			}
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);

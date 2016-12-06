@@ -19,6 +19,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.service.JsonService;
+import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 /**
@@ -62,7 +63,7 @@ public class PassportService {
 		return null;
 	}
 
-	public String geConfigurationDn() {
+	private String geConfigurationDn() {
 		FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
 		String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
 		return configurationDn;
@@ -75,7 +76,12 @@ public class PassportService {
 	 *            LdapOxPassportConfiguration
 	 */
 	public void updateLdapOxPassportConfiguration(LdapOxPassportConfiguration ldapOxPassportConfiguration) {
-		ldapEntryManager.merge(ldapOxPassportConfiguration);
+		if (StringHelper.isEmpty(ldapOxPassportConfiguration.getDn())) {
+			ldapOxPassportConfiguration.setDn(geConfigurationDn());
+			ldapEntryManager.persist(ldapOxPassportConfiguration);
+		} else {
+			ldapEntryManager.merge(ldapOxPassportConfiguration);
+		}
 
 	}
 
