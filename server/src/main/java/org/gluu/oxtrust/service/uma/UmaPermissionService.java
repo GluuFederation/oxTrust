@@ -138,12 +138,10 @@ public class UmaPermissionService implements Serializable {
         // along with providing the authorization server's URI in an "as_uri" property in the header,
         // and the permission ticket it just received from the AM in the body in a JSON-encoded "ticket" property.
 		
-		//TODO: START: Check if next blok do the same
         final String ticket = registerUmaPermissions(patToken, resourceSetId, scopeId);
         if (StringHelper.isEmpty(ticket)) {
         	return authenticationFailure;
         }
-		//TODO: END: Check if next blok do the same
         
         Response registerUmaPermissionsResponse = prepareRegisterUmaPermissionsResponse(patToken, resourceSetId, scopeId);
         if (registerUmaPermissionsResponse == null) {
