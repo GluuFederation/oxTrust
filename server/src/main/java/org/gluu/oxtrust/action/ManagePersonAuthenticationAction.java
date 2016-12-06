@@ -148,7 +148,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			this.authenticationMode = appliance.getAuthenticationMode();
 			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
 			
-			ldapOxPassportConfiguration = oxPassportService.loadConfigurationFromLdap();
+			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -176,7 +176,7 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 			appliance.setPassportEnabled(passportEnable);
 			
 			applianceService.updateAppliance(appliance);
-			oxPassportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
+			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(Severity.ERROR, "Failed to update appliance");
