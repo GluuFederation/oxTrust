@@ -33,7 +33,7 @@ import org.xdi.util.Pair;
  */
 
 @Name("PassportConfigurationEndPoint")
-@Path("/passportconfig")
+@Path("/passport/config")
 public class PassportRestWebService {
 
 	@Logger

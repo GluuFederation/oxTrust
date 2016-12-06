@@ -128,13 +128,23 @@
 									</h:selectOneMenu>
 								</s:decorate>
 
-								
-
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="scimEnabledState">
 									<ui:define name="label">SCIM Support</ui:define>
 									<h:selectOneMenu value="#{_appliance.scimEnabled}" styleClass="form-control"
 										id="scimEnabledStateId">
+										<s:selectItems
+											value="#{organizationService.booleanSelectionTypes}"
+											var="_type" label="#{_type.displayName}" />
+										<s:convertEnum />
+									</h:selectOneMenu>
+								</s:decorate>
+
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+									id="passportEnabledState">
+									<ui:define name="label">Passport Support</ui:define>
+									<h:selectOneMenu value="#{_appliance.passportEnabled}" styleClass="form-control"
+										id="passportEnabledStateId">
 										<s:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
 											var="_type" label="#{_type.displayName}" />
