@@ -394,7 +394,11 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 	
 	public void addStrategy(){
 		PassportConfiguration passportConfiguration = new PassportConfiguration();
-		this.ldapOxPassportConfiguration.getPassportConfigurations().add(passportConfiguration);		
+		if(this.ldapOxPassportConfiguration.getPassportConfigurations() == null){
+			List<PassportConfiguration> passportConfigurations = new ArrayList<PassportConfiguration>();
+			this.ldapOxPassportConfiguration.setPassportConfigurations(passportConfigurations);
+		}
+		this.ldapOxPassportConfiguration.getPassportConfigurations().add(passportConfiguration);	
 	}
 
 	public GluuBoolean getPassportEnable() {
