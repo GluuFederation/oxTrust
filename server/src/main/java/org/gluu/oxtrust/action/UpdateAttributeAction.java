@@ -108,10 +108,6 @@ public class UpdateAttributeAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		
-		if(attribute.getRegExp() != null){
-			validationToggle = true;
-		}
-		
 		if(attribute.getGluuTooltip()  != null){
 			tooltipToggle = true;
 		}
@@ -174,10 +170,6 @@ public class UpdateAttributeAction implements Serializable {
 	public String save(boolean addToSchema) {
 		boolean currentShowAttributeExistConfirmation = this.showAttributeExistConfirmation;
 		this.showAttributeExistConfirmation = false;
-
-		if(!validationToggle){
-			attribute.setRegExp(null);
-		}
 
 		if(!tooltipToggle){
 			attribute.setGluuTooltip(null);
