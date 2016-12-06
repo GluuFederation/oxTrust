@@ -179,6 +179,13 @@
             "format": "url",
             "minLength": 1
         },
+        "oxElevenJwksEndpoint": {
+            "id": "oxElevenJwksEndpoint",
+            "description": "URL for the oxEleven JWKS Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "openidSubAttribute": {
             "id": "openidSubAttribute",
             "description": "LDAP attribute used for the sub claim.",
@@ -999,6 +1006,7 @@
         "oxElevenSignEndpoint",
         "oxElevenVerifySignatureEndpoint",
         "oxElevenDeleteKeyEndpoint",
+        "oxElevenJwksEndpoint",
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
