@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OxPassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
@@ -50,7 +51,7 @@ public class PassportRestWebService {
 
 	@POST
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response getPassportConfig(@HeaderParam("Authorization") String authorization) throws Exception{
+	public Response getPassportConfig(@HeaderParam("Authorization") String authorization) {
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -78,13 +79,19 @@ public class PassportRestWebService {
 		return Response.status(Response.Status.OK).entity(passportConfigResponse).build();
 	}
 
-	protected Response processAuthorization(String authorization) throws Exception {
+	protected Response processAuthorization(String authorization) {
 		if (!pasportUmaProtectionService.isEnabled()) {
 			log.info("UMA authentication is disabled");
 			return getErrorResponse(Response.Status.FORBIDDEN, "Passport configuration was disabled");
 		}
 
-		Token patToken = pasportUmaProtectionService.getPatToken();
+		Token patToken;
+		try {
+			patToken = pasportUmaProtectionService.getPatToken();
+		} catch (UmaProtectionException ex) {
+			return getErrorResponse(Response.Status.FORBIDDEN, "Failed to obtain PAT token");
+		}
+
 		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, pasportUmaProtectionService.getUmaResourceId(), pasportUmaProtectionService.getUmaScope());
 		if (rptTokenValidationResult.getFirst()) {
 			if (rptTokenValidationResult.getSecond() != null) {

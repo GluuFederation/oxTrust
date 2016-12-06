@@ -24,7 +24,7 @@ import org.xdi.ldap.model.GluuBoolean;
  * @author Yuriy Movchan Date: 012/06/2016
  */
 @Scope(ScopeType.APPLICATION)
-@Name("pasportPassportProtectionService")
+@Name("pasportUmaProtectionService")
 @AutoCreate
 public class PassportUmaProtectionService extends BaseUmaProtectionService implements Serializable {
 
