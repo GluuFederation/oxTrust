@@ -45,8 +45,7 @@ public class PassportService {
 
 	public LdapOxPassportConfiguration loadConfigurationFromLdap() {
 		try {
-			FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
-			String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
+			String configurationDn = geConfigurationDn();
 			log.debug("########## configurationDn = " + configurationDn);
 			if ((configurationDn != null) && !(configurationDn.trim().equals(""))) {
 				LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
@@ -61,6 +60,12 @@ public class PassportService {
 		}
 
 		return null;
+	}
+
+	public String geConfigurationDn() {
+		FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
+		String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
+		return configurationDn;
 	}
 
 	/**
