@@ -29,32 +29,29 @@ import org.xdi.util.properties.FileConfiguration;
 @Scope(ScopeType.STATELESS)
 @Name("passportService")
 @AutoCreate
-public class OxPassportService {
-
+public class PassportService {
 
 	@Logger
 	private Log log;
 
 	@In
 	private JsonService jsonService;
-	
+
 	@In
 	private LdapEntryManager ldapEntryManager;
-	
+
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
-	
-	
-	public LdapOxPassportConfiguration loadConfigurationFromLdap(String ... returnAttributes) {
+
+	public LdapOxPassportConfiguration loadConfigurationFromLdap() {
 		try {
 			FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
 			String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
-			log.info("########## configurationDn = " + configurationDn);
-			if ((configurationDn != null)  && !(configurationDn.trim().equals(""))) {
+			log.debug("########## configurationDn = " + configurationDn);
+			if ((configurationDn != null) && !(configurationDn.trim().equals(""))) {
 				LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
-				LdapOxPassportConfiguration conf = ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn,returnAttributes);
-				log.info("########## LdapOxPassportConfiguration  status =  '{0}'"+ conf.getStatus());
-				log.info("########## LdapOxPassportConfiguration  size = '{0}'",conf.getPassportConfigurations().size());
+				LdapOxPassportConfiguration conf = ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
+				log.info("########## LdapOxPassportConfiguration  size = '{0}'", conf.getPassportConfigurations().size());
 				return conf;
 			}
 		} catch (LdapMappingException ex) {
@@ -62,10 +59,10 @@ public class OxPassportService {
 		} catch (Exception ex) {
 			log.error("Exception ", ex);
 		}
-        
-        return null;
-    }
-	
+
+		return null;
+	}
+
 	/**
 	 * Update LdapOxPassportConfiguration entry
 	 * 

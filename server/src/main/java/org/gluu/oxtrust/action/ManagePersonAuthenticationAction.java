@@ -21,7 +21,7 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.OxPassportService;
+import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
@@ -42,12 +42,12 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.config.oxtrust.PassportConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.ldap.GluuLdapConfiguration;
+import org.xdi.model.passport.PassportConfiguration;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
@@ -86,8 +86,8 @@ public class ManagePersonAuthenticationAction implements SimplePropertiesListMod
 	@In(value = "customScriptService")
 	private AbstractCustomScriptService customScriptService;
 	
-	@In(create = true, value="passportService")
-	private OxPassportService oxPassportService ;
+	@In
+	private PassportService passportService;
 
 	@In
 	private FacesMessages facesMessages;
