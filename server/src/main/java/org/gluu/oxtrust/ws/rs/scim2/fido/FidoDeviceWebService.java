@@ -57,7 +57,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	private Scim2FidoDeviceService scim2FidoDeviceService;
 
 	@GET
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Search devices", notes = "Returns a list of devices (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response searchDevices(
@@ -145,7 +145,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@GET
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Find device by id", notes = "Returns a device by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = FidoDevice.class)
 	public Response getDeviceById(
@@ -212,7 +212,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 	@POST
 	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Create device", notes = "Create device (https://tools.ietf.org/html/rfc7644#section-3.3)", response = FidoDevice.class)
 	public Response createDevice() {
@@ -222,7 +222,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	@Path("{id}")
 	@PUT
 	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Update device", notes = "Update device (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = FidoDevice.class)
 	public Response updateDevice(
@@ -284,7 +284,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 	@Path("{id}")
 	@DELETE
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Delete device", notes = "Delete device (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteDevice(
@@ -325,7 +325,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 	@Path("/.search")
 	@POST
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Search devices POST /.search", notes = "Returns a list of devices (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
 	public Response searchDevicesPost(
@@ -373,7 +373,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 	@Path("/Me")
 	@GET
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "GET \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
 	public Response meGet() {
@@ -382,7 +382,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 	@Path("/Me")
 	@POST
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "POST \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
 	public Response mePost() {
