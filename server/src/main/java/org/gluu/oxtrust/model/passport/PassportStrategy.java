@@ -7,15 +7,15 @@ package org.gluu.oxtrust.model.passport;
 
 public class PassportStrategy {
 
-	private String clientId;
+	private String clientID;
 	private String clientSecret;
 
-	public String getClientId() {
-		return clientId;
+	public String getClientID() {
+		return clientID;
 	}
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
+	public void setClientID(String clientID) {
+		this.clientID = clientID;
 	}
 
 	public String getClientSecret() {

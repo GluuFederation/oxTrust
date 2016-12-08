@@ -66,7 +66,7 @@ public class PassportRestWebService {
 		LdapOxPassportConfiguration ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 		for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
 			PassportStrategy passportStrategy = new PassportStrategy();
-			passportStrategy.setClientId(passportConfiguration.getClientID());
+			passportStrategy.setClientID(passportConfiguration.getClientID());
 			passportStrategy.setClientSecret(passportConfiguration.getClientSecret());
 
 			passportStrategies.put(passportConfiguration.getProvider(), passportStrategy);
