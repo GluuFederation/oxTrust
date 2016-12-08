@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.api.rest;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
@@ -23,7 +26,11 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.oxauth.model.uma.wrapper.Token;
+import org.xdi.service.JsonService;
 import org.xdi.util.Pair;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * PassportConfigurationEndPoint Implementation
@@ -41,34 +48,46 @@ public class PassportRestWebService {
 
 	@In
 	private PassportService passportService;
-	
+
 	@In
 	private PassportUmaProtectionService pasportUmaProtectionService;
-	
+
 	@In
 	private UmaPermissionService umaPermissionService;
 
+	@In
+	private JsonService jsonService;
+
 	@POST
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getPassportConfig(@HeaderParam("Authorization") String authorization) {
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
-		PassportConfigResponse passportConfigResponse = null;
-		passportConfigResponse = new PassportConfigResponse();
+		PassportConfigResponse passportConfigResponse = new PassportConfigResponse();
+		Map<String, PassportStrategy> passportStrategies = new HashMap<String, PassportStrategy>();
+
 		LdapOxPassportConfiguration ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-		List<org.xdi.model.passport.PassportConfiguration>  passportConfigurations  =ldapOxPassportConfiguration.getPassportConfigurations();
-		Map  <String ,PassportStrategy> PassportConfigurationsMap = new HashMap<String, PassportStrategy>();
-		for(org.xdi.model.passport.PassportConfiguration passportConfiguration : passportConfigurations){			
-			PassportStrategy passportStrategy = new PassportStrategy();							
-			passportStrategy.setClientID((passportConfiguration.getClientID()==null) ? "" : passportConfiguration.getClientID());
-			passportStrategy.setClientSecret((passportConfiguration.getClientSecret()==null) ? "" : passportConfiguration.getClientSecret());
-			PassportConfigurationsMap.put((passportConfiguration.getProvider()==null) ? "" : passportConfiguration.getProvider(), passportStrategy);
-		}	
-		passportConfigResponse.setPassportStrategies(PassportConfigurationsMap);
-		return Response.status(Response.Status.OK).entity(passportConfigResponse).build();
+		for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
+			PassportStrategy passportStrategy = new PassportStrategy();
+			passportStrategy.setClientId(passportConfiguration.getClientID());
+			passportStrategy.setClientSecret(passportConfiguration.getClientSecret());
+
+			passportStrategies.put(passportConfiguration.getProvider(), passportStrategy);
+		}
+
+		passportConfigResponse.setPassportStrategies(passportStrategies);
+
+		String passportConfigResponseJson;
+		try {
+			passportConfigResponseJson = jsonService.objectToPerttyJson(passportConfigResponse);
+		} catch (IOException ex) {
+			return getErrorResponse(Response.Status.FORBIDDEN, "Failed to prepare configuration");
+		}
+
+		return Response.status(Response.Status.OK).entity(passportConfigResponseJson).build();
 	}
 
 	protected Response processAuthorization(String authorization) {
@@ -84,7 +103,9 @@ public class PassportRestWebService {
 			return getErrorResponse(Response.Status.FORBIDDEN, "Failed to obtain PAT token");
 		}
 
-		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, pasportUmaProtectionService.getUmaResourceId(), pasportUmaProtectionService.getUmaScope());
+		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken,
+				authorization, pasportUmaProtectionService.getUmaResourceId(),
+				pasportUmaProtectionService.getUmaScope());
 		if (rptTokenValidationResult.getFirst()) {
 			if (rptTokenValidationResult.getSecond() != null) {
 				return rptTokenValidationResult.getSecond();
