@@ -2,18 +2,15 @@ package org.gluu.oxtrust.api.rest;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
@@ -28,9 +25,6 @@ import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.service.JsonService;
 import org.xdi.util.Pair;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * PassportConfigurationEndPoint Implementation
@@ -58,7 +52,7 @@ public class PassportRestWebService {
 	@In
 	private JsonService jsonService;
 
-	@POST
+	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getPassportConfig(@HeaderParam("Authorization") String authorization) {
 		Response authorizationResponse = processAuthorization(authorization);
