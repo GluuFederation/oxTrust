@@ -111,6 +111,7 @@ public class UmaPermissionService implements Serializable {
 		}
 
 		String rptToken = authorization.substring(7);
+		boolean isGat = rptToken.startsWith("gat_");
 
         RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
 		if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
@@ -121,8 +122,8 @@ public class UmaPermissionService implements Serializable {
 		boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
 		if (rptHasPermissions) {
 			for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
-				if (StringHelper.equals(resourceSetId, umaPermission.getResourceSetId()) &&
-					(umaPermission.getScopes() != null) && umaPermission.getScopes().contains(scopeId)) {
+				if ((umaPermission.getScopes() != null) && umaPermission.getScopes().contains(scopeId) &&
+						(isGat || StringHelper.equals(resourceSetId, umaPermission.getResourceSetId()))) {
 					return authenticationSuccess;
 				}
 			}
