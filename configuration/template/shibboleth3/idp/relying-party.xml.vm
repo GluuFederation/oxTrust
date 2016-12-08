@@ -56,15 +56,6 @@
                       p:signResponses-ref="SignNoIntegrity"
                       p:signAssertions="false" />
 
-                <bean parent="SAML1.AttributeQuery"
-                      p:assertionLifetime="PT5M"
-                      p:signResponses-ref="SignNoIntegrity"
-                      p:signAssertions="false" />
-
-                <bean parent="SAML1.ArtifactResolution"
-                      p:signResponses-ref="SignNoIntegrity"
-                      p:signAssertions="false" />
-
             </list>
         </property>
     </bean>
