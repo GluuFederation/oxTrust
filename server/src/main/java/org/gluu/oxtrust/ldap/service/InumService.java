@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -31,9 +30,6 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.GluuAttribute;
 import org.xdi.util.INumGenerator;
-
-import com.mysql.jdbc.PreparedStatement;
-import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 
 /* 
 

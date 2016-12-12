@@ -270,18 +270,6 @@
             "type": "string",
             "minLength": 1
         },
-        "mysqlUrl": {
-            "id": "mysqlUrl",
-            "type": "string"
-        },
-        "mysqlUser": {
-            "id": "mysqlUser",
-            "type": "string"
-        },
-        "mysqlPassword": {
-            "id": "mysqlPassword",
-            "type": "string"
-        },
         "shibboleth3FederationRootDir": {
             "id": "shibboleth3FederationRootDir",
             "type": "string",
@@ -665,9 +653,6 @@
         "idpBindPassword",
         "idpUserFields",
         "gluuSpCert",
-        "mysqlUrl",
-        "mysqlUser",
-        "mysqlPassword",
         "shibboleth3FederationRootDir",
         "cacheRefreshEnabled",
         "cacheRefreshIntervalMinutes",
