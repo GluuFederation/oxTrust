@@ -91,10 +91,6 @@
     "idpLdapServer":"localhost:1636",
     "idpUserFields":"uid,mail",
 
-    "mysqlUrl":"jdbc:mysql:///${config.host.idp_mysql_db}",
-    "mysqlUser":"${config.host.idp_mysql_user}",
-    "mysqlPassword":"${config.host.idp_mysql_base64_encoded_password}",
-
     "ldifStore":"${base.root}/var/ox/oxtrust/removed",
 
     "caCertsLocation":"${base.root}/usr/java/latest/jre/lib/security/cacerts",

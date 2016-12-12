@@ -484,12 +484,6 @@
 				<type>pom</type>
 			</dependency>
 			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.22</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.velocity</groupId>
 				<artifactId>velocity</artifactId>
 				<version>1.7</version>
