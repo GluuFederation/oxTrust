@@ -18,7 +18,6 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.sql.InumSqlEntry;
-import org.gluu.oxtrust.util.DbConnectionUtil;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -202,8 +201,7 @@ public class InumService implements Serializable {
 					break;
 				}
 				if (!contains(inum, gluu, type)) {
-					if (!existsInDb(inum, type))
-						break;
+					break;
 				}
 				/* Just to make sure it doesn't get into an infinite loop */
 				if (counter > MAX) {
@@ -249,30 +247,6 @@ public class InumService implements Serializable {
 			break;
 		}
 		return inum;
-	}
-
-	private boolean existsInDb(String inum, String type) throws Exception {
-		Connection conn = null;
-		try {
-			conn = DbConnectionUtil.getInstance().getConnection();
-			String query = "INSERT INTO inum (inum, type) VALUES (?, ?)";
-			PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(query);
-			pstmt.setString(1, inum);
-			pstmt.setString(2, type);
-			pstmt.execute();
-			DbConnectionUtil.getInstance().closeConnection(conn);
-			return false;
-		} catch (MySQLIntegrityConstraintViolationException ex) {
-			// ex.printStackTrace();
-			log.error("Duplicate Inum found: " + inum);
-			DbConnectionUtil.getInstance().closeConnection(conn);
-		} catch (Exception ex) {
-			log.error("MySQL database error: " + ex.getMessage());
-			DbConnectionUtil.getInstance().closeConnection(conn);
-			// ex.printStackTrace();
-			throw ex;
-		}
-		return true;
 	}
 
 	/**
