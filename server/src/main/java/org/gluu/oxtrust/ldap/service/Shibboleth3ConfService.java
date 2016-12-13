@@ -714,6 +714,17 @@ public class Shibboleth3ConfService implements Serializable {
 
 		String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
 
+		// Generate sp-metadata.xml meta-data file
+		String spMetadataFileContent = generateSpMetadataFileContent( trustRelationship,  certificate);
+		if (StringHelper.isEmpty(spMetadataFileContent)) {
+			return false;
+		}
+
+		return templateService.writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
+	}
+	
+	public String generateSpMetadataFileContent(GluuSAMLTrustRelationship trustRelationship, String certificate){
+
 		VelocityContext context = new VelocityContext();
 		context.put("certificate", certificate);
 		context.put("trustRelationship", trustRelationship);
@@ -722,11 +733,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 		// Generate sp-metadata.xml meta-data file
 		String spMetadataFileContent = templateService.generateConfFile(SHIB3_IDP_SP_METADATA_FILE, context);
-		if (StringHelper.isEmpty(spMetadataFileContent)) {
-			return false;
-		}
-
-		return templateService.writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
+		return spMetadataFileContent;
 	}
 
 	public void removeSpMetadataFile(String spMetadataFileName) {
