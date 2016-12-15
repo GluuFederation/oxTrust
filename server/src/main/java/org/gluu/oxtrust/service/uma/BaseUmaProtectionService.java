@@ -95,7 +95,11 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 		try {
 			this.umaPat = UmaClient.requestPat(umaMetadataConfiguration.getTokenEndpoint(), umaClientKeyStoreFile, umaClientKeyStorePassword, getClientId(), getClientKeyId());
-			this.umaPatAccessTokenExpiration = computeAccessTokenExpirationTime(this.umaPat.getExpiresIn());
+			if (this.umaPat == null) {
+				this.umaPatAccessTokenExpiration = 0l;
+			} else {
+				this.umaPatAccessTokenExpiration = computeAccessTokenExpirationTime(this.umaPat.getExpiresIn());
+			}
 		} catch (Exception ex) {
 			throw new UmaProtectionException("Failed to obtain valid UMA PAT token", ex);
 		}
