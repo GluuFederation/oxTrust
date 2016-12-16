@@ -25,9 +25,12 @@ import java.util.TreeSet;
 import java.util.zip.Deflater;
 import java.util.zip.ZipOutputStream;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -57,7 +60,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
@@ -174,6 +176,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	private List<String> availableEntitiesFiltered;
 	//private GluuEntityType entityType;	
+
+
+	@In(value="#{facesContext.externalContext}")
+	private ExternalContext extCtx;
 
 	// @In
 	// private ResourceLoader resourceLoader;
@@ -450,7 +456,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		this.trustRelationship.setGluuEntityId(entityIdSet);
 	}
-
+	
 	/**
 	 * If there is no certificate selected, or certificate is invalid -
 	 * generates one.
@@ -459,7 +465,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	 * @return certificate for generated SP
 	 * @throws CertificateEncodingException
 	 */
-	private String getCertForGeneratedSP() {
+	public String getCertForGeneratedSP() {
 
 		X509Certificate cert = null;
 
@@ -1355,4 +1361,47 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public GluuEntityType[] getEntityTypeList() {
 		return GluuEntityType.values();
 	}
+	
+	public boolean generateSp() throws IOException{
+		try{
+		log.info(" generate sp ------------");
+		this.trustRelationship.setInum(trustService.generateInumForNewTrustRelationship());
+		
+		String cert = getCertForGeneratedSP();
+		//boolean val = generateSpMetaDataFile(cert);
+		
+		String spMetadataFileName = this.trustRelationship.getSpMetaDataFN();
+
+		if (StringHelper.isEmpty(spMetadataFileName)) {
+			// Generate new file name
+			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
+			trustRelationship.setSpMetaDataFN(spMetadataFileName);
+		}
+		
+		String spMetadataFileContent = shibboleth3ConfService.generateSpMetadataFileContent( trustRelationship,  cert);
+		
+		//ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance()
+                //.getExternalContext().getContext();
+		HttpServletResponse response = (HttpServletResponse)extCtx.getResponse();
+			//InputStream fis = new ByteArrayInputStream(spMetadataFileContent.getBytes(StandardCharsets.UTF_8));//ctx.getResourceAsStream("/WEB-INF/testfile.zip");
+	
+			// Prepare the response
+			response.setContentType("application/xml");
+			response.setHeader("Content-Disposition",
+					"attachment;filename="+spMetadataFileName);
+			ServletOutputStream os = response.getOutputStream();
+			os.write(spMetadataFileContent.getBytes());
+			os.flush();
+			os.close();
+			facesContext.responseComplete();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
+		facesContext.responseComplete();
+			return true;
+
+	}
+
 }

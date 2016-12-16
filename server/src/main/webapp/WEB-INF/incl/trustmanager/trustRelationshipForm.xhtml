@@ -92,7 +92,14 @@
 	        $('.checkbox1').on('ifChanged', function(event) {
 			  configureRelyingParty();
 			});
-        });          
+        }); 
+    
+    function changeEvent(element) {
+    var val = $(element).find('option:selected').text();
+    if(val === 'None') {
+       #{rich:component('createSPMetadata:createSPMeatadataModalPanel')}.show();
+    }
+	}        
     </h:outputScript>
 
 	<ui:include src="/WEB-INF/incl/trustmanager/viewSPMetadata.xhtml" />
@@ -211,7 +218,7 @@
 								id="spMetaDataSourceType">
 								<ui:define name="label">Metadata Location</ui:define>
 								<h:selectOneMenu styleClass="form-control"
-									value="#{_trustRelationship.spMetaDataSourceType}"
+									value="#{_trustRelationship.spMetaDataSourceType}" onchange="changeEvent(this)"
 									required="#{empty param['sv']}" id="spMetaDataSourceTypeId">
 									<s:selectItems value="#{_trustRelationshipAction.metadataSourceTypesList}"
 										noSelectionLabel="Metadata type" var="_type"
@@ -219,9 +226,9 @@
 									<!-- <s:convertEnum/> -->
 									<f:converter
 										converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
-									<a4j:ajax event="change"
+									<a4j:ajax event="change" 
 										render="MetadataOperations, FederationWizard, spMetaDataUrlGroupId, 
-                                                FederationWizardEntitySelection, urlId"
+                                                FederationWizardEntitySelection, urlId" 
 										limitRender="true" execute="@this" />
 								</h:selectOneMenu>
 							</s:decorate>						
