@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" 
+    xmlns:a4j="http://richfaces.org/a4j" 
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:gluufn="http://www.gluu.org/jsf/functions"
+    xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:cc="http://java.sun.com/jsf/composite">
+
+<cc:interface>
+    <cc:attribute name="label" default="Generate Metadata" required="false" type="java.lang.String" />
+    <cc:attribute name="generateMethod"  required="true" method-signature="void action()" />
+    <cc:attribute name="metadataUri"  required="true"  /> 
+    <cc:attribute name="logoutUri"  required="true"  /> 
+    <cc:attribute name="uri"  required="true" /> 
+</cc:interface>
+
+<cc:implementation>
+    <rich:popupPanel id="createSPMeatadataModalPanel" onmaskclick="#{rich:component('createSPMeatadataModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="500" keepVisualState="true">
+        <f:facet name="header">
+            <h:outputText value="#{cc.attrs.label}" />
+        </f:facet>
+        <f:facet name="controls">
+            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('createSPMeatadataModalPanel')}.hide(); return false;" />
+        </f:facet>
+
+        <h:outputStylesheet>
+            .red {
+                color: red;
+            }
+     
+            .green {
+               color: green;
+            }
+        </h:outputStylesheet>
+
+                <h:form id="generateMetadata">
+            <input type='hidden' name='cid' value='#{conversation.id}'/> <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
+            
+                <rich:messages for="gv" />
+
+                <h:panelGrid id="metadataGroupId" columns="2">
+                    <h:outputText value="URI" />
+                    <h:inputText value="#{cc.attrs.uri}" id="spuri"  autocomplete="off" styleClass="form-control">
+                        
+                    </h:inputText>         
+
+
+                    <h:outputText value="Loouturi:" style="margin-top: 10px;display: block;" />
+                    <h:inputText value="#{cc.attrs.logoutUri}" id="spLogoutUri" autocomplete="off" styleClass="form-control" style="margin-top: 10px;">
+                        
+                    </h:inputText>
+                    
+
+                    <h:outputText value="MetatData url"  style="margin-top: 10px;display: block;"/>
+                    <h:inputText value="#{cc.attrs.metadataUri}" id="spMetatdataUrl" autocomplete="off" styleClass="form-control" style="margin-top: 10px;">
+                       
+                    </h:inputText>
+                    
+                </h:panelGrid>           
+
+                <h:panelGroup style="margin-top: 10px;display: block;">
+                <h:commandButton action="#{cc.attrs.generateMethod}" value="Generate SP Matadata"  styleClass="btn btn-primary" >
+       
+                
+                </h:commandButton>
+                </h:panelGroup> 
+        </h:form>
+    </rich:popupPanel>
+</cc:implementation>
+
+</html>
