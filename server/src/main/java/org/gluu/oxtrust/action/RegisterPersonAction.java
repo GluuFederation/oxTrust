@@ -196,9 +196,9 @@ public class RegisterPersonAction implements Serializable {
 		if (registrationFormValid) {
 			GluuCustomPerson archivedPerson = (GluuCustomPerson) person.clone();
 
-			String customObjectClass = attributeService.getCustomOrigin();
+			//String customObjectClass = attributeService.getCustomOrigin();
 
-			this.person.setCustomObjectClasses(new String[] { customObjectClass });
+			this.person.setCustomObjectClasses(new String[] { "gluuPerson" });
 
 			// Save person
 			if (person.getInum() == null) {

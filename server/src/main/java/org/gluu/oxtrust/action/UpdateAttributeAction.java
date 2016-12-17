@@ -86,7 +86,7 @@ public class UpdateAttributeAction implements Serializable {
 		
 		this.attribute.setStatus(GluuStatus.ACTIVE);
 		this.attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
-		this.attribute.setOrigin(attributeService.getCustomOrigin());
+		this.attribute.setOrigin("gluuPerson");
 
 		this.canEdit = true;
 
@@ -133,9 +133,9 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean isAllowEdit() {
-		if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass())) {
+		/*if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass())) {
 			return true;
-		}
+		}*/
 
 		return this.attribute.isAdminCanEdit();
 	}
@@ -163,7 +163,7 @@ public class UpdateAttributeAction implements Serializable {
 
 	@Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String save() {
-		return save(true);
+		return save(false);
 	}
 
 	@Restrict("#{s:hasPermission('attribute', 'access')}")
@@ -193,12 +193,12 @@ public class UpdateAttributeAction implements Serializable {
 					// Check if the attribute defined 
 					String atributeNameToSearch = StringHelper.toLowerCase(attributeName);
 					if (schemaService.containsAttributeTypeInSchema(atributeNameToSearch)) {
-						String customObjectClass = attributeService.getCustomOrigin();
-						boolean addResult = addAttributeToObjectClass(attributeName, attributeService.getCustomOrigin());
-						if (!addResult) {
+						//String customObjectClass = attributeService.getCustomOrigin();
+						//boolean addResult = addAttributeToObjectClass(attributeName, attributeService.getCustomOrigin());
+						/*if (!addResult) {
 							facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema object class '{1}'", attributeName, customObjectClass);
 							return OxTrustConstants.RESULT_FAILURE;
-						}
+						}*/
 					} else {
 						facesMessages.add(Severity.ERROR, "There is no attribute type '{0}' definition in LDAP schema", attributeName);
 						return OxTrustConstants.RESULT_FAILURE;
@@ -250,8 +250,8 @@ public class UpdateAttributeAction implements Serializable {
 		String dn = attributeService.getDnForAttribute(inum);
 		log.info("getting ldapAttributeName : " + attributeService.generateRandomOid());
 		String ldapAttributedName = attributeService.generateRandomOid();
-		log.info("getting objectClassName : " + attributeService.getCustomOrigin());
-		String objectClassName = attributeService.getCustomOrigin();
+		//log.info("getting objectClassName : " + attributeService.getCustomOrigin());
+		//String objectClassName = attributeService.getCustomOrigin();
 		if (attribute.getSaml1Uri() == null || attribute.getSaml1Uri().equals("")) {
 			attribute.setSaml1Uri("urn:gluu:dir:attribute-def:" + attributeName);
 		}
@@ -274,30 +274,30 @@ public class UpdateAttributeAction implements Serializable {
 				return false;
 			}
 	
-			boolean addResult = addAttributeToObjectClass(attributeName, objectClassName);
+			boolean addResult = addAttributeToObjectClass(attributeName, "gluuPerson");
 			if (!addResult) {
-				facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema object class '{1}'", attributeName, objectClassName);
+				facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema object class '{1}'", attributeName, "gluuPerson");
 				return false;
 			}
 		} else {
-			String attributeOrigin = determineOrigin(attributeName);
-			if (StringHelper.isEmpty(attributeOrigin)) {
+			//String attributeOrigin = determineOrigin(attributeName);
+			/*if (StringHelper.isEmpty(attributeOrigin)) {
 				facesMessages.add(Severity.ERROR, "Failed to determine object class by attribute name");
 				return false;
-			}
+			}*/
 
-			this.attribute.setOrigin(attributeOrigin);
+			this.attribute.setOrigin("gluuPerson");
 
 			// Check if attribute defined in gluuPerson or in custom object class
-			boolean containsAttribute = containsAttributeInGluuObjectClasses(attributeName);
+			/*boolean containsAttribute = containsAttributeInGluuObjectClasses(attributeName);
 			if (!containsAttribute) {
-				String customObjectClass = attributeService.getCustomOrigin();
-				boolean addResult = addAttributeToObjectClass(attributeName, customObjectClass);
+				//String customObjectClass = attributeService.getCustomOrigin();
+				boolean addResult = addAttributeToObjectClass(attributeName, "gluuPerson");
 				if (!addResult) {
-					facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema object class '{1}'", attributeName, customObjectClass);
+					facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema object class '{1}'", attributeName, "gluuPerson");
 					return false;
 				}
-			}
+			}*/
 		}
 
 		// Save attribute metadata
@@ -325,8 +325,8 @@ public class UpdateAttributeAction implements Serializable {
 		}
 
 		List<String> attributeOriginins = attributeService.getAllAttributeOrigins();
-		String customOriginin = attributeService.getCustomOrigin();
-		attributeOriginins.remove(customOriginin);
+		//String customOriginin = attributeService.getCustomOrigin();
+		//attributeOriginins.remove(customOriginin);
 
 		for (Iterator<String> it = objectClasses.iterator(); it.hasNext();) {
 			String attributeOrigin = (String) it.next();
@@ -343,7 +343,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean containsAttributeInGluuObjectClasses(String attributeName) {
-		String[] objectClasses = { "gluuPerson", attributeService.getCustomOrigin() };
+		String[] objectClasses = { "gluuPerson"};
 
 		SchemaEntry schemaEntry = schemaService.getSchema();
 		Set<String> attributeNames = schemaService.getObjectClassesAttributes(schemaEntry, objectClasses);
@@ -445,7 +445,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	public boolean canEditUri() {
-		return attributeService.getCustomOrigin().equals(attribute.getOrigin());
+		return true;
 	}
 
 	public boolean isValidationToggle() {

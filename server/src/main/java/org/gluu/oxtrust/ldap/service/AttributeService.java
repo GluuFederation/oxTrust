@@ -97,9 +97,8 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		String[] objectClassTypes = applicationConfiguration.getPersonObjectClassTypes();
 		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
 		for (GluuAttribute attribute : attributes) {
-			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass())
-					&& (GluuUserRole.ADMIN == gluuUserRole)) {
-				attribute.setCustom(true);
+			if ((GluuUserRole.ADMIN == gluuUserRole)) {
+				//attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
 			}
@@ -145,9 +144,8 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 
 		String[] objectClassTypes = applicationConfiguration.getContactObjectClassTypes();
 		for (GluuAttribute attribute : attributes) {
-			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass())
-					&& (GluuUserRole.ADMIN == gluuUserRole)) {
-				attribute.setCustom(true);
+			if ((GluuUserRole.ADMIN == gluuUserRole)) {
+				//attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
 			}
@@ -198,10 +196,10 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 			}
 		}
 
-		String customOrigin = getCustomOrigin();
+		/*String customOrigin = getCustomOrigin();
 		if (!attributeOriginList.contains(customOrigin)) {
 			attributeOriginList.add(customOrigin);
-		}
+		}*/
 
 		return attributeOriginList;
 	}
@@ -383,8 +381,8 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		log.info("Attribute removal started");
 		log.trace("Getting attribute information");
 		
-		String objectClassName = getCustomOrigin();
-		log.debug("objectClassName is " + objectClassName);
+		/*String objectClassName = getCustomOrigin();
+		log.debug("objectClassName is " + objectClassName);*/
 		
 		String attributeName = attribute.getName();
 		log.debug("attributeName is " + attributeName);
@@ -436,7 +434,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		log.trace("Removing attribute from objectclass");
 		// Unregister new attribute type from custom object class
 		try {
-			schemaService.removeAttributeTypeFromObjectClass(objectClassName, attributeName);
+			//schemaService.removeAttributeTypeFromObjectClass(objectClassName, attributeName);
 		} catch (Exception ex) {
 			log.error("Failed to remove attribute type from LDAP schema's object class", ex);
 			return false;
@@ -631,19 +629,19 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 * 
 	 * @return Current custom origin
 	 */
-	public String getCustomOrigin() {
+	/*public String getCustomOrigin() {
 		return applicationConfiguration.getPersonCustomObjectClass();
 		// return CUSTOM_ATTRIBUTE_OBJECTCLASS_PREFIX +
 		// toInumWithoutDelimiters(organizationService.getInumForOrganization());
-	}
+	}*/
 	
 	@Override
 	protected List<GluuAttribute> getAllAtributesImpl(String baseDn) {
 		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(baseDn, GluuAttribute.class, null);
-		String customOrigin = getCustomOrigin();
+		/*String customOrigin = getCustomOrigin();
 		for (GluuAttribute attribute : attributeList) {
 			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
-		}
+		}*/
 
 		return attributeList;
 	}
@@ -754,14 +752,13 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	private List<GluuAttribute> getAllActiveAtributesImpl(GluuUserRole gluuUserRole) {
 		Filter filter = Filter.createEqualityFilter("gluuStatus", "active");
 		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter);
-		String customOrigin = getCustomOrigin();
+		//String customOrigin = getCustomOrigin();
 		String[] objectClassTypes = applicationConfiguration.getPersonObjectClassTypes();
 		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 		for (GluuAttribute attribute : attributeList) {
-			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass()) &&
-				(GluuUserRole.ADMIN == gluuUserRole)) {
-				attribute.setCustom(true);
+			if ((GluuUserRole.ADMIN == gluuUserRole)) {
+				//attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
 			}
@@ -769,7 +766,7 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 			for (String objectClassType : objectClassTypes) {
 				if (attribute.getOrigin().equals(objectClassType)
 						&& ((attribute.allowViewBy(gluuUserRole) || attribute.allowEditBy(gluuUserRole)))) {
-					attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
+					//attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
 					returnAttributeList.add(attribute);
 					break;
 				}
@@ -797,10 +794,10 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 
 		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, searchFilter, 0, sizeLimit);
-		String customOrigin = getCustomOrigin();
-		for (GluuAttribute attribute : result) {
+		//String customOrigin = getCustomOrigin();
+		/*for (GluuAttribute attribute : result) {
 			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
-		}
+		}*/
 		
 		return result;
 	}

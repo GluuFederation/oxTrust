@@ -162,7 +162,7 @@ public class UpdatePersonAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		personService.addCustomObjectClass(this.person);
+		//personService.addCustomObjectClass(this.person);
 
 		List<GluuCustomAttribute> removedAttributes = customAttributeAction.detectRemovedAttributes();
 		customAttributeAction.updateOriginCustomAttributes();
