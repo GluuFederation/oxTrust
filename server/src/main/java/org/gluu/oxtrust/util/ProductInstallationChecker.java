@@ -16,12 +16,12 @@ public class ProductInstallationChecker {
     
     public static final String GLUU_CE_PATH = "/install/community-edition-setup";
     
-    public static final String OXASIMBA_PATH = "/opt/web/jetty/asimba/webapps/asimba.war";
-    public static final String OXAUTH_PATH = "/opt/web/jetty/oxauth/webapps/oxauth.war";
-    public static final String OXTRUST_PATH = "/opt/web/jetty/identity/webapps/identity.war";
+    public static final String OXASIMBA_PATH = "/opt/gluu/jetty/asimba/webapps/asimba.war";
+    public static final String OXAUTH_PATH = "/opt/gluu/jetty/oxauth/webapps/oxauth.war";
+    public static final String OXTRUST_PATH = "/opt/gluu/jetty/identity/webapps/identity.war";
     public static final String SHIBBOLETH_IDP2_PATH = "/opt/idp/war/idp.war";
-    public static final String SHIBBOLETH_IDP3_PATH = "/opt/web/jetty/idp/webapps/idp.war";
-    public static final String CAS_PATH = "/opt/web/jetty/cas/webapps/cas.war";
+    public static final String SHIBBOLETH_IDP3_PATH = "/opt/gluu/jetty/idp/webapps/idp.war";
+    public static final String CAS_PATH = "/opt/gluu/jetty/cas/webapps/cas.war";
     
     public static boolean isGluuCE() {
         return new File(GLUU_CE_PATH).exists();
