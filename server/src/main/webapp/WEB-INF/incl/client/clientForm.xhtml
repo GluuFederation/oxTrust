@@ -31,7 +31,7 @@
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clientSecret" rendered="#{_new}">
                 <ui:define name="label">Client Secret</ui:define>
-                <rich:inplaceInput value="#{_client.oxAuthClientSecret}" defaultLabel="click to enter Client Secret" maxlength="60" inputWidth="695" required="true" id="applicationTypeId" />
+                <rich:inplaceInput value="#{_client.oxAuthClientSecret}" defaultLabel="click to enter Client Secret" maxlength="60" inputWidth="695" required="#{_clientAction.checkClientSecretRequired()}" id="applicationTypeId" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="applicatonType">
