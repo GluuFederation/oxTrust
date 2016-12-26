@@ -1,7 +1,9 @@
 package org.gluu.oxtrust.api.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -22,6 +24,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
+import org.xdi.model.passport.FieldSet;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.service.JsonService;
 import org.xdi.util.Pair;
@@ -61,18 +64,21 @@ public class PassportRestWebService {
 		}
 
 		PassportConfigResponse passportConfigResponse = new PassportConfigResponse();
-		Map<String, PassportStrategy> passportStrategies = new HashMap<String, PassportStrategy>();
+		
+		List <Map> strategies = new ArrayList <Map>();
 
 		LdapOxPassportConfiguration ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 		for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
-			PassportStrategy passportStrategy = new PassportStrategy();
-			passportStrategy.setClientID(passportConfiguration.getClientID());
-			passportStrategy.setClientSecret(passportConfiguration.getClientSecret());
-
-			passportStrategies.put(passportConfiguration.getProvider(), passportStrategy);
+			Map<String, String> map = new HashMap();
+			List<FieldSet>  passList = passportConfiguration.getFieldset();
+			for( FieldSet fieldset :  passList ){
+				map.put(fieldset.getKey(), fieldset.getValue());
+			}		
+			
+			strategies.add(map);
 		}
 
-		passportConfigResponse.setPassportStrategies(passportStrategies);
+		passportConfigResponse.setPassportStrategies(strategies);
 
 		String passportConfigResponseJson;
 		try {

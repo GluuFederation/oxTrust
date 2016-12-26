@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -47,6 +48,7 @@ import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.ldap.GluuLdapConfiguration;
+import org.xdi.model.passport.FieldSet;
 import org.xdi.model.passport.PassportConfiguration;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.util.OxConstants;
@@ -107,6 +109,8 @@ public class ManagePersonAuthenticationAction
 	private GluuBoolean passportEnable;
 
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
+	
+	private List<PassportConfiguration> ldapPassportConfigurations;
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
@@ -154,6 +158,7 @@ public class ManagePersonAuthenticationAction
 			if (ldapOxPassportConfiguration == null) {
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
+			this.ldapPassportConfigurations = ldapOxPassportConfiguration.getPassportConfigurations();
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -181,6 +186,9 @@ public class ManagePersonAuthenticationAction
 			appliance.setPassportEnabled(passportEnable);
 
 			applianceService.updateAppliance(appliance);
+			
+			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
+		
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
@@ -398,14 +406,23 @@ public class ManagePersonAuthenticationAction
 	public String getId(Object obj) {
 		return "c" + System.identityHashCode(obj) + "Id";
 	}
-
+	
 	public void addStrategy() {
 		PassportConfiguration passportConfiguration = new PassportConfiguration();
-		if (this.ldapOxPassportConfiguration.getPassportConfigurations() == null) {
-			List<PassportConfiguration> passportConfigurations = new ArrayList<PassportConfiguration>();
-			this.ldapOxPassportConfiguration.setPassportConfigurations(passportConfigurations);
+		if (ldapPassportConfigurations == null) {
+			ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
 		}
-		this.ldapOxPassportConfiguration.getPassportConfigurations().add(passportConfiguration);
+		this.ldapPassportConfigurations.add(passportConfiguration);
+	}
+	
+	public void addField(PassportConfiguration passportConfiguration) {
+		String id = getId(passportConfiguration);
+		for(PassportConfiguration passportConfig :this.ldapPassportConfigurations){
+			String passportid = getId(passportConfig);
+			if(id.equals(passportid)){
+				passportConfig.getFieldset().add(new FieldSet());				
+			}			
+		}		
 	}
 
 	public GluuBoolean getPassportEnable() {
@@ -414,6 +431,15 @@ public class ManagePersonAuthenticationAction
 
 	public void setPassportEnable(GluuBoolean passportEnable) {
 		this.passportEnable = passportEnable;
+	}
+
+	public List<PassportConfiguration> getLdapPassportConfigurations() {
+		return ldapPassportConfigurations;
+	}
+
+	public void setLdapPassportConfigurations(
+			List<PassportConfiguration> ldapPassportConfigurations) {
+		this.ldapPassportConfigurations = ldapPassportConfigurations;
 	}
 
 }

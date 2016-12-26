@@ -112,67 +112,22 @@
 						
 						
 						<div class="tab-pane" id="ox-passport">
-							<ui:param name="_ldapPassport" 	value="#{_action.ldapOxPassportConfiguration}" />							
+							<ui:param name="_ldapoxPassport" 	value="#{_action.ldapOxPassportConfiguration}" />
+							<ui:param name="_ldapPassport" 	value="#{_action.ldapPassportConfigurations}" />							
 							
-							<h:panelGroup layout="block" style="overflow-y:auto;overflow-x:hidden;"  id="strategyId">
-								<a4j:region>
-									<rich:dataGrid
-										columns="1" value="#{_ldapPassport.passportConfigurations}"
-										var="_passportConfiguration" style="width: 100%;">
-										<h:panelGrid
-											id="#{_action.getId(_passportConfiguration)}"
-											columns="2" columnClasses="alignLeft, removeConfig"
-											width="100%" border="0" cellpadding="0" cellspacing="0">
-											<h:panelGroup>
-												<h1 style="color: #333;"><small>#{_passportConfiguration.provider}</small></h1>
+ 					<h:panelGroup id="strategyId">
+	                    <rich:dataGrid iterationStatusVar="status" id="strategyConfigsId" value="#{_ldapPassport}" var="_passportConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
+	                       <div style="display: inline-block;width: 75% !important;">
+	                        <ox:passportConf passportConfig="#{_passportConfig}" passportConfigFieldList="#{_passportConfig.fieldset}"
+	                            authenicationConfigAction="#{_action}" propertiesAction="#{_configureCacheRefreshAction}"  displayEnable="false"
+	                            renderAfterRomoval="strategyConfigsId"/> 
+	                  		</div> 
+	                    </rich:dataGrid>
 
-												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-													<ui:define name="label">Provider</ui:define>
-													<h:inputText value="#{_passportConfiguration.provider}"
-														size="90"
-														styleClass="form-control">
-
-													</h:inputText>
-												</s:decorate>
-
-												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-													<ui:define name="label">clientID</ui:define>
-													<h:inputText value="#{_passportConfiguration.clientID}"
-														size="90"
-														styleClass="form-control">
-
-													</h:inputText>
-												</s:decorate>
-
-												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-													<ui:define name="label">clientSecret</ui:define>
-													<h:inputText value="#{_passportConfiguration.clientSecret}"
-														size="90"
-														styleClass="form-control">
-
-													</h:inputText>
-												</s:decorate>
-
-												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-													<ui:define name="label">callbackURL</ui:define>
-													<h:inputText value="#{_passportConfiguration.callbackURL}"
-														size="90"
-														styleClass="form-control">
-
-													</h:inputText>
-												</s:decorate>
-												<hr></hr>
-											</h:panelGroup>
-
-										</h:panelGrid>
-										
-									</rich:dataGrid>
-								</a4j:region>
-							</h:panelGroup>							
-							
-							<s:div styleClass="addConfig">
-                        		<a4j:commandLink styleClass="btn btn-link" value="Add Strategy" action="#{_action.addStrategy()}" render="strategyId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
-                   			</s:div>
+                    <s:div styleClass="addConfig">
+                    	<a4j:commandLink styleClass="btn btn-link" value="Add Strategy" action="#{_action.addStrategy()}" render="strategyId" execute="@form" style="margin-right:1100px;margin-top:50px;"/>
+                    </s:div>
+               		 </h:panelGroup>
 						</div>					
 					</div>
 				</div>

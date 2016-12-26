@@ -1,6 +1,9 @@
 package org.gluu.oxtrust.model.passport;
 
+import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Multimap;
 
 /**
  * @author Shekhar L.
@@ -9,13 +12,13 @@ import java.util.Map;
 
 public class PassportConfigResponse {
 
-	private Map<String, PassportStrategy> passportStrategies;
+	private List <Map> passportStrategies;
 
-	public Map<String, PassportStrategy> getPassportStrategies() {
+	public List <Map> getPassportStrategies() {
 		return passportStrategies;
 	}
 
-	public void setPassportStrategies(Map<String, PassportStrategy> passportStrategies) {
+	public void setPassportStrategies(List <Map> passportStrategies) {
 		this.passportStrategies = passportStrategies;
 	}
 
