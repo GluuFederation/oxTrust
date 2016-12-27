@@ -147,7 +147,7 @@
              	 <h:panelGroup rendered="#{_attributeAction.validationToggle}">
 		             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="validationRE">
 		                 <ui:define name="label">Validation RegExp</ui:define>
-		                 <h:inputText styleClass="form-control" value="#{_attribute.regExp}"  size="30" maxlength="256" 
+		                 <h:inputText styleClass="form-control" value="#{_attribute.attributeValidation.regexp}"  size="30" maxlength="256" 
 		                     required="true" id="validationREId" disabled="#{not _attributeAction.canEdit()}"/>
 		             </s:decorate>
 	             </h:panelGroup>

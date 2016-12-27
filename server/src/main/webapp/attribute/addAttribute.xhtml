@@ -19,7 +19,7 @@
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a href="#{request.contextPath}/attribute/add"> Register Attributes</a></li>
+			<li class="organization/configuration"><a href="#{request.contextPath}/attribute/add">Register Attributes</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -36,9 +36,6 @@
                     </div>
                 </ui:define>
             </ui:decorate>
-
-            <ox:showConfirmationDialog acceptMethod="#{updateAttributeAction.save(false)}" cancelMethod="#{updateAttributeAction.save(true)}" show="#{updateAttributeAction.showAttributeExistConfirmation}"
-            	title="Attribute exists in schema" message="Specified attribute name alredy exists in LDAP schema. Are you going to use it?" />
         </div>
         </section>
     </ui:define>
