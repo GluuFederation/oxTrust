@@ -259,6 +259,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				this.trustRelationship.setInum(this.inum);
 			} else {
 				this.inum = this.trustRelationship.getInum();
+				if(this.trustRelationship.getSpMetaDataFN() == null )
 				update=true;
 			}
 
