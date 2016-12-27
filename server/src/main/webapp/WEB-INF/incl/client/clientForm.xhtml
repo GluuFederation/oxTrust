@@ -200,7 +200,6 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="persistClientAuthorizations">
                 <ui:define name="label">Persist Client Authorizations</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthPersistClientAuthorizations}" required="true">
-                    <f:selectItem itemLabel="Please select a value."	noSelectionOption="true" />
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
@@ -401,7 +400,6 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="logoutSessionRequired">
                 <ui:define name="label">Logout Session Required</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.logoutSessionRequired}" required="true">
-                   	<f:selectItem itemLabel="Please select a value."	noSelectionOption="true" />
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>

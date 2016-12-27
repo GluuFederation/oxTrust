@@ -158,10 +158,10 @@ public class OxAuthClient extends Entry implements Serializable {
     private List <String> logoutUri;
 
     @LdapAttribute(name = "oxAuthLogoutSessionRequired")
-    private GluuBoolean logoutSessionRequired;
+    private GluuBoolean logoutSessionRequired = GluuBoolean.FALSE;
 
     @LdapAttribute(name = "oxPersistClientAuthorizations")
-    private GluuBoolean oxAuthPersistClientAuthorizations;
+    private GluuBoolean oxAuthPersistClientAuthorizations = GluuBoolean.FALSE;
 
     @LdapAttribute(name = "oxAuthDefaultAcrValues")
     private String[] defaultAcrValues;
