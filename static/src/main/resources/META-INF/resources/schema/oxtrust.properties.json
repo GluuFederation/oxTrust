@@ -43,16 +43,6 @@
             "format": "url",
             "minLength": 1
         },
-        "schemaAddObjectClassWithoutAttributeTypesDefinition": {
-            "id": "schemaAddObjectClassWithoutAttributeTypesDefinition",
-            "type": "string",
-            "minLength": 1
-        },
-        "schemaAddObjectClassWithAttributeTypesDefinition": {
-            "id": "schemaAddObjectClassWithAttributeTypesDefinition",
-            "type": "string",
-            "minLength": 1
-        },
         "personObjectClassTypes": {
             "id": "personObjectClassTypes",
             "type": "array",
@@ -79,11 +69,6 @@
                 "type": "string",
                 "minLength": 1
             }
-        },
-        "schemaAddAttributeDefinition": {
-            "id": "schemaAddAttributeDefinition",
-            "type": "string",
-            "minLength": 1
         },
         "contactObjectClassTypes": {
             "id": "contactObjectClassTypes",
@@ -616,12 +601,9 @@
         "applianceInum",
         "applianceUrl",
         "baseEndpoint",
-        "schemaAddObjectClassWithoutAttributeTypesDefinition",
-        "schemaAddObjectClassWithAttributeTypesDefinition",
         "personObjectClassTypes",
         "personCustomObjectClass",
         "personObjectClassDisplayNames",
-        "schemaAddAttributeDefinition",
         "contactObjectClassTypes",
         "contactObjectClassDisplayNames",
         "photoRepositoryRootDir",
