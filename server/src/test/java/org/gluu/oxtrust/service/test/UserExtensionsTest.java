@@ -376,8 +376,9 @@ public class UserExtensionsTest extends BaseTest {
 			gluuAttribute.setSaml2Uri("urn:oid:" + gluuAttribute);
 		}
 
-		schemaService.addStringAttribute(ldapAttributedName, name,
-				applicationConfiguration.getSchemaAddAttributeDefinition());
+//		We don't support schema update at runtime
+//		schemaService.addStringAttribute(ldapAttributedName, name,
+//				applicationConfiguration.getSchemaAddAttributeDefinition());
 		schemaService.addAttributeTypeToObjectClass(objectClassName, name);
 
 		attributeService.addAttribute(gluuAttribute);

@@ -433,23 +433,6 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 				}
 			}
 		}
-		log.trace("Removing attribute from objectclass");
-		// Unregister new attribute type from custom object class
-		try {
-			schemaService.removeAttributeTypeFromObjectClass(objectClassName, attributeName);
-		} catch (Exception ex) {
-			log.error("Failed to remove attribute type from LDAP schema's object class", ex);
-			return false;
-		}
-		
-		log.trace("Removing attribute from schema");
-		// Remove attribute type from LDAP schema
-		try {
-			schemaService.removeStringAttribute(attributeName);
-		} catch (Exception ex) {
-			log.error("Failed to remove attribute type from LDAP schema", ex);
-			return false;
-		}
 
 		log.trace("Removing attribute for good.");
 		ldapEntryManager.remove(attribute);
@@ -633,8 +616,6 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	 */
 	public String getCustomOrigin() {
 		return applicationConfiguration.getPersonCustomObjectClass();
-		// return CUSTOM_ATTRIBUTE_OBJECTCLASS_PREFIX +
-		// toInumWithoutDelimiters(organizationService.getInumForOrganization());
 	}
 	
 	@Override
