@@ -108,10 +108,10 @@
     "logoutRedirectUrl":"${config.host.schema}://${config.host.idp_name}${config.oxtrust.web_context}/authentication/finishlogout",
 
     "umaIssuer":"${config.uma.issuer}",
-    "umaClientId":"${config.uma.client_id}",
-    "umaClientKeyId":"${config.uma.client_key_id}",
-    "umaResourceId":"${config.uma.resource_id}",
-    "umaScope":"${config.uma.scope}",
+    "scimUmaClientId":"${config.uma.client_id}",
+    "scimUmaClientKeyId":"${config.uma.client_key_id}",
+    "scimUmaResourceId":"${config.uma.resource_id}",
+    "scimUmaScope":"${config.uma.scope}",
 
     "cssLocation":"/identity/stylesheet",
     "jsLocation":"/identity/js",

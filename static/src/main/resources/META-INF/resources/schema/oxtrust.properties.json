@@ -362,32 +362,32 @@
             "type": "string",
             "minLength": 1
         },
-        "umaClientId": {
+        "scimUmaClientId": {
             "id": "umaClientId",
             "type": "string",
             "minLength": 1
         },
-        "umaClientKeyId": {
+        "scimUmaClientKeyId": {
             "id": "umaClientKeyId",
             "type": "string",
             "minLength": 1
         },
-        "umaResourceId": {
+        "scimUmaResourceId": {
             "id": "umaResourceId",
             "type": "string",
             "minLength": 1
         },
-        "umaScope": {
+        "scimUmaScope": {
             "id": "umaScope",
             "type": "string",
             "minLength": 1
         },
-        "umaClientKeyStoreFile": {
+        "scimUmaClientKeyStoreFile": {
             "id": "umaClientKeyStoreFile",
             "type": "string",
             "minLength": 1
         },
-        "umaClientKeyStorePassword": {
+        "scimUmaClientKeyStorePassword": {
             "id": "umaClientKeyStorePassword",
             "type": "string",
             "minLength": 1
@@ -614,12 +614,12 @@
         "oxAuthIssuer",
         "ignoreValidation",
         "umaIssuer",
-        "umaClientId",
-        "umaClientKeyId",
-        "umaResourceId",
-        "umaScope",
-        "umaClientKeyStoreFile",
-        "umaClientKeyStorePassword",
+        "scimUmaClientId",
+        "scimUmaClientKeyId",
+        "scimUmaResourceId",
+        "scimUmaScope",
+        "scimUmaClientKeyStoreFile",
+        "scimUmaClientKeyStorePassword",
         "passportUmaClientId",
         "passportUmaClientKeyId",
         "passportUmaResourceId",

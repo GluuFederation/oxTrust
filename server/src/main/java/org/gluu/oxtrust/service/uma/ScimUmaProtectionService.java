@@ -37,27 +37,27 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 	private ApplianceService applianceService;
 
 	protected String getClientId() {
-		return applicationConfiguration.getUmaClientId();
+		return applicationConfiguration.getScimUmaClientId();
 	}
 
 	protected String getClientKeyStorePassword() {
-		return applicationConfiguration.getUmaClientKeyStorePassword();
+		return applicationConfiguration.getScimUmaClientKeyStorePassword();
 	}
 
 	protected String getClientKeyStoreFile() {
-		return applicationConfiguration.getUmaClientKeyStoreFile();
+		return applicationConfiguration.getScimUmaClientKeyStoreFile();
 	}
 
 	protected String getClientKeyId() {
-		return applicationConfiguration.getUmaClientKeyId();
+		return applicationConfiguration.getScimUmaClientKeyId();
 	}
 
 	public String getUmaResourceId() {
-		return applicationConfiguration.getUmaResourceId();
+		return applicationConfiguration.getScimUmaResourceId();
 	}
 
 	public String getUmaScope() {
-		return applicationConfiguration.getUmaScope();
+		return applicationConfiguration.getScimUmaScope();
 	}
 
 	public boolean isEnabled() {
