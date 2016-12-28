@@ -120,7 +120,7 @@
                                                             <rich:inplaceInput
                                                                     value="#{_custAttr.values[_valueIdx]}"
                                                                     defaultLabel="Click to enter #{_custAttr.metadata.displayName}"
-                                                                    maxlength="400" id="custId"
+                                                                    id="custId"
                                                                     validator="#{_custAttr.metadata.validateAttribute}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="Please enter #{_custAttr.metadata.displayName}. "
@@ -190,7 +190,7 @@
                                                             
                                                             <rich:inplaceInput       
                                                                     defaultLabel="Click to enter Confirm Pasword"
-                                                                    maxlength="400" id="custconfirmpasswordId"
+                                                                    maxlength="50" id="custconfirmpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="Please enter Confirm Password" 
