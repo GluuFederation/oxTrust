@@ -301,47 +301,6 @@
             "id": "persistSVN",
             "type": "boolean"
         },
-        "oxAuthAuthorizeUrl": {
-            "id": "oxAuthAuthorizeUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthRegisterUrl": {
-            "id": "oxAuthRegisterUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthTokenUrl": {
-            "id": "oxAuthTokenUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthEndSessionUrl": {
-            "id": "oxAuthEndSessionUrl",
-            "type": "string",
-            "format": "url"
-        },
-        "oxAuthLogoutUrl": {
-            "id": "oxAuthLogoutUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthTokenValidationUrl": {
-            "id": "oxAuthTokenValidationUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthUserInfo": {
-            "id": "oxAuthUserInfo",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
         "oxAuthSectorIdentifierUrl": {
             "id": "oxAuthSectorIdentifierUrl",
             "type": "string",
@@ -644,13 +603,6 @@
         "certDir",
         "servicesRestartTrigger",
         "persistSVN",
-        "oxAuthAuthorizeUrl",
-        "oxAuthRegisterUrl",
-        "oxAuthTokenUrl",
-        "oxAuthEndSessionUrl",
-        "oxAuthLogoutUrl",
-        "oxAuthTokenValidationUrl",
-        "oxAuthUserInfo",
         "oxAuthSectorIdentifierUrl",
         "oxAuthClientId",
         "oxAuthClientPassword",
