@@ -174,14 +174,14 @@
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="minlength">
                 <ui:define name="label">Minimum Length</ui:define>
                 <h:inputText styleClass="form-control" value="#{_attribute.attributeValidation.minLength}"  converter="javax.faces.Integer" size="40" maxlength="4000"  id="minlengthid" disabled="#{not _attributeAction.canEdit()}">
-            	<f:validateLongRange maximum="10" minimum="1" />
+            	<f:validateLongRange minimum="1" maximum="10000" />
             	</h:inputText>
              </s:decorate>
              
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="maxlength">
                 <ui:define name="label">Maximum Length</ui:define>
                 <h:inputText styleClass="form-control"  value="#{_attribute.attributeValidation.maxLength}" converter="javax.faces.Integer" size="40" maxlength="4000" id="maxlengthid" disabled="#{not _attributeAction.canEdit()}">
-            		<f:validateLongRange maximum="10" minimum="1" />
+            		<f:validateLongRange minimum="1" maximum="10000" />
             	</h:inputText>
              </s:decorate>
              
