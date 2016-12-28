@@ -142,13 +142,13 @@
                 	<a4j:ajax  event="click"  render="validation" />
                 </h:selectBooleanCheckbox>
              </s:decorate>
-             
+
              <h:panelGroup id="validation">
              	 <h:panelGroup rendered="#{_attributeAction.validationToggle}">
 		             <s:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="validationRE">
 		                 <ui:define name="label">Validation RegExp</ui:define>
-		                 <h:inputText styleClass="form-control" value="#{_attribute.attributeValidation.regexp}"  size="30" maxlength="256" 
-		                     required="true" id="validationREId" disabled="#{not _attributeAction.canEdit()}"/>
+		                 <h:inputText styleClass="form-control" value="#{_attribute.attributeValidation.regexp}" size="30" maxlength="256" 
+		                     id="validationREId" disabled="#{not _attributeAction.canEdit()}"/>
 		             </s:decorate>
 	             </h:panelGroup>
              </h:panelGroup>
@@ -174,7 +174,7 @@
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="minlength">
                 <ui:define name="label">Minimum Length</ui:define>
                 <h:inputText styleClass="form-control" value="#{_attribute.attributeValidation.minLength}"  converter="javax.faces.Integer" size="40" maxlength="4000"  id="minlengthid" disabled="#{not _attributeAction.canEdit()}">
-            	<f:validateLongRange minimum="1" maximum="10000" />
+            		<f:validateLongRange minimum="1" maximum="10000" />
             	</h:inputText>
              </s:decorate>
              
