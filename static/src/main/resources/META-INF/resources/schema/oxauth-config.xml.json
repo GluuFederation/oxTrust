@@ -979,6 +979,11 @@
             "id": "legacyIdTokenClaims",
             "description": "Include Claims in ID Token.",
             "type": "boolean"
+        },
+        "customHeadersWithAuthorizationResponse": {
+            "id": "customHeadersWithAuthorizationResponse",
+            "description": "Boolean value specifying whether to enable Custom Response Header parameter to return custom headers with the Authorization Response.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1079,6 +1084,7 @@
         "keyStoreFile",
         "keyStoreSecret",
         "endSessionWithAccessToken",
-        "legacyIdTokenClaims"
+        "legacyIdTokenClaims",
+        "customHeadersWithAuthorizationResponse"
     ]
 }
