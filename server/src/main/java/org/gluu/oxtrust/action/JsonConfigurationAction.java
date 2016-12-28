@@ -141,13 +141,7 @@ public class JsonConfigurationAction implements Serializable {
 	private void trimUriProperties() {
 		this.oxTrustApplicationConfiguration.setLogoutRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLogoutRedirectUrl()));
 		this.oxTrustApplicationConfiguration.setLoginRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLoginRedirectUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthAuthorizeUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthAuthorizeUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthEndSessionUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthEndSessionUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthLogoutUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthLogoutUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthRegisterUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthRegisterUrl()));
 		this.oxTrustApplicationConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthSectorIdentifierUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthTokenUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthTokenUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthTokenValidationUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthTokenValidationUrl()));
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")

@@ -13,6 +13,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
@@ -56,6 +57,9 @@ public class JsonConfigurationService implements Serializable {
 
 	@In
 	private JsonService jsonService;
+
+	@In
+	private OpenIdService openIdService;
 
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
@@ -159,14 +163,14 @@ public class JsonConfigurationService implements Serializable {
 		ApplicationConfiguration applicationConfiguration = getOxTrustApplicationConfiguration();
 
 		if (current.isScimTestMode()) {
+			OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
 
 			String clientPassword = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getOxAuthClientPassword(), cryptoConfigurationSalt);
 
 			if (source.getScimTestModeAccessToken() != null && !source.getScimTestModeAccessToken().isEmpty()) {
-
 				// Check if current token is still valid
 
-				String validateTokenEndpoint = applicationConfiguration.getOxAuthTokenValidationUrl();
+				String validateTokenEndpoint = openIdConfiguration.getValidateTokenEndpoint();
 
 				ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);
 				ValidateTokenResponse validateTokenResponse = validateTokenClient.execValidateToken(source.getScimTestModeAccessToken());
@@ -190,7 +194,7 @@ public class JsonConfigurationService implements Serializable {
 					longLivedTokenRequest.setAuthPassword(clientPassword);
 					longLivedTokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 
-					TokenClient longLivedTokenClient = new TokenClient(current.getOxAuthTokenUrl());
+					TokenClient longLivedTokenClient = new TokenClient(openIdConfiguration.getTokenEndpoint());
 					longLivedTokenClient.setRequest(longLivedTokenRequest);
 					TokenResponse longLivedTokenResponse = longLivedTokenClient.exec();
 
@@ -203,9 +207,7 @@ public class JsonConfigurationService implements Serializable {
 				} else {
 					log.info(" (processScimTestModeIsTrue) Current long-lived token still valid");
 				}
-
 			} else {
-
 				log.info(" (processScimTestModeIsTrue) Requesting for a first time long-lived access token...");
 
 				// 1. Request short-lived access token
@@ -215,7 +217,7 @@ public class JsonConfigurationService implements Serializable {
 				tokenRequest.setAuthPassword(clientPassword);
 				tokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 
-				TokenClient tokenClient = new TokenClient(applicationConfiguration.getOxAuthTokenUrl());
+				TokenClient tokenClient = new TokenClient(openIdConfiguration.getTokenEndpoint());
 				tokenClient.setRequest(tokenRequest);
 				TokenResponse tokenResponse = tokenClient.exec();
 
@@ -229,7 +231,7 @@ public class JsonConfigurationService implements Serializable {
 				longLivedTokenRequest.setAuthPassword(clientPassword);
 				longLivedTokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 
-				TokenClient longLivedTokenClient = new TokenClient(current.getOxAuthTokenUrl());
+				TokenClient longLivedTokenClient = new TokenClient(openIdConfiguration.getTokenEndpoint());
 				longLivedTokenClient.setRequest(longLivedTokenRequest);
 				TokenResponse longLivedTokenResponse = longLivedTokenClient.exec();
 

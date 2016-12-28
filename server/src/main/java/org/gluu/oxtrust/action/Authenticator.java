@@ -34,8 +34,8 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.security.OauthData;
 import org.gluu.oxtrust.service.AuthenticationSessionService;
+import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.seam.Component;
@@ -57,6 +57,7 @@ import org.jboss.seam.security.SimplePrincipal;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
+import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
 import org.xdi.oxauth.client.UserInfoClient;
@@ -78,9 +79,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @Name("authenticator")
 @Scope(ScopeType.SESSION)
 public class Authenticator implements Serializable {
-	/**
-     *
-     */
+
 	private static final long serialVersionUID = -3975272457541385597L;
 
 	@Logger
@@ -108,7 +107,10 @@ public class Authenticator implements Serializable {
 	private SsoLoginAction ssoLoginAction;
 
 	@In
-	private transient ApplianceService applianceService;
+	private ApplianceService applianceService;
+	
+	@In
+	private OpenIdService openIdService;
 
 	@In
 	private FacesMessages facesMessages;
@@ -123,16 +125,12 @@ public class Authenticator implements Serializable {
 	private ApplicationConfiguration applicationConfiguration;
 
 	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;	
+	private String cryptoConfigurationSalt;
 	
 	public boolean preAuthenticate() throws IOException, Exception {
 		boolean result = true;
-		if (isOxAuthAuth()) {
-			if (!identity.isLoggedIn()) {
-				result = oAuthLogin();
-			}
-		} else {
-			result = externalAuthenticate();
+		if (!identity.isLoggedIn()) {
+			result = oAuthLogin();
 		}
 		
 		return result;
@@ -141,27 +139,9 @@ public class Authenticator implements Serializable {
 	public boolean authenticate() {
 		String userName = null;
 		try {
-			if (isBasicAuth()) {
-				userName = identity.getCredentials().getUsername();
-				log.info("Authenticating user '{0}'", userName);
-
-				boolean authenticated = false;
-				try {
-					authenticated = this.authenticationService.authenticate(userName, this.credentials.getPassword());
-				} catch (AuthenticationException ex) {
-					this.log.error("Failed to authenticate user: '{0}'", ex, userName);
-				}
-				
-				if (!authenticated) {
-					return false;
-				}
-			} else if (isOxAuthAuth()) {
-				userName = oauthData.getUserUid();
-				identity.getCredentials().setUsername(userName);
-				log.info("Authenticating user '{0}'", userName);
-			} else {
-				return false;
-			}
+			userName = oauthData.getUserUid();
+			identity.getCredentials().setUsername(userName);
+			log.info("Authenticating user '{0}'", userName);
 
 			User user = findUserByUserName(userName);
 			if (user == null) {
@@ -285,14 +265,6 @@ public class Authenticator implements Serializable {
 		return person;
     }
 
-	private boolean isBasicAuth() {
-		return Utils.isBasicAuth();
-	}
-
-	private boolean isOxAuthAuth() {
-		return !isBasicAuth();
-	}
-
 	public void processLogout() throws Exception {
 		ssoLoginAction.logout();
 		oAuthlLogout();
@@ -314,7 +286,7 @@ public class Authenticator implements Serializable {
 			return;
 		}
 
-		ClientRequest clientRequest = new ClientRequest(applicationConfiguration.getOxAuthLogoutUrl());
+		ClientRequest clientRequest = new ClientRequest(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
 
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
@@ -406,34 +378,13 @@ public class Authenticator implements Serializable {
 	}
 
 	/**
-	 * Make attempt to authenticate using parameters passed in header
-	 */
-	public boolean externalAuthenticate() {
-		if (identity.isLoggedIn()) {
-			return true;
-		}
-
-		if (Shibboleth3Authenticate()) {
-
-			return true;
-		}
-		// try {
-		// oAuthLogin();
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		return false;
-	}
-
-	/**
 	 * Main entry point for oAuth authentication.
 	 * @throws IOException 
 	 * 
 	 * @throws Exception
 	 */
 	public boolean oAuthLogin() throws IOException, Exception {
-		ClientRequest clientRequest = new ClientRequest(applicationConfiguration.getOxAuthAuthorizeUrl());
+		ClientRequest clientRequest = new ClientRequest(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
 		String clientId = applicationConfiguration.getOxAuthClientId();
 		String scope = applicationConfiguration.getOxAuthClientScope();
 		String responseType = "code+id_token";
@@ -470,7 +421,7 @@ public class Authenticator implements Serializable {
 	 * @throws JSONException
 	 */
 	public String oAuthGetAccessToken() throws JSONException {
-		String oxAuthAuthorizeUrl = applicationConfiguration.getOxAuthAuthorizeUrl();
+		String oxAuthAuthorizeUrl = openIdService.getOpenIdConfiguration().getAuthorizationEndpoint();
 		String oxAuthHost = getOxAuthHost(oxAuthAuthorizeUrl);
 		if (StringHelper.isEmpty(oxAuthHost)) {
 			log.info("Failed to determine oxAuth host using oxAuthAuthorizeUrl: '{0}'", oxAuthAuthorizeUrl);
@@ -527,23 +478,21 @@ public class Authenticator implements Serializable {
 			}
 		}
 
-		log.info("getting accessToken");
-		// 1. Request access token using the authorization code.
-		log.info("tokenURL : " + applicationConfiguration.getOxAuthTokenUrl());
-		String tokenURL = applicationConfiguration.getOxAuthTokenUrl();
-
-		String result = requestAccessToken(oxAuthHost, authorizationCode, sessionState, idToken, scopes, clientID, clientPassword, tokenURL);
+		String result = requestAccessToken(oxAuthHost, authorizationCode, sessionState, idToken, scopes, clientID, clientPassword);
 
 		return result;
 	}
 
 	private String requestAccessToken(String oxAuthHost, String authorizationCode, String sessionState, String idToken, String scopes,
-			String clientID, String clientPassword, String tokenURL) {
-		TokenClient tokenClient1 = new TokenClient(tokenURL);
+			String clientID, String clientPassword) {
+		OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
+
+		// 1. Request access token using the authorization code.
+		TokenClient tokenClient1 = new TokenClient(openIdConfiguration.getTokenEndpoint());
 
 		log.info("Sending request to token endpoint");
 		String redirectURL = applicationConfiguration.getLoginRedirectUrl();
-		log.info("redirectURI : " + applicationConfiguration.getLoginRedirectUrl());
+		log.info("redirectURI : " + redirectURL);
 		TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID, clientPassword);
 
 		log.debug(" tokenResponse : " + tokenResponse);
@@ -558,14 +507,7 @@ public class Authenticator implements Serializable {
 		log.debug(" accessToken : " + accessToken);
 
 		// 2. Validate the access token
-		// ValidateTokenClient validateTokenClient = new
-		// ValidateTokenClient(applicationConfiguration.getOxAuthValidateTokenUrl());
-		// ValidateTokenResponse response3 = validateTokenClient
-		// .execValidateToken(accessToken);
-		log.debug(" validating AccessToken ");
-
-		String validateUrl = applicationConfiguration.getOxAuthTokenValidationUrl();
-		ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateUrl);
+		ValidateTokenClient validateTokenClient = new ValidateTokenClient(openIdConfiguration.getValidateTokenEndpoint());
 		ValidateTokenResponse response3 = validateTokenClient.execValidateToken(accessToken);
 		log.debug(" response3.getStatus() : " + response3.getStatus());
 
@@ -576,8 +518,7 @@ public class Authenticator implements Serializable {
 
 		if (response3.getStatus() == 200) {
 			log.info("Session validation successful. User is logged in");
-			String userInfoEndPoint = applicationConfiguration.getOxAuthUserInfo();
-			UserInfoClient userInfoClient = new UserInfoClient(userInfoEndPoint);
+			UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
 			UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
 			this.oauthData.setHost(oxAuthHost);

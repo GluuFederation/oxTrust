@@ -11,7 +11,6 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxauth.client.exception.ConfigurationException;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -19,6 +18,7 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xdi.util.StringHelper;
+import org.xdi.util.exception.ConfigurationException;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
 

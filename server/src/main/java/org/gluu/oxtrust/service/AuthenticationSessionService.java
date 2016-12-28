@@ -31,6 +31,9 @@ public class AuthenticationSessionService {
 
 	@Logger
 	private Log log;
+
+	@In
+	private OpenIdService openIdService;
 	
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
@@ -50,7 +53,7 @@ public class AuthenticationSessionService {
             EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), applicationConfiguration.getLogoutRedirectUrl(), endSessionState);
             endSessionRequest.setSessionState(oauthData.getSessionState());
 
-            EndSessionClient endSessionClient = new EndSessionClient(applicationConfiguration.getOxAuthEndSessionUrl());
+            EndSessionClient endSessionClient = new EndSessionClient(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
             endSessionClient.setRequest(endSessionRequest);
             EndSessionResponse endSessionResponse = endSessionClient.exec();
  

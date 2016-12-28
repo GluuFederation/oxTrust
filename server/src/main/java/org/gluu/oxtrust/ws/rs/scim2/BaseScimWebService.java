@@ -33,6 +33,7 @@ import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
+import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
@@ -80,6 +81,9 @@ public class BaseScimWebService {
 	private UmaPermissionService umaPermissionService;
 
 	@In
+	private OpenIdService openIdService;
+
+	@In
 	private LdapEntryManager ldapEntryManager;
 
 	@In
@@ -87,7 +91,7 @@ public class BaseScimWebService {
 
 	protected Response processTestModeAuthorization(String token) throws Exception {
 		try {
-			String validateTokenEndpoint = jsonConfigurationService.getOxTrustApplicationConfiguration().getOxAuthTokenValidationUrl();
+			String validateTokenEndpoint = openIdService.getOpenIdConfiguration().getValidateTokenEndpoint();
 
 			ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);
 			ValidateTokenResponse validateTokenResponse = validateTokenClient.execValidateToken(token);
