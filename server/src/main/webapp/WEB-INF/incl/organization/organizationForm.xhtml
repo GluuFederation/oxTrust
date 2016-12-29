@@ -104,17 +104,6 @@
 						<!-- System Configuration -->
 						<div class="tab-pane active" id="sys-config">
 							<h:panelGroup layout="block" style="width:80%;">
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="whitePages">
-									<ui:define name="label">White Pages</ui:define>
-									<h:selectOneMenu value="#{_appliance.whitePagesEnabled}" styleClass="form-control"
-										id="whitePagesId">
-										<s:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" label="#{_type.displayName}" />
-										<s:convertEnum />
-									</h:selectOneMenu>
-								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="passwordReset">
