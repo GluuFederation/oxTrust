@@ -65,19 +65,22 @@ public class PassportRestWebService {
 
 		PassportConfigResponse passportConfigResponse = new PassportConfigResponse();
 		
-		List <Map> strategies = new ArrayList <Map>();
+		Map <String,Map> strategies = new HashMap <String,Map>();
 
 		LdapOxPassportConfiguration ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-		for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
-			Map<String, String> map = new HashMap();
-			List<FieldSet>  passList = passportConfiguration.getFieldset();
-			for( FieldSet fieldset :  passList ){
-				map.put(fieldset.getKey(), fieldset.getValue());
-			}		
-			
-			strategies.add(map);
+		if(ldapOxPassportConfiguration != null ){
+			for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
+				if(passportConfiguration != null){
+					Map<String, String> map = new HashMap();
+					List<FieldSet>  passList = passportConfiguration.getFieldset();
+					for( FieldSet fieldset :  passList ){
+						map.put(fieldset.getKey(), fieldset.getValue());
+					}		
+					
+					strategies.put(passportConfiguration.getStrategy(),map);
+				}
+			}
 		}
-
 		passportConfigResponse.setPassportStrategies(strategies);
 
 		String passportConfigResponseJson;

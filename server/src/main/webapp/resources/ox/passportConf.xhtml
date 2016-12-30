@@ -26,6 +26,13 @@
 
 <cc:implementation>
 	<h:panelGroup id="fieldsid">
+	
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="text">
+                    <ui:define name="label">Strategy</ui:define>
+                    <div class="row" style="float:left;margin-left:3px;">
+                    <h:inputText value="#{cc.attrs.passportConfig.strategy}" size="40" maxlength="40" styleClass="searchParameters form-control" /></div>
+                </s:decorate>
+				
 				<ui:repeat id="fieldtable" 
 					value="#{cc.attrs.passportConfig.fieldset}" var="fieldkey">
 					<h:panelGrid id="panel" columns="3" cellpadding="10"

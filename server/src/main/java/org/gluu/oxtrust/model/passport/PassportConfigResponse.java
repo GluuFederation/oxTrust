@@ -12,13 +12,13 @@ import com.google.common.collect.Multimap;
 
 public class PassportConfigResponse {
 
-	private List <Map> passportStrategies;
+	private Map <String,Map> passportStrategies;
 
-	public List <Map> getPassportStrategies() {
+	public Map <String, Map> getPassportStrategies() {
 		return passportStrategies;
 	}
 
-	public void setPassportStrategies(List <Map> passportStrategies) {
+	public void setPassportStrategies(Map <String,Map> passportStrategies) {
 		this.passportStrategies = passportStrategies;
 	}
 
