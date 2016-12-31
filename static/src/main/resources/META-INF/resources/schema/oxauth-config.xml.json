@@ -989,6 +989,11 @@
             "id": "customHeadersWithAuthorizationResponse",
             "description": "Boolean value specifying whether to enable Custom Response Header parameter to return custom headers with the Authorization Response.",
             "type": "boolean"
+        },
+        "frontChannelLogoutSessionSupported": {
+        	"id": "frontChannelLogoutSessionSupported",
+            "description": "Boolean value to specify support for front channel logout session.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1091,6 +1096,7 @@
         "keyStoreSecret",
         "endSessionWithAccessToken",
         "legacyIdTokenClaims",
-        "customHeadersWithAuthorizationResponse"
+        "customHeadersWithAuthorizationResponse",
+        "frontChannelLogoutSessionSupported"
     ]
 }
