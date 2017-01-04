@@ -994,6 +994,23 @@
         	"id": "frontChannelLogoutSessionSupported",
             "description": "Boolean value to specify support for front channel logout session.",
             "type": "boolean"
+        },
+        "loggingLevel": {
+            "id": "loggingLevel",
+            "description": "Logging level for oxAuth logers.",
+            "type": "string",
+            "format": "select",
+            "enum": [
+                "DEFAULT",
+                "OFF",
+                "FATAL",
+                "ERROR",
+                "WARN",
+                "INFO",
+                "DEBUG",
+                "TRACE",
+                "ALL"
+            ]
         }
     },
     "required": [
@@ -1097,6 +1114,7 @@
         "endSessionWithAccessToken",
         "legacyIdTokenClaims",
         "customHeadersWithAuthorizationResponse",
-        "frontChannelLogoutSessionSupported"
+        "frontChannelLogoutSessionSupported",
+        "loggingLevel"
     ]
 }

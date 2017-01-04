@@ -44,6 +44,8 @@ import org.xdi.util.properties.FileConfiguration;
 @Startup
 public class OxTrustConfiguration {
 
+	public final static String CONFIGURATION_UPDATE_EVENT = "configurationUpdateEvent";
+
     public final static String LDAP_CONFIGUARION_RELOAD_EVENT_TYPE = "LDAP_CONFIGUARION_RELOAD";
     public final static String LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE = "LDAP_CENTRAL_CONFIGUARION_RELOAD";
 
@@ -206,6 +208,9 @@ public class OxTrustConfiguration {
             final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
             if (conf != null) {
                 init(conf);
+
+                Events.instance().raiseAsynchronousEvent(CONFIGURATION_UPDATE_EVENT, this.applicationConfiguration);
+
                 return true;
             }
         } catch (Exception ex) {
