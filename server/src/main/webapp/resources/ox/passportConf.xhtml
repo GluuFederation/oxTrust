@@ -30,7 +30,7 @@
 				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="text">
                     <ui:define name="label">Strategy</ui:define>
                     <div class="row" style="float:left;margin-left:3px;">
-                    <h:inputText value="#{cc.attrs.passportConfig.strategy}" size="40" maxlength="40" styleClass="searchParameters form-control" /></div>
+                    <h:inputText value="#{cc.attrs.passportConfig.strategy}" required="true" immediate="true" size="40" maxlength="40" styleClass="searchParameters form-control" /></div>
                 </s:decorate>
 				
 				<ui:repeat id="fieldtable" 
