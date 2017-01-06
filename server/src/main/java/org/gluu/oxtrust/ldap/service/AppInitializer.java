@@ -7,21 +7,26 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.helpers.Loader;
+import org.apache.log4j.helpers.LogLog;
+import org.apache.log4j.helpers.OptionConverter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
-import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.OperationsFacade;
@@ -31,7 +36,6 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -635,6 +639,44 @@ public class AppInitializer {
 		}
 
 		return umaConfigurationEndpoint;
+	}
+	
+	@Observer(OxTrustConfiguration.CONFIGURATION_UPDATE_EVENT)
+	public void updateLoggingSeverity(ApplicationConfiguration applicationConfiguration) {
+		String loggingLevel = applicationConfiguration.getLoggingLevel();
+		log.info("Setting loggers level to: '{0}'", loggingLevel);
+		
+		if (StringHelper.equalsIgnoreCase("DEFAULT", loggingLevel)) {
+			resetLog4jConfiguration();
+			return;
+		}
+
+		Level level = Level.toLevel(loggingLevel, Level.INFO); 
+		
+		Enumeration<org.apache.log4j.Logger> currentLoggers = LogManager.getCurrentLoggers();
+		while(currentLoggers.hasMoreElements()) {
+			org.apache.log4j.Logger logger = (org.apache.log4j.Logger) currentLoggers.nextElement();
+			String loggerName = logger.getName();
+			if (loggerName.startsWith("org.xdi.service") || loggerName.startsWith("org.gluu.oxtrust") || loggerName.startsWith("org.xdi.oxauth")) {
+				logger.setLevel(level);
+			}
+		}
+	}
+	
+	private void resetLog4jConfiguration() {
+		URL url = Loader.getResource("log4j.xml");
+		if(url == null) {
+		    LogLog.debug("Could not find resource: 'log4j.xml'");
+		}
+	      
+		// If we have a non-null url, then delegate the rest of the configuration to the OptionConverter.selectAndConfigure method.
+	    LogLog.debug("Using URL ["+url+"] for automatic log4j configuration.");
+	    try {
+	    	LogManager.getLoggerRepository().resetConfiguration();
+	        OptionConverter.selectAndConfigure(url, null, LogManager.getLoggerRepository());
+	    } catch (NoClassDefFoundError e) {
+	        LogLog.warn("Error during default initialization", e);
+	    }
 	}
 
 }

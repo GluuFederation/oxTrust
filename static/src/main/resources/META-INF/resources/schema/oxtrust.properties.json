@@ -550,6 +550,23 @@
         "oxIncommonFlag": {
             "id": "oxIncommonFlag",
             "type": "boolean"
+        },
+        "loggingLevel": {
+            "id": "loggingLevel",
+            "description": "Logging level for oxTrust logers.",
+            "type": "string",
+            "format": "select",
+            "enum": [
+                "DEFAULT",
+                "OFF",
+                "FATAL",
+                "ERROR",
+                "WARN",
+                "INFO",
+                "DEBUG",
+                "TRACE",
+                "ALL"
+            ]
         }
     },
     "required": [
@@ -643,6 +660,7 @@
         "organizationName",
         "idp3SigningCert",
         "idp3EncryptionCert",
-        "oxIncommonFlag"
+        "oxIncommonFlag",
+        "loggingLevel"
     ]
 }

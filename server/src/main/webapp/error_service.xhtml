@@ -1,0 +1,28 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://http://java.sun.com/jsf/composite/components/property"
+                template="/WEB-INF/incl/layout/template.xhtml">
+
+    <ui:param name="showGlobalMessages" value="false"/>
+
+	<ui:define name="body">
+		<div class="section">
+			<h1>Error Encountered</h1>
+		</div>
+
+		<div class="section">
+			<p>An unexpected error has occurred at #{pageService.currentDateTime}.</p>
+
+			<div class="body">
+				<h:messages id="globalMessage" styleClass="message"
+					errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+					globalOnly="true" />
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>

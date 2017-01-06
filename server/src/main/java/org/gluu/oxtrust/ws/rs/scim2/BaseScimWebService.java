@@ -288,7 +288,8 @@ public class BaseScimWebService {
 		log.info(" sortOrder = " + sortOrderEnum.getValue());
 		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? new ObjectMapper().writeValueAsString(attributes) : null));
 
-		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
+		// List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
+		List<T> result = ldapEntryManager.findEntriesSearchSearchResult(dn, entryClass, filter, startIndex, count, MAX_COUNT, sortBy, sortOrderEnum, vlvResponse, attributes);
 
 		log.info(" ### RESULTS INFO ###");
 		log.info(" totalResults = " + vlvResponse.getTotalResults());
