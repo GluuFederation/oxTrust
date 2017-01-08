@@ -282,9 +282,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					update = true;
 					updateSpMetaDataCert(certWrapper);
 //					setEntityId();
-					if(!update){
+					// if(!update){
 						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
-					}
+					// }
 				} else {
 					log.error("Failed to save SP meta-data file {0}", fileWrapper);
 					return OxTrustConstants.RESULT_FAILURE;
