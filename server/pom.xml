@@ -387,6 +387,10 @@
 					<artifactId>oxLdap-annotations</artifactId>
 					<groupId>org.xdi</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -417,10 +421,6 @@
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
 					<groupId>commons-logging</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
 				</exclusion>
 				<exclusion>
 					<artifactId>resteasy-jackson-provider</artifactId>
@@ -455,10 +455,6 @@
 				<exclusion>
 					<artifactId>httpcore</artifactId>
 					<groupId>org.apache.httpcomponents</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
 				</exclusion>
 				<exclusion>
 					<artifactId>resteasy-jackson-provider</artifactId>
@@ -549,10 +545,6 @@
 					<groupId>commons-logging</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-				<exclusion>
 					<artifactId>resteasy-jackson-provider</artifactId>
 					<groupId>org.jboss.resteasy</groupId>
 				</exclusion>
@@ -569,10 +561,6 @@
 				<exclusion>
 					<artifactId>commons-codec</artifactId>
 					<groupId>commons-codec</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -724,20 +712,6 @@
 			<artifactId>mvel2</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.asimba</groupId>
 			<artifactId>asimba-utility-ldap</artifactId>
                         <version>3.0.0-SNAPSHOT</version>
@@ -745,10 +719,6 @@
                         	<exclusion>
                         		<artifactId>slf4j-api</artifactId>
                         		<groupId>org.slf4j</groupId>
-                        	</exclusion>
-                        	<exclusion>
-                        		<artifactId>log4j</artifactId>
-                        		<groupId>log4j</groupId>
                         	</exclusion>
                         	<exclusion>
                         		<artifactId>commons-logging</artifactId>
@@ -759,6 +729,10 @@
                         			oxLdap-annotations
                         		</artifactId>
                         		<groupId>org.xdi</groupId>
+                        	</exclusion>
+                        	<exclusion>
+                        		<groupId>log4j</groupId>
+                        		<artifactId>log4j</artifactId>
                         	</exclusion>
                         </exclusions>
 		</dependency>
@@ -987,8 +961,8 @@
 			<artifactId>jxl</artifactId>
 			<exclusions>
 				<exclusion>
-					<artifactId>log4j</artifactId>
 					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -1115,6 +1089,19 @@
 					<groupId>javax.activation</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
 		</dependency>
 
 		<!-- Test -->
