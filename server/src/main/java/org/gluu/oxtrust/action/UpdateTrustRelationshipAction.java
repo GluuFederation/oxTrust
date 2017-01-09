@@ -165,6 +165,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private List<String> filteredEntities;
 
 	private String filterString;
+/*
 	private String metadata;
 	public String getMetadata() {
 		return metadata;
@@ -173,6 +174,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public void setMetadata(String metadata) {
 		this.metadata = metadata;
 	}
+*/
 
 	private List<String> availableEntitiesFiltered;
 	//private GluuEntityType entityType;	
@@ -1008,9 +1010,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return trustRelationship;
 	}
 
-	public void loadMetadata() throws IOException {
+	// public void loadMetadata() throws IOException {
+	public String getMetadata() throws IOException {
 		if (trustRelationship == null) {
-			return ;
+			// return ;
+			return null;
 		}
 
 		String filename = trustRelationship.getSpMetaDataFN();
@@ -1019,12 +1023,14 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(filename));
 
 			if (metadataFile.exists()) {
-				metadata = FileUtils.readFileToString(metadataFile);
-				return;
+				// metadata = FileUtils.readFileToString(metadataFile);
+				// return;
+				return FileUtils.readFileToString(metadataFile);
 			}
 		}
 
-		return;
+		// return;
+		return null;
 	}
 
 	public boolean isUpdate() {

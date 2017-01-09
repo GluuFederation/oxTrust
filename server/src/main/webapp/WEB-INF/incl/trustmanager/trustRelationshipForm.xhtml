@@ -314,9 +314,8 @@
 										contentType="#{_trustRelationshipAction.fileWrapper.contentType}"
 										maxlength="100"
 										rendered="#{empty _trustRelationship.spMetaDataFN}" />
-									<a4j:commandLink  value="#{_trustRelationship.spMetaDataFN}" 
-										action="#{_trustRelationshipAction.loadMetadata()}"
-										oncomplete="#{rich:component('spMetadataPanel')}.show();" 
+									<a4j:commandLink value="#{_trustRelationship.spMetaDataFN}"
+										onclick="#{rich:component('spMetadataPanel')}.show();"
 										rendered="#{not empty _trustRelationship.spMetaDataFN}"
 										execute="@this" />
 
