@@ -49,16 +49,7 @@
         
        function changeTextType(element) {
     		var $element = $(element);
-    		//alert("alert" + $element[0].childNodes[2].childNodes[0].getAttribute('type'));
     		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
-		}
-		
-		function updateSpan(element) {
-    		var $element = $(element);
-    		setTimeout(function(){}, 2000);
-    		//alert("alert" + $element[0].childNodes[0]);
-    		$element[0].childNodes[0].innerHTML="&bull;&bull;&bull;&bull;&bull;";
-    		//$element[0].childNodes[2].childNodes[0].setAttribute('value','&bull;&bull;&bull;&bull;&bull;');
 		}
 		
 		
@@ -206,18 +197,23 @@
                                                                 name="label"> Password</ui:define>
 														<div class="col-xs-10">                                                                                           
                                                             
-                                                             <rich:inplaceInput
-                                                                    value="#{_custAttr.values[_valueIdx]}"
+															<s:fragment>
+                                                            <h:inputHidden id="custpasswordHiddenId" value="#{_custAttr.values[_valueIdx]}" />
+                                                            
+                                                            <rich:inplaceInput
                                                                     defaultLabel="&bull;&bull;&bull;&bull;&bull;"
                                                                     id="custpasswordId"
                                                                     validator="#{_custAttr.metadata.validateAttribute}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="Please enter #{_custAttr.metadata.displayName}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
-                                                                    onkeypress="changeTextType(this); " onclick="updateSpan(this);" >
+                                                                    onkeypress="changeTextType(this);"
+                                                                    onfocus="#{rich:component('custpasswordId')}.setValue(#{rich:element('custpasswordHiddenId')}.value);"
+                                                                    onblur="var cmpPwd = #{rich:component('custpasswordId')}; #{rich:element('custpasswordHiddenId')}.value = cmpPwd.getValue(); cmpPwd.setValue('hidden');"">
                                                                 <rich:validator event="blur"/>
                                                                	
                                                             </rich:inplaceInput>                                                             
+															</s:fragment>
                                                         </div>
                                                      </s:decorate>               
                                                         
