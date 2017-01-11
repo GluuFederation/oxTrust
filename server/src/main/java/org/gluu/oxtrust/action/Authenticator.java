@@ -400,7 +400,7 @@ public class Authenticator implements Serializable {
 		GluuAppliance appliance = applianceService.getAppliance(new String[] {"oxTrustAuthenticationMode"});
 		String authenticationMode = appliance.getOxTrustAuthenticationMode();
 		if (StringHelper.isNotEmpty(authenticationMode)) {
-			clientRequest.queryParameter(OxTrustConstants.OXAUTH_AUTH_MODE, authenticationMode);
+			clientRequest.queryParameter(OxTrustConstants.OXAUTH_ACR_VALUES, authenticationMode);
 		}
 
 		if (viewIdBeforeLoginRedirect != null) {

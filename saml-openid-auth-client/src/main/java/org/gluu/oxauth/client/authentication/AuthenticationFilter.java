@@ -151,9 +151,9 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 			String authenticationMode = determineAuthenticationMode(requestUri);
 	
 			if (StringHelper.isNotEmpty(authenticationMode)) {
-				log.debug("auth_mode = \"" + authenticationMode + "\"");
-				clientRequest.queryParameter(Configuration.OAUTH_AUTH_MODE, authenticationMode);
-				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/" + Configuration.OAUTH_AUTH_MODE +"/" + authenticationMode);
+				log.debug("acr_values = \"" + authenticationMode + "\"");
+				clientRequest.queryParameter(Configuration.OXAUTH_ACR_VALUES, authenticationMode);
+				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/" + Configuration.OXAUTH_ACR_VALUES +"/" + authenticationMode);
 			}
 		}
 
