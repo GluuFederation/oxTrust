@@ -51,7 +51,6 @@ public class PassportService {
 			if ((configurationDn != null) && !(configurationDn.trim().equals(""))) {
 				LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
 				LdapOxPassportConfiguration conf = ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
-				log.info("########## LdapOxPassportConfiguration  size = '{0}'", conf.getPassportConfigurations().size());
 				return conf;
 			}
 		} catch (LdapMappingException ex) {
