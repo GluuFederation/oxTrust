@@ -182,7 +182,7 @@ public class UpdateAttributeAction implements Serializable {
 
 				boolean attributeValidation = validateAttributeDefinition(attributeName);
 				if (!attributeValidation) {
-					return OxTrustConstants.RESULT_FAILURE;
+					return OxTrustConstants.RESULT_VALIDATION_ERROR;
 				}
 
 				attributeService.updateAttribute(this.attribute);

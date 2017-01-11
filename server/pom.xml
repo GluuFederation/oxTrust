@@ -33,14 +33,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
-			<dependency>
-				<groupId>org.richfaces</groupId>
-				<artifactId>richfaces-bom</artifactId>
-				<version>${richfaces.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
 			<dependency>
 				<groupId>org.jboss.arquillian</groupId>
 				<artifactId>arquillian-bom</artifactId>
@@ -682,20 +674,16 @@
 			<artifactId>jboss-jsf-api_2.1_spec</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.richfaces.core</groupId>
-			<artifactId>richfaces-core-api</artifactId>
+			<groupId>org.richfaces</groupId>
+			<artifactId>richfaces-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.richfaces.core</groupId>
-			<artifactId>richfaces-core-impl</artifactId>
+			<groupId>org.richfaces</groupId>
+			<artifactId>richfaces</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.richfaces.ui</groupId>
-			<artifactId>richfaces-components-ui</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.richfaces.ui</groupId>
-			<artifactId>richfaces-components-api</artifactId>
+			<groupId>org.richfaces</groupId>
+			<artifactId>richfaces-a4j</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>

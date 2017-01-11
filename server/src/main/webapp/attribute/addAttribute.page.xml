@@ -38,15 +38,11 @@
                 <message severity="INFO">New attribute '#{updateAttributeAction.attribute.displayName}' added successfully</message>
             </redirect>
         </rule>
-        
-        <rule if-outcome="confirm">
+
+        <rule if-outcome="validation_error">
             <render view-id="/attribute/addAttribute.xhtml"/>
         </rule>
 
-        <rule if-outcome="exists">
-            <render view-id="/attribute/addAttribute.xhtml"/>
-        </rule>
-        
         <rule if-outcome="no_permissions">
             <end-conversation />
             <redirect view-id="/home.xhtml">
