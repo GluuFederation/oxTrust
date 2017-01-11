@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.min-version>3.0.3</maven.min-version>
 		<seam.version>2.3.1.Final</seam.version>
-		<richfaces.version>4.3.7.Final</richfaces.version>
+		<richfaces.version>4.5.17.Final</richfaces.version>
 		<hibernate.version>4.1.8.Final</hibernate.version>
 		<jackson.version>1.9.11</jackson.version>
 		<jettison.version>1.3.2</jettison.version>
@@ -187,29 +187,17 @@
 			<!-- Richfaces -->
 			<dependency>
 				<groupId>org.richfaces</groupId>
-				<artifactId>richfaces-bom</artifactId>
-				<version>${richfaces.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.richfaces.core</groupId>
-				<artifactId>richfaces-core-api</artifactId>
+				<artifactId>richfaces-core</artifactId>
 				<version>${richfaces.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.richfaces.core</groupId>
-				<artifactId>richfaces-core-impl</artifactId>
+				<groupId>org.richfaces</groupId>
+				<artifactId>richfaces</artifactId>
 				<version>${richfaces.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.richfaces.ui</groupId>
-				<artifactId>richfaces-components-ui</artifactId>
-				<version>${richfaces.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.richfaces.ui</groupId>
-				<artifactId>richfaces-components-api</artifactId>
+				<groupId>org.richfaces</groupId>
+				<artifactId>richfaces-a4j</artifactId>
 				<version>${richfaces.version}</version>
 			</dependency>
 
