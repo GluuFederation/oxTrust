@@ -43,7 +43,12 @@ public class LdifArchiver implements DeleteNotifier {
 
 	public void onBeforeRemove(String dn) {
 		if (!disable) {
-			File file = new File(storeDir + File.separator + dn + Calendar.getInstance().getTimeInMillis());
+			String dnForRemoval = dn;
+			int dnForRemovalLenght = dnForRemoval.length();
+			if (dnForRemovalLenght > 200) {
+				dnForRemoval = dn.substring(dnForRemovalLenght - 200, dnForRemovalLenght);
+			}
+			File file = new File(storeDir + File.separator + dnForRemoval + Calendar.getInstance().getTimeInMillis());
 			PrintWriter writer = null;
 			try {
 				writer = new PrintWriter(file);
