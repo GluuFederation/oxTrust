@@ -64,6 +64,8 @@ import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
 import org.xdi.oxauth.client.ValidateTokenClient;
 import org.xdi.oxauth.client.ValidateTokenResponse;
+import org.xdi.oxauth.model.exception.InvalidJwtException;
+import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
@@ -398,9 +400,12 @@ public class Authenticator implements Serializable {
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_NONCE, nonce);
 
 		GluuAppliance appliance = applianceService.getAppliance(new String[] {"oxTrustAuthenticationMode"});
-		String authenticationMode = appliance.getOxTrustAuthenticationMode();
-		if (StringHelper.isNotEmpty(authenticationMode)) {
-			clientRequest.queryParameter(OxTrustConstants.OXAUTH_ACR_VALUES, authenticationMode);
+		String acrValues = appliance.getOxTrustAuthenticationMode();
+		if (StringHelper.isNotEmpty(acrValues)) {
+			clientRequest.queryParameter(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
+			
+			// Store request authentication method
+			Contexts.getSessionContext().set(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
 		}
 
 		if (viewIdBeforeLoginRedirect != null) {
@@ -529,6 +534,28 @@ public class Authenticator implements Serializable {
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
 			
+			// Store request authentication method
+			if (Contexts.getSessionContext().isSet(OxTrustConstants.OXAUTH_ACR_VALUES)) {
+				String requestAcrValues = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_ACR_VALUES);
+				Jwt jwt;
+                try {
+					jwt = Jwt.parse(idToken);
+				} catch (InvalidJwtException ex) {
+					log.error("Failed to parse id_token");
+					return OxTrustConstants.RESULT_NO_PERMISSIONS;
+				}
+
+                List<String> acrValues = jwt.getClaims().getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
+				if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
+					log.error("User info response doesn't contains acr claim");
+					return OxTrustConstants.RESULT_NO_PERMISSIONS;
+				}
+				if (!acrValues.contains(requestAcrValues)) {
+					log.error("User info response contains acr='{0}' claim but expected acr='{1}'", acrValues, requestAcrValues);
+					return OxTrustConstants.RESULT_NO_PERMISSIONS;
+				}
+			}
+
 			this.oauthData.setUserUid(uidValues.get(0));
 			this.oauthData.setAccessToken(accessToken);
 			this.oauthData.setAccessTokenExpirationInSeconds(response3.getExpiresIn());
@@ -537,7 +564,7 @@ public class Authenticator implements Serializable {
 			this.oauthData.setSessionState(sessionState);
 
 			log.info("user uid:" + oauthData.getUserUid());
-			
+
 			// Create session scope authentication service
 			Component.getInstance(AuthenticationSessionService.class);
 
