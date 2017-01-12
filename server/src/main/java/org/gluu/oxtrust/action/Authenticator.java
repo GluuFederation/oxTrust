@@ -398,9 +398,12 @@ public class Authenticator implements Serializable {
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_NONCE, nonce);
 
 		GluuAppliance appliance = applianceService.getAppliance(new String[] {"oxTrustAuthenticationMode"});
-		String authenticationMode = appliance.getOxTrustAuthenticationMode();
-		if (StringHelper.isNotEmpty(authenticationMode)) {
-			clientRequest.queryParameter(OxTrustConstants.OXAUTH_ACR_VALUES, authenticationMode);
+		String acrValues = appliance.getOxTrustAuthenticationMode();
+		if (StringHelper.isNotEmpty(acrValues)) {
+			clientRequest.queryParameter(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
+			
+			// Store request authentication method
+			Contexts.getSessionContext().set(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
 		}
 
 		if (viewIdBeforeLoginRedirect != null) {
@@ -527,6 +530,20 @@ public class Authenticator implements Serializable {
 			if ((uidValues == null) || (uidValues.size() == 0)) {
 				log.error("User info response doesn't contains uid claim");
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
+			}
+			
+			// Store request authentication method
+			if (Contexts.getSessionContext().isSet(OxTrustConstants.OXAUTH_ACR_VALUES)) {
+				String requestAcrValues = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_ACR_VALUES);
+				List<String> acrValues = userInfoResponse.getClaims().get(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
+				if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
+					log.error("User info response doesn't contains acr claim");
+					return OxTrustConstants.RESULT_NO_PERMISSIONS;
+				}
+				if (!acrValues.contains(requestAcrValues)) {
+					log.error("User info response contains acr='{0}' claim but expected acr='{1}'", acrValues, requestAcrValues);
+					return OxTrustConstants.RESULT_NO_PERMISSIONS;
+				}
 			}
 			
 			this.oauthData.setUserUid(uidValues.get(0));
