@@ -64,6 +64,8 @@ import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
 import org.xdi.oxauth.client.ValidateTokenClient;
 import org.xdi.oxauth.client.ValidateTokenResponse;
+import org.xdi.oxauth.model.exception.InvalidJwtException;
+import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
@@ -535,7 +537,15 @@ public class Authenticator implements Serializable {
 			// Store request authentication method
 			if (Contexts.getSessionContext().isSet(OxTrustConstants.OXAUTH_ACR_VALUES)) {
 				String requestAcrValues = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_ACR_VALUES);
-				List<String> acrValues = userInfoResponse.getClaims().get(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
+				Jwt jwt;
+                try {
+					jwt = Jwt.parse(idToken);
+				} catch (InvalidJwtException ex) {
+					log.error("Failed to parse id_token");
+					return OxTrustConstants.RESULT_NO_PERMISSIONS;
+				}
+
+                List<String> acrValues = jwt.getClaims().getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
 				if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
 					log.error("User info response doesn't contains acr claim");
 					return OxTrustConstants.RESULT_NO_PERMISSIONS;
