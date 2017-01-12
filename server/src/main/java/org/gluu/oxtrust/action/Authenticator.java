@@ -555,7 +555,7 @@ public class Authenticator implements Serializable {
 					return OxTrustConstants.RESULT_NO_PERMISSIONS;
 				}
 			}
-			
+
 			this.oauthData.setUserUid(uidValues.get(0));
 			this.oauthData.setAccessToken(accessToken);
 			this.oauthData.setAccessTokenExpirationInSeconds(response3.getExpiresIn());
@@ -564,7 +564,7 @@ public class Authenticator implements Serializable {
 			this.oauthData.setSessionState(sessionState);
 
 			log.info("user uid:" + oauthData.getUserUid());
-			
+
 			// Create session scope authentication service
 			Component.getInstance(AuthenticationSessionService.class);
 
