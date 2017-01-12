@@ -639,6 +639,10 @@ public class AppInitializer {
 	@Observer(OxTrustConfiguration.CONFIGURATION_UPDATE_EVENT)
 	public void updateLoggingSeverity(ApplicationConfiguration applicationConfiguration) {
 		String loggingLevel = applicationConfiguration.getLoggingLevel();
+		if (StringHelper.isEmpty(loggingLevel)) {
+			return;
+		}
+
 		log.info("Setting loggers level to: '{0}'", loggingLevel);
 		
 		LoggerContext loggerContext = LoggerContext.getContext(false);
