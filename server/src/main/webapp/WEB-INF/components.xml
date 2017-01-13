@@ -77,9 +77,9 @@
 	<web:context-filter name="servletFilter" url-pattern="/servlet/*" />
 
     <!-- Not works fine in SEAM 2.3.0.Final + RichFaces 4.2.2.Final -->
-    <web:multipart-filter regex-url-pattern=".*(trustmanager|federation).*" create-temp-files="false" max-request-size="4194304"/>
-	
-    <!-- Rest Web service configuration -->
+    <web:multipart-filter regex-url-pattern=".*(trustmanager|federation).*" create-temp-files="false" max-request-size="10485760"/>
+
+   <!-- Rest Web service configuration -->
     <resteasy:application resource-path-prefix="/restv1" />
 
 <!--

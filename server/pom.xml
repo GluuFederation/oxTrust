@@ -1028,21 +1028,6 @@
 			<artifactId>jstl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>edu.internet2.middleware</groupId>
-			<artifactId>shibboleth-jce</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>edu.internet2.middleware</groupId>
-			<artifactId>shibboleth-identityprovider</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>log4j-over-slf4j</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
