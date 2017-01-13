@@ -106,7 +106,7 @@ public class ManagePersonAuthenticationAction
 
 	private boolean initialized;
 
-	private GluuBoolean passportEnable;
+	private GluuBoolean passportEnable = GluuBoolean.DISABLED;
 
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 	

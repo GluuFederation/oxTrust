@@ -35,12 +35,9 @@
 						<li class="active"><a href="#manage-ldap" data-toggle="tab">Manage
 								LDAP Authentication</a></li>
 						<li><a href="#authentication-method" data-toggle="tab">Default
-								Authentication Method</a></li>
-						<ui:fragment rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
+								Authentication Method</a></li>						
 						<li><a href="#ox-passport" data-toggle="tab">Passport
 								Authentication Method</a></li>
-						</ui:fragment>
-
 					</ul>
 					<div class="tab-content">
 						<!-- System Configuration -->
@@ -94,18 +91,6 @@
 												var="_name" label="#{_name}" noSelectionLabel="Default" />
 										</h:selectOneMenu>
 									</s:decorate>
-									
-									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="PassportEnabledState">
-									<ui:define name="label">Passport Support</ui:define>									
-									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control" 
-										id="scimEnabledStateId">
-										<s:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" label="#{_type.displayName}"  noSelectionLabel="Default"/>
-										<s:convertEnum />
-									</h:selectOneMenu>
-								</s:decorate>
 								</h:panelGroup>
 							</div>
 						</div>
@@ -113,9 +98,22 @@
 						
 						<div class="tab-pane" id="ox-passport">
 							<ui:param name="_ldapoxPassport" 	value="#{_action.ldapOxPassportConfiguration}" />
-							<ui:param name="_ldapPassport" 	value="#{_action.ldapPassportConfigurations}" />							
+							<ui:param name="_ldapPassport" 	value="#{_action.ldapPassportConfigurations}" />	
 							
- 					<h:panelGroup id="strategyId">
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+									id="PassportEnabledState">
+									<ui:define name="label">Passport Support</ui:define>									
+									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control"  
+										id="scimEnabledStateId">
+										<s:selectItems
+											value="#{organizationService.booleanSelectionTypes}"
+											var="_type" label="#{_type.displayName}"/>
+										<s:convertEnum />
+									</h:selectOneMenu>
+						</s:decorate>	
+						<hr></hr>					
+							
+ 					<h:panelGroup id="strategyId" rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
 	                    <rich:dataGrid iterationStatusVar="status" id="strategyConfigsId" value="#{_ldapPassport}" var="_passportConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
 	                       <div style="display: inline-block;width: 75% !important;">
 	                        <ox:passportConf passportConfig="#{_passportConfig}" passportConfigFieldList="#{_passportConfig.fieldset}"
