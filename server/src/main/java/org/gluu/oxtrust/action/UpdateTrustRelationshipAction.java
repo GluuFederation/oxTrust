@@ -80,7 +80,6 @@ import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
 /**
  * Action class for updating and adding the trust relationships
  * 
- * @author Pankaj Narang
  * @author Yuriy Movchan Date: 11.04.2010
  */
 @Scope(ScopeType.CONVERSATION)
