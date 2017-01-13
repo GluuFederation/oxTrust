@@ -124,7 +124,12 @@
       <servlet-name>Faces Servlet</servlet-name>
       <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
       <load-on-startup>1</load-on-startup>
-   </servlet>
+      <multipart-config>
+		 <max-file-size>5242880</max-file-size>
+		 <max-request-size>10485760</max-request-size>
+		 <file-size-threshold>1048576</file-size-threshold>
+      </multipart-config>
+    </servlet>
 
    <servlet-mapping>
       <servlet-name>Faces Servlet</servlet-name>
