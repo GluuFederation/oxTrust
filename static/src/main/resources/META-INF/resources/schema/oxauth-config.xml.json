@@ -81,13 +81,6 @@
             "format": "url",
             "minLength": 1
         },
-        "endSessionPage": {
-            "id": "endSessionPage",
-            "description": "URL of the End Session Page.",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
         "jwksUri": {
             "id": "jwksUri",
             "description": "URL of the OP's JSON Web Key Set (JWK) document. This contains the signing key(s) the RP uses to validate signatures from the OP.",
@@ -1034,7 +1027,6 @@
         "clientInfoEndpoint",
         "checkSessionIFrame",
         "endSessionEndpoint",
-        "endSessionPage",
         "jwksUri",
         "registrationEndpoint",
         "validateTokenEndpoint",
