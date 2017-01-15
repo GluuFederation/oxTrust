@@ -995,6 +995,16 @@
             "description": "Boolean value to specify support for front channel logout session.",
             "type": "boolean"
         },
+        "updateUserLastLogonTime": {
+        	"id": "updateUserLastLogonTime",
+            "description": "Boolean value to specify if application should update oxLastLogonTime attribute on user authentication.",
+            "type": "boolean"
+        },
+        "updateClientAccessTime": {
+        	"id": "updateClientAccessTime",
+            "description": "Boolean value to specify if application should update oxLastAccessTime/oxLastLogonTime attributes on client authentication.",
+            "type": "boolean"
+        },
         "loggingLevel": {
             "id": "loggingLevel",
             "description": "Logging level for oxAuth logers.",
@@ -1115,6 +1125,8 @@
         "legacyIdTokenClaims",
         "customHeadersWithAuthorizationResponse",
         "frontChannelLogoutSessionSupported",
+        "updateUserLastLogonTime",
+        "updateClientAccessTime",
         "loggingLevel"
     ]
 }
