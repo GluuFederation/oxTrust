@@ -548,6 +548,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
+			<artifactId>oxJsfUtil</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
 			<artifactId>oxSaml</artifactId>
 			<exclusions>
 				<exclusion>

@@ -47,7 +47,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 @Scope(ScopeType.STATELESS)
 @Name("attributeService")
 @AutoCreate
-public class AttributeService  extends org.xdi.service.AttributeService{
+public class AttributeService  extends org.xdi.service.AttributeService {
 
 	@In
 	private SchemaService schemaService;
@@ -270,36 +270,6 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 	public GluuAttribute getAttributeByInum(String inum, List<GluuAttribute> attributes) {
 		for (GluuAttribute attribute : attributes) {
 			if (attribute.getInum().equals(inum)) {
-				return attribute;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get attribute by name
-	 * 
-	 * @param name
-	 *            Name
-	 * @return Attribute
-	 */
-	public GluuAttribute getAttributeByName(String name) {
-		return getAttributeByName(name, getAllAttributes());
-	}
-
-	/**
-	 * Get attribute by name
-	 * 
-	 * @param name
-	 *            Name
-	 * @param attributes
-	 *            List of attributes
-	 * @return Attribute
-	 */
-	public GluuAttribute getAttributeByName(String name, List<GluuAttribute> attributes) {
-		for (GluuAttribute attribute : attributes) {
-			if (attribute.getName().equals(name)) {
 				return attribute;
 			}
 		}
@@ -572,10 +542,6 @@ public class AttributeService  extends org.xdi.service.AttributeService{
 		}
 
 		return String.format("inum=%s,ou=attributes,%s", inum, organizationDn);
-	}
-	
-	public List<GluuAttribute> getAllAttributes() {
-		return getAllAttributes(getDnForAttribute(null));
 	}
 	
 	/**
