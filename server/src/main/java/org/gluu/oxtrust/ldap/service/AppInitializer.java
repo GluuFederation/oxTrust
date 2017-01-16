@@ -142,7 +142,7 @@ public class AppInitializer {
 		SubversionService.instance().initSubversionService();
 
 		// Initialize python interpreter
-		PythonService.instance().initPythonInterpreter();
+		PythonService.instance().initPythonInterpreter(oxTrustConfiguration.getLdapConfiguration().getString("pythonModulesDir", null));
 
 //		checkAndUpdateLdapbaseConfiguration(); // We do not need to create ldapbase configuration any more because we 
 											   //supply working ldap data with either dashboard or python setup sript.
