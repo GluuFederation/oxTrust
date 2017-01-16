@@ -99,7 +99,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	private String systemUptime;
 
 	@LdapAttribute(name = "gluuLastUpdate", updateOnly = true)
-	private String lastUpdate;
+	private Date lastUpdate;
 
 	@LdapAttribute(name = "gluuAppliancePollingInterval")
 	private String pollingInterval;
@@ -153,7 +153,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	private String vdsCacheRefreshPollingInterval;
 
 	@LdapAttribute(name = "gluuVdsCacheRefreshLastUpdate")
-	private String vdsCacheRefreshLastUpdate;
+	private Date vdsCacheRefreshLastUpdate;
 
 	@LdapAttribute(name = "gluuVdsCacheRefreshLastUpdateCount")
 	private String vdsCacheRefreshLastUpdateCount;
@@ -234,25 +234,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "oxTrustStoreCert")
 	@LdapJsonObject
 	private List<TrustStoreCertificate> trustStoreCertificates;
-
-	public Date getLastUpdateDate() {
-		try {
-			return (lastUpdate == null) ? null : new Date(Long.valueOf(lastUpdate) * 1000);
-		} catch (NumberFormatException ex) {
-		}
-		
-
-		return null;
-	}
-
-	public Date getVdsCacheRefreshLastUpdateDate() {
-		try {
-			return (vdsCacheRefreshLastUpdate == null) ? null : new Date(Long.valueOf(vdsCacheRefreshLastUpdate) * 1000);
-		} catch (NumberFormatException ex) {
-		}
-
-		return null;
-	}
 
 	public boolean isRequiresAuthentication() {
 		return Boolean.parseBoolean(smtpRequiresAuthentication);
@@ -489,11 +470,11 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.ipAddress = ipAddress;
     }
 
-    public String getLastUpdate() {
+    public Date getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setLastUpdate(String lastUpdate) {
+    public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 
@@ -745,11 +726,11 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.vdsCacheRefreshEnabled = vdsCacheRefreshEnabled;
     }
 
-    public String getVdsCacheRefreshLastUpdate() {
+    public Date getVdsCacheRefreshLastUpdate() {
         return vdsCacheRefreshLastUpdate;
     }
 
-    public void setVdsCacheRefreshLastUpdate(String vdsCacheRefreshLastUpdate) {
+    public void setVdsCacheRefreshLastUpdate(Date vdsCacheRefreshLastUpdate) {
         this.vdsCacheRefreshLastUpdate = vdsCacheRefreshLastUpdate;
     }
 

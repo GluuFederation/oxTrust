@@ -8,6 +8,8 @@ package org.gluu.oxtrust.service.test;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Date;
+
 import org.gluu.oxtrust.action.test.BaseComponentTest;
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
@@ -28,8 +30,10 @@ public class ApplianceStatusTest extends BaseTest {
             public void invokeApplication() throws Exception {
             	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
             	GluuAppliance appliance = applianceService.getAppliance();
-        		int currentTime = (int) (System.currentTimeMillis() / 1000);
-        		appliance.setLastUpdate(Integer.toString(currentTime));
+
+            	Date currentDateTime = new Date();
+        		appliance.setLastUpdate(currentDateTime);
+
         		applianceService.updateAppliance(appliance);
                 assertEquals(invokeMethod("#{applianceStatusAction.checkHealth}"), OxTrustConstants.RESULT_SUCCESS);
             }
@@ -45,8 +49,11 @@ public class ApplianceStatusTest extends BaseTest {
             public void invokeApplication() throws Exception {
             	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
             	GluuAppliance appliance = applianceService.getAppliance();
-        		int currentTime = (int) (System.currentTimeMillis() / 1000);
-        		appliance.setLastUpdate(Integer.toString(currentTime-50));
+
+            	int currentTime = (int) (System.currentTimeMillis() - 50*1000);
+        		Date currentDateTime = new Date(currentTime);
+        		appliance.setLastUpdate(currentDateTime);
+
         		applianceService.updateAppliance(appliance);
                 assertEquals(invokeMethod("#{applianceStatusAction.checkHealth}"), OxTrustConstants.RESULT_SUCCESS);
             }
@@ -62,8 +69,11 @@ public class ApplianceStatusTest extends BaseTest {
             public void invokeApplication() throws Exception {
             	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
             	GluuAppliance appliance = applianceService.getAppliance();
-        		int currentTime = (int) (System.currentTimeMillis() / 1000);
-        		appliance.setLastUpdate(Integer.toString(currentTime-101));
+
+            	int currentTime = (int) (System.currentTimeMillis() - 101*1000);
+        		Date currentDateTime = new Date(currentTime);
+        		appliance.setLastUpdate(currentDateTime);
+
         		applianceService.updateAppliance(appliance);
                 assertEquals(invokeMethod("#{applianceStatusAction.checkHealth}"), OxTrustConstants.RESULT_SUCCESS);
             }
