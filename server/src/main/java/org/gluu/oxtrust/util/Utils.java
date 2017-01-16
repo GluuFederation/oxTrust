@@ -288,9 +288,9 @@ public class Utils implements Serializable {
      * @throws IOException 
      */
     public static String saveRandomFile(byte[] array, String baseDir, String extension) throws IOException {
-        String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
+        final String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
         
-        File dir = new File(baseDir);
+        final File dir = new File(baseDir);
         if (!dir.exists())
             dir.mkdirs();
         else if (!dir.isDirectory())
@@ -304,8 +304,8 @@ public class Utils implements Serializable {
                 out.write(b);
             }
         } finally {
-            out.close();
             in.close();
+            out.close();
         }
         return filepath;
     }
