@@ -14,8 +14,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.validator.ValidatorException;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
@@ -38,7 +36,6 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -335,14 +332,6 @@ public class UpdatePersonAction implements Serializable {
 	
 	public GluuStatus[] getActiveInactiveStatuses() {
 		return new GluuStatus[] { GluuStatus.ACTIVE, GluuStatus.INACTIVE };
-	}
-
-	public void passwordChangedEvent(ValueChangeEvent event) {
-		this.password = (String) event.getNewValue();
-	}
-
-	public void passwordConfirmChangedEvent(ValueChangeEvent event) {
-		this.confirmPassword = (String) event.getNewValue();
 	}
 
 	public void validateConfirmPassword(FacesContext context, UIComponent comp,
