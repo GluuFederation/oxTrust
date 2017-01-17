@@ -51,7 +51,14 @@
     		var $element = $(element);
     		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
 		}
-		
+		function updateSpan(element) {
+    		var $element = $(element);
+    		var pwd = $element[0].childNodes[0].innerHTML;
+    		
+    		var newPwd = '';
+    		newPwd = '&bull;';
+    		$element[0].childNodes[0].innerHTML=newPwd;
+		}
 		
     </h:outputScript>
     <section class="content-header">
@@ -197,23 +204,16 @@
                                                                 name="label"> Password</ui:define>
 														<div class="col-xs-10">                                                                                           
                                                             
-															<s:fragment>
-                                                            <h:inputHidden id="custpasswordHiddenId" value="#{_custAttr.values[_valueIdx]}" />
-                                                            
                                                             <rich:inplaceInput
                                                                     defaultLabel="&bull;&bull;&bull;&bull;&bull;"
                                                                     id="custpasswordId"
-                                                                    validator="#{_custAttr.metadata.validateAttribute}"
+                                                                    validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="Please enter #{_custAttr.metadata.displayName}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
-                                                                    onkeypress="changeTextType(this);"
-                                                                    onfocus="#{rich:component('custpasswordId')}.setValue(#{rich:element('custpasswordHiddenId')}.value);"
-                                                                    onblur="var cmpPwd = #{rich:component('custpasswordId')}; #{rich:element('custpasswordHiddenId')}.value = cmpPwd.getValue(); cmpPwd.setValue('hidden');"">
-                                                                <rich:validator event="blur"/>
-                                                               	
+                                                                    onkeypress="changeTextType(this);">
+                                                                <rich:validator event="blur" oncomplete="updateSpan(this)"/>
                                                             </rich:inplaceInput>                                                             
-															</s:fragment>
                                                         </div>
                                                      </s:decorate>               
                                                         
@@ -221,16 +221,15 @@
                                                         <ui:define
                                                                 name="label">Confirm Password</ui:define>
 														<div class="col-xs-10">                                                                                           
-                                                            
                                                             <rich:inplaceInput       
                                                                     defaultLabel="Click to enter Confirm Pasword"
                                                                     maxlength="50" id="custconfirmpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="Please enter Confirm Password" 
-                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-                                                                <rich:validator event="blur"/>
-                                                               	
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
+                                                                    onkeypress="changeTextType(this);">
+                                                                <rich:validator event="blur" oncomplete="updateSpan(this)"/>
                                                             </rich:inplaceInput>                                                             
                                                         </div>
                                                      </s:decorate>                                                        
