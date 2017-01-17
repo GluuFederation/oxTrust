@@ -57,7 +57,6 @@
             </h:panelGroup>
         </h:panelGroup></div> <div class="box-footer">
 					
-							<rich:notifyMessages stayTime="2000" nonblocking="true" />
 							<ui:insert name="controlButttons" />
 							<div id="updateButtons">
                         <h:commandButton value="Validate" styleClass="btn btn-primary" action="#{personImportAction.validateFileToImport}" rendered="#{not personImportAction.fileDataToImport.ready}" />
