@@ -51,12 +51,15 @@
     		var $element = $(element);
     		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
 		}
+
 		function updateSpan(element) {
     		var $element = $(element);
     		var pwd = $element[0].childNodes[0].innerHTML;
     		
     		var newPwd = '';
-    		newPwd = '&bull;';
+    		for (i = 0;  i &lt; pwd.length ; i++)
+    			newPwd += '&bull;';
+    		
     		$element[0].childNodes[0].innerHTML=newPwd;
 		}
 		
