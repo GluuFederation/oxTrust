@@ -7,11 +7,6 @@ $(function () {
   //- Dashboard > Authentication Requests Chart -
   //-----------------------
 	try{
-
-  // Get context with jQuery - using jQuery's .get() method.
-  var authenticationRequestsChartCanvas = $("#authenticationRequestsChart").get(0).getContext("2d");
-  // This will get the first returned node in the jQuery collection.
-  var authenticationRequestsChart = new Chart(authenticationRequestsChartCanvas);
 	
 
   var authChartData = JSON.parse($("#authenticationChartJson").val());  
@@ -82,12 +77,29 @@ $(function () {
       //Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
       maintainAspectRatio: false,
       //Boolean - whether to make the chart responsive to window resizing
-      responsive: true
+      responsive: true,
+      scales: {
+          yAxes: [{
+              ticks: {
+                  suggestedMin: 0,
+                  suggestedMax: 1000
+              }
+          }]
+      }
   };
+  console.log(authenticationRequestsChartData);
+  console.log(authenticationRequestsChartOptions);
 
+  // Get context with jQuery - using jQuery's .get() method.
+  var authenticationRequestsChartCanvas = $("#authenticationRequestsChart").get(0).getContext("2d");
+  // This will get the first returned node in the jQuery collection.
   //Create the line chart
-  authenticationRequestsChart.Line(authenticationRequestsChartData, authenticationRequestsChartOptions);
-  
+  var authenticationRequestsChart = new Chart(authenticationRequestsChartCanvas, {
+    type: 'line',
+    data: authenticationRequestsChartData,
+    options:  authenticationRequestsChartOptions
+  });
+
 	}catch(error){
 		console.log(error);
 	}
