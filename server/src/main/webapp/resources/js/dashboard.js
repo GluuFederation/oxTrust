@@ -38,7 +38,7 @@ $(function () {
           yAxes: [{
               ticks: {
                   suggestedMin: 0,
-                  suggestedMax: 1000
+                  suggestedMax: 10
               }
           }]
       }
