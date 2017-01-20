@@ -115,6 +115,7 @@ public class Shibboleth3ConfService implements Serializable {
 	// public static final String PRIVATE_KEY_START_LINE = "-----BEGIN RSA PRIVATE KEY-----";
 	// public static final String PRIVATE_KEY_END_LINE = "-----END RSA PRIVATE KEY-----";
 	
+	public static final String SHIB3_IDP_PROPERTIES_FILE = "idp.properties";
 	private static final String SHIB3_IDP_LOGIN_CONFIG_FILE = "login.config";
 
 	private static final String SHIB3_IDP_METADATA_CREDENTIALS_FOLDER = SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials";
@@ -159,14 +160,8 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		String idpConfFolder      = applicationConfiguration.getShibboleth3IdpRootDir()
-		                            + File.separator 
-		                            + SHIB3_IDP_CONF_FOLDER 
-		                            + File.separator;
-		String idpMetadataFolder  = applicationConfiguration.getShibboleth3IdpRootDir()
-		                            + File.separator 
-		                            + SHIB3_IDP_METADATA_FOLDER 
-		                            + File.separator;
+		String idpConfFolder      = getIdpConfDir();
+		String idpMetadataFolder  = getIdpMetadataDir();
 
 		// Prepare data for files
 		initAttributes(trustRelationships);
@@ -298,7 +293,7 @@ public class Shibboleth3ConfService implements Serializable {
 				trustIds.put(trustRelationship.getInum(), String.valueOf(id++));
 
 				// Set entityId
-				String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+				String idpMetadataFolder = getIdpMetadataDir();
 
 				File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 				List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
@@ -538,7 +533,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 	public String getIdpMetadataFilePath() {
 
-		String filePath = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator + SHIB3_IDP_IDP_METADATA_FILE;
+		String filePath = getIdpMetadataDir() + SHIB3_IDP_IDP_METADATA_FILE;
 
 		return filePath;
 
@@ -597,6 +592,14 @@ public class Shibboleth3ConfService implements Serializable {
 		return filePath;
 		*/
 	}
+        
+        public String getIdpConfDir() {
+                return applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
+        }
+        
+        public String getIdpMetadataDir() {
+                return applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+        }
 
 	public String getSpMetadataFilePath(String spMetaDataFN) {
 
@@ -839,7 +842,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to create SubversionFile file due to undefined IDP root folder");
 		}
 
-		String idpConfFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
+		String idpConfFolder = getIdpConfDir();
 		String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
 		String idpMetadataCredentialsFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER	+ File.separator;
 		String spConfFolder = applicationConfiguration.getShibboleth3SpConfDir() + File.separator;
@@ -960,7 +963,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		String idpConfFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
+		String idpConfFolder = getIdpConfDir();
 
 		// Prepare data for files
 		VelocityContext context = new VelocityContext();
