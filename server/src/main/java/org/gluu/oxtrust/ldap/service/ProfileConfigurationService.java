@@ -149,7 +149,7 @@ public class ProfileConfigurationService {
 			ParserConfigurationException, FactoryConfigurationError, XPathExpressionException {
 		if (trustRelationship.getGluuProfileConfiguration() != null) {
 			for (String profileConfigurationXML : trustRelationship.getGluuProfileConfiguration()) {
-				Document xmlDocument = xmlService.getXmlDocument(profileConfigurationXML.getBytes());
+				Document xmlDocument = xmlService.getXmlDocument(profileConfigurationXML.getBytes(), true);
 				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SHIBBOLETH_SSO)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SHIBBOLETH_SSO);
 
