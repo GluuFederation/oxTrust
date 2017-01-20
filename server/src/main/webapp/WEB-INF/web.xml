@@ -118,7 +118,6 @@
       <servlet-name>Faces Servlet</servlet-name>
       <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
       <load-on-startup>1</load-on-startup>
-      <multipart-form enable="true" />
       <multipart-config>
 		 <max-file-size>5242880</max-file-size>
 		 <max-request-size>10485760</max-request-size>
@@ -156,5 +155,5 @@
       <persistence-unit-ref-name>myproject/pu</persistence-unit-ref-name>
       <persistence-unit-name>myproject</persistence-unit-name>
    </persistence-unit-ref>
-
+   
 </web-app>
