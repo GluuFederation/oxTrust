@@ -54,7 +54,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
-	private String searchPattern="";
+	private String searchPattern=" ";
 
 	private String oldSearchPattern;
 
@@ -81,6 +81,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 	public String search() {
 		try {
 			
+			this.searchPattern= this.searchPattern.isEmpty() ? this.searchPattern=" " : this.searchPattern;
 			this.trustedSpList = trustService.searchSAMLTrustRelationships(searchPattern,100);
 			this.oldSearchPattern = this.searchPattern;
 
