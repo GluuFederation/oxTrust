@@ -37,13 +37,13 @@ public class ApplianceStatusAction implements Serializable {
 	public String checkHealth() {
 		GluuAppliance appliance = applianceService.getAppliance();
 		Date lastUpdateDateTime = appliance.getLastUpdate();
-		int lastUpdate = 0;
+		long lastUpdate = 0;
 		if (lastUpdateDateTime != null) {
-			lastUpdate = (int) (lastUpdateDateTime.getTime() / 1000);
+			lastUpdate = lastUpdateDateTime.getTime();
 		}
 
-		int currentTime = (int) (System.currentTimeMillis() / 1000);
-		int timeSinceLastUpdate = currentTime - lastUpdate;
+		long currentTime = System.currentTimeMillis();
+		long timeSinceLastUpdate = currentTime - lastUpdate;
 		if (timeSinceLastUpdate >= 0 && timeSinceLastUpdate < 100) {
 			this.setHealth("OK");
 		} else {
