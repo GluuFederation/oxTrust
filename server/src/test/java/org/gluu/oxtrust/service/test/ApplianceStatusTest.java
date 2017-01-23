@@ -10,12 +10,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
 
-import org.gluu.oxtrust.action.test.BaseComponentTest;
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.mock.SeamTest;
 import org.testng.annotations.Test;
 
 /**
@@ -50,7 +48,7 @@ public class ApplianceStatusTest extends BaseTest {
             	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
             	GluuAppliance appliance = applianceService.getAppliance();
 
-            	int currentTime = (int) (System.currentTimeMillis() - 50*1000);
+            	long currentTime = System.currentTimeMillis() - 50*1000;
         		Date currentDateTime = new Date(currentTime);
         		appliance.setLastUpdate(currentDateTime);
 
@@ -70,7 +68,7 @@ public class ApplianceStatusTest extends BaseTest {
             	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
             	GluuAppliance appliance = applianceService.getAppliance();
 
-            	int currentTime = (int) (System.currentTimeMillis() - 101*1000);
+            	long currentTime = System.currentTimeMillis() - 101*1000;
         		Date currentDateTime = new Date(currentTime);
         		appliance.setLastUpdate(currentDateTime);
 
