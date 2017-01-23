@@ -47,7 +47,7 @@
     
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                     <ui:define name="label">Last update</ui:define>
-                    <h:outputText value="#{_appliance.lastUpdateDate}">
+                    <h:outputText value="#{_appliance.lastUpdate}">
                         <s:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
                     </h:outputText>
                 </s:decorate>
