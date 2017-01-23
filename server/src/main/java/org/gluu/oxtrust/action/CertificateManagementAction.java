@@ -180,7 +180,7 @@ public class CertificateManagementAction implements Serializable {
             try {
                 X509Certificate shibIDPCerts[] = SSLService.loadCertificates(new FileInputStream(SHIB_IDP_CERTIFICATE_FILE));
                 for (X509Certificate shibIDPCert : shibIDPCerts)
-                    internalCertificates.add(new X509CertificateShortInfo("Shibboleth IDP SSL", shibIDPCert));
+                    internalCertificates.add(new X509CertificateShortInfo("Shibboleth IDP SAML Certificate", shibIDPCert));
             } catch (Exception e) { log.error("Certificate load exception", e); }
         } catch (Exception e) {
             log.error("Load internalCertificates configuration exception", e); 
