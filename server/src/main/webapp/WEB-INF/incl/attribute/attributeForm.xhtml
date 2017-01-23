@@ -28,14 +28,12 @@
              
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="saml1Uri">
                 <ui:define name="label">SAML1 URI</ui:define>
-                <h:inputText styleClass="form-control" value="#{_attribute.saml1Uri}" size="30" maxlength="256" required="#{not _new}" id="saml1Id" rendered="#{_attributeAction.canEditUri()}"/>
-                <h:outputText value="#{_attribute.saml1Uri}" rendered="#{not _attributeAction.canEditUri()}"/>
+                <h:inputText styleClass="form-control" value="#{_attribute.saml1Uri}" size="30" maxlength="256" id="saml1Id" />
              </s:decorate>
              
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="saml2Uri">
                 <ui:define name="label">SAML2 URI</ui:define>
-                <h:inputText styleClass="form-control" value="#{_attribute.saml2Uri}" size="30" maxlength="256" required="#{not _new}" id="saml2Id" rendered="#{_attributeAction.canEditUri()}"/>
-                <h:outputText value="#{_attribute.saml2Uri}" rendered="#{not _attributeAction.canEditUri()}"/>
+                <h:inputText styleClass="form-control" value="#{_attribute.saml2Uri}" size="30" maxlength="256" id="saml2Id" />
              </s:decorate>
 
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">

@@ -369,10 +369,6 @@ public class UpdateAttributeAction implements Serializable {
 		return canEdit;
 	}
 
-	public boolean canEditUri() {
-		return attributeService.getCustomOrigin().equals(attribute.getOrigin());
-	}
-
 	public boolean isValidationToggle() {
 		return validationToggle;
 	}
