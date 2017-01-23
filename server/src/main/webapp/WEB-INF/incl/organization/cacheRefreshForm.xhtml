@@ -71,7 +71,7 @@
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
                 <ui:define name="label">Last run</ui:define>
-                <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdateDate}">
+                <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
                     <s:convertDateTime pattern="MMM. d yyyy hh:mm a" />
                 </h:outputText>
             </s:decorate>
