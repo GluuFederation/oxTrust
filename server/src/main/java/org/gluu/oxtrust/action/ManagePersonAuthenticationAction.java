@@ -285,10 +285,11 @@ public class ManagePersonAuthenticationAction
 				}
 			}
 
-			if (ldapConfig != null)
+			if (ldapConfig != null) {
 				this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
-			else
+			} else {
 				this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
+			}
 		}
 
 		return this.customAuthenticationConfigNames;
