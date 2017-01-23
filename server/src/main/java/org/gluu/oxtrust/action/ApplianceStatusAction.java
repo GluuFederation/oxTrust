@@ -15,8 +15,10 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.log.Log;
 
 /**
  * Action class for health check display
@@ -28,6 +30,9 @@ import org.jboss.seam.annotations.Scope;
 public class ApplianceStatusAction implements Serializable {
 
 	private static final long serialVersionUID = -7470520478553992898L;
+
+	@Logger
+    private Log log;
 
 	@In
 	private ApplianceService applianceService;
@@ -41,14 +46,18 @@ public class ApplianceStatusAction implements Serializable {
 		if (lastUpdateDateTime != null) {
 			lastUpdate = lastUpdateDateTime.getTime();
 		}
+		log.debug("checkHealth.lastUpdate", lastUpdate);
 
 		long currentTime = System.currentTimeMillis();
+		
+		log.debug("lastUpdate: '{0}', currentTime: '{1}'", lastUpdate, currentTime);
 		long timeSinceLastUpdate = currentTime - lastUpdate;
 		if (timeSinceLastUpdate >= 0 && timeSinceLastUpdate < 100) {
 			this.setHealth("OK");
 		} else {
 			this.setHealth("FAIL");
 		}
+		log.debug("Set status '{0}'", this.getHealth());
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
