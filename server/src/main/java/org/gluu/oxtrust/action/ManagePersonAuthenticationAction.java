@@ -115,7 +115,7 @@ public class ManagePersonAuthenticationAction
 	private GluuBoolean passportEnable = GluuBoolean.DISABLED;
 
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
-	
+
 	private List<PassportConfiguration> ldapPassportConfigurations;
 
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
@@ -142,8 +142,9 @@ public class ManagePersonAuthenticationAction
 					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 
 			OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
-			if(idpConf != null)
+			if (idpConf != null) {
 				this.ldapConfig = mapLdapConfig(idpConf.getConfig());
+			}
 
 			this.existLdapConfigIdpAuthConf = this.ldapConfig != null;
 
@@ -178,34 +179,33 @@ public class ManagePersonAuthenticationAction
 
 			boolean updateAuthenticationMode = false;
 			boolean updateOxTrustAuthenticationMode = false;
+
 			OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
-			if(idpConf != null && idpConf.getName() != null){
-				if(idpConf.getName().equals(this.authenticationMode))
+			if (idpConf != null && idpConf.getName() != null) {
+				if (idpConf.getName().equals(this.authenticationMode)) {
 					updateAuthenticationMode = true;
-				if(idpConf.getName().equals(this.oxTrustAuthenticationMode))
+				}
+				if (idpConf.getName().equals(this.oxTrustAuthenticationMode)) {
 					updateOxTrustAuthenticationMode = true;
+				}
 			}
-			
+
 			this.ldapConfig.updateStringsLists();
 
 			updateAuthConf(appliance);
 
-			if(updateAuthenticationMode)
-				appliance.setAuthenticationMode(this.ldapConfig.getConfigId());
-			else
-				appliance.setAuthenticationMode(this.authenticationMode);
-			
-			if(updateOxTrustAuthenticationMode)
-				appliance.setOxTrustAuthenticationMode(this.ldapConfig.getConfigId());
-			else
-				appliance.setOxTrustAuthenticationMode(this.oxTrustAuthenticationMode);
+			String updatedAuthMode = updateAuthenticationMode ? this.ldapConfig.getConfigId() : this.authenticationMode;
+			String updatedOxTrustAuthMode = updateOxTrustAuthenticationMode ? this.ldapConfig.getConfigId()
+					: this.oxTrustAuthenticationMode;
+			appliance.setAuthenticationMode(updatedAuthMode);
+			appliance.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
 
 			appliance.setPassportEnabled(passportEnable);
 
 			applianceService.updateAppliance(appliance);
-			
+
 			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
-		
+
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
@@ -285,7 +285,7 @@ public class ManagePersonAuthenticationAction
 				}
 			}
 
-			if(ldapConfig != null)
+			if (ldapConfig != null)
 				this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
 			else
 				this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
@@ -426,7 +426,7 @@ public class ManagePersonAuthenticationAction
 	public String getId(Object obj) {
 		return "c" + System.identityHashCode(obj) + "Id";
 	}
-	
+
 	public void addStrategy() {
 		PassportConfiguration passportConfiguration = new PassportConfiguration();
 		if (ldapPassportConfigurations == null) {
@@ -434,15 +434,15 @@ public class ManagePersonAuthenticationAction
 		}
 		this.ldapPassportConfigurations.add(passportConfiguration);
 	}
-	
+
 	public void addField(PassportConfiguration passportConfiguration) {
 		String id = getId(passportConfiguration);
-		for(PassportConfiguration passportConfig :this.ldapPassportConfigurations){
+		for (PassportConfiguration passportConfig : this.ldapPassportConfigurations) {
 			String passportid = getId(passportConfig);
-			if(id.equals(passportid)){
-				passportConfig.getFieldset().add(new FieldSet());				
-			}			
-		}		
+			if (id.equals(passportid)) {
+				passportConfig.getFieldset().add(new FieldSet());
+			}
+		}
 	}
 
 	public GluuBoolean getPassportEnable() {
@@ -462,6 +462,7 @@ public class ManagePersonAuthenticationAction
 				}
 			}
 		}
+
 		return null;
 	}
 }
