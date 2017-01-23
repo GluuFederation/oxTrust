@@ -6,9 +6,20 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor.getUserLdapAttributeName;
+import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor.getFidoDeviceLdapAttributeName;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.ws.rs.core.Response;
 
-import com.unboundid.ldap.sdk.Filter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
@@ -16,11 +27,17 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.ErrorResponse;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.Group;
+import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
-import org.gluu.oxtrust.service.UmaAuthenticationService;
+import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
+import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
+import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.annotations.In;
@@ -33,15 +50,10 @@ import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.oxauth.client.ValidateTokenClient;
 import org.xdi.oxauth.client.ValidateTokenResponse;
+import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 
-import java.util.*;
-
-import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor.getUserLdapAttributeName;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor.getFidoDeviceLdapAttributeName;
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * Base methods for SCIM web services
@@ -63,7 +75,13 @@ public class BaseScimWebService {
 	private ApplianceService applianceService;
 
 	@In
-	private UmaAuthenticationService umaAuthenticationService;
+	private ScimUmaProtectionService scimUmaProtectionService;
+	
+	@In
+	private UmaPermissionService umaPermissionService;
+
+	@In
+	private OpenIdService openIdService;
 
 	@In
 	private LdapEntryManager ldapEntryManager;
@@ -72,10 +90,8 @@ public class BaseScimWebService {
 	private ScimFilterParserService scimFilterParserService;
 
 	protected Response processTestModeAuthorization(String token) throws Exception {
-
 		try {
-
-			String validateTokenEndpoint = jsonConfigurationService.getOxTrustApplicationConfiguration().getOxAuthTokenValidationUrl();
+			String validateTokenEndpoint = openIdService.getOpenIdConfiguration().getValidateTokenEndpoint();
 
 			ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);
 			ValidateTokenResponse validateTokenResponse = validateTokenClient.execValidateToken(token);
@@ -103,11 +119,12 @@ public class BaseScimWebService {
 	protected Response processAuthorization(String authorization) throws Exception {
 		boolean authorized = getAuthorizedUser();
 		if (!authorized) {
-			if (!umaAuthenticationService.isEnabledUmaAuthentication()) {
+			if (!scimUmaProtectionService.isEnabled()) {
 				log.info("UMA authentication is disabled");
 				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
-			Pair<Boolean, Response> rptTokenValidationResult = umaAuthenticationService.validateRptToken(authorization, applicationConfiguration.getUmaResourceId(), applicationConfiguration.getUmaScope());
+			Token patToken = scimUmaProtectionService.getPatToken();
+			Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, scimUmaProtectionService.getUmaResourceId(), scimUmaProtectionService.getUmaScope());
 			if (rptTokenValidationResult.getFirst()) {
 				if (rptTokenValidationResult.getSecond() != null) {
 					return rptTokenValidationResult.getSecond();
@@ -116,6 +133,7 @@ public class BaseScimWebService {
 				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
 		}
+
 		return null;
 	}
 
@@ -270,7 +288,8 @@ public class BaseScimWebService {
 		log.info(" sortOrder = " + sortOrderEnum.getValue());
 		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? new ObjectMapper().writeValueAsString(attributes) : null));
 
-		List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
+		// List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
+		List<T> result = ldapEntryManager.findEntriesSearchSearchResult(dn, entryClass, filter, startIndex, count, MAX_COUNT, sortBy, sortOrderEnum, vlvResponse, attributes);
 
 		log.info(" ### RESULTS INFO ###");
 		log.info(" totalResults = " + vlvResponse.getTotalResults());

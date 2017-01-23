@@ -31,7 +31,7 @@
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clientSecret" rendered="#{_new}">
                 <ui:define name="label">Client Secret</ui:define>
-                <rich:inplaceInput value="#{_client.oxAuthClientSecret}" defaultLabel="click to enter Client Secret" maxlength="60" inputWidth="695" required="true" id="applicationTypeId" />
+                <rich:inplaceInput value="#{_client.oxAuthClientSecret}" defaultLabel="click to enter Client Secret" maxlength="60" inputWidth="695" required="#{_clientAction.checkClientSecretRequired()}" id="applicationTypeId" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="applicatonType">
@@ -200,7 +200,6 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="persistClientAuthorizations">
                 <ui:define name="label">Persist Client Authorizations</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthPersistClientAuthorizations}" required="true">
-                    <f:selectItem itemLabel="Please select a value."	noSelectionOption="true" />
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
@@ -401,7 +400,6 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="logoutSessionRequired">
                 <ui:define name="label">Logout Session Required</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.logoutSessionRequired}" required="true">
-                   	<f:selectItem itemLabel="Please select a value."	noSelectionOption="true" />
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
@@ -416,8 +414,8 @@
                 <h:panelGroup>
                 <div class="btn-group" role="group" aria-label="..." style="margin-left:105px;">
                 
-                    <a4j:commandButton styleClass="btn btn-primary" value="Add Login URI" oncomplete="#{rich:component('loginRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
-                    <a4j:commandButton styleClass="btn btn-primary" value="Add Redirect Logout URI" oncomplete="#{rich:component('logoutRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Login Redirect URI" oncomplete="#{rich:component('loginRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Add Logout Redirect URI" oncomplete="#{rich:component('logoutRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Scope" oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Response Type" oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Grant Type" oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
@@ -433,10 +431,7 @@
 
        </div>
        <div class="box-footer">
-					
-							<rich:notifyMessages stayTime="2000" nonblocking="true" />
 							<ui:insert name="controlButttons" />
-						
 					</div>
         </div></div></div></div>
     </h:form>

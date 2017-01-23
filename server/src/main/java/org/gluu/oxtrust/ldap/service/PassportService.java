@@ -19,6 +19,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.service.JsonService;
+import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 /**
@@ -29,32 +30,27 @@ import org.xdi.util.properties.FileConfiguration;
 @Scope(ScopeType.STATELESS)
 @Name("passportService")
 @AutoCreate
-public class OxPassportService {
-
+public class PassportService {
 
 	@Logger
 	private Log log;
 
 	@In
 	private JsonService jsonService;
-	
+
 	@In
 	private LdapEntryManager ldapEntryManager;
-	
+
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
-	
-	
-	public LdapOxPassportConfiguration loadConfigurationFromLdap(String ... returnAttributes) {
+
+	public LdapOxPassportConfiguration loadConfigurationFromLdap() {
 		try {
-			FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
-			String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
-			log.info("########## configurationDn = " + configurationDn);
-			if ((configurationDn != null)  && !(configurationDn.trim().equals(""))) {
+			String configurationDn = geConfigurationDn();
+			log.debug("########## configurationDn = " + configurationDn);
+			if ((configurationDn != null) && !(configurationDn.trim().equals(""))) {
 				LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
-				LdapOxPassportConfiguration conf = ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn,returnAttributes);
-				log.info("########## LdapOxPassportConfiguration  status =  '{0}'"+ conf.getStatus());
-				log.info("########## LdapOxPassportConfiguration  size = '{0}'",conf.getPassportConfigurations().size());
+				LdapOxPassportConfiguration conf = ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
 				return conf;
 			}
 		} catch (LdapMappingException ex) {
@@ -62,10 +58,16 @@ public class OxPassportService {
 		} catch (Exception ex) {
 			log.error("Exception ", ex);
 		}
-        
-        return null;
-    }
-	
+
+		return null;
+	}
+
+	private String geConfigurationDn() {
+		FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
+		String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
+		return configurationDn;
+	}
+
 	/**
 	 * Update LdapOxPassportConfiguration entry
 	 * 
@@ -73,7 +75,12 @@ public class OxPassportService {
 	 *            LdapOxPassportConfiguration
 	 */
 	public void updateLdapOxPassportConfiguration(LdapOxPassportConfiguration ldapOxPassportConfiguration) {
-		ldapEntryManager.merge(ldapOxPassportConfiguration);
+		if (StringHelper.isEmpty(ldapOxPassportConfiguration.getDn())) {
+			ldapOxPassportConfiguration.setDn(geConfigurationDn());
+			ldapEntryManager.persist(ldapOxPassportConfiguration);
+		} else {
+			ldapEntryManager.merge(ldapOxPassportConfiguration);
+		}
 
 	}
 

@@ -505,8 +505,8 @@ public class AsimbaService implements Serializable {
     }
     
     public String saveIDPMetadataFile(UploadedFile uploadedFile, IDPEntry idp) throws IOException {
-        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "webapps" + File.separator + "asimba" 
-                + File.separator + "WEB-INF" + File.separator + "sample-data" + File.separator + "idp";
+        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "conf" + File.separator + "asimba" 
+                + File.separator + "metadata" + File.separator + "idp";
         
         byte[] fileContent = Utils.copyUploadedFile(uploadedFile);
         
@@ -517,8 +517,9 @@ public class AsimbaService implements Serializable {
     }
     
     public String saveSPRequestorMetadataFile(UploadedFile uploadedFile) throws IOException {
-        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "webapps" + File.separator + "asimba" 
-                + File.separator + "WEB-INF" + File.separator + "sample-data" + File.separator + "sp";
+        String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "conf" + File.separator + "asimba" 
+                + File.separator + "metadata" + File.separator + "sp";
+        
         return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
     }
     

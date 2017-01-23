@@ -60,6 +60,7 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
 import org.xdi.service.SchemaService;
+import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
@@ -102,8 +103,8 @@ public class Shibboleth3ConfService implements Serializable {
 	public static final String SHIB3_IDP_SP_METADATA_FILE = "sp-metadata.xml";
 	public static final String SHIB3_SP_ATTRIBUTE_MAP_FILE = "attribute-map.xml";
 	public static final String SHIB3_SP_SHIBBOLETH2_FILE = "shibboleth2.xml";
-	private static final String SHIB3_SP_READ_ME = "WEB-INF/resources/doc/README_SP.pdf";
-	private static final String SHIB3_SP_READ_ME_WINDOWS = "WEB-INF/resources/doc/README_SP_windows.pdf";
+	private static final String SHIB3_SP_READ_ME = "/WEB-INF/resources/doc/README_SP.pdf";
+	private static final String SHIB3_SP_READ_ME_WINDOWS = "/WEB-INF/resources/doc/README_SP_windows.pdf";
 
 	private static final String SHIB3_SP_METADATA_FILE_PATTERN = "%s-sp-metadata.xml";
 	// private static final String SHIB3_IDP_METADATA_FILE_PATTERN = "%s-idp-metadata.xml";
@@ -114,6 +115,7 @@ public class Shibboleth3ConfService implements Serializable {
 	// public static final String PRIVATE_KEY_START_LINE = "-----BEGIN RSA PRIVATE KEY-----";
 	// public static final String PRIVATE_KEY_END_LINE = "-----END RSA PRIVATE KEY-----";
 	
+	public static final String SHIB3_IDP_PROPERTIES_FILE = "idp.properties";
 	private static final String SHIB3_IDP_LOGIN_CONFIG_FILE = "login.config";
 
 	private static final String SHIB3_IDP_METADATA_CREDENTIALS_FOLDER = SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials";
@@ -143,7 +145,10 @@ public class Shibboleth3ConfService implements Serializable {
 	
 	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
-	
+
+	@In
+	private XmlService xmlService;
+
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
 	 */
@@ -155,14 +160,8 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		String idpConfFolder      = applicationConfiguration.getShibboleth3IdpRootDir()
-		                            + File.separator 
-		                            + SHIB3_IDP_CONF_FOLDER 
-		                            + File.separator;
-		String idpMetadataFolder  = applicationConfiguration.getShibboleth3IdpRootDir()
-		                            + File.separator 
-		                            + SHIB3_IDP_METADATA_FOLDER 
-		                            + File.separator;
+		String idpConfFolder      = getIdpConfDir();
+		String idpMetadataFolder  = getIdpMetadataDir();
 
 		// Prepare data for files
 		initAttributes(trustRelationships);
@@ -294,7 +293,7 @@ public class Shibboleth3ConfService implements Serializable {
 				trustIds.put(trustRelationship.getInum(), String.valueOf(id++));
 
 				// Set entityId
-				String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+				String idpMetadataFolder = getIdpMetadataDir();
 
 				File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 				List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
@@ -343,7 +342,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 						try {
 
-							xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new java.io.ByteArrayInputStream(filterXML.getBytes()));
+							xmlDocument = xmlService.getXmlDocument(filterXML.getBytes());
 
 						} catch (Exception e) {
 							log.error("GluuSAMLMetaDataFilter contains invalid value.", e);
@@ -529,30 +528,12 @@ public class Shibboleth3ConfService implements Serializable {
 			e.printStackTrace();
 		}
 
-		context.put("mysqlUrl", applicationConfiguration.getMysqlUrl());
-		context.put("mysqlUser", applicationConfiguration.getMysqlUser());
-
-		try {
-
-			String mysqlPassword = applicationConfiguration.getMysqlPassword();
-
-			if (StringHelper.isNotEmpty(mysqlPassword)) {
-				mysqlPassword = StringEncrypter.defaultInstance().decrypt(mysqlPassword, cryptoConfigurationSalt);
-			}
-
-			context.put("mysqlPass", mysqlPassword);
-
-		} catch (EncryptionException e) {
-			log.error("Failed to decrypt mysqlPassword", e);
-			e.printStackTrace();
-		}
-
 		return context;
 	}
 
 	public String getIdpMetadataFilePath() {
 
-		String filePath = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator + SHIB3_IDP_IDP_METADATA_FILE;
+		String filePath = getIdpMetadataDir() + SHIB3_IDP_IDP_METADATA_FILE;
 
 		return filePath;
 
@@ -576,7 +557,7 @@ public class Shibboleth3ConfService implements Serializable {
 			is = FileUtils.openInputStream(relyingPartyFile);
 			isr = new InputStreamReader(is, "UTF-8");
 			try {
-				xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(isr));
+				xmlDocument = xmlService.getXmlDocument(new InputSource(isr));
 			} catch (Exception ex) {
 				log.error("Failed to parse relying party file '{0}'", ex, relyingPartyFile.getAbsolutePath());
 				ex.printStackTrace();
@@ -611,6 +592,14 @@ public class Shibboleth3ConfService implements Serializable {
 		return filePath;
 		*/
 	}
+        
+        public String getIdpConfDir() {
+                return applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
+        }
+        
+        public String getIdpMetadataDir() {
+                return applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+        }
 
 	public String getSpMetadataFilePath(String spMetaDataFN) {
 
@@ -728,6 +717,17 @@ public class Shibboleth3ConfService implements Serializable {
 
 		String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
 
+		// Generate sp-metadata.xml meta-data file
+		String spMetadataFileContent = generateSpMetadataFileContent( trustRelationship,  certificate);
+		if (StringHelper.isEmpty(spMetadataFileContent)) {
+			return false;
+		}
+
+		return templateService.writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
+	}
+	
+	public String generateSpMetadataFileContent(GluuSAMLTrustRelationship trustRelationship, String certificate){
+
 		VelocityContext context = new VelocityContext();
 		context.put("certificate", certificate);
 		context.put("trustRelationship", trustRelationship);
@@ -736,11 +736,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 		// Generate sp-metadata.xml meta-data file
 		String spMetadataFileContent = templateService.generateConfFile(SHIB3_IDP_SP_METADATA_FILE, context);
-		if (StringHelper.isEmpty(spMetadataFileContent)) {
-			return false;
-		}
-
-		return templateService.writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
+		return spMetadataFileContent;
 	}
 
 	public void removeSpMetadataFile(String spMetadataFileName) {
@@ -846,7 +842,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to create SubversionFile file due to undefined IDP root folder");
 		}
 
-		String idpConfFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
+		String idpConfFolder = getIdpConfDir();
 		String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
 		String idpMetadataCredentialsFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER	+ File.separator;
 		String spConfFolder = applicationConfiguration.getShibboleth3SpConfDir() + File.separator;
@@ -902,7 +898,7 @@ public class Shibboleth3ConfService implements Serializable {
 			is = FileUtils.openInputStream(spMetaDataFile);
 			isr = new InputStreamReader(is, "UTF-8");
 			try {
-				xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(isr));
+				xmlDocument = xmlService.getXmlDocument(new InputSource(isr));
 			} catch (Exception ex) {
 				log.error("Failed to parse metadata file '{0}'", ex, spMetaDataFile.getAbsolutePath());
 				ex.printStackTrace();
@@ -967,7 +963,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		String idpConfFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
+		String idpConfFolder = getIdpConfDir();
 
 		// Prepare data for files
 		VelocityContext context = new VelocityContext();
@@ -1359,7 +1355,9 @@ public class Shibboleth3ConfService implements Serializable {
 	 */
 	public static GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
 
-		String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
+		String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
+		// String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
+		String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
 		Schema schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
                 
 		return XMLValidator.validateMetadata(stream, schema);

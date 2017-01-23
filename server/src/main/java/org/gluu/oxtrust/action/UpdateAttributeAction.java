@@ -14,6 +14,7 @@ import java.util.Set;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.hibernate.internal.util.collections.ArrayHelper;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -63,7 +64,6 @@ public class UpdateAttributeAction implements Serializable {
 	private GluuAttribute attribute;
 	private boolean update;
 	private boolean showAttributeDeleteConfirmation;
-	private boolean showAttributeExistConfirmation;
 	
 	private boolean validationToggle;
 	private boolean tooltipToggle;
@@ -79,14 +79,12 @@ public class UpdateAttributeAction implements Serializable {
 		this.update = false;
 
 		this.showAttributeDeleteConfirmation = false;
-		this.showAttributeExistConfirmation = false;
 
 		this.attribute = new GluuAttribute();
 		attribute.setAttributeValidation(new AttributeValidation());
 		
 		this.attribute.setStatus(GluuStatus.ACTIVE);
 		this.attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
-		this.attribute.setOrigin(attributeService.getCustomOrigin());
 
 		this.canEdit = true;
 
@@ -102,19 +100,11 @@ public class UpdateAttributeAction implements Serializable {
 		this.update = true;
 
 		this.showAttributeDeleteConfirmation = false;
-		this.showAttributeExistConfirmation = false;
 
 		if (!loadAttribute(this.inum)) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		
-		if(attribute.getRegExp() != null){
-			validationToggle = true;
-		}
-		
-		if(attribute.getGluuTooltip()  != null){
-			tooltipToggle = true;
-		}
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -136,14 +126,6 @@ public class UpdateAttributeAction implements Serializable {
 		return true;
 	}
 
-	private boolean isAllowEdit() {
-		if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass())) {
-			return true;
-		}
-
-		return this.attribute.isAdminCanEdit();
-	}
-
 	private void initAttribute() {
 		if (StringHelper.isEmpty(this.attribute.getSaml1Uri())) {
 			String namespace;
@@ -159,58 +141,48 @@ public class UpdateAttributeAction implements Serializable {
 		if (StringHelper.isEmpty(this.attribute.getSaml2Uri())) {
 			this.attribute.setSaml2Uri(attributeService.getDefaultSaml2Uri(attribute.getName()));
 		}
+
+		if (attribute.getAttributeValidation() == null) {
+			attribute.setAttributeValidation(new AttributeValidation());
+		} else {
+			this.validationToggle = true;
+		}
+		
+		if(attribute.getGluuTooltip() != null){
+			this.tooltipToggle = true;
+		}
+	}
+
+	private boolean isAllowEdit() {
+		return this.attribute.isAdminCanEdit();
 	}
 
 	@Restrict("#{s:hasPermission('attribute', 'access')}")
 	public void cancel() {
 	}
 
+
 	@Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String save() {
-		return save(true);
-	}
-
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
-	public String save(boolean addToSchema) {
-		boolean currentShowAttributeExistConfirmation = this.showAttributeExistConfirmation;
-		this.showAttributeExistConfirmation = false;
-
-		if(!validationToggle){
-			attribute.setRegExp(null);
-		}
-
-		if(!tooltipToggle){
+		if (!tooltipToggle) {
 			attribute.setGluuTooltip(null);
 		}
-		
-		if ((attribute.getEditType() != null) && attribute.getEditType().length == 0) {
+
+		if ((attribute.getEditType() != null) && (attribute.getEditType().length == 0)) {
 			attribute.setEditType(null);
 		}
 
-		if ((attribute.getViewType() != null) && attribute.getViewType().length == 0) {
+		if ((attribute.getViewType() != null) && (attribute.getViewType().length == 0)) {
 			attribute.setViewType(null);
 		}
 		
 		String attributeName = this.attribute.getName();
 		if (this.update) {
 			try {
-				
-				// Check if attribute defined in gluuPerson or in custom object class
-				boolean containsAttribute = containsAttributeInGluuObjectClasses(attributeName);
-				if (!containsAttribute) {
-					// Check if the attribute defined 
-					String atributeNameToSearch = StringHelper.toLowerCase(attributeName);
-					if (schemaService.containsAttributeTypeInSchema(atributeNameToSearch)) {
-						String customObjectClass = attributeService.getCustomOrigin();
-						boolean addResult = addAttributeToObjectClass(attributeName, attributeService.getCustomOrigin());
-						if (!addResult) {
-							facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema object class '{1}'", attributeName, customObjectClass);
-							return OxTrustConstants.RESULT_FAILURE;
-						}
-					} else {
-						facesMessages.add(Severity.ERROR, "There is no attribute type '{0}' definition in LDAP schema", attributeName);
-						return OxTrustConstants.RESULT_FAILURE;
-					}
+
+				boolean attributeValidation = validateAttributeDefinition(attributeName);
+				if (!attributeValidation) {
+					return OxTrustConstants.RESULT_VALIDATION_ERROR;
 				}
 
 				attributeService.updateAttribute(this.attribute);
@@ -224,20 +196,7 @@ public class UpdateAttributeAction implements Serializable {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			if (schemaService.containsAttributeTypeInSchema(attributeName)) {
-				if (currentShowAttributeExistConfirmation) {
-					if (addToSchema) {
-						facesMessages.addToControl("nameId", Severity.ERROR,
-								"Attribute with specified name already exist in server schema definition");
-						return OxTrustConstants.RESULT_FAILURE;
-					}
-				} else {
-					this.showAttributeExistConfirmation = true;
-					return OxTrustConstants.RESULT_CONFIRM;
-				}
-			}
-
-			boolean result = addNewAttribute(attributeName, addToSchema);
+			boolean result = addNewAttribute(attributeName, false);
 			if (!result) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -252,14 +211,13 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean addNewAttribute(String attributeName, boolean addToSchema) {
-		log.info("getting attribute inum : " + attributeService.generateInumForNewAttribute());
+		boolean attributeValidation = validateAttributeDefinition(attributeName);
+		if (!attributeValidation) {
+			return false;
+		}
+
 		String inum = attributeService.generateInumForNewAttribute();
-		log.info("getting the dn : " + attributeService.getDnForAttribute(inum));
 		String dn = attributeService.getDnForAttribute(inum);
-		log.info("getting ldapAttributeName : " + attributeService.generateRandomOid());
-		String ldapAttributedName = attributeService.generateRandomOid();
-		log.info("getting objectClassName : " + attributeService.getCustomOrigin());
-		String objectClassName = attributeService.getCustomOrigin();
 		if (attribute.getSaml1Uri() == null || attribute.getSaml1Uri().equals("")) {
 			attribute.setSaml1Uri("urn:gluu:dir:attribute-def:" + attributeName);
 		}
@@ -267,46 +225,13 @@ public class UpdateAttributeAction implements Serializable {
 			attribute.setSaml2Uri("urn:oid:" + attributeName);
 		}
 
-		if (addToSchema) {
-			// Add new attribute type to LDAP schema
-			try {
-				log.info("adding string attribute");
-				log.info("ldapAttributedName : " + ldapAttributedName);
-				log.info("attributeName : " + attributeName);
-	
-				schemaService.addStringAttribute(ldapAttributedName, attributeName, applicationConfiguration.getSchemaAddAttributeDefinition());
-			} catch (Exception ex) {
-				log.error("Failed to add new attribute type to LDAP schema", ex);
-	
-				facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema", attributeName);
-				return false;
-			}
-	
-			boolean addResult = addAttributeToObjectClass(attributeName, objectClassName);
-			if (!addResult) {
-				facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema object class '{1}'", attributeName, objectClassName);
-				return false;
-			}
-		} else {
-			String attributeOrigin = determineOrigin(attributeName);
-			if (StringHelper.isEmpty(attributeOrigin)) {
-				facesMessages.add(Severity.ERROR, "Failed to determine object class by attribute name");
-				return false;
-			}
-
-			this.attribute.setOrigin(attributeOrigin);
-
-			// Check if attribute defined in gluuPerson or in custom object class
-			boolean containsAttribute = containsAttributeInGluuObjectClasses(attributeName);
-			if (!containsAttribute) {
-				String customObjectClass = attributeService.getCustomOrigin();
-				boolean addResult = addAttributeToObjectClass(attributeName, customObjectClass);
-				if (!addResult) {
-					facesMessages.add(Severity.ERROR, "Failed to add attribute type '{0}' to LDAP schema object class '{1}'", attributeName, customObjectClass);
-					return false;
-				}
-			}
+		String attributeOrigin = determineOrigin(attributeName);
+		if (StringHelper.isEmpty(attributeOrigin)) {
+			facesMessages.add(Severity.ERROR, "Failed to determine object class by attribute name");
+			return false;
 		}
+
+		this.attribute.setOrigin(attributeOrigin);
 
 		// Save attribute metadata
 		this.attribute.setDn(dn);
@@ -324,34 +249,43 @@ public class UpdateAttributeAction implements Serializable {
 		return true;
 	}
 
-	private String determineOrigin(String attributeName) {
-		SchemaEntry schemaEntry = schemaService.getSchema();
-		Set<String> objectClasses = schemaService.getObjectClassesByAttribute(schemaEntry, attributeName);
-		if (objectClasses.size() == 0) {
-			log.error("Failed to determine object class by attribute name '{0}'", attributeName);
-			return null;
+	private boolean validateAttributeDefinition(String attributeName) {
+		boolean containsAttribute = schemaService.containsAttributeTypeInSchema(attributeName);
+		if (!containsAttribute) {
+			facesMessages.add(Severity.ERROR, "The attribute type '{0}' not defined in LDAP schema", attributeName);
+			return false;
 		}
 
-		List<String> attributeOriginins = attributeService.getAllAttributeOrigins();
-		String customOriginin = attributeService.getCustomOrigin();
-		attributeOriginins.remove(customOriginin);
+		// Check if attribute defined in gluuPerson or in custom object class
+		boolean containsAttributeInGluuObjectClasses = containsAttributeInGluuObjectClasses(attributeName);
+		if (!containsAttributeInGluuObjectClasses) {
+			facesMessages.add(Severity.ERROR, "Attribute type '{0}' definition not belong to list of allowed object classes", attributeName);
+			return false;
+		}
+		
+		return true;
+	}
 
-		for (Iterator<String> it = objectClasses.iterator(); it.hasNext();) {
-			String attributeOrigin = (String) it.next();
+	private String determineOrigin(String attributeName) {
+		String[] objectClasses = ArrayHelper.join(new String[] { "gluuPerson" }, applicationConfiguration.getPersonObjectClassTypes());
 
-			// Try to determine one which we supports
-			if (attributeOriginins.contains(attributeOrigin)) {
-				return attributeOrigin;
+		SchemaEntry schemaEntry = schemaService.getSchema();
+		
+		for (String objectClass : objectClasses) { 
+			Set<String> attributeNames = schemaService.getObjectClassesAttributes(schemaEntry, new String[] { objectClass });
+			String atributeNameToSearch = StringHelper.toLowerCase(attributeName);
+			boolean contains = attributeNames.contains(atributeNameToSearch);
+			if (contains) {
+				return objectClass;
 			}
 		}
 
-		// Use first one
-		String attributeOrigin = objectClasses.iterator().next();
-		return attributeOrigin;
+		log.error("Failed to determine object class by attribute name '{0}'", attributeName);
+		return null;
 	}
 
 	private boolean containsAttributeInGluuObjectClasses(String attributeName) {
-		String[] objectClasses = { "gluuPerson", attributeService.getCustomOrigin() };
+		String[] objectClasses = ArrayHelper.join(new String[] { "gluuPerson" }, applicationConfiguration.getPersonObjectClassTypes());
 
 		SchemaEntry schemaEntry = schemaService.getSchema();
 		Set<String> attributeNames = schemaService.getObjectClassesAttributes(schemaEntry, objectClasses);
@@ -360,19 +294,6 @@ public class UpdateAttributeAction implements Serializable {
 		boolean result = attributeNames.contains(atributeNameToSearch);
 
 		return result;
-	}
-
-	private boolean addAttributeToObjectClass(String attributeName, String objectClassName) {
-		// Register new attribute type to custom object class
-		try {
-			schemaService.addAttributeTypeToObjectClass(objectClassName, attributeName);
-		} catch (Exception ex) {
-			log.error("Failed to add new attribute type to LDAP schema's object class", ex);
-
-			return false;
-		}
-		
-		return true;
 	}
 
 	@Restrict("#{s:hasPermission('attribute', 'access')}")
@@ -444,10 +365,6 @@ public class UpdateAttributeAction implements Serializable {
 		return showAttributeDeleteConfirmation;
 	}
 
-	public boolean isShowAttributeExistConfirmation() {
-		return showAttributeExistConfirmation;
-	}
-
 	public boolean canEdit() {
 		return canEdit;
 	}
@@ -473,83 +390,6 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
     /**
-     * @return the log
-     */
-    public Log getLog() {
-        return log;
-    }
-
-    /**
-     * @param log the log to set
-     */
-    public void setLog(Log log) {
-        this.log = log;
-    }
-
-    /**
-     * @return the attributeService
-     */
-    public AttributeService getAttributeService() {
-        return attributeService;
-    }
-
-    /**
-     * @param attributeService the attributeService to set
-     */
-    public void setAttributeService(AttributeService attributeService) {
-        this.attributeService = attributeService;
-    }
-
-    /**
-     * @return the schemaService
-     */
-    public SchemaService getSchemaService() {
-        return schemaService;
-    }
-
-    /**
-     * @param schemaService the schemaService to set
-     */
-    public void setSchemaService(SchemaService schemaService) {
-        this.schemaService = schemaService;
-    }
-
-    /**
-     * @return the facesMessages
-     */
-    public FacesMessages getFacesMessages() {
-        return facesMessages;
-    }
-
-    /**
-     * @param facesMessages the facesMessages to set
-     */
-    public void setFacesMessages(FacesMessages facesMessages) {
-        this.facesMessages = facesMessages;
-    }
-
-    /**
-     * @return the applicationConfiguration
-     */
-    public ApplicationConfiguration getApplicationConfiguration() {
-        return applicationConfiguration;
-    }
-
-    /**
-     * @param applicationConfiguration the applicationConfiguration to set
-     */
-    public void setApplicationConfiguration(ApplicationConfiguration applicationConfiguration) {
-        this.applicationConfiguration = applicationConfiguration;
-    }
-
-    /**
-     * @param attribute the attribute to set
-     */
-    public void setAttribute(GluuAttribute attribute) {
-        this.attribute = attribute;
-    }
-
-    /**
      * @param update the update to set
      */
     public void setUpdate(boolean update) {
@@ -561,13 +401,6 @@ public class UpdateAttributeAction implements Serializable {
      */
     public void setShowAttributeDeleteConfirmation(boolean showAttributeDeleteConfirmation) {
         this.showAttributeDeleteConfirmation = showAttributeDeleteConfirmation;
-    }
-
-    /**
-     * @param showAttributeExistConfirmation the showAttributeExistConfirmation to set
-     */
-    public void setShowAttributeExistConfirmation(boolean showAttributeExistConfirmation) {
-        this.showAttributeExistConfirmation = showAttributeExistConfirmation;
     }
 
     /**

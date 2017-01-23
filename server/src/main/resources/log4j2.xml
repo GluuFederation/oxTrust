@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration packages="org.gluu.log">
+	<Appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
+		</Console>
+
+		<RollingFile name="FILE" fileName="${sys:catalina.base}/logs/oxtrust.log" filePattern="${sys:catalina.base}/logs/oxtrust-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
+
+		<RollingFile name="OX_PERSISTENCE_FILE" fileName="${sys:catalina.base}/logs/oxtrust_persistence.log" filePattern="${sys:catalina.base}/logs/oxtrust_persistence-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
+
+		<RollingFile name="OX_PERSISTENCE_LDAP_STATISTICS_FILE" fileName="${sys:catalina.base}/logs/oxtrust_persistence_ldap_statistics.log"
+			filePattern="${sys:catalina.base}/logs/oxtrust_persistence_ldap_statistics-%d{yyyy-MM-dd}-%i.log">
+
+			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
+
+		<RollingFile name="OX_SCRIPT_LOG_FILE" fileName="${sys:catalina.base}/logs/oxtrust_script.log" filePattern="${sys:catalina.base}/logs/oxtrust_script-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
+
+		<RollingFile name="OX_CACHE_REFRESH_FILE" fileName="${sys:catalina.base}/logs/oxtrust_cache_refresh.log" filePattern="${sys:catalina.base}/logs/oxtrust_cache_refresh-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
+
+		<RollingFile name="OX_CACHE_REFRESH_PYTHON_FILE" fileName="${sys:catalina.base}/logs/oxtrust_cache_refresh_python.log"
+			filePattern="${sys:catalina.base}/logs/oxtrust_cache_refresh_python-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
+
+		<RollingFile name="OX_APACHEHC_LOG_FILE" fileName="${sys:catalina.base}/logs/oxtrust_apachehc.log" filePattern="${sys:catalina.base}/logs/oxtrust_apachehc-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<!-- ############### oxAuth ################# -->
+		<Logger name="org.xdi.oxauth" level="${log4j.default.log.level}" />
+
+		<!-- ############### oxTrust ################# -->
+		<Logger name="org.gluu.oxtrust" level="${log4j.default.log.level}" />
+
+		<!-- ############### Gluu ################# -->
+		<Logger name="org.gluu" level="${log4j.default.log.level}" />
+
+		<!-- ############### Embedded JBoss AS ################# -->
+		<Logger name="org.jboss" level="error" />
+		<Logger name="com.arjuna" level="error" />
+
+		<!-- EMB-6, JMS activation throws an error due to deployment ordering, but as there is a timeout and retry the tests pass. Hide the error message -->
+		<Logger name="jboss.resource.adapter.jms.inflow.JmsActivation" level="error" />
+
+		<!-- ############### Hibernate logging ################# -->
+		<Logger name="org.hibernate" level="error" />
+
+		<!-- ############### Ajax4jsf logging ################# -->
+		<Logger name="org.ajax4jsf.cache" level="error" />
+
+
+		<!-- ############### Seam logging ################### -->
+		<Logger name="org.jboss.seam" level="info" />
+
+		<!-- These things are too noisy
+		<category name="org.jboss.seam.jsf.SeamVariableResolver" level="info" />
+		<category name="org.jboss.seam.contexts.Contexts" level="info" />
+		<category name="org.jboss.seam.Component" level="info" />
+		<category name="org.jboss.seam.deployment.Scanner" level="info" />
+		<category name="org.jboss.seam.util.Naming" level="info" />
+		<category name="org.jboss.seam.debug.hot" level="info" />
+		<category name="org.jboss.seam.core.Events" level="info" />
+		-->
+
+		<!-- Debugging conversations and persistence contexts
+		<Logger name="org.jboss.seam.core.Manager" level="debug" />
+		<Logger name="org.jboss.seam.core.ManagedPersistenceContext" level="debug" />
+		<Logger name="org.jboss.seam.jsf.AbstractSeamPhaseListener" level="debug" />
+		<Logger name="org.jboss.seam.interceptors.ConversationInterceptor" level="debug" />
+		<Logger name="org.jboss.seam.contexts.Lifecycle" level="debug" />
+		<Logger name="org.hibernate.impl.SessionImpl" level="debug" />
+		<Logger name="org.hibernate.event.def.AbstractFlushingEventListener" level="debug" />
+		-->
+
+		<logger name="org.gluu.site.ldap" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_PERSISTENCE_FILE" />
+		</logger>
+
+		<logger name="com.unboundid.ldap.sdk.LDAPConnection" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_PERSISTENCE_FILE" />
+		</logger>
+
+		<logger name="org.gluu.oxtrust.ldap.service.status.ldap" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_PERSISTENCE_LDAP_STATISTICS_FILE" />
+		</logger>
+
+		<logger name="org.gluu.oxtrust.service.external.ExternalCacheRefreshService" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_CACHE_REFRESH_PYTHON_FILE" />
+		</logger>
+
+		<logger name="org.gluu.oxtrust.ldap.cache.service" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_CACHE_REFRESH_FILE" />
+		</logger>
+
+		<logger name="org.gluu.oxtrust.action.ConfigureCacheRefreshAction" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_CACHE_REFRESH_FILE" />
+		</logger>
+
+		<logger name="org.xdi.service.PythonService" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_SCRIPT_LOG_FILE" />
+		</logger>
+
+		<logger name="org.xdi.service.custom.script" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_SCRIPT_LOG_FILE" />
+		</logger>
+
+		<logger name="org.gluu.oxtrust.service.custom" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_SCRIPT_LOG_FILE" />
+		</logger>
+
+		<!-- START: For Apache HttpClient UMA RPT connection pooling -->
+		<logger name="org.apache.http.impl" level="off" additivity="false">
+			<AppenderRef ref="OX_APACHEHC_LOG_FILE" />
+		</logger>
+
+		<logger name="org.apache.http.conn" level="off" additivity="false">
+			<AppenderRef ref="OX_APACHEHC_LOG_FILE" />
+		</logger>
+
+		<logger name="org.apache.http.message" level="off" additivity="false">
+			<AppenderRef ref="OX_APACHEHC_LOG_FILE" />
+		</logger>
+		<!-- END: For Apache HttpClient UMA RPT connection pooling -->
+
+		<Root level="info">
+			<AppenderRef ref="FILE" />
+			<AppenderRef ref="STDOUT" />
+		</Root>
+	</Loggers>
+</Configuration>

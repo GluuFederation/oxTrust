@@ -46,7 +46,7 @@ public final class Configuration {
 	public static final String OAUTH_NONCE = "nonce";
 	public static final String OAUTH_ERROR_DESCRIPTION = "error_description";
 	public static final String OAUTH_ACCESS_TOKEN = "access_token";
-	public static final String OAUTH_AUTH_MODE = "acr_values";
+	public static final String OXAUTH_ACR_VALUES = "acr_values";
     public static final String OAUTH_ID_TOKEN_HINT = "id_token_hint";
     public static final String OAUTH_POST_LOGOUT_REDIRECT_URI = "post_logout_redirect_uri";
 

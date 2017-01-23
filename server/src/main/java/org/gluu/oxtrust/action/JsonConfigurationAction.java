@@ -141,13 +141,7 @@ public class JsonConfigurationAction implements Serializable {
 	private void trimUriProperties() {
 		this.oxTrustApplicationConfiguration.setLogoutRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLogoutRedirectUrl()));
 		this.oxTrustApplicationConfiguration.setLoginRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLoginRedirectUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthAuthorizeUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthAuthorizeUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthEndSessionUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthEndSessionUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthLogoutUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthLogoutUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthRegisterUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthRegisterUrl()));
 		this.oxTrustApplicationConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthSectorIdentifierUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthTokenUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthTokenUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthTokenValidationUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthTokenValidationUrl()));
 	}
 
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -176,7 +170,6 @@ public class JsonConfigurationAction implements Serializable {
 			resultOxTrustApplicationConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustApplicationConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustApplicationConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setMysqlPassword(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustApplicationConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustApplicationConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
 
@@ -206,7 +199,6 @@ public class JsonConfigurationAction implements Serializable {
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "keystorePassword");
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "idpSecurityKeyPassword");
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "idpBindPassword");
-			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "mysqlPassword");
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "caCertsPassphrase");
 			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "oxAuthClientPassword");
 

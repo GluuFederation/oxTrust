@@ -22,7 +22,6 @@
 
     <resolver:AttributeDefinition id="eduPersonPrincipalName" xsi:type="ad:Scoped" scope="%{idp.scope}" sourceAttributeID="uid">
         <resolver:Dependency ref="siteLDAP" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonPrincipalName" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" />
     </resolver:AttributeDefinition>
 
@@ -30,7 +29,6 @@
 
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="$attribute.name" sourceAttributeID="$attribute.name">
         <resolver:Dependency ref="siteLDAP" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="$attrParams.attributeSAML1Strings.get($attribute.name)" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="$attrParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" />
     </resolver:AttributeDefinition>
 #end

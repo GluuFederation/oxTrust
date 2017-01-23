@@ -303,6 +303,10 @@ public class GluuCustomPerson extends User
 	public void setOxCreationTimestamp(Date oxCreationTimestamp) {
 		this.oxCreationTimestamp = oxCreationTimestamp;
 	}
+	
+	public void setOxUpdatedAt(String value) {
+		setAttribute("UpdatedAt", value);
+	}
 
     public Set<String> getSchemas() {
         return Collections.unmodifiableSet(schemas);

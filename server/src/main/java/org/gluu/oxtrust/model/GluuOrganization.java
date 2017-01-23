@@ -23,7 +23,7 @@ import java.io.Serializable;
  * @author Yuriy Movchan Date: 11.02.2010
  */
 @LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "gluuGroup", "oxEntry" })
+@LdapObjectClass(values = { "top", "gluuOrganization" })
 public class GluuOrganization extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -8284018077740582699L;

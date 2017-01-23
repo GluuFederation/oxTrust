@@ -81,13 +81,6 @@
             "format": "url",
             "minLength": 1
         },
-        "endSessionPage": {
-            "id": "endSessionPage",
-            "description": "URL of the End Session Page.",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
         "jwksUri": {
             "id": "jwksUri",
             "description": "URL of the OP's JSON Web Key Set (JWK) document. This contains the signing key(s) the RP uses to validate signatures from the OP.",
@@ -175,6 +168,13 @@
         "oxElevenDeleteKeyEndpoint": {
             "id": "oxElevenDeleteKeyEndpoint",
             "description": "URL for the oxEleven Delete Key Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
+        "oxElevenJwksEndpoint": {
+            "id": "oxElevenJwksEndpoint",
+            "description": "URL for the oxEleven JWKS Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
@@ -843,6 +843,11 @@
             "description": "Boolean value specifying whether to persist session ID on prompt none.",
             "type": "boolean"
         },
+        "sessionStateHttpOnly": {
+            "id": "sessionStateHttpOnly",
+            "description": "Boolean value specifying whether to set Session State HttpOnly.",
+            "type": "boolean"
+        },
         "configurationUpdateInterval": {
             "id": "configurationUpdateInterval",
             "description": "The interval for configuration update in seconds.",
@@ -972,6 +977,43 @@
             "id": "legacyIdTokenClaims",
             "description": "Include Claims in ID Token.",
             "type": "boolean"
+        },
+        "customHeadersWithAuthorizationResponse": {
+            "id": "customHeadersWithAuthorizationResponse",
+            "description": "Boolean value specifying whether to enable Custom Response Header parameter to return custom headers with the Authorization Response.",
+            "type": "boolean"
+        },
+        "frontChannelLogoutSessionSupported": {
+        	"id": "frontChannelLogoutSessionSupported",
+            "description": "Boolean value to specify support for front channel logout session.",
+            "type": "boolean"
+        },
+        "updateUserLastLogonTime": {
+        	"id": "updateUserLastLogonTime",
+            "description": "Boolean value to specify if application should update oxLastLogonTime attribute on user authentication.",
+            "type": "boolean"
+        },
+        "updateClientAccessTime": {
+        	"id": "updateClientAccessTime",
+            "description": "Boolean value to specify if application should update oxLastAccessTime/oxLastLogonTime attributes on client authentication.",
+            "type": "boolean"
+        },
+        "loggingLevel": {
+            "id": "loggingLevel",
+            "description": "Logging level for oxAuth logers.",
+            "type": "string",
+            "format": "select",
+            "enum": [
+                "DEFAULT",
+                "OFF",
+                "FATAL",
+                "ERROR",
+                "WARN",
+                "INFO",
+                "DEBUG",
+                "TRACE",
+                "ALL"
+            ]
         }
     },
     "required": [
@@ -985,7 +1027,6 @@
         "clientInfoEndpoint",
         "checkSessionIFrame",
         "endSessionEndpoint",
-        "endSessionPage",
         "jwksUri",
         "registrationEndpoint",
         "validateTokenEndpoint",
@@ -999,6 +1040,7 @@
         "oxElevenSignEndpoint",
         "oxElevenVerifySignatureEndpoint",
         "oxElevenDeleteKeyEndpoint",
+        "oxElevenJwksEndpoint",
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
@@ -1057,6 +1099,7 @@
         "sessionIdUnauthenticatedUnusedLifetime",
         "sessionIdEnabled",
         "sessionIdPersistOnPromptNone",
+        "sessionStateHttpOnly",
         "configurationUpdateInterval",
         "cssLocation",
         "jsLocation",
@@ -1071,6 +1114,11 @@
         "keyStoreFile",
         "keyStoreSecret",
         "endSessionWithAccessToken",
-        "legacyIdTokenClaims"
+        "legacyIdTokenClaims",
+        "customHeadersWithAuthorizationResponse",
+        "frontChannelLogoutSessionSupported",
+        "updateUserLastLogonTime",
+        "updateClientAccessTime",
+        "loggingLevel"
     ]
 }

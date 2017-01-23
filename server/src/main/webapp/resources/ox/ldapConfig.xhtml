@@ -128,7 +128,7 @@
 							value="Change Bind Password"
 							oncomplete="#{rich:component(cc.attrs.changePasswordDialogId)}.show();"
 							rendered="#{cc.attrs.changePasswordDialogId != null}"
-							render="#{cc.attrs.changePasswordDialogId}"
+							render="#{cc.attrs.changePasswordDialogId}:changePasswordForm"
 							limitRender="true"
 							action="#{cc.attrs.ldapConfigAction.setActiveLdapConfig(cc.attrs.ldapConfig)}"
 							execute="@this" />

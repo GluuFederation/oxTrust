@@ -41,6 +41,10 @@
             </redirect>
         </rule>
 
+        <rule if-outcome="validation_error">
+            <render view-id="/attribute/updateAttribute.xhtml"/>
+        </rule>
+
         <rule if-outcome="failure">
             <end-conversation />
             <redirect view-id="/attribute/attributeInventory.xhtml">

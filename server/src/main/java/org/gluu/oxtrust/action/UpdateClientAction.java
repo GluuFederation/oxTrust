@@ -991,5 +991,23 @@ public class UpdateClientAction implements Serializable {
 		}
 
 	}
+	
+	public boolean checkClientSecretRequired(){
+		for(ResponseType responseType : this.responseTypes){
+			if(responseType.getValue().equalsIgnoreCase("token") || 
+					responseType.getValue().equalsIgnoreCase("id_token")){
+				return false;
+			}
+		}
+		
+		for(GrantType grantType : this.grantTypes){
+			if(grantType.getValue().equalsIgnoreCase("implicit")){
+				return false;
+			}
+			
+		}
+		
+		return true;
+	}
 
 }

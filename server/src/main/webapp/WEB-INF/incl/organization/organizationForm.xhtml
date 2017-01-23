@@ -104,17 +104,6 @@
 						<!-- System Configuration -->
 						<div class="tab-pane active" id="sys-config">
 							<h:panelGroup layout="block" style="width:80%;">
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="whitePages">
-									<ui:define name="label">White Pages</ui:define>
-									<h:selectOneMenu value="#{_appliance.whitePagesEnabled}" styleClass="form-control"
-										id="whitePagesId">
-										<s:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" label="#{_type.displayName}" />
-										<s:convertEnum />
-									</h:selectOneMenu>
-								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="passwordReset">
@@ -128,13 +117,23 @@
 									</h:selectOneMenu>
 								</s:decorate>
 
-								
-
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="scimEnabledState">
 									<ui:define name="label">SCIM Support</ui:define>
 									<h:selectOneMenu value="#{_appliance.scimEnabled}" styleClass="form-control"
 										id="scimEnabledStateId">
+										<s:selectItems
+											value="#{organizationService.booleanSelectionTypes}"
+											var="_type" label="#{_type.displayName}" />
+										<s:convertEnum />
+									</h:selectOneMenu>
+								</s:decorate>
+
+								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+									id="passportEnabledState">
+									<ui:define name="label">Passport Support</ui:define>
+									<h:selectOneMenu value="#{_appliance.passportEnabled}" styleClass="form-control"
+										id="passportEnabledStateId">
 										<s:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
 											var="_type" label="#{_type.displayName}" />
@@ -398,8 +397,6 @@
 		</div>
 
 		<richext:spacer height="16" />
-
-		<rich:notifyMessages stayTime="2000" nonblocking="true" />
 		<ui:insert name="controlButttons" />
 	</h:form>
 </ui:composition>

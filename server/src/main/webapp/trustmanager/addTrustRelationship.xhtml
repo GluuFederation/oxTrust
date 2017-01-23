@@ -7,6 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
 	<ui:define name="body">
@@ -55,6 +56,11 @@
 			
 
 		</ui:decorate> 
+		
+		  <ox:createSPMetadataDialog  id="createSPMetadata" generateMethod="#{updateTrustRelationshipAction.generateSp()}" 
+		  label="Generate SP Metadata" metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
+		  logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}" uri="#{updateTrustRelationshipAction.trustRelationship.url}"/>
+
 		
 		</section>
 		<!--<div class = "box-footer"></div>-->

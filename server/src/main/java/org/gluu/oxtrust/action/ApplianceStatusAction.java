@@ -9,6 +9,7 @@ package org.gluu.oxtrust.action;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -32,22 +33,23 @@ public class ApplianceStatusAction implements Serializable {
 	private ApplianceService applianceService;
 
 	private String health;
-	
-	public String checkHealth(){
+
+	public String checkHealth() {
 		GluuAppliance appliance = applianceService.getAppliance();
-		String lastUpdateString = appliance.getLastUpdate();
+		Date lastUpdateDateTime = appliance.getLastUpdate();
 		int lastUpdate = 0;
-		if(lastUpdateString !=null){
-			lastUpdate = Integer.parseInt(lastUpdateString);
+		if (lastUpdateDateTime != null) {
+			lastUpdate = (int) (lastUpdateDateTime.getTime() / 1000);
 		}
-		
+
 		int currentTime = (int) (System.currentTimeMillis() / 1000);
 		int timeSinceLastUpdate = currentTime - lastUpdate;
-		if(timeSinceLastUpdate >= 0 && timeSinceLastUpdate < 100){
+		if (timeSinceLastUpdate >= 0 && timeSinceLastUpdate < 100) {
 			this.setHealth("OK");
-		}else{
+		} else {
 			this.setHealth("FAIL");
 		}
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -58,5 +60,5 @@ public class ApplianceStatusAction implements Serializable {
 	public void setHealth(String health) {
 		this.health = health;
 	}
-	
+
 }

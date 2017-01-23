@@ -43,16 +43,6 @@
             "format": "url",
             "minLength": 1
         },
-        "schemaAddObjectClassWithoutAttributeTypesDefinition": {
-            "id": "schemaAddObjectClassWithoutAttributeTypesDefinition",
-            "type": "string",
-            "minLength": 1
-        },
-        "schemaAddObjectClassWithAttributeTypesDefinition": {
-            "id": "schemaAddObjectClassWithAttributeTypesDefinition",
-            "type": "string",
-            "minLength": 1
-        },
         "personObjectClassTypes": {
             "id": "personObjectClassTypes",
             "type": "array",
@@ -79,11 +69,6 @@
                 "type": "string",
                 "minLength": 1
             }
-        },
-        "schemaAddAttributeDefinition": {
-            "id": "schemaAddAttributeDefinition",
-            "type": "string",
-            "minLength": 1
         },
         "contactObjectClassTypes": {
             "id": "contactObjectClassTypes",
@@ -270,18 +255,6 @@
             "type": "string",
             "minLength": 1
         },
-        "mysqlUrl": {
-            "id": "mysqlUrl",
-            "type": "string"
-        },
-        "mysqlUser": {
-            "id": "mysqlUser",
-            "type": "string"
-        },
-        "mysqlPassword": {
-            "id": "mysqlPassword",
-            "type": "string"
-        },
         "shibboleth3FederationRootDir": {
             "id": "shibboleth3FederationRootDir",
             "type": "string",
@@ -327,47 +300,6 @@
         "persistSVN": {
             "id": "persistSVN",
             "type": "boolean"
-        },
-        "oxAuthAuthorizeUrl": {
-            "id": "oxAuthAuthorizeUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthRegisterUrl": {
-            "id": "oxAuthRegisterUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthTokenUrl": {
-            "id": "oxAuthTokenUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthEndSessionUrl": {
-            "id": "oxAuthEndSessionUrl",
-            "type": "string",
-            "format": "url"
-        },
-        "oxAuthLogoutUrl": {
-            "id": "oxAuthLogoutUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthTokenValidationUrl": {
-            "id": "oxAuthTokenValidationUrl",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxAuthUserInfo": {
-            "id": "oxAuthUserInfo",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
         },
         "oxAuthSectorIdentifierUrl": {
             "id": "oxAuthSectorIdentifierUrl",
@@ -430,33 +362,63 @@
             "type": "string",
             "minLength": 1
         },
-        "umaClientId": {
+        "scimUmaClientId": {
             "id": "umaClientId",
             "type": "string",
             "minLength": 1
         },
-        "umaClientKeyId": {
+        "scimUmaClientKeyId": {
             "id": "umaClientKeyId",
             "type": "string",
             "minLength": 1
         },
-        "umaResourceId": {
+        "scimUmaResourceId": {
             "id": "umaResourceId",
             "type": "string",
             "minLength": 1
         },
-        "umaScope": {
+        "scimUmaScope": {
             "id": "umaScope",
             "type": "string",
             "minLength": 1
         },
-        "umaClientKeyStoreFile": {
+        "scimUmaClientKeyStoreFile": {
             "id": "umaClientKeyStoreFile",
             "type": "string",
             "minLength": 1
         },
-        "umaClientKeyStorePassword": {
+        "scimUmaClientKeyStorePassword": {
             "id": "umaClientKeyStorePassword",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaClientId": {
+            "id": "passportUmaClientId",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaClientKeyId": {
+            "id": "passportUmaClientKeyId",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaResourceId": {
+            "id": "passportUmaResourceId",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaScope": {
+            "id": "passportUmaScope",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaClientKeyStoreFile": {
+            "id": "passportUmaClientKeyStoreFile",
+            "type": "string",
+            "minLength": 1
+        },
+        "passportUmaClientKeyStorePassword": {
+            "id": "passportUmaClientKeyStorePassword",
             "type": "string",
             "minLength": 1
         },
@@ -584,6 +546,27 @@
                 "type": "string",
                 "minLength": 1
             }
+        },
+        "oxIncommonFlag": {
+            "id": "oxIncommonFlag",
+            "type": "boolean"
+        },
+        "loggingLevel": {
+            "id": "loggingLevel",
+            "description": "Logging level for oxTrust logers.",
+            "type": "string",
+            "format": "select",
+            "enum": [
+                "DEFAULT",
+                "OFF",
+                "FATAL",
+                "ERROR",
+                "WARN",
+                "INFO",
+                "DEBUG",
+                "TRACE",
+                "ALL"
+            ]
         }
     },
     "required": [
@@ -594,12 +577,9 @@
         "applianceInum",
         "applianceUrl",
         "baseEndpoint",
-        "schemaAddObjectClassWithoutAttributeTypesDefinition",
-        "schemaAddObjectClassWithAttributeTypesDefinition",
         "personObjectClassTypes",
         "personCustomObjectClass",
         "personObjectClassDisplayNames",
-        "schemaAddAttributeDefinition",
         "contactObjectClassTypes",
         "contactObjectClassDisplayNames",
         "photoRepositoryRootDir",
@@ -631,9 +611,6 @@
         "idpBindPassword",
         "idpUserFields",
         "gluuSpCert",
-        "mysqlUrl",
-        "mysqlUser",
-        "mysqlPassword",
         "shibboleth3FederationRootDir",
         "cacheRefreshEnabled",
         "cacheRefreshIntervalMinutes",
@@ -643,13 +620,6 @@
         "certDir",
         "servicesRestartTrigger",
         "persistSVN",
-        "oxAuthAuthorizeUrl",
-        "oxAuthRegisterUrl",
-        "oxAuthTokenUrl",
-        "oxAuthEndSessionUrl",
-        "oxAuthLogoutUrl",
-        "oxAuthTokenValidationUrl",
-        "oxAuthUserInfo",
         "oxAuthSectorIdentifierUrl",
         "oxAuthClientId",
         "oxAuthClientPassword",
@@ -661,12 +631,18 @@
         "oxAuthIssuer",
         "ignoreValidation",
         "umaIssuer",
-        "umaClientId",
-        "umaClientKeyId",
-        "umaResourceId",
-        "umaScope",
-        "umaClientKeyStoreFile",
-        "umaClientKeyStorePassword",
+        "scimUmaClientId",
+        "scimUmaClientKeyId",
+        "scimUmaResourceId",
+        "scimUmaScope",
+        "scimUmaClientKeyStoreFile",
+        "scimUmaClientKeyStorePassword",
+        "passportUmaClientId",
+        "passportUmaClientKeyId",
+        "passportUmaResourceId",
+        "passportUmaScope",
+        "passportUmaClientKeyStoreFile",
+        "passportUmaClientKeyStorePassword",
         "recaptchaSiteKey",
         "recaptchaSecretKey",
         "cssLocation",
@@ -683,6 +659,8 @@
         "shibboleth3SpConfDir",
         "organizationName",
         "idp3SigningCert",
-        "idp3EncryptionCert"
+        "idp3EncryptionCert",
+        "oxIncommonFlag",
+        "loggingLevel"
     ]
 }

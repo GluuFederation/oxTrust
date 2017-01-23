@@ -11,7 +11,6 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxauth.client.exception.ConfigurationException;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -19,6 +18,7 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xdi.util.StringHelper;
+import org.xdi.util.exception.ConfigurationException;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
 
@@ -33,7 +33,9 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
 	static {
-		if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
+        if (System.getProperty("gluu.base") != null) {
+            BASE_DIR = System.getProperty("gluu.base");
+        } else if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
 			BASE_DIR = System.getProperty("catalina.base");
 		} else if (System.getProperty("catalina.home") != null) {
 			BASE_DIR = System.getProperty("catalina.home");

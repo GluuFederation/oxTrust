@@ -1093,7 +1093,8 @@ public class CacheRefreshTimer {
 	private void updateApplianceStatus(GluuAppliance currentAppliance, long lastRun) {
 		GluuAppliance appliance = applianceService.getAppliance();
 
-		appliance.setVdsCacheRefreshLastUpdate(toIntString(lastRun / 1000));
+    	Date currentDateTime = new Date();
+		appliance.setVdsCacheRefreshLastUpdate(currentDateTime);
 		appliance.setVdsCacheRefreshLastUpdateCount(currentAppliance.getVdsCacheRefreshLastUpdateCount());
 		appliance.setVdsCacheRefreshProblemCount(currentAppliance.getVdsCacheRefreshProblemCount());
 

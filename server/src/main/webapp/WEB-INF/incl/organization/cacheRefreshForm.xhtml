@@ -31,6 +31,10 @@
             text-align: left;
             vertical-align: top;
         }
+        
+        .col-sm-11 {
+    		width: 80.66666667% !important;
+		}
     </h:outputStylesheet>
 
     <h:outputScript>
@@ -162,7 +166,7 @@
 </div></div>
            
                <div class="tab-pane" id="key-attributes">
-                <div style="display: inline-block;width: 75% !important;">
+                <div style="display: inline-block;width: 90% !important;">
                 <h:panelGroup >
                     <ox:simplePropertiesList label="Key attribute" labelAdd="key attribute" maxItems="3" properties="#{_configureCacheRefreshAction.keyAttributes}"
                         propertiesAction="#{_configureCacheRefreshAction}" required="true" />
@@ -226,7 +230,7 @@
 </div></div>
  <div class="box-footer">
 					
-							<rich:notifyMessages stayTime="2000" nonblocking="true" rendered="#{showGlobalMessages != 'false'}"/>
+							<rich:notifyMessages stayTime="2000" nonblocking="true" rendered="#{showGlobalMessages == 'false'}"/>
 							
 							 <h:commandButton styleClass="btn btn-primary" value="Update" action="#{configureCacheRefreshAction.update}" />
                         <h:commandButton styleClass="btn btn-primary" value="Cancel" action="#{configureCacheRefreshAction.cancel}" immediate="true" style="margin-left:5px" />

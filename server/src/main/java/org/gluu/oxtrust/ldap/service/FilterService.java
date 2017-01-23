@@ -33,6 +33,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.w3c.dom.Document;
+import org.xdi.service.XmlService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xml.sax.SAXException;
@@ -63,9 +64,15 @@ public class FilterService {
 	@In
 	private Shibboleth3ConfService shibboleth3ConfService;
 
+	@In
+	private XmlService xmlService;
+
 	public List<MetadataFilter> getAvailableMetadataFilters() {
-		File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth3"
-				+ File.separator + "idp" + File.separator + "MetadataFilter");
+
+		String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
+		// File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
+		File filterFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
+
 		File[] filterTemplates = null;
 		if (filterFolder.exists() && filterFolder.isDirectory()) {
 			filterTemplates = filterFolder.listFiles(new FilenameFilter() {
@@ -191,8 +198,7 @@ public class FilterService {
 		if (trustRelationship.getGluuSAMLMetaDataFilter() != null) {
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			for (String filterXML : trustRelationship.getGluuSAMLMetaDataFilter()) {
-				Document xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-						.parse(new java.io.ByteArrayInputStream(filterXML.getBytes()));
+				Document xmlDocument = xmlService.getXmlDocument(filterXML.getBytes());
 				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().equals(VALIDATION_TYPE)) {
 					MetadataFilter filter = createMetadataFilter("validation");
 					XPathExpression contactCountXPath = xPath.compile("count(/MetadataFilter/ExtensionSchema)");

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/schema/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
+	xmlns:cc="http://java.sun.com/jsf/composite">
+
+<cc:interface>
+
+	<cc:attribute name="passportConfig" required="true"
+		type="org.xdi.model.passport.PassportConfiguration" />
+	<cc:attribute name="passportConfigFieldList" required="false"
+		type="java.util.List" />
+	<cc:attribute name="authenicationConfigAction" required="false"
+		type="org.gluu.oxtrust.action.ManagePersonAuthenticationAction" />
+	<cc:attribute name="displayEnable" required="false" default="true"
+		type="java.lang.Boolean" />
+	<cc:attribute name="renderAfterRomoval" type="java.lang.String" />
+</cc:interface>
+
+<cc:implementation>
+	<h:panelGroup id="fieldsid">
+				
+				<a4j:region>
+				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="text">
+                    <ui:define name="label">Strategy</ui:define>
+                    <div class="row" style="float:left;margin-left:3px;">
+                    <h:inputText value="#{cc.attrs.passportConfig.strategy}" required="true" immediate="true" size="40" maxlength="40" styleClass="searchParameters form-control" /></div>
+                </s:decorate>
+                
+                
+                    <a4j:repeat id="fieldtable" 
+					value="#{cc.attrs.passportConfig.fieldset}" var="fieldkey">
+					<h:panelGrid id="panel" columns="3" cellpadding="10"
+						cellspacing="1">
+							<h:inputText value="#{fieldkey.key}" size="20"
+								immediate="true" styleClass="form-control">
+								<f:ajax />
+							</h:inputText>
+							<h:inputText value="#{fieldkey.value}" size="50"
+								immediate="true" styleClass="form-control">
+								<f:ajax />
+							</h:inputText>
+							</h:panelGrid>
+
+				</a4j:repeat>				
+				
+				<s:div styleClass="addConfig">
+					<a4j:commandLink styleClass="btn btn-link" value="Add New Field"
+						action="#{cc.attrs.authenicationConfigAction.addField(cc.attrs.passportConfig)}"
+						render="fieldsid" execute="@region"
+						style="margin-right:1100px;margin-top:50px;" />
+				</s:div>
+				<hr></hr>
+			</a4j:region>
+	</h:panelGroup>
+</cc:implementation>
+
+</html>

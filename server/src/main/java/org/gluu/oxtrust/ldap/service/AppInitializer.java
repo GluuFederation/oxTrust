@@ -15,13 +15,13 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
-import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.OperationsFacade;
@@ -31,7 +31,6 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -143,7 +142,7 @@ public class AppInitializer {
 		SubversionService.instance().initSubversionService();
 
 		// Initialize python interpreter
-		PythonService.instance().initPythonInterpreter();
+		PythonService.instance().initPythonInterpreter(oxTrustConfiguration.getLdapConfiguration().getString("pythonModulesDir", null));
 
 //		checkAndUpdateLdapbaseConfiguration(); // We do not need to create ldapbase configuration any more because we 
 											   //supply working ldap data with either dashboard or python setup sript.
@@ -635,6 +634,33 @@ public class AppInitializer {
 		}
 
 		return umaConfigurationEndpoint;
+	}
+	
+	@Observer(OxTrustConfiguration.CONFIGURATION_UPDATE_EVENT)
+	public void updateLoggingSeverity(ApplicationConfiguration applicationConfiguration) {
+		String loggingLevel = applicationConfiguration.getLoggingLevel();
+		if (StringHelper.isEmpty(loggingLevel)) {
+			return;
+		}
+
+		log.info("Setting loggers level to: '{0}'", loggingLevel);
+		
+		LoggerContext loggerContext = LoggerContext.getContext(false);
+
+		if (StringHelper.equalsIgnoreCase("DEFAULT", loggingLevel)) {
+			log.info("Reloadming log4j configuration");
+			loggerContext.reconfigure();
+			return;
+		}
+
+		Level level = Level.toLevel(loggingLevel, Level.INFO);
+
+		for (org.apache.logging.log4j.core.Logger logger : loggerContext.getLoggers()) {
+			String loggerName = logger.getName();
+			if (loggerName.startsWith("org.xdi.service") || loggerName.startsWith("org.xdi.oxauth") || loggerName.startsWith("org.gluu")) {
+				logger.setLevel(level);
+			}
+		}
 	}
 
 }

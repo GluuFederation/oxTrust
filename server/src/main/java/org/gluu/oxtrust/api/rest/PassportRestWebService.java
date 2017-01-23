@@ -1,122 +1,127 @@
 package org.gluu.oxtrust.api.rest;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.ldap.service.OxPassportService;
+import org.gluu.oxtrust.exception.UmaProtectionException;
+import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
 import org.gluu.oxtrust.model.passport.PassportStrategy;
-import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.service.uma.PassportUmaProtectionService;
+import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.oxauth.client.uma.RptStatusService;
-import org.xdi.oxauth.client.uma.UmaClientFactory;
-import org.xdi.oxauth.client.uma.wrapper.UmaClient;
-import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
-import org.xdi.oxauth.model.uma.UmaConfiguration;
+import org.xdi.model.passport.FieldSet;
 import org.xdi.oxauth.model.uma.wrapper.Token;
-import org.xdi.util.security.StringEncrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
-
+import org.xdi.service.JsonService;
+import org.xdi.util.Pair;
 
 /**
  * PassportConfigurationEndPoint Implementation
  * 
  * @author Shekhar L.
+ * @author Yuriy Movchan Date: 12/06/2016
  */
 
-
 @Name("PassportConfigurationEndPoint")
-@Path("/passportconfig")
+@Path("/passport/config")
 public class PassportRestWebService {
+
 	@Logger
 	private Log log;
-	
-	@In(create = true, value="passportService")
-	private OxPassportService oxPassportService ;
-	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
-	
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
-	
-	@In(value = "umaMetadataConfiguration")
-	private UmaConfiguration metadataConfiguration;
-	
-	@POST
-	@Produces({MediaType.APPLICATION_JSON})
-	public Response getPassportConfig(@FormParam(OxTrustConstants.OXAUTH_ACCESS_TOKEN) final String rpt) throws Exception{
-		PassportConfigResponse passportConfigResponse = null;
-		try{
-			RptStatusService rptStatusService = UmaClientFactory.instance().createRptStatusService(metadataConfiguration);			
-			String umaPatClientId = applicationConfiguration.getOxAuthClientId();
-			String umaPatClientSecret = applicationConfiguration.getOxAuthClientPassword();
-			
-			if (umaPatClientSecret != null) {
-				try {
-					umaPatClientSecret = StringEncrypter.defaultInstance().decrypt(umaPatClientSecret, cryptoConfigurationSalt);
-				} catch (EncryptionException ex) {
-					log.error("Failed to decrypt client password", ex);
-				}
-			}
-			
-			String tokenEndpoint = metadataConfiguration.getTokenEndpoint();			
-			Token patToken = UmaClient.requestPat(tokenEndpoint, umaPatClientId, umaPatClientSecret);
-			
-			if((patToken != null) ){			
-				RptIntrospectionResponse tokenStatusResponse = rptStatusService.requestRptStatus(
-		                    "Bearer " + patToken.getAccessToken(),
-		                    rpt, "");
-				
-				if((tokenStatusResponse != null) && (tokenStatusResponse.getActive())){
-					passportConfigResponse = new PassportConfigResponse();
-					LdapOxPassportConfiguration ldapOxPassportConfiguration = oxPassportService.loadConfigurationFromLdap();
-					List<org.xdi.config.oxtrust.PassportConfiguration>  passportConfigurations  =ldapOxPassportConfiguration.getPassportConfigurations();
-					Map  <String ,PassportStrategy> PassportConfigurationsMap = new HashMap<String, PassportStrategy>();
-					for(org.xdi.config.oxtrust.PassportConfiguration passportConfiguration : passportConfigurations){			
-						if(passportConfiguration.getProvider().equalsIgnoreCase("passport")){
-							passportConfigResponse.setApplicationEndpoint((passportConfiguration.getApplicationEndpoint()==null) ? "" : passportConfiguration.getApplicationEndpoint() );	
-							passportConfigResponse.setAuthenticationUrl((passportConfiguration.getServerURI()==null) ? "" : passportConfiguration.getServerURI());
-							passportConfigResponse.setApplicationStartpoint((passportConfiguration.getApplicationStartpoint()==null) ? "" : passportConfiguration.getApplicationStartpoint());
-							
-						}else{
-							PassportStrategy passportStrategy = new PassportStrategy();							
-							passportStrategy.setClientID((passportConfiguration.getClientID()==null) ? "" : passportConfiguration.getClientID());
-							passportStrategy.setClientSecret((passportConfiguration.getClientSecret()==null) ? "" : passportConfiguration.getClientSecret());
-							PassportConfigurationsMap.put((passportConfiguration.getProvider()==null) ? "" : passportConfiguration.getProvider(), passportStrategy);
-						}					
-					}	
-					passportConfigResponse.setPassportStrategies(PassportConfigurationsMap);
-					return Response.status(Response.Status.OK).entity(passportConfigResponse).build();
+
+	@In
+	private PassportService passportService;
+
+	@In
+	private PassportUmaProtectionService pasportUmaProtectionService;
+
+	@In
+	private UmaPermissionService umaPermissionService;
+
+	@In
+	private JsonService jsonService;
+
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getPassportConfig(@HeaderParam("Authorization") String authorization) {
+		Response authorizationResponse = processAuthorization(authorization);
+		if (authorizationResponse != null) {
+			return authorizationResponse;
+		}
+
+		PassportConfigResponse passportConfigResponse = new PassportConfigResponse();
+		
+		Map <String,Map> strategies = new HashMap <String,Map>();
+
+		LdapOxPassportConfiguration ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
+		if(ldapOxPassportConfiguration != null ){
+			for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
+				if(passportConfiguration != null){
+					Map<String, String> map = new HashMap();
+					List<FieldSet>  passList = passportConfiguration.getFieldset();
+					for( FieldSet fieldset :  passList ){
+						map.put(fieldset.getKey(), fieldset.getValue());
+					}		
 					
-				}else{
-					log.info("Invalid GAT/RPT token. ");
-					return Response.status(Response.Status.UNAUTHORIZED).build();
+					strategies.put(passportConfiguration.getStrategy(),map);
 				}
-				
-			}else{
-				log.info("Unable to get PAT token. ");	
-				return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
 			}
-			
-		}catch(Exception e){
-			log.error("Exception Occured : {0} ", e.getMessage());
-			e.printStackTrace();			
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}	
+		}
+		passportConfigResponse.setPassportStrategies(strategies);
+
+		String passportConfigResponseJson;
+		try {
+			passportConfigResponseJson = jsonService.objectToPerttyJson(passportConfigResponse);
+		} catch (IOException ex) {
+			return getErrorResponse(Response.Status.FORBIDDEN, "Failed to prepare configuration");
+		}
+
+		return Response.status(Response.Status.OK).entity(passportConfigResponseJson).build();
+	}
+
+	protected Response processAuthorization(String authorization) {
+		if (!pasportUmaProtectionService.isEnabled()) {
+			log.info("UMA authentication is disabled");
+			return getErrorResponse(Response.Status.FORBIDDEN, "Passport configuration was disabled");
+		}
+
+		Token patToken;
+		try {
+			patToken = pasportUmaProtectionService.getPatToken();
+		} catch (UmaProtectionException ex) {
+			return getErrorResponse(Response.Status.FORBIDDEN, "Failed to obtain PAT token");
+		}
+
+		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken,
+				authorization, pasportUmaProtectionService.getUmaResourceId(),
+				pasportUmaProtectionService.getUmaScope());
+		if (rptTokenValidationResult.getFirst()) {
+			if (rptTokenValidationResult.getSecond() != null) {
+				return rptTokenValidationResult.getSecond();
+			}
+		} else {
+			return getErrorResponse(Response.Status.FORBIDDEN, "Invalid GAT/RPT token");
+		}
+
+		return null;
+	}
+
+	protected Response getErrorResponse(Response.Status status, String detail) {
+		return Response.status(status).entity(detail).build();
 	}
 
 }

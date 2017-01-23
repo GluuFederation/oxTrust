@@ -115,7 +115,8 @@ public class StatusCheckerDaily {
 		// Set LDAP attributes
 		setLdapAttributes(appliance);
 
-		appliance.setLastUpdate(toIntString(System.currentTimeMillis() / 1000));
+    	Date currentDateTime = new Date();
+		appliance.setLastUpdate(currentDateTime);
 
 		try {
 			applianceService.updateAppliance(appliance);

@@ -46,6 +46,7 @@ import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.Extension.Builder;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
+import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -391,7 +392,7 @@ public class CopyUtils2 implements Serializable {
 			try {
 
 				if (personService1.getPersonByUid(source.getUserName()) != null) {
-					return null;
+					throw new DuplicateEntryException("Duplicate UID value: " + source.getUserName());
 				}
 
 				personService1.addCustomObjectClass(destination);
@@ -583,6 +584,8 @@ public class CopyUtils2 implements Serializable {
 				}
 				*/
 
+			} catch (DuplicateEntryException e) {
+				throw e;
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				return null;

@@ -246,91 +246,6 @@ public class Utils implements Serializable {
 		return false;
 	}
 
-	/**
-	 * gets the authentication mode true if its basic or false if its oxAuth
-	 * 
-	 * @return boolean
-	 */
-
-	public static boolean isBasicAuth() {
-		String mode = OxTrustConfiguration.instance().getApplicationConfiguration().getAuthMode();
-		if ("basic".equalsIgnoreCase(mode)) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * gets the authentication mode true if its basic or false if its oxAuth
-	 * 
-	 * @return boolean
-	 */
-
-	public static boolean isOxAuth() {
-		String mode = OxTrustConfiguration.instance().getApplicationConfiguration().getAuthMode();
-		if ("oxauth".equalsIgnoreCase(mode)) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Returns an xri (last quad) in lower case for given inum
-	 * 
-	 * @param inum
-	 *            object's inum
-	 * @return lower case representation of xri
-	 */
-	public static String getXriFromInum(String inum) {
-		String xri = inum.substring(inum.lastIndexOf(OxTrustConstants.inumDelimiter));
-		return xri.toLowerCase();
-	}
-
-	/**
-	 * Returns parent xri in lower case for a given inum
-	 * 
-	 * @param inum
-	 *            object's inum
-	 * @return parent xri in lower case
-	 */
-	public static String getParentXriFromInum(String inum) {
-		String parentXri = inum.substring(0, inum.lastIndexOf(OxTrustConstants.inumDelimiter));
-		return parentXri.toLowerCase();
-	}
-
-	/**
-	 * Returns an xri (last quad) in lower case for given iname
-	 * 
-	 * @param iname
-	 *            object's iname
-	 * @return lower case representation of xri
-	 */
-	public static String getXriFromIname(String iname) {
-		String xri = iname.substring(iname.lastIndexOf(OxTrustConstants.inameDelimiter));
-		return xri.toLowerCase();
-	}
-
-	/**
-	 * Returns parent xri in lower case for a given inum
-	 * 
-	 * @param inum
-	 *            object's inum
-	 * @return parent xri in lower case
-	 */
-	public static String getParentXriFromIname(String inum) {
-		String parentXri = inum.substring(0, inum.lastIndexOf(OxTrustConstants.inameDelimiter));
-		return parentXri.toLowerCase();
-	}
-
-	/*
-	 * public static String getSchoolClassParentIname() { return
-	 * OxTrustConfiguration
-	 * .instance().getApplicationConfiguration().getOrgInum() +
-	 * Configuration.inameDelimiter +
-	 * OxTrustConfiguration.instance().getApplicationConfiguration
-	 * ().getOxPlusIname() + Configuration.inameDelimiter +
-	 * Configuration.INAME_CLASS_OBJECTTYPE; }
-	 */
 	public static String getPersonParentInum() {
 		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgInum() + OxTrustConstants.inumDelimiter
 				+ OxTrustConstants.INUM_PERSON_OBJECTTYPE;
@@ -373,9 +288,9 @@ public class Utils implements Serializable {
      * @throws IOException 
      */
     public static String saveRandomFile(byte[] array, String baseDir, String extension) throws IOException {
-        String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
+        final String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
         
-        File dir = new File(baseDir);
+        final File dir = new File(baseDir);
         if (!dir.exists())
             dir.mkdirs();
         else if (!dir.isDirectory())
@@ -389,8 +304,8 @@ public class Utils implements Serializable {
                 out.write(b);
             }
         } finally {
-            out.close();
             in.close();
+            out.close();
         }
         return filepath;
     }

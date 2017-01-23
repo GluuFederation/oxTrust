@@ -31,7 +31,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 	private Log log;
 
 	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON)
+	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	public Response listGroups(@HeaderParam("Authorization") String authorization) throws Exception {
 

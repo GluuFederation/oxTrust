@@ -6,14 +6,7 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.io.StringWriter;
+import java.io.*;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -32,8 +25,12 @@ import java.util.TreeSet;
 import java.util.zip.Deflater;
 import java.util.zip.ZipOutputStream;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -63,11 +60,11 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
+import org.jboss.seam.web.ServletContexts;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
@@ -83,7 +80,6 @@ import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
 /**
  * Action class for updating and adding the trust relationships
  * 
- * @author Pankaj Narang
  * @author Yuriy Movchan Date: 11.04.2010
  */
 @Scope(ScopeType.CONVERSATION)
@@ -168,6 +164,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private List<String> filteredEntities;
 
 	private String filterString;
+/*
 	private String metadata;
 	public String getMetadata() {
 		return metadata;
@@ -176,12 +173,17 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public void setMetadata(String metadata) {
 		this.metadata = metadata;
 	}
+*/
 
 	private List<String> availableEntitiesFiltered;
 	//private GluuEntityType entityType;	
 
-	@In
-	 private ResourceLoader resourceLoader;
+
+	@In(value="#{facesContext.externalContext}")
+	private ExternalContext extCtx;
+
+	// @In
+	// private ResourceLoader resourceLoader;
 	
 	public List <GluuMetadataSourceType> getMetadataSourceTypesList() {
 		List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
@@ -258,10 +260,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				this.trustRelationship.setInum(this.inum);
 			} else {
 				this.inum = this.trustRelationship.getInum();
+				if(this.trustRelationship.getSpMetaDataFN() == null )
 				update=true;
 			}
 
-			boolean updateShib2Configuration = applicationConfiguration.isConfigGeneration();
+			boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration();
 			switch (trustRelationship.getSpMetaDataSourceType()) {
 			case GENERATE:
 				String certificate = getCertForGeneratedSP();
@@ -277,12 +280,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				break;
 			case FILE:
 				if (saveSpMetaDataFileSourceTypeFile()) {
-					update = true;
+					//update = true;
 					updateSpMetaDataCert(certWrapper);
 //					setEntityId();
 					if(!update){
 						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
-					}
+					 }
 				} else {
 					log.error("Failed to save SP meta-data file {0}", fileWrapper);
 					return OxTrustConstants.RESULT_FAILURE;
@@ -351,7 +354,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				this.update = true;
 			}
 
-			if (updateShib2Configuration) {
+			if (updateShib3Configuration) {
 				List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 				updateShibboleth3Configuration(trustRelationships);
 			}
@@ -455,7 +458,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		this.trustRelationship.setGluuEntityId(entityIdSet);
 	}
-
+	
 	/**
 	 * If there is no certificate selected, or certificate is invalid -
 	 * generates one.
@@ -464,7 +467,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	 * @return certificate for generated SP
 	 * @throws CertificateEncodingException
 	 */
-	private String getCertForGeneratedSP() {
+	public String getCertForGeneratedSP() {
 
 		X509Certificate cert = null;
 
@@ -938,17 +941,24 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 			String spReadMeResourceName = shibboleth3ConfService.getSpReadMeResourceName();
 			String fileName = (new File(spReadMeResourceName)).getName();
-			InputStream is = resourceLoader.getResourceAsStream(spReadMeResourceName);
+			// InputStream is = resourceLoader.getResourceAsStream(spReadMeResourceName);
 			//InputStream is = this.getClass().getClassLoader().getResourceAsStream(spReadMeResourceName);
-			if (!ResponseHelper.addResourceToZip(is, fileName , zos)) {
+
+			ServletContext ctx = ServletContexts.instance().getRequest().getServletContext();
+			InputStream is = ctx.getResourceAsStream(spReadMeResourceName);
+
+			if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
 				log.error("Failed to add " + spReadMeResourceName + " to zip");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
 			String spReadMeWindowsResourceName = shibboleth3ConfService.getSpReadMeWindowsResourceName();
 			fileName = (new File(spReadMeWindowsResourceName)).getName();
-			is = resourceLoader.getResourceAsStream(spReadMeWindowsResourceName);
-			if (!ResponseHelper.addResourceToZip(is, fileName , zos)) {
+			// is = resourceLoader.getResourceAsStream(spReadMeWindowsResourceName);
+
+			is = ctx.getResourceAsStream(spReadMeWindowsResourceName);
+
+			if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
 				log.error("Failed to add " + spReadMeWindowsResourceName + " to zip");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -999,9 +1009,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return trustRelationship;
 	}
 
-	public void loadMetadata() throws IOException {
+	// public void loadMetadata() throws IOException {
+	public String getMetadata() throws IOException {
 		if (trustRelationship == null) {
-			return ;
+			// return ;
+			return null;
 		}
 
 		String filename = trustRelationship.getSpMetaDataFN();
@@ -1010,12 +1022,14 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(filename));
 
 			if (metadataFile.exists()) {
-				metadata = FileUtils.readFileToString(metadataFile);
-				return;
+				// metadata = FileUtils.readFileToString(metadataFile);
+				// return;
+				return FileUtils.readFileToString(metadataFile);
 			}
 		}
 
-		return;
+		// return;
+		return null;
 	}
 
 	public boolean isUpdate() {
@@ -1353,4 +1367,47 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public GluuEntityType[] getEntityTypeList() {
 		return GluuEntityType.values();
 	}
+	
+	public boolean generateSp() throws IOException{
+		try{
+		log.info(" generate sp ------------");
+		this.trustRelationship.setInum(trustService.generateInumForNewTrustRelationship());
+		
+		String cert = getCertForGeneratedSP();
+		//boolean val = generateSpMetaDataFile(cert);
+		
+		String spMetadataFileName = this.trustRelationship.getSpMetaDataFN();
+
+		if (StringHelper.isEmpty(spMetadataFileName)) {
+			// Generate new file name
+			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
+			trustRelationship.setSpMetaDataFN(spMetadataFileName);
+		}
+		
+		String spMetadataFileContent = shibboleth3ConfService.generateSpMetadataFileContent( trustRelationship,  cert);
+		
+		//ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance()
+                //.getExternalContext().getContext();
+		HttpServletResponse response = (HttpServletResponse)extCtx.getResponse();
+			//InputStream fis = new ByteArrayInputStream(spMetadataFileContent.getBytes(StandardCharsets.UTF_8));//ctx.getResourceAsStream("/WEB-INF/testfile.zip");
+	
+			// Prepare the response
+			response.setContentType("application/xml");
+			response.setHeader("Content-Disposition",
+					"attachment;filename="+spMetadataFileName);
+			ServletOutputStream os = response.getOutputStream();
+			os.write(spMetadataFileContent.getBytes());
+			os.flush();
+			os.close();
+			facesContext.responseComplete();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
+		facesContext.responseComplete();
+			return true;
+
+	}
+
 }
