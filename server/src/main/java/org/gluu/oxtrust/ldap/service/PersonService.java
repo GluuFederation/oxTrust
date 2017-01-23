@@ -31,6 +31,8 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.ldap.model.CustomAttribute;
+import org.xdi.ldap.model.SimpleUser;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;

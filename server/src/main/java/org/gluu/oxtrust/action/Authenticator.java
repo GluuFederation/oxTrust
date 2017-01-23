@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.AuthenticationService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -36,7 +35,6 @@ import org.gluu.oxtrust.security.OauthData;
 import org.gluu.oxtrust.service.AuthenticationSessionService;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.AuthenticationException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -89,9 +87,6 @@ public class Authenticator implements Serializable {
 
 	@In
 	private Identity identity;
-
-	@In
-	private AuthenticationService authenticationService;
 
 	@In
 	private Credentials credentials;
@@ -164,54 +159,6 @@ public class Authenticator implements Serializable {
 		}
 
 		return true;
-	}
-
-	public boolean authenticateBasicWebService() {
-		String userName = identity.getCredentials().getUsername();
-		log.info("Authenticating user '{0}'", userName);
-
-		boolean authenticated = false;
-		try {
-			authenticated = this.authenticationService.authenticate(userName, this.credentials.getPassword());
-		} catch (AuthenticationException ex) {
-			this.log.error("Failed to authenticate user: '{0}'", ex, userName);
-		}
-		
-		if (!authenticated) {
-			return false;
-		}
-
-		return postAuthenticateWebService(userName);
-    }
-
-	public boolean authenticateBearerWebService() {
-		String userName = identity.getCredentials().getUsername();
-		log.info("Authenticating user '{0}'", userName);
-
-		return postAuthenticateWebService(userName);
-    }
-
-	public boolean postAuthenticateWebService(String userName) {
-		try {
-	        User user = findUserByUserName(userName);
-			if (user == null) {
-				log.error("Person '{0}' not found in LDAP", userName);
-				return false;
-			}
-	
-            Principal principal = new SimplePrincipal(userName);
-            identity.acceptExternallyAuthenticatedPrincipal(principal);
-            identity.quietLogin();
-
-	        postLogin(user);
-			log.info("User '{0}' authenticated successfully", userName);
-
-	        return true;
-		} catch (Exception ex) {
-			log.error("Failed to authenticate user '{0}'", ex, userName);
-		}
-
-		return false;
 	}
 
 	/**
