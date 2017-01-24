@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
@@ -44,25 +45,26 @@ public class PassportService {
 	@In
 	private OxTrustConfiguration oxTrustConfiguration;
 
+	public boolean containsPassportConfiguration() {
+		String configurationDn = getConfigurationDn();
+		if (StringHelper.isEmpty(configurationDn)) {
+			return false;
+		}
+
+		return ldapEntryManager.contains(LdapOxPassportConfiguration.class, configurationDn);
+	}
+
 	public LdapOxPassportConfiguration loadConfigurationFromLdap() {
-		try {
-			String configurationDn = geConfigurationDn();
-			log.debug("########## configurationDn = " + configurationDn);
-			if ((configurationDn != null) && !(configurationDn.trim().equals(""))) {
-				LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
-				LdapOxPassportConfiguration conf = ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
-				return conf;
-			}
-		} catch (LdapMappingException ex) {
-			log.error("Failed to load configuration from LDAP", ex);
-		} catch (Exception ex) {
-			log.error("Exception ", ex);
+		boolean contains = containsPassportConfiguration();
+		if (contains) {
+			String configurationDn = getConfigurationDn();
+			return ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
 		}
 
 		return null;
 	}
 
-	private String geConfigurationDn() {
+	private String getConfigurationDn() {
 		FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
 		String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
 		return configurationDn;
@@ -75,11 +77,13 @@ public class PassportService {
 	 *            LdapOxPassportConfiguration
 	 */
 	public void updateLdapOxPassportConfiguration(LdapOxPassportConfiguration ldapOxPassportConfiguration) {
-		if (StringHelper.isEmpty(ldapOxPassportConfiguration.getDn())) {
-			ldapOxPassportConfiguration.setDn(geConfigurationDn());
-			ldapEntryManager.persist(ldapOxPassportConfiguration);
-		} else {
+		ldapOxPassportConfiguration.setDn(getConfigurationDn());
+
+		boolean contains = containsPassportConfiguration();
+		if (contains) {
 			ldapEntryManager.merge(ldapOxPassportConfiguration);
+		} else {
+			ldapEntryManager.persist(ldapOxPassportConfiguration);
 		}
 
 	}
