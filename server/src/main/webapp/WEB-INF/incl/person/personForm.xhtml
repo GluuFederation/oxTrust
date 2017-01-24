@@ -46,6 +46,23 @@
                 attr.hide();
             }
         }
+        
+       function changeTextType(element) {
+    		var $element = $(element);
+    		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
+		}
+
+		function updateSpan(element) {
+    		var $element = $(element);
+    		var pwd = $element[0].childNodes[0].innerHTML;
+    		
+    		var newPwd = '';
+    		for (i = 0;  i &lt; pwd.length ; i++)
+    			newPwd += '&bull;';
+    		
+    		$element[0].childNodes[0].innerHTML=newPwd;
+		}
+		
     </h:outputScript>
     <section class="content-header">
         <h1 style="color: #333;">
@@ -112,7 +129,7 @@
                                                     <ui:param name="_aid"
                                                               value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
                                                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                                                                rendered="#{_custAttr.adminCanEdit or _mustEnter}">
+                                                                rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}">
                                                         <ui:define
                                                                 name="label">#{_custAttr.metadata.displayName}</ui:define>
 
@@ -124,7 +141,7 @@
                                                                     validator="#{_custAttr.metadata.validateAttribute}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="Please enter #{_custAttr.metadata.displayName}. "
-                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status')}">
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status') and (_custAttr.metadata.displayName ne 'Password')}" >
                                                                 <rich:validator event="blur"/>
                                                                	
                                                             </rich:inplaceInput>                                                      
@@ -183,20 +200,37 @@
                                                         </a4j:commandLink>
                                                         </s:decorate>
                                                         
-                                                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">>
+                                                        
+                                                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+                                                        <ui:define
+                                                                name="label">Password</ui:define>
+														<div class="col-xs-10">                                                                                           
+                                                            
+                                                            <rich:inplaceInput
+                                                                    id="custpasswordId"
+                                                                    validator="#{updatePersonAction.validateConfirmPassword}"
+                                                                    required="#{_mustEnter and empty param['sv']}"
+                                                                    requiredMessage="Please enter #{_custAttr.metadata.displayName}. "
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
+                                                                    onfocus="changeTextType(this);">
+                                                                <rich:validator event="blur" oncomplete="updateSpan(this)"/>
+                                                            </rich:inplaceInput>                                                             
+                                                        </div>
+                                                     </s:decorate>               
+                                                        
+                                                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
                                                         <ui:define
                                                                 name="label">Confirm Password</ui:define>
 														<div class="col-xs-10">                                                                                           
-                                                            
                                                             <rich:inplaceInput       
                                                                     defaultLabel="Click to enter Confirm Pasword"
                                                                     maxlength="50" id="custconfirmpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="Please enter Confirm Password" 
-                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-                                                                <rich:validator event="blur"/>
-                                                               	
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
+                                                                    onfocus="changeTextType(this);">
+                                                                <rich:validator event="blur" oncomplete="updateSpan(this)"/>
                                                             </rich:inplaceInput>                                                             
                                                         </div>
                                                      </s:decorate>                                                        

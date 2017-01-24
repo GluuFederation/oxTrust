@@ -40,6 +40,7 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
+import org.xdi.util.StringHelper;
 
 /**
  * Action class for updating person's attributes
@@ -86,6 +87,9 @@ public class UpdatePersonAction implements Serializable {
 	private ExternalUpdateUserService externalUpdateUserService;
 	
 	private GluuStatus gluuStatus ;
+
+	private String password;
+	private String confirmPassword;
 
 	public GluuStatus getGluuStatus() {
 		return gluuStatus;
@@ -333,16 +337,17 @@ public class UpdatePersonAction implements Serializable {
 	
 	public void validateConfirmPassword(FacesContext context, UIComponent comp,
 			Object value){
-		String confirmPassword = (String) value;
-		String password = this.person.getAttribute("userPassword");
-		
-		if ((confirmPassword == null)  ||  !confirmPassword.equals(password)) {	
-			((UIInput) comp).setValid(false);
-		      FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Password and Confirm Password should be same!", "Password and Confirm Password should be same!");
-		      context.addMessage(comp.getClientId(context), message);
+		if (comp.getClientId().endsWith("custpasswordId")) {
+			this.password = (String) value;
+		} else if (comp.getClientId().endsWith("custconfirmpasswordId")) {
+			this.confirmPassword = (String) value;
 		}
-		
-		
+
+		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {	
+			((UIInput) comp).setValid(false);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Password and Confirm Password should be same!", "Password and Confirm Password should be same!");
+			context.addMessage(comp.getClientId(context), message);
+}		
 	}
 
 }
