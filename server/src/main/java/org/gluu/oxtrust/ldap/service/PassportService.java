@@ -7,10 +7,8 @@
 package org.gluu.oxtrust.ldap.service;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.Component;
+import org.gluu.site.ldap.persistence.exception.MappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -58,7 +56,11 @@ public class PassportService {
 		boolean contains = containsPassportConfiguration();
 		if (contains) {
 			String configurationDn = getConfigurationDn();
-			return ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
+			try {
+				return ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
+			} catch (MappingException ex) {
+				log.error("Failed to load passport configuration from LDAP", ex);
+			}
 		}
 
 		return null;
