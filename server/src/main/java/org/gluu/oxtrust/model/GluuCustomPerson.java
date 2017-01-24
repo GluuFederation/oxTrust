@@ -57,8 +57,11 @@ public class GluuCustomPerson extends User
 		this.oxPPID = oxPPID;
 	}
 
+	@LdapAttribute(name = "oxCreationTimestamp")
+    private Date creationDate;	
+
 	@LdapAttribute
-    private Date oxCreationTimestamp;	
+    private Date updatedAt;	
 
 	// Value object holders
     private Set<String> schemas = new HashSet<String>();
@@ -296,19 +299,23 @@ public class GluuCustomPerson extends User
         this.sourceServerName = sourceServerName;
     }
 
-    public Date getOxCreationTimestamp() {
-		return oxCreationTimestamp;
+    public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setOxCreationTimestamp(Date oxCreationTimestamp) {
-		this.oxCreationTimestamp = oxCreationTimestamp;
-	}
-	
-	public void setOxUpdatedAt(String value) {
-		setAttribute("UpdatedAt", value);
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
-    public Set<String> getSchemas() {
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public Set<String> getSchemas() {
         return Collections.unmodifiableSet(schemas);
     }
 

@@ -228,7 +228,7 @@ public class RegisterPersonAction implements Serializable {
 
 			// save password
 			this.person.setUserPassword(password);
-			this.person.setOxCreationTimestamp(new Date());
+			this.person.setCreationDate(new Date());
 			this.person.setMail(email);
 			
 

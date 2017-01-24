@@ -351,7 +351,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				assertNull(copy.getMail());
 				assertEquals(copy.getMemberOf().get(0),"Mocked DN");
 				assertNull(copy.getNetworkPoken());
-				assertNull(copy.getOxCreationTimestamp());
+				assertNull(copy.getCreationDate());
 				assertEquals(copy.getPreferredLanguage(),"preferredLanguage");
 				assertNull(copy.getSLAManager());
 				assertNull(copy.getSourceServerName());
@@ -591,7 +591,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				assertNull(copy.getMail());
 				assertEquals(copy.getMemberOf().get(0),"Mocked DN");
 				assertNull(copy.getNetworkPoken());
-				assertNull(copy.getOxCreationTimestamp());
+				assertNull(copy.getCreationDate());
 				assertEquals(copy.getPreferredLanguage(),"preferredLanguage");
 				assertNull(copy.getSLAManager());
 				assertNull(copy.getSourceServerName());
@@ -808,7 +808,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				assertNull(copy.getMail());
 				assertEquals(copy.getMemberOf().size(),0);
 				assertNull(copy.getNetworkPoken());
-				assertNull(copy.getOxCreationTimestamp());
+				assertNull(copy.getCreationDate());
 				assertEquals(copy.getPreferredLanguage(),"preferredLanguage");
 				assertNull(copy.getSLAManager());
 				assertNull(copy.getSourceServerName());
