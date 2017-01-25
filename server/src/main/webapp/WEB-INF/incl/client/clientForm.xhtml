@@ -45,9 +45,24 @@
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="oxAuthTrustedClientBox">
                 <ui:define name="label">Pre-Authorization</ui:define>
-                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthTrustedClient}" id="trustedClientId" required="true">
+                <h:selectOneMenu id="trustedClientId"
+                                 styleClass="col-sm-9 form-control"
+                                 value="#{_client.oxAuthTrustedClient}"
+                                 required="true"
+                                 onchange="togglePersistAuthorization()">
                     <s:selectItems value="#{clientService.oxAuthTrustedClient}"  var="_type" label="#{_type.displayName}" />
-                    <!-- <s:convertEnum/> -->
+                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="persistClientAuthorizations">
+                <ui:define name="label">Persist Client Authorizations</ui:define>
+                <h:selectOneMenu id="persisteClientAuthorizationsId"
+                                 styleClass="col-sm-9 form-control"
+                                 value="#{_client.oxAuthPersistClientAuthorizations}"
+                                 required="true"
+                                 onchange="togglePersistAuthorization()">
+                    <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
             </s:decorate>
@@ -192,14 +207,6 @@
                 <ui:define name="label">Require Auth Time</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.requireAuthTime}" required="false">
                     <f:selectItem itemLabel="Please select a value."	noSelectionOption="true" />
-                    <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
-                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
-                </h:selectOneMenu>
-            </s:decorate>
-
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="persistClientAuthorizations">
-                <ui:define name="label">Persist Client Authorizations</ui:define>
-                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthPersistClientAuthorizations}" required="true">
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
@@ -435,4 +442,15 @@
 					</div>
         </div></div></div></div>
     </h:form>
+
+    <h:outputScript>
+        function togglePersistAuthorization() {
+            var trustedClientIdSelect = $("select[id='clientForm:oxAuthTrustedClientBox:trustedClientId']");
+            var persisteClientAuthorizationsIdSelect = $("select[id='clientForm:persistClientAuthorizations:persisteClientAuthorizationsId']");
+
+            if (trustedClientIdSelect.val() == "TRUE") {
+                persisteClientAuthorizationsIdSelect.val("FALSE");
+            }
+        }
+    </h:outputScript>
 </ui:composition>

@@ -19,9 +19,7 @@ import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -80,7 +78,7 @@ public class OxAuthClient extends Entry implements Serializable {
     private List<String> associatedPersons;
 
     @LdapAttribute(name = "oxAuthTrustedClient")
-    private OxAuthTrustedClientBox oxAuthTrustedClient;
+    private GluuBoolean oxAuthTrustedClient = GluuBoolean.FALSE;
 
     @LdapAttribute(name = "oxAuthResponseType")
     private ResponseType[] responseTypes;
@@ -155,20 +153,20 @@ public class OxAuthClient extends Entry implements Serializable {
     private String[] postLogoutRedirectUris;
 
     @LdapAttribute(name = "oxAuthLogoutURI")
-    private List <String> logoutUri;
+    private List<String> logoutUri;
 
     @LdapAttribute(name = "oxAuthLogoutSessionRequired")
     private GluuBoolean logoutSessionRequired = GluuBoolean.FALSE;
 
     @LdapAttribute(name = "oxPersistClientAuthorizations")
-    private GluuBoolean oxAuthPersistClientAuthorizations = GluuBoolean.FALSE;
+    private GluuBoolean oxAuthPersistClientAuthorizations = GluuBoolean.TRUE;
 
     @LdapAttribute(name = "oxAuthDefaultAcrValues")
     private String[] defaultAcrValues;
 
     @LdapAttribute(name = "oxAuthInitiateLoginURI")
     private String initiateLoginUri;
-    
+
     @LdapAttribute(name = "oxAuthClientSecretExpiresAt")
     private Date clientSecretExpiresAt;
 
@@ -273,11 +271,11 @@ public class OxAuthClient extends Entry implements Serializable {
         this.associatedPersons = associatedPersons;
     }
 
-    public OxAuthTrustedClientBox getOxAuthTrustedClient() {
+    public GluuBoolean getOxAuthTrustedClient() {
         return oxAuthTrustedClient;
     }
 
-    public void setOxAuthTrustedClient(OxAuthTrustedClientBox oxAuthTrustedClient) {
+    public void setOxAuthTrustedClient(GluuBoolean oxAuthTrustedClient) {
         this.oxAuthTrustedClient = oxAuthTrustedClient;
     }
 
@@ -473,11 +471,11 @@ public class OxAuthClient extends Entry implements Serializable {
         this.postLogoutRedirectUris = postLogoutRedirectUris;
     }
 
-    public List <String> getLogoutUri() {
+    public List<String> getLogoutUri() {
         return logoutUri;
     }
 
-    public void setLogoutUri(List <String> logoutUri) {
+    public void setLogoutUri(List<String> logoutUri) {
         this.logoutUri = logoutUri;
     }
 
@@ -532,12 +530,12 @@ public class OxAuthClient extends Entry implements Serializable {
         return oxAuthClientSecret;
     }
 
-	public Date getClientSecretExpiresAt() {
-		return clientSecretExpiresAt;
-	}
+    public Date getClientSecretExpiresAt() {
+        return clientSecretExpiresAt;
+    }
 
-	public void setClientSecretExpiresAt(Date clientSecretExpiresAt) {
-		this.clientSecretExpiresAt = clientSecretExpiresAt;
-	}
+    public void setClientSecretExpiresAt(Date clientSecretExpiresAt) {
+        this.clientSecretExpiresAt = clientSecretExpiresAt;
+    }
 
 }
