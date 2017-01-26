@@ -118,6 +118,15 @@ public class ManagePersonAuthenticationAction
 
 	private List<PassportConfiguration> ldapPassportConfigurations;
 
+	public List<PassportConfiguration> getLdapPassportConfigurations() {
+		return ldapPassportConfigurations;
+	}
+
+	public void setLdapPassportConfigurations(
+			List<PassportConfiguration> ldapPassportConfigurations) {
+		this.ldapPassportConfigurations = ldapPassportConfigurations;
+	}
+
 	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
@@ -160,6 +169,7 @@ public class ManagePersonAuthenticationAction
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
 			this.ldapPassportConfigurations = ldapOxPassportConfiguration.getPassportConfigurations();
+			
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
