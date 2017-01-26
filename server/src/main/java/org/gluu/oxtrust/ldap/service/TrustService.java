@@ -480,4 +480,8 @@ public class TrustService {
 
 		return result;
 	}
+	
+	public List<GluuSAMLTrustRelationship> getAllSAMLTrustRelationships(int sizeLimit) {		
+			return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null, 0, sizeLimit);
+	}
 }
