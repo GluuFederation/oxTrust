@@ -998,11 +998,6 @@
             "description": "Boolean value to specify if application should update oxLastAccessTime/oxLastLogonTime attributes on client authentication.",
             "type": "boolean"
         },
-        "updateSessionAccessTime": {
-        	"id": "updateSessionAccessTime",
-            "description": "Boolean value to specify if application should update oxLastAccessTime on session update.",
-            "type": "boolean"
-        },
         "loggingLevel": {
             "id": "loggingLevel",
             "description": "Logging level for oxAuth logers.",
@@ -1124,7 +1119,6 @@
         "frontChannelLogoutSessionSupported",
         "updateUserLastLogonTime",
         "updateClientAccessTime",
-        "updateSessionAccessTime",
         "loggingLevel"
     ]
 }
