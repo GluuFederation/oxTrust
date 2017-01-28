@@ -52,15 +52,13 @@
     		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
 		}
 
-		function updateSpan(element) {
+		function updateSpan(element, value) {
+    		var newValue = '';
+    		for (i = 0;  i &lt; value.length ; i++)
+    			newValue += '&bull;';
+    		
     		var $element = $(element);
-    		var pwd = $element[0].childNodes[0].innerHTML;
-    		
-    		var newPwd = '';
-    		for (i = 0;  i &lt; pwd.length ; i++)
-    			newPwd += '&bull;';
-    		
-    		$element[0].childNodes[0].innerHTML=newPwd;
+    		$element[0].childNodes[0].innerHTML = newValue;
 		}
 		
     </h:outputScript>
@@ -213,7 +211,7 @@
                                                                     requiredMessage="Please enter #{_custAttr.metadata.displayName}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
                                                                     onfocus="changeTextType(this);">
-                                                                <rich:validator event="blur" oncomplete="updateSpan(this)"/>
+                                                                <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custpasswordId')}.getValue())"/>
                                                             </rich:inplaceInput>                                                             
                                                         </div>
                                                      </s:decorate>               
@@ -230,7 +228,7 @@
                                                                     requiredMessage="Please enter Confirm Password" 
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
                                                                     onfocus="changeTextType(this);">
-                                                                <rich:validator event="blur" oncomplete="updateSpan(this)"/>
+                                                                <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custconfirmpasswordId')}.getValue())"/>
                                                             </rich:inplaceInput>                                                             
                                                         </div>
                                                      </s:decorate>                                                        
