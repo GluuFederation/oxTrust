@@ -39,6 +39,9 @@
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
                     <s:selectItems value="#{scopeService.scopeTypes}" noSelectionLabel="Default" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                    <a4j:ajax event="change"
+						render="dynamicScripts"
+						execute="@this" />
                 </h:selectOneMenu>
             </s:decorate>
   
@@ -46,6 +49,7 @@
                 <ui:define name="label">Default scope</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" noSelectionLabel="Select"/>
+
                 </h:selectOneMenu>
             </s:decorate>
 
@@ -69,48 +73,46 @@
                     </h:panelGroup>
                 </h:panelGroup>
             </s:decorate>
-
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="responseTypes">
-									<ui:define name="label">Dynamic Scope Scripts</ui:define>
-									<h:panelGroup id="selectedDynamicScriptId">
-										<h:panelGrid columns="1" width="100%" border="0"
-											cellpadding="0" cellspacing="0">
-											<a4j:repeat value="#{updateScopeAction.dynamicScripts}"
-												rowKeyVar="_dynamicScriptIdx" var="_dynamicScript">
-												<div class="col-sm-12">
-													<div class="col-sm-6">
-														<h:outputText value="#{_dynamicScript.name}"
-															style="margin-left:-29px;" />
-														<h:outputText value="&#160;" />
-													</div>
-													<div class="col-sm-6">
-														<a4j:commandLink styleClass="glyphicon glyphicon-remove "
-															action="#{updateScopeAction.removeDynamicScript(_dynamicScript)}"
-															execute="@this" render="selectedDynamicScriptId">
-															<!--  <h:graphicImage value="/img/remove.gif" /> -->
-														</a4j:commandLink>
-													</div>
-												</div>
-
-											</a4j:repeat>
-											<richext:spacer height="16" />
-										</h:panelGrid>
-									</h:panelGroup>
-								</s:decorate>
-								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="command">
-									<h:panelGroup>
-										<a4j:commandButton value="Add Dynamic Scope Script"
-											oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
-											execute="@this" styleClass="btn btn-primary"
-											style="margin-left:-95px;" />
-									</h:panelGroup>
-								</s:decorate>
-
-
-							</h:panelGroup>
-        
+			<h:panelGroup id="dynamicScripts">
+				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
+					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+						<ui:define name="label">Dynamic Scope Scripts</ui:define>
+						<h:panelGroup id="selectedDynamicScriptId">
+							<h:panelGrid columns="1" width="100%" border="0"
+								cellpadding="0" cellspacing="0">
+								<a4j:repeat value="#{updateScopeAction.dynamicScripts}"
+									rowKeyVar="_dynamicScriptIdx" var="_dynamicScript">
+									<div class="col-sm-12">
+										<div class="col-sm-6">
+											<h:outputText value="#{_dynamicScript.name}"
+												style="margin-left:-29px;" />
+											<h:outputText value="&#160;" />
+										</div>
+										<div class="col-sm-6">
+											<a4j:commandLink styleClass="glyphicon glyphicon-remove "
+												action="#{updateScopeAction.removeDynamicScript(_dynamicScript)}"
+												execute="@this" render="selectedDynamicScriptId">
+												<!--  <h:graphicImage value="/img/remove.gif" /> -->
+											</a4j:commandLink>
+										</div>
+									</div>
+								</a4j:repeat>
+								<richext:spacer height="16" />
+							</h:panelGrid>
+						</h:panelGroup>
+					</s:decorate>
+					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+						id="command">
+						<h:panelGroup>
+							<a4j:commandButton value="Add Dynamic Scope Script"
+								oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
+								execute="@this" styleClass="btn btn-primary"
+								style="margin-left:-95px;" />
+						</h:panelGroup>
+					</s:decorate>
+				</a4j:region>
+			</h:panelGroup>
+        </h:panelGroup>
         </div></div><div class="box-footer">
 							<ui:insert name="controlButttons" />
 					</div></div></div></div>

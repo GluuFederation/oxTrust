@@ -479,7 +479,9 @@ public class UpdateScopeAction implements Serializable {
 
 			List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<SelectableEntity<CustomScript>>();
 			for (CustomScript dynamicScript : availableScripts) {
-				tmpAvailableDynamicScripts.add(new SelectableEntity<CustomScript>(dynamicScript));
+				if(dynamicScript.isEnabled()){
+					tmpAvailableDynamicScripts.add(new SelectableEntity<CustomScript>(dynamicScript));
+				}
 			}
 			
 			this.availableDynamicScripts = tmpAvailableDynamicScripts;
