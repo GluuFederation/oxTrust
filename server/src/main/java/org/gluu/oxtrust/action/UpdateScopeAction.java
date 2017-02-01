@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Set;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
@@ -29,6 +31,9 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuAttribute;
+import org.xdi.model.SelectableEntity;
+import org.xdi.model.custom.script.CustomScriptType;
+import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
@@ -47,6 +52,7 @@ public class UpdateScopeAction implements Serializable {
      *
      */
 	private static final long serialVersionUID = 8198574569820157032L;
+	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description", "gluuStatus" };
 
 	@Logger
 	private Log log;
@@ -75,8 +81,15 @@ public class UpdateScopeAction implements Serializable {
 	private transient AttributeService attributeService;
 
 	@In
+	private CustomScriptService customScriptService;
+
+	@In
 	private FacesMessages facesMessages;
 
+	private List<CustomScript> dynamicScripts;
+	private List<SelectableEntity<CustomScript>> availableDynamicScripts;
+
+	
 	@Restrict("#{s:hasPermission('scope', 'access')}")
 	public String add() throws Exception {
 		if (this.scope != null) {
@@ -98,6 +111,9 @@ public class UpdateScopeAction implements Serializable {
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+		
+		this.dynamicScripts = getInitialDynamicScripts();
+
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -130,6 +146,7 @@ public class UpdateScopeAction implements Serializable {
 			} else {
 				this.claims = new ArrayList<DisplayNameEntry>();
 			}
+			this.dynamicScripts = getInitialDynamicScripts();
 
 		} catch (LdapMappingException ex) {
 			log.error("Failed to load claims", ex);
@@ -157,6 +174,7 @@ public class UpdateScopeAction implements Serializable {
 		// return Configuration.RESULT_FAILURE;
 		// }
 
+		updateDynamicScripts();
 		updateClaims();
 		if (update) {
 			// Update scope
@@ -374,6 +392,133 @@ public class UpdateScopeAction implements Serializable {
 		this.claims = claims;
 	}
 
+	private List<CustomScript> getInitialDynamicScripts() {
+		List<CustomScript> result = new ArrayList<CustomScript>();
+		if ((this.scope.getDynamicScopeScripts() == null) || (this.scope.getDynamicScopeScripts().size() == 0)) {
+			return result;
+		}
+
+		List<DisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
+				this.scope.getDynamicScopeScripts());
+		if (displayNameEntries != null) {
+			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
+				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(), displayNameEntry.getDisplayName()));
+			}
+		}
+
+		return result;
+	}
+
+	private void updateDynamicScripts() {
+		if (this.dynamicScripts == null || this.dynamicScripts.size() == 0) {
+			this.scope.setDynamicScopeScripts(null);
+			return;
+		}
+
+		List<String> tmpDynamicScripts = new ArrayList<String>();
+		for (CustomScript dynamicScript: this.dynamicScripts) {
+			tmpDynamicScripts.add(dynamicScript.getDn());
+		}
+
+		this.scope.setDynamicScopeScripts(tmpDynamicScripts);
+	}
+
+	public void acceptSelectDynamicScripts() {
+		if (this.availableDynamicScripts == null) {
+			return;
+		}
+
+		Set<String> addedDynamicScriptInums = getAddedDynamicScriptInums();
+
+		for (SelectableEntity<CustomScript> availableDynamicScript : this.availableDynamicScripts) {
+			CustomScript dynamicScript = availableDynamicScript.getEntity();
+			if (availableDynamicScript.isSelected() && !addedDynamicScriptInums.contains(dynamicScript.getInum())) {
+				addDynamicScript(dynamicScript);
+			}
+
+			if (!availableDynamicScript.isSelected() && addedDynamicScriptInums.contains(dynamicScript.getInum())) {
+				removeDynamicScript(dynamicScript);
+			}
+		}
+	}
+
+	public void cancelSelectDynamicScripts() {
+	}
+
+	public void addDynamicScript(CustomScript addDynamicScript) {
+		if (addDynamicScript == null) {
+			return;
+		}
+
+		this.dynamicScripts.add(addDynamicScript);
+	}
+
+	public void removeDynamicScript(CustomScript removeDynamicScript) {
+		if (removeDynamicScript == null) {
+			return;
+		}
+
+		for (Iterator<CustomScript> it = this.dynamicScripts.iterator(); it.hasNext();) {
+			CustomScript dynamicScript = (CustomScript) it.next();
+			
+			if (StringHelper.equalsIgnoreCase(removeDynamicScript.getInum(), dynamicScript.getInum())) {
+				it.remove();
+				break;
+			}
+		}
+	}
+	
+	public void searchAvailableDynamicScripts() {
+		if (this.availableDynamicScripts != null) {
+			selectAddedDynamicScripts();
+			return;
+		}
+
+		try {
+			List<CustomScript> availableScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.DYNAMIC_SCOPE), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
+
+			List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<SelectableEntity<CustomScript>>();
+			for (CustomScript dynamicScript : availableScripts) {
+				if(dynamicScript.isEnabled()){
+					tmpAvailableDynamicScripts.add(new SelectableEntity<CustomScript>(dynamicScript));
+				}
+			}
+			
+			this.availableDynamicScripts = tmpAvailableDynamicScripts;
+			selectAddedDynamicScripts();
+		} catch (LdapMappingException ex) {
+			log.error("Failed to find available authorization policies", ex);
+		}
+
+	}
+
+	private void selectAddedDynamicScripts() {
+		Set<String> addedDynamicScriptInums = getAddedDynamicScriptInums();
+
+		for (SelectableEntity<CustomScript> availableDynamicScript : this.availableDynamicScripts) {
+			availableDynamicScript.setSelected(addedDynamicScriptInums.contains(availableDynamicScript.getEntity().getInum()));
+		}
+	}
+
+	private Set<String> getAddedDynamicScriptInums() {
+		Set<String> addedDynamicScriptInums = new HashSet<String>();
+
+		for (CustomScript dynamicScript : this.dynamicScripts) {
+			addedDynamicScriptInums.add(dynamicScript.getInum());
+		}
+
+		return addedDynamicScriptInums;
+	}
+
+	public List<SelectableEntity<CustomScript>> getAvailableDynamicScripts() {
+		return this.availableDynamicScripts;
+	}
+
+	public List<CustomScript> getDynamicScripts() {
+		return dynamicScripts;
+	}
+	
+	
 	public boolean isUpdate() {
 		return update;
 	}
