@@ -59,6 +59,7 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -298,7 +299,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 //						setEntityId();
 					boolean result = shibboleth3ConfService.existsResourceUri(trustRelationship.getSpMetaDataURL());
 					if(result){
-						metadataValidationTimer.newThreadSaveSpMetaDataFileSourceTypeURI(this);
+						newThreadSaveSpMetaDataFileSourceTypeURI();
 					}else{
 						log.info("There is no resource found Uri : {0}", trustRelationship.getSpMetaDataURL());
 					}
@@ -361,6 +362,17 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+	
+	@Asynchronous
+	public void newThreadSaveSpMetaDataFileSourceTypeURI() {
+		try {
+			boolean result = saveSpMetaDataFileSourceTypeURI();
+			log.info("Download metadata for TR " + getTrustRelationship().getDisplayName() + "  : result   :  "
+					+ result);
+		} catch (IOException ex) {
+			log.error("Failed to Download metadata for TR   :" + getTrustRelationship().getDisplayName(), ex);
+		}
 	}
 
 	private boolean initActions() {

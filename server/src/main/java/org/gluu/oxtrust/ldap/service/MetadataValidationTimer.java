@@ -241,15 +241,4 @@ public class MetadataValidationTimer {
 
 		return result;
 	}
-	
-	@Asynchronous
-	public void newThreadSaveSpMetaDataFileSourceTypeURI(UpdateTrustRelationshipAction updateTrustRelationshipAction){
-	  	 try {
-	   		boolean result = updateTrustRelationshipAction.saveSpMetaDataFileSourceTypeURI();
-	   		log.info("Download metadata for TR " + updateTrustRelationshipAction.getTrustRelationship().getDisplayName() + "  : result   :  " + result);
-	 		} catch (IOException e) {
-	 			log.info("Failed to Download metadata for TR   :" + updateTrustRelationshipAction.getTrustRelationship().getDisplayName());
-	 			e.printStackTrace();
-	 		}
-	    }
 }
