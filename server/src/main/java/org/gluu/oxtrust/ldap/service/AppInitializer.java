@@ -142,7 +142,11 @@ public class AppInitializer {
 		createShibbolethConfiguration();
 
 		logSizeChecker();
+	}
 
+	@Observer("org.jboss.seam.postInitialization")
+	@Asynchronous
+    public void postInitialization() {
 		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR, CustomScriptType.SCIM );
         CustomScriptManager.instance().init(supportedCustomScriptTypes);
 	}
