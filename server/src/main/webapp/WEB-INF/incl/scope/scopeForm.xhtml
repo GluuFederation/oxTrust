@@ -8,6 +8,7 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
     <h:form id="scopeForm">
@@ -38,6 +39,9 @@
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
                     <s:selectItems value="#{scopeService.scopeTypes}" noSelectionLabel="Default" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                    <a4j:ajax event="change"
+						render="dynamicScripts, selectedClaims"
+						execute="@this" />
                 </h:selectOneMenu>
             </s:decorate>
   
@@ -45,35 +49,84 @@
                 <ui:define name="label">Default scope</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" noSelectionLabel="Select"/>
+
                 </h:selectOneMenu>
             </s:decorate>
-
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="claims">
-                <ui:define name="label">Claims</ui:define>
-                <h:panelGroup id="selectedClaimsId">
-                    <h:panelGroup>
-                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim">
-                            <h:outputText value="#{empty _claim.displayName ? _claim.displayName : _claim.displayName}" />
-                            <h:outputText value="&#160;" />
-                            <div class="row-fluid">
-                                 <div class="span6 pull-right" >
-                            
-                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_scopeAction.removeClaim(_claim.inum)}" execute="@this" render="selectedClaimsId" eventsQueue="scopeQueue">
-                               <!--   <h:graphicImage value="/img/remove.gif" />-->
-                            </a4j:commandLink></div></div>
-                            <br />
-                        </a4j:repeat>
-                      
-                        <a4j:commandButton styleClass="btn btn-primary" value="Add Claim" oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();" execute="@this" eventsQueue="scopeQueue" />
-                    </h:panelGroup>
-                </h:panelGroup>
-            </s:decorate>
+			<h:panelGroup id="selectedClaims">
+				<a4j:region rendered="#{not (_scope.scopeType.value eq 'oauth')}">
+		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="claims">
+		                <ui:define name="label">Claims</ui:define>
+		                <h:panelGroup id="selectedClaimsId">
+		                    <h:panelGroup>
+		                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim">
+		                            <h:outputText value="#{empty _claim.displayName ? _claim.displayName : _claim.displayName}" />
+		                            <h:outputText value="&#160;" />
+		                            <div class="row-fluid">
+		                                 <div class="span6 pull-right" >
+		                            
+		                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_scopeAction.removeClaim(_claim.inum)}" execute="@this" render="selectedClaimsId" eventsQueue="scopeQueue">
+		                               <!--   <h:graphicImage value="/img/remove.gif" />-->
+		                            </a4j:commandLink></div></div>
+		                            <br />
+		                        </a4j:repeat>
+		                      
+		                        <a4j:commandButton styleClass="btn btn-primary" value="Add Claim" oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();" execute="@this" eventsQueue="scopeQueue" />
+		                    </h:panelGroup>
+		                </h:panelGroup>
+		            </s:decorate>
+	            </a4j:region>
+            </h:panelGroup>
+			<h:panelGroup id="dynamicScripts">
+				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
+					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+						<ui:define name="label">Dynamic Scope Scripts</ui:define>
+						<h:panelGroup id="selectedDynamicScriptId">
+							<h:panelGrid columns="1" width="100%" border="0"
+								cellpadding="0" cellspacing="0">
+								<a4j:repeat value="#{updateScopeAction.dynamicScripts}"
+									rowKeyVar="_dynamicScriptIdx" var="_dynamicScript">
+									<div class="col-sm-12">
+										<div class="col-sm-6">
+											<h:outputText value="#{_dynamicScript.name}"
+												style="margin-left:-29px;" />
+											<h:outputText value="&#160;" />
+										</div>
+										<div class="col-sm-6">
+											<a4j:commandLink styleClass="glyphicon glyphicon-remove "
+												action="#{updateScopeAction.removeDynamicScript(_dynamicScript)}"
+												execute="@this" render="selectedDynamicScriptId">
+												<!--  <h:graphicImage value="/img/remove.gif" /> -->
+											</a4j:commandLink>
+										</div>
+									</div>
+								</a4j:repeat>
+								<richext:spacer height="16" />
+							</h:panelGrid>
+						</h:panelGroup>
+					</s:decorate>
+					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+						id="command">
+						<h:panelGroup>
+							<a4j:commandButton value="Add Dynamic Scope Script"
+								oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
+								execute="@this" styleClass="btn btn-primary"
+								style="margin-left:-95px;" />
+						</h:panelGroup>
+					</s:decorate>
+				</a4j:region>
+			</h:panelGroup>
         </h:panelGroup>
-
-       
-        
         </div></div><div class="box-footer">
 							<ui:insert name="controlButttons" />
 					</div></div></div></div>
     </h:form>
+    								<ox:selectSelectableEntityDialog id="dynamicScript"
+									searchMethod="#{updateScopeAction.searchAvailableDynamicScripts}"
+									searchResult="#{updateScopeAction.availableDynamicScripts}"
+									displaySearchForm="false"
+									acceptMethod="#{updateScopeAction.acceptSelectDynamicScripts}"
+									cancelMethod="#{updateScopeAction.cancelSelectDynamicScripts}"
+									render="selectedDynamicScriptId" nameProperty="entity.name"
+									displayNameProperty="entity.description"
+									label="Add Dynamic Scripts" />
 </ui:composition>

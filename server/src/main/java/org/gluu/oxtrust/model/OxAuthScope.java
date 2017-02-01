@@ -54,6 +54,9 @@ public class OxAuthScope extends Entry implements Serializable {
 	@LdapAttribute(name = "defaultScope")
 	private GluuBoolean defaultScope;
 
+	@LdapAttribute(name = "oxScriptDn")
+    private List<String> dynamicScopeScripts;
+
 	public String getInum() {
 		return this.inum;
 	}
@@ -110,6 +113,14 @@ public class OxAuthScope extends Entry implements Serializable {
 		this.defaultScope = defaultScope;
 	}
 
+    public List<String> getDynamicScopeScripts() {
+		return dynamicScopeScripts;
+	}
+
+	public void setDynamicScopeScripts(List<String> dynamicScopeScripts) {
+        this.dynamicScopeScripts = dynamicScopeScripts;
+    }
+	
 	@Override
 	public String toString() {
 		return "OxAuthScope [inum=" + inum + ", displayName=" + displayName + ", description=" + description + ", oxAuthClaims="
