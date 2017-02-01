@@ -40,7 +40,7 @@
                     <s:selectItems value="#{scopeService.scopeTypes}" noSelectionLabel="Default" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                     <a4j:ajax event="change"
-						render="dynamicScripts"
+						render="dynamicScripts, selectedClaims"
 						execute="@this" />
                 </h:selectOneMenu>
             </s:decorate>
@@ -52,27 +52,30 @@
 
                 </h:selectOneMenu>
             </s:decorate>
-
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="claims">
-                <ui:define name="label">Claims</ui:define>
-                <h:panelGroup id="selectedClaimsId">
-                    <h:panelGroup>
-                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim">
-                            <h:outputText value="#{empty _claim.displayName ? _claim.displayName : _claim.displayName}" />
-                            <h:outputText value="&#160;" />
-                            <div class="row-fluid">
-                                 <div class="span6 pull-right" >
-                            
-                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_scopeAction.removeClaim(_claim.inum)}" execute="@this" render="selectedClaimsId" eventsQueue="scopeQueue">
-                               <!--   <h:graphicImage value="/img/remove.gif" />-->
-                            </a4j:commandLink></div></div>
-                            <br />
-                        </a4j:repeat>
-                      
-                        <a4j:commandButton styleClass="btn btn-primary" value="Add Claim" oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();" execute="@this" eventsQueue="scopeQueue" />
-                    </h:panelGroup>
-                </h:panelGroup>
-            </s:decorate>
+			<h:panelGroup id="selectedClaims">
+				<a4j:region rendered="#{not (_scope.scopeType.value eq 'oauth')}">
+		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="claims">
+		                <ui:define name="label">Claims</ui:define>
+		                <h:panelGroup id="selectedClaimsId">
+		                    <h:panelGroup>
+		                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim">
+		                            <h:outputText value="#{empty _claim.displayName ? _claim.displayName : _claim.displayName}" />
+		                            <h:outputText value="&#160;" />
+		                            <div class="row-fluid">
+		                                 <div class="span6 pull-right" >
+		                            
+		                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_scopeAction.removeClaim(_claim.inum)}" execute="@this" render="selectedClaimsId" eventsQueue="scopeQueue">
+		                               <!--   <h:graphicImage value="/img/remove.gif" />-->
+		                            </a4j:commandLink></div></div>
+		                            <br />
+		                        </a4j:repeat>
+		                      
+		                        <a4j:commandButton styleClass="btn btn-primary" value="Add Claim" oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();" execute="@this" eventsQueue="scopeQueue" />
+		                    </h:panelGroup>
+		                </h:panelGroup>
+		            </s:decorate>
+	            </a4j:region>
+            </h:panelGroup>
 			<h:panelGroup id="dynamicScripts">
 				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
 					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
