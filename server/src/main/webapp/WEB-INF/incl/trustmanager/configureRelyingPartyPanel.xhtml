@@ -92,6 +92,7 @@
 
                 <h:panelGroup id="ProfileConfigurationConfigMenu">
                     <h:panelGroup style="overflow:auto; height: 300px; width: 900px;" layout="block" rendered="#{relyingPartyAction.profileConfigurations.size() > 0}">
+                        <!--
                         <ui:decorate template="/WEB-INF/incl/trustmanager/profileConfiguration/saml1sso.xhtml">
                             <ui:param name="_relyingPartyAction" value="#{relyingPartyAction}" />
                         </ui:decorate>
@@ -103,7 +104,8 @@
                         <ui:decorate template="/WEB-INF/incl/trustmanager/profileConfiguration/saml1aq.xhtml">
                             <ui:param name="_relyingPartyAction" value="#{relyingPartyAction}" />
                         </ui:decorate>
-    
+                         -->
+
                         <ui:decorate template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2sso.xhtml">
                             <ui:param name="_relyingPartyAction" value="#{relyingPartyAction}" />
                         </ui:decorate>

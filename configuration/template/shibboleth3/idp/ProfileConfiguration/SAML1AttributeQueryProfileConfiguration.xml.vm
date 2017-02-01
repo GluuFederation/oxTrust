@@ -1,9 +1,0 @@
-<rp:ProfileConfiguration xsi:type="saml:SAML1AttributeQueryProfile" 
-#if($SAML1AttributeQuerySigningCredentialRef)
-	signingCredentialRef="$SAML1AttributeQuerySigningCredentialRef"
-#end	
-	assertionLifetime="$SAML1AttributeQueryAssertionLifetime"
-	signResponses="$SAML1AttributeQuerySignResponses"
-	signAssertions="$SAML1AttributeQuerySignAssertions"
-	signRequests="$SAML1AttributeQuerySignRequests"
-/>

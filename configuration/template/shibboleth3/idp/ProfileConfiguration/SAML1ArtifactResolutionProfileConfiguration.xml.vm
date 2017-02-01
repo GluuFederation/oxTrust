@@ -1,8 +1,0 @@
-<rp:ProfileConfiguration xsi:type="saml:SAML1ArtifactResolutionProfile" 
-#if($SAML1ArtifactResolutionSigningCredentialRef)
-	signingCredentialRef="$SAML1ArtifactResolutionSigningCredentialRef"
-#end	
-	signResponses="$SAML1ArtifactResolutionSignResponses"
-	signAssertions="$SAML1ArtifactResolutionSignAssertions"
-	signRequests="$SAML1ArtifactResolutionSignRequests"
-/>
