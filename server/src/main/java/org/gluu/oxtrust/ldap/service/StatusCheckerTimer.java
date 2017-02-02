@@ -6,12 +6,10 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URL;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -21,6 +19,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,6 +90,9 @@ public class StatusCheckerTimer {
 	private NumberFormat numberFormat;
 
     private AtomicBoolean isActive;
+
+	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	private ApplicationConfiguration applicationConfiguration;
 
 	@Create
 	public void create() {
@@ -194,69 +196,23 @@ public class StatusCheckerTimer {
 	}
 
 	private void setCertificateExpiryAttributes(GluuAppliance appliance) {
-		if (isLinux()) {
-			String programPath = OxTrustConstants.PROGRAM_CHECK_SSL;
-
-			String[] outputLines = runCheck(programPath);
-			int expiresAfter = -1;
-			if (ArrayHelper.isEmpty(outputLines) || (outputLines.length < 1) || StringHelper.isEmpty(outputLines[0]) || outputLines[0].startsWith("SSL_CERT CRITICAL")) {
-				String message = String.format("%s retuned an unexpected value", programPath);
-				log.error(message);
-			} else {
-				try {
-					if (outputLines.length == 1) {
-						expiresAfter = Integer.parseInt(outputLines[0]);
-					} else {
-						String message = String.format("%s retuned an unexpected " + "number of lines", programPath);
-						log.error(message);
-					}
-				} catch (NumberFormatException e) {
-					String message = String.format("%s retuned an unexpected value", programPath);
-					log.error(message);
+		try {
+			URL destinationURL = new URL(applicationConfiguration.getApplianceUrl());
+			HttpsURLConnection conn = (HttpsURLConnection) destinationURL.openConnection();
+			conn.connect();
+			Certificate[] certs = conn.getServerCertificates();
+			if(certs.length > 0) {
+				if(certs[0] instanceof X509Certificate) {
+					X509Certificate x509Certificate = (X509Certificate) certs[0];
+					Date expirationDate = x509Certificate.getNotAfter();
+					long expiresAfter = TimeUnit.MILLISECONDS.toDays(expirationDate.getTime() - new Date().getTime());
+					appliance.setSslExpiry(toIntString(expiresAfter));
 				}
 			}
-			appliance.setSslExpiry(toIntString(expiresAfter));
 		}
-	}
-
-	private String[] runCheck(String programPath) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
-		boolean result = false;
-		try {
-			result 
-				= ProcessHelper.executeProgram(programPath, false, 0, bos);
-		} catch (Exception e) {
-			String message = String.format("Failed to run %s : %s", 
-											programPath, 
-											e.getMessage());
-			log.error(message);
-		} finally {
-			IOUtils.closeQuietly(bos);
+		catch (IOException e){
+			log.error("Can not download ssl certificate", e);
 		}
-		
-		String[] outputLines = null;
-		if (result) {
-			String resultOutput = null;
-			try {
-				resultOutput = new String(bos.toByteArray(), "UTF-8");
-			} catch (UnsupportedEncodingException ex) {
-				String message 
-					= String.format("Failed to parse program %s output", 
-									programPath);
-				log.error(message, ex);
-			}
-
-			if(resultOutput!=null){
-				outputLines = resultOutput.split("\\r?\\n");
-			}
-		}else{
-			String message 
-				= String.format("There was an error executing command %s", 
-							programPath);
-			log.error(message);			
-		}
-		return outputLines;
-		
 	}
 
 	private void setHttpdAttributes(GluuAppliance appliance) {

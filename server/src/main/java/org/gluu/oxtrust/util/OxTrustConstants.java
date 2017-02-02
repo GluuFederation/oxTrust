@@ -118,8 +118,6 @@ public final class OxTrustConstants extends OxConstants {
     public static final String CUSTOM_MESSAGE_WELCOME_PAGE = "welcomePage";
     public static final String CUSTOM_MESSAGE_TITLE_TEXT = "welcomeTitle";
 
-    public static final String PROGRAM_CHECK_SSL = "check_ssl";
-
     public static final char[] HEX_CHARACTERS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 
