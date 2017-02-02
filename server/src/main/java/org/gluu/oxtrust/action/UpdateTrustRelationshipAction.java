@@ -398,6 +398,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	
 	private List<GluuAttribute> getAllActiveAttributes() {
 		List<GluuAttribute> attributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
+		attributes.remove(attributeService.getAttributeByName("userPassword"));
 		return attributes;
 	}
 
