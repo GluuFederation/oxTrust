@@ -208,6 +208,7 @@ public class UpdatePersonAction implements Serializable {
 			this.person.setDn(dn);
 			this.person.setInum(this.inum);
 			this.person.setIname(iname);
+			this.person.setUserPassword(this.password);
 
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
