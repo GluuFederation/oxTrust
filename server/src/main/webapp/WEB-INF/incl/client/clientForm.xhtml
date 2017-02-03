@@ -422,14 +422,14 @@
                 <div class="btn-group" role="group" aria-label="..." style="margin-left:105px;">
                 
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Login Redirect URI" oncomplete="#{rich:component('loginRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
-                    <a4j:commandButton styleClass="btn btn-primary" value="Add Logout Redirect URI" oncomplete="#{rich:component('logoutRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+                    <a4j:commandButton styleClass="btn btn-primary" value="Post Logout Redirect URI" oncomplete="#{rich:component('logoutRedirect:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Scope" oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Response Type" oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Grant Type" oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Contact" oncomplete="#{rich:component('contact:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Default ACR value" oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
                     <a4j:commandButton styleClass="btn btn-primary" value="Add Request URI" oncomplete="#{rich:component('requestUri:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
-               		 <a4j:commandButton styleClass="btn btn-primary" value="Add Logout URI" oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
+               		 <a4j:commandButton styleClass="btn btn-primary" value="Add Frontchannel Logout URI" oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();" execute="@this" eventsQueue="clientQueue" />
                 </div>
                 </h:panelGroup>
             </s:decorate>
