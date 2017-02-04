@@ -90,7 +90,7 @@
                                                             </f:validator>
 
                                                             <f:attribute name="pattern"
-                                                                         value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.regExp))?'.*':_custAttr.metadata.regExp}"/>
+                                                                         value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.attributeValidation) or (empty _custAttr.metadata.attributeValidation.regexp)) ? '.*' : _custAttr.metadata.attributeValidation.regexp}"/>
 
                                                             <rich:validator event="keyup"/>
 
