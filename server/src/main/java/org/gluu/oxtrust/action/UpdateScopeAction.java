@@ -212,19 +212,20 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	private void updateClaims() {
-
-		if (this.claims == null || this.claims.size() < 1) {
+		if ((org.xdi.oxauth.model.common.ScopeType.DYNAMIC == this.scope.getScopeType()) ||
+			(this.claims == null) || (this.claims.size() == 0)) {
 			this.scope.setOxAuthClaims(null);
 			return;
 		}
-		List<String> TMPclaims = new ArrayList<String>();
-		this.scope.setOxAuthClaims(TMPclaims);
+
+		List<String> resultClaims = new ArrayList<String>();
+		this.scope.setOxAuthClaims(resultClaims);
 
 		for (DisplayNameEntry claim : this.claims) {
-			TMPclaims.add(claim.getDn());
+			resultClaims.add(claim.getDn());
 		}
 
-		this.scope.setOxAuthClaims(TMPclaims);
+		this.scope.setOxAuthClaims(resultClaims);
 	}
 
 	@Restrict("#{s:hasPermission('scope', 'access')}")
@@ -410,17 +411,18 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	private void updateDynamicScripts() {
-		if (this.dynamicScripts == null || this.dynamicScripts.size() == 0) {
+		if ((org.xdi.oxauth.model.common.ScopeType.DYNAMIC != this.scope.getScopeType()) ||
+			(this.dynamicScripts == null) || (this.dynamicScripts.size() == 0)) {
 			this.scope.setDynamicScopeScripts(null);
 			return;
 		}
 
-		List<String> tmpDynamicScripts = new ArrayList<String>();
+		List<String> resultDynamicScripts = new ArrayList<String>();
 		for (CustomScript dynamicScript: this.dynamicScripts) {
-			tmpDynamicScripts.add(dynamicScript.getDn());
+			resultDynamicScripts.add(dynamicScript.getDn());
 		}
 
-		this.scope.setDynamicScopeScripts(tmpDynamicScripts);
+		this.scope.setDynamicScopeScripts(resultDynamicScripts);
 	}
 
 	public void acceptSelectDynamicScripts() {
