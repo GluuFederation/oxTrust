@@ -139,12 +139,14 @@ public class ScopeService implements Serializable {
 	 * @throws Exception
 	 */
 	public List<OxAuthScope> searchScopes(String pattern, int sizeLimit) throws Exception {
-		String[] targetArray = new String[] { pattern };
-		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
-		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
-
+		Filter searchFilter = null;
+		if(pattern!=null && ! pattern.isEmpty() ){
+			String[] targetArray = new String[] { pattern };
+			Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
+			Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
+			Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
+			searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
+		}
 		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, searchFilter, 0, sizeLimit);
 
 		return result;

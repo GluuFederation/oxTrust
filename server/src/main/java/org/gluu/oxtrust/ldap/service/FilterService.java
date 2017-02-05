@@ -74,17 +74,19 @@ public class FilterService {
 		File filterFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
 
 		File[] filterTemplates = null;
+		List<MetadataFilter> metadataFilters = new ArrayList<MetadataFilter>();
+
 		if (filterFolder.exists() && filterFolder.isDirectory()) {
 			filterTemplates = filterFolder.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return name.endsWith("Filter.xml.vm");
 				}
 			});
+			for (File filterTemplate : filterTemplates) {
+				metadataFilters.add(createMetadataFilter(filterTemplate.getName().split("Filter")[0]));
+			}
 		}
-		List<MetadataFilter> metadataFilters = new ArrayList<MetadataFilter>();
-		for (File filterTemplate : filterTemplates) {
-			metadataFilters.add(createMetadataFilter(filterTemplate.getName().split("Filter")[0]));
-		}
+
 		return metadataFilters;
 	}
 

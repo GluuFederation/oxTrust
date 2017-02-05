@@ -35,6 +35,7 @@ public class ProductInstallationCheckerAction implements Serializable {
     private boolean showSAMLMenu = true;
     private boolean showAsimbaSubmenu = true;
     private boolean showSAMLSubmenu = true;
+    private boolean showIDP_CAS = true;
     
     public ProductInstallationCheckerAction() {
     }
@@ -48,6 +49,8 @@ public class ProductInstallationCheckerAction implements Serializable {
         showAsimbaSubmenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled();
         
         showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || Shibboleth3ConfService.instance().isIdpInstalled();
+        
+        showIDP_CAS = !ProductInstallationChecker.isGluuCE() || Shibboleth3ConfService.instance().isIdpInstalled();
     }
 
     /**
@@ -90,6 +93,20 @@ public class ProductInstallationCheckerAction implements Serializable {
      */
     public void setShowSAMLSubmenu(boolean showSAMLSubmenu) {
         this.showSAMLSubmenu = showSAMLSubmenu;
+    }
+
+    /**
+     * @return the showIDP_CAS
+     */
+    public boolean isShowIDP_CAS() {
+        return showIDP_CAS;
+    }
+
+    /**
+     * @param showIDP_CAS the showIDP_CAS to set
+     */
+    public void setShowIDP_CAS(boolean showIDP_CAS) {
+        this.showIDP_CAS = showIDP_CAS;
     }
     
     
