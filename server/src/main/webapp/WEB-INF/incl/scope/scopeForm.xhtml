@@ -53,7 +53,7 @@
                 </h:selectOneMenu>
             </s:decorate>
 			<h:panelGroup id="selectedClaims">
-				<a4j:region rendered="#{not (_scope.scopeType.value eq 'oauth')}">
+				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'openid')}">
 		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="claims">
 		                <ui:define name="label">Claims</ui:define>
 		                <h:panelGroup id="selectedClaimsId">
