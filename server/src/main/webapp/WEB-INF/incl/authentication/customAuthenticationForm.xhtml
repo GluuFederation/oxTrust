@@ -165,7 +165,7 @@
                                                                     
                                                                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 										id="casProtocolToProxyPatternsEnabled">
-										<ui:define name="label">Enable ToProxy patterns</ui:define>
+										<ui:define name="label">Enable Proxy Patterns</ui:define>
                                                                                 <h:selectBooleanCheckbox value="#{updateCASAction.enableToProxyPatterns}"
 											styleClass="form-control"
                                                                                         tabindex="0" >
@@ -174,7 +174,7 @@
 
 									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 										id="casProtocolAuthorizedToProxy">
-										<ui:define name="label">CAS authorized to proxy pattern</ui:define>
+										<ui:define name="label">Authorized Proxy Pattern</ui:define>
 										<h:inputText styleClass="form-control"
                                                                                     title=""
                                                                                     value="#{updateCASAction.authorizedToProxyPattern}" size="100" tabindex="2" 
@@ -183,7 +183,7 @@
 
 									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 										id="casProtocolUnauthorizedToProxy">
-										<ui:define name="label">CAS unauthorized to proxy pattern</ui:define>
+										<ui:define name="label">UnAuthorized Proxy Pattern</ui:define>
 										<h:inputText styleClass="form-control"
                                                                                     title=""
                                                                                     value="#{updateCASAction.unauthorizedToProxyPattern}" size="100" tabindex="3" 
