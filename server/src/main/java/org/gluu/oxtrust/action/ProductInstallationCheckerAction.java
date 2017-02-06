@@ -35,6 +35,7 @@ public class ProductInstallationCheckerAction implements Serializable {
     private boolean showSAMLMenu = true;
     private boolean showAsimbaSubmenu = true;
     private boolean showSAMLSubmenu = true;
+    // CAS protocol through Shibboleth IDP
     private boolean showIDP_CAS = true;
     
     public ProductInstallationCheckerAction() {
@@ -50,7 +51,7 @@ public class ProductInstallationCheckerAction implements Serializable {
         
         showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || Shibboleth3ConfService.instance().isIdpInstalled();
         
-        showIDP_CAS = !ProductInstallationChecker.isGluuCE() || Shibboleth3ConfService.instance().isIdpInstalled();
+        showIDP_CAS = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isShibbolethIDP3Installed();
     }
 
     /**

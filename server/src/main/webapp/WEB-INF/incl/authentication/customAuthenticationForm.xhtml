@@ -129,73 +129,73 @@
                     	<a4j:commandLink styleClass="btn btn-link" value="Add Strategy" action="#{_action.addStrategy()}" render="strategyId" execute="@form" style="margin-right:1100px;margin-top:50px;"/>
                     </s:div>
                		 </h:panelGroup>
-						</div>	
+                                        </div>	
                                                 
-                                                <div class="tab-pane" id="cas">
-							<div style="display: inline-block; width: 75% !important;">
-                                                            <h:panelGroup rendered="productInstallationCheckerAction.showIDP_CAS">
-                                                                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-										id="casProtocolEnabled">
-										<ui:define name="label">Enabled</ui:define>
-                                                                                <h:selectBooleanCheckbox value="#{updateCASAction.enabled}"
-											styleClass="form-control"
-                                                                                        tabindex="0" >
-										</h:selectBooleanCheckbox>
-									</s:decorate>
-                                                                    
-									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-										id="casProtocolSessionStorageType">
-										<ui:define name="label">Shibboleth session/CAS storage service type (Server-side only for CAS)</ui:define>
-										<h:selectOneMenu value="#{updateCASAction.sessionStorageType}"
-											styleClass="form-control"
-                                                                                        tabindex="1">
-											<s:selectItems
-												value="#{updateCASAction.sessionStorageTypes}"
-												var="_name" label="#{_name}" noSelectionLabel="Default" />
-										</h:selectOneMenu>
-									</s:decorate>
-                                                                    
-                                                                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-										id="casProtocolBaseURL">
-										<ui:define name="label">Base CAS server URL</ui:define>
-										<h:outputText styleClass="form-control"
-                                                                                    title=""
-                                                                                    value="#{updateCASAction.casBaseURL}" size="100" />
-									</s:decorate>
-                                                                    
-                                                                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-										id="casProtocolToProxyPatternsEnabled">
-										<ui:define name="label">Enable Proxy Patterns</ui:define>
-                                                                                <h:selectBooleanCheckbox value="#{updateCASAction.enableToProxyPatterns}"
-											styleClass="form-control"
-                                                                                        tabindex="0" >
-										</h:selectBooleanCheckbox>
-									</s:decorate>
+                                        <div class="tab-pane" id="cas">
+                                                <div style="display: inline-block; width: 75% !important;">
+                                                    <h:panelGroup rendered="#{productInstallationCheckerAction.showIDP_CAS}">
+                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                                                                        id="casProtocolEnabled">
+                                                                        <ui:define name="label">Enabled</ui:define>
+                                                                        <h:selectBooleanCheckbox value="#{updateCASAction.enabled}"
+                                                                                styleClass="form-control"
+                                                                                tabindex="0" >
+                                                                        </h:selectBooleanCheckbox>
+                                                                </s:decorate>
 
-									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-										id="casProtocolAuthorizedToProxy">
-										<ui:define name="label">Authorized Proxy Pattern</ui:define>
-										<h:inputText styleClass="form-control"
-                                                                                    title=""
-                                                                                    value="#{updateCASAction.authorizedToProxyPattern}" size="100" tabindex="2" 
-                                                                                    required="false" disabled="true" />
-									</s:decorate>
+                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                                                                        id="casProtocolSessionStorageType">
+                                                                        <ui:define name="label">Shibboleth session/CAS storage service type (Server-side only for CAS)</ui:define>
+                                                                        <h:selectOneMenu value="#{updateCASAction.sessionStorageType}"
+                                                                                styleClass="form-control"
+                                                                                tabindex="1">
+                                                                                <s:selectItems
+                                                                                        value="#{updateCASAction.sessionStorageTypes}"
+                                                                                        var="_name" label="#{_name}" noSelectionLabel="Default" />
+                                                                        </h:selectOneMenu>
+                                                                </s:decorate>
 
-									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-										id="casProtocolUnauthorizedToProxy">
-										<ui:define name="label">UnAuthorized Proxy Pattern</ui:define>
-										<h:inputText styleClass="form-control"
-                                                                                    title=""
-                                                                                    value="#{updateCASAction.unauthorizedToProxyPattern}" size="100" tabindex="3" 
-                                                                                    required="false" disabled="true" />
-									</s:decorate>
-                                                                    
-                                                                        <h:commandButton styleClass="btn btn-primary"
-                                                                            style="margin-left:4px" value="Update configuration files"
-                                                                            action="#{updateCASAction.save}" />
-								</h:panelGroup>
-							</div>
-						</div>
+                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                                                                        id="casProtocolBaseURL">
+                                                                        <ui:define name="label">Base CAS server URL</ui:define>
+                                                                        <h:outputText styleClass="form-control"
+                                                                            title=""
+                                                                            value="#{updateCASAction.casBaseURL}" size="100" />
+                                                                </s:decorate>
+
+                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                                                                        id="casProtocolToProxyPatternsEnabled">
+                                                                        <ui:define name="label">Enable Proxy Patterns</ui:define>
+                                                                        <h:selectBooleanCheckbox value="#{updateCASAction.enableToProxyPatterns}"
+                                                                                styleClass="form-control"
+                                                                                tabindex="0" >
+                                                                        </h:selectBooleanCheckbox>
+                                                                </s:decorate>
+
+                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                                                                        id="casProtocolAuthorizedToProxy">
+                                                                        <ui:define name="label">Authorized Proxy Pattern</ui:define>
+                                                                        <h:inputText styleClass="form-control"
+                                                                            title=""
+                                                                            value="#{updateCASAction.authorizedToProxyPattern}" size="100" tabindex="2" 
+                                                                            required="false" disabled="true" />
+                                                                </s:decorate>
+
+                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+                                                                        id="casProtocolUnauthorizedToProxy">
+                                                                        <ui:define name="label">UnAuthorized Proxy Pattern</ui:define>
+                                                                        <h:inputText styleClass="form-control"
+                                                                            title=""
+                                                                            value="#{updateCASAction.unauthorizedToProxyPattern}" size="100" tabindex="3" 
+                                                                            required="false" disabled="true" />
+                                                                </s:decorate>
+
+                                                                <h:commandButton styleClass="btn btn-primary"
+                                                                    style="margin-left:4px" value="Update configuration files"
+                                                                    action="#{updateCASAction.save}" />
+                                                        </h:panelGroup>
+                                                </div>
+                                        </div>
 					</div>
 				</div>
 
