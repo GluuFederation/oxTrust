@@ -100,8 +100,14 @@ public class UmaInventoryAction implements Serializable {
 		}
 
 		try {
-			this.resourcesList = resourceSetService.findResourceSets(this.searchPattern, 100);
-			this.scopesList = scopeDescriptionService.findScopeDescriptions(this.searchPattern, 100);
+			if(searchPattern == null || searchPattern.isEmpty()){
+				this.scopesList = scopeDescriptionService.getAllScopeDescriptions(100);
+				this.resourcesList = resourceSetService.getAllResourceSets(100);
+			}else{
+				this.scopesList = scopeDescriptionService.findScopeDescriptions(this.searchPattern, 100);
+				this.resourcesList = resourceSetService.findResourceSets(this.searchPattern, 100);
+			}
+			
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
 			log.error("Failed to find resource sets", ex);

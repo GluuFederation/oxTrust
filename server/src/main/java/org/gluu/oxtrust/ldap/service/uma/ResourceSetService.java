@@ -101,6 +101,10 @@ public class ResourceSetService implements Serializable {
 	public boolean containsResourceSet(ResourceSet resourceSet) {
 		return ldapEntryManager.contains(resourceSet);
 	}
+	
+  public List<ResourceSet> getAllResourceSets(int sizeLimit) {		
+		return ldapEntryManager.findEntries(getDnForResourceSet(null), ResourceSet.class, null, 0, sizeLimit);
+    }
 
 	/**
 	 * Get all resource sets

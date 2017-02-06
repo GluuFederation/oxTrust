@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import com.unboundid.ldap.sdk.Filter;
+
 import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -189,6 +190,10 @@ public class ClientService implements Serializable {
         List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, 0, sizeLimit);
 
         return result;
+    }
+    
+    public List<OxAuthClient> getAllClients(int sizeLimit) {		
+		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, null, 0, sizeLimit);
     }
 
     /**

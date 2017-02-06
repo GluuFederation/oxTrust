@@ -204,7 +204,7 @@ public class UpdateResourceSetAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Destroy
+	@Destroy 
 	public void destroy() throws Exception {
 		cancel();
 	}
@@ -216,8 +216,14 @@ public class UpdateResourceSetAction implements Serializable {
 		}
 
 		try {
-			this.availableScopes = SelectableEntityHelper.convertToSelectableEntityModel(scopeDescriptionService.findScopeDescriptions(
-					this.searchAvailableScopePattern, 100));
+			List<ScopeDescription> resultScopeDescriptions;
+			if (StringHelper.isEmpty(this.searchAvailableScopePattern)) {
+				resultScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
+			} else {
+				resultScopeDescriptions = scopeDescriptionService.findScopeDescriptions(this.searchAvailableScopePattern, 100);
+			}
+
+			this.availableScopes = SelectableEntityHelper.convertToSelectableEntityModel(resultScopeDescriptions);
 			this.oldSearchAvailableScopePattern = this.searchAvailableScopePattern;
 
 			selectAddedScopes();
