@@ -11,9 +11,11 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.PropertiesConfigurationLayout;
-import org.gluu.asimba.util.ldap.idp.IDPEntry;
+import org.gluu.oxtrust.ldap.service.CASService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
+import org.gluu.oxtrust.ldap.service.TrustService;
+import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
@@ -26,6 +28,8 @@ import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
+import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 
 /**
  * Action class for updating CAS protocol Shibboleth IDP properties.
@@ -43,9 +47,14 @@ public class UpdateCASAction implements Serializable {
     
     private static final String IDP_CAS_STORAGESERVICE = "idp.cas.StorageService";
     
+    // server-side storage of user sessions
     private static final String SHIBBOLETH_STORAGESERVICE = "shibboleth.StorageService";
     
+    // client-side storage of user sessions
+    private static final String CLIENT_SESSION_STORAGESERVICE = "shibboleth.ClientSessionStorageService";
     
+    // client-side storage of user sessions
+    private static final String SHIBBOLETH_MEMCACHEDSTORAGESERVICE = "shibboleth.MemcachedStorageService";
     
     @Logger
     private Log log;
@@ -66,32 +75,15 @@ public class UpdateCASAction implements Serializable {
     private ResourceLoader resourceLoader;
     
     @In
-    private Shibboleth3ConfService shibboleth3ConfService;
-    
-    @Out
-    private boolean enabled;
-    
-    @Out
-    private boolean extended;
+    private CASService casService;
     
     @Out
     private String casBaseURL;
     
-    @Out
-    private boolean enableToProxyPatterns;
-    
-    @Out
-    private String authorizedToProxyPattern = "https://([A-Za-z0-9_-]+\\.)*example\\.org(:\\d+)?/.*";
-    
-    @Out
-    private String unauthorizedToProxyPattern = "https://([A-Za-z0-9_-]+\\.)*example\\.org(:\\d+)?/.*";
-    
-    @Out
-    private String sessionStorageType = SHIBBOLETH_STORAGESERVICE;
-    
     private List<String> sessionStorageTypes = new ArrayList<String>();
     
-    
+    @Out
+    private ShibbolethCASProtocolConfiguration configuration;
     
     public UpdateCASAction() {
         
@@ -103,10 +95,22 @@ public class UpdateCASAction implements Serializable {
         
         sessionStorageTypes = new ArrayList<String>();
         sessionStorageTypes.add(SHIBBOLETH_STORAGESERVICE);
+        sessionStorageTypes.add(SHIBBOLETH_MEMCACHEDSTORAGESERVICE);
         
         casBaseURL = applicationConfiguration.getIdpUrl() + "/idp/profile/cas";
         
-        enableToProxyPatterns = false;
+        try {
+            configuration = casService.loadCASConfiguration();
+            
+            if (configuration == null) {
+                configuration = createNewConfiguration();
+                
+                casService.addCASConfiguration(configuration);
+            }
+        } catch (Exception e) {
+            log.error("init() CAS - load from LDAP exception", e);
+            configuration = createNewConfiguration();
+        }
         
         clearEdit();
         
@@ -121,30 +125,50 @@ public class UpdateCASAction implements Serializable {
         log.info("clearEdit() CAS call");
     }
     
+    private ShibbolethCASProtocolConfiguration createNewConfiguration() {
+        ShibbolethCASProtocolConfiguration newConfiguration =  new ShibbolethCASProtocolConfiguration();
+        newConfiguration.setEnableToProxyPatterns(false);
+        newConfiguration.setAuthorizedToProxyPattern("https://([A-Za-z0-9_-]+\\.)*example\\.org(:\\d+)?/.*");
+        newConfiguration.setUnauthorizedToProxyPattern("https://([A-Za-z0-9_-]+\\.)*example\\.org(:\\d+)?/.*");
+        newConfiguration.setSessionStorageType(SHIBBOLETH_STORAGESERVICE);
+        return newConfiguration;
+    }
+    
     @Restrict("#{s:hasPermission('trust', 'access')}")
     public void save() {
         log.info("save() CAS call");
         
-        if (enabled)
-            enable();
-        else
-            disable();
+        try {
+            if (configuration.isEnabled())
+                enable();
+            else
+                disable();
+            
+            casService.updateCASConfiguration(configuration);
+        } catch (Exception e) {
+            log.error("save() CAS exception", e);
+        }
     }    
     
     
     public void enable() {
         try {
+            log.info("enable() CAS call");
             // enable server-side storage in idp.properties
-            String idpConfFolder = shibboleth3ConfService.getIdpConfDir();
-            PropertiesConfiguration idpPropertiesConfiguration = new PropertiesConfiguration(idpConfFolder + shibboleth3ConfService.SHIB3_IDP_PROPERTIES_FILE);
+            String idpConfFolder = Shibboleth3ConfService.instance().getIdpConfDir();
+            PropertiesConfiguration idpPropertiesConfiguration = new PropertiesConfiguration(idpConfFolder + Shibboleth3ConfService.SHIB3_IDP_PROPERTIES_FILE);
             PropertiesConfigurationLayout layoutConfiguration = new PropertiesConfigurationLayout(idpPropertiesConfiguration);
             
-            layoutConfiguration.getConfiguration().setProperty(IDP_SESSION_STORAGESERVICE, SHIBBOLETH_STORAGESERVICE);
-            layoutConfiguration.getConfiguration().setProperty(IDP_CAS_STORAGESERVICE, SHIBBOLETH_STORAGESERVICE);
+            // CAS require server-side storage
+            layoutConfiguration.getConfiguration().setProperty(IDP_SESSION_STORAGESERVICE, configuration.getSessionStorageType());
+            layoutConfiguration.getConfiguration().setProperty(IDP_CAS_STORAGESERVICE, configuration.getSessionStorageType());
             layoutConfiguration.getConfiguration().save();
             
             // enable CAS beans in relying-party.xml
             
+            updateShibboleth3Configuration();
+            
+            log.info("enable() CAS - enabled");
         } catch (Exception e) {
             log.error("enable() CAS exception", e);
         }
@@ -152,34 +176,30 @@ public class UpdateCASAction implements Serializable {
     
     public void disable() {
         try {
+            log.info("disable() CAS call");
             // enable server-side storage in idp.properties
-            String idpConfFolder = shibboleth3ConfService.getIdpConfDir();
-            PropertiesConfiguration idpPropertiesConfiguration = new PropertiesConfiguration(idpConfFolder + shibboleth3ConfService.SHIB3_IDP_PROPERTIES_FILE);
+            String idpConfFolder = Shibboleth3ConfService.instance().getIdpConfDir();
+            PropertiesConfiguration idpPropertiesConfiguration = new PropertiesConfiguration(idpConfFolder + Shibboleth3ConfService.SHIB3_IDP_PROPERTIES_FILE);
             PropertiesConfigurationLayout layoutConfiguration = new PropertiesConfigurationLayout(idpPropertiesConfiguration);
             
-            layoutConfiguration.getConfiguration().setProperty(IDP_SESSION_STORAGESERVICE, SHIBBOLETH_STORAGESERVICE);
-            layoutConfiguration.getConfiguration().setProperty(IDP_CAS_STORAGESERVICE, SHIBBOLETH_STORAGESERVICE);
+            // Restore default - client session storage
+            layoutConfiguration.getConfiguration().setProperty(IDP_SESSION_STORAGESERVICE, CLIENT_SESSION_STORAGESERVICE);
+            layoutConfiguration.getConfiguration().setProperty(IDP_CAS_STORAGESERVICE, configuration.getSessionStorageType());
             layoutConfiguration.getConfiguration().save();
             
             // disable CAS beans in relying-party.xml
             
+            updateShibboleth3Configuration();  
+            
+            log.info("disable() CAS - enabled");
         } catch (Exception e) {
             log.error("disable() CAS exception", e);
         }
     }
-
-    /**
-     * @return the enabled
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * @param enabled the enabled to set
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    
+    private void updateShibboleth3Configuration() {
+        List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
+        Shibboleth3ConfService.instance().generateConfigurationFiles(trustRelationships);
     }
 
     /**
@@ -197,20 +217,6 @@ public class UpdateCASAction implements Serializable {
     }
 
     /**
-     * @return the sessionStorageType
-     */
-    public String getSessionStorageType() {
-        return sessionStorageType;
-    }
-
-    /**
-     * @param sessionStorageType the sessionStorageType to set
-     */
-    public void setSessionStorageType(String sessionStorageType) {
-        this.sessionStorageType = sessionStorageType;
-    }
-
-    /**
      * @return the sessionStorageTypes
      */
     public List<String> getSessionStorageTypes() {
@@ -225,44 +231,16 @@ public class UpdateCASAction implements Serializable {
     }
 
     /**
-     * @return the enableToProxyPatterns
+     * @return the configuration
      */
-    public boolean isEnableToProxyPatterns() {
-        return enableToProxyPatterns;
+    public ShibbolethCASProtocolConfiguration getConfiguration() {
+        return configuration;
     }
 
     /**
-     * @param enableToProxyPatterns the enableToProxyPatterns to set
+     * @param configuration the configuration to set
      */
-    public void setEnableToProxyPatterns(boolean enableToProxyPatterns) {
-        this.enableToProxyPatterns = enableToProxyPatterns;
-    }
-
-    /**
-     * @return the authorizedToProxyPattern
-     */
-    public String getAuthorizedToProxyPattern() {
-        return authorizedToProxyPattern;
-    }
-
-    /**
-     * @param authorizedToProxyPattern the authorizedToProxyPattern to set
-     */
-    public void setAuthorizedToProxyPattern(String authorizedToProxyPattern) {
-        this.authorizedToProxyPattern = authorizedToProxyPattern;
-    }
-
-    /**
-     * @return the unauthorizedToProxyPattern
-     */
-    public String getUnauthorizedToProxyPattern() {
-        return unauthorizedToProxyPattern;
-    }
-
-    /**
-     * @param unauthorizedToProxyPattern the unauthorizedToProxyPattern to set
-     */
-    public void setUnauthorizedToProxyPattern(String unauthorizedToProxyPattern) {
-        this.unauthorizedToProxyPattern = unauthorizedToProxyPattern;
+    public void setConfiguration(ShibbolethCASProtocolConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
