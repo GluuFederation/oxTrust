@@ -296,7 +296,7 @@ public class AsimbaService implements Serializable {
     * @throws Exception
     */
     private static String generateInum() {
-        return INumGenerator.generate(8);
+        return INumGenerator.generate(1);
     }
     
     /**
