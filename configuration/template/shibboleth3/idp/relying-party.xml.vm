@@ -56,6 +56,11 @@
                       p:signResponses-ref="SignNoIntegrity"
                       p:signAssertions="false" />
 
+                #if ($casParams.enabled)
+                <ref bean="CAS.LoginConfiguration" />
+                <ref bean="CAS.ProxyConfiguration" />
+                <ref bean="CAS.ValidateConfiguration.default" />
+                #end
             </list>
         </property>
     </bean>

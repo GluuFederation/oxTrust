@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!--
+       | The CAS service registry defines verified relying parties by endpoint URI.
+       | The default implementation treats the ID of each entry as a regular expression defining a logical group of
+       | services whose URIs match the expression.
+       |
+       | This bean is reloaded periodically according to %{idp.home}/conf/services.properties.
+       -->
+    <bean id="reloadableServiceRegistry"
+          class="%{idp.cas.serviceRegistryClass:net.shibboleth.idp.cas.service.PatternServiceRegistry}">
+        <property name="definitions">
+            <list>
+                <!--
+                <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
+                      c:regex="https://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
+                      p:group="proxying-services"
+                      p:authorizedToProxy="true"
+                      p:singleLogoutParticipant="true" />
+                <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
+                      c:regex="http://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
+                      p:group="non-proxying-services"
+                      p:authorizedToProxy="false" /
+                -->
+            </list>
+        </property>
+    </bean>
+
+    <!--
+       | Advanced CAS configuration.
+       |
+       | Override default CAS components by creating aliases to custom components where the alias
+       | is the same as the default component bean ID.
+       -->
+    <!--
+    <bean id="cas.CustomTicketService"
+          class="org.example.idp.cas.CustomTicketService" />
+    <alias name="cas.CustomTicketService" alias="cas.TicketService" />
+
+    <bean id="cas.CustomProxyAuthenticator"
+          class="org.example.idp.cas.CustomProxyAuthenticator" />
+    <alias name="cas.CustomProxyAuthenticator" alias="cas.ProxyAuthenticator" />
+    -->
+</beans>

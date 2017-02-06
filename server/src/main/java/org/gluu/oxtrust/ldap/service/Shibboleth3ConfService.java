@@ -73,6 +73,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
+import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.xdi.xml.GluuErrorHandler;
 import org.xdi.xml.XMLValidator;
 
@@ -99,6 +100,7 @@ public class Shibboleth3ConfService implements Serializable {
 	private static final String SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE = "attribute-resolver.xml";
 	private static final String SHIB3_IDP_RELYING_PARTY_FILE = "relying-party.xml";
 	// private static final String SHIB3_IDP_PROFILE_HADLER = "handler.xml";
+        private static final String SHIB3_IDP_CAS_PROTOCOL_FILE = "cas-protocol.xml";
 	public static final String SHIB3_IDP_IDP_METADATA_FILE = "idp-metadata.xml";
 	public static final String SHIB3_IDP_SP_METADATA_FILE = "sp-metadata.xml";
 	public static final String SHIB3_SP_ATTRIBUTE_MAP_FILE = "attribute-map.xml";
@@ -167,13 +169,14 @@ public class Shibboleth3ConfService implements Serializable {
 		initAttributes(trustRelationships);
 		HashMap<String, Object> trustParams = initTrustParamMap(trustRelationships);
 		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
+                HashMap<String, Object> casParams = initCASParamMap();
 
 		boolean result = (trustParams != null) && (attrParams != null);
 		if (!result) {
 			return result;
 		}
 
-		VelocityContext context = prepareVelocityContext(trustParams, attrParams, idpMetadataFolder);
+		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, idpMetadataFolder);
 
 		// Generate metadata-providers.xml
 		String metadataProviders = templateService.generateConfFile(SHIB3_IDP_METADATA_PROVIDERS_FILE, context);
@@ -183,6 +186,8 @@ public class Shibboleth3ConfService implements Serializable {
 		String attributeFilter = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_FILTER_FILE, context);
 		// Generate relying-party.xml
 		String relyingParty = templateService.generateConfFile(SHIB3_IDP_RELYING_PARTY_FILE, context);
+                // Generate cas-protocol.xml
+		String casProtocol = templateService.generateConfFile(SHIB3_IDP_CAS_PROTOCOL_FILE, context);
 		// Generate shibboleth2.xml
 		String shibConfig = templateService.generateConfFile(SHIB3_SP_SHIBBOLETH2_FILE, context);
 		// Generate handler.xml
@@ -193,7 +198,7 @@ public class Shibboleth3ConfService implements Serializable {
 		// templateService.generateConfFile(SHIB2_SP_ATTRIBUTE_MAP, context);
 
 		// result = (metadataProviders != null) && (attributeFilter != null) && (attributeResolver != null) && (relyingParty != null) && (shibConfig != null)	&& (profileHandler != null);
-		result = (metadataProviders != null) && (attributeFilter != null) && (attributeResolver != null) && (relyingParty != null) && (shibConfig != null);
+		result = (metadataProviders != null) && (attributeFilter != null) && (attributeResolver != null) && (relyingParty != null)  && (casProtocol != null) && (shibConfig != null);
 
 		// Write metadata-providers.xml
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_IDP_METADATA_PROVIDERS_FILE, metadataProviders);
@@ -203,6 +208,8 @@ public class Shibboleth3ConfService implements Serializable {
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_IDP_ATTRIBUTE_FILTER_FILE, attributeFilter);
 		// Write relying-party.xml
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_IDP_RELYING_PARTY_FILE, relyingParty);
+		// Write cas-protocol.xml
+		result &= templateService.writeConfFile(idpConfFolder + SHIB3_IDP_CAS_PROTOCOL_FILE, casProtocol);
 		// Write shibboleth2.xml
 		result &= templateService.writeConfFile(getSpShibboleth3FilePath(), shibConfig);
 		// Write handler.xml
@@ -465,8 +472,28 @@ public class Shibboleth3ConfService implements Serializable {
 
 		return attrParams;
 	}
+        
+        private HashMap<String, Object> initCASParamMap() {
+		HashMap<String, Object> casParams = new HashMap<String, Object>();
+                try {
+                    CASService casService = CASService.instance();
+                    
+                    ShibbolethCASProtocolConfiguration configuration = casService.loadCASConfiguration();
+                    if (configuration != null) {
+                        log.info("add ShibbolethCASProtocolConfiguration parameters");
+                        casParams.put("enabled", configuration.isEnabled());
+                        casParams.put("extended", configuration.isExtended());
+                        casParams.put("enableToProxyPatterns", configuration.isEnableToProxyPatterns());
+                        casParams.put("authorizedToProxyPattern", configuration.getAuthorizedToProxyPattern());
+                        casParams.put("unauthorizedToProxyPattern", configuration.getAuthorizedToProxyPattern());
+                    }
+                } catch (Exception e) {
+                    log.error("initCASParamMap() exception", e);
+                }
+		return casParams;
+        }
 
-	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams, String idpMetadataFolder) {
+	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams, HashMap<String, Object> casParams, String idpMetadataFolder) {
 
 		VelocityContext context = new VelocityContext();
 
@@ -474,6 +501,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 		context.put("trustParams", trustParams);
 		context.put("attrParams", attrParams);
+		context.put("casParams", casParams);
 		context.put("medataFolder", idpMetadataFolder);
 		context.put("applianceInum", StringHelper.removePunctuation(ApplianceService.instance().getApplianceInum()));
 		context.put("orgInum", StringHelper.removePunctuation(OrganizationService.instance().getOrganizationInum()));
@@ -703,7 +731,7 @@ public class Shibboleth3ConfService implements Serializable {
 			return null;
 		}
 
-		VelocityContext context = prepareVelocityContext(null, attrParams, null);
+		VelocityContext context = prepareVelocityContext(null, attrParams, null, null);
 		String spAttributeMap = templateService.generateConfFile(SHIB3_SP_ATTRIBUTE_MAP_FILE, context);
 
 		return spAttributeMap;

@@ -137,7 +137,7 @@
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolEnabled">
                                                                         <ui:define name="label">Enabled</ui:define>
-                                                                        <h:selectBooleanCheckbox value="#{updateCASAction.enabled}"
+                                                                        <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enabled}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="0" >
                                                                         </h:selectBooleanCheckbox>
@@ -146,7 +146,7 @@
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolSessionStorageType">
                                                                         <ui:define name="label">Shibboleth session/CAS storage service type (Server-side only for CAS)</ui:define>
-                                                                        <h:selectOneMenu value="#{updateCASAction.sessionStorageType}"
+                                                                        <h:selectOneMenu value="#{updateCASAction.configuration.sessionStorageType}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="1">
                                                                                 <s:selectItems
@@ -166,7 +166,7 @@
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolToProxyPatternsEnabled">
                                                                         <ui:define name="label">Enable Proxy Patterns</ui:define>
-                                                                        <h:selectBooleanCheckbox value="#{updateCASAction.enableToProxyPatterns}"
+                                                                        <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enableToProxyPatterns}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="0" >
                                                                         </h:selectBooleanCheckbox>
@@ -177,7 +177,7 @@
                                                                         <ui:define name="label">Authorized Proxy Pattern</ui:define>
                                                                         <h:inputText styleClass="form-control"
                                                                             title=""
-                                                                            value="#{updateCASAction.authorizedToProxyPattern}" size="100" tabindex="2" 
+                                                                            value="#{updateCASAction.configuration.authorizedToProxyPattern}" size="100" tabindex="2" 
                                                                             required="false" disabled="true" />
                                                                 </s:decorate>
 
@@ -186,7 +186,7 @@
                                                                         <ui:define name="label">UnAuthorized Proxy Pattern</ui:define>
                                                                         <h:inputText styleClass="form-control"
                                                                             title=""
-                                                                            value="#{updateCASAction.unauthorizedToProxyPattern}" size="100" tabindex="3" 
+                                                                            value="#{updateCASAction.configuration.unauthorizedToProxyPattern}" size="100" tabindex="3" 
                                                                             required="false" disabled="true" />
                                                                 </s:decorate>
 
