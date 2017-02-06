@@ -61,12 +61,17 @@ public class SearchGroupAction implements Serializable {
 
 	@Restrict("#{s:hasPermission('group', 'access')}")
 	public String search() {
-		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
+		if ((this.searchPattern != null) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
 		try {
-			this.groupList = groupService.searchGroups(this.searchPattern, OxTrustConstants.searchGroupSizeLimit);
+			if(searchPattern == null || searchPattern.isEmpty()){
+				this.groupList = groupService.getAllGroups(OxTrustConstants.searchGroupSizeLimit);
+			}else{
+				this.groupList = groupService.searchGroups(this.searchPattern, OxTrustConstants.searchGroupSizeLimit);
+			}
+			
 			log.debug("Found \"" + this.groupList.size() + "\" groups.");
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {

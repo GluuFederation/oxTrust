@@ -66,7 +66,12 @@ public class SearchClientAction implements Serializable {
 		}
 
 		try {
-			this.clientList = clientService.searchClients(this.searchPattern, 100);
+			if(searchPattern == null || searchPattern.isEmpty()){
+				this.clientList = clientService.getAllClients(100);
+			}else{
+				this.clientList = clientService.searchClients(this.searchPattern, 100);
+			}
+			
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
 			log.error("Failed to find clients", ex);

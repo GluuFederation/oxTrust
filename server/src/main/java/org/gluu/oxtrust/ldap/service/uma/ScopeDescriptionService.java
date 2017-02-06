@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.hibernate.annotations.common.util.StringHelper;
@@ -139,6 +140,11 @@ public class ScopeDescriptionService implements Serializable {
 
 		return result;
 	}
+	
+	  public List<ScopeDescription> getAllScopeDescriptions(int sizeLimit) {		
+			return ldapEntryManager.findEntries(getDnForScopeDescription(null), ScopeDescription.class, null, 0, sizeLimit);
+	    }
+
 
 	/**
 	 * Get scope descriptions by example

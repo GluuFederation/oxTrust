@@ -149,4 +149,6 @@ public interface IGroupService {
 	 * @return
 	 */
 	public abstract List<GluuGroup> findGroups(GluuGroup group, int sizeLimit);
+
+	List<GluuGroup> getAllGroups(int sizeLimit);
 }

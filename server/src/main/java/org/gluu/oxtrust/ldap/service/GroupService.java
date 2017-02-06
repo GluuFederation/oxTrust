@@ -13,6 +13,7 @@ import java.util.List;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupVisibility;
+import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -206,6 +207,11 @@ public class GroupService implements Serializable, IGroupService {
 		List<GluuGroup> result = ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter, 0, sizeLimit);
 
 		return result;
+	}
+	
+	@Override
+	public List<GluuGroup> getAllGroups(int sizeLimit) {		
+		return ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, null, 0, sizeLimit);
 	}
 
 	/* (non-Javadoc)
