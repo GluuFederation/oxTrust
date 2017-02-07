@@ -83,28 +83,6 @@
                         </h:panelGroup>
                     </s:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="resources">
-                        <ui:define name="label">Resources</ui:define>
-                        <h:panelGroup id="selectedResourcesId">
-                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                <a4j:repeat value="#{updateResourceSetAction.resources}" rowKeyVar="_resourceIdx" var="_resource">
-                                 <div class = "col-sm-12">
-                                 <div class = "col-sm-6" >
-                                    <h:outputText value="#{_resource}" style="margin-left:-29px;" />
-                                    <h:outputText value="&#160;" />
-                                    </div>
-                                    <div class = "col-sm-6" >
-                                    <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceSetAction.removeResource(_resource)}" render="selectedResourcesId" eventsQueue="resourceSetQueue">
-                                      <!--   <h:graphicImage value="/img/remove.gif" />  -->
-                                    </a4j:commandLink>
-                                    </div>
-                                   </div>
-                                </a4j:repeat>
-                                <richext:spacer height="8" />
-                            </h:panelGrid>
-                        </h:panelGroup>
-                    </s:decorate>
-
 <!--                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clients">
                         <ui:define name="label">Clients</ui:define>
                         <h:panelGroup id="selectedClientsId">
@@ -131,7 +109,6 @@
                     </s:decorate> -->
 
                     <h:panelGroup>
-                            <a4j:commandButton value="Add Resource" onclick="#{rich:component('resource:inputText')}.show();" styleClass="btn btn-primary" style = "margin-left:20px;"/>
                             <a4j:commandButton value="Add Scope" style = "margin-left:3px;" onclick="#{rich:component('scope:selectEntityModalPanel')}.show();" styleClass="btn btn-primary"/>
                             <!--  <a4j:commandButton value="Add Client" style = "margin-left:3px;" onclick="#{rich:component('client:selectEntityModalPanel')}.show();" styleClass="btn btn-primary"/> -->
                         </h:panelGroup>
