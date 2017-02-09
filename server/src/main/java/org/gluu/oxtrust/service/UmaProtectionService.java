@@ -325,6 +325,11 @@ public class UmaProtectionService implements Serializable {
 	        tokenRequest.setAudience(umaMetadataConfiguration.getTokenEndpoint());
 
 			this.umaPat = UmaClient.request(umaMetadataConfiguration.getTokenEndpoint(), tokenRequest);
+
+			if (this.umaPat == null) {
+				throw new UmaProtectionException("Failed to get UMA PAT token");
+			}
+
 			this.umaPatAccessTokenExpiration = computeAccessTokenExpirationTime(this.umaPat.getExpiresIn());
 		} catch (Exception ex) {
 			throw new UmaProtectionException("Failed to obtain valid UMA PAT token", ex);
