@@ -109,6 +109,7 @@
                                                                     value="#{_custAttr.values[_valueIdx]}"
                                                                     defaultLabel="Click to enter #{_custAttr.metadata.displayName}"
                                                                     maxlength="400" id="custId"
+                                                                    validator="#{_custAttr.metadata.validateAttribute}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status')}">
                                                                 <rich:validator event="blur"/>
