@@ -25,6 +25,7 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.SmtpConfiguration;
+import org.xdi.service.cache.MemcachedConfiguration;
 import org.xdi.util.security.StringEncrypter;
 
 /**
@@ -234,6 +235,10 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "oxTrustStoreCert")
 	@LdapJsonObject
 	private List<TrustStoreCertificate> trustStoreCertificates;
+
+	@LdapAttribute(name = "oxMemcachedConfiguration")
+	@LdapJsonObject
+	private MemcachedConfiguration memcachedConfiguration;
 
 	public boolean isRequiresAuthentication() {
 		return Boolean.parseBoolean(smtpRequiresAuthentication);
@@ -773,6 +778,13 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	public void setPassportEnabled(GluuBoolean passportEnabled) {
 		this.passportEnabled = passportEnabled;
 	}
-	
+
+	public MemcachedConfiguration getMemcachedConfiguration() {
+		return memcachedConfiguration;
+	}
+
+	public void setMemcachedConfiguration(MemcachedConfiguration memcachedConfiguration) {
+		this.memcachedConfiguration = memcachedConfiguration;
+	}
 
 }
