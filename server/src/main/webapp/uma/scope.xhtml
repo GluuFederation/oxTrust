@@ -71,7 +71,10 @@
 
                                     <rich:column sortBy="#{_row.url}">
                                         <f:facet name="header">Reference</f:facet>
-                                        <h:outputText value="#{_row.url}" />
+                                        <s:fragment>
+	                                        <h:outputText value="#{umaMetadataConfiguration.scopeEndpoint}/#{_row.displayName}" rendered="#{_row.type.value eq 'internal'}"/>
+	                                        <h:outputText value="#{_row.url}" rendered="#{_row.type.value ne 'internal'}"/>
+                                        </s:fragment>
                                     </rich:column>
 
                                     <rich:column>
