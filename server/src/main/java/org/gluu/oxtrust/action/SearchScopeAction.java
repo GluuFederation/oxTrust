@@ -62,7 +62,6 @@ public class SearchScopeAction implements Serializable {
 		}
 
 		try {
-			this.searchPattern= this.searchPattern.isEmpty() ? this.searchPattern=" " : this.searchPattern;			
 			this.scopeList = scopeService.searchScopes(this.searchPattern, 100);
 			this.oldSearchPattern = this.searchPattern;
 
