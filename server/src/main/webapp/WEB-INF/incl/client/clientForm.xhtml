@@ -10,6 +10,10 @@
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
     xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:gluufn="http://www.gluu.org/jsf/functions">
+     <style type="text/css">
+            .odd{ background-color: #ddd; }
+            .even{ background-color: #eee; }
+        </style>
 
     <h:form id="clientForm">
      <div class="row">
@@ -216,15 +220,17 @@
                 <ui:define name="label">Redirect Login URIs</ui:define>
                 <h:panelGroup id="selectedLoginURIsId">
                     <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                        <a4j:repeat value="#{_clientAction.loginUris}" rowKeyVar="_urisIdx" var="_uri">
+                        <a4j:repeat value="#{_clientAction.loginUris}" rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+                         <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                             <h:outputText value="#{empty _uri ? _uri : _uri}" />
                             <h:outputText value="&#160;" />
                             <div class="row-fluid">
      <div class="span6 pull-right" >
                             <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_clientAction.removeLoginURI(_uri)}" execute="@this" render="selectedLoginURIsId" eventsQueue="clientQueue">
                                <!--  <h:graphicImage value="/img/remove.gif" /> -->
-                            </a4j:commandLink></div></div>
+                            </a4j:commandLink></div></div>                            
                             <br />
+                            </div>
                         </a4j:repeat>
                         <richext:spacer height="16" />
                     </h:panelGroup>
