@@ -6,13 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Transient;
-import javax.validation.constraints.Min;
-
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
@@ -25,8 +18,14 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.SmtpConfiguration;
-import org.xdi.service.cache.MemcachedConfiguration;
+import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.util.security.StringEncrypter;
+
+import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * GluuAppliance
@@ -236,9 +235,9 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapJsonObject
 	private List<TrustStoreCertificate> trustStoreCertificates;
 
-	@LdapAttribute(name = "oxMemcachedConfiguration")
-	@LdapJsonObject
-	private MemcachedConfiguration memcachedConfiguration;
+    @LdapAttribute(name = "oxCacheConfiguration")
+   	@LdapJsonObject
+   	private CacheConfiguration cacheConfiguration;
 
 	public boolean isRequiresAuthentication() {
 		return Boolean.parseBoolean(smtpRequiresAuthentication);
@@ -779,12 +778,12 @@ public class GluuAppliance extends InumEntry implements Serializable {
 		this.passportEnabled = passportEnabled;
 	}
 
-	public MemcachedConfiguration getMemcachedConfiguration() {
-		return memcachedConfiguration;
-	}
+    public CacheConfiguration getCacheConfiguration() {
+   		return cacheConfiguration;
+   	}
 
-	public void setMemcachedConfiguration(MemcachedConfiguration memcachedConfiguration) {
-		this.memcachedConfiguration = memcachedConfiguration;
-	}
+   	public void setCacheConfiguration(CacheConfiguration cacheConfiguration) {
+   		this.cacheConfiguration = cacheConfiguration;
+   	}
 
 }
