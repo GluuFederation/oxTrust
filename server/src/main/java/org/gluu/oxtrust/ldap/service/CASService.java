@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.util.List;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -28,7 +29,7 @@ import org.xdi.util.StringHelper;
  */
 @Name("casService")
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
+@Scope(ScopeType.STATELESS)
 public class CASService {
     
     @Logger
@@ -49,15 +50,17 @@ public class CASService {
     }
     
     public ShibbolethCASProtocolConfiguration loadCASConfiguration() {
-        String organizationDn = organizationService.getDnForOrganization();
-        LdapShibbolethCASProtocolConfiguration ldapConfiguration = ldapEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, "ou=cas,ou=oxidp,"+organizationDn, null);
-        
-        return ldapConfiguration.getCasProtocolConfiguration();
+        log.info("loadCASConfiguration() call");
+        List<LdapShibbolethCASProtocolConfiguration> entries = ldapEntryManager.findEntries(getDnForLdapShibbolethCASProtocolConfiguration(null), LdapShibbolethCASProtocolConfiguration.class, null);
+        if (!entries.isEmpty())
+            return entries.get(0).getCasProtocolConfiguration();
+        else
+            return null;
     }
     
     public void updateCASConfiguration(ShibbolethCASProtocolConfiguration entry) {
-        String organizationDn = organizationService.getDnForOrganization();
-        LdapShibbolethCASProtocolConfiguration ldapEntry = ldapEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, "ou=cas,ou=oxidp,"+organizationDn);
+        log.info("updateCASConfiguration() call");
+        LdapShibbolethCASProtocolConfiguration ldapEntry = ldapEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, getDnForLdapShibbolethCASProtocolConfiguration(null));
         ldapEntry.setInum(entry.getOrgInum());
         ldapEntry.setCasProtocolConfiguration(entry);
         ldapEntryManager.merge(ldapEntry);
@@ -79,7 +82,7 @@ public class CASService {
         }
     }
     
-    public String getDnForLdapShibbolethCASProtocolConfiguration(String inum) {
+    private String getDnForLdapShibbolethCASProtocolConfiguration(String inum) {
         String organizationDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
             return String.format("ou=cas,ou=oxidp,%s", organizationDn);

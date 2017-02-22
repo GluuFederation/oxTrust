@@ -103,6 +103,7 @@ public class UpdateCASAction implements Serializable {
             configuration = casService.loadCASConfiguration();
             
             if (configuration == null) {
+                log.info("CAS Configuration not found, create new");
                 configuration = createNewConfiguration();
                 
                 casService.addCASConfiguration(configuration);
@@ -127,6 +128,7 @@ public class UpdateCASAction implements Serializable {
     
     private ShibbolethCASProtocolConfiguration createNewConfiguration() {
         ShibbolethCASProtocolConfiguration newConfiguration =  new ShibbolethCASProtocolConfiguration();
+        newConfiguration.setEnabled(false);
         newConfiguration.setEnableToProxyPatterns(false);
         newConfiguration.setAuthorizedToProxyPattern("https://([A-Za-z0-9_-]+\\.)*example\\.org(:\\d+)?/.*");
         newConfiguration.setUnauthorizedToProxyPattern("https://([A-Za-z0-9_-]+\\.)*example\\.org(:\\d+)?/.*");
@@ -144,7 +146,10 @@ public class UpdateCASAction implements Serializable {
             else
                 disable();
             
-            casService.updateCASConfiguration(configuration);
+            if (configuration.getOrgInum() == null || configuration.getOrgInum().isEmpty() )
+                casService.addCASConfiguration(configuration);
+            else
+                casService.updateCASConfiguration(configuration);
         } catch (Exception e) {
             log.error("save() CAS exception", e);
         }
