@@ -13,6 +13,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -33,6 +34,7 @@ import org.xdi.oxauth.client.*;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.service.JsonService;
+import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.util.security.StringEncrypter;
 
 import javax.ws.rs.core.Response;
@@ -66,10 +68,25 @@ public class JsonConfigurationService implements Serializable {
 
 	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
+	
+	@In
+	private ApplianceService applianceService;
 
 	public ApplicationConfiguration getOxTrustApplicationConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		return ldapOxTrustConfiguration.getApplication();
+	}
+	
+	public CacheConfiguration getOxMemCacheConfiguration() {
+		CacheConfiguration cachedConfiguration = applianceService.getAppliance().getCacheConfiguration();
+		return cachedConfiguration;
+	}
+	
+	public boolean saveOxMemCacheConfiguration(CacheConfiguration cachedConfiguration) {
+		GluuAppliance gluuAppliance = applianceService.getAppliance();
+		gluuAppliance.setCacheConfiguration(cachedConfiguration);
+		applianceService.updateAppliance(gluuAppliance);
+		return true;
 	}
 
 	public ImportPersonConfig getOxTrustImportPersonConfiguration() {

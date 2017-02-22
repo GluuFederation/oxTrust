@@ -43,6 +43,8 @@
 								Configuration</a></li>
 						<li><a href="#oxauth-config" data-toggle="tab">OxAuth
 								Configuration</a></li>
+						<li><a href="#memcached-config" data-toggle="tab">Memcached
+								Configuration</a></li>
 						<li><a href="#oxtrust-import-person-config" data-toggle="tab">OxTrust Import Person
 								Configuration</a></li>
 
@@ -115,6 +117,29 @@
 										action="#{jsonConfigAction.saveOxTrustImportPersonConfigJson}"
 										prependId="false" id="saveOxTrustImportPersonConfigBtn"
 										style="display:none"/>
+								</h:form>
+							</h:panelGrid>
+						</div>
+						
+						<div class="tab-pane" id="memcached-config">
+							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
+								cellspacing="0" columnClasses="alignTop">
+								<h:form id="oxMemCacheConfigForm" prependId="false">
+									<s:decorate template="/WEB-INF/incl/layout/jsoneditor.xhtml"
+										id="oxMemcache">
+										<ui:param name="id" value="oxMemcacheConfig" />
+										<ui:param name="parentId" value="oxMemcache" />
+										<ui:param name="json"
+											value="#{jsonConfigAction.cacheConfigurationJson}" />
+										<ui:param name="jsonSchema"
+											value="#{request.contextPath}/schema/oxmemcache-config.json" />
+										<ui:param name="saveBtnId" value="saveOxMemcacheConfigBtn" />
+										<ui:param name="saveBtnLabel" value="Save Configuration" />
+									</s:decorate>
+									<h:commandButton value="Save MemCache Configuration"
+										action="#{jsonConfigAction.saveOxMemCacheConfigJson}"
+										prependId="false" id="saveOxMemcacheConfigBtn"
+										style="display:none" />
 								</h:form>
 							</h:panelGrid>
 						</div>
