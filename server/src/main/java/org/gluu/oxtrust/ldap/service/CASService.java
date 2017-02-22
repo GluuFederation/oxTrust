@@ -60,7 +60,7 @@ public class CASService {
     
     public void updateCASConfiguration(ShibbolethCASProtocolConfiguration entry) {
         log.info("updateCASConfiguration() call");
-        LdapShibbolethCASProtocolConfiguration ldapEntry = ldapEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, getDnForLdapShibbolethCASProtocolConfiguration(null));
+        LdapShibbolethCASProtocolConfiguration ldapEntry = ldapEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, getDnForLdapShibbolethCASProtocolConfiguration(entry.getOrgInum()));
         ldapEntry.setInum(entry.getOrgInum());
         ldapEntry.setCasProtocolConfiguration(entry);
         ldapEntryManager.merge(ldapEntry);

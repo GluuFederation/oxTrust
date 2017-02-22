@@ -141,15 +141,15 @@ public class UpdateCASAction implements Serializable {
         log.info("save() CAS call");
         
         try {
-            if (configuration.isEnabled())
-                enable();
-            else
-                disable();
-            
             if (configuration.getOrgInum() == null || configuration.getOrgInum().isEmpty() )
                 casService.addCASConfiguration(configuration);
             else
                 casService.updateCASConfiguration(configuration);
+            
+            if (configuration.isEnabled())
+                enable();
+            else
+                disable();
         } catch (Exception e) {
             log.error("save() CAS exception", e);
         }
