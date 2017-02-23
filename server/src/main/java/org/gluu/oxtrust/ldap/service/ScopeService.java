@@ -140,7 +140,7 @@ public class ScopeService implements Serializable {
 	 */
 	public List<OxAuthScope> searchScopes(String pattern, int sizeLimit) throws Exception {
 		Filter searchFilter = null;
-		if(pattern!=null && ! pattern.isEmpty() ){
+		if (StringHelper.isNotEmpty(pattern)) {
 			String[] targetArray = new String[] { pattern };
 			Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 			Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);

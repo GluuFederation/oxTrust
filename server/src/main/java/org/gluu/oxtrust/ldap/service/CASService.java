@@ -60,8 +60,8 @@ public class CASService {
     
     public void updateCASConfiguration(ShibbolethCASProtocolConfiguration entry) {
         log.info("updateCASConfiguration() call");
-        LdapShibbolethCASProtocolConfiguration ldapEntry = ldapEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, getDnForLdapShibbolethCASProtocolConfiguration(entry.getOrgInum()));
-        ldapEntry.setInum(entry.getOrgInum());
+        LdapShibbolethCASProtocolConfiguration ldapEntry = ldapEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, getDnForLdapShibbolethCASProtocolConfiguration(entry.getInum()));
+        ldapEntry.setInum(entry.getInum());
         ldapEntry.setCasProtocolConfiguration(entry);
         ldapEntryManager.merge(ldapEntry);
     }
@@ -73,7 +73,7 @@ public class CASService {
             ldapEntry.setCasProtocolConfiguration(entry);
             String inum = generateInum();
             log.info("getDnForLdapShibbolethCASProtocolConfiguration(inum) retsult: " + getDnForLdapShibbolethCASProtocolConfiguration(inum));
-            entry.setOrgInum(inum);
+            entry.setInum(inum);
             ldapEntry.setInum(inum);
             ldapEntry.setDn(getDnForLdapShibbolethCASProtocolConfiguration(inum));
             ldapEntryManager.persist(ldapEntry);

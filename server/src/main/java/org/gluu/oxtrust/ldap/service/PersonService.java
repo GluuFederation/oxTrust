@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -364,12 +365,11 @@ public class PersonService implements Serializable, IPersonService {
 
 	private String generateInum() {
 		String inum = "";
-		long value;
 		while (true) {
 			inum = INumGenerator.generate(4);
 			try {
-				value = Long.parseLong(inum.replace(".", ""), 16);
-				if (value < 7) {
+				BigInteger value = new BigInteger(inum.replace(".", ""), 16);
+				if (value.doubleValue() < 7.0) {
 					continue;
 				}
 			} catch (Exception ex) {
