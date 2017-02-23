@@ -12,6 +12,7 @@ public class CasLdapAppConfiguration extends LdapAppConfiguration {
 	@LdapAttribute(name = "oxConfApplication")
     private CasAppConfiguration application;
 
+        @Override
 	public CasAppConfiguration getApplication() {
 		return application;
 	}
