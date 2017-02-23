@@ -141,7 +141,7 @@ public class UpdateCASAction implements Serializable {
         log.info("save() CAS call");
         
         try {
-            if (configuration.getOrgInum() == null || configuration.getOrgInum().isEmpty() )
+            if (configuration.getInum() == null || configuration.getInum().isEmpty() )
                 casService.addCASConfiguration(configuration);
             else
                 casService.updateCASConfiguration(configuration);
