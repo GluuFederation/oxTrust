@@ -5,6 +5,15 @@
     "type": "object",
     "additionalProperties": true,
     "properties": {
+    "cacheProviderType": {
+            "id": "cacheProviderType",
+            "description": "The cacheProvider Type.",
+            "type": "string",
+            "enum": [
+                "IN_MEMORY",
+                "MEMCACHED"
+            ]
+    },
     "memcachedConfiguration":{
     	 "type":"object",
          "additionalProperties":false,
@@ -46,13 +55,23 @@
 		            "minimum": 1,
 		            "exclusiveMaximum": false,
 		            "exclusiveMinimum": false
-		        }
+		        },
+		        "MemcachedConnectionFactoryType": {
+		           	"id": "MemcachedConnectionFactoryType",
+            		"description": "The MemcachedConnectionFactoryType Type.",
+            		"type": "string",
+            		"enum": [
+                		"IN_MEMORY",
+                		"MEMCACHED"
+            		]
+        		}
         	},
 			    "required": [
 			        "servers",
 			        "maxOperationQueueLength",
 			        "bufferSize",
-			        "defaultPutExpiration"
+			        "defaultPutExpiration",
+			        "MemcachedConnectionFactoryType"
 			    ]
        },
       	"inMemoryConfiguration": {
@@ -70,15 +89,6 @@
 			            "exclusiveMinimum": false
 			            }
            		}
-		},
-      	"cacheProviderType": {
-            "id": "cacheProviderType",
-            "description": "The cacheProvider Type.",
-            "type": "string",
-            "enum": [
-                "IN_MEMORY",
-                "MEMCACHED"
-            ]
-        }
+		}
     }
 }
