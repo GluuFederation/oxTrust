@@ -59,7 +59,7 @@
                 #if ($casParams.enabled)
                 <ref bean="CAS.LoginConfiguration" />
                 <ref bean="CAS.ProxyConfiguration" />
-                <ref bean="CAS.ValidateConfiguration.default" />
+                <ref bean="CAS.ValidateConfiguration" />
                 #end
             </list>
         </property>
