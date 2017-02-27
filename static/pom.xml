@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.xdi</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 	</parent>
 
 	<!--repositories>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>rubygems</groupId>
 			<artifactId>bootstrap-sass</artifactId>
-			<version>3.3.0.1</version>
+			<version>3.3.0.2</version>
 			<type>gem</type>
 		</dependency>
 		<dependency>
