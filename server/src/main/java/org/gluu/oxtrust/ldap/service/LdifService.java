@@ -9,8 +9,6 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.LdifDataUtility;
 import org.jboss.seam.ScopeType;
@@ -19,7 +17,6 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -29,15 +26,20 @@ import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldif.LDIFReader;
 
 /**
- * Provides operations with persons
+ * Provides operations with LDIF files
  * 
- * @author Yuriy Movchan Date: 10.13.2010
+ * @author Shekhar L Date: 02.28.2017
  */
 @Scope(ScopeType.STATELESS)
 @Name("ldifService")
 @AutoCreate
 public class LdifService implements Serializable{
-	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6690460114767359078L;
+
 	@Logger
 	private Log log;
 	
@@ -46,24 +48,14 @@ public class LdifService implements Serializable{
 	
 	LdifDataUtility ldifDataUtility = LdifDataUtility.instance();	
 
-	@In
-	private IGroupService groupService;
-
-	private transient OperationsFacade ldapOperationService;
-	
-	public boolean destroy() {
-		boolean destroyResult = this.ldapOperationService.destroy();
-		
-		return destroyResult;
-	}
 	
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException{
 		ResultCode result = ResultCode.UNAVAILABLE;
 		
+		LDAPConnectionPool ldapConnectionPool = ldapEntryManager.getLdapOperationService().getConnectionPool();
 		LDAPConnection connection = null;
-		try {
-		connection = ldapOperationService.getConnection();
-		//ResultCode result = LdifDataUtility.instance().importLdifFileContent(connection, ldifFileContent);
+        try {
+        	 connection = ldapConnectionPool.getConnection();
 
 			LDIFReader importLdifReader = new LDIFReader(is);
 			
@@ -72,26 +64,28 @@ public class LdifService implements Serializable{
 			
 		} catch(Exception e ) {
 			log.info("LDIFReader   --- : " + e.getMessage());
+			e.printStackTrace();
 			
 		}finally {
 			if (connection != null) {
-				ldapOperationService.releaseConnection(connection);
+				ldapConnectionPool.releaseConnection(connection);
 			}
 		}
 		return result;
 		
 	}
 	
-	public ResultCode validateLdifFile(InputStream is) throws LDAPException{
+	public ResultCode validateLdifFile(InputStream is, String dn) throws LDAPException{
 		ResultCode result = ResultCode.UNAVAILABLE;
 		try {
 			LDIFReader validateLdifReader = new LDIFReader(is);
-			result = ldifDataUtility.validateLDIF(validateLdifReader);			
+			result = ldifDataUtility.validateLDIF(validateLdifReader,dn);			
 			log.info("LDIFReader successfully");
 			validateLdifReader.close();
 			
 		} catch(Exception e ) {
 			log.info("LDIFReader   --- : "+e.getMessage());
+			e.printStackTrace();
 			
 		}
 		return result;
