@@ -7,7 +7,7 @@
     "properties": {
         "sessionAsJwt": {
             "id": "sessionAsJwt",
-            "description": "Session as JWT.",
+            "description": "Experimental feature. Do not use in production!",
             "type": "boolean"
         },
         "issuer": {
