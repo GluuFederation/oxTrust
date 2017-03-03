@@ -23,14 +23,13 @@
 	
 		<section class="content-header">
 		<h1 style="color: #333;">
-			Configuration<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> JSON Configuration</small>
+			#{msg['updateConfiguration.configuration']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i>#{msg['updateConfiguration.jsonConfiguration']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/configuration/jsonConfig">JSON
-					Configuration</a></li>
+				href="#{request.contextPath}/configuration/jsonConfig">#{msg['updateConfiguration.jsonConfiguration']}</a></li>
 		</ol>
 		</section>
 
@@ -39,15 +38,10 @@
 			<div class="col-xs-12">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs">
-						<li class="active"><a href="#oxtrust-config" data-toggle="tab">OxTrust
-								Configuration</a></li>
-						<li><a href="#oxauth-config" data-toggle="tab">OxAuth
-								Configuration</a></li>
-						<li><a href="#memcached-config" data-toggle="tab">Memcached
-								Configuration</a></li>
-						<li><a href="#oxtrust-import-person-config" data-toggle="tab">OxTrust Import Person
-								Configuration</a></li>
-
+						<li class="active"><a href="#oxtrust-config" data-toggle="tab">#{msg['updateConfiguration.oxTrustConfiguration']}</a></li>
+						<li><a href="#oxauth-config" data-toggle="tab">#{msg['updateConfiguration.oxAuthConfiguration']}</a></li>
+						<li><a href="#memcached-config" data-toggle="tab">#{msg['updateConfiguration.memcachedConfiguration']}</a></li>
+						<li><a href="#oxtrust-import-person-config" data-toggle="tab">#{msg['updateConfiguration.oxTrustImportConfiguration']}</a></li>
 					</ul>
 					<div class="tab-content">
 						<!-- System Configuration -->
@@ -64,9 +58,9 @@
 										<ui:param name="jsonSchema"
 											value="#{request.contextPath}/schema/oxtrust.properties.json" />
 										<ui:param name="saveBtnId" value="saveOxTrustConfigBtn" />
-										<ui:param name="saveBtnLabel" value="Save Configuration" />
+										<ui:param name="saveBtnLabel" value="#{msg['updateConfiguration.saveConfiguration']}" />
 									</s:decorate>
-									<h:commandButton value="Save OxTrust Configuration"
+									<h:commandButton value="#{msg['updateConfiguration.saveOxTrustConfiguration']}"
 										action="#{jsonConfigAction.saveOxTrustConfigJson}"
 										prependId="false" id="saveOxTrustConfigBtn"
 										style="display:none"/>
@@ -88,9 +82,9 @@
 										<ui:param name="jsonSchema"
 											value="#{request.contextPath}/schema/oxauth-config.xml.json" />
 										<ui:param name="saveBtnId" value="saveOxAuthConfigBtn" />
-										<ui:param name="saveBtnLabel" value="Save Configuration" />
+										<ui:param name="saveBtnLabel" value="#{msg['updateConfiguration.saveConfiguration']}" />
 									</s:decorate>
-									<h:commandButton value="Save OxAuth Configuration"
+									<h:commandButton value="#{msg['updateConfiguration.saveOxAuthConfiguration']}"
 										action="#{jsonConfigAction.saveOxAuthDynamicConfigJson}"
 										prependId="false" id="saveOxAuthConfigBtn"
 										style="display:none" />
@@ -111,9 +105,9 @@
 										<ui:param name="jsonSchema"
 											value="#{request.contextPath}/schema/oxtrust-import-person.json" />
 										<ui:param name="saveBtnId" value="saveOxTrustImportPersonConfigBtn" />
-										<ui:param name="saveBtnLabel" value="Save Configuration" />
+										<ui:param name="saveBtnLabel" value="#{msg['updateConfiguration.saveConfiguration']}" />
 									</s:decorate>
-									<h:commandButton value="Save OxTrust Import Person Configuration"
+									<h:commandButton value="#{msg['updateConfiguration.saveOxTrustImportPersonConfiguration']}"
 										action="#{jsonConfigAction.saveOxTrustImportPersonConfigJson}"
 										prependId="false" id="saveOxTrustImportPersonConfigBtn"
 										style="display:none"/>
@@ -134,9 +128,9 @@
 										<ui:param name="jsonSchema"
 											value="#{request.contextPath}/schema/oxmemcache-config.json" />
 										<ui:param name="saveBtnId" value="saveOxMemcacheConfigBtn" />
-										<ui:param name="saveBtnLabel" value="Save Configuration" />
+										<ui:param name="saveBtnLabel" value="#{msg['updateConfiguration.saveConfiguration']}" />
 									</s:decorate>
-									<h:commandButton value="Save MemCache Configuration"
+									<h:commandButton value="#{msg['updateConfiguration.saveMemCacheConfiguration']}"
 										action="#{jsonConfigAction.saveOxMemCacheConfigJson}"
 										prependId="false" id="saveOxMemcacheConfigBtn"
 										style="display:none" />

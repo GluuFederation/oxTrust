@@ -93,12 +93,9 @@
 			<div class="col-xs-12">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs">
-						<li class="active"><a href="#sys-config" data-toggle="tab">System
-								Configuration</a></li>
-						<li><a href="#smtp-server" data-toggle="tab">SMTP Server
-								Configuration</a></li>
-						<li><a href="#ox-trust" data-toggle="tab">OxTrust
-								Settings</a></li>
+						<li class="active"><a href="#sys-config" data-toggle="tab">#{msg['organizationForm.systemConfiguration']}</a></li>
+						<li><a href="#smtp-server" data-toggle="tab">#{msg['organizationForm.smtpServerConfiguration']}</a></li>
+						<li><a href="#ox-trust" data-toggle="tab">#{msg['organizationForm.oxTrustSettings']}</a></li>
 					</ul>
 					<div class="tab-content">
 						<!-- System Configuration -->
@@ -107,7 +104,7 @@
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="passwordReset">
-									<ui:define name="label">Self-Service Password Reset</ui:define>
+									<ui:define name="label">#{msg['organizationForm.selfServicePasswordReset']}</ui:define>
 									<h:selectOneMenu value="#{_appliance.passwordResetAllowed}" styleClass="form-control"
 										id="passwordResetId">
 										<s:selectItems
@@ -119,7 +116,7 @@
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="scimEnabledState">
-									<ui:define name="label">SCIM Support</ui:define>
+									<ui:define name="label">#{msg['organizationForm.scimSupport']}</ui:define>
 									<h:selectOneMenu value="#{_appliance.scimEnabled}" styleClass="form-control"
 										id="scimEnabledStateId">
 										<s:selectItems
@@ -131,7 +128,7 @@
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="passportEnabledState">
-									<ui:define name="label">Passport Support</ui:define>
+									<ui:define name="label">#{msg['organizationForm.passportSupport']}</ui:define>
 									<h:selectOneMenu value="#{_appliance.passportEnabled}" styleClass="form-control"
 										id="passportEnabledStateId">
 										<s:selectItems
@@ -143,7 +140,7 @@
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="dnsServer">
-									<ui:define name="label">DNS Server(s)</ui:define>
+									<ui:define name="label">#{msg['organizationForm.dnsServer']}</ui:define>
 									<h:inputText styleClass="form-control"
 										title="Multiple addresses can be specified using comma (,)"
 										value="#{_appliance.applianceDnsServer}" size="100" />
@@ -151,14 +148,14 @@
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="maxLogSize">
-									<ui:define name="label">Maximum Log Size (MB)</ui:define>
+									<ui:define name="label">#{msg['organizationForm.maxLogSize']}</ui:define>
 									<h:inputText value="#{_appliance.maxLogSize}" required="true" styleClass="form-control"
 										size="10" />
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="profileManagment">
-									<ui:define name="label">User Can Edit Own Profile</ui:define>
+									<ui:define name="label">#{msg['organizationForm.userCanEditProfile']}</ui:define>
 									<h:selectOneMenu value="#{_appliance.profileManagment}" styleClass="form-control"
 										id="profileManagmentStateId">
 										<s:selectItems
@@ -169,7 +166,7 @@
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Contact Email</ui:define>
+									<ui:define name="label">#{msg['organizationForm.contactEmail']}</ui:define>
 									<h:inputText value="#{_appliance.contactEmail}" styleClass="form-control"/>
 								</s:decorate>
 
@@ -179,47 +176,47 @@
 							<h:panelGroup layout="block" style="width:80%;">
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">SMTP Host</ui:define>
+									<ui:define name="label">#{msg['organizationForm.smtpHost']}</ui:define>
 									<h:inputText value="#{_appliance.smtpHost}" styleClass="form-control"/>
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">From Name</ui:define>
+									<ui:define name="label">#{msg['organizationForm.fromName']}</ui:define>
 									<h:inputText value="#{_appliance.smtpFromName}" styleClass="form-control"/>
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">From Email Address</ui:define>
+									<ui:define name="label">#{msg['organizationForm.fromEmailAddress']}</ui:define>
 									<h:inputText value="#{_appliance.smtpFromEmailAddress}" styleClass="form-control"/>
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Requires Authentication</ui:define>
+									<ui:define name="label">#{msg['organizationForm.requiresAuthentication']}</ui:define>
 									<h:selectBooleanCheckbox styleClass="form-control"
 										value="#{_appliance.requiresAuthentication}" />
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">SMTP User Name</ui:define>
+									<ui:define name="label">#{msg['organizationForm.smtpUserName']}</ui:define>
 									<h:inputText value="#{_appliance.smtpUserName}" styleClass="form-control"/>
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">SMTP Password</ui:define>
+									<ui:define name="label">#{msg['organizationForm.smtpPassword']}</ui:define>
 									<h:inputSecret value="#{_appliance.smtpPasswordStr}" styleClass="form-control"
 										redisplay="true" />
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Requires SSL</ui:define>
+									<ui:define name="label">#{msg['organizationForm.requiresSSL']}</ui:define>
 									<h:selectBooleanCheckbox value="#{_appliance.requiresSsl}" styleClass="form-control"/>
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">SMTP Port</ui:define>
+									<ui:define name="label">#{msg['organizationForm.smtpPort']}</ui:define>
 									<h:inputText value="#{_appliance.smtpPort}" styleClass="form-control"/>
 								</s:decorate>
-								<h:commandButton value="Test Configuration" styleClass="btn btn-success"
+								<h:commandButton value="#{msg['organizationForm.testConfiguration']}" styleClass="btn btn-success"
 									action="#{updateOrganizationAction.verifySmtpConfiguration}" />
 
 							</h:panelGroup>
@@ -241,13 +238,13 @@
  -->
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="buildDate">
-									<ui:define name="label">Build Date</ui:define>
+									<ui:define name="label">#{msg['organizationForm.buildDate']}</ui:define>
 									<h:outputText value="#{_organizationAction.buildDate}" />
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="buildNumber">
-									<ui:define name="label">Build Number</ui:define>
+									<ui:define name="label">#{msg['organizationForm.buildNumber']}</ui:define>
 									<h:outputText value="#{_organizationAction.buildNumber}" />
 								</s:decorate>
 
@@ -259,7 +256,7 @@
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="displayName">
-									<ui:define name="label">Organization name </ui:define>
+									<ui:define name="label">#{msg['organizationForm.organizationName']}</ui:define>
 									<h:inputText value="#{_organization.displayName}" size="100" styleClass="form-control" style="width:80%;"/>
 								</s:decorate>
 
@@ -304,7 +301,7 @@
 									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="managerGroup">
-									<ui:define name="label">Manager group</ui:define>
+									<ui:define name="label">#{msg['organizationForm.managerGroup']}</ui:define>
 									<s:link view="/group/updateGroup.xhtml"
 										value="#{_managerGroup.displayName}" propagation="none">
 										<f:param name="inum" value="#{_managerGroup.inum}" />
@@ -312,7 +309,7 @@
 								</s:decorate>
 
 								<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-									<ui:define name="label">Organization Logo</ui:define>
+									<ui:define name="label">#{msg['organizationForm.organizationLogo']}</ui:define>
 									<h:panelGroup id="custLogoImagePanelId" columns="1" width="100%"
 										border="0" cellpadding="0" cellspacing="0">
 										<rich:fileUpload id="custUploadId"

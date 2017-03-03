@@ -23,14 +23,14 @@
         }
     </h:outputStylesheet>
 
-    <ox:changePasswordDialog id="bindPassword" label="Change Bind Password" password="#{managePersonAuthenticationAction.ldapConfig.bindPassword}" setPasswordMethod="#{managePersonAuthenticationAction.updateLdapBindPassword}" />
+    <ox:changePasswordDialog id="bindPassword" label="#{msg['manageAuthentication.changeBindPassword']}" password="#{managePersonAuthenticationAction.ldapConfig.bindPassword}" setPasswordMethod="#{managePersonAuthenticationAction.updateLdapBindPassword}" />
 
     <h:form id="customAuthenticationForm">
-        <rich:collapsiblePanel switchType="client" opened="false" header="Manage LDAP Authentication" id="ldapManagement" rendered="true">
+        <rich:collapsiblePanel switchType="client" opened="false" header="#{msg['manageAuthentication.manageLDAPAuthentication']}" id="ldapManagement" rendered="true">
             <h:panelGrid id="ldapManagementGroupId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
-                <a4j:commandButton value="Activate" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
+                <a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
                     render="ldapManagementGroupId" limitRender="true" />
-                <a4j:commandButton value="Deactivate" action="#{_action.setExistLdapConfigIdpAuthConf(false)}" rendered="#{_action.existLdapConfigIdpAuthConf}"
+                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_action.setExistLdapConfigIdpAuthConf(false)}" rendered="#{_action.existLdapConfigIdpAuthConf}"
                     render="ldapManagementGroupId" limitRender="true" immediate="true"/>
 
                 <ox:ldapConfig ldapConfig="#{_action.ldapConfig}" ldapConfigAction="#{_action}"
@@ -38,21 +38,21 @@
                     displayRemoveButton="false" displayPrimaryKey="true" displayLocalPrimaryKey="true"
                     changePasswordDialogId="bindPassword:changePasswordModalPanel" rendered="#{_action.existLdapConfigIdpAuthConf}"/> 
 
-                <h:commandButton value="Test LDAP Connection" action="#{_action.testLdapConnection}" rendered="#{_action.existLdapConfigIdpAuthConf}" />
+                <h:commandButton value="#{msg['manageAuthentication.testLDAPConnection']}" action="#{_action.testLdapConnection}" rendered="#{_action.existLdapConfigIdpAuthConf}" />
             </h:panelGrid>
         </rich:collapsiblePanel>
 
-        <rich:collapsiblePanel switchType="client" opened="false" header="Default Authentication Method">
+        <rich:collapsiblePanel switchType="client" opened="false" header="#{msg['manageAuthentication.defaultAuthentication']}">
             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">Authentication mode</ui:define>
+                    <ui:define name="label">#{msg['manageAuthentication.authenticationMode']}</ui:define>
                     <h:selectOneMenu value="#{_action.authenticationMode}">
                         <s:selectItems value="#{_action.personAuthenticationConfigurationNames}" var="_name" label="#{_name}" noSelectionLabel="Default"/>
                     </h:selectOneMenu>
                 </s:decorate>
 
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">Authentication level</ui:define>
+                    <ui:define name="label">#{msg['manageAuthentication.authenticationLevel']}</ui:define>
                     <h:selectOneMenu value="#{_action.authenticationLevel}">
                         <s:selectItems value="#{_action.personAuthenticationConfigurationLevels}" var="_level" label="#{_level}" noSelectionLabel="Default"/>
                     </h:selectOneMenu>

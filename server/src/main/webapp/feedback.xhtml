@@ -13,7 +13,7 @@
         <div class="lockscreen-wrapper" style="text-align: center;">
             <div class="lockscreen-logo" style="margin-top: 20%;">
                 <b style="font-size: 1.4em !important;  color: darkred;">
-                    SAML error happened
+                    #{msg['feedback.samlErrorHappened']}
                 </b>
             </div>
 
@@ -21,20 +21,19 @@
                  style="text-align: justify;font-size: 1.2em !important;">
 
                 <p class="info">
-                    You were redirected to this page because of error during access to the federated resource.
-                    Please file an issue about this in out Jira or write a message to our support.
+                    #{msg['feedback.youWereRedirectedToThisPage']}
                 </p>
                 <p class="info">
-                    Information we would like to know:
+                    #{msg['feedback.informationWeWouldLikeToKnow']}
                 </p>
                 <ul>
-                    <li>What site were you trying to access?</li>
-                    <li>What is your username?</li>
-                    <li>At what time did this error happen?</li>
-                    <li>Any additional information you consider relevant.</li>
+                    <li>#{msg['feedback.whatSite']}</li>
+                    <li>#{msg['feedback.whatIsYourName']}</li>
+                    <li>#{msg['feedback.atWhatTime']}</li>
+                    <li>#{msg['feedback.additionalInfo']}</li>
                 </ul>
 
-                <p class="info">support email:</p>
+                <p class="info">#{msg['feedback.supportEmail']}</p>
                 <ui:param name="support_email" value="#{oxTrustConfiguration.applicationConfiguration.orgSupportEmail}"/>
                 <ul>
                     <li>
@@ -47,12 +46,12 @@
 
                 <br></br>
 
-                <span style="font-size: 14px;">Return to the application using below button.</span>
+                <span style="font-size: 14px;">#{msg['feedback.returnToTheApplication']}</span>
             </div>
 
             <a href="#{request.contextPath}/home"
                class="btn btn-block btn-primary btn-lg"
-               style="width: 60%;">Return</a>
+               style="width: 60%;">#{msg['feedback.return']}</a>
         </div>
     </ui:define>
 </ui:composition>

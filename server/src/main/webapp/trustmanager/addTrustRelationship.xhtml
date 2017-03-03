@@ -13,16 +13,15 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">
-			SAML<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Add Trust Relationship</small>
+			#{msg['trustmanager.saml']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['trustmanager.addRelationship']}</small>
 		</h1>
 		<ol class="breadcrumb">
 		
 			<li><a href="#{request.contextPath}/trustmanager/relationships"><i
-					class="fa fa-home"></i> Trust Relationships</a></li>
+					class="fa fa-home"></i> #{msg['trustmanager.trustRelationships']}</a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/trustmanager/add">Add Trust
-					Relationships</a></li>
+				href="#{request.contextPath}/trustmanager/add">#{msg['trustmanager.addTrustRelationship']}</a></li>
 		</ol>
 		</section>
 
@@ -44,9 +43,9 @@
 			<div class = "box-footer">
 				<div  style="width: 100%;height: 30px;">
 					<div id="updateButtons" style="float: left;width: 150px;">
-						<h:commandButton styleClass="btn btn-primary" value="   Add   "
+						<h:commandButton styleClass="btn btn-primary" value="   #{msg['trustmanager.add']}   "
 							action="#{updateTrustRelationshipAction.save}" />
-						<h:commandButton value="   Cancel  " styleClass="btn btn-primary"
+						<h:commandButton value="   #{msg['trustmanager.cancel']}  " styleClass="btn btn-primary"
 							style="margin-left:5px;"
 							action="#{updateTrustRelationshipAction.cancel}" immediate="true" />
 					</div>

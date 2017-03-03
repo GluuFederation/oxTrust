@@ -55,7 +55,7 @@
 					<h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
 						cellspacing="0">
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="name">
-							<ui:define name="label">Name</ui:define>
+							<ui:define name="label">#{msg['ldapConfig.name']}</ui:define>
 							<h:inputText styleClass="form-control"
 								value="#{cc.attrs.ldapConfig.configId}"
 								size="#{cc.attrs.inputWidth}" required="true" />
@@ -64,7 +64,7 @@
 
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 							id="useAnonymousBind" rendered="#{cc.attrs.displayAnonymousBind}">
-							<ui:define name="label">Use Anonymous Bind</ui:define>
+							<ui:define name="label">#{msg['ldapConfig.useAnonymousBind']}</ui:define>
 							<h:selectBooleanCheckbox
 								value="#{cc.attrs.ldapConfig.useAnonymousBind}">
 								<a4j:ajax event="click" render="bindDnGroup" execute="@this" />
@@ -75,7 +75,7 @@
 							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 								id="bindDn"
 								rendered="#{not cc.attrs.ldapConfig.useAnonymousBind}">
-								<ui:define name="label">Bind DN</ui:define>
+								<ui:define name="label">#{msg['ldapConfig.bindDN']}</ui:define>
 								<h:inputText styleClass="form-control"
 									value="#{cc.attrs.ldapConfig.bindDN}" size="46"
 									required="#{not ldapConfig.useAnonymousBind}" />
@@ -83,7 +83,7 @@
 						</h:panelGroup>
 
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="useSSL">
-							<ui:define name="label">Max connections</ui:define>
+							<ui:define name="label">#{msg['ldapConfig.maxConnections']}</ui:define>
 							<h:inputText styleClass="form-control"
 								value="#{cc.attrs.ldapConfig.maxConnections}" size="5"
 								required="true" />
@@ -91,7 +91,7 @@
 
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 							rendered="#{cc.attrs.displayPrimaryKey}">
-							<ui:define name="label">Primary key</ui:define>
+							<ui:define name="label">#{msg['ldapConfig.primaryKey']}</ui:define>
 							<h:inputText styleClass="form-control"
 								value="#{cc.attrs.ldapConfig.primaryKey}" required="true"
 								size="46" />
@@ -99,25 +99,25 @@
 
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 							rendered="#{cc.attrs.displayLocalPrimaryKey}">
-							<ui:define name="label">Local primary key</ui:define>
+							<ui:define name="label">#{msg['ldapConfig.localPrimaryKey']}</ui:define>
 							<h:inputText styleClass="form-control"
 								value="#{cc.attrs.ldapConfig.localPrimaryKey}" required="true"
 								size="46" />
 						</s:decorate>
 
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-							<ui:define name="label">Level</ui:define>
+							<ui:define name="label">#{msg['ldapConfig.level']}</ui:define>
 							<rich:inputNumberSpinner value="#{cc.attrs.ldapConfig.level}"
 								inputSize="2" minValue="0" maxValue="100" />
 						</s:decorate>
 
-			<ox:simplePropertiesList label="Server" labelAdd="server"
+			<ox:simplePropertiesList label="#{msg['ldapConfig.server']}" labelAdd="server"
 							properties="#{cc.attrs.ldapConfig.servers}"
 							propertiesAction="#{cc.attrs.propertiesAction}"
 							inputWidth="#{cc.attrs.inputWidth}" required="true"
 							maxItems="#{cc.attrs.maxServerItems}" />
 
-						<ox:simplePropertiesList label="Base DN" labelAdd="base DN"
+						<ox:simplePropertiesList label="#{msg['ldapConfig.baseDN']}" labelAdd="base DN"
 							maxItems="#{cc.attrs.maxBaseDnItems}"
 							properties="#{cc.attrs.ldapConfig.baseDNs}"
 							propertiesAction="#{cc.attrs.propertiesAction}" required="true"
@@ -125,7 +125,7 @@
 						
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
 						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link"
-							value="Change Bind Password"
+							value="#{msg['ldapConfig.changeBindPassword']}"
 							oncomplete="#{rich:component(cc.attrs.changePasswordDialogId)}.show();"
 							rendered="#{cc.attrs.changePasswordDialogId != null}"
 							render="#{cc.attrs.changePasswordDialogId}:changePasswordForm"
@@ -136,13 +136,13 @@
 							
 							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 							id="maxConnection">
-							<ui:define name="label">Use SSL</ui:define>
+							<ui:define name="label">#{msg['ldapConfig.useSSL']}</ui:define>
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.useSSL}"
 								required="true" />
 						</s:decorate>
 
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{cc.attrs.displayEnable}">
-							<ui:define name="label">Enabled</ui:define>
+							<ui:define name="label">#{msg['ldapConfig.enabled']}</ui:define>
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}" />
 						</s:decorate>
 					</h:panelGroup>

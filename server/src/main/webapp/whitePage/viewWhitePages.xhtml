@@ -12,19 +12,19 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">
-			White Pages<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i>view</small>
+			#{msg['whitePages.whitePages']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i>#{msg['whitePages.view']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i
-					class="fa fa-home"></i>White Pages</a></li>
-			<li class="organization/configuration">View</li>
+					class="fa fa-home"></i>#{msg['whitePages.whitePages']}</a></li>
+			<li class="organization/configuration">#{msg['whitePages.view']}</li>
 		</ol>
 		</section>
 		<section class="content">
 		<div id="formArea">
 			<a4j:queue size="1" />
-			<h:outputText value="White Pages" />
+			<h:outputText value="#{msg['whitePages.whitePages']}" />
 
 			<h:form id="form">
 				<h:panelGrid columns="2" columnClasses="alignTop, alignTop">
@@ -38,7 +38,7 @@
 						<rich:column sortable="false" label="Photo" id="col_1"
 							width="53px">
 							<f:facet name="header">
-								<h:outputText value="Photo" />
+								<h:outputText value="#{msg['whitePages.photo']}" />
 							</f:facet>
 							<s:graphicImage
 								value="#{whitePagesAction.getPhotoThumbData(entry)}"
@@ -46,9 +46,9 @@
 						</rich:column>
 						<rich:column sortable="true" sortBy="#{entry.getAttribute('cn')}"
 							id="col_2" filterBy="#{entry.getAttribute('cn')}"
-							filterEvent="onkeyup" width="170px" label="Name">
+							filterEvent="onkeyup" width="170px" label="#{msg['whitePages.name']}">
 							<f:facet name="header">
-								<h:outputText value="Name" />
+								<h:outputText value="#{msg['whitePages.name']}" />
 							</f:facet>
 							<h:outputText value="#{entry.getAttribute('cn')}" id="entry_name" />
 						</rich:column>
@@ -57,18 +57,18 @@
 							filterBy="#{entry.getAttribute('mail')}" filterEvent="onkeyup"
 							width="170px" label="E-Mail">
 							<f:facet name="header">
-								<h:outputText value="E-Mail" />
+								<h:outputText value="#{msg['whitePages.email']}" />
 							</f:facet>
 							<h:outputText value="#{entry.getAttribute('mail')}"
 								id="entry_email"
 								rendered="#{whitePagesAction.released(entry, 'mail')}" />
 						</rich:column>
-						<rich:column sortable="true" label="Phone Number" id="col_4"
+						<rich:column sortable="true" label="#{msg['whitePages.phoneNumber']}" id="col_4"
 							sortBy="#{entry.getAttribute('telephoneNumber')}"
 							filterBy="#{entry.getAttribute('telephoneNumber')}"
 							filterEvent="onkeyup" width="170px">
 							<f:facet name="header">
-								<h:outputText value="Phone Number" />
+								<h:outputText value="#{msg['whitePages.phoneNumber']}" />
 							</f:facet>
 							<h:outputText value="#{entry.getAttribute('telephoneNumber')}"
 								id="entry_phone"
@@ -93,17 +93,17 @@
 									width="275px" />
 								<h:panelGrid columns="1">
 									<h:panelGroup>
-										<h:outputText value="Name " styleClass="name" />
+										<h:outputText value="#{msg['whitePages.name']} " styleClass="name" />
 										<h:outputText value="#{sel.getAttribute('cn')}" />
 									</h:panelGroup>
 									<h:panelGroup
 										rendered="#{(sel.getAttribute('mail') ne null) and whitePagesAction.released(sel, 'mail')}">
-										<h:outputText value="E-Mail " styleClass="name" />
+										<h:outputText value="#{msg['whitePages.email']} " styleClass="name" />
 										<h:outputText value="#{sel.getAttribute('mail')}" />
 									</h:panelGroup>
 									<h:panelGroup
 										rendered="#{(sel.getAttribute('telephoneNumber') ne null) and whitePagesAction.released(sel, 'telephoneNumber')}">
-										<h:outputText value="Phone " styleClass="name" />
+										<h:outputText value="#{msg['whitePages.phone']} " styleClass="name" />
 										<h:outputText value="#{sel.getAttribute('telephoneNumber')}" />
 									</h:panelGroup>
 

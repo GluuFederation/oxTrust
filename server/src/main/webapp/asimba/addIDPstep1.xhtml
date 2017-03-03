@@ -11,12 +11,12 @@
 
     <ui:define name="body">
         <section class="content-header">
-            <h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />Asimba 
-                    <i class="fa fa-caret-right" style="color: #333 !important;" /> IDPs</small></h1>
+            <h1 style="color: #333;">#{msg['asimba.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;" />#{msg['asimba.asimba']}
+                    <i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['asimba.idps']}</small></h1>
             <ol class="breadcrumb">
 
-                    <li><a href="#{request.contextPath}/asimba/idps"><i class="fa fa-home"></i> IDPs</a></li>
-                    <li class="organization/configuration"><a href="#{request.contextPath}/asimba/editIDP/">Add IDP</a></li>
+                    <li><a href="#{request.contextPath}/asimba/idps"><i class="fa fa-home"></i> #{msg['asimba.idps']}</a></li>
+                    <li class="organization/configuration"><a href="#{request.contextPath}/asimba/editIDP/">#{msg['asimba.addIdp']}</a></li>
             </ol>
         </section>
 

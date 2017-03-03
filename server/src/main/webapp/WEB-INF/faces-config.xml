@@ -4,20 +4,24 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd">
 
-   <application>
-      <locale-config>
-         <default-locale>en</default-locale>
-         <supported-locale>bg</supported-locale>
-         <supported-locale>de</supported-locale>
-         <supported-locale>en</supported-locale>
-         <supported-locale>fr</supported-locale>
-         <supported-locale>it</supported-locale>
-         <supported-locale>tr</supported-locale>
-      </locale-config>
-</application>
+    <application>
+        <locale-config>
+            <default-locale>en</default-locale>
+            <supported-locale>bg</supported-locale>
+            <supported-locale>de</supported-locale>
+            <supported-locale>en</supported-locale>
+            <supported-locale>fr</supported-locale>
+            <supported-locale>it</supported-locale>
+            <supported-locale>tr</supported-locale>
+        </locale-config>
+        <resource-bundle>
+            <base-name>oxtrust</base-name>
+            <var>msg</var>
+        </resource-bundle>
+    </application>
 
-<lifecycle>
-   <phase-listener>org.gluu.oxtrust.util.jsf.MultiPageMessagesSupport</phase-listener>
-</lifecycle>
+    <lifecycle>
+        <phase-listener>org.gluu.oxtrust.util.jsf.MultiPageMessagesSupport</phase-listener>
+    </lifecycle>
 
 </faces-config>

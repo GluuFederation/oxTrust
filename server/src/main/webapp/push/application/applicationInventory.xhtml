@@ -19,7 +19,7 @@
                         <ui:param name="_hideLabel" value="true" />
                         <h:inputText value="#{pushApplicationInventoryAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters"
                             alt="Search parameters for client like inum,iname,displayName" />
-                        <h:commandButton value="Search" action="#{pushApplicationInventoryAction.search}" />
+                        <h:commandButton value="#{msg['applicationInventory.search']}" action="#{pushApplicationInventoryAction.search}" />
                     </s:decorate>
                 </h:form>
 
@@ -28,7 +28,7 @@
                 <h:form id="clientsFormId">
                     <s:fragment rendered="#{pushApplicationInventoryAction.pushApplicationList.size eq 0}">
                         <richext:spacer height="30" />
-                        <h:outputText value="No Search Result Found" />
+                        <h:outputText value="#{msg['applicationInventory.noSearchResultFound']}" />
                     </s:fragment>
 
                     <rich:dataTable sortMode="single" id="applicationsListId" value="#{pushApplicationInventoryAction.pushApplicationList}" rows="20" styleClass="data sortable" var="_application"
@@ -43,15 +43,15 @@
 -->
                         </rich:column>
                         <rich:column sortBy="#{_application.displayName}">
-                            <f:facet name="header">Display Name</f:facet>
+                            <f:facet name="header">#{msg['applicationInventory.displayName']}</f:facet>
                             <h:outputText value="#{_application.displayName}" />
                         </rich:column>
                         <rich:column sortBy="#{_application.id}">
-                            <f:facet name="header">Id</f:facet>
+                            <f:facet name="header">#{msg['applicationInventory.id']}</f:facet>
                             <h:outputText value="#{_application.id}" />
                         </rich:column>
                         <rich:column>
-                            <f:facet name="header">Platforms</f:facet>
+                            <f:facet name="header">#{msg['applicationInventory.platforms']}</f:facet>
                             <ox:stringList value="#{pushApplicationInventoryAction.getPlatforms(_application)}"></ox:stringList>
                         </rich:column>
                     </rich:dataTable>

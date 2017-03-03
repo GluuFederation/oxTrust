@@ -29,18 +29,18 @@
                 }
             </h:outputScript>
 			<ox:changePasswordDialog id="appliancePassword"
-				label="Change Appliance Password"
+				label="#{msg['profile.changeAppliancePassword']}"
 				password="#{appliancePasswordAction.newPassword}"
 				setPasswordMethod="#{appliancePasswordAction.update}" />
 			<section class="content-header">
 			<h1 style="color: #333;">
 				Personal<small><i class="fa fa-caret-right"
-					style="color: #333 !important;"></i> Profile</small>
+					style="color: #333 !important;"></i> #{msg['profile.profile']}</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="#{request.contextPath}/home"><i
 						class="fa fa-home"></i></a></li>
-				<li class="organization/configuration">Profile</li>
+				<li class="organization/configuration">#{msg['profile.profile']}</li>
 			</ol>
 			</section>
 			<section class="content"> <ui:include
@@ -68,14 +68,14 @@
 											cellpadding="0" cellspacing="0" styleClass="formColumn"
 											onclick="slideUpAndDown({duration:0.5})">
 											<h:panelGroup columns="5">
-												<h:outputText styleClass="headertext"
-													style="margin-left: 2.3%;  font-size: 13pt;  font-weight: 700;  margin-bottom: 15px;  display: block;"
-													value="My #{organizationService.organization.displayName} Profile" />
+												<h:outputFormat styleClass="headertext" style="margin-left: 2.3%;  font-size: 13pt;  font-weight: 700;  margin-bottom: 15px;  display: block;" value="#{msg['profile.myProfile']}">
+													<f:param value="#{organizationService.organization.displayName}"/>
+												</h:outputFormat>
 												<br></br>
 												<br></br>
 												<richext:spacer width="40" />
 												<h:panelGroup id="configureListing">
-													<a4j:commandButton value="Configure Listing" styleClass="btn btn-success"
+													<a4j:commandButton value="#{msg['profile.configureListing']}" styleClass="btn btn-success"
 														rendered="#{s:hasPermission(applianceService.appliance, 'whitePagesEnabled') and  (userProfileAction.person.allowPublication)}"
 														execute="@this" limitRender="true"
 														oncomplete="#{rich:component('configureListingOptions')}.show();" />
@@ -146,7 +146,7 @@
 
 																	<richext:spacer height="8" />
 
-																	<a4j:commandLink value="Remove"
+																	<a4j:commandLink value="#{msg['profile.remove']}"
 																		action="#{customAttributeAction.removePhoto(_custAttr.metadata.inum)}"
 																		rendered="#{_custAttr.userCanEdit}"
 																		onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
@@ -174,7 +174,7 @@
 														columnClasses="alignLeftTop, alignLeftTop" width="100%"
 														border="0" cellpadding="0" cellspacing="0"
 														rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">															
-															<h:outputText value="IMAP DATA Details" />
+															<h:outputText value="#{msg['profile.imapDataDetails']}" />
 															<a4j:commandLink styleClass="glyphicon glyphicon-remove"
 															action="#{userProfileAction.removeImapData(_custAttr.metadata.inum)}"
 															onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
@@ -187,7 +187,7 @@
 															<s:decorate
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
-																<ui:define name="label">IMAP Host</ui:define>
+																<ui:define name="label">#{msg['profile.imapHost']}</ui:define>
 																<div class="col-sm-11">
 																	<rich:inplaceInput
 																		value="#{userProfileAction.imapData.imaphost}"
@@ -204,7 +204,7 @@
 															<s:decorate
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
-																<ui:define name="label">IMAP Username </ui:define>
+																<ui:define name="label">#{msg['profile.imapUsername']}</ui:define>
 																<div class="col-sm-11">
 																	<rich:inplaceInput
 																		value="#{userProfileAction.imapData.imapusername}"
@@ -221,7 +221,7 @@
 															<s:decorate
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
-																<ui:define name="label">IMAP Port </ui:define>
+																<ui:define name="label">#{msg['profile.imapPort']}</ui:define>
 																<div class="col-sm-11">
 																	<rich:inplaceInput
 																		value="#{userProfileAction.imapData.imapport}"
@@ -240,7 +240,7 @@
 															<s:decorate
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
-																<ui:define name="label">IMAP password encrypted String</ui:define>
+																<ui:define name="label">#{msg['profile.imapPasswordEncrypted']}</ui:define>
 																<div class="col-sm-11">
 																	<rich:inplaceInput
 																		value="#{userProfileAction.imapData.imapPassword.encryptedString}"
@@ -257,7 +257,7 @@
 															<s:decorate
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
-																<ui:define name="label">IMAP password cipher</ui:define>
+																<ui:define name="label">#{msg['profile.imapPasswordCipher']}</ui:define>
 																<div class="col-sm-11">
 																	<rich:inplaceInput
 																		value="#{userProfileAction.imapData.imapPassword.cipher}"
@@ -274,7 +274,7 @@
 															<s:decorate
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}">
-																<ui:define name="label">IMAP password Mode</ui:define>
+																<ui:define name="label">#{msg['profile.imapPasswordMode']}</ui:define>
 																<div class="col-sm-11">
 																	<rich:inplaceInput
 																		value="#{userProfileAction.imapData.imapPassword.mode}"
@@ -303,7 +303,7 @@
 									<h:panelGroup id="attributeTabPanelGroupId" layout="block"
 										rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}"
 										style="{vertical-align:bottom;};border: 1px solid rgb(204, 204, 204);padding: 0px 0px 7px;padding-bottom: 7px;margin-bottom: 10px;">
-										<div style="background: #1E282C;padding: 15px;color:white;font-weight: bold;">Custom Attributes</div>
+										<div style="background: #1E282C;padding: 15px;color:white;font-weight: bold;">#{msg['profile.customAttributes']}</div>
 										<div style="height: 400px; overflow-y: auto;">
 											<ul class="sidebar-menu">
 													<c:forEach items="#{customAttributeAction.attributes}"
@@ -333,7 +333,7 @@
 				</div>
 				<div class="box-footer">
 
-					<a4j:commandButton value="Change Password"
+					<a4j:commandButton value="#{msg['profile.changePassword']}"
 						styleClass="btn btn-success"
 						onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
 						rendered="#{s:hasPermission(applianceService.appliance, 'profile_management')}" />
@@ -353,7 +353,7 @@
 					<!-- 								</div> -->
 				</div>
 			</h:form></section>
-			<ox:changePasswordDialog id="personPassword" label="Change Password"
+			<ox:changePasswordDialog id="personPassword" label="#{msg['profile.changePassword']}"
 				password="#{userPasswordAction.newPassword}"
 				verifyOldPassword="true" person="#{userProfileAction.person}"
 				setPasswordMethod="#{userPasswordAction.update}"

@@ -14,58 +14,57 @@
 							<li class="treeview" id="menu2"><a
 								href="http://www.gluu.org/"
 								style="margin: 0; border: none; padding-left: 20px; font-weight: 600;"
-								target="_blank"> <span>Website</span>
+								target="_blank"> <span>#{msg['leftmenu.website']}</span>
 							</a></li>
 							<li class="treeview" id="menu3"><a
 								href="http://www.gluu.org/docs/"
 								style="margin: 0; border: none; padding-left: 20px; font-weight: 600;"
-								target="_blank"> <span>Documentation</span>
+								target="_blank"> <span>#{msg['leftmenu.documentation']}</span>
 							</a></li>
 							<li class="treeview" id="menu4"><a
 								href="https://support.gluu.org/"
 								style="margin: 0; border: none; padding-left: 20px; font-weight: 600;"
-								target="_blank"> <span>Support Forum</span>
+								target="_blank"> <span>#{msg['leftmenu.supportForum']}</span>
 							</a></li>
 						</ul>
-						<li class="header" style="text-align: center;"><h4>GLUU
-								Identity Appliance</h4></li>
+						<li class="header" style="text-align: center;"><h4>#{msg['leftmenu.gluuIdentityAppliance']}</h4></li>
 						<ui:fragment
 							rendered="#{s:hasPermission('configuration', 'access') or s:hasPermission('scim', 'access') or s:hasPermission('attribute', 'access') or s:hasPermission('configuration', 'access')}">
 							<li class="treeview" id="menuConfiguration"><a href="#">
-									<i class="fa fa-wrench"></i> <span>Configuration</span> <i
+									<i class="fa fa-wrench"></i> <span>#{msg['leftmenu.configuration']}</span> <i
 									class="fa fa-angle-left pull-right"></i>
 							</a>
 								<ul class="treeview-menu" id="subMenuConfiguration">
 									<li id="subMenuLinkConfiguration1"><h:commandLink
-											value="Organization Configuration"
+											value="#{msg['leftmenu.organizationConfiguration']}"
 											action="#{menuAction.endConversation('/organization/updateOrganization.xhtml')}"
 											rendered="#{s:hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration2"><h:commandLink
-											value="JSON Configuration"
+											value="#{msg['leftmenu.jsonConfiguration']}"
 											action="#{menuAction.endConversation('/configuration/updateConfiguration.xhtml')}"
 											rendered="#{s:hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration3"><h:commandLink
-											value="Manage Authentication"
+											value="#{msg['leftmenu.manageAuthentication']}"
 											action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}"
 											rendered="#{s:hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration4"><h:commandLink
-											value="Manage Custom Scripts"
+											value="#{msg['leftmenu.manageCustomScripts']}"
 											action="#{menuAction.endConversation('/script/manageCustomScript.xhtml')}"
 											rendered="#{s:hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration5"><h:commandLink
-											value="Manage Registration"
+											value="#{msg['leftmenu.manageRegistration']}"
 											action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}"
 											rendered="#{s:hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
@@ -73,28 +72,28 @@
 										</h:commandLink></li>
 									
 									<li id="subMenuLinkConfiguration7"><h:commandLink
-											value="Attributes"
+											value="#{msg['leftmenu.attributes']}"
 											action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}"
 											rendered="#{s:hasPermission('attribute', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration8"><h:commandLink
-											value="Cache refresh"
+											value="#{msg['leftmenu.cacheRefresh']}"
 											action="#{menuAction.endConversation('/organization/cacheRefresh.xhtml')}"
 											rendered="#{s:hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration9"><h:commandLink
-											value="Configure log viewer"
+											value="#{msg['leftmenu.configureLogViewer']}"
 											action="#{menuAction.endConversation('/logviewer/configureLogViewer.xhtml')}"
 											rendered="#{s:hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration10"><h:commandLink
-											value="View log file"
+											value="#{msg['leftmenu.viewLogFile']}"
 											action="#{menuAction.endConversation('/logviewer/viewLogFile.xhtml')}"
 											rendered="#{s:hasPermission('log', 'access')}">
 											<i class="fa fa-chevron-right"
@@ -102,7 +101,7 @@
 										</h:commandLink></li>
 
 									<li id="subMenuLinkConfiguration11"><h:commandLink
-											value="Server Status"
+											value="#{msg['leftmenu.serverStatus']}"
 											action="#{menuAction.endConversation('/status/applianceStatus.xhtml')}"
 											rendered="#{s:hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
@@ -111,7 +110,7 @@
                                                                     
                                                                                                                                     
                                                                         <li id="subMenuLinkCertificates1"><h:commandLink
-                                                                                      value="Certificates"
+                                                                                      value="#{msg['leftmenu.certificates']}"
                                                                                       action="#{menuAction.endConversation('/configuration/certificateManagement.xhtml')}"
                                                                                       rendered="#{s:hasPermission('trust', 'access')}">
                                                                                       <i class="fa fa-chevron-right"
@@ -122,25 +121,25 @@
 						</ui:fragment>
 						<ui:fragment rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLMenu}">
 							<li class="treeview" id="menuSAML"><a href="#"> <i
-									class="fa fa-pencil-square-o"></i> <span>SAML</span> <i
+									class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.saml']}</span> <i
 									class="fa fa-angle-left pull-right"></i>
 							</a>
                                                             
                                                         
 								<ul class="treeview-menu" id="subMenuSAML">
                                                                     <li id="menuSAMLShibboleth"><a href="#"> <i
-                                                                            class="fa fa-pencil-square-o"></i> <span>Outbound</span> <i
+                                                                            class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.outbound']}</span> <i
                                                                             class="fa fa-angle-left pull-right"></i></a>
 									<!--Shibboleth-->
                                                                         <li id="subMenuLinkSAML1"><h:commandLink
-											value="Trust Relationships"
+											value="#{msg['leftmenu.trustRelationships']}"
 											action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkSAML2"><h:commandLink
-											value="Add Trust Relationships"
+											value="#{msg['leftmenu.addRelationships']}"
 											action="#{menuAction.endConversation('/trustmanager/addTrustRelationship.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
 											<i class="fa fa-chevron-right"
@@ -153,32 +152,32 @@
                                                         
 								<ul class="treeview-menu" id="subMenuSAMLAsimba">
                                                                     <li id="menuSAMLAsimba"><a href="#"> <i
-                                                                            class="fa fa-pencil-square-o"></i> <span>Inbound</span> <i
+                                                                            class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.inbound']}</span> <i
                                                                             class="fa fa-angle-left pull-right"></i></a>
                                                                         <!--Asimba-->
                                                                         <li id="subMenuLinkAsimba1"><h:commandLink
-											value="IDPs"
+											value="#{msg['leftmenu.idps']}"
 											action="#{menuAction.endConversation('/asimba/idps.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
                                                                         <li id="subMenuLinkAsimba2"><h:commandLink
-											value="SP Pools"
+											value="#{msg['leftmenu.spPools']}"
 											action="#{menuAction.endConversation('/asimba/spPools.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
                                                                         <li id="subMenuLinkAsimba3"><h:commandLink
-											value="SP Requestors"
+											value="#{msg['leftmenu.spRequestors']}"
 											action="#{menuAction.endConversation('/asimba/spRequestors.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
                                                                         <li id="subMenuLinkAsimba4"><h:commandLink
-											value="Selectors"
+											value="#{msg['leftmenu.selectors']}"
 											action="#{menuAction.endConversation('/asimba/selectors.xhtml')}"
 											rendered="#{s:hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
 											<i class="fa fa-chevron-right"
@@ -192,26 +191,26 @@
                             <li class="treeview" id="menuOpenID">
                                 <a href="#">
                                     <i class="fa fa-external-link"></i>
-                                    <span>OpenID Connect</span>
+                                    <span>#{msg['leftmenu.openidConnect']}</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
                                 <ul class="treeview-menu" id="subMenuOpenID">
                                     <li id="subMenuLinkOpenID1">
-                                        <h:commandLink value="Scopes"
+                                        <h:commandLink value="#{msg['leftmenu.scopes']}"
                                                        action="#{menuAction.endConversation('/scope/scopeInventory.xhtml')}"
                                                        rendered="#{s:hasPermission('oxauth', 'access')}">
                                             <i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
                                         </h:commandLink>
                                     </li>
                                     <li id="subMenuLinkOpenID2">
-                                        <h:commandLink value="Clients"
+                                        <h:commandLink value="#{msg['leftmenu.clients']}"
                                                        action="#{menuAction.endConversation('/client/clientInventory.xhtml')}"
                                                        rendered="#{s:hasPermission('oxauth', 'access')}">
                                             <i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
                                         </h:commandLink>
                                     </li>
                                     <li id="subMenuLinkOpenID3">
-                                        <h:commandLink value="Sector Identifiers"
+                                        <h:commandLink value="#{msg['leftmenu.sectorIdentifier']}"
                                                        action="#{menuAction.endConversation('/sectoridentifier/sectorIdentifierInventory.xhtml')}"
                                                        rendered="#{false and s:hasPermission('oxauth', 'access')}">
                                             <i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
@@ -223,17 +222,17 @@
 						<ui:fragment rendered="#{s:hasPermission('uma', 'access')}">
 
 							<li class="treeview" id="menuUMA"><a href="#"> <i
-									class="fa fa-folder-open-o"></i> <span>UMA</span> <i
+									class="fa fa-folder-open-o"></i> <span>#{msg['leftmenu.uma']}</span> <i
 									class="fa fa-angle-left pull-right"></i>
 							</a>
 								<ul class="treeview-menu" id="subMenuUMA">
-									<li id="subMenuLinkUMA1"><h:commandLink value="Scopes"
+									<li id="subMenuLinkUMA1"><h:commandLink value="#{msg['leftmenu.scopes']}"
 											action="#{menuAction.endConversation('/uma/scope.xhtml?scopes=1')}"
 											rendered="#{s:hasPermission('uma', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-									<li id="subMenuLinkUMA2"><h:commandLink value="Resources"
+									<li id="subMenuLinkUMA2"><h:commandLink value="#{msg['leftmenu.resources']}"
 											action="#{menuAction.endConversation('/uma/resource.xhtml?resources=1')}"
 											rendered="#{s:hasPermission('uma', 'access')}">
 											<i class="fa fa-chevron-right"
@@ -245,33 +244,33 @@
 						<ui:fragment
 							rendered="#{s:hasPermission('group', 'access') or s:hasPermission('person', 'access')}">
 							<li class="treeview" id="menuUsers"><a href="#"> <i
-									class="fa fa-group"></i> <span>Users</span> <i
+									class="fa fa-group"></i> <span>#{msg['leftmenu.users']}</span> <i
 									class="fa fa-angle-left pull-right"></i>
 							</a>
 								<ul class="treeview-menu" id="subMenuUsers">
 									<li id="subMenuLinkUsers1"><h:commandLink
-											value="Manage Groups"
+											value="#{msg['leftmenu.manageGroups']}"
 											action="#{menuAction.endConversation('/group/groupInventory.xhtml')}"
 											rendered="#{s:hasPermission('group', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkUsers2"><h:commandLink
-											value="Manage People"
+											value="#{msg['leftmenu.managePeople']}"
 											action="#{menuAction.endConversation('/person/personInventory.xhtml')}"
 											rendered="#{s:hasPermission('person', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkUsers3"><h:commandLink
-											value="Add person"
+											value="#{msg['leftmenu.addPerson']}"
 											action="#{menuAction.endConversation('/person/addPerson.xhtml')}"
 											rendered="#{s:hasPermission('person', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkUsers4"><h:commandLink
-										value="Import People"
+										value="#{msg['leftmenu.importPeople']}"
 										action="#{menuAction.endConversation('/person/personImport.xhtml')}"
 										rendered="#{s:hasPermission('import', 'person')}">
 										<i class="fa fa-chevron-right"
@@ -283,12 +282,12 @@
 						<ui:fragment
 							rendered="#{s:hasPermission('profile', 'access') or s:hasPermission(applianceService.appliance, 'whitePagesEnabled')}">
 							<li class="treeview" id="menuPersonal"><a href="#"> <i
-									class="fa fa-user"></i> <span>Personal</span> <i
+									class="fa fa-user"></i> <span>#{msg['leftmenu.personal']}</span> <i
 									class="fa fa-angle-left pull-right"></i>
 							</a>
 								<ul class="treeview-menu" id="subMenuPersonal">
 									<li id="subMenuLinkPersonal1"><h:commandLink
-											value="Profile"
+											value="#{msg['leftmenu.profile']}"
 											action="#{menuAction.endConversation('/profile/person/viewProfile.xhtml')}"
 											rendered="#{s:hasPermission('profile', 'access')}">
 											<i class="fa fa-chevron-right"

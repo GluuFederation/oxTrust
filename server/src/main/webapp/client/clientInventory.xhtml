@@ -13,13 +13,13 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">
-			OpenID Connect<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Clients</small>
+			#{msg['client.openIDConnect']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['client.clients']}</small>
 		</h1>
 		<ol class="breadcrumb">
 <li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/client/inventory"> Clients</a></li>
+				href="#{request.contextPath}/client/inventory"> #{msg['client.clients']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -37,8 +37,7 @@
 										<!--    <s:link view="/client/addClient.xhtml" value="Add Client" styleClass="addClient" propagation="none" /> -->
 										<ui:define name="label" style="margin-left:15px;">
 											<a class="btn btn-primary"
-												href="#{request.contextPath}/client/manage/add">Add
-												Client</a>
+												href="#{request.contextPath}/client/manage/add">#{msg['client.addClient']}</a>
 										</ui:define>
 									</s:decorate>
 
@@ -53,7 +52,7 @@
 													maxlength="30" id="searchPatternId"
 													alt="Search parameters for client like inum,iname,displayName" />
 												<h:commandButton style="float:left;margin-left :3px;"
-													styleClass="btn btn-primary" value="Search"
+													styleClass="btn btn-primary" value="#{msg['client.search']}"
 													action="#{searchClientAction.search}" />
 											</div>
 										</s:decorate>
@@ -66,7 +65,7 @@
 									<div class="box box-primary"
 										style="width: 128%; margin-left: 22px;">
 										<div class="box-header">
-											<h3 class="box-title">Search Results</h3>
+											<h3 class="box-title">#{msg['client.searchResults']}</h3>
 										</div>
 										<!-- /.box-header -->
 										<!-- form start -->
@@ -76,7 +75,7 @@
 													<s:fragment
 														rendered="#{searchClientAction.clientList.size eq 0}">
 														
-														<h:outputText value="No Search Result Found" />
+														<h:outputText value="#{msg['client.noSearchResultFound']}" />
 													</s:fragment>
 
 													<h:dataTable sortMode="single"
@@ -86,7 +85,7 @@
 														rendered="#{searchClientAction.clientList.size gt 0}">
 														<h:column sortBy="#{clt.displayName}">
 															<f:facet name="header">
-																Display Name
+																#{msg['client.displayName']}
 															</f:facet>
 															<s:link view="/client/updateClient.xhtml"
 																value="#{clt.displayName}" propagation="none">
@@ -95,13 +94,13 @@
 														</h:column>
 														<h:column sortBy="#{clt.iname}">
 															<f:facet name="header">
-																<div style="margin-left:20px;">iNum</div>
+																<div style="margin-left:20px;">#{msg['client.inum']}</div>
 															</f:facet>
 															<h:outputText value="#{clt.inum}" class="col-xs-12" />
 														</h:column>
 														<h:column>
 															<f:facet name="header">
-														Application type
+																#{msg['client.applicationType']}
 															</f:facet>
 															<h:outputText value="#{clt.oxAuthAppType}"
 																class="col-xs-12" />

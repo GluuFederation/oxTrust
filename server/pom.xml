@@ -312,6 +312,14 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>net.jodah</groupId>
+			<artifactId>expiringmap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.wordnik</groupId>
 			<artifactId>swagger-annotations</artifactId>
 		</dependency>

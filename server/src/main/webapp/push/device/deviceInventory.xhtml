@@ -18,7 +18,7 @@
                         <ui:param name="_hideLabel" value="true" />
                         <h:inputText value="#{pushDeviceInventoryAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters"
                             alt="Search parameters for client like inum,iname,displayName" />
-                        <h:commandButton value="Search" action="#{pushDeviceInventoryAction.search}" />
+                        <h:commandButton value="#{msg['deviceInventory.search']}" action="#{pushDeviceInventoryAction.search}" />
                     </s:decorate>
                 </h:form>
 
@@ -27,44 +27,44 @@
                 <h:form id="clientsFormId">
                     <s:fragment rendered="#{pushDeviceInventoryAction.pushDeviceList.size eq 0}">
                         <richext:spacer height="30" />
-                        <h:outputText value="No Search Result Found" />
+                        <h:outputText value="#{msg['deviceInventory.noSearchResultFound']}" />
                     </s:fragment>
 
                     <rich:dataTable sortMode="single" id="devicesListId" value="#{pushDeviceInventoryAction.pushDeviceList}" rows="20" styleClass="data sortable" var="_device"
                         rendered="#{pushDeviceInventoryAction.pushDeviceList.size gt 0}">
                         <rich:column>
-                            <f:facet name="header">Application</f:facet>
+                            <f:facet name="header">#{msg['deviceInventory.application']}</f:facet>
                             <ui:param name="_application" value="#{lookupService.getDisplayNameEntry(_device.application)}" />
                             <h:outputText value="#{_application.displayName}" />
                         </rich:column>
                         <rich:column sortBy="#{_device.type}">
-                            <f:facet name="header">Type</f:facet>
+                            <f:facet name="header">#{msg['deviceInventory.type']}</f:facet>
                             <h:outputText value="#{_device.type}" />
                         </rich:column>
                         <rich:column sortBy="#{_device.userId}">
-                            <f:facet name="header">User Id</f:facet>
+                            <f:facet name="header">#{msg['deviceInventory.userId']}</f:facet>
                             <h:outputText value="#{_device.userId}" />
                         </rich:column>
                         <rich:column>
-                            <f:facet name="header">OS</f:facet>
+                            <f:facet name="header">#{msg['deviceInventory.os']}</f:facet>
                             <h:outputText value="#{_device.deviceConfiguration.osName} - #{_device.deviceConfiguration.osVersion}" />
                         </rich:column>
                         <rich:column>
-                            <f:facet name="header">Device</f:facet>
+                            <f:facet name="header">#{msg['deviceInventory.device']}</f:facet>
                             <h:outputText value="#{_device.deviceConfiguration.deviceName}" />
                         </rich:column>
                         <rich:column>
-                            <f:facet name="header">Device UUID</f:facet>
+                            <f:facet name="header">#{msg['deviceInventory.deviceUUID']}</f:facet>
                             <h:outputText value="#{_device.deviceConfiguration.deviceUuid}" />
                         </rich:column>
                         <rich:column>
-                            <f:facet name="header">Approved At</f:facet>
+                            <f:facet name="header">#{msg['deviceInventory.approvedAt']}</f:facet>
                             <h:outputText value="#{_device.deviceConfiguration.approvedTime}">
 		                        <s:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
                             </h:outputText>
                         </rich:column>
                         <rich:column>
-                            <f:facet name="header">Approved From</f:facet>
+                            <f:facet name="header">#{msg['deviceInventory.approvedFrom']}</f:facet>
                             <h:outputText value="#{_device.deviceConfiguration.approvedIp}" />
                         </rich:column>
                         <f:facet name="footer">

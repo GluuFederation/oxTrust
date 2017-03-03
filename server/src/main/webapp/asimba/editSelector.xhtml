@@ -11,14 +11,14 @@
 
 	<ui:define name="body">
 		<section class="content-header">
-                    <h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />Asimba 
-                            <i class="fa fa-caret-right" style="color: #333 !important;" /> Selector</small></h1>
+                    <h1 style="color: #333;">#{msg['asimba.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;" />#{msg['asimba.asimba']}
+                            <i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['asimba.selector']}</small></h1>
                     <ol class="breadcrumb">
 
                             <li><a href="#{request.contextPath}/asimba/selectors"><i
-                                            class="fa fa-home"></i> Selectors</a></li>
+                                            class="fa fa-home"></i> #{msg['asimba.selectors']}</a></li>
                             <li class="organization/configuration"><a
-                                    href="#{request.contextPath}/asimba/editSelector/">Add Selector</a></li>
+                                    href="#{request.contextPath}/asimba/editSelector/">#{msg['asimba.addSelector']}</a></li>
                     </ol>
 		</section>
 
@@ -33,15 +33,15 @@
                     <div class = "box-footer">
                         <div  style="width: 100%;height: 30px;">
                             <div id="updateButtons" style="float: left;width: 250px;"> 
-                        <h:commandButton styleClass="btn btn-primary" value="   Add   "
+                        <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.add']}   "
                                 action="#{updateAsimbaSelectorAction.add}" rendered="#{updateAsimbaSelectorAction.newEntry}" />
-                        <h:commandButton styleClass="btn btn-primary" value="   Update   "
+                        <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.update']}   "
                                          style="margin-left:5px;"
                                 action="#{updateAsimbaSelectorAction.update}" rendered="#{not updateAsimbaSelectorAction.newEntry}" />
-                        <h:commandButton styleClass="btn btn-primary" value="   Delete   "
+                        <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.delete']}   "
                                          style="margin-left:5px;"
                                 action="#{updateAsimbaSelectorAction.delete}" rendered="#{not updateAsimbaSelectorAction.newEntry}" />
-                        <h:commandButton styleClass="btn btn-primary" value="   Cancel  "
+                        <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.cancel']}  "
                                          style="margin-left:5px;"
                                 action="#{updateAsimbaSelectorAction.cancel}" immediate="true" />
                             </div>

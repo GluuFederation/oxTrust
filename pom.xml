@@ -107,7 +107,21 @@
 				<artifactId>oxtrust-scim</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
+			<!-- https://mvnrepository.com/artifact/net.jodah/expiringmap -->
+			<dependency>
+				<groupId>net.jodah</groupId>
+				<artifactId>expiringmap</artifactId>
+				<version>0.5.7</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/com.codahale.metrics/metrics-core -->
+			<dependency>
+				<groupId>com.codahale.metrics</groupId>
+				<artifactId>metrics-core</artifactId>
+				<version>3.0.2</version>
+			</dependency>
+
 			<!-- Gluu -->
 			<dependency>
 				<groupId>org.xdi</groupId>

@@ -11,20 +11,20 @@
 
     <ui:define name="body">
         <section class="content-header">
-            <h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />Asimba 
-                    <i class="fa fa-caret-right" style="color: #333 !important;" /> Selectors</small></h1>
+            <h1 style="color: #333;">#{msg['asimba.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;" />#{msg['asimba.asimba']}
+                    <i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['asimba.selectors']}</small></h1>
             <ol class="breadcrumb">
 
                     <li><a href="#{request.contextPath}/asimba/selectors"><i
-                                    class="fa fa-home"></i> Selectors</a></li>
+                                    class="fa fa-home"></i> #{msg['asimba.selectors']}</a></li>
                     <li class="organization/configuration"><a
-                            href="#{request.contextPath}/asimba/editSelector/">Add Selector</a></li>
+                            href="#{request.contextPath}/asimba/editSelector/">#{msg['asimba.addSelector']}</a></li>
             </ol>
         </section>
 
         <section class="content"> 
             <div style="margin-left: 16px;">
-                <s:link view="/asimba/editSelector" value="Add Selector" styleClass="addPerson btn btn-primary" propagation="none" />
+                <s:link view="/asimba/editSelector" value="#{msg['asimba.addSelector']}" styleClass="addPerson btn btn-primary" propagation="none" />
             </div>
 
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -35,7 +35,7 @@
                 <ui:param name="_hideLabel" value="true" />
                 <h:inputText value="#{updateAsimbaSelectorAction.searchPattern}" size="30" maxlength="30" required="true" id="searchPatternId" styleClass="searchParameters form-control" style="width: 50%; float: left;"
                     alt="search parameters for person like uid,iname,email" />
-                <h:commandButton value="Search" action="#{updateAsimbaSelectorAction.search}" styleClass="btn btn-primary" style="float: left;" />
+                <h:commandButton value="#{msg['asimba.search']}" action="#{updateAsimbaSelectorAction.search}" styleClass="btn btn-primary" style="float: left;" />
             </s:decorate>
         </h:form>
 
@@ -44,7 +44,7 @@
         <h:form id="selectorsFormId">
             <s:fragment rendered="#{updateAsimbaSelectorAction.selectorList.size eq 0}">
                 <richext:spacer height="30" />
-                <h:outputText value="No Search Result Found" />
+                <h:outputText value="#{msg['asimba.noSearchResult']}" />
             </s:fragment>
 
 
@@ -56,7 +56,7 @@
 
                 <h:column>
                        <f:facet name="header">  
-                        <div style="text-align: center;"> SP</div>
+                        <div style="text-align: center;"> #{msg['asimba.sp']}</div>
                     </f:facet>
                     <s:link view="/asimba/editSelector.xhtml" value="#{selector.id}" propagation="none">
                         <f:param name="inum" value="#{selector.inum}" />
@@ -65,21 +65,21 @@
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Friendly Name</div>
+                        <div style="text-align: center;"> #{msg['asimba.friendlyName']}</div>
                     </f:facet>
                     <h:outputText value="#{selector.friendlyName}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> IDP</div>
+                        <div style="text-align: center;"> #{msg['asimba.idp']}</div>
                     </f:facet>
                     <h:outputText value="#{selector.organizationId}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Enabled</div>
+                        <div style="text-align: center;"> #{msg['asimba.enabled']}</div>
                     </f:facet>
                     <div style="text-align: center;">
                         <h:selectBooleanCheckbox value="#{selector.enabled}" readonly="true" disabled="true" />
