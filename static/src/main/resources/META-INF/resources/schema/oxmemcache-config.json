@@ -89,6 +89,37 @@
 			            "exclusiveMinimum": false
 			            }
            		}
+		},
+      	"redisConfiguration": {
+      	 "type":"object",
+         "additionalProperties":false,
+         "properties":{
+			      	"host" : {
+						"id": "host",
+			            "description": "Host value",
+			            "type": "string"		            
+			            },
+			        "port" : {
+						"id": "port",
+			            "description": "port",
+			            "type": "integer",
+			            "multipleOf": 1,
+			            "maximum": 2147483647,
+			            "minimum": 1,
+			            "exclusiveMaximum": false,
+			            "exclusiveMinimum": false
+			            },
+			        "defaultPutExpiration" : {
+						"id": "defaultPutExpiration",
+			            "description": "defaultPutExpiration timeout value",
+			            "type": "integer",
+			            "multipleOf": 1,
+			            "maximum": 2147483647,
+			            "minimum": 1,
+			            "exclusiveMaximum": false,
+			            "exclusiveMinimum": false
+			            }
+           		}
 		}
     }
 }
