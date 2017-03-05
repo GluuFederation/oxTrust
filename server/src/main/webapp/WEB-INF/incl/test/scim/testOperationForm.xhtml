@@ -12,15 +12,15 @@
     <h:form id="operationForm">
         <h:panelGrid columns="1" width="100%">
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="userName">
-                <ui:define name="label">User Name</ui:define>
+                <ui:define name="label">#{msg['testOperationForm.userName']}</ui:define>
                 <h:inputText value="#{_scimAction.userName}" size="30" maxlength="30" required="true" id="userNameId"/>
              </s:decorate>
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="password">
-                <ui:define name="label">Password</ui:define>
+                <ui:define name="label">#{msg['testOperationForm.password']}</ui:define>
                 <h:inputSecret value="#{_scimAction.password}" size="30" maxlength="30" required="true" id="passwordId"/>
              </s:decorate>
              <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="baseUrl">
-                <ui:define name="label">Base URL</ui:define>
+                <ui:define name="label">#{msg['testOperationForm.baseURL']}</ui:define>
                 <h:inputText value="#{_scimAction.baseUrl}" size="30" maxlength="60" required="true" id="baseUrlId"/>
              </s:decorate>
              <s:fragment rendered="#{_scimAction.responseResult ne null}">

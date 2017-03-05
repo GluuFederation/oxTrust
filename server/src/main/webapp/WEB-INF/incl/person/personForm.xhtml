@@ -80,12 +80,12 @@
     </h:outputScript>
     <section class="content-header">
         <h1 style="color: #333;">
-            Users
+            #{msg['person.users']}
             <small><i class="fa fa-caret-right" style="color: #333 !important;"></i>Update User</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-            <li class="organization/configuration">Add/Update User</li>
+            <li class="organization/configuration">#{msg['person.addUpdateUser']}</li>
         </ol>
     </section>
     <section class="content">
@@ -109,7 +109,7 @@
                                                    var="origin">
                                             <rich:tab header="#{_customAttributeAction.originDisplayNames[origin.key]}">
                                                 <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0">
-                                                    <h4 style="font-size: 18px;text-decoration: underline;">Add attributes to person entry</h4>
+                                                    <h4 style="font-size: 18px;text-decoration: underline;">#{msg['person.addAttributesToPerson']}</h4>
                                                     <c:forEach items="#{origin.value}" var="attr">
                                                         <ui:param name="_aid"
                                                                   value="#{_customAttributeAction.attributeIds[attr]}"/>
@@ -150,11 +150,11 @@
                                                         <div class="col-xs-10">
                                                             <rich:inplaceInput
                                                                     value="#{_custAttr.values[_valueIdx]}"
-                                                                    defaultLabel="Click to enter #{_custAttr.metadata.displayName}"
+                                                                    defaultLabel="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName}"
                                                                     id="custId"
                                                                     validator="#{_custAttr.metadata.validateAttribute}"
                                                                     required="#{_mustEnter and empty param['sv']}"
-                                                                    requiredMessage="Please enter #{_custAttr.metadata.displayName}. "
+                                                                    requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status') and (_custAttr.metadata.displayName ne 'Password')}" >
                                                                 <rich:validator event="blur"/>
                                                                	
@@ -224,7 +224,7 @@
                                                                     id="custpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter and empty param['sv']}"
-                                                                    requiredMessage="Please enter #{_custAttr.metadata.displayName}. "
+                                                                    requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
                                                                     onfocus="changeTextType(this);">
                                                                 <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custpasswordId')}.getValue())"/>
@@ -234,10 +234,10 @@
                                                         
                                                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
                                                         <ui:define
-                                                                name="label">Confirm Password</ui:define>
+                                                                name="label">#{msg['person.confirmPassword']}</ui:define>
 														<div class="col-xs-10">                                                                                           
                                                             <rich:inplaceInput       
-                                                                    defaultLabel="Click to enter Confirm Pasword"
+                                                                    defaultLabel="#{msg['person.confirmPassword']}"
                                                                     maxlength="50" id="custconfirmpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter and empty param['sv']}"

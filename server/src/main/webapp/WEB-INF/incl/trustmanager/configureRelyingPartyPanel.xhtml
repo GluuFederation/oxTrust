@@ -69,7 +69,7 @@
 
 	<rich:popupPanel id="TRConfigPanel" onmaskclick="#{rich:component('TRConfigPanel')}.hide()" keepVisualState="true" autosized="true" zindex="2000" top="60" >
         <f:facet name="header">
-            <h:outputText value="Relying Party configuration" />
+            <h:outputText value="#{msg['trustmanager.relyingPartyConfiguration']}" />
         </f:facet>
 
         <f:facet name="controls">
@@ -82,7 +82,7 @@
 
             <h:panelGrid columns="1" id="RelyingPartyMenu" width="700"  style="margin: 0 auto; ">
                 <rich:pickList id="profileConfigurationSelection" value="#{relyingPartyAction.profileConfigurations}"
-                    listsHeight="150" listWidth="230" sourceCaption="Available Profile Configurations" targetCaption="Selected Profile Configurations">
+                    listsHeight="150" listWidth="230" sourceCaption="#{msg['trustmanager.availableProfileConfigurations']}" targetCaption="#{msg['trustmanager.selectedProfileConfigurations']}">
 
                     <f:selectItems value="#{relyingPartyAction.availableProfileConfigurations}" var="item" itemValue="#{item}" itemLabel="#{item}" />
                     <f:converter converterId="profileConfigurationConverter" />
@@ -122,8 +122,8 @@
             </h:panelGrid>
 
             <div id="relyingPartyUpdate">
-                <a4j:commandButton value="Save" action="#{relyingPartyAction.saveFilters}" oncomplete="#{rich:component('TRConfigPanel')}.hide()" render="RelyingPartyMenu" />
-                <a4j:commandButton value="Back" onclick="#{rich:component('TRConfigPanel')}.hide()" immediate="true" />
+                <a4j:commandButton value="#{msg['trustmanager.save']}" action="#{relyingPartyAction.saveFilters}" oncomplete="#{rich:component('TRConfigPanel')}.hide()" render="RelyingPartyMenu" />
+                <a4j:commandButton value="#{msg['trustmanager.back']}" onclick="#{rich:component('TRConfigPanel')}.hide()" immediate="true" />
             </div>
         </h:form>
     </rich:popupPanel>

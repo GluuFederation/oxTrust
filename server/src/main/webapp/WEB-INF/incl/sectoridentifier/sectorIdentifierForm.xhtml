@@ -12,14 +12,14 @@
 
     <section class="content-header">
         <h1 style="color: #333;">
-            OpenID Connect
+            #{msg['sectorIdentifier.openIDConnect']}
             <small>
                 <i class="fa fa-caret-right" style="color: #333 !important;"></i>
-                Manage Sector Identifiers
+                #{msg['sectorIdentifier.manageSectorIdentifiers']}
             </small>
             <small>
                 <i class="fa fa-caret-right" style="color: #333 !important;"></i>
-                Add Sector Identifier
+                #{msg['sectorIdentifier.addSectorIdentifiers']}
             </small>
         </h1>
         <ol class="breadcrumb">
@@ -27,7 +27,7 @@
                 <a href="#{request.contextPath}"><i class="fa fa-home"></i></a>
             </li>
             <li class="organization/configuration">
-                <a href="#{request.contextPath}/sectoridentifier/inventory">Manage Sector Identifiers</a>
+                <a href="#{request.contextPath}/sectoridentifier/inventory">#{msg['sectorIdentifier.manageSectorIdentifiers']}</a>
             </li>
         </ol>
     </section>
@@ -42,13 +42,13 @@
 
                                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="inu"
                                                 rendered="#{not _new}">
-                                        <ui:define name="label">Inum</ui:define>
+                                        <ui:define name="label">#{msg['sectorIdentifier.inum']}</ui:define>
                                         <h:outputText value="#{_sectorIdentifierAction.sectorIdentifier.inum}"/>
                                     </s:decorate>
 
                                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="url"
                                                 rendered="#{not _new}">
-                                        <ui:define name="label">Url</ui:define>
+                                        <ui:define name="label">#{msg['sectorIdentifier.url']}</ui:define>
                                         <h:outputLink value="#{_sectorIdentifierAction.sectorIdentifierUrl}"
                                                       target="_blank">
                                             <i class="icon-external-link"></i>
@@ -58,7 +58,7 @@
                                     </s:decorate>
 
                                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="redirectLoginUrls">
-                                        <ui:define name="label">Redirect Login URIs</ui:define>
+                                        <ui:define name="label">#{msg['sectorIdentifier.redirectLoginURIs']}</ui:define>
                                         <h:panelGroup id="selectedLoginURIsId">
                                             <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                           cellspacing="0">
@@ -86,7 +86,7 @@
                                     </s:decorate>
 
                                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clients">
-                                        <ui:define name="label">Clients</ui:define>
+                                        <ui:define name="label">#{msg['sectorIdentifier.clients']}</ui:define>
                                         <h:panelGroup id="selectedClientsId">
                                             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
                                                          cellspacing="0">
@@ -118,12 +118,12 @@
                                             <div class="btn-group" role="group" aria-label="..."
                                                  style="margin-left:105px;">
                                                 <a4j:commandButton styleClass="btn btn-primary"
-                                                                   value="Add Login URI"
+                                                                   value="#{msg['sectorIdentifier.addLoginUri']}"
                                                                    oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
                                                                    execute="@this"
                                                                    eventsQueue="sectorIdentifierQueue"/>
                                                 <a4j:commandButton styleClass="btn btn-primary"
-                                                                   value="Add Client"
+                                                                   value="#{msg['sectorIdentifier.addClient']}"
                                                                    action="#{_sectorIdentifierAction.selectAddedClients}"
                                                                    oncomplete="#{rich:component('client:selectClientModalPanel')}.show();"
                                                                    execute="@this"
