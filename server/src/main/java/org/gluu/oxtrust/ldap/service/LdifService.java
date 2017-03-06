@@ -29,68 +29,55 @@ import com.unboundid.ldif.LDIFReader;
  * Provides operations with LDIF files
  * 
  * @author Shekhar L Date: 02.28.2017
+ * @author Yuriy Movchan Date: 03/06/2017
  */
 @Scope(ScopeType.STATELESS)
 @Name("ldifService")
 @AutoCreate
-public class LdifService implements Serializable{
+public class LdifService implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6690460114767359078L;
 
 	@Logger
 	private Log log;
-	
+
 	@In
 	private LdapEntryManager ldapEntryManager;
-	
-	LdifDataUtility ldifDataUtility = LdifDataUtility.instance();	
 
-	
-	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException{
+	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {
 		ResultCode result = ResultCode.UNAVAILABLE;
-		
-		LDAPConnectionPool ldapConnectionPool = ldapEntryManager.getLdapOperationService().getConnectionPool();
-		LDAPConnection connection = null;
-        try {
-        	 connection = ldapConnectionPool.getConnection();
 
+		LDAPConnection connection = ldapEntryManager.getLdapOperationService().getConnection();
+		try {
+			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
 			LDIFReader importLdifReader = new LDIFReader(is);
-			
-			result = ldifDataUtility.importLdifFile(connection,importLdifReader);
+
+			result = ldifDataUtility.importLdifFile(connection, importLdifReader);
 			importLdifReader.close();
-			
-		} catch(Exception e ) {
-			log.info("LDIFReader   --- : " + e.getMessage());
-			e.printStackTrace();
-			
-		}finally {
-			if (connection != null) {
-				ldapConnectionPool.releaseConnection(connection);
-			}
+		} catch (Exception ex) {
+			log.error("Failed to import ldif file: ", ex);
+		} finally {
+			ldapEntryManager.getLdapOperationService().releaseConnection(connection);
 		}
+
 		return result;
-		
+
 	}
-	
-	public ResultCode validateLdifFile(InputStream is, String dn) throws LDAPException{
+
+	public ResultCode validateLdifFile(InputStream is, String dn) throws LDAPException {
 		ResultCode result = ResultCode.UNAVAILABLE;
 		try {
+			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
 			LDIFReader validateLdifReader = new LDIFReader(is);
-			result = ldifDataUtility.validateLDIF(validateLdifReader,dn);			
-			log.info("LDIFReader successfully");
+
+			result = ldifDataUtility.validateLDIF(validateLdifReader, dn);
 			validateLdifReader.close();
-			
-		} catch(Exception e ) {
-			log.info("LDIFReader   --- : "+e.getMessage());
-			e.printStackTrace();
-			
+		} catch (Exception ex) {
+			log.error("Failed to validate ldif file: ", ex);
 		}
+
 		return result;
-		
+
 	}
-	
 
 }

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -26,21 +27,21 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+
+import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
 
 /**
  * Action class to load data from LDIF file
  * 
  * @author Shekhar L Date: 02.28.2017
+ * @author Yuriy Movchan Date: 03/06/2017
  */
 @Name("attributeImportAction")
 @Scope(ScopeType.CONVERSATION)
 @Restrict("#{identity.loggedIn}")
 public class AttributeImportAction implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8755036208872218664L;
 
 	@Logger
@@ -76,52 +77,53 @@ public class AttributeImportAction implements Serializable {
 		if (!fileDataToImport.isReady()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		
-		if (uploadedFile != null) {
-			//Table table;
-			InputStream is = new ByteArrayInputStream(this.fileData);
-			
-			ResultCode result = ldifService.importLdifFileInLdap( is);
-			
-			if(!result.equals(ResultCode.SUCCESS)){
-				removeFileDataToImport();
-				this.fileDataToImport.setReady(false);
-				facesMessages.add(Severity.ERROR, "Invalid LDIF File. import Failed");
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-			
-			is.close();
-			this.fileDataToImport.setReady(true);
-			this.fileDataToImport.setIs(is);
-		}
 
+		InputStream is = new ByteArrayInputStream(fileDataToImport.getData());
+		ResultCode result = null;
+		try {
+			result = ldifService.importLdifFileInLdap(is);
+		} catch (LDAPException ex) {
+			facesMessages.add(Severity.ERROR, "Failed to import LDIF file");
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+		
 		removeFileToImport();
-		facesMessages.add(Severity.INFO,"LDIF File is successfully Added");
-		return OxTrustConstants.RESULT_SUCCESS;
+
+		if ((result != null) && result.equals(ResultCode.SUCCESS)) {
+			facesMessages.add(Severity.INFO,"Attributes added successfully");
+			return OxTrustConstants.RESULT_SUCCESS;
+		} else {
+			facesMessages.add(Severity.ERROR, "Failed to import LDIF file");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 	}
 
-	public void validateFileToImport() throws Exception {
+	public void validateFileToImport() {
 		removeFileDataToImport();
-		String dn=attributeService.getDnForAttribute(null);
+		String dn = attributeService.getDnForAttribute(null);
 
 		if (uploadedFile == null) {
 			return;
 		}
 
-		if (uploadedFile != null) {
-			//Table table;
-			InputStream is = new ByteArrayInputStream(this.fileData);
-			ResultCode result = ldifService.validateLdifFile(is , dn);
-			if(!result.equals(ResultCode.SUCCESS)){
-				log.info("LDIFReader   --- : ");
-				removeFileDataToImport();
-				this.fileDataToImport.setReady(false);
-				facesMessages.add(Severity.ERROR, "Invalid LDIF File. validation Failed");
-				return;
-			}
-			is.close();
+		InputStream is = new ByteArrayInputStream(this.fileData);
+		ResultCode result = null;
+		try {
+			result = ldifService.validateLdifFile(is, dn);
+		} catch (LDAPException ex) {
+			facesMessages.add(Severity.ERROR, "Failed to parse LDIF file");
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+
+		if ((result != null) && result.equals(ResultCode.SUCCESS)) {
 			this.fileDataToImport.setReady(true);
-			this.fileDataToImport.setIs(is);
+			this.fileDataToImport.setData(this.fileData);
+		} else {
+			removeFileDataToImport();
+			this.fileDataToImport.setReady(false);
+			facesMessages.add(Severity.ERROR, "Invalid LDIF File. Validation failed");
 		}
 	}
 
@@ -173,14 +175,14 @@ public class AttributeImportAction implements Serializable {
 		private static final long serialVersionUID = 7334362213305310293L;
 
 		private String fileName;
-		private InputStream is;
+		private byte[] data;
 		private boolean ready;
 
 		public FileDataToImport() {
 		}
 
-		public FileDataToImport(InputStream is) {
-			this.is = is;
+		public FileDataToImport(byte[] data) {
+			this.data = data;
 		}
 		
 		public String getFileName() {
@@ -201,16 +203,16 @@ public class AttributeImportAction implements Serializable {
 
 		public void reset() {
 			this.fileName = null;
-			this.is = null;
+			this.data = null;
 			this.ready = false;
 		}
 
-		public InputStream getIs() {
-			return is;
+		public byte[] getData() {
+			return data;
 		}
 
-		public void setIs(InputStream is) {
-			this.is = is;
+		public void setData(byte[] data) {
+			this.data = data;
 		}
 	}
 }
