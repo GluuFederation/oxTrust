@@ -8,6 +8,9 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -40,6 +43,7 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
+import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 
 /**
@@ -166,7 +170,7 @@ public class UpdatePersonAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		personService.addCustomObjectClass(this.person);
+		updateCustomObjectClasses();
 
 		List<GluuCustomAttribute> removedAttributes = customAttributeAction.detectRemovedAttributes();
 		customAttributeAction.updateOriginCustomAttributes();
@@ -235,6 +239,16 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private void updateCustomObjectClasses() {
+		personService.addCustomObjectClass(this.person);
+
+		// Update objectClasses
+		String[] allObjectClasses = ArrayHelper.arrayMerge(applicationConfiguration.getPersonObjectClassTypes(), this.person.getCustomObjectClasses());
+		String[] resultObjectClasses = new HashSet<String>(Arrays.asList(allObjectClasses)).toArray(new String[0]);
+		
+		this.person.setCustomObjectClasses(resultObjectClasses);
 	}
 
 	/**
