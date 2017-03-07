@@ -143,6 +143,26 @@
 				</p>
 			</s:fragment>
 	    </div>
+
+	    <!-- session management iframes -->
+	    <iframe title='empty' style='visibility: hidden;' width='0' height='0' tabindex='-1' id='rpiframe' src='#{request.contextPath}/rpiframe' onload="checkSessionPoll('rpiframe')"></iframe>
+	    <iframe title='empty' style='visibility: hidden;' width='0' height='0' tabindex='-1' id='opiframe' src='/oxauth/opiframe' onload="checkSessionPoll('opiframe')"></iframe>
+	    <script type="text/javascript">
+		//<![CDATA[
+		checkSessionPoll = (function () {
+			var rpiframe_loaded = false;
+			var opiframe_loaded = false;
+			return function(frame) {
+				if (frame == 'rpiframe') rpiframe_loaded = true;
+				if (frame == 'opiframe') opiframe_loaded = true;
+				if (rpiframe_loaded && opiframe_loaded) {
+					var rpiframe = document.getElementById('rpiframe').contentWindow;
+					poll = setInterval(rpiframe.checkSession, rpiframe.check_interval);
+				}
+			};
+		})();
+		//]]>
+	    </script>
 	</h:body>
 </f:view>
 
