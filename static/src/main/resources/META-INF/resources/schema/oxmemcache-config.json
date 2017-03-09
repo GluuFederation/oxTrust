@@ -1,0 +1,125 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "/",
+    "title": "oxMemCache-Config",
+    "type": "object",
+    "additionalProperties": true,
+    "properties": {
+    "cacheProviderType": {
+            "id": "cacheProviderType",
+            "description": "The cacheProvider Type.",
+            "type": "string",
+            "enum": [
+                "IN_MEMORY",
+                "MEMCACHED"
+            ]
+    },
+    "memcachedConfiguration":{
+    	 "type":"object",
+         "additionalProperties":false,
+         "properties":{
+		        "servers": {
+		            "id": "servers",
+		            "description": "server details separated by commas",
+		            "title": "servers",
+		            "type": "string",
+		            "format": "url",
+		            "minLength": 1
+		        },
+		        "maxOperationQueueLength": {
+		            "id": "maxOperationQueueLength",
+		            "description": "Maximum operation Queue Length.",
+		            "type": "integer",
+		            "multipleOf": 1,
+		            "maximum": 2147483647,
+		            "minimum": 1,
+		            "exclusiveMaximum": false,
+		            "exclusiveMinimum": false
+		        },
+		        "bufferSize": {
+		            "id": "bufferSize",
+		            "description": "Buffer Size.",
+		            "type": "integer",
+		            "multipleOf": 1,
+		            "maximum": 2147483647,
+		            "minimum": 1,
+		            "exclusiveMaximum": false,
+		            "exclusiveMinimum": false
+		        },
+		        "defaultPutExpiration": {
+		            "id": "defaultPutExpiration",
+		            "description": "Expiration timeout value",
+		            "type": "integer",
+		            "multipleOf": 1,
+		            "maximum": 2147483647,
+		            "minimum": 1,
+		            "exclusiveMaximum": false,
+		            "exclusiveMinimum": false
+		        },
+		        "MemcachedConnectionFactoryType": {
+		           	"id": "MemcachedConnectionFactoryType",
+            		"description": "The MemcachedConnectionFactoryType Type.",
+            		"type": "string",
+            		"enum": [
+                		"IN_MEMORY",
+                		"MEMCACHED"
+            		]
+        		}
+        	},
+			    "required": [
+			        "servers",
+			        "maxOperationQueueLength",
+			        "bufferSize",
+			        "defaultPutExpiration",
+			        "MemcachedConnectionFactoryType"
+			    ]
+       },
+      	"inMemoryConfiguration": {
+      	 "type":"object",
+         "additionalProperties":false,
+         "properties":{
+			      	"defaultPutExpiration" : {
+						"id": "defaultPutExpiration",
+			            "description": "defaultPutExpiration timeout value",
+			            "type": "integer",
+			            "multipleOf": 1,
+			            "maximum": 2147483647,
+			            "minimum": 1,
+			            "exclusiveMaximum": false,
+			            "exclusiveMinimum": false
+			            }
+           		}
+		},
+      	"redisConfiguration": {
+      	 "type":"object",
+         "additionalProperties":false,
+         "properties":{
+			      	"host" : {
+						"id": "host",
+			            "description": "Host value",
+			            "type": "string"		            
+			            },
+			        "port" : {
+						"id": "port",
+			            "description": "port",
+			            "type": "integer",
+			            "multipleOf": 1,
+			            "maximum": 2147483647,
+			            "minimum": 1,
+			            "exclusiveMaximum": false,
+			            "exclusiveMinimum": false
+			            },
+			        "defaultPutExpiration" : {
+						"id": "defaultPutExpiration",
+			            "description": "defaultPutExpiration timeout value",
+			            "type": "integer",
+			            "multipleOf": 1,
+			            "maximum": 2147483647,
+			            "minimum": 1,
+			            "exclusiveMaximum": false,
+			            "exclusiveMinimum": false
+			            }
+           		}
+		}
+    }
+}

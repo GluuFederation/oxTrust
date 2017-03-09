@@ -21,7 +21,7 @@ public final class OpenIdCredentials implements Serializable  {
 
 	private String clientName;
 
-	private String authorizationCode;
+	private final String authorizationCode;
 
 	private UserProfile userProfile;
 

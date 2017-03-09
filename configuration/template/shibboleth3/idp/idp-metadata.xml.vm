@@ -31,7 +31,7 @@ $idpEncryptionCertificate
         </KeyDescriptor>
 
         <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
-                                   Location="$idpHost:9443/idp/profile/SAML2/SOAP/ArtifactResolution"
+                                   Location="$idpHost/idp/profile/SAML2/SOAP/ArtifactResolution"
                                    index="2"/>
 
         <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>

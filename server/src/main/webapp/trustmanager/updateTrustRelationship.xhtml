@@ -63,6 +63,11 @@
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="Trust Relationship" value="#{updateTrustRelationshipAction.trustRelationship.displayName}" deleteMethod="#{updateTrustRelationshipAction.delete}" queue="trustQueue" />
             
         </div>
+        
+       	<ox:createSPMetadataDialog  id="createSPMetadata" generateMethod="#{updateTrustRelationshipAction.generateSp()}" 
+		  label="Generate SP Metadata" metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
+		  logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}" uri="#{updateTrustRelationshipAction.trustRelationship.url}"/>
+        
         </section>
     </ui:define>
 </ui:composition>

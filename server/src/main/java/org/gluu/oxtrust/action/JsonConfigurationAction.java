@@ -25,6 +25,7 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.service.JsonService;
+import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
@@ -74,16 +75,23 @@ public class JsonConfigurationAction implements Serializable {
 
 	private String oxAuthDynamicConfigJson;
 
+	private CacheConfiguration cacheConfiguration;
+
+	private String cacheConfigurationJson;
+
 	@Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		try {
 			log.debug("Loading oxauth-config.json and oxtrust-config.json");
 			this.oxTrustApplicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
 			this.oxTrustImportPersonConfiguration = jsonConfigurationService.getOxTrustImportPersonConfiguration();
+			this.cacheConfiguration = jsonConfigurationService.getOxMemCacheConfiguration();
+			
 
 			this.oxTrustConfigJson = getProtectedOxTrustApplicationConfiguration(this.oxTrustApplicationConfiguration);
 			this.oxTrustImportPersonConfigJson = getOxTrustImportPersonConfiguration(this.oxTrustImportPersonConfiguration);
 			this.oxAuthDynamicConfigJson = jsonConfigurationService.getOxAuthDynamicConfigJson();
+			this.cacheConfigurationJson = getCacheConfiguration(cacheConfiguration);
 
 			if ((this.oxTrustConfigJson == null) || (this.oxAuthDynamicConfigJson == null)) {
 				return OxTrustConstants.RESULT_FAILURE;
@@ -132,6 +140,25 @@ public class JsonConfigurationAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxtrust-config.json", ex);
+			facesMessages.add(Severity.ERROR, "Failed to update oxTrust configuration in LDAP");
+		}
+
+		return OxTrustConstants.RESULT_FAILURE;
+	}
+	
+	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	public String saveOxMemCacheConfigJson() {
+		// Update JSON configurations
+		try {
+			log.debug("Saving memcache-config.json:" + this.cacheConfigurationJson);
+			this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
+			
+			jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
+			facesMessages.add(Severity.INFO, "OxMemcache  Configuration is updated.");
+
+			return OxTrustConstants.RESULT_SUCCESS;
+		} catch (Exception ex) {
+			log.error("Failed to update oxMemcache-config.json", ex);
 			facesMessages.add(Severity.ERROR, "Failed to update oxTrust configuration in LDAP");
 		}
 
@@ -191,6 +218,16 @@ public class JsonConfigurationAction implements Serializable {
 		return null;
 	}
 
+	private String getCacheConfiguration(CacheConfiguration cachedConfig) {
+		try {
+			return jsonService.objectToJson(cachedConfig);
+		} catch (Exception ex) {
+			log.error("Failed to prepare JSON from ImportPersonConfig: '{0}'", ex, oxTrustImportPersonConfiguration);
+		}
+
+		return null;
+	}
+	
 	private ApplicationConfiguration convertToOxTrustApplicationConfiguration(String oxTrustApplicationConfigurationJson) {
 		try {
 			ApplicationConfiguration resultOxTrustApplicationConfiguration = jsonService.jsonToObject(oxTrustApplicationConfigurationJson, ApplicationConfiguration.class);
@@ -217,6 +254,18 @@ public class JsonConfigurationAction implements Serializable {
 			ImportPersonConfig resultOxTrustImportPersonConfiguration = jsonService.jsonToObject(oxTrustImportPersonConfigJson, ImportPersonConfig.class);
 
 			return resultOxTrustImportPersonConfiguration;
+		} catch (Exception ex) {
+			log.error("Failed to prepare ImportPersonConfig from JSON: '{0}'", ex, oxTrustImportPersonConfigJson);
+		}
+
+		return null;
+	}
+	
+	private CacheConfiguration convertToCacheConfiguration(String oxCacheConfigurationJson) {
+		try {
+			CacheConfiguration cachedConfiguration = jsonService.jsonToObject(cacheConfigurationJson, CacheConfiguration.class);
+
+			return cachedConfiguration;
 		} catch (Exception ex) {
 			log.error("Failed to prepare ImportPersonConfig from JSON: '{0}'", ex, oxTrustImportPersonConfigJson);
 		}
@@ -257,5 +306,14 @@ public class JsonConfigurationAction implements Serializable {
 
 	public void setOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) {
 		this.oxAuthDynamicConfigJson = oxAuthDynamicConfigJson;
+	}
+
+	public String getCacheConfigurationJson() {
+		return cacheConfigurationJson;
+	}
+
+	public void setCacheConfigurationJson(
+			String cacheConfigurationJson) {
+		this.cacheConfigurationJson = cacheConfigurationJson;
 	}
 }

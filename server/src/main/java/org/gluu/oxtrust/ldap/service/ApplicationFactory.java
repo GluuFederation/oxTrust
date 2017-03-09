@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
@@ -15,7 +14,8 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.log.Log;
-import org.xdi.service.cache.MemcachedConfiguration;
+import org.xdi.service.cache.CacheConfiguration;
+import org.xdi.service.cache.InMemoryConfiguration;
 
 /**
  * Holds factory methods to create services
@@ -33,15 +33,21 @@ public class ApplicationFactory {
     @Logger
     private Log log;
 
-	@Factory(value = "memcachedConfiguration", scope = ScopeType.APPLICATION, autoCreate = true)
-	public MemcachedConfiguration createMemcachedConfiguration() {
-		MemcachedConfiguration memcachedConfiguration = applianceService.getAppliance().getMemcachedConfiguration();
-		if (memcachedConfiguration == null || StringUtils.isBlank(memcachedConfiguration.getServers())) {
-			throw new RuntimeException("Failed to load memcached configuration from ldap. Please check appliance ldap entry.");
-		} else {
-			log.trace("Memcached configuration: " + memcachedConfiguration);
-		}
-		return memcachedConfiguration;
-	}
+    @Factory(value = "cacheConfiguration", scope = ScopeType.APPLICATION, autoCreate = true)
+   	public CacheConfiguration createCacheConfiguration() {
+   		CacheConfiguration cacheConfiguration = applianceService.getAppliance().getCacheConfiguration();
+   		if (cacheConfiguration == null || cacheConfiguration.getCacheProviderType() == null) {
+   			log.error("Failed to read cache configuration from LDAP. Please check appliance oxCacheConfiguration attribute " +
+   					"that must contain cache configuration JSON represented by CacheConfiguration.class. Applieance DN: " + applianceService.getAppliance().getDn());
+   			log.info("Creating fallback IN-MEMORY cache configuration ... ");
+
+   			cacheConfiguration = new CacheConfiguration();
+   			cacheConfiguration.setInMemoryConfiguration(new InMemoryConfiguration());
+
+   			log.info("IN-MEMORY cache configuration is created.");
+   		}
+   		log.info("Cache configuration: " + cacheConfiguration);
+   		return cacheConfiguration;
+   	}
 
 }
