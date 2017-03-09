@@ -16,6 +16,11 @@
                 <a href="#" class="sidebar-toggle" data-toggle="offcanvas"
                    role="button"> <span class="sr-only">#{msg['topmenu.toggleNavigation']}</span>
                 </a>
+                Language :
+                <h:selectOneMenu value="#{language.localeCode}" onchange="submit()"
+                                 valueChangeListener="#{language.countryLocaleCodeChanged}">
+                    <f:selectItems value="#{language.countriesInMap}"/>
+                </h:selectOneMenu>
                 <div class="navbar-custom-menu" style="margin-right:0px;">
                     <ul class="nav navbar-nav" style="margin-right:0px;">
 
@@ -39,9 +44,9 @@
                                         <h:outputFormat value="#{msg['topmenu.organization']}">
                                             <f:param value="#{organizationService.organization.displayName}"/>
                                         </h:outputFormat>
+                                        <br/>
                                     </p>
                                 </li>
-
                                 <!-- Menu Footer-->
                                 <li class="user-footer" style="background-color: #181D20 !important;">
                                     <div class="pull-left" style="margin-right:1px;">

@@ -12,13 +12,13 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			Users<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Manage People</small>
+            #{msg['person.users']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['person.managePeople']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/group/inventory"> Manage People</a></li>
+				href="#{request.contextPath}/group/inventory"> #{msg['person.managePeople']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -32,7 +32,7 @@
 						<div style="display: inline-block; width: 100% !important;">
         <div id="formArea">
             <div style="margin-left: 16px;">
-                <s:link view="/person/addPerson.xhtml" value="Add Person" styleClass="addPerson btn btn-primary" propagation="none" rendered="#{organizationService.instance().allowPersonModification}" />
+                <s:link view="/person/addPerson.xhtml" value="#{msg['person.addPerson']}" styleClass="addPerson btn btn-primary" propagation="none" rendered="#{organizationService.instance().allowPersonModification}" />
             </div>
 
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -52,29 +52,29 @@
                 <h:form id="personsFormId">
                     <s:fragment rendered="#{searchPersonAction.personList.size eq 0}">
                         <richext:spacer height="30" />
-                        <h:outputText value="No Search Result Found" />
+                        <h:outputText value="#{msg['person.noSearchResultFound']}" />
                     </s:fragment>
 
                     <rich:dataTable sortMode="single" id="personsListId" value="#{searchPersonAction.personList}" rows="20" styleClass="data sortable" var="prs"
                         rendered="#{searchPersonAction.personList.size gt 0}">
                         <rich:column sortBy="#{prs.displayName}">
-                            <f:facet name="header">Display Name</f:facet>
+                            <f:facet name="header">#{msg['person.displayName']}</f:facet>
                             <s:link view="/person/updatePerson.xhtml" value="#{prs.displayName}" propagation="none">
                                 <f:param name="inum" value="#{prs.inum}" />
                             </s:link>
                         </rich:column>
                         <rich:column sortBy="#{prs.iname}">
-                            <f:facet name="header">iName</f:facet>
+                            <f:facet name="header">#{msg['person.iName']}</f:facet>
                             <h:outputText value="#{prs.iname}" />
                         </rich:column>
                         <rich:column sortBy="#{prs.uid}">
-                            <f:facet name="header">UID</f:facet>
+                            <f:facet name="header">#{msg['person.uid']}</f:facet>
                             <s:link view="/person/updatePerson.xhtml" value="#{prs.uid}" propagation="none">
                                 <f:param name="inum" value="#{prs.inum}" />
                             </s:link>
                         </rich:column>
                         <rich:column sortBy="#{prs.mail}">
-                            <f:facet name="header">Email</f:facet>
+                            <f:facet name="header">#{msg['person.status']}</f:facet>
                             <h:outputText value="#{prs.mail}" />
                         </rich:column>
                         <rich:column sortBy="#{prs.status.value}">

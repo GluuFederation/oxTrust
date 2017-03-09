@@ -36,7 +36,7 @@
                     alt="search parameters for certificate like email,CN,C,O" />
                 <h:outputText value=" " />
                 <h:selectBooleanCheckbox value="#{certificateManagementAction.searchObsoleteWarning}" styleClass="form-control" />
-                <h:outputText value="With 'obsolete' warning only" />
+                <h:outputText value="#{msg['configuration.withObsoleteWarningOnly']}" />
                 <h:commandButton value="#{msg['configuration.search']}" action="#{certificateManagementAction.search}" styleClass="btn btn-primary" />
             </s:decorate>
         </h:form>

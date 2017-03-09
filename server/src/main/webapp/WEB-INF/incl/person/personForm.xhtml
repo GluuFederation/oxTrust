@@ -81,7 +81,7 @@
     <section class="content-header">
         <h1 style="color: #333;">
             #{msg['person.users']}
-            <small><i class="fa fa-caret-right" style="color: #333 !important;"></i>Update User</small>
+            <small><i class="fa fa-caret-right" style="color: #333 !important;"></i>#{msg['person.updateUser']}</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
@@ -217,7 +217,7 @@
                                                         
                                                         <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"  rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
                                                         <ui:define
-                                                                name="label">Password</ui:define>
+                                                                name="label">#{msg['person.password']}</ui:define>
 														<div class="col-xs-10">                                                                                           
                                                             
                                                             <rich:inplaceInput
