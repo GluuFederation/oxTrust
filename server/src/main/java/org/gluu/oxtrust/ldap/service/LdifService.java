@@ -6,11 +6,15 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.List;
 
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.LdifDataUtility;
+import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -18,12 +22,18 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
+import org.xdi.model.GluuAttribute;
 
+import com.unboundid.ldap.sdk.Entry;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPConnectionPool;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
+import com.unboundid.ldap.sdk.SearchResult;
+import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldif.LDIFReader;
+import com.unboundid.ldif.LDIFRecord;
+import com.unboundid.ldif.LDIFWriter;
 
 /**
  * Provides operations with LDIF files
@@ -43,6 +53,9 @@ public class LdifService implements Serializable {
 
 	@In
 	private LdapEntryManager ldapEntryManager;
+	
+	@In
+	private AttributeService attributeService;
 
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {
 		ResultCode result = ResultCode.UNAVAILABLE;
@@ -78,6 +91,35 @@ public class LdifService implements Serializable {
 
 		return result;
 
+	}
+	
+	public void exportLDIFFile(List<String> checkedItems, OutputStream output)
+			throws LDAPException {
+		List<SearchResultEntry> result = null;
+		LDAPConnection connection = ldapEntryManager.getLdapOperationService().getConnection();
+		try {
+			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
+			result = ldifDataUtility.getAttributeResultEntryLDIF(connection,checkedItems, attributeService.getDnForAttribute(null));
+		} catch (Exception ex) {
+			log.error("Failed to export ldif file: ", ex);
+		} finally {
+			ldapEntryManager.getLdapOperationService().releaseConnection(connection);
+		}
+
+		if (result != null && result.size() > 0) {
+			// Write all of the matching entries to LDIF.
+			LDIFWriter ldifWriter;
+			try {
+				ldifWriter = new LDIFWriter(output);
+				for (SearchResultEntry entry : result) {
+					ldifWriter.writeEntry(entry);
+				}
+
+				ldifWriter.close();
+			} catch (IOException e) {
+				throw new LdapMappingException("Error writing to file, try again", e);
+			}
+		}
 	}
 
 }
