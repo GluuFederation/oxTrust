@@ -106,7 +106,8 @@ public class ManagePersonAuthenticationAction
 
 	private List<CustomScript> customScripts;
 
-	private String authenticationMode, oxTrustAuthenticationMode;
+	private String authenticationMode="auth_ldap_server";
+	private String oxTrustAuthenticationMode;
 
 	private List<String> customAuthenticationConfigNames;
 
