@@ -170,22 +170,20 @@ public class PersonImportAction implements Serializable {
 			return;
 		}
 
-		if (uploadedFile != null) {
-			Table table;
-			InputStream is = new ByteArrayInputStream(this.fileData);
-			try {
-				table = excelService.readExcelFile(is);
-			} finally {
-				IOUtils.closeQuietly(is);
-			}
+		Table table;
+		InputStream is = new ByteArrayInputStream(this.fileData);
+		try {
+			table = excelService.readExcelFile(is);
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
 
-			this.fileDataToImport.setTable(table);
+		this.fileDataToImport.setTable(table);
 
-			if (table != null) {
-				this.fileDataToImport.setFileName(FilenameUtils.getName(uploadedFile.getName()));
-				this.fileDataToImport.setImportAttributes(getAttributesForImport(table));
-				this.fileDataToImport.setReady(true);
-			}
+		if (table != null) {
+			this.fileDataToImport.setFileName(FilenameUtils.getName(uploadedFile.getName()));
+			this.fileDataToImport.setImportAttributes(getAttributesForImport(table));
+			this.fileDataToImport.setReady(true);
 		}
 
 		if (this.fileDataToImport.isReady()) {

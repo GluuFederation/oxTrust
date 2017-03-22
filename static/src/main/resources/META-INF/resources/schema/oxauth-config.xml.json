@@ -7,7 +7,7 @@
     "properties": {
         "sessionAsJwt": {
             "id": "sessionAsJwt",
-            "description": "Session as JWT.",
+            "description": "Experimental feature. Do not use in production!",
             "type": "boolean"
         },
         "issuer": {
@@ -168,13 +168,6 @@
         "oxElevenDeleteKeyEndpoint": {
             "id": "oxElevenDeleteKeyEndpoint",
             "description": "URL for the oxEleven Delete Key Endpoint.",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "oxElevenJwksEndpoint": {
-            "id": "oxElevenJwksEndpoint",
-            "description": "URL for the oxEleven JWKS Endpoint.",
             "type": "string",
             "format": "url",
             "minLength": 1
@@ -1014,6 +1007,75 @@
                 "TRACE",
                 "ALL"
             ]
+        },
+        "corsConfigurationFilters": {
+            "id": "corsConfigurationFilters",
+            "description": "CORS Configuration filters.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": false,
+            "additionalItems": true,
+            "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                    "filterName": {
+                        "id": "filterName",
+                        "description": "",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "corsAllowedOrigins": {
+                        "id": "corsAllowedOrigins",
+                        "description": "",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "corsAllowedMethods": {
+                        "id": "corsAllowedMethods",
+                        "description": "",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "corsAllowedHeaders": {
+                        "id": "corsAllowedHeaders",
+                        "description": "",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "corsExposedHeaders": {
+                        "id": "corsExposedHeaders",
+                        "description": "",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "corsSupportCredentials": {
+                        "id": "corsSupportCredentials",
+                        "description": "",
+                        "type": "boolean"
+                    },
+                    "corsLoggingEnabled": {
+                        "id": "corsLoggingEnabled",
+                        "description": "",
+                        "type": "boolean"
+                    },
+                    "corsPreflightMaxAge": {
+                        "id": "corsPreflightMaxAge",
+                        "description": "",
+                        "type": "integer",
+                        "multipleOf": 1,
+                        "maximum": 2147483647,
+                        "minimum": 1,
+                        "exclusiveMaximum": false,
+                        "exclusiveMinimum": false
+                    },
+                    "corsRequestDecorate": {
+                        "id": "corsRequestDecorate",
+                        "description": "",
+                        "type": "boolean"
+                    }
+                }
+            }
         }
     },
     "required": [
@@ -1040,7 +1102,6 @@
         "oxElevenSignEndpoint",
         "oxElevenVerifySignatureEndpoint",
         "oxElevenDeleteKeyEndpoint",
-        "oxElevenJwksEndpoint",
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
@@ -1119,6 +1180,7 @@
         "frontChannelLogoutSessionSupported",
         "updateUserLastLogonTime",
         "updateClientAccessTime",
-        "loggingLevel"
+        "loggingLevel",
+        "corsConfigurationFilters"
     ]
 }
