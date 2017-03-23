@@ -75,7 +75,7 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                 id="spRequestorSelectSP"
                 rendered="true">
-                <ui:define name="label">Select parent SP Pool</ui:define>
+                <ui:define name="label">#{msg['asimba.selectParentSPPool']}</ui:define>
 
                 <h:selectOneMenu styleClass="form-control"
                     title=""
@@ -90,13 +90,13 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                 id="spRequestorEditID"
                 rendered="true">
-                <ui:define name="label">ID</ui:define>
+                <ui:define name="label">#{msg['asimba.id']}</ui:define>
 
                 <h:outputLabel 
-                    title="Example: https://ce.gluu.info/shibboleth"
-                    value="The Requestor ID (URL) of this SAML2 requestor. This is the same as the SAML2 EntityID"/>
+                    title="#{msg['asimba.example']}"
+                    value="#{msg['asimba.theRequestorID']}"/>
                 <h:inputText styleClass="form-control"
-                    title="Example: https://ce.gluu.info/shibboleth"
+                    title="#{msg['asimba.example']}"
                     value="#{_spRequestor.id}" size="100" tabindex="0" 
                     required="true" />
             </s:decorate>
@@ -106,12 +106,12 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spRequestorEditFriendlyName"
                     rendered="true">
-                    <ui:define name="label">Friendly Name</ui:define>
+                    <ui:define name="label">#{msg['asimba.friendlyName']}</ui:define>
             <h:outputLabel 
-                title="The SP Requestor friendly name"
-                value="The SP Requestor friendly name"/>
+                title="#{msg['asimba.theSPRequestorFriendly']}"
+                value="#{msg['asimba.theSPRequestorFriendly']}"/>
             <h:inputText styleClass="form-control"
-                title="The SP Requestor friendly name"
+                title="#{msg['asimba.theSPRequestorFriendly']}"
                 value="#{_spRequestor.friendlyName}" size="100" tabindex="1" />
             </s:decorate>
             </h:panelGroup>
@@ -120,13 +120,13 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                 id="idpEditMetadataURL"
                 rendered="true">
-                <ui:define name="label">Metadata URL</ui:define>
+                <ui:define name="label">#{msg['asimba.metadataURL']}</ui:define>
 
                 <h:outputLabel 
-                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
-                    value="The URL of the metadata or empty if none"/>
+                    title="#{msg['asimba.configureTheURL']}"
+                    value="#{msg['asimba.theURLOfTheMetadata']}"/>
                 <h:inputText styleClass="form-control"
-                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
+                    title="#{msg['asimba.configureTheURL']}"
                     value="#{_spRequestor.metadataUrl}" size="100" tabindex="2" />
             </s:decorate>
             </h:panelGroup>
@@ -135,14 +135,14 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditMetadataTimeout"
                     rendered="true">
-                    <ui:define name="label">Metadata Timeout</ui:define>
+                    <ui:define name="label">#{msg['asimba.metadataTimeout']}</ui:define>
                     
                     <h:outputLabel 
-                        title="The timeout to be used in connecting the the URL metadata or -1 when default must be used"
-                        value="The timeout to be used in connecting the the URL metadata or -1 when default must be used"/>
+                        title="#{msg['asimba.theTimeoutToBeUsedInConnection']}"
+                        value="#{msg['asimba.theTimeoutToBeUsedInConnection']}"/>
                     <h:inputText styleClass="form-control"
-                        title="The timeout to be used in connecting the the URL metadata or -1 when default must be used"
-                        value="#{_spRequestor.metadataTimeout}" size="100" label="Metadata Timeout" tabindex="3" />
+                        title="#{msg['asimba.theTimeoutToBeUsedInConnection']}"
+                        value="#{_spRequestor.metadataTimeout}" size="100" label="#{msg['asimba.metadataTimeout']}" tabindex="3" />
             </s:decorate>
             </h:panelGroup>
             
@@ -150,18 +150,18 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spRequestorEditMetadataFile"
                     rendered="true">
-                    <ui:define name="label">Metadata File</ui:define>
+                    <ui:define name="label">#{msg['asimba.metadataFile']}</ui:define>
                     
                     <h:outputLabel 
-                        title="The location of the metadata file or empty if none"
-                        value="The location of the metadata file or empty if none"/>
+                        title="#{msg['asimba.theLocationOfMetadata']}"
+                        value="#{msg['asimba.theLocationOfMetadata']}"/>
                     <h:inputText id="spRequestorEditMetadataFileOutputText" 
                         styleClass="form-control"       
-                        title="The location of the metadata file or empty if none"
+                        title="#{msg['asimba.theLocationOfMetadata']}"
                         value="#{_spRequestor.metadataFile}" />
                     
                     <!-- upload file button -->
-                    <rich:fileUpload id="spRequestorRichUploadMetadataFile" addLabel="Upload"
+                    <rich:fileUpload id="spRequestorRichUploadMetadataFile" addLabel="#{msg['asimba.upload']}"
                         fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadFile}" 
                             maxFilesQuantity="1" 
                             immediateUpload="true" 
@@ -175,14 +175,14 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spRequestorEditTrustCertificateFile"
                     rendered="true">
-                <ui:define name="label">Trust Certificate File</ui:define>
+                <ui:define name="label">#{msg['asimba.trustCertificateFile']}</ui:define>
 
                 <h:outputLabel 
-                    title="Add certificate file"
-                    value="Add certificate file"/>
+                    title="#{msg['asimba.addCertificateFile']}"
+                    value="#{msg['asimba.addCertificateFile']}"/>
                 
                 <!-- upload file button -->
-                <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" addLabel="Upload" 
+                <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" addLabel="#{msg['asimba.upload']}"
                                  acceptedTypes="crt, cert, pem, txt" ontyperejected="alert('Only CRT, CERT, PEM, TXT files are accepted');"
                                      maxFilesQuantity="1" 
                                      immediateUpload="true"
@@ -194,11 +194,11 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="spRequestorEditAdditionalProperties"
                     rendered="true">
-                    <ui:define name="label">Properties</ui:define>
+                    <ui:define name="label">#{msg['asimba.properties']}</ui:define>
                     
                     <h:outputLabel 
-                        title="Additional properties"
-                        value="Additional properties"/>
+                        title="#{msg['asimba.additionalProperties']}"
+                        value="#{msg['asimba.additionalProperties']}"/>
                     <h:inputText styleClass="form-control"
                         title=""
                         value="#{_updateAsimbaSPRequestorAction.spRequestorAdditionalProperties}" tabindex="4" />
@@ -210,10 +210,10 @@
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Enabled"
+                title="#{msg['asimba.enabled']}"
                 value="#{_spRequestor.enabled}" />
             <h:outputLabel 
-                value="Enabled"/>
+                value="#{msg['asimba.enabled']}"/>
                         </td>
                         <td colspan="2" rowspan="1">
                         </td>
@@ -221,11 +221,11 @@
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Configure whether signing is required for this requestor. When set to true, incoming requests without a signature will be rejected."
+                title="#{msg['asimba.configureWhetherSigningIsRequired']}"
                 value="#{_spRequestor.signing}" />
             <h:outputLabel 
-                title="Configure whether signing is required for this requestor. When set to true, incoming requests without a signature will be rejected."
-                value="Signing"/>
+                title="#{msg['asimba.configureWhetherSigningIsRequired']}"
+                value="#{msg['asimba.signing']}"/>
                         </td>
                         <td colspan="2" rowspan="1">        
                         </td>

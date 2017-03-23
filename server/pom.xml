@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>oxtrust-server</artifactId>
 	<name>oxTrust Server</name>
@@ -58,7 +58,7 @@
 	</dependencyManagement>
 
 	<build>
-	        <finalName>${project.artifactId}</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<filters>
 			<filter>profiles/${cfg}/config-build.properties</filter>
 			<filter>profiles/${cfg}/config-oxtrust-test-data.properties</filter>
@@ -706,27 +706,27 @@
 		<dependency>
 			<groupId>org.asimba</groupId>
 			<artifactId>asimba-utility-ldap</artifactId>
-                        <version>3.1.0-SNAPSHOT</version>
-                        <exclusions>
-                        	<exclusion>
-                        		<artifactId>slf4j-api</artifactId>
-                        		<groupId>org.slf4j</groupId>
-                        	</exclusion>
-                        	<exclusion>
-                        		<artifactId>commons-logging</artifactId>
-                        		<groupId>commons-logging</groupId>
-                        	</exclusion>
-                        	<exclusion>
-                        		<artifactId>
-                        			oxLdap-annotations
-                        		</artifactId>
-                        		<groupId>org.xdi</groupId>
-                        	</exclusion>
-                        	<exclusion>
-                        		<groupId>log4j</groupId>
-                        		<artifactId>log4j</artifactId>
-                        	</exclusion>
-                        </exclusions>
+			<version>3.1.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>
+						oxLdap-annotations
+					</artifactId>
+					<groupId>org.xdi</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- JBoss -->

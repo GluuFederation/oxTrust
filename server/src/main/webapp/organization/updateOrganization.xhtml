@@ -16,12 +16,11 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">
-			Configuration<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Organization Configuration</small>
+			#{msg['updateorganization.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['updateorganization.organizationConfiguration']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a href="#{request.contextPath}/organization/configuration">Organization
-				Configuration</a></li>
+			<li class="organization/configuration"><a href="#{request.contextPath}/organization/configuration">#{msg['updateorganization.organizationConfiguration']}</a></li>
 		</ol>
 		</section>
 		<section class="content"> <!-- Small boxes (Stat box) -->
@@ -40,11 +39,11 @@
 				<ui:define name="controlButttons">
 				<div class = "box-footer" style="margin-top:-16px !important;">
 					<s:div id="updateButtons">
-						<a4j:commandButton value="Change Password" styleClass="btn btn-success"
+						<a4j:commandButton value="#{msg['updateorganization.changePassword']}" styleClass="btn btn-success"
 							onclick="#{rich:component('appliancePassword:changePasswordModalPanel')}.show();" />
-						<h:commandButton value="Update" styleClass="btn btn-primary" style="margin-left:5px"
+						<h:commandButton value="#{msg['updateorganization.update']}" styleClass="btn btn-primary" style="margin-left:5px"
 							action="#{updateOrganizationAction.save}" />
-						<h:commandButton value="Cancel" styleClass="btn btn-primary" style="margin-left:5px"
+						<h:commandButton value="#{msg['updateorganization.cancel']}" styleClass="btn btn-primary" style="margin-left:5px"
 							action="#{updateOrganizationAction.cancel}" immediate="true" />
 					</s:div>
 					</div>

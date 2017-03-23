@@ -13,10 +13,10 @@
     <ui:define name="body">
         <section class="content-header">
             <h1 style="color: #333;">
-                OpenID Connect
+                #{msg['sectorIdentifier.openIDConnect']}
                 <small>
                     <i class="fa fa-caret-right" style="color: #333 !important;"></i>
-                    Manage Sector Identifiers
+                    #{msg['sectorIdentifier.manageSectorIdentifiers']}
                 </small>
             </h1>
             <ol class="breadcrumb">
@@ -24,7 +24,7 @@
                     <a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/sectoridentifier/inventory">Manage Sector Identifiers</a>
+                    <a href="#{request.contextPath}/sectoridentifier/inventory">#{msg['sectorIdentifier.manageSectorIdentifiers']}</a>
                 </li>
             </ol>
         </section>
@@ -39,7 +39,7 @@
                                 <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
 
                                     <s:link view="/sectoridentifier/addSectorIdentifier.xhtml"
-                                            value="Add Sector Identifier"
+                                            value="#{msg['sectorIdentifier.addSectorIdentifiers']}"
                                             styleClass="addSectorIdentifier btn btn-primary" propagation="none"
                                             style="margin-left:20px !important;"/>
 
@@ -53,7 +53,7 @@
                                                          styleClass="searchParameters form-control"
                                                          alt="search parameters for sector identifier like inum, redirect_uri"
                                                          style="float: left;width: 50%;"/>
-                                            <h:commandButton value="Search"
+                                            <h:commandButton value="#{msg['sectorIdentifier.search']}"
                                                              action="#{searchSectorIdentifierAction.search}"
                                                              style="float:left;" class="btn btn-primary"/>
                                         </s:decorate>
@@ -65,7 +65,7 @@
                                         <s:fragment
                                                 rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size eq 0}">
                                             <richext:spacer height="30"/>
-                                            <h:outputText value="No Search Result Found"/>
+                                            <h:outputText value="#{msg['sectorIdentifier.noSearchResultFound']}"/>
                                         </s:fragment>
 
                                         <rich:dataTable sortMode="single" id="sectorIdentifierListId"

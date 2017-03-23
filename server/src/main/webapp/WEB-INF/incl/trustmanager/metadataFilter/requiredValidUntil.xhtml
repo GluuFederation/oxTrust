@@ -19,18 +19,14 @@
             <f:facet name="header">
                 <h:outputText value="RequiredValidUntil Filter help" />
             </f:facet>
-This metadata filter requires the presence of the validUntil attribute on the root of the retrieved metadata. 
-It may optionally ensure that the value of this attribute is not more than a given amount of time in the future.
- This ensures that old metadata, which may contain entities which have been removed/revoked, is not used.<br />
-            <b>maxValidityInterval</b> - the interval, in seconds, from now within which the validUntil date must fall. 
-A value of zero indicates no upper limit. <b>Default value: 0</b>
+            #{msg['trustmanager.thisMetadataFilterRequiresThePresence']}
         </rich:panel>
         <rich:panel id="RequiredValidUntilFilterMenu" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="RequiredValidUntil Filter configuration" />
+                <h:outputText value="#{msg['trustmanager.requiredValidUntilFilter']}" />
             </f:facet>
             <h:panelGrid>
-                <h:outputText value="Enter maxValidityInterval" />
+                <h:outputText value="#{msg['trustmanager.enterMaxValidatyInternal']}" />
                 <rich:inputNumberSpinner value="#{_metadataFilterSelected.maxValidityInterval}" step="86400" maxValue="2147483647" />
             </h:panelGrid>
         </rich:panel>

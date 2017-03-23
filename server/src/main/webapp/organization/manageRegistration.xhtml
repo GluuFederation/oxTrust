@@ -146,14 +146,13 @@ var changeTooltipPosition = function(event) {
 
 		<section class="content-header">
 		<h1 style="color: #333;">
-			Configuration<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Manage Registration</small>
+			#{msg['organization.configuration']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['organization.manageRegistration']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/configuration/registration">Manage
-					Registration</a></li>
+				href="#{request.contextPath}/configuration/registration">#{msg['organization.manageRegistration']}</a></li>
 		</ol>
 		</section>
 
@@ -169,13 +168,13 @@ var changeTooltipPosition = function(event) {
 								<h:panelGroup>
 									<a4j:region>
 										<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
-											<ui:define name="label">Disable Captcha for registration form</ui:define>
+											<ui:define name="label">#{msg['organization.disableCaptcha']}</ui:define>
 											<h:selectBooleanCheckbox 
 												value="#{registrationManagementAction.captchaDisabled}">
 											</h:selectBooleanCheckbox>
 										</s:decorate>
 										<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
-											<ui:define name="label">Configure Registration Form Attributes</ui:define>
+											<ui:define name="label">#{msg['organization.configureRegistrationAttributes']}</ui:define>
 											<h:selectBooleanCheckbox styleClass="checkbox checkbox2"
 												value="#{registrationManagementAction.configureRegistrationForm}">
 												<a4j:ajax event="click" render="attributes" />
@@ -187,11 +186,11 @@ var changeTooltipPosition = function(event) {
 												<a4j:region>
 													<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml"
 														id="searchPattern">
-														<ui:define name="label">Attributes Filter</ui:define>
+														<ui:define name="label">#{msg['organization.attributesFilter']}</ui:define>
 														<h:inputText styleClass="form-control"
 															value="#{registrationManagementAction.searchPattern}"
 															size="30" maxlength="30" id="searchPatternId"
-															title="Enter at least two characters to search for attributes"
+															title="#{msg['organization.enterAtLeastTwoCharacters']}"
 															alt="search parameters for attribute like name,iname,description">
 
 															<a4j:ajax event="keyup" render="foundAttributes"
@@ -203,7 +202,7 @@ var changeTooltipPosition = function(event) {
 
 													<h:panelGroup id="foundAttributes">
 														<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-															<ui:define name="label">Attributes</ui:define>
+															<ui:define name="label">#{msg['organization.attributes']}</ui:define>
 															<rich:pickList
 																value="#{registrationManagementAction.selectedAttributes}"
 																orderable="true"

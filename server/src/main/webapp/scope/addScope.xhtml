@@ -13,13 +13,13 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			OpenID Connect<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Add Scope</small>
+            #{msg['scope.openIDConnect']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['scope.addScope']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/scope/manage/add"> Add Scope</a></li>
+				href="#{request.contextPath}/scope/manage/add"> #{msg['scope.addScope']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -32,13 +32,13 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="Add" action="#{updateScopeAction.save}" />
-                        <h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="Cancel" action="#{updateScopeAction.cancel}" immediate="true" />
+                        <h:commandButton styleClass="btn btn-primary" value="#{msg['scope.add']}" action="#{updateScopeAction.save}" />
+                        <h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="#{msg['scope.cancel']}" action="#{updateScopeAction.cancel}" immediate="true" />
                     </div>
                 </ui:define>
             </ui:decorate>
 
-            <ox:selectAttributeDialog id="claim" label="Add Claim" searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
+            <ox:selectAttributeDialog id="claim" label="#{msg['scope.addClaim']}" searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
                 searchMethod="#{updateScopeAction.searchAvailableClaims}" searchResult="#{updateScopeAction.availableClaims}"
                 acceptMethod="#{updateScopeAction.acceptSelectClaims}" cancelMethod="#{updateScopeAction.cancelSelectClaims}"
                 render="selectedClaimsId" queue="scopeQueue"/>

@@ -14,13 +14,13 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">
-			OpenID Connect<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Scopes</small>
+			#{msg['scope.openIDConnect']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['scope.scopes']}</small>
 		</h1>
 		<ol class="breadcrumb">
 		<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/scope/inventory"> Scopes</a></li>
+				href="#{request.contextPath}/scope/inventory"> #{msg['scope.scopes']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -38,7 +38,7 @@
 										<!-- <s:link  view="/scope/addScope.xhtml" value="Add Scope" styleClass="form-control" propagation="none" /> -->
 										<ui:define name="label" style="margin-left:15px;">
 											<a class="btn btn-primary"
-												href="#{request.contextPath}/scope/manage/add">Add Scope</a>
+												href="#{request.contextPath}/scope/manage/add">#{msg['scope.addScope']}</a>
 										</ui:define>
 									</s:decorate>
 
@@ -72,7 +72,7 @@
 									<div class="box box-primary"
 										style="width: 100%; margin-left: 22px;">
 										<div class="box-header">
-											<h3 class="box-title">Search Results</h3>
+											<h3 class="box-title">#{msg['scope.searchResults']}</h3>
 										</div>
 										<!-- /.box-header -->
 										<!-- form start -->
@@ -83,7 +83,7 @@
 													<s:fragment
 														rendered="#{searchScopeAction.scopeList.size eq 0}">
 
-														<h:outputText value="No Search Result Found" />
+														<h:outputText value="#{msg['scope.noSearchResultFound']}" />
 													</s:fragment>
 
 													<h:dataTable sortMode="single" id="scopesListId"
@@ -92,7 +92,7 @@
 														rendered="#{searchScopeAction.scopeList.size gt 0}">
 														<h:column sortBy="#{clt.displayName}">
 															<f:facet name="header">
-																<div style="text-align: left;">Display Name</div>
+																<div style="text-align: left;">#{msg['scope.displayName']}</div>
 															</f:facet>
 															<s:link view="/scope/updateScope.xhtml"
 																value="#{clt.displayName}" propagation="none">
@@ -101,20 +101,20 @@
 														</h:column>
 														<h:column sortBy="#{clt.displayName}">
 															<f:facet name="header">
-																<div style="text-align: center;">iNum</div>
+																<div style="text-align: center;">#{msg['scope.inum']}</div>
 															</f:facet>
 															<h:outputText style="text-align: center;" value="#{clt.inum}" class="col-xs-12" />
 														</h:column>
 														<h:column>
 															<f:facet name="header">
-																<div style="text-align: center;">Description</div>
+																<div style="text-align: center;">#{msg['scope.description']}</div>
 															</f:facet>
 															<h:outputText value="#{clt.description}"
 																class="col-xs-12" />
 														</h:column>
 														<h:column>
 															<f:facet name="header">
-																<div style="text-align: left;">Default</div>
+																<div style="text-align: left;">#{msg['scope.default']}</div>
 															</f:facet>
 															<h:outputText value="#{clt.defaultScope.displayName}"
 																class="col-xs-12" />

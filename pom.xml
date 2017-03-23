@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xdi</groupId>
 	<artifactId>oxtrust</artifactId>
@@ -107,7 +107,7 @@
 				<artifactId>oxtrust-scim</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<!-- Gluu -->
 			<dependency>
 				<groupId>org.xdi</groupId>
@@ -287,7 +287,7 @@
 				<artifactId>bcpkix-jdk15on</artifactId>
 				<version>1.54</version>
 			</dependency>
-			
+
 			<!-- Drolls -->
 			<dependency>
 				<groupId>org.drools</groupId>
@@ -330,7 +330,7 @@
 				<artifactId>hibernate-validator</artifactId>
 				<version>4.3.0.Final</version>
 			</dependency>
-			
+
 			<!-- Remove unused Hibernate libs -->
 			<dependency>
 				<groupId>org.hibernate</groupId>
@@ -472,9 +472,9 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-			    <groupId>joda-time</groupId>
-			    <artifactId>joda-time</artifactId>
-			    <version>2.9.3</version>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.9.3</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sourceforge.jexcelapi</groupId>
@@ -700,18 +700,18 @@
 			</properties>
 		</profile>
 
-        <profile>
-            <id>development-build</id>
-            <activation>
-                <property>
-                    <name>development-build</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <properties>
-                <log4j.default.log.level>TRACE</log4j.default.log.level>
-            </properties>
-        </profile>
+		<profile>
+			<id>development-build</id>
+			<activation>
+				<property>
+					<name>development-build</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<log4j.default.log.level>TRACE</log4j.default.log.level>
+			</properties>
+		</profile>
 	</profiles>
 
 </project>

@@ -12,11 +12,11 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			Configuration<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Import People</small>
+            #{msg['person.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['person.importPeople']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a href="#{request.contextPath}/person/import">Import People</a></li>
+			<li class="organization/configuration"><a href="#{request.contextPath}/person/import">#{msg['person.importPeople']}</a></li>
 		</ol>
 		</section>	<section class="content"> <!-- Small boxes (Stat box) -->
 		

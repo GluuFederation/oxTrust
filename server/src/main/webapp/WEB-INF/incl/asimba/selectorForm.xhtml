@@ -72,7 +72,7 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                 id="selectorSelectSPRequestor"
                 rendered="true">
-                <ui:define name="label">Select SP Requestor</ui:define>
+                <ui:define name="label">#{msg['asimba.selectSPRequestor']}</ui:define>
 
                 <h:selectOneMenu styleClass="form-control"
                     title=""
@@ -87,7 +87,7 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                 id="selectorSelectIDP"
                 rendered="true">
-                <ui:define name="label">Select IDP</ui:define>
+                <ui:define name="label">#{msg['asimba.selectIDP']}</ui:define>
 
                 <h:selectOneMenu styleClass="form-control"
                     title=""
@@ -102,10 +102,10 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="selectorEditFriendlyName"
                     rendered="true">
-                    <ui:define name="label">Friendly Name</ui:define>
+                    <ui:define name="label">#{msg['asimba.friendlyName']}</ui:define>
             <h:outputLabel 
-                title="The selector rule friendly name"
-                value="The selector rule friendly name"/>
+                title="#{msg['asimba.theSelectorRuleFriendlyName']}"
+                value="#{msg['asimba.theSelectorRuleFriendlyName']}"/>
             <h:inputText styleClass="form-control"
                 title="The selector rule friendly name"
                 value="#{_selector.friendlyName}" size="100" tabindex="2" />
@@ -117,10 +117,10 @@
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Enabled"
+                title="#{msg['asimba.enabled']}"
                 value="#{_selector.enabled}" />
             <h:outputLabel 
-                value="Enabled"/>
+                value="#{msg['asimba.enabled']}"/>
                         </td>
                         <td colspan="2" rowspan="1">
                         </td>

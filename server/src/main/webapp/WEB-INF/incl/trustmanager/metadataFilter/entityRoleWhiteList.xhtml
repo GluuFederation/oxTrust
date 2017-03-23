@@ -17,29 +17,21 @@
 
         <rich:panel id="EntityRoleWhiteListFilterDescription" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="EntityRoleWhiteList Filter help" />
+                <h:outputText value="#{msg['trustmanager.entityRoleWhiteListFilterHelp']}" />
             </f:facet>
-Metadata files can grow quite large, especially when they contain the embedded key necessary for XML encryption support.
- However, only the SP information is usually needed by the IdP, this means that all the IdP metadata being kept around is just taking up memory. 
- This metadata filter removes entity roles, and optional who entity and entities descriptors, that are not needed by the IdP. 
- It is based on a white list because the types of roles that may appear within metadata is not bounded.<br />
-            <b>removeRolelessEntityDescriptors</b> - a boolean flag that indicates that, after role filtering, 
- an EntityDescriptor element should be removed from metadata if it does not contain any roles <b>(default value: true)</b>
-            <br />
-            <b>removeEmptyEntitiesDescriptors</b> - indicates that, after role and EntityDescriptor filtering, 
- an EntitiesDescriptor element should be removed from metadata if it does not contain any EntityDescriptor or EntitiesDescriptor <b>(default value: true)</b>
+            #{msg['trustmanager.metadataFilesCanGrowQuiteLarge']}
         </rich:panel>
         <rich:panel id="EntityRoleWhiteListFilterMenu" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="EntityRoleWhiteList Filter configuration" />
+                <h:outputText value="#{msg['trustmanager.entityRoleWhiteListFilterConfiguration']}" />
             </f:facet>
             <h:panelGrid columns="2">
-                <h:outputText value="removeRolelessEntityDescriptors: " />
+                <h:outputText value="#{msg['trustmanager.removeRolelessEntityDescriptors']} " />
                 <h:selectBooleanCheckbox value="#{_metadataFilterSelected.removeRolelessEntityDescriptors}" />
-                <h:outputText value="removeEmptyEntitiesDescriptors: " />
+                <h:outputText value="#{msg['trustmanager.removeEmptyEntitiesDescriptors']} " />
                 <h:selectBooleanCheckbox value="#{_metadataFilterSelected.removeEmptyEntitiesDescriptors}" />
             </h:panelGrid>
-            <h:outputText value="RetainedRoles white list: " />
+            <h:outputText value="#{msg['trustmanager.retainedRolesWhiteList']}" />
             <rich:list var="_retainedRole" value="#{_metadataFilterSelected.retainedRoles}" id="roleList">
                 <h:outputText value="#{_retainedRole}" />
                 <h:outputText value="&#160;">
@@ -50,7 +42,7 @@ Metadata files can grow quite large, especially when they contain the embedded k
                 </h:outputText>
             </rich:list>
             <h:panelGrid>
-                <h:outputText value="Enter new RetainedRole: " />
+                <h:outputText value="#{msg['trustmanager.enterNewRetainedRole']}" />
                 <rich:inplaceInput defaultLabel="click to enter RetainedRole" value="#{_metadataFilterSelected.retainedRole}">
                     <a4j:ajax event="change" render="EntityRoleWhiteListFilterMenu" />
                 </rich:inplaceInput>

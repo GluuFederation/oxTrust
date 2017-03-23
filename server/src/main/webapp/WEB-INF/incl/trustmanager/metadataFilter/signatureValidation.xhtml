@@ -17,22 +17,19 @@
 
         <rich:panel id="SignatureValidationFilterDescription" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="SignatureValidation Filter help" />
+                <h:outputText value="#{msg['trustmanager.signatureValidationFilterHelp']}" />
             </f:facet>
-This metadata filter validates the signature on the root element of the incoming metadata if the metadata is signed.<br />
-            <b>requireSignedMetadata</b> - a boolean flag that requires that incoming metadata be signed <b>(default value: false)</b>
-            <br />
-            <b>Validation Certificate</b> - a certificate to use for signature validation.
+            #{msg['trustmanager.thisMetadataFilterValidate']}
         </rich:panel>
         <rich:panel id="SignatureValidationFilterMenu" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="SignatureValidation Filter confiuration" />
+                <h:outputText value="#{msg['trustmanager.signatureValidationFilterConfiguration']}" />
             </f:facet>
             <h:panelGrid columns="2">
                 <h:outputText value="requireSignedMetadata: " />
                 <h:selectBooleanCheckbox value="#{_metadataFilterSelected.requireSignedMetadata}" />
             </h:panelGrid>
-            <h:outputText value="Validation Certificate" />
+            <h:outputText value="#{msg['trustmanager.validationCertificate']}" />
             <s:fileUpload id="filterCertWrapperId" fileName="#{_metadataFiltersAction.filterCertWrapper.fileName}" data="#{_metadataFiltersAction.filterCertWrapper.stream}"
                 fileSize="#{_metadataFiltersAction.filterCertWrapper.fileSize}" contentType="#{_metadataFiltersAction.filterCertWrapper.contentType}" maxlength="100"
                 rendered="#{empty _metadataFilterSelected.filterCertFileName}" immediate="true" style="width: 180px;">

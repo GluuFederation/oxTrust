@@ -12,13 +12,13 @@
 
 <section class="content-header">
 		<h1 style="color: #333;">
-			Users<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Manage Groups</small>
-			<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Add Group</small>
+            #{msg['group.users']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['group.manageGroups']}</small>
+			<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['group.addGroup']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/client/inventory"> Clients</a></li>
+				href="#{request.contextPath}/client/inventory"> #{msg['group.clients']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -32,17 +32,17 @@
         <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
             <ui:param name="_organization" value="#{gluufn:getDisplayNameEntry(_group.organization)}" />
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="organization">
-                <ui:define name="label">Organization</ui:define>
+                <ui:define name="label">#{msg['group.organization']}</ui:define>
                 <h:outputText value="#{_organization.displayName}" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                <ui:define name="label">Display Name</ui:define>
+                <ui:define name="label">#{msg['group.displayName']}</ui:define>
                 <rich:inplaceInput value="#{_group.displayName}" defaultLabel="click to enter display name" maxlength="60"  required="true" id="displayNameId" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="visibility">
-                <ui:define name="label">Type</ui:define>
+                <ui:define name="label">#{msg['group.type']}</ui:define>
                 <h:selectOneMenu value="#{_group.visibility}" id="visibilityId" styleClass="form-control">
                     <s:selectItems value="#{groupService.visibilityTypes}" noSelectionLabel="Visibility type" var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
@@ -51,12 +51,12 @@
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
-                <ui:define name="label">Description</ui:define>
+                <ui:define name="label">#{msg['group.description']}</ui:define>
                 <h:inputTextarea value="#{_group.description}" rows="3" size="40" maxlength="4000" id="descriptionId" styleClass="form-control" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="members">
-                <ui:define name="label">Members</ui:define>
+                <ui:define name="label">#{msg['group.users']}</ui:define>
                 <h:panelGroup id="selectedMembersId">
                     <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                         <a4j:repeat value="#{_groupAction.members}" rowKeyVar="_memberIdx" var="_member">

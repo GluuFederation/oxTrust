@@ -19,15 +19,15 @@
 
                 <ui:define name="controlButtons">
                     <s:div id="updateButtons">
-                        <a4j:commandButton value="Change Password" onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();" styleClass="btn btn-primary"/>
-                        <h:commandButton value="Update" action="#{updatePersonAction.save}" rendered="#{organizationService.instance().allowPersonModification}"  styleClass="btn btn-primary"/>
-                        <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" eventsQueue="personQueue" rendered="#{not _new and organizationService.instance().allowPersonModification}" styleClass="btn btn-primary"/>
+                        <a4j:commandButton value="#{msg['person.changePassword']}" onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();" styleClass="btn btn-primary"/>
+                        <h:commandButton value="#{msg['person.update']}" action="#{updatePersonAction.save}" rendered="#{organizationService.instance().allowPersonModification}"  styleClass="btn btn-primary"/>
+                        <a4j:commandButton value="#{msg['person.delete']}" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" eventsQueue="personQueue" rendered="#{not _new and organizationService.instance().allowPersonModification}" styleClass="btn btn-primary"/>
                         <h:commandButton value="#{organizationService.instance().allowPersonModification ? 'Cancel' : 'Back' }" action="#{updatePersonAction.cancel}" immediate="true" styleClass="btn btn-primary"/>
                     </s:div>
                 </ui:define>
             </ui:decorate>
 
-            <ox:changePasswordDialog id="personPassword" label="Change Person Password" password="#{userPasswordAction.newPassword}" setPasswordMethod="#{userPasswordAction.update}" />
+            <ox:changePasswordDialog id="personPassword" label="#{msg['person.changePersonPassword']}" password="#{userPasswordAction.newPassword}" setPasswordMethod="#{userPasswordAction.update}" />
 
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="person" value="#{updatePersonAction.person.displayName}" deleteMethod="#{updatePersonAction.delete}" queue="personQueue" />
         </s:div>

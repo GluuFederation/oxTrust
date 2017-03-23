@@ -11,7 +11,7 @@
 	<rich:popupPanel id="certUpload" onmaskclick="#{rich:component('certUpload')}.hide()" zindex="2000" keepVisualState="true" autosized="true"
 		width="500">
 		<f:facet name="header">
-			<h:outputText value="Certificate upload" />
+			<h:outputText value="#{msg['cert.certificateUpload']}" />
 		</f:facet>
 		<f:facet name="controls">
 			<h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer"
@@ -19,10 +19,9 @@
 		</f:facet>
 
 		<h:panelGrid id="certUploadId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                        Select a new certificate. 
-                        <br />Please note that the certificate 
-                        uploaded here must either be generated from the CSR obtained 
-                        here or key must be uploaded as well. 
+						#{msg['cert.selectNewCertificate']}
+                        <br />
+                        #{msg['cert.pleaseNoteCertificate']}
             <h:form>
 				<rich:fileUpload id="uploadCert" fileUploadListener="#{manageCertificateAction.certUpload}" acceptedTypes="crt"
 					ontyperejected="alert('Only CRT files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
@@ -35,7 +34,7 @@
 			<richext:spacer height="8" />
 
 			<h:panelGroup>
-				<a4j:commandButton value="Back" onclick="#{rich:component('certUpload')}.hide(); return false;" immediate="true" execute="@this" />
+				<a4j:commandButton value="back" onclick="#{rich:component('certUpload')}.hide(); return false;" immediate="true" execute="@this" />
 			</h:panelGroup>
 		</h:panelGrid>
 

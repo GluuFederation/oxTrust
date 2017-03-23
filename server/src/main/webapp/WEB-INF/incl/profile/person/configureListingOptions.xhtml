@@ -9,32 +9,31 @@
 
     <rich:popupPanel id="configureListingOptions" keepVisualState="true" autosized="true" width="300" onmaskclick="#{rich:component('configureListingOptions')}.hide();">
         <f:facet name="header">
-            <h:outputText value="Configure White Pages Listing Options" />
+            <h:outputText value="#{msg['profile.configureWhitePage']}" />
         </f:facet>
         <h:form id="configureListingOptionsForm">
             <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
             <input type='hidden' name='cid' value='#{conversation.id}' />
 
             <h:panelGrid columns="1">
-                <h:outputText value="Click on attribute name to strike out white pages release permission. 
-                        Please note that you can not strike out Name" />
+                <h:outputText value="#{msg['profile.clickOnAttributeName']}" />
                 <h:panelGrid columns="2">
                     <a4j:ajax event="click" listener="#{userProfileAction.toggle('photo1')}" render="configureListingOptionsForm" execute="@this" limitRender="true" />
-                    <h:outputText value="Photo" styleClass="#{userProfileAction.released('photo1')? 'name' : 'striked name'}" />
+                    <h:outputText value="#{msg['profile.photo']}" styleClass="#{userProfileAction.released('photo1')? 'name' : 'striked name'}" />
                     <s:graphicImage value="#{userProfileAction.getPhotoThumbData()}" width="50px" rendered="#{userProfileAction.released('photo1')}" />
                 </h:panelGrid>
                 <h:panelGrid columns="2">
-                    <h:outputText value="Name " styleClass="name" />
+                    <h:outputText value="#{msg['profile.name']} " styleClass="name" />
                     <h:outputText value="#{userProfileAction.person.getAttribute('cn')}" />
                 </h:panelGrid>
                 <h:panelGrid columns="2">
                     <a4j:ajax event="click" listener="#{userProfileAction.toggle('mail')}" render="configureListingOptionsForm" execute="@this" limitRender="true" />
-                    <h:outputText value="E-Mail " styleClass="#{userProfileAction.released('mail')? 'name' : 'striked name'}" />
+                    <h:outputText value="#{msg['profile.email']} " styleClass="#{userProfileAction.released('mail')? 'name' : 'striked name'}" />
                     <h:outputText value="#{userProfileAction.person.getAttribute('mail')}" rendered="#{userProfileAction.released('mail')}" />
                 </h:panelGrid>
                 <h:panelGrid rendered="#{userProfileAction.person.getAttribute('telephoneNumber') ne null}" columns="2">
                     <a4j:ajax event="click" listener="#{userProfileAction.toggle('telephoneNumber')}" render="configureListingOptionsForm" execute="@this" limitRender="true" />
-                    <h:outputText value="Phone " styleClass="#{userProfileAction.released('telephoneNumber')? 'name' : 'striked name'}" />
+                    <h:outputText value="#{msg['profile.phone']} " styleClass="#{userProfileAction.released('telephoneNumber')? 'name' : 'striked name'}" />
                     <h:outputText value="#{sel.getAttribute('telephoneNumber')}" rendered="#{userProfileAction.released('telephoneNumber')}" />
                 </h:panelGrid>
                 <a4j:repeat value="#{whitePagesAction.getReleasedAttributes(userProfileAction.person)}" var="_custAttr" rowKeyVar="rowKey">
@@ -49,9 +48,9 @@
             <h:panelGroup>
                 <a4j:commandButton action="#{userProfileAction.configureListingOptions()}" value="Change" onclick="#{rich:component('configureListingOptions')}.hide();" styleClass="btn btn-success"/>
                 &nbsp;
-               <a4j:commandButton value="Cancel" onclick="#{rich:component('configureListingOptions')}.hide(); return false;" styleClass="btn btn-success"/>
+               <a4j:commandButton value="#{msg['profile.cancel']}" onclick="#{rich:component('configureListingOptions')}.hide(); return false;" styleClass="btn btn-success"/>
                &nbsp;
-               <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" styleClass="btn btn-success"/>
+               <a4j:status startText="#{msg['profile.requestInProgress']}" stopText="" startStyle="color:red" styleClass="btn btn-success"/>
             </h:panelGroup>
         </h:form>
     </rich:popupPanel>

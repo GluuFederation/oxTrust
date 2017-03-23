@@ -52,31 +52,31 @@
 		                        <h:panelGrid id="#{_customScriptId}" columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
 		                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop" style="margin-bottom:10px;">
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-		                                    <ui:define name="label">Name</ui:define>
+		                                    <ui:define name="label">#{msg['customScript.name']}</ui:define>
 		                                    <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" validatorMessage="Script Name cannot contain space(s)." styleClass="form-control">
 												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>						    
 											</h:inputText>
 		                                </s:decorate>
 
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-		                                    <ui:define name="label">Description</ui:define>
+		                                    <ui:define name="label">#{msg['customScript.description']}</ui:define>
 		                                    <h:inputText value="#{_customScript.description}" size="90" styleClass="form-control" />
 		                                </s:decorate>
 
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-		                                    <ui:define name="label">Programming Language</ui:define>
+		                                    <ui:define name="label">#{msg['customScript.programmingLanguage']}</ui:define>
 		                                    <h:selectOneMenu value="#{_customScript.programmingLanguage}" required="true" disabled="true" styleClass="form-control">
 		                                        <s:selectItems value="#{applianceService.programmingLanguages}" var="_type" label="#{_type.displayName}"/>
 		                                    </h:selectOneMenu>
 		                                </s:decorate>
 		            
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-		                                    <ui:define name="label">Level</ui:define>
+		                                    <ui:define name="label">#{msg['customScript.level']}</ui:define>
 		                                    <rich:inputNumberSpinner value="#{_customScript.level}" inputSize="2" minValue="0" maxValue="100"/>
 		                                </s:decorate>
 
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-		                                    <ui:define name="label">Location Type</ui:define>
+		                                    <ui:define name="label">#{msg['customScript.locationType']}</ui:define>
 		                                    <h:selectOneMenu value="#{_customScript.locationType}" required="false" styleClass="form-control">
 		                                        <s:selectItems value="#{applianceService.locationTypes}" var="_type" label="#{_type.displayName}"/>
 		                                        <a4j:ajax event="change" render="scriptAreaId, scriptPathId" limitRender="true" execute="@this">
@@ -87,32 +87,32 @@
 		                                <!-- Person Authentication specific parameters -->
 		                                <s:fragment rendered="#{_scriptType.value eq 'person_authentication'}">
 			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-			                                    <ui:define name="label">Usage type</ui:define> 
+			                                    <ui:define name="label">#{msg['customScript.usageType']}</ui:define>
 			                                    <h:selectOneMenu value="#{_customScript.usageType}" required="true" styleClass="form-control">
 			                                        <s:selectItems value="#{applianceService.scriptUsageTypes}" var="_usageType" label="#{_usageType.displayName}"/>
 			                                    </h:selectOneMenu>
 			                                </s:decorate>
 		                                </s:fragment>
 
-		                                <ox:simpleCustomPropertiesList label="Custom property (key/value)" labelAdd="custom property"
+		                                <ox:simpleCustomPropertiesList label="#{msg['customScript.customProperty']}" labelAdd="custom property"
 		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" />
 		                
 		                                <h:panelGroup id="scriptAreaId">
 			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_customScript.locationType.value ne 'file'}">
-			                                    <ui:define name="label">Script</ui:define>
+			                                    <ui:define name="label">#{msg['customScript.script']}</ui:define>
 			                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
 			                                </s:decorate>
 			                            </h:panelGroup>
 		                
 		                                <h:panelGroup id="scriptPathId">
 			                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_customScript.locationType.value eq 'file'}">
-			                                    <ui:define name="label">Script Path</ui:define>
+			                                    <ui:define name="label">#{msg['customScript.scriptPath']}</ui:define>
 			                                    <h:inputText value="#{_customScript.locationPath}" size="90" styleClass="form-control" />
 			                                </s:decorate>
 			                            </h:panelGroup>
 		                
 		                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-		                                    <ui:define name="label">Enabled</ui:define>
+		                                    <ui:define name="label">#{msg['customScript.enabled']}</ui:define>
 		                                    <h:selectBooleanCheckbox value="#{_customScript.enabled}" />
 		                                </s:decorate>
 <hr></hr>
@@ -127,7 +127,7 @@
 		                    </rich:dataGrid>
 		    
 		                    <s:div styleClass="addConfig">
-		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="Add custom script configuration" action="#{_action.addCustomScript(_scriptType)}" render="#{_customScriptTypeId}" execute="@region" />
+		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['customScript.addCustomScriptConfiguration']}" action="#{_action.addCustomScript(_scriptType)}" render="#{_customScriptTypeId}" execute="@region" />
 		                        <f:param name="sv" value="1" />
 		                    </s:div>
 

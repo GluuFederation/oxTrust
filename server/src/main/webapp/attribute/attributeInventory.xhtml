@@ -15,13 +15,13 @@
 	<section class="content-header">
 	
 		<h1 style="color: #333;">
-			Configuration<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Attributes</small>
+			#{msg['attribute.configuration']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['attribute.attributes']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a href="#{request.contextPath}/attribute/add">
-					 Attributes</a></li>
+				#{msg['attribute.attributes']}</a></li>
 		</ol>
 		</section>
 		<section class= "content">
@@ -30,17 +30,17 @@
 				width="100%">
 				<h:form id="attributesFormId">
 				<s:link view="/attribute/addAttribute.xhtml"
-					styleClass="label label-success" value="Register Attribute" propagation="none" style="padding:6px;" />
+					styleClass="label label-success" value="#{msg['attribute.registerAttribute']}" propagation="none" style="padding:6px;" />
 
 				
 				<s:fragment rendered="#{attributeInventoryAction.showInactive}">
-					<a4j:commandLink value="Show only Active Attributes"
+					<a4j:commandLink value="#{msg['attribute.showOnlyActiveAttributes']}"
 						action="#{attributeInventoryAction.toggleShowInactive}"
 						styleClass="label label-success" render="attributesFormId" style="margin-left:5px;padding:6px;" />
 				</s:fragment>
 
 				<s:fragment rendered="#{not attributeInventoryAction.showInactive}">
-					<a4j:commandLink value="Show All Attributes"
+					<a4j:commandLink value="#{msg['attribute.showAllAttributes']}"
 						action="#{attributeInventoryAction.toggleShowInactive}"
 						render="attributesFormId" styleClass="label label-success" style="margin-left:5px;padding:6px;"/>
 				</s:fragment>
@@ -53,7 +53,7 @@
 								<ul class="nav nav-tabs">
 
 									<li class="active"><a href="#attribuiteInventory"
-										data-toggle="tab">Attribute Inventory</a></li>
+										data-toggle="tab">#{msg['attribute.attributeInventory']}</a></li>
 								</ul>
 								<div class="tab-content">
 									<!-- System Configuration -->
@@ -70,7 +70,7 @@
 														<!-- general form elements -->
 														<div class="box box-primary" style="width:132%;">
 															<div class="box-header">
-																<h3 class="box-title">Update Attribute</h3>
+																<h3 class="box-title">#{msg['attribute.updateAttribute']}</h3>
 															</div>
 															<!-- /.box-header -->
 															<!-- form start -->
@@ -81,7 +81,7 @@
 
 																	<s:fragment
 																		rendered="#{attributeInventoryAction.attributeList.size eq 0}">
-																		<h:outputText value="No Attributes Found" />
+																		<h:outputText value="#{msg['attribute.noAttributesFound']}" />
 																	</s:fragment>
 																	<h:dataTable sortMode="single" 
 																		styleClass="table table-hover rt"
@@ -92,7 +92,7 @@
 																		<h:column sortBy="#{attr.displayName}" 
 																			class="col-xs-12">
 																			<f:facet name="header" >  
-              <div style="text-align: center;"> Display Name</div>  
+              <div style="text-align: center;"> #{msg['attribute.displayName']}</div>
             </f:facet>
 																			<s:link view="/attribute/updateAttribute.xhtml"
 																				value="#{attr.displayName}" propagation="none">
@@ -102,14 +102,14 @@
 																		
 																		<h:column sortBy="#{attr.name}" >
 																		<f:facet name="header">  
-              <div style="text-align: center;"> Name</div>
+              <div style="text-align: center;"> #{msg['attribute.name']}</div>
             </f:facet>
 																			<h:outputText value="#{attr.name}" class="col-xs-12" />
 																		</h:column>
 																		
 																		<h:column sortBy="#{attr.origin}" class="col-xs-12">
 																		<f:facet name="header">  
-               <div style="text-align: center;">   Origin</div>
+               <div style="text-align: center;">   #{msg['attribute.origin']}</div>
             </f:facet>
 
 																			<h:outputText value="#{attr.origin}"
@@ -118,7 +118,7 @@
 																		
 																		<h:column>
 																		<f:facet name="header">  
-            <div style="text-align: center;">      Description </div>
+            <div style="text-align: center;">      #{msg['attribute.description']} </div>
             </f:facet>
 																			<h:outputText class="col-xs-12"
 																				value="#{attr.description}" />
@@ -126,7 +126,7 @@
 																		
 																		<h:column>
 <f:facet name="header">  
-           <div style="text-align: center;">      Status</div>
+           <div style="text-align: center;">      #{msg['attribute.status']}</div>
             </f:facet>
 																			<h:outputText class="col-xs-1" value="#{attr.status}" />
 																		</h:column>

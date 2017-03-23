@@ -13,13 +13,13 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			Users<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Manage Groups</small>
+            #{msg['group.users']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['group.manageGroups']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/group/inventory"> Manage Groups</a></li>
+				href="#{request.contextPath}/group/inventory"> #{msg['group.manageGroups']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -34,7 +34,7 @@
         <div id="formArea">
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
                 
-                <s:link view="/group/addGroup.xhtml" value="Add Group" styleClass="addGroup btn btn-primary" propagation="none" style="margin-left:20px !important;" />
+                <s:link view="/group/addGroup.xhtml" value="#{msg['group.addGroup']}" styleClass="addGroup btn btn-primary" propagation="none" style="margin-left:20px !important;" />
                     
                 <richext:spacer height="16" />
 
@@ -43,7 +43,7 @@
                         <ui:param name="_hideLabel" value="true" />
                         <h:inputText value="#{searchGroupAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters form-control"
                             alt="search parameters for group like uid,iname,email" style="float: left;width: 50%;" />
-                        <h:commandButton value="Search" action="#{searchGroupAction.search}" style="float:left;" class="btn btn-primary" />
+                        <h:commandButton value="#{msg['group.search']}" action="#{searchGroupAction.search}" style="float:left;" class="btn btn-primary" />
                     </s:decorate>
                 </h:form>
 
@@ -52,19 +52,19 @@
                 <h:form id="groupsFormId">
                     <s:fragment rendered="#{searchGroupAction.groupList.size eq 0}">
                         <richext:spacer height="30" />
-                        <h:outputText value="No Search Result Found" />
+                        <h:outputText value="#{msg['group.noSearchResultFound']}" />
                     </s:fragment>
 
                     <rich:dataTable sortMode="single" id="groupsListId" value="#{searchGroupAction.groupList}" rows="20" styleClass="data sortable" var="grp"
                         rendered="#{searchGroupAction.groupList.size gt 0}">
                         <rich:column sortBy="#{grp.displayName}">
-                            <f:facet name="header">Display Name</f:facet>
+                            <f:facet name="header">#{msg['group.displayName']}</f:facet>
                             <s:link view="/group/updateGroup.xhtml" value="#{grp.displayName}" propagation="none">
                                 <f:param name="inum" value="#{grp.inum}" />
                             </s:link>
                         </rich:column>
                         <rich:column>
-                            <f:facet name="header">Description</f:facet>
+                            <f:facet name="header">#{msg['group.description']}</f:facet>
                             <h:outputText value="#{grp.description}" />
                         </rich:column>
                         <rich:column sortBy="#{grp.status.value}">

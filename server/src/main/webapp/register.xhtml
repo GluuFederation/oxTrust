@@ -43,11 +43,10 @@
                             <div class="row" style="margin-bottom:20px;">
                                 <div class="col-md-12">
                                     <div id="register" style="color:white;">
-                                        <h1>Sign up</h1>
-                                        To create an account, please complete your details below. Already
-                                        have an account?
+                                        <h1>#{msg['register.signUp']}</h1>
+                                        #{msg['register.toCreateAnAccount']}
                                         <richext:spacer width="4"/>
-                                        <s:link view="/login.xhtml" value="Login" style="color:white;font-weight:bold;"
+                                        <s:link view="/login.xhtml" value="#{msg['register.login']}" style="color:white;font-weight:bold;"
                                                 rendered="#{not identity.loggedIn and not isLogin}"
                                                 propagation="none"/>
                                     </div>
@@ -138,7 +137,7 @@
                                             <!-- Passwords -->
                                             <s:decorate id="passwordField" style="margin-left: -15px;"
                                                         template="/WEB-INF/incl/layout/edit.xhtml">
-                                                <ui:define name="label">Password</ui:define>
+                                                <ui:define name="label">#{msg['register.password']}</ui:define>
                                                 <h:inputSecret id="password" class="form-control"
                                                                value="#{registerPersonAction.password}" maxlength="60"
                                                                size="40" tabindex="6" required="true" redisplay="true"
@@ -147,14 +146,14 @@
                                             </s:decorate>
                                             <s:decorate id="repeatPasswordField" style="margin-left: -15px;"
                                                         template="/WEB-INF/incl/layout/edit.xhtml">
-                                                <ui:define name="label">Repeat password</ui:define>
+                                                <ui:define name="label">#{msg['register.repeatPassword']}</ui:define>
                                                 <h:inputSecret id="passwordValidation" class="form-control"
                                                                value="#{registerPersonAction.repeatPassword}"
                                                                maxlength="60"
                                                                size="40" tabindex="7" required="true" redisplay="true"
                                                                autocomplete="off">
                                                     <s:validateEquality for="#{'password'}"
-                                                                        message="Passwords don't match"/>
+                                                                        message="#{msg['register.passwordsDontMatch']}"/>
                                                 </h:inputSecret>
                                                 <h:outputText value="&#160;"/>
                                             </s:decorate>
@@ -163,13 +162,13 @@
                                             
                                             <s:decorate id="email" style="margin-left: -15px;"
                                                         template="/WEB-INF/incl/layout/edit.xhtml">
-                                                <ui:define name="label">Email </ui:define>
+                                                <ui:define name="label">#{msg['register.email']} </ui:define>
                                                 <h:inputText id="emailValidation" class="form-control" validator="#{registerPersonAction.validateEmail}" 
                                                                value="#{registerPersonAction.email}"
                                                                maxlength="60"
                                                                size="40" tabindex="7" required="true" redisplay="true"
                                                                autocomplete="off" 
-                                                               requiredMessage="Please Enter Your Email address.">                            
+                                                               requiredMessage="#{msg['register.pleaseEnterYourEmailAddress']}">
                                                 	                                           		 
                                                 <rich:validator event="keyup" />                                                                                                  
                                                 </h:inputText>                                               
@@ -183,10 +182,10 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div id="updateButtons" style="margin-top: 20px;">
-                                                    <h:commandButton value="Register" class="btn btn-primary btn-flat"
+                                                    <h:commandButton value="#{msg['register.register']}" class="btn btn-primary btn-flat"
                                                                      style="width:90px;"
                                                                      action="#{registerPersonAction.register}"/>
-                                                    <h:commandButton value="Cancel" class="btn btn-primary btn-flat"
+                                                    <h:commandButton value="#{msg['register.cancel']}" class="btn btn-primary btn-flat"
                                                                      style="margin-left:3px; width:90px;"
                                                                      action="#{registerPersonAction.cancel}"
                                                                      immediate="true"/>
