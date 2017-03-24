@@ -89,12 +89,12 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 		return result;
 	}
 	
-	public boolean executeExternalNewUserMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, boolean persisted) {
+	public boolean executeExternalNewUserMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user) {
 		try {
-			log.debug("Executing python 'addUser' method");
+			log.debug("Executing python 'newUser' method");
 			UpdateUserType externalType = (UpdateUserType) customScriptConfiguration.getExternalType();
 			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
-			return externalType.newUser(user, persisted, configurationAttributes);
+			return externalType.newUser(user, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
@@ -105,7 +105,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 	public boolean executeExternalNewUserMethods(GluuCustomPerson user) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
-			result &= executeExternalNewUserMethod(customScriptConfiguration, user, true);
+			result &= executeExternalNewUserMethod(customScriptConfiguration, user);
 			if (!result) {
 				return result;
 			}
