@@ -418,7 +418,7 @@
                 </h:selectOneMenu>
             </s:decorate>
             
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clientsecretexpiry">
+            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clientsecretexpiry" rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}">
                 <ui:define name="label">#{msg['clientForm.clientSecretExpires']}</ui:define>
                 <rich:calendar value="#{_client.clientSecretExpiresAt}" showApplyButton="true" datePattern="d/M/yy HH:mm" cellWidth="24px" cellHeight="22px" style="width:300px"/>
             </s:decorate>
