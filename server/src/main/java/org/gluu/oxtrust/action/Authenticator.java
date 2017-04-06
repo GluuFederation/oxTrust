@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -337,8 +338,7 @@ public class Authenticator implements Serializable {
 		String clientId = applicationConfiguration.getOxAuthClientId();
 		String scope = applicationConfiguration.getOxAuthClientScope();
 		String responseType = "code+id_token";
-
-		String nonce = "nonce";
+		String nonce = UUID.randomUUID().toString();
 
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_CLIENT_ID, clientId);
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_REDIRECT_URI, applicationConfiguration.getLoginRedirectUrl());
@@ -353,6 +353,7 @@ public class Authenticator implements Serializable {
 			
 			// Store request authentication method
 			Contexts.getSessionContext().set(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
+			Contexts.getSessionContext().set(OxTrustConstants.OXAUTH_NONCE, nonce);
 		}
 
 		if (viewIdBeforeLoginRedirect != null) {
@@ -501,7 +502,15 @@ public class Authenticator implements Serializable {
 					log.error("User info response contains acr='{0}' claim but expected acr='{1}'", acrValues, requestAcrValues);
 					return OxTrustConstants.RESULT_NO_PERMISSIONS;
 				}
-			}
+				
+				String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
+				String nonceSession = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_NONCE);
+				if (nonceResponse == null ||  nonceSession == null || !nonceSession.equals(nonceResponse)) {
+					log.error("User info response :  nonce is not matching.");
+					return OxTrustConstants.RESULT_NO_PERMISSIONS;
+				}			
+			}	
+			
 
 			this.oauthData.setUserUid(uidValues.get(0));
 			this.oauthData.setAccessToken(accessToken);
