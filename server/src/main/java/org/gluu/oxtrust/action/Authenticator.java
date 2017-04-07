@@ -492,6 +492,13 @@ public class Authenticator implements Serializable {
 					log.error("Failed to parse id_token");
 					return OxTrustConstants.RESULT_NO_PERMISSIONS;
 				}
+                
+                String issuer = openIdConfiguration.getIssuer();
+                String responseIssuer = (String) jwt.getClaims().getClaim(JwtClaimName.ISSUER);
+                if (issuer == null ||  responseIssuer == null || !issuer.equals(responseIssuer)) {
+					log.error("User info response :  Issuer.");
+					return OxTrustConstants.RESULT_NO_PERMISSIONS;
+				}
 
                 List<String> acrValues = jwt.getClaims().getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
 				if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
