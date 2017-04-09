@@ -119,10 +119,11 @@
 		                            </h:panelGrid>
 
 		    
-		                            <a4j:commandLink immediate="true" action="#{_action.removeCustomScript(_customScript)}" render="#{_customScriptTypeId}" execute="@region" styleClass="glyphicon glyphicon-remove" style="margin-top: -14px; margin-left: -18px;">
+		                            <a4j:commandLink immediate="true"   onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="glyphicon glyphicon-remove" style="margin-top: -14px; margin-left: -18px;">
 		                                
 		                                <f:param name="sv" value="1" />
 		                            </a4j:commandLink>
+		                            <ox:acceptRemovalDialog id="deleteConfirmation" subject="Script" value="#{_customScript.name}" deleteMethod="#{manageCustomScriptAction.removeCustomScript(_customScript)}" render="#{_customScriptTypeId}"/>
 		                        </h:panelGrid>
 		                    </rich:dataGrid>
 		    
