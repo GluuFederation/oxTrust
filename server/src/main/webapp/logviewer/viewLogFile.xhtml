@@ -24,12 +24,12 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				Configuration<small><i class="fa fa-caret-right"
-									   style="color: #333 !important;"></i> View Log File</small>
+				#{msg['logViewer.configuration']}<small><i class="fa fa-caret-right"
+									   style="color: #333 !important;"></i> #{msg['logViewer.viewLogFile']}</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-				<li class="organization/configuration"><a href="#{request.contextPath}/logviewer/view">View Log File</a>
+				<li class="organization/configuration"><a href="#{request.contextPath}/logviewer/view">#{msg['logViewer.viewLogFile']}</a>
 				</li>
 			</ol>
 		</section>
@@ -46,9 +46,9 @@
 							<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 								<ul class="nav nav-tabs">
 									<li class="active"><a href="#logged-files"
-														  data-toggle="tab">Allowed Log Files</a></li>
-									<li><a href="#config" data-toggle="tab">Configuration</a></li>
-									<li><a href="#tail" data-toggle="tab">Tail of Log File</a></li>
+														  data-toggle="tab">#{msg['logViewer.allowedLogFiles']}</a></li>
+									<li><a href="#config" data-toggle="tab">#{msg['logViewer.configuration']}</a></li>
+									<li><a href="#tail" data-toggle="tab">#{msg['logViewer.tailOfLogFile']}</a></li>
 
 								</ul>
 								<div class="tab-content">
@@ -80,7 +80,7 @@
 
 											<h:panelGroup >
 												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-													<ui:define name="label">Display last lines count</ui:define>
+													<ui:define name="label">#{msg['logViewer.displayLastLinesCount']}</ui:define>
 													<h:inputText
 															value="#{viewLogFileAction.displayLastLinesCount}"
 															styleClass="form-control"

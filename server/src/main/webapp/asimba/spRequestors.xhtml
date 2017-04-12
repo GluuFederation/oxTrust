@@ -11,20 +11,20 @@
 
     <ui:define name="body">
         <section class="content-header">
-            <h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />Asimba 
-                    <i class="fa fa-caret-right" style="color: #333 !important;" /> SP Requestors</small></h1>
+            <h1 style="color: #333;">#{msg['asimba.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;" />#{msg['asimba.asimba']}
+                    <i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['asimba.spRequestors']}</small></h1>
             <ol class="breadcrumb">
 
                     <li><a href="#{request.contextPath}/asimba/spRequestors"><i
-                                    class="fa fa-home"></i> SP Requestors</a></li>
+                                    class="fa fa-home"></i> #{msg['asimba.spRequestors']}</a></li>
                     <li class="organization/configuration"><a
-                            href="#{request.contextPath}/asimba/editSPRequestor/">Add SP Requestor</a></li>
+                            href="#{request.contextPath}/asimba/editSPRequestor/">#{msg['asimba.addSPRequestor']}</a></li>
             </ol>
         </section>
 
         <section class="content"> 
             <div style="margin-left: 16px;">
-                <s:link view="/asimba/editSPRequestor" value="Add SP Requestor" styleClass="addPerson btn btn-primary" propagation="none" />
+                <s:link view="/asimba/editSPRequestor" value="#{msg['asimba.addSPRequestor']}" styleClass="addPerson btn btn-primary" propagation="none" />
             </div>
 
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -35,7 +35,7 @@
                 <ui:param name="_hideLabel" value="true" />
                 <h:inputText value="#{updateAsimbaSPRequestorAction.searchPattern}" size="30" maxlength="30" required="true" id="searchPatternId" styleClass="searchParameters form-control" style="width: 50%; float: left;"
                     alt="search parameters for person like uid,iname,email" />
-                <h:commandButton value="Search" action="#{updateAsimbaSPRequestorAction.search}" styleClass="btn btn-primary" style="float: left;" />
+                <h:commandButton value="#{msg['asimba.search']}" action="#{updateAsimbaSPRequestorAction.search}" styleClass="btn btn-primary" style="float: left;" />
             </s:decorate>
         </h:form>
 
@@ -44,7 +44,7 @@
         <h:form id="spRequestorsFormId">
             <s:fragment rendered="#{updateAsimbaSPRequestorAction.spRequestorList.size eq 0}">
                 <richext:spacer height="30" />
-                <h:outputText value="No Search Result Found" />
+                <h:outputText value="#{msg['asimba.noSearchResult']}" />
             </s:fragment>
 
 
@@ -56,7 +56,7 @@
 
                 <h:column>
                        <f:facet name="header">  
-                        <div style="text-align: center;"> ID</div>
+                        <div style="text-align: center;"> #{msg['asimba.id']}</div>
                     </f:facet>
                     <s:link view="/asimba/editSPRequestor.xhtml" value="#{spRequestor.id}" propagation="none">
                         <f:param name="inum" value="#{spRequestor.inum}" />
@@ -65,21 +65,21 @@
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Friendly Name</div>
+                        <div style="text-align: center;"> #{msg['asimba.friendlyName']}</div>
                     </f:facet>
                     <h:outputText value="#{spRequestor.friendlyName}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Pool ID</div>
+                        <div style="text-align: center;"> #{msg['asimba.poolID']}</div>
                     </f:facet>
                     <h:outputText value="#{spRequestor.poolID}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Enabled</div>
+                        <div style="text-align: center;"> #{msg['asimba.enabled']}</div>
                     </f:facet>
                     <div style="text-align: center;">
                         <h:selectBooleanCheckbox value="#{spRequestor.enabled}" readonly="true" disabled="true" />

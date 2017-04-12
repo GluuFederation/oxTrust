@@ -13,16 +13,15 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			SAML<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Update Trust Relationship</small>
+			#{msg['trustmanager.saml']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['trustmanager.updateTrustRelationship']}</small>
 		</h1>
 		<ol class="breadcrumb">
 		
 			<li><a href="#{request.contextPath}/trustmanager/relationships"><i
-					class="fa fa-home"></i> Trust Relationships</a></li>
+					class="fa fa-home"></i> #{msg['trustmanager.trustRelationships']}</a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/trustmanager/add">Update Trust
-					Relationships</a></li>
+				href="#{request.contextPath}/trustmanager/add">#{msg['trustmanager.updateTrustRelationship']}</a></li>
 		</ol>
 		</section>
 
@@ -39,7 +38,7 @@
 			<div class = "box-footer">
 				<div  style="width: 100%;height: 30px;">
 					<div id="updateButtons" style="float: right;width: 320px;">
-						<h:commandButton styleClass="btn btn-primary" value="   Update   " 
+						<h:commandButton styleClass="btn btn-primary" value="   #{msg['trustmanager.update']}   "
 							action="#{updateTrustRelationshipAction.save}" />
 							<h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="#{updateTrustRelationshipAction.isActive()?'Deactivate':'Activate'}" action="#{updateTrustRelationshipAction.activationToggle}"/>
 							<a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" styleClass="btn btn-primary" style="margin-left:3px;"
@@ -65,7 +64,7 @@
         </div>
         
        	<ox:createSPMetadataDialog  id="createSPMetadata" generateMethod="#{updateTrustRelationshipAction.generateSp()}" 
-		  label="Generate SP Metadata" metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
+		  label="#{msg['trustmanager.generateSPMetadata']}" metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
 		  logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}" uri="#{updateTrustRelationshipAction.trustRelationship.url}"/>
         
         </section>

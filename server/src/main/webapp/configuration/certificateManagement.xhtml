@@ -11,11 +11,11 @@
 
     <ui:define name="body">
         <section class="content-header">
-            <h1 style="color: #333;">Configuration<small><i class="fa fa-caret-right" style="color: #333 !important;" /> Certificates</small></h1>
+            <h1 style="color: #333;">#{msg['configuration.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['configuration.certificates']}</small></h1>
             
             <ol class="breadcrumb">
                     <li><a href="#{request.contextPath}/configuration/certificateManagement"><i
-                            class="fa fa-home"></i> Certificates</a></li>
+                            class="fa fa-home"></i> #{msg['configuration.certificates']}</a></li>
                     <!--<li class="organization/configuration"><a
                             href="#{request.contextPath}/configuration/addCertificate">Add Certificate</a></li>-->
             </ol>
@@ -36,19 +36,19 @@
                     alt="search parameters for certificate like email,CN,C,O" />
                 <h:outputText value=" " />
                 <h:selectBooleanCheckbox value="#{certificateManagementAction.searchObsoleteWarning}" styleClass="form-control" />
-                <h:outputText value="With 'obsolete' warning only" />
-                <h:commandButton value="Search" action="#{certificateManagementAction.search}" styleClass="btn btn-primary" />
+                <h:outputText value="#{msg['configuration.withObsoleteWarningOnly']}" />
+                <h:commandButton value="#{msg['configuration.search']}" action="#{certificateManagementAction.search}" styleClass="btn btn-primary" />
             </s:decorate>
         </h:form>
         
         <richext:spacer height="16" />
         
         <h:form id="internalCertificatesFormId">
-            <H3>Internal Gluu Certificates</H3>
+            <H3>#{msg['configuration.internalGluuCertificates']}</H3>
             
             <s:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
                 <richext:spacer height="30" />
-                <h:outputText value="No Search Result Found" />
+                <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
             </s:fragment>
 
 
@@ -60,14 +60,14 @@
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Alias</div>
+                        <div style="text-align: center;"> #{msg['configuration.alias']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.alias}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Issuer</div>
+                        <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.issuer}" class="col-xs-12" />
                 </h:column>
@@ -81,21 +81,21 @@
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Algorithm</div>
+                        <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.algorithm}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Not Before</div>
+                        <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Not After</div>
+                        <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
                     </f:facet>
                     <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12" />
                 </h:column>
@@ -105,11 +105,11 @@
         <richext:spacer height="16" />
         
         <h:form id="trustStoreCertificatesFormId" rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
-            <H3>TrustStore Certificates</H3>
+            <H3>#{msg['configuration.trustStoreCertificates']}</H3>
             
             <s:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size eq 0}">
                 <richext:spacer height="30" />
-                <h:outputText value="No Search Result Found" />
+                <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
             </s:fragment>
 
 
@@ -121,14 +121,14 @@
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Alias</div>
+                        <div style="text-align: center;"> #{msg['configuration.alias']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.alias}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Issuer</div>
+                        <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.issuer}" class="col-xs-12" />
                 </h:column>
@@ -142,21 +142,21 @@
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Algorithm</div>
+                        <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.algorithm}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Not Before</div>
+                        <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Not After</div>
+                        <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
                     </f:facet>
                     <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12" />
                 </h:column>
@@ -170,7 +170,7 @@
             
             <s:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
                 <richext:spacer height="30" />
-                <h:outputText value="No Search Result Found" />
+                <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
             </s:fragment>
 
             <h:dataTable 
@@ -181,14 +181,14 @@
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Alias</div>
+                        <div style="text-align: center;"> #{msg['configuration.alias']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.alias}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Issuer</div>
+                        <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.issuer}" class="col-xs-12" />
                 </h:column>
@@ -202,21 +202,21 @@
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Algorithm</div>
+                        <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.algorithm}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Not Before</div>
+                        <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
                     </f:facet>
                     <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">  
-                        <div style="text-align: center;"> Not After</div>
+                        <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
                     </f:facet>
                     <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12" />
                 </h:column>

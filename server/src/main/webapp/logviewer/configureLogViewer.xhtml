@@ -15,14 +15,13 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">
-			Configuration<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Configure Log Viewer</small>
+			#{msg['logViewer.configuration']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['logViewer.configureLogViewer']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/logviewer/configure">Configure Log
-					Viewer</a></li>
+				href="#{request.contextPath}/logviewer/configure">#{msg['logViewer.configureLogViewer']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -46,8 +45,8 @@
 
 
 								<h:panelGroup>
-									<ox:simpleCustomPropertiesList label="Allowed log templates"
-										labelAdd="log template"
+									<ox:simpleCustomPropertiesList label="#{msg['logViewer.allowedLogTemplates']}"
+										labelAdd="#{msg['logViewer.logTemplate']}"
 										properties="#{configureLogViewerAction.logViewerConfiguration.logTemplates}"
 										propertiesAction="#{configureLogViewerAction}" />
 								</h:panelGroup>
@@ -57,9 +56,9 @@
 								</div><div class="box-footer">
 
 									<div id="updateButtons">
-										<h:commandButton styleClass="btn btn-primary" value="Update"
+										<h:commandButton styleClass="btn btn-primary" value="#{msg['logViewer.update']}"
 											action="#{configureLogViewerAction.update}" />
-										<h:commandButton styleClass="btn btn-primary" value="Cancel"
+										<h:commandButton styleClass="btn btn-primary" value="#{msg['logViewer.cancel']}"
 											action="#{configureLogViewerAction.cancel}"
 											style="margin-left:5px" immediate="true" />
 

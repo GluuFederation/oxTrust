@@ -46,7 +46,7 @@
         }
     </h:outputScript>
 
-    <ox:changePasswordDialog id="bindPasswordDialogId" label="Change Backend '#{_configureCacheRefreshAction.activeLdapConfig.configId}' Bind Password" password="#{_configureCacheRefreshAction.activeLdapConfig.bindPassword}"
+    <ox:changePasswordDialog id="bindPasswordDialogId" label="#{msg['organization.changeBackend']} '#{_configureCacheRefreshAction.activeLdapConfig.configId}' #{msg['organization.bindPassword']}" password="#{_configureCacheRefreshAction.activeLdapConfig.bindPassword}"
 	   setPasswordMethod="#{configureCacheRefreshAction.updateBindPassword}"/>
 
 
@@ -56,10 +56,10 @@
             <div class="col-xs-12">
               <div class="nav-tabs-custom" style="margin-bottom: 0px;overflow:auto;">
                 <ul class="nav nav-tabs">
-                  <li class="active"><a href="#cache-refresh" data-toggle="tab">Cache Refresh</a></li>
-                  <li><a href="#key-attributes" data-toggle="tab">Customer Backend Key/Attributes</a></li>
-                  <li><a href="#ldap-servers" data-toggle="tab">Source Backend LDAP Servers</a></li>
-                  <li><a href="#Inum" data-toggle="tab">Inum LDAP Server</a></li>
+                  <li class="active"><a href="#cache-refresh" data-toggle="tab">#{msg['organization.cacheRefresh']}</a></li>
+                  <li><a href="#key-attributes" data-toggle="tab">#{msg['organization.customerBackend']}</a></li>
+                  <li><a href="#ldap-servers" data-toggle="tab">#{msg['organization.sourceBackend']}</a></li>
+                  <li><a href="#Inum" data-toggle="tab">#{msg['organization.inumLDAPServer']}</a></li>
                 </ul>
         <s:validateAll />
          <div class="tab-content">
@@ -70,20 +70,20 @@
                       
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Last run</ui:define>
+                <ui:define name="label">#{msg['organization.lastRun']}</ui:define>
                 <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
                     <s:convertDateTime pattern="MMM. d yyyy hh:mm a" />
                 </h:outputText>
             </s:decorate>
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Updates at the last run</ui:define>
+                <ui:define name="label">#{msg['organization.updatesAtTheLastRun']}</ui:define>
                 <h:outputText  value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdateCount}" />
             </s:decorate>
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Problems at the last run</ui:define>
+                <ui:define name="label">#{msg['organization.problemsAtTheLastRun']}</ui:define>
                 <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshProblemCount}" />
             </s:decorate> <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="editType">
-                <ui:define name="label">Refresh Method</ui:define>
+                <ui:define name="label">#{msg['organization.refreshMethod']}</ui:define>
                 <h:selectOneMenu styleClass="form-control"  value="#{_configureCacheRefreshAction.updateMethod}" required="true" id="refreshMethodId">
                     <s:selectItems value="#{_configureCacheRefreshAction.allCacheRefreshUpdateMethods}" var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
@@ -93,7 +93,7 @@
             </s:decorate>
 			  <h:panelGroup id="copyTogglePanelGroup">
                     <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                        <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'copy'}" label="Source attribute to destination attribute mapping" labelAdd="source attribute to destination attribute mapping"
+                        <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'copy'}" label="#{msg['organization.sourceAttributeToDesitnation']}" labelAdd="source attribute to destination attribute mapping"
                             properties="#{_configureCacheRefreshAction.attributeMapping}" propertiesAction="#{_configureCacheRefreshAction}" />
                     </h:panelGroup>
             </h:panelGroup>
@@ -107,45 +107,45 @@
            </h:outputScript>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Polling interval (minutes)</ui:define>
+                <ui:define name="label">#{msg['organization.pollingInterval']}</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshPollingInterval}" id="vdsCacheRefreshPollingIntervalId" size="5" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Server IP Address</ui:define>
+                <ui:define name="label">#{msg['organization.serverIPAddress']}</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.appliance.cacheRefreshServerIpAddress}" id="cacheRefreshServerIpAddressId" size="16" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Snapshot Folder</ui:define>
+                <ui:define name="label">#{msg['organization.snapshotFolder']}</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotFolder}" size="48" required="true" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Snapshots count</ui:define>
+                <ui:define name="label">#{msg['organization.snapshotCount']}</ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotMaxCount}" size="5" required="true" />
             </s:decorate>
             
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Keep external persons</ui:define>
+                <ui:define name="label">#{msg['organization.keepExternalPersons']}</ui:define>
 
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"/>
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Load source data with limited search</ui:define>
+                <ui:define name="label">#{msg['organization.loadSourceData']}</ui:define>
 
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.useSearchLimit}"/>
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Search size limit </ui:define>
+                <ui:define name="label">#{msg['organization.searchSizeLimit']} </ui:define>
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.ldapSearchSizeLimit}" size="6" required="false" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="vdsCacheRefreshState">
-									<ui:define name="label">Cache Refresh</ui:define>
+									<ui:define name="label">#{msg['organization.cacheRefresh']}</ui:define>
 									<h:selectOneMenu value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshEnabled}" styleClass="form-control"
 										id="vdsCacheRefreshStateId">
 										<s:selectItems
@@ -168,17 +168,17 @@
                <div class="tab-pane" id="key-attributes">
                 <div style="display: inline-block;width: 90% !important;">
                 <h:panelGroup >
-                    <ox:simplePropertiesList label="Key attribute" labelAdd="key attribute" maxItems="3" properties="#{_configureCacheRefreshAction.keyAttributes}"
+                    <ox:simplePropertiesList label="#{msg['organization.keyAttribute']}" labelAdd="key attribute" maxItems="3" properties="#{_configureCacheRefreshAction.keyAttributes}"
                         propertiesAction="#{_configureCacheRefreshAction}" required="true" />
 
-                    <ox:simplePropertiesList label="Object class" labelAdd="object class" properties="#{_configureCacheRefreshAction.keyObjectClasses}"
+                    <ox:simplePropertiesList label="#{msg['organization.objectClass']}" labelAdd="object class" properties="#{_configureCacheRefreshAction.keyObjectClasses}"
                         propertiesAction="#{_configureCacheRefreshAction}" required="true" />
 
-                    <ox:simplePropertiesList label="Source attribute" labelAdd="source attribute" properties="#{_configureCacheRefreshAction.sourceAttributes}"
+                    <ox:simplePropertiesList label="#{msg['organization.sourceAttribute']}" labelAdd="source attribute" properties="#{_configureCacheRefreshAction.sourceAttributes}"
                         propertiesAction="#{_configureCacheRefreshAction}" required="true" />
 
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="customLdapFilter">
-                        <ui:define name="label">Custom LDAP filter</ui:define>
+                        <ui:define name="label">#{msg['organization.customLDAPFilter']}</ui:define>
                         <h:panelGroup>
                             <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.customLdapFilter}" size="48" />
                           
@@ -202,7 +202,7 @@
                     </rich:dataGrid>
 
                     <s:div styleClass="addConfig">
-                        <a4j:commandLink styleClass="btn btn-link" value="Add source LDAP server" action="#{_configureCacheRefreshAction.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
+                        <a4j:commandLink styleClass="btn btn-link" value="#{msg['organization.addSourceLDAPServer']}" action="#{_configureCacheRefreshAction.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
                     </s:div>
                 </h:panelGroup></div></div>
             
@@ -211,7 +211,7 @@
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 			
 			<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Default Inum Serer</ui:define>
+                <ui:define name="label">#{msg['organization.defaultInumServer']}</ui:define>
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}">
                     <a4j:ajax event="click" render="inumServerId" execute="@this" limitRender="true" />
                 </h:selectBooleanCheckbox>
@@ -232,9 +232,9 @@
 					
 							<rich:notifyMessages stayTime="2000" nonblocking="true" rendered="#{showGlobalMessages == 'false'}"/>
 							
-							 <h:commandButton styleClass="btn btn-primary" value="Update" action="#{configureCacheRefreshAction.update}" />
-                        <h:commandButton styleClass="btn btn-primary" value="Cancel" action="#{configureCacheRefreshAction.cancel}" immediate="true" style="margin-left:5px" />
-                        <h:commandButton styleClass="btn btn-primary" value="Update &amp; Validate script" action="#{configureCacheRefreshAction.validateInterceptorScript}" style="margin-left:5px" />
+							 <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.update']}" action="#{configureCacheRefreshAction.update}" />
+                        <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.cancel']}" action="#{configureCacheRefreshAction.cancel}" immediate="true" style="margin-left:5px" />
+                        <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.update']} &amp; #{msg['organization.validateScript']}" action="#{configureCacheRefreshAction.validateInterceptorScript}" style="margin-left:5px" />
 						
 					</div>
 					</div></div>

@@ -17,49 +17,49 @@
 
         <rich:panel id="SAML2AttributeQueryDescription" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="SAML 2 Attribute Query Profile Help" />
+                <h:outputText value="#{msg['trustmanager.saml2AttributeQueryProfileHelp']}" />
             </f:facet>
-This profile configuration enables and configures the SAML 2 Attribute Query profile.
+            #{msg['trustmanager.thisProfileConfigurationEnablesAndConfigures']}
         </rich:panel>
         <rich:panel id="SAML2AttributeQueryMenu" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="SAML 2 Attribute Query Profile Configuration" />
+                <h:outputText value="#{msg['trustmanager.saml2AttributeQueryProfileConfiguration']}" />
             </f:facet>
             <h:panelGrid columns="2">
-                <h:outputText value="assertionLifetime: " />
+                <h:outputText value="#{msg['trustmanager.assertionLifetime']} " />
                 <rich:inputNumberSpinner value="#{_profileConfigurationSelected.assertionLifetime}" step="300000" maxValue="2147483647" />
-                <h:outputText value="assertionProxyCount: " />
+                <h:outputText value="#{msg['trustmanager.assertionProxyCount']} " />
                 <rich:inputNumberSpinner value="#{_profileConfigurationSelected.assertionProxyCount}" step="1" maxValue="999" />
 
-                <h:outputText value="signResponses: " />
+                <h:outputText value="#{msg['trustmanager.signResponses']} " />
                 <h:selectOneMenu value="#{_profileConfigurationSelected.signResponses}">
-                    <f:selectItem itemLabel="never" itemValue="never" />
-                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
-                    <f:selectItem itemLabel="always" itemValue="always" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
                 </h:selectOneMenu>
-                <h:outputText value="signAssertions: " />
+                <h:outputText value="#{msg['trustmanager.signAssertions']} " />
                 <h:selectOneMenu value="#{_profileConfigurationSelected.signAssertions}">
-                    <f:selectItem itemLabel="never" itemValue="never" />
-                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
-                    <f:selectItem itemLabel="always" itemValue="always" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
                 </h:selectOneMenu>
-                <h:outputText value="signRequests: " />
+                <h:outputText value="#{msg['trustmanager.signRequests']} " />
                 <h:selectOneMenu value="#{_profileConfigurationSelected.signRequests}">
-                    <f:selectItem itemLabel="never" itemValue="never" />
-                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
-                    <f:selectItem itemLabel="always" itemValue="always" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
                 </h:selectOneMenu>
-                <h:outputText value="encryptAssertions: " />
+                <h:outputText value="#{msg['trustmanager.encryptAssertions']} " />
                 <h:selectOneMenu value="#{_profileConfigurationSelected.encryptAssertions}">
-                    <f:selectItem itemLabel="never" itemValue="never" />
-                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
-                    <f:selectItem itemLabel="always" itemValue="always" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
                 </h:selectOneMenu>
-                <h:outputText value="encryptNameIds: " />
+                <h:outputText value="#{msg['trustmanager.encryptNameIds']} " />
                 <h:selectOneMenu value="#{_profileConfigurationSelected.encryptNameIds}">
-                    <f:selectItem itemLabel="never" itemValue="never" />
-                    <f:selectItem itemLabel="conditional" itemValue="conditional" />
-                    <f:selectItem itemLabel="always" itemValue="always" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
+                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
                 </h:selectOneMenu>
             </h:panelGrid>
             <s:fileUpload id="SAML2AttributeQueryWrapperId" fileName="#{_relyingPartyAction.fileWrappers.get('SAML2AttributeQuery').fileName}"

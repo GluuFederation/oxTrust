@@ -7,13 +7,13 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			UMA<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> scopes</small>
+            #{msg['uma.uma']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['uma.scopes']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/uma/scopehome">Scopes
+				href="#{request.contextPath}/uma/scopehome">#{msg['uma.scopes']}
 					</a></li>
 		</ol>
 		</section>
@@ -28,12 +28,12 @@
                                 <h:form>
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern" style="height:60px;">
                         
-                        	<ui:define name="label">Search Key:</ui:define>
+                        	<ui:define name="label">#{msg['uma.searchKey']}</ui:define>
                        
                         
                         	<h:inputText value="#{umaInventoryAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="form-control"
                             		alt="Search parameters for UMA resource set like Inum, Display Name" placeholder="Search Key" style="width:50%;float: left;"/>
-                            <a4j:commandButton value="Search" action="#{umaInventoryAction.search}" render="resourcesListId, scopesListId" styleClass="btn btn-primary" style="float: left;margin-left:5px;"/>
+                            <a4j:commandButton value="#{msg['uma.search']}" action="#{umaInventoryAction.search}" render="resourcesListId, scopesListId" styleClass="btn btn-primary" style="float: left;margin-left:5px;"/>
                         
 
 
@@ -45,47 +45,47 @@
                   
                   <div class="tab-pane" id="scopeTab">
                   		<h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
-                                <s:button view="/uma/scope/modifyScopeDescription.xhtml" value="Add Scope Description" propagation="none" styleClass="btn btn-primary">
+                                <s:button view="/uma/scope/modifyScopeDescription.xhtml" value="#{msg['uma.addScopeDescription']}" propagation="none" styleClass="btn btn-primary">
                                     <f:param name="scope" value="#{null}" />
                                 </s:button>
 
                                 <richext:spacer height="8" />
                                 <s:fragment rendered="#{umaInventoryAction.scopesList.size eq 0}">
                                     <richext:spacer height="30" />
-                                    <h:outputText value="No Search Result Found" />
+                                    <h:outputText value="#{msg['uma.noSearchResultFound']}" />
                                 </s:fragment>
 
                                 <rich:dataTable sortMode="single" id="scopesListId" value="#{umaInventoryAction.scopesList}" rows="20" styleClass="data sortable" var="_row"
                                     rendered="#{umaInventoryAction.scopesList.size gt 0}" style="width: 750px;">
                                     <rich:column sortBy="#{_row.displayName}">
-                                        <f:facet name="header">Name</f:facet>
+                                        <f:facet name="header">#{msg['uma.name']}</f:facet>
                                         <s:link value="#{_row.displayName}" view="/uma/scope/modifyScopeDescription.xhtml" propagation="none">
                                             <f:param name="scope" value="#{_row.inum}" />
                                         </s:link>
                                     </rich:column>
 
                                     <rich:column sortBy="#{_row.type.displayName}">
-                                        <f:facet name="header">Type</f:facet>
+                                        <f:facet name="header">#{msg['uma.uma']}</f:facet>
                                         <h:outputText value="#{_row.type.displayName}" />
                                     </rich:column>
 
                                     <rich:column sortBy="#{_row.url}">
-                                        <f:facet name="header">Reference Url (used for resource set registration)</f:facet>
+                                        <f:facet name="header">#{msg['uma.referenceUrl']}</f:facet>
                                         <s:fragment>
-	                                        <h:outputText value="#{umaMetadataConfiguration.scopeEndpoint}/#{_row.displayName}" rendered="#{_row.type.value eq 'internal'}"/>
+	                                        <h:outputText value="#{umaMetadataConfiguration.scopeEndpoint}/#{_row.id}" rendered="#{_row.type.value eq 'internal'}"/>
 	                                        <h:outputText value="#{_row.url}" rendered="#{_row.type.value ne 'internal'}"/>
                                         </s:fragment>
                                     </rich:column>
 
                                     <rich:column>
-                                        <f:facet name="header">Action</f:facet>
+                                        <f:facet name="header">#{msg['uma.action']}</f:facet>
                                         <s:fragment rendered="#{_row.id != null}">
-                                            <s:link value="Download" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
+                                            <s:link value="#{msg['uma.download']}" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
                                                 <f:param name="scope" value="#{_row.id}" />
                                                 <f:param name="dl" value="#{true}" />
                                             </s:link>
                                             <h:outputText value="/" />
-                                            <s:link value="Link" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
+                                            <s:link value="#{msg['uma.link']}" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
                                                 <f:param name="scope" value="#{_row.id}" />
                                             </s:link>
                                         </s:fragment>

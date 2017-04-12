@@ -11,7 +11,7 @@
 	<rich:popupPanel id="certInfoViewer" onmaskclick="#{rich:component('certInfoViewer')}.hide()" zindex="2000" keepVisualState="true"
 		autosized="true" width="500" height="500">
 		<f:facet name="header">
-			<h:outputText value="Certificate details" />
+			<h:outputText value="#{msg['cert.certificateDetails']}" />
 		</f:facet>
 		<f:facet name="controls">
 			<h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer"
@@ -20,43 +20,43 @@
 
 		<h:panelGrid id="certInfoSubject" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">Valid Until:</ui:define>
+				<ui:define name="label">#{msg['cert.validUntil']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.subject.get('validUntil')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">Valid After:</ui:define>
+				<ui:define name="label">#{msg['cert.validAfter']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.subject.get('validAfter')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">Common Name:</ui:define>
+				<ui:define name="label">#{msg['cert.commonName']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.subject.get('CN')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">City:</ui:define>
+				<ui:define name="label">#{msg['cert.city']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.subject.get('L')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">State:</ui:define>
+				<ui:define name="label">#{msg['cert.state']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.subject.get('ST')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">Country:</ui:define>
+				<ui:define name="label">#{msg['cert.country']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.subject.get('C')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">Organization:</ui:define>
+				<ui:define name="label">#{msg['cert.organization']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.subject.get('O')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
@@ -64,35 +64,35 @@
 
 		<hr />
 
-		<h:outputText value="Issuer:" />
+		<h:outputText value="#{msg['cert.issuer']}" />
 
 		<h:panelGrid id="certInfoIssuer" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">Common Name:</ui:define>
+				<ui:define name="label">#{msg['cert.commonName']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.issuer.get('CN')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">City:</ui:define>
+				<ui:define name="label">#{msg['cert.city']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.issuer.get('L')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">State:</ui:define>
+				<ui:define name="label">#{msg['cert.state']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.issuer.get('ST')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">Country:</ui:define>
+				<ui:define name="label">#{msg['cert.country']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.issuer.get('C')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
 
 			<s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-				<ui:define name="label">Organization:</ui:define>
+				<ui:define name="label">#{msg['cert.organization']}</ui:define>
 				<h:outputText value="#{manageCertificateAction.issuer.get('O')}" />
 				<h:outputText value="&#160;" />
 			</s:decorate>
@@ -101,7 +101,7 @@
 		<richext:spacer height="8" />
 
 		<h:panelGroup>
-			<a4j:commandButton value="Back" onclick="#{rich:component('certInfoViewer')}.hide(); return false;" immediate="true" execute="@this" />
+			<a4j:commandButton value="#{msg['cert.back']}" onclick="#{rich:component('certInfoViewer')}.hide(); return false;" immediate="true" execute="@this" />
 		</h:panelGroup>
 
 	</rich:popupPanel>

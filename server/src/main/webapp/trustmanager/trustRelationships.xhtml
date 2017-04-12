@@ -14,14 +14,13 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">
-			SAML<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Trust Relationships</small>
+			#{msg['trustmanager.saml']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['trustmanager.trustRelationships']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/trustmanager/relationships">Trust
-					Relationships</a></li>
+				href="#{request.contextPath}/trustmanager/relationships">#{msg['trustmanager.trustRelationships']}</a></li>
 		</ol>
 		</section>
 
@@ -34,7 +33,7 @@
 			   <div style="display: inline-block; width: 75% !important;">
 			
 				<s:link view="/trustmanager/addTrustRelationship.xhtml"
-					styleClass="btn btn-primary btn-block btn-flat" value="Add Relationship"
+					styleClass="btn btn-primary btn-block btn-flat" value="#{msg['trustmanager.addRelationship']}"
 					propagation="none" style="width:200px;"/>
 			
 				<richext:spacer height="50" />
@@ -60,7 +59,7 @@
 													maxlength="30" id="searchPatternId"
 													alt="Search parameters for client like inum,iname,displayName" />
 												<h:commandButton style="float:left;margin-left :3px;"
-													styleClass="btn btn-primary" value="Search"
+													styleClass="btn btn-primary" value="#{msg['trustmanager.search']}"
 													action="#{trustRelationshipInventoryAction.search}" />
 											</div>
 										</s:decorate>
@@ -72,7 +71,7 @@
 							<div class="box box-primary"
 								style="width: 128%; margin-left: 22px;">
 								<div class="box-header">
-									<h3 class="box-title">Search Results</h3>
+									<h3 class="box-title">#{msg['trustmanager.searchResults']}</h3>
 								</div>
 								<!-- /.box-header -->
 								<!-- form start -->
@@ -82,7 +81,7 @@
 											<s:fragment
 												rendered="#{trustRelationshipInventoryAction.trustedSpList.size eq 0}">
 												<richext:spacer height="30" />
-												<h:outputText value="No Trust Relationships Found" />
+												<h:outputText value="#{msg['trustmanager.noTrsutRelationshipsFound']}" />
 											</s:fragment>
 
 											<rich:dataTable sortMode="single" id="relationshipstable"
@@ -91,32 +90,32 @@
 												style="width:100%;"
 												rendered="#{trustRelationshipInventoryAction.trustedSpList.size gt 0}">
 												<rich:column sortBy="#{tsps.displayName}">
-													<f:facet name="header">Community</f:facet>
+													<f:facet name="header">#{msg['trustmanager.community']}</f:facet>
 													<s:link view="/trustmanager/updateTrustRelationship.xhtml"
 														value="#{tsps.displayName}" propagation="none">
 														<f:param name="inum" value="#{tsps.inum}" />
 													</s:link>
 												</rich:column>
 												<rich:column sortBy="#{tsps.description}">
-													<f:facet name="header">Description</f:facet>
+													<f:facet name="header">#{msg['trustmanager.description']}</f:facet>
 													<h:outputText value="#{tsps.description}" />
 												</rich:column>
 												<rich:column>
-													<f:facet name="header">Attributes Published</f:facet>
+													<f:facet name="header">#{msg['trustmanager.attributesPublished']}</f:facet>
 													<ox:attributeList value="#{tsps.releasedCustomAttributes}" />
 												</rich:column>
 												<rich:column sortBy="#{tsps.isFederation()}">
-													<f:facet name="header">Relationship type</f:facet>
+													<f:facet name="header">#{msg['trustmanager.relationshipType']}</f:facet>
 													<h:outputText
 														value="#{tsps.isFederation() ? 'federation' : (tsps.containerFederation ne null ? 'site federated with '.concat(tsps.containerFederation.displayName) : 'site')}" />
 												</rich:column>
 												<rich:column sortBy="#{tsps.validationStatus.value}">
-													<f:facet name="header">Validation Status</f:facet>
+													<f:facet name="header">#{msg['trustmanager.validationStatus']}</f:facet>
 													<h:outputText
 														value="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}" />
 												</rich:column>
 												<rich:column sortBy="#{tsps.status.value}">
-													<f:facet name="header">Status</f:facet>
+													<f:facet name="header">#{msg['trustmanager.status']}</f:facet>
 													<h:outputText value="#{tsps.status.displayName}" />
 												</rich:column>
 												<f:facet name="footer">

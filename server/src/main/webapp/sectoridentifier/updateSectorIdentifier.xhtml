@@ -20,13 +20,13 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="Update"
+                        <h:commandButton styleClass="btn btn-primary" value="#{msg['sectorIdentifier.update']}"
                                          action="#{updateSectorIdentifierAction.save}"/>
-                        <a4j:commandButton styleClass="btn btn-primary" value="Delete"
+                        <a4j:commandButton styleClass="btn btn-primary" value="#{msg['sectorIdentifier.delete']}"
                                            onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
                                            ajaxSingle="true" eventsQueue="sectorIdentifierQueue" rendered="#{not _new}"
                                            style="margin-left:3px;"/>
-                        <h:commandButton styleClass="btn btn-primary" value="Cancel"
+                        <h:commandButton styleClass="btn btn-primary" value="#{msg['sectorIdentifier.cancel']}"
                                          action="#{updateSectorIdentifierAction.cancel}" immediate="true"
                                          style="margin-left:3px;"/>
                     </div>
@@ -34,8 +34,8 @@
             </ui:decorate>
 
             <ox:inputTextDialog id="loginRedirect"
-                                label="Select Login Redirect URI"
-                                inputLabel="Login Redirect URI"
+                                label="#{msg['sectorIdentifier.selectLoginRedirectURI']}"
+                                inputLabel="#{msg['sectorIdentifier.loginRedirectURI']}"
                                 text="#{updateSectorIdentifierAction.availableLoginUri}"
                                 textId="loginTextId"
                                 acceptMethod="#{updateSectorIdentifierAction.acceptSelectLoginUri}"

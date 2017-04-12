@@ -17,18 +17,15 @@
 
         <rich:panel id="ValidationFilterDescription" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="Validation Filter help" />
+                <h:outputText value="#{msg['trustmanager.validationFilterHelp']}" />
             </f:facet>
-This metadata filter validates incoming metadata against the SAML metadata schema.
-Enter <i>classpath locations for additional XML Schema files</i> to use during validation.<br />
-            <i>Example:</i>
-            <b>/schema/foo.xsd</b>
+            #{msg['trustmanager.theMetadataFilterValidate']}
         </rich:panel>
         <rich:panel id="ValidationFilterMenu" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="Validation Filter configuration" />
+                <h:outputText value="#{msg['trustmanager.validationFilterConfiguration']}" />
             </f:facet>
-            <h:outputText value="Added ExtensionSchemas: " />
+            <h:outputText value="#{msg['trustmanager.addedExtensionSchemas']}" />
             <rich:list var="_extensionSchema" value="#{_metadataFilterSelected.extensionSchemas}" id="schemaList">
                 <h:outputText value="#{_extensionSchema}" />
                 <h:outputText value="&#160;">
@@ -38,8 +35,8 @@ Enter <i>classpath locations for additional XML Schema files</i> to use during v
                 </h:outputText>
             </rich:list>
             <h:panelGrid>
-                <h:outputText value="Enter new ExtensionSchema: " />
-                <rich:inplaceInput defaultLabel="click to enter ExtensionSchema" value="#{_metadataFilterSelected.extensionSchema}">
+                <h:outputText value="#{msg['trustmanager.enterNewExtensionSchema']}" />
+                <rich:inplaceInput defaultLabel="#{msg['trustmanager.clickToEnterExtensionSchema']}" value="#{_metadataFilterSelected.extensionSchema}">
                     <a4j:ajax event="change" render="ValidationFilterMenu" />
                 </rich:inplaceInput>
             </h:panelGrid>

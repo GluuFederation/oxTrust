@@ -20,12 +20,12 @@
 
 				<ui:define name="controlButttons">
 					<div id="updateButtons">
-						<h:commandButton styleClass="btn btn-primary" value="Update"
+						<h:commandButton styleClass="btn btn-primary" value="#{msg['group.update']}"
 							action="#{updateGroupAction.save}" />
-						<a4j:commandButton styleClass="btn btn-primary" value="Delete"
+						<a4j:commandButton styleClass="btn btn-primary" value="#{msg['group.delete']}"
 							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 							ajaxSingle="true" eventsQueue="groupQueue" rendered="#{not _new}" style = "margin-left:3px;" />
-						<h:commandButton styleClass="btn btn-primary" value="Cancel"
+						<h:commandButton styleClass="btn btn-primary" value="#{msg['group.cancel']}"
 							action="#{updateGroupAction.cancel}" immediate="true" style = "margin-left:3px;" />
 					</div>
 				</ui:define>

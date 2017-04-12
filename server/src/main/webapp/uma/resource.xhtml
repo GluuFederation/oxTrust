@@ -7,14 +7,13 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			UMA<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Resources and scopes</small>
+            #{msg['uma.uma']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['uma.resourcesAndScopes']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a
-				href="#{request.contextPath}/uma/resourcehome">Resources and Scopes
-					</a></li>
+				href="#{request.contextPath}/uma/resourcehome">#{msg['uma.resourcesAndScopes']}</a></li>
 		</ol>
 		</section>
 
@@ -28,12 +27,12 @@
                                 <h:form>
                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern" style="height:60px;">
                         
-                        	<ui:define name="label">Search Key:</ui:define>
+                        	<ui:define name="label">#{msg['uma.searchKey']}</ui:define>
                        
                         
                         	<h:inputText value="#{umaInventoryAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="form-control"
                             		alt="Search parameters for UMA resource set like Inum, Display Name" placeholder="Search Key" style="width:50%;float: left;"/>
-                            <a4j:commandButton value="Search" action="#{umaInventoryAction.search}" render="resourcesListId, scopesListId" styleClass="btn btn-primary" style="float: left;margin-left:5px;"/>
+                            <a4j:commandButton value="#{msg['uma.search']}" action="#{umaInventoryAction.search}" render="resourcesListId, scopesListId" styleClass="btn btn-primary" style="float: left;margin-left:5px;"/>
                         
 
 
@@ -45,7 +44,7 @@
                   <div class="tab-pane active" id="resourceTab">
                   	<h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
 
-                                <s:button view="/uma/resource/modifyResourceSet.xhtml" value="Add Resource Set" propagation="none" styleClass="btn btn-primary">
+                                <s:button view="/uma/resource/modifyResourceSet.xhtml" value="#{msg['uma.addResourceSet']}" propagation="none" styleClass="btn btn-primary">
                                     <f:param name="resource" value="#{null}" />
                                 </s:button>
 
@@ -53,30 +52,30 @@
 
                                 <s:fragment rendered="#{umaInventoryAction.resourcesList.size eq 0}">
                                     <richext:spacer height="30" />
-                                    <h:outputText value="No Search Result Found" />
+                                    <h:outputText value="#{msg['uma.noSearchResultFound']}" />
                                 </s:fragment>
 
                                 <rich:dataTable sortMode="single" id="resourcesListId" value="#{umaInventoryAction.resourcesList}" rows="20" styleClass="data sortable" var="_row"
                                     rendered="#{umaInventoryAction.resourcesList.size gt 0}" style="width: 750px;">
                                     <rich:column sortBy="#{_row.name}">
-                                        <f:facet name="header">Name</f:facet>
+                                        <f:facet name="header">#{msg['uma.name']}</f:facet>
                                         <s:link value="#{_row.name}" view="/uma/resource/modifyResourceSet.xhtml" propagation="none">
                                             <f:param name="resource" value="#{_row.inum}" />
                                         </s:link>
                                     </rich:column>
 
                                     <rich:column>
-                                        <f:facet name="header">Id</f:facet>
+                                        <f:facet name="header">#{msg['uma.id']}</f:facet>
                                         <h:outputText value="#{_row.id}" />
                                     </rich:column>
 
                                     <rich:column>
-                                        <f:facet name="header">Scopes</f:facet>
+                                        <f:facet name="header">#{msg['uma.scopes']}</f:facet>
                                         <ox:displayNameEntryList value="#{umaInventoryAction.getScopeDisplayNameEntries(_row.getScopes())}" />
                                     </rich:column>
 
                                     <rich:column sortBy="#{_row.iconUri}">
-                                        <f:facet name="header">Icon URI</f:facet>
+                                        <f:facet name="header">#{msg['uma.iconURI']}</f:facet>
                                         <h:outputText value="#{_row.iconUri}" />
                                     </rich:column>
 									<!-- 

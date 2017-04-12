@@ -50,11 +50,25 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 		
 		return false;
 	}
+	
+	
+	public boolean executeExternalAddUserMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, boolean persisted) {
+		try {
+			log.debug("Executing python 'addUser' method");
+			UpdateUserType externalType = (UpdateUserType) customScriptConfiguration.getExternalType();
+			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+			return externalType.addUser(user, persisted, configurationAttributes);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
+		
+		return false;
+	}
 
 	public boolean executeExternalAddUserMethods(GluuCustomPerson user) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
-			result &= executeExternalUpdateUserMethod(customScriptConfiguration, user, false);
+			result &= executeExternalAddUserMethod(customScriptConfiguration, user, true);
 			if (!result) {
 				return result;
 			}
@@ -67,6 +81,56 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
 			result &= executeExternalUpdateUserMethod(customScriptConfiguration, user, true);
+			if (!result) {
+				return result;
+			}
+		}
+
+		return result;
+	}
+	
+	public boolean executeExternalNewUserMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user) {
+		try {
+			log.debug("Executing python 'newUser' method");
+			UpdateUserType externalType = (UpdateUserType) customScriptConfiguration.getExternalType();
+			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+			return externalType.newUser(user, configurationAttributes);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
+		
+		return false;
+	}
+
+	public boolean executeExternalNewUserMethods(GluuCustomPerson user) {
+		boolean result = true;
+		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+			result &= executeExternalNewUserMethod(customScriptConfiguration, user);
+			if (!result) {
+				return result;
+			}
+		}
+
+		return result;
+	}
+	
+	public boolean executeExternalDeleteUserMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, boolean persisted) {
+		try {
+			log.debug("Executing python 'addUser' method");
+			UpdateUserType externalType = (UpdateUserType) customScriptConfiguration.getExternalType();
+			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+			return externalType.deleteUser(user, persisted, configurationAttributes);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
+		
+		return false;
+	}
+
+	public boolean executeExternalDeleteUserMethods(GluuCustomPerson user) {
+		boolean result = true;
+		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+			result &= executeExternalDeleteUserMethod(customScriptConfiguration, user, true);
 			if (!result) {
 				return result;
 			}

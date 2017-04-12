@@ -73,13 +73,13 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditID"
                     rendered="true">
-                <ui:define name="label">ID</ui:define>
+                <ui:define name="label">#{msg['asimba.id']}</ui:define>
 
                 <h:outputLabel 
-                    title="It should be the entityID (URL) of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
-                    value="The entity ID of the organization"/>
+                    title="#{msg['asimba.itShouldBeTheEntityID']}"
+                    value="#{msg['asimba.theEntityID']}"/>
                 <h:inputText styleClass="form-control"
-                    title="It should be the entityID (URL) of remote IDP/ADFS. Example: https://ce.gluu.info/idp/shibboleth"
+                    title="#{msg['asimba.itShouldBeTheEntityID']}"
                     value="#{_idp.id}" size="100" tabindex="0" 
                     required="true" />
             </s:decorate>
@@ -89,12 +89,12 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditFriendlyName"
                     rendered="true">
-                <ui:define name="label">Friendly Name</ui:define>
+                <ui:define name="label">#{msg['asimba.friendlyName']}</ui:define>
                 <h:outputLabel 
-                    title="Anything human readable"
+                    title="#{msg['asimba.anythingReadable']}"
                     value="The organization friendly name"/>
                 <h:inputText styleClass="form-control"
-                    title="Anything human readable"
+                    title="#{msg['asimba.anythingReadable']}"
                     value="#{_idp.friendlyName}" size="100" tabindex="1" />
             </s:decorate>
             </h:panelGroup>
@@ -103,13 +103,13 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditMetadataURL"
                     rendered="true">
-                <ui:define name="label">Metadata URL</ui:define>
+                <ui:define name="label">#{msg['asimba.metadataURL']}</ui:define>
 
                 <h:outputLabel 
-                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
-                    value="The URL of the metadata or empty if none"/>
+                    title="#{msg['asimba.configureTheURL']}"
+                    value="#{msg['asimba.theURLOfTheMetadata']}"/>
                 <h:inputText styleClass="form-control"
-                    title="Configure the URL where the metadata is retrieved from (preferably a https URL)."
+                    title="#{msg['asimba.configureTheURL']}"
                     value="#{_idp.metadataUrl}" size="100" tabindex="3" />
             </s:decorate>
             </h:panelGroup>
@@ -118,14 +118,14 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditMetadataTimeout"
                     rendered="true">
-                <ui:define name="label">Metadata Timeout</ui:define>
+                <ui:define name="label">#{msg['asimba.metadataTimeout']}</ui:define>
 
                 <h:outputLabel 
-                    title="The timeout to be used in connecting the the URL metadata or -1 when default must be used"
-                    value="The timeout to be used in connecting the the URL metadata or -1 when default must be used"/>
+                    title="#{msg['asimba.theTimeoutToBeUsedInConnection']}"
+                    value="#{msg['asimba.theTimeoutToBeUsedInConnection']}"/>
                 <h:inputText styleClass="form-control"
-                    title="The timeout to be used in connecting the the URL metadata or -1 when default must be used"
-                    value="#{_idp.metadataTimeout}" size="100" label="Metadata Timeout" tabindex="4" />
+                    title="#{msg['asimba.theTimeoutToBeUsedInConnection']}"
+                    value="#{_idp.metadataTimeout}" size="100" label="#{msg['asimba.metadataTimeout']}" tabindex="4" />
             </s:decorate>
             </h:panelGroup>
             
@@ -133,14 +133,14 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditMetadataFile"
                     rendered="true">
-                <ui:define name="label">Metadata File</ui:define>
+                <ui:define name="label">#{msg['asimba.metadataFile']}</ui:define>
 
                 <h:outputLabel 
-                    title="Provide the absolute location of metadata file."
-                    value="The location of the metadata file or empty if none"/>
+                    title="#{msg['asimba.provideLocationOfMetadata']}"
+                    value="#{msg['asimba.theLocationOfMetadata']}"/>
                 <h:inputText id="idpEditMetadataFileOutputText" 
                     styleClass="form-control"
-                    title="Provide the absolute location of metadata file."
+                    title="#{msg['asimba.provideLocationOfMetadata']}"
                     value="#{_idp.metadataFile}" />
                 
                 <!-- upload file button -->
@@ -158,14 +158,14 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditTrustCertificateFile"
                     rendered="true">
-                <ui:define name="label">Trust Certificate File</ui:define>
+                <ui:define name="label">#{msg['asimba.trustCertificateFile']}</ui:define>
 
                 <h:outputLabel 
                     title="Add certificate file"
                     value="Add certificate file"/>
                 
                 <!-- upload file button -->
-                <rich:fileUpload fileUploadListener="#{_updateAsimbaIDPAction.uploadCertificateFile}" addLabel="Upload"
+                <rich:fileUpload fileUploadListener="#{_updateAsimbaIDPAction.uploadCertificateFile}" addLabel="#{msg['asimba.upload']}"
                                  acceptedTypes="crt, cert, pem, txt" ontyperejected="alert('Only CRT, CERT, PEM, TXT files are accepted');"
                                      maxFilesQuantity="1" 
                                      immediateUpload="true"
@@ -177,13 +177,13 @@
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                     id="idpEditNameIDFormat"
                     rendered="true">
-                    <ui:define name="label">NameIDFormat</ui:define>
+                    <ui:define name="label">#{msg['asimba.nameIDFormat']}</ui:define>
                     
                     <h:outputLabel 
-                        title="The NameIDFormat to be set in the NameIDPolicy or empty if resolved from metadata"
-                        value="The NameIDFormat to be set in the NameIDPolicy or empty if resolved from metadata"/>
+                        title="#{msg['asimba.theNameIDFormat']}"
+                        value="#{msg['asimba.theNameIDFormat']}"/>
                     <h:inputText styleClass="form-control"
-                        title="The NameIDFormat to be set in the NameIDPolicy or empty if resolved from metadata"
+                        title="#{msg['asimba.theNameIDFormat']}"
                         value="#{_idp.nameIdFormat}" size="100" tabindex="5" />
             </s:decorate>
             </h:panelGroup>
@@ -193,66 +193,66 @@
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Enabled"
+                title="#{msg['asimba.enabled']}"
                 value="#{_idp.enabled}" />
             <h:outputLabel 
-                value="Enabled"/>
+                value="#{msg['asimba.enabled']}"/>
                         </td>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Indicates whether the ACS location in the AuthnRequest must be an Index. TRUE if ACS should be set as AssertionConsumerServiceIndex. TRUE if ACS should be set as AssertionConsumerServiceIndex (default). FALSE - AssertionConsumerServiceURL and ProtocolBinding must be set."
+                title="#{msg['asimba.indicatesWhetherTheACS']}"
                 value="#{_idp.acsIndex}" />
             <h:outputLabel 
-                title="Indicates whether the ACS location in the AuthnRequest must be an Index. TRUE if ACS should be set as AssertionConsumerServiceIndex. TRUE if ACS should be set as AssertionConsumerServiceIndex (default). FALSE - AssertionConsumerServiceURL and ProtocolBinding must be set."
-                value="ACS Index"/>
+                title="#{msg['asimba.indicatesWhetherTheACS']}"
+                value="#{msg['asimba.acsIndex']}"/>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Indicates what the value of Scoping in the AuthnRequest must be. TRUE if Scoping element must be send"
+                title="#{msg['asimba.indicatesWhatTheValueOfScoping']}"
                 value="#{_idp.scoping}" />
             <h:outputLabel 
-                title="Indicates what the value of Scoping in the AuthnRequest must be. TRUE if Scoping element must be send"
-                value="Send Scoping in the AuthnRequest"/>
+                title="#{msg['asimba.indicatesWhatTheValueOfScoping']}"
+                value="#{msg['asimba.sendScopingInTheAuthRequest']}"/>
                         </td>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Indicates what the value of NameIDPolicy in the AuthnRequest must be. TRUE if NameIDPolicy element must be send"
+                title="#{msg['asimba.indicatesWhatTheValueOfNameIDPolicy']}"
                 value="#{_idp.nameIdPolicy}" />
             <h:outputLabel 
-                title="Indicates what the value of NameIDPolicy in the AuthnRequest must be. TRUE if NameIDPolicy element must be send"
-                value="Send NameIDPolicy"/>            
+                title="#{msg['asimba.indicatesWhatTheValueOfNameIDPolicy']}"
+                value="#{msg['asimba.sendNameIDPolicy']}"/>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Indicates what the value of NameIDPolicy in the AuthnRequest must be. Enable AllowCreate value"
+                title="#{msg['asimba.enableAllowCreateValue']}"
                 value="#{_idp.allowCreate}" />
             <h:outputLabel 
-                title="Indicates what the value of NameIDPolicy in the AuthnRequest must be. Enable AllowCreate value"
-                value="AllowCreate"/>
+                title="#{msg['asimba.enableAllowCreateValue']}"
+                value="#{msg['asimba.allowCreate']}"/>
                         </td>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Avoid Subject Confirmations. Indicates whether avoid including SubjectConfirmation in an AuthnRequest to this IDP; used for compatibility with Microsoft ADFS"
+                title="#{msg['asimba.avoidSubjectConfirmationsIndicates']}"
                 value="#{_idp.avoidSubjectConfirmations}" 
-                label="Avoid Subject Confirmations" />
+                label="#{msg['asimba.avoidSubjectConfirmations']}" />
             <h:outputLabel 
-                title="Avoid Subject Confirmations. Indicates whether avoid including SubjectConfirmation in an AuthnRequest to this IDP; used for compatibility with Microsoft ADFS"
-                value="Avoid Subject Confirmations"/>            
+                title="#{msg['asimba.avoidSubjectConfirmationsIndicates']}"
+                value="#{msg['asimba.avoidSubjectConfirmations']}"/>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2" rowspan="1">
             <h:selectBooleanCheckbox 
-                title="Disable SSO For IDP. Indicates whether SSO should be disabled when authentication is performed by this IDP"
+                title="#{msg['asimba.disableSSOForIDPIndicates']}"
                 value="#{_idp.disableSSOForIDP}" 
-                label="Disable SSO For IDP"  />
+                label="#{msg['asimba.disableSSOForIDP']}"  />
             <h:outputLabel 
-                title="Disable SSO For IDP. Indicates whether SSO should be disabled when authentication is performed by this IDP"
-                value="Disable SSO For IDP"/>
+                title="#{msg['asimba.disableSSOForIDPIndicates']}"
+                value="#{msg['asimba.disableSSOForIDP']}"/>
                         </td>
                         <td colspan="2" rowspan="1">
                         </td>

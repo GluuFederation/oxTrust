@@ -14,12 +14,12 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			Attributes<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Edit Attribute</small>
+            #{msg['attribute.attributes']}<small><i class="fa fa-caret-right"
+				style="color: #333 !important;"></i> #{msg['attribute.editAttribute']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a href="#{request.contextPath}/attribute/update/{inum}">Edit Attributes</a></li>
+			<li class="organization/configuration"><a href="#{request.contextPath}/attribute/update/{inum}">#{msg['attribute.editAttributes']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
@@ -31,9 +31,9 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="Update" action="#{updateAttributeAction.save}" rendered="#{updateAttributeAction.canEdit()}" />
-                        <a4j:commandButton styleClass="btn btn-primary" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{updateAttributeAction.canEdit()}" />
-                        <h:commandButton styleClass="btn btn-primary" value="Cancel" action="#{updateAttributeAction.cancel}" immediate="true" style="margin-left:5px"/>
+                        <h:commandButton styleClass="btn btn-primary" value="#{msg['attribute.update']}" action="#{updateAttributeAction.save}" rendered="#{updateAttributeAction.canEdit()}" />
+                        <a4j:commandButton styleClass="btn btn-primary" value="#{msg['attribute.delete']}" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{updateAttributeAction.canEdit()}" />
+                        <h:commandButton styleClass="btn btn-primary" value="#{msg['attribute.cancel']}" action="#{updateAttributeAction.cancel}" immediate="true" style="margin-left:5px"/>
                     </div>
                 </ui:define>
             </ui:decorate>

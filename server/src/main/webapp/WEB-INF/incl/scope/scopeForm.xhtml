@@ -20,22 +20,22 @@
         <h:panelGroup>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="inum" rendered="#{not _new}">
-                <ui:define name="label">Inum</ui:define>
+                <ui:define name="label">#{msg['scope.inum']}</ui:define>
                 <h:outputText styleClass="form-control" value="#{_scope.inum}" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                <ui:define name="label">Display Name</ui:define>
+                <ui:define name="label">#{msg['scope.displayName']}</ui:define>
                 <rich:inplaceInput value="#{_scope.displayName}"  defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="704"  required="true" id="displayNameId" />
             </s:decorate>
 
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
-                <ui:define name="label">Description</ui:define>
+                <ui:define name="label">#{msg['scope.description']}</ui:define>
                 <h:inputTextarea styleClass="form-control" value="#{_scope.description}" rows="3" cols="80" maxlength="4000" id="descriptionId" />
             </s:decorate>
   
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Scope Type</ui:define>
+                <ui:define name="label">#{msg['scope.scopeType']}</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
                     <s:selectItems value="#{scopeService.scopeTypes}" noSelectionLabel="Default" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
@@ -46,7 +46,7 @@
             </s:decorate>
   
             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">Default scope</ui:define>
+                <ui:define name="label">#{msg['scope.defaultScope']}</ui:define>
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" noSelectionLabel="Select"/>
 
@@ -55,7 +55,7 @@
 			<h:panelGroup id="selectedClaims">
 				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'openid')}">
 		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="claims">
-		                <ui:define name="label">Claims</ui:define>
+		                <ui:define name="label">#{msg['scope.claims']}</ui:define>
 		                <h:panelGroup id="selectedClaimsId">
 		                    <h:panelGroup>
 		                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim">
@@ -79,7 +79,7 @@
 			<h:panelGroup id="dynamicScripts">
 				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
 					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-						<ui:define name="label">Dynamic Scope Scripts</ui:define>
+						<ui:define name="label">#{msg['scope.dynamicScopeScripts']}</ui:define>
 						<h:panelGroup id="selectedDynamicScriptId">
 							<h:panelGrid columns="1" width="100%" border="0"
 								cellpadding="0" cellspacing="0">
@@ -107,7 +107,7 @@
 					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 						id="command">
 						<h:panelGroup>
-							<a4j:commandButton value="Add Dynamic Scope Script"
+							<a4j:commandButton value="#{msg['scope.addDynamicScopeScript']}"
 								oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
 								execute="@this" styleClass="btn btn-primary"
 								style="margin-left:-95px;" />
@@ -128,5 +128,5 @@
 									cancelMethod="#{updateScopeAction.cancelSelectDynamicScripts}"
 									render="selectedDynamicScriptId" nameProperty="entity.name"
 									displayNameProperty="entity.description"
-									label="Add Dynamic Scripts" />
+									label="#{msg['scope.addDynamicScripts']}" />
 </ui:composition>

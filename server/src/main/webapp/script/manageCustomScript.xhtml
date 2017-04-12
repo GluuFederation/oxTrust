@@ -16,11 +16,11 @@
     
     <section class="content-header">
 		<h1 style="color: #333;">
-			Configuration<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Manage Custom Scripts</small>
+            #{msg['customScript.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i>#{msg['customScript.manageCustomScripts']}</small>
 		</h1>
 		<ol class="breadcrumb">
 <li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration">Manage Custom scripts</li>
+			<li class="organization/configuration">#{msg['customScript.manageCustomScripts']}</li>
 		</ol>
 		</section>
         <section class="content">
@@ -30,8 +30,8 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons" style="margin-top:10px;">
-                        <h:commandButton value="Update" action="#{manageCustomScriptAction.save}" styleClass="btn btn-success" />
-                        <h:commandButton value="Cancel" action="#{manageCustomScriptAction.cancel}" immediate="true" styleClass="btn btn-success" style="margin-left:5px !important;" />
+                        <h:commandButton value="#{msg['customScript.update']}" action="#{manageCustomScriptAction.save}" styleClass="btn btn-success" />
+                        <h:commandButton value="#{msg['customScript.cancel']}" action="#{manageCustomScriptAction.cancel}" immediate="true" styleClass="btn btn-success" style="margin-left:5px !important;" />
                     </div>
                 </ui:define>
             </ui:decorate>

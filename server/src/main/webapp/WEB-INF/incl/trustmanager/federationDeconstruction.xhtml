@@ -19,7 +19,7 @@
     <rich:popupPanel id="federationDeconstruction" onmaskclick="#{rich:component('federationDeconstruction')}.hide()" keepVisualState="true" autosized="true"
         rendered="#{_trustRelationship.isFederation()}">
         <f:facet name="header">
-            <h:outputText value="Select which members of this federation you would like configure individually" />
+            <h:outputText value="#{msg['trustmanager.selectWhichMembers']}" />
         </f:facet>
 
         <f:facet name="controls">
@@ -47,8 +47,8 @@
                 <input type='hidden' name='cid' value='#{conversation.id}' />
 
                 <rich:pickList id="federationDeconstructionSelection" value="#{federationDeconstructionAction.managedEntities}"
-                    listsHeigh="150" listWidth="230" sourceCaption="Available federation members"
-                    targetCaption="Members selected for individual configuration">
+                    listsHeigh="150" listWidth="230" sourceCaption="#{msg['trustmanager.availableFederationMembers']}"
+                    targetCaption="#{msg['trustmanager.membersSelectedForIndividualsConfiguration']}">
 
                     <f:selectItems value="#{federationDeconstructionAction.bulkEntities}" var="item" itemLabel="#{item}" />
 

@@ -262,7 +262,6 @@ public class UserWebService extends BaseScimWebService {
 		} catch (Exception ex) {
 
 			log.error("Failed to create user", ex);
-			ex.printStackTrace();
 			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}

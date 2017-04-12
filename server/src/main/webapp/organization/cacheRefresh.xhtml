@@ -12,12 +12,12 @@
     <ui:define name="body">
     <section class="content-header">
 		<h1 style="color: #333;">
-			Configuration<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> Cache Refresh</small>
+            #{msg['organization.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['organization.cacheRefresh']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
 			<li class="organization/configuration"><a href="#{request.contextPath}/organization/cacherefresh">
-					Cache Refresh</a></li>
+                #{msg['organization.cacheRefresh']}</a></li>
 		</ol>
 		</section>
 		<section class="content">

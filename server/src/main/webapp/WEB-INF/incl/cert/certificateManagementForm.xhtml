@@ -29,17 +29,17 @@
 
 	<h:form id="certificateManagementForm">
 
-        <rich:collapsiblePanel switchType="client" opened="false" header="Certificate Management">
+        <rich:collapsiblePanel switchType="client" opened="false" header="#{msg['cert.certificateManagement']}">
             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">Use JRE public certs</ui:define>
+                    <ui:define name="label">#{msg['cert.useJrePublicCerts']}</ui:define>
 
 	                <h:selectBooleanCheckbox value="#{_action.trustStoreConfiguration.useJreCertificates}"/>
                 </s:decorate>
         	</h:panelGrid>
         </rich:collapsiblePanel>
 
-		<rich:collapsiblePanel switchType="client" opened="false" header="Manage server SSL certificates" id="certManagement">
+		<rich:collapsiblePanel switchType="client" opened="false" header="#{msg['cert.manageServerSSLCertificates']}" id="certManagement">
 			<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
 						rendered="#{_action.certsManagePossible}">
 				<ui:decorate template="/WEB-INF/incl/cert/certForm.xhtml">
@@ -55,7 +55,7 @@
 			</h:panelGrid>
 
 			<s:div rendered="#{not _action.certsManagePossible}">
-				<h:outputText value="Application don't have permissions to load/update certificates. Contact administrator to resolve this issue." />
+				<h:outputText value="#{msg['cert.applicationDontHavePermission']}" />
 			</s:div>
 		</rich:collapsiblePanel>
 
@@ -66,21 +66,21 @@
                         <h:panelGrid columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
                             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                                    <ui:define name="label">Name</ui:define>
+                                    <ui:define name="label">#{msg['cert.name']}</ui:define>
                                     <h:inputText value="#{_cert.name}" size="100" />
                                 </s:decorate>
             
                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                                    <ui:define name="label">Operations</ui:define>
+                                    <ui:define name="label">#{msg['cert.operations']}</ui:define>
 							        <h:panelGrid columns="2" width="100%" border="0" cellpadding="0" cellspacing="0">
-								        <a4j:commandButton value="Cert Info" action="#{_action.getCert(_cert)}" render="certInfoSubject, certInfoIssuer" oncomplete="#{rich:component('certInfoViewer')}.show();" execute="@this"
+								        <a4j:commandButton value="#{msg['cert.certInfo']}" action="#{_action.getCert(_cert)}" render="certInfoSubject, certInfoIssuer" oncomplete="#{rich:component('certInfoViewer')}.show();" execute="@this"
 								        		disabled="#{_cert.certificate == null}" />
-							            <a4j:commandButton value="Upload Cert" action="#{_action.setUploadMarker(_cert)}" oncomplete="#{rich:component('certUpload')}.show();" execute="@this"/>
+							            <a4j:commandButton value="#{msg['cert.uploadCert']}" action="#{_action.setUploadMarker(_cert)}" oncomplete="#{rich:component('certUpload')}.show();" execute="@this"/>
 							        </h:panelGrid>
                                 </s:decorate>
                 
                                 <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-                                    <ui:define name="label">Enabled</ui:define>
+                                    <ui:define name="label">#{msg['cert.enabled']}</ui:define>
                                     <h:selectBooleanCheckbox value="#{_cert.enabled}" />
                                 </s:decorate>
                             </h:panelGrid>
@@ -93,7 +93,7 @@
                     </rich:dataGrid>
     
                     <s:div styleClass="addConfig">
-                        <a4j:commandLink value="Add public certificate" action="#{_action.addPublicCertificate()}" render="managePublicCertificateId" execute="@region" />
+                        <a4j:commandLink value="#{msg['cert.addPublicCertificates']}" action="#{_action.addPublicCertificate()}" render="managePublicCertificateId" execute="@region" />
                         <f:param name="sv" value="1" />
                     </s:div>
                 </a4j:region>

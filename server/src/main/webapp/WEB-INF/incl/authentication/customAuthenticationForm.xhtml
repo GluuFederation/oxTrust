@@ -23,7 +23,7 @@
         }
     </h:outputStylesheet>
 
-	<ox:changePasswordDialog id="bindPassword" label="Change Bind Password"
+	<ox:changePasswordDialog id="bindPassword" label="#{msg['manageAuthentication.changeBindPassword']}"
 		password="#{managePersonAuthenticationAction.ldapConfig.bindPassword}"
 		setPasswordMethod="#{managePersonAuthenticationAction.updateLdapBindPassword}" />
 
@@ -32,13 +32,10 @@
 			<div class="col-xs-12">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs">
-						<li class="active"><a href="#manage-ldap" data-toggle="tab">Manage
-								LDAP Authentication</a></li>
-						<li><a href="#authentication-method" data-toggle="tab">Default
-								Authentication Method</a></li>						
-						<li><a href="#ox-passport" data-toggle="tab">Passport
-								Authentication Method</a></li>						
-						<li><a href="#cas" data-toggle="tab">CAS Protocol</a></li>
+						<li class="active"><a href="#manage-ldap" data-toggle="tab">#{msg['manageAuthentication.manageLDAPAuthentication']}</a></li>
+						<li><a href="#authentication-method" data-toggle="tab">#{msg['manageAuthentication.defaultAuthentication']}</a></li>
+						<li><a href="#ox-passport" data-toggle="tab">#{msg['manageAuthentication.passportAuthenticationMethod']}</a></li>
+						<li><a href="#cas" data-toggle="tab">#{msg['manageAuthentication.casProtocol']}</a></li>
 					</ul>
 					<div class="tab-content">
 						<!-- System Configuration -->
@@ -53,13 +50,13 @@
 									displayLocalPrimaryKey="true" displayEnable="false"
 									changePasswordDialogId="bindPassword:changePasswordModalPanel"
 									rendered="#{_action.existLdapConfigIdpAuthConf}" />
-								 <a4j:commandButton value="Activate" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
+								 <a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
 							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"/>
-				                <a4j:commandButton value="Deactivate" action="#{_action.setExistLdapConfigIdpAuthConf(false)}" rendered="#{_action.existLdapConfigIdpAuthConf}"
+				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_action.setExistLdapConfigIdpAuthConf(false)}" rendered="#{_action.existLdapConfigIdpAuthConf}"
 			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/>
 			                    	
 								<h:commandButton styleClass="btn btn-success"
-									style="margin-left:4px" value="Test LDAP Connection"
+									style="margin-left:4px" value="#{msg['manageAuthentication.testLDAPConnection']}"
 									action="#{_action.testLdapConnection}"
 									rendered="#{_action.existLdapConfigIdpAuthConf}" />
 
@@ -73,18 +70,18 @@
 								<h:panelGroup>
 									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 										id="auntheticationMode">
-										<ui:define name="label">Authentication mode</ui:define>
+										<ui:define name="label">#{msg['manageAuthentication.authenticationMode']}</ui:define>
 										<h:selectOneMenu value="#{_action.authenticationMode}"
 											styleClass="form-control">
 											<s:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
-												var="_name" label="#{_name}" noSelectionLabel="Default" />
+												var="_name" label="#{_name}" />
 										</h:selectOneMenu>
 									</s:decorate>
 
 									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 										id="oxTrustAuntheticationMode">
-										<ui:define name="label">oxTrust authentication mode</ui:define>
+										<ui:define name="label">#{msg['manageAuthentication.oxTrustAuthenticationMode']}</ui:define>
 										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
 											styleClass="form-control">
 											<s:selectItems
@@ -105,7 +102,7 @@
 							
 						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 									id="PassportEnabledState">
-									<ui:define name="label">Passport Support</ui:define>									
+									<ui:define name="label">#{msg['manageAuthentication.passportSupport']}</ui:define>
 									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control"  
 										id="scimEnabledStateId">
 										<s:selectItems
@@ -126,7 +123,7 @@
 	                    </rich:dataGrid>
 
                     <s:div styleClass="addConfig">
-                    	<a4j:commandLink styleClass="btn btn-link" value="Add Strategy" action="#{_action.addStrategy()}" render="strategyId" execute="@form" style="margin-right:1100px;margin-top:50px;"/>
+                    	<a4j:commandLink styleClass="btn btn-link" value="#{msg['manageAuthentication.addStrategy']}" action="#{_action.addStrategy()}" render="strategyId" execute="@form" style="margin-right:1100px;margin-top:50px;"/>
                     </s:div>
                		 </h:panelGroup>
                                         </div>	
@@ -136,7 +133,7 @@
                                                     <h:panelGroup rendered="#{productInstallationCheckerAction.showIDP_CAS}">
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolEnabled">
-                                                                        <ui:define name="label">Enabled</ui:define>
+                                                                        <ui:define name="label">#{msg['manageAuthentication.enabled']}</ui:define>
                                                                         <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enabled}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="0" >
@@ -145,7 +142,7 @@
 
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolSessionStorageType">
-                                                                        <ui:define name="label">Shibboleth session/CAS storage service type (Server-side only for CAS)</ui:define>
+                                                                        <ui:define name="label">#{msg['manageAuthentication.shibbolethSession']}</ui:define>
                                                                         <h:selectOneMenu value="#{updateCASAction.configuration.sessionStorageType}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="1">
@@ -157,7 +154,7 @@
 
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolBaseURL">
-                                                                        <ui:define name="label">Base CAS server URL</ui:define>
+                                                                        <ui:define name="label">#{msg['manageAuthentication.baseCASServerURL']}</ui:define>
                                                                         <h:outputText styleClass="form-control"
                                                                             title=""
                                                                             value="#{updateCASAction.casBaseURL}" size="100" />
@@ -165,7 +162,7 @@
 
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolToProxyPatternsEnabled">
-                                                                        <ui:define name="label">Enable Proxy Patterns</ui:define>
+                                                                        <ui:define name="label">#{msg['manageAuthentication.enableProxyPatterns']}</ui:define>
                                                                         <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enableToProxyPatterns}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="0" >
@@ -174,7 +171,7 @@
 
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolAuthorizedToProxy">
-                                                                        <ui:define name="label">Authorized Proxy Pattern</ui:define>
+                                                                        <ui:define name="label">#{msg['manageAuthentication.authorizedProxyPattern']}</ui:define>
                                                                         <h:inputText styleClass="form-control"
                                                                             title=""
                                                                             value="#{updateCASAction.configuration.authorizedToProxyPattern}" size="100" tabindex="2" 
@@ -183,7 +180,7 @@
 
                                                                 <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                         id="casProtocolUnauthorizedToProxy">
-                                                                        <ui:define name="label">UnAuthorized Proxy Pattern</ui:define>
+                                                                        <ui:define name="label">#{msg['manageAuthentication.unauthorizedProxyPattern']}</ui:define>
                                                                         <h:inputText styleClass="form-control"
                                                                             title=""
                                                                             value="#{updateCASAction.configuration.unauthorizedToProxyPattern}" size="100" tabindex="3" 
@@ -191,7 +188,7 @@
                                                                 </s:decorate>
 
                                                                 <h:commandButton styleClass="btn btn-primary"
-                                                                    style="margin-left:4px" value="Update configuration files"
+                                                                    style="margin-left:4px" value="#{msg['manageAuthentication.updateConfigurationFiles']}"
                                                                     action="#{updateCASAction.save}" />
                                                         </h:panelGroup>
                                                 </div>
@@ -205,17 +202,17 @@
 					<ui:insert name="controlButttons" />
 					<div id="updateButtons">
 						<h:commandButton styleClass="btn btn-primary"
-							style="margin-left:4px" value="Update"
+							style="margin-left:4px" value="#{msg['manageAuthentication.updated']}"
 							action="#{managePersonAuthenticationAction.save}" />
-						<h:commandButton styleClass="btn btn-primary" value="Cancel"
+						<h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.cancel']}"
 							action="#{managePersonAuthenticationAction.cancel}"
 							immediate="true" style="margin-left:4px" />
-						<h:commandButton styleClass="btn btn-primary" value="Activate"
+						<h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.activate']}"
 							action="#{_action.setExistLdapConfigIdpAuthConf(true)}"
 							rendered="#{not _action.existLdapConfigIdpAuthConf}"
 							render="ldapManagementGroupId" limitRender="true"
 							style="margin-left:4px" />
-						<h:commandButton styleClass="btn btn-primary" value="Deactivate"
+						<h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.deactivate']}"
 							action="#{_action.setExistLdapConfigIdpAuthConf(false)}"
 							rendered="#{_action.existLdapConfigIdpAuthConf}"
 							render="ldapManagementGroupId" limitRender="true"

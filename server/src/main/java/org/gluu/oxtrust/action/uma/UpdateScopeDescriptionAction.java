@@ -6,15 +6,6 @@
 
 package org.gluu.oxtrust.action.uma;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -36,11 +27,21 @@ import org.xdi.model.GluuImage;
 import org.xdi.model.SelectableEntity;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
+import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.persistence.InternalExternal;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.service.JsonService;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Action class for view and update UMA scope description
@@ -76,6 +77,9 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	
 	@In
 	private CustomScriptService customScriptService;
+
+    @In(required = false)
+   	private UmaConfiguration umaMetadataConfiguration;
 
 	private String scopeInum;
 
@@ -158,6 +162,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 		if (this.update) {
 			scopeDescription.setRevision(String.valueOf(StringHelper.toInteger(scopeDescription.getRevision(), 0) + 1));
+            scopeDescription.setUrl(umaMetadataConfiguration.getScopeEndpoint() + "/" + scopeDescription.getId());
+
 			// Update scope description
 			try {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
@@ -180,6 +186,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			this.scopeDescription.setInum(inum);
 			this.scopeDescription.setDn(scopeDescriptionDn);
 			this.scopeDescription.setOwner(currentPerson.getDn());
+            this.scopeDescription.setUrl(umaMetadataConfiguration.getScopeEndpoint() + "/" + scopeDescription.getId());
 
 			// Save scope description
 			try {

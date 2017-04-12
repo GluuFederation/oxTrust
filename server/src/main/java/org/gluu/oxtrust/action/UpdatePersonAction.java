@@ -267,6 +267,9 @@ public class UpdatePersonAction implements Serializable {
 			// Remove person
 			try {
 				Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_DELETED, this.person);
+				if (externalUpdateUserService.isEnabled()) {
+					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
+                }
 				personService.removePerson(this.person);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
@@ -278,6 +281,10 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void initAttributes() {
+		if (externalUpdateUserService.isEnabled()) {
+			externalUpdateUserService.executeExternalNewUserMethods(this.person);
+        }
+		
 		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
 

@@ -11,12 +11,12 @@
 
     <ui:define name="body">
         <section class="content-header">
-            <h1 style="color: #333;">SAML<small><i class="fa fa-caret-right" style="color: #333 !important;" />Asimba 
-                    <i class="fa fa-caret-right" style="color: #333 !important;" /> IDPs</small></h1>
+            <h1 style="color: #333;">#{msg['asimba.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;" />#{msg['asimba.asimba']}
+                    <i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['asimba.idps']}</small></h1>
             <ol class="breadcrumb">
 
-                    <li><a href="#{request.contextPath}/asimba/idps"><i class="fa fa-home"></i> IDPs</a></li>
-                    <li class="organization/configuration"><a href="#{request.contextPath}/asimba/editIDP/">Add IDP</a></li>
+                    <li><a href="#{request.contextPath}/asimba/idps"><i class="fa fa-home"></i> #{msg['asimba.idps']}</a></li>
+                    <li class="organization/configuration"><a href="#{request.contextPath}/asimba/editIDP/">#{msg['asimba.addIdp']}</a></li>
             </ol>
         </section>
 
@@ -24,7 +24,7 @@
 
 
         <div style="margin-left: 16px;">
-            <s:link view="/asimba/editIDP" value="Add IDP" styleClass="btn btn-primary" propagation="none" />
+            <s:link view="/asimba/editIDP" value="#{msg['asimba.addIdp']}" styleClass="btn btn-primary" propagation="none" />
         </div>
 
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -35,7 +35,7 @@
                     <ui:param name="_hideLabel" value="true" />
                     <h:inputText value="#{updateAsimbaIDPAction.searchPattern}" size="30" maxlength="30" required="true" id="searchPatternId" styleClass="searchParameters form-control" style="width: 50%; float: left;"
                         alt="search parameters for IDP like id, friendly name,organization" />
-                    <h:commandButton value="Search" action="#{updateAsimbaIDPAction.search}" styleClass="btn btn-primary" style="float: left;" />
+                    <h:commandButton value="#{msg['asimba.search']}" action="#{updateAsimbaIDPAction.search}" styleClass="btn btn-primary" style="float: left;" />
                 </s:decorate>
             </h:form>
 
@@ -44,7 +44,7 @@
             <h:form id="idpsFormId">
                 <s:fragment rendered="#{updateAsimbaIDPAction.idpList.size eq 0}">
                     <richext:spacer height="30" />
-                    <h:outputText value="No Search Result Found" />
+                    <h:outputText value="#{msg['asimba.noSearchResult']}" />
                 </s:fragment>
 
                 <h:dataTable 
@@ -66,7 +66,7 @@
                     
                     <h:column>
                         <f:facet name="header">  
-                            <div style="text-align: center;"> ID</div>
+                            <div style="text-align: center;"> #{msg['asimba.id']}</div>
                         </f:facet>
                         <s:link view="/asimba/editIDP.xhtml" value="#{idp.id}" propagation="none">
                             <f:param name="inum" value="#{idp.inum}" />
@@ -75,14 +75,14 @@
 
                     <h:column>
                         <f:facet name="header">  
-                            <div style="text-align: center;"> Friendly Name</div>
+                            <div style="text-align: center;"> #{msg['asimba.friendlyName']}</div>
                         </f:facet>
                         <h:outputText value="#{idp.friendlyName}" class="col-xs-12" />
                     </h:column>
 
                     <h:column>
                         <f:facet name="header">  
-                            <div style="text-align: center;"> Enabled</div>
+                            <div style="text-align: center;"> #{msg['asimba.enabled']}</div>
                         </f:facet>
                         <div style="text-align: center;">
                             <h:selectBooleanCheckbox value="#{idp.enabled}" readonly="true" disabled="true" />
