@@ -39,8 +39,6 @@
 				<ui:define name="controlButttons">
 				<div class = "box-footer" style="margin-top:-16px !important;">
 					<s:div id="updateButtons">
-						<a4j:commandButton value="#{msg['updateorganization.changePassword']}" styleClass="btn btn-success"
-							onclick="#{rich:component('appliancePassword:changePasswordModalPanel')}.show();" />
 						<h:commandButton value="#{msg['updateorganization.update']}" styleClass="btn btn-primary" style="margin-left:5px"
 							action="#{updateOrganizationAction.save}" />
 						<h:commandButton value="#{msg['updateorganization.cancel']}" styleClass="btn btn-primary" style="margin-left:5px"
