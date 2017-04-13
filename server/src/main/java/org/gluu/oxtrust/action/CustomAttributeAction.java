@@ -160,7 +160,7 @@ public class CustomAttributeAction implements Serializable {
 		if ((tmpAttribute == null) || containsCustomAttribute(tmpAttribute)) {
 			return;
 		}
-
+				
 		String id = this.attributeIds.get(tmpAttribute);
 		this.availableAttributeIds.remove(id);
 
@@ -168,6 +168,70 @@ public class CustomAttributeAction implements Serializable {
 		tmpGluuPersonAttribute.setMetadata(tmpAttribute);
 
 		this.customAttributes.add(tmpGluuPersonAttribute);
+	}
+	public void addMultiValuesInAttributes(String inum, boolean mandatory) {
+		if (StringHelper.isEmpty(inum)) {
+			return;
+		}
+
+		GluuAttribute tmpAttribute = this.attributeInums.get(inum);
+		if (tmpAttribute == null) {
+			return;
+		}
+		
+		String id = this.attributeIds.get(tmpAttribute);
+		this.availableAttributeIds.remove(id);
+		
+		String[] values = null;
+		int index = 0;
+		for (GluuCustomAttribute customAttribute : this.customAttributes) {
+			if (tmpAttribute.equals(customAttribute.getMetadata())) {
+				values = customAttribute.getValues();
+				break;
+			}
+			index ++;
+		}
+		
+		String[] newValues = new String[values.length+1];
+		System.arraycopy(values, 0 , newValues , 0 , values.length);
+		removeCustomAttribute(inum);
+		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(),newValues , true, mandatory);
+		tmpGluuPersonAttribute.setMetadata(tmpAttribute);
+
+		this.customAttributes.add(index,tmpGluuPersonAttribute);
+	}
+	public void removeMultiValuesInAttributes(String inum, boolean mandatory) {
+		if (StringHelper.isEmpty(inum)) {
+			return;
+		}
+
+		GluuAttribute tmpAttribute = this.attributeInums.get(inum);
+		if (tmpAttribute == null) {
+			return;
+		}
+		
+		String id = this.attributeIds.get(tmpAttribute);
+		this.availableAttributeIds.remove(id);
+		
+		String[] values = null;
+		int index = 0;
+		for (GluuCustomAttribute customAttribute : this.customAttributes) {
+			if (tmpAttribute.equals(customAttribute.getMetadata())) {
+				values = customAttribute.getValues();
+				if(values.length == 1)
+					return; 
+				break;
+			}
+			index ++;
+		}
+		
+		String[] newValues = new String[values.length-1];
+		System.arraycopy(values, 0 , newValues , 0 , values.length-1);
+		removeCustomAttribute(inum);
+		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(),newValues , true, mandatory);
+		tmpGluuPersonAttribute.setMetadata(tmpAttribute);
+
+		this.customAttributes.add(index,tmpGluuPersonAttribute);
 	}
 
 	public void addCustomAttribute(String inum) {
@@ -206,7 +270,7 @@ public class CustomAttributeAction implements Serializable {
 			}
 		}
 	}
-
+	
 	private void deselectCustomAttributes(List<GluuCustomAttribute> customAttributes) {
 		for (GluuCustomAttribute customAttribute : customAttributes) {
 			String id = this.attributeIds.get(customAttribute);
