@@ -188,7 +188,7 @@
                                                                 <f:param name="sv" value="1"/>
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
-                                                            		action="#{_customAttributeAction.addMultiValuesAttributes(_custAttr.metadata.inum,_mandatory)}"
+                                                            		action="#{_customAttributeAction.addMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-plus"
                                                                     style="margin-top:-18px;margin-right:-76px;margin-left:5px;"
@@ -197,7 +197,7 @@
                                                                 <f:param name="sv" value="1"/>
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
-                                                            		action="#{_customAttributeAction.removeMultiValuesAttributes(_custAttr.metadata.inum,_mandatory)}"
+                                                            		action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-minus"
                                                                     style="margin-top:-18px;margin-left:79px;"
@@ -205,8 +205,6 @@
                                                                 <!--   <h:graphicImage value="/img/remove.gif" />-->
                                                                 <f:param name="sv" value="1"/>
                                                             </a4j:commandLink>
-                                                            
-                                           
                                                             </div>
                                                     </s:decorate>
 
