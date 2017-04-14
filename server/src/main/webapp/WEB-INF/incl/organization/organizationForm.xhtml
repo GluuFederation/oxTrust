@@ -80,14 +80,10 @@
 	addToBodyOnload(loadColorPicker);
     </h:outputScript>
 
-	<ox:changePasswordDialog id="appliancePassword"
-		label="Change Appliance Password"
-		password="#{appliancePasswordAction.newPassword}"
-		setPasswordMethod="#{appliancePasswordAction.update}" />
-
 	<h:form id="organizationForm">
 		<!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
 		<input type='hidden' name='cid' value='#{conversation.id}' />
+
 
 		<div class="row">
 			<div class="col-xs-12">
