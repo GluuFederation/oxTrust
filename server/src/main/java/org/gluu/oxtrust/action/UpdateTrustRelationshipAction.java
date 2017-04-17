@@ -299,7 +299,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 //						setEntityId();
 					boolean result = shibboleth3ConfService.existsResourceUri(trustRelationship.getSpMetaDataURL());
 					if(result){
-						newThreadSaveSpMetaDataFileSourceTypeURI();
+						saveSpMetaDataFileSourceTypeURI();
 					}else{
 						log.info("There is no resource found Uri : {0}", trustRelationship.getSpMetaDataURL());
 					}
@@ -825,7 +825,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 
 		return StringHelper.isNotEmpty(result);
-
 	}
 
 	public boolean saveSpMetaDataFileSourceTypeURI() throws IOException {
