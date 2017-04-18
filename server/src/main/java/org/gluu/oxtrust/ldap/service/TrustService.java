@@ -281,16 +281,24 @@ public class TrustService implements Serializable {
 			releasedAttributes.add(customAttribute.getMetadata().getDn());
 		}
 
+                // send email notification
 		if (!StringUtils.isEmpty(mailMsg)) {
 			try {
-				String preMsg = "Trust RelationShip name: " + trustRelationship.getDisplayName() + " (inum:" + trustRelationship.getInum()
-						+ ")\n\n";
 				GluuAppliance appliance = applianceService.getAppliance();
-				String subj = "Attributes with Privacy level 5 are released in a Trust Relationaship";
-				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
-				mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", appliance.getContactEmail(),
-						subj, preMsg + mailMsg);
+                                
+                                if (appliance.getContactEmail() == null || appliance.getContactEmail().isEmpty()) 
+                                    log.warn("Failed to send the 'Attributes released' notification email: unconfigured contact email");
+                                else if (appliance.getSmtpHost() == null || appliance.getSmtpHost().isEmpty()) 
+                                    log.warn("Failed to send the 'Attributes released' notification email: unconfigured SMTP server");
+                                else {
+                                    String preMsg = "Trust RelationShip name: " + trustRelationship.getDisplayName() + " (inum:" + trustRelationship.getInum()
+                                                    + ")\n\n";
+                                    String subj = "Attributes with Privacy level 5 are released in a Trust Relationaship";
+                                    MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
+                                                    appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
+                                    mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", appliance.getContactEmail(),
+                                                    subj, preMsg + mailMsg);
+                                }
 			} catch (AuthenticationFailedException ex) {
 				log.error("SMTP Authentication Error: ", ex);
 			} catch (MessagingException ex) {
@@ -299,6 +307,7 @@ public class TrustService implements Serializable {
 				log.error("Failed to send the notification email: ", ex);
 			}
 		}
+                
 		if (!releasedAttributes.isEmpty()) {
 			trustRelationship.setReleasedAttributes(releasedAttributes);
 		} else {
