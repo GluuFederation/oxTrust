@@ -144,17 +144,18 @@
                                                               value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
                                                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
                                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}">
+                                                        
                                                         <ui:define
-                                                                name="label">#{_custAttr.metadata.displayName}</ui:define>
+                                                                name="label">#{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}</ui:define>
 
                                                         <div class="col-xs-10">
                                                             <rich:inplaceInput
                                                                     value="#{_custAttr.values[_valueIdx]}"
-                                                                    defaultLabel="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName}"
+                                                                    defaultLabel="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
                                                                     id="custId"
                                                                     validator="#{_custAttr.metadata.validateAttribute}"
                                                                     required="#{_mustEnter and empty param['sv']}"
-                                                                    requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName}. "
+                                                                    requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status') and (_custAttr.metadata.displayName ne 'Password')}" >
                                                                 <rich:validator event="blur"/>
                                                                	
@@ -180,12 +181,31 @@
                                                                     action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-remove"
-                                                                    style="margin-top:-18px;margin-left:-44px;"
+                                                                    style="margin-top:-18px;margin-left:-76px;"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
                                                                     rendered="#{_custAttr.adminCanEdit and not _mandatory}">
                                                                 <!--   <h:graphicImage value="/img/remove.gif" />-->
                                                                 <f:param name="sv" value="1"/>
-                                                            </a4j:commandLink></div>
+                                                            </a4j:commandLink>
+                                                            <a4j:commandLink
+                                                            		action="#{_customAttributeAction.addMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
+                                                                    render="selectedCustomAttributesId"
+                                                                    styleClass="glyphicon glyphicon-plus"
+                                                                    style="margin-top:-18px;margin-right:-76px;margin-left:5px;"
+                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0}">
+                                                                <!--   <h:graphicImage value="/img/remove.gif" />-->
+                                                                <f:param name="sv" value="1"/>
+                                                            </a4j:commandLink>
+                                                            <a4j:commandLink
+                                                            		action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
+                                                                    render="selectedCustomAttributesId"
+                                                                    styleClass="glyphicon glyphicon-minus"
+                                                                    style="margin-top:-18px;margin-left:79px;"
+                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0 }">
+                                                                <!--   <h:graphicImage value="/img/remove.gif" />-->
+                                                                <f:param name="sv" value="1"/>
+                                                            </a4j:commandLink>
+                                                            </div>
                                                     </s:decorate>
 
                                                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
