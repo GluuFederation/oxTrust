@@ -86,11 +86,12 @@
                                                                 rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE')}">
 
                                                             <f:validator validatorId="extendedRegexValidator">
+                                                             <f:attribute name="pattern"
+                                                                         value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.attributeValidation) or (empty _custAttr.metadata.attributeValidation.regexp)) ? '.*' : _custAttr.metadata.attributeValidation.regexp}"/>
+                                                            
                                                             </f:validator>
 
-                                                            <f:attribute name="pattern"
-                                                                         value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.attributeValidation) or (empty _custAttr.metadata.attributeValidation.regexp)) ? '.*' : _custAttr.metadata.attributeValidation.regexp}"/>
-
+                                                           
                                                             <rich:validator event="keyup"/>
 
                                                         </h:inputText>
