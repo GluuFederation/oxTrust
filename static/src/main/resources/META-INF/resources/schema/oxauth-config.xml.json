@@ -919,6 +919,12 @@
                 "pkcs11"
             ]
         },
+        "oxElevenTestModeToken": {
+            "id": "oxElevenTestModeToken",
+            "description": "oxEleven Test Mode Token.",
+            "type": "string",
+            "minLength": 1
+        },
         "dnName": {
             "id": "dnName",
             "description": "DN of certificate issuer.",
@@ -1171,6 +1177,7 @@
         "pairwiseCalculationKey",
         "pairwiseCalculationSalt",
         "webKeysStorage",
+        "oxElevenTestModeToken",
         "dnName",
         "keyStoreFile",
         "keyStoreSecret",
