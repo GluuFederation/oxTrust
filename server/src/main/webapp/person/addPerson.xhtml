@@ -10,7 +10,7 @@
     template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
-        <s:div id="formArea">
+        <h:panelGroup layout="block" id="formArea">
             <ui:decorate template="/WEB-INF/incl/person/personForm.xhtml">
                 <ui:param name="_person" value="#{updatePersonAction.person}" />
                 <ui:param name="_customAttributeAction" value="#{customAttributeAction}" />
@@ -18,13 +18,13 @@
 
                 <ui:define name="controlButtons">
                 <div class = "box-footer">
-                    <s:div id="updateButtons" style="margin-bottom:6px;">
+                    <h:panelGroup layout="block" id="updateButtons" style="margin-bottom:6px;">
                         <h:commandButton value="#{msg['person.add']}" action="#{updatePersonAction.save}" rendered="#{organizationService.instance().allowPersonModification}" styleClass="btn btn-primary" />
                         <h:commandButton value="#{msg['person.cancel']}" action="#{updatePersonAction.cancel}" immediate="true" styleClass="btn btn-primary" style = "margin-left:3px;"/>
-                    </s:div>
+                    </h:panelGroup>
                     </div>
                 </ui:define>
             </ui:decorate>
-        </s:div>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>

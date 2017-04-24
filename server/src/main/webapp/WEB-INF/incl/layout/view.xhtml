@@ -5,11 +5,11 @@
                  xmlns:s="http://jboss.org/schema/seam/taglib">
                  
                  <div class="col-sm-12" style="padding:5px;margin-bottom: 5px;">
-        <s:div rendered="#{not _hideLabel}">
-               <s:span styleClass="nameText col-sm-3">
+        <h:panelGroup layout="block" rendered="#{not _hideLabel}">
+               <h:panelGroup styleClass="nameText col-sm-3">
                    <ui:insert name="label"/>
-               </s:span>
-        </s:div>
+               </h:panelGroup>
+        </h:panelGroup>
 
         <div class="col-sm-9 prop">
             <span class="value">

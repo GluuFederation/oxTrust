@@ -15,7 +15,7 @@
 			<h:outputText value="#{msg['linktrack.verificationInProgress']}"/>
 			</rich:popupPanel>
 		</h:form>
-        <s:div id="formArea">
+        <h:panelGroup layout="block" id="formArea">
             <ui:param name="_appliance" value="#{applianceService.appliance}" />
             <h:form>
 	            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" id="statusTable">
@@ -60,7 +60,7 @@
 				    </a4j:outputPanel> 
 	            </h:panelGrid>
             </h:form>
-        </s:div>
+        </h:panelGroup>
     </ui:define>
 
 </ui:composition>

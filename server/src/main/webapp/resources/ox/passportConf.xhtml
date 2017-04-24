@@ -51,12 +51,12 @@
 
 				</a4j:repeat>				
 				
-				<s:div styleClass="addConfig">
+				<h:panelGroup layout="block" styleClass="addConfig">
 					<a4j:commandLink styleClass="btn btn-link" value="Add New Field"
 						action="#{cc.attrs.authenicationConfigAction.addField(cc.attrs.passportConfig)}"
 						render="fieldsid" execute="@region"
 						style="margin-right:1100px;margin-top:50px;" />
-				</s:div>
+				</h:panelGroup>
 				<hr></hr>
 			</a4j:region>
 	</h:panelGroup>

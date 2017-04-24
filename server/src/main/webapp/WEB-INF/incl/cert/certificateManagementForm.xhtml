@@ -54,9 +54,9 @@
 				</ui:decorate>
 			</h:panelGrid>
 
-			<s:div rendered="#{not _action.certsManagePossible}">
+			<h:panelGroup layout="block" rendered="#{not _action.certsManagePossible}">
 				<h:outputText value="#{msg['cert.applicationDontHavePermission']}" />
-			</s:div>
+			</h:panelGroup>
 		</rich:collapsiblePanel>
 
         <rich:collapsiblePanel switchType="client" opened="false" width="100%" bodyClass="paddning4" header="Manage Public Certificates" id="trustCertManagement">
@@ -92,10 +92,10 @@
                         </h:panelGrid>
                     </rich:dataGrid>
     
-                    <s:div styleClass="addConfig">
+                    <h:panelGroup layout="block" styleClass="addConfig">
                         <a4j:commandLink value="#{msg['cert.addPublicCertificates']}" action="#{_action.addPublicCertificate()}" render="managePublicCertificateId" execute="@region" />
                         <f:param name="sv" value="1" />
-                    </s:div>
+                    </h:panelGroup>
                 </a4j:region>
             </h:panelGrid>
         </rich:collapsiblePanel>

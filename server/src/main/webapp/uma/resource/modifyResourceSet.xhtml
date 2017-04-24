@@ -29,7 +29,7 @@
 						<div class="box-header">
 						</div>
                             <div style="display: inline-block; width: 100% !important;">
-        <s:div id="formArea">
+        <h:panelGroup layout="block" id="formArea">
             <h:outputStylesheet>
                 .uploadFile {
                      width: 300px;        
@@ -113,16 +113,16 @@
                 </h:panelGrid>
                 <h:panelGroup>
 <div class = "box-footer" style = "margin-top:10px !important;">
-                <s:div id="updateButtons" style="margin-top:10px;margin-bottom: 10px;">
+                <h:panelGroup layout="block" id="updateButtons" style="margin-top:10px;margin-bottom: 10px;">
                     <h:commandButton value="#{updateResourceSetAction.update ? 'Update' : 'Add'}" action="#{updateResourceSetAction.save}" styleClass="btn btn-primary" style = "margin-left:3px;"/>
                     <a4j:commandButton styleClass="btn btn-primary" style = "margin-left:3px;" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{updateResourceSetAction.update}" />
                     <s:button value="Cancel" action="#{updateResourceSetAction.cancel}" immediate="true" propagation="end" styleClass="btn btn-primary" style = "margin-left:3px;"/>
-                </s:div>
+                </h:panelGroup>
                         </div>
                         </h:panelGroup>
                 
             </h:form>
-        </s:div>
+        </h:panelGroup>
 
         <ox:inputTextDialog id="resource" label="#{msg['uma.addResource']}" inputLabel="#{msg['uma.resource']}" text="#{updateResourceSetAction.newResource}" acceptMethod="#{updateResourceSetAction.acceptResource}"
             cancelMethod="#{updateResourceSetAction.cancelResource}" maxLength="256" inputWidth="80" dialogWidth="600" render="selectedResourcesId" queue="resourceSetQueue" />

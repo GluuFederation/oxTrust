@@ -26,7 +26,7 @@
 
 		<section class="content">
       
-        <s:div id="formArea">
+        <h:panelGroup layout="block" id="formArea">
             <h:outputStylesheet>
                 .uploadFile {
                      width: 300px;        
@@ -125,15 +125,15 @@
                 
             </div>
             <div class="box-footer">
-             <s:div id="updateButtons">
+             <h:panelGroup layout="block" id="updateButtons">
                     <h:commandButton value="#{updateScopeDescriptionAction.update ? 'Update' : 'Add Scope'}" action="#{updateScopeDescriptionAction.save}" styleClass="btn btn-primary" />
                     <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" styleClass="btn btn-primary" style="margin-left:3px;"
                         rendered="#{updateScopeDescriptionAction.update}" />
                     <s:button value="#{msg['uma.cancel']}" action="#{updateScopeDescriptionAction.cancel}" immediate="true" propagation="end" styleClass="btn btn-primary" style="margin-left:3px;"/>
-                </s:div>
+                </h:panelGroup>
             </div>
             </div></div></div>
-        </s:div>
+        </h:panelGroup>
         
         </section>
         </h:form>

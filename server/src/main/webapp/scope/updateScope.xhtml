@@ -23,7 +23,7 @@
 		</ol>
 		</section>
 		<section class="content">
-        <s:div id="formArea">
+        <h:panelGroup layout="block" id="formArea">
             <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
                 <ui:param name="_scope" value="#{updateScopeAction.scope}" />
                 <ui:param name="_scopeAction" value="#{updateScopeAction}" />
@@ -45,7 +45,7 @@
                 render="selectedClaimsId" queue="scopeQueue"/>
 
             <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeAction.scope.displayName}" deleteMethod="#{updateScopeAction.delete}" queue="scopeQueue" />
-        </s:div>
+        </h:panelGroup>
         </section>
     </ui:define>
 </ui:composition>

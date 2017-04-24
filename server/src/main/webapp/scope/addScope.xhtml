@@ -23,7 +23,7 @@
 		</ol>
 		</section>
 		<section class="content">
-        <s:div id="formArea">
+        <h:panelGroup layout="block" id="formArea">
             <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
 
                 <ui:param name="_scope" value="#{updateScopeAction.scope}" />
@@ -42,7 +42,7 @@
                 searchMethod="#{updateScopeAction.searchAvailableClaims}" searchResult="#{updateScopeAction.availableClaims}"
                 acceptMethod="#{updateScopeAction.acceptSelectClaims}" cancelMethod="#{updateScopeAction.cancelSelectClaims}"
                 render="selectedClaimsId" queue="scopeQueue"/>
-        </s:div>
+        </h:panelGroup>
         </section>
 		
 		

@@ -5,17 +5,17 @@
                  xmlns:s="http://jboss.org/schema/seam/taglib">
 
 <div class="col-sm-12" style="padding:5px;margin-bottom: 5px;">
-    <s:div rendered="#{not _hideLabel}" styleClass="col-sm-3">
+    <h:panelGroup layout="block" rendered="#{not _hideLabel}" styleClass="col-sm-3">
     
         <s:label styleClass="name #{invalid?'errors':''}" rendered="#{not _labelAsText}">
             <ui:insert name="label"/>
-            <s:span styleClass="required" rendered="#{required}">*</s:span>
+            <h:panelGroup styleClass="required" rendered="#{required}">*</h:panelGroup>
         </s:label>
 
-        <s:span styleClass="name #{invalid?'errors':''}" rendered="#{_labelAsText}">
+        <h:panelGroup styleClass="name #{invalid?'errors':''}" rendered="#{_labelAsText}">
             <ui:insert name="label"/>
-        </s:span>
-    </s:div>
+        </h:panelGroup>
+    </h:panelGroup>
     
 
     <div class="col-sm-9 prop" style="float:left;">

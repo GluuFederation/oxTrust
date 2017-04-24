@@ -127,10 +127,10 @@
 		                        </h:panelGrid>
 		                    </rich:dataGrid>
 		    
-		                    <s:div styleClass="addConfig">
+		                    <h:panelGroup layout="block" styleClass="addConfig">
 		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['customScript.addCustomScriptConfiguration']}" action="#{_action.addCustomScript(_scriptType)}" render="#{_customScriptTypeId}" execute="@region" />
 		                        <f:param name="sv" value="1" />
-		                    </s:div>
+		                    </h:panelGroup>
 
 		                </a4j:region>
 	        	    </h:panelGrid>

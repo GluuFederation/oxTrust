@@ -13,10 +13,10 @@
             <ui:param name="welcomeTitle" value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}"/>
 
             <s:fragment rendered="#{not empty welcomeTitle and not s:hasPermission('configuration', 'access')}">
-                <s:div>
+                <h:panelGroup layout="block">
                     <h:outputText value="#{welcomeTitle}" escape="false"/>
                     <h:outputText value="#{organizationService.getVersion()}" escape="false"/>
-                </s:div>
+                </h:panelGroup>
             </s:fragment>
             <s:fragment rendered="#{empty welcomeTitle}">
                 <h1>
