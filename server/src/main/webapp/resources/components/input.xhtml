@@ -1,0 +1,39 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:a="http://richfaces.org/a4j"
+                xmlns:cc="http://java.sun.com/jsf/composite">
+
+    <cc:interface componentType="org.gluu.oxtrust.util.jsf.InputContainer">
+        <cc:attribute name="label" required="true"/>
+        <cc:attribute name="required" required="false"/>
+        <cc:attribute name="rendered" required="false"/>
+        <cc:attribute name="inputId" required="false"/>
+    </cc:interface>
+
+    <cc:implementation>
+
+        <a:region id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}Region" rendered="#{cc.attrs.rendered}">
+            <h:panelGroup styleClass="entry" id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}Panel"
+                          layout="block">
+
+                <span class="#{cc.attrs.invalid ? 'label errors' : 'label'}">
+                    <h:outputLabel id="label" value="#{cc.attrs.label}:">
+                        <h:panelGroup styleClass="required" rendered="#{cc.attrs.required}">*</h:panelGroup>
+                    </h:outputLabel>
+                </span>
+
+                <span class="#{cc.attrs.invalid ? 'input errors' : 'input'}">
+                    <cc:insertChildren/>
+                </span>
+
+                <h:panelGroup rendered="#{cc.attrs.invalid}">
+                    <rich:message id="errorMessage" styleClass="error errors" />
+                </h:panelGroup>
+            </h:panelGroup>
+        </a:region>
+    </cc:implementation>
+</ui:composition>
