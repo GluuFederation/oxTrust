@@ -173,6 +173,9 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxAuthRequestURI")
     private String[] requestUris;
 
+    @LdapAttribute(name = "oxClientRefreshTokenEnabled")
+    private GluuBoolean clientRefreshTokenEnabled = GluuBoolean.FALSE;
+    
     private String oxAuthClientSecret;
 
     public boolean isSelected() {
@@ -538,4 +541,12 @@ public class OxAuthClient extends Entry implements Serializable {
         this.clientSecretExpiresAt = clientSecretExpiresAt;
     }
 
+	public GluuBoolean getClientRefreshTokenEnabled() {
+		return clientRefreshTokenEnabled;
+	}
+
+	public void setClientRefreshTokenEnabled(GluuBoolean clientRefreshTokenEnabled) {
+		this.clientRefreshTokenEnabled = clientRefreshTokenEnabled;
+	}
+    
 }
