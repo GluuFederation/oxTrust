@@ -28,11 +28,10 @@
 	<h:panelGroup id="fieldsid">
 				
 				<a4j:region>
-				<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="text">
-                    <ui:define name="label">Strategy</ui:define>
+				<ox:decorate id="text" label="Strategy">
                     <div class="row" style="float:left;margin-left:3px;">
                     <h:inputText value="#{cc.attrs.passportConfig.strategy}" required="true" immediate="true" size="40" maxlength="40" styleClass="searchParameters form-control" /></div>
-                </s:decorate>
+                </ox:decorate>
                 
                 
                     <a4j:repeat id="fieldtable" 

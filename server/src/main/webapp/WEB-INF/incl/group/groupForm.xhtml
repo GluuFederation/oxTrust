@@ -8,6 +8,7 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
 <section class="content-header">
@@ -31,32 +32,27 @@
 
         <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
             <ui:param name="_organization" value="#{gluufn:getDisplayNameEntry(_group.organization)}" />
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="organization">
-                <ui:define name="label">#{msg['group.organization']}</ui:define>
+            <ox:decorate id="organization" label="#{msg['group.organization']}">
                 <h:outputText value="#{_organization.displayName}" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                <ui:define name="label">#{msg['group.displayName']}</ui:define>
+            <ox:decorate id="displayName" label="#{msg['group.displayName']}">
                 <rich:inplaceInput value="#{_group.displayName}" defaultLabel="click to enter display name" maxlength="60"  required="true" id="displayNameId" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="visibility">
-                <ui:define name="label">#{msg['group.type']}</ui:define>
+            <ox:decorate id="visibility" label="#{msg['group.type']}">
                 <h:selectOneMenu value="#{_group.visibility}" id="visibilityId" styleClass="form-control">
                     <s:selectItems value="#{groupService.visibilityTypes}" noSelectionLabel="Visibility type" var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                 </h:selectOneMenu>
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
-                <ui:define name="label">#{msg['group.description']}</ui:define>
+            <ox:decorate id="description" label="#{msg['group.description']}">
                 <h:inputTextarea value="#{_group.description}" rows="3" size="40" maxlength="4000" id="descriptionId" styleClass="form-control" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="members">
-                <ui:define name="label">#{msg['group.users']}</ui:define>
+            <ox:decorate id="members" label="#{msg['group.users']}">
                 <h:panelGroup id="selectedMembersId">
                     <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                         <a4j:repeat value="#{_groupAction.members}" rowKeyVar="_memberIdx" var="_member">
@@ -80,7 +76,7 @@
                         <a4j:commandButton style="margin-top:10px;" styleClass="btn btn-primary" value="Add member" action="#{_groupAction.selectAddedMembers}" oncomplete="#{rich:component('member:selectMemberModalPanel')}.show();" execute="@this" />
                     </h:panelGrid>
                 </h:panelGroup>
-            </s:decorate>
+            </ox:decorate>
         </h:panelGrid>
 
                    

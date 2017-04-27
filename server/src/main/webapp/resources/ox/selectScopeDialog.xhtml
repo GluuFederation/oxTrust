@@ -8,6 +8,7 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:gluufn="http://www.gluu.org/jsf/functions"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
@@ -34,14 +35,13 @@
         
             <h:panelGroup id = "scopePanelId">
            
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
-                    <ui:param name="_hideLabel" value="true" />
+                <ox:decorate id="searchPattern" hideLabel="true">
                     
                     <h:inputText  value="#{cc.attrs.searchPattern}" size="20" maxlength="30" id="searchScopePatternId" styleClass="searchParameters form-control"
                         alt="Search parameters like iNum, Name, Display Name" />
                        
                     <a4j:commandButton style = "margin-top:5px;" styleClass = "btn btn-primary" value="Search" action="#{cc.attrs.searchMethod}" render="scopePanelId"  />
-                </s:decorate>
+                </ox:decorate>
 
                 <h:panelGroup id="scopeNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
                     <h:outputText value="No Search Result Found" />

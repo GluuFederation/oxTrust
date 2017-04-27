@@ -44,18 +44,15 @@
            
                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                        <ui:define name="label">#{msg['uma.displayName']}</ui:define>
+                    <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
                         <rich:inplaceInput style="width:100% !important" value="#{_scopeDescription.displayName}" defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="180"  required="true" id="displayNameId" />
-                    </s:decorate>
+                    </ox:decorate>
                     <h:panelGroup id="internalTypeGroupId">
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scope" rendered="#{_scopeDescription.type.value eq 'internal'}">
-                            <ui:define name="label">#{msg['uma.id']}</ui:define>
+                        <ox:decorate id="scope" rendered="#{_scopeDescription.type.value eq 'internal'}" label="#{msg['uma.id']}">
                             <rich:inplaceInput value="#{_scopeDescription.id}" defaultLabel="Click to enter Scope Name" maxlength="300" inputWidth="180" required="true" id="scope" />
-                        </s:decorate>
+                        </ox:decorate>
     
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'internal'}">
-                            <ui:define name="label">#{msg['uma.icon']}</ui:define>
+                        <ox:decorate rendered="#{_scopeDescription.type.value eq 'internal'}" label="#{msg['uma.icon']}">
     						
                                  
                             <h:panelGrid id="iconPanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -77,23 +74,20 @@
                             </h:panelGrid>
                             
                             
-                        </s:decorate>
+                        </ox:decorate>
                     </h:panelGroup>
 
                     <h:panelGroup id="externalTypeGroupId">
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
-                            <ui:define name="label">#{msg['uma.iconURI']}</ui:define>
+                        <ox:decorate rendered="#{_scopeDescription.type.value eq 'external'}" label="#{msg['uma.iconURI']}">
                             <rich:inplaceInput value="#{_scopeDescription.iconUrl}" defaultLabel="Click to enter Icon Url" maxlength="60" inputWidth="180" required="true" id="iconUrlId" />
-                        </s:decorate>
+                        </ox:decorate>
 
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{_scopeDescription.type.value eq 'external'}">
-                            <ui:define name="label">#{msg['uma.url']}</ui:define>
+                        <ox:decorate rendered="#{_scopeDescription.type.value eq 'external'}" label="#{msg['uma.url']}">
                             <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Url" maxlength="60" inputWidth="180" required="true" id="urlId" />
-                        </s:decorate>
+                        </ox:decorate>
                     </h:panelGroup>
 
-		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="responseTypes">
-		                <ui:define name="label">#{msg['uma.authorizationPolicy']}</ui:define>
+		            <ox:decorate id="responseTypes" label="#{msg['uma.authorizationPolicy']}">
 		                <h:panelGroup id="selectedAuthorizationPolicyId">
 		                    <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 		                        <a4j:repeat value="#{updateScopeDescriptionAction.authorizationPolicies}" rowKeyVar="_authorizationPolicyIdx" var="_authorizationPolicy">
@@ -112,13 +106,13 @@
 		                        <richext:spacer height="16" />
 		                    </h:panelGrid>
 		                </h:panelGroup>
-		            </s:decorate>
+		            </ox:decorate>
 
-		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="command">
+		            <ox:decorate id="command">
 		                <h:panelGroup>
 		                    <a4j:commandButton value="#{msg['uma.addAuthorizationPolicy']}" oncomplete="#{rich:component('authorizationPolicy:selectEntityModalPanel')}.show();" execute="@this" styleClass="btn btn-primary" style="margin-left:-95px;"/>
 		                </h:panelGroup>
-		            </s:decorate>
+		            </ox:decorate>
                 </h:panelGrid>
 
                

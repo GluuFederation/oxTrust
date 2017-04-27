@@ -8,6 +8,7 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
@@ -39,12 +40,11 @@
                 <richext:spacer height="16" />
 
                 <h:form>
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
-                        <ui:param name="_hideLabel" value="true" />
+                    <ox:decorate id="searchPattern" hideLabel="true">
                         <h:inputText value="#{searchGroupAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters form-control"
                             alt="search parameters for group like uid,iname,email" style="float: left;width: 50%;" />
                         <h:commandButton value="#{msg['group.search']}" action="#{searchGroupAction.search}" style="float:left;" class="btn btn-primary" />
-                    </s:decorate>
+                    </ox:decorate>
                 </h:form>
 
                 <richext:spacer height="16" />

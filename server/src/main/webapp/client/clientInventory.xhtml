@@ -8,6 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
 	<ui:define name="body">
@@ -32,19 +33,18 @@
 
 							<h:panelGroup>
 								<div class="row">
-									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+									<ox:decorate
 										id="searchPattern">
 										<!--    <s:link view="/client/addClient.xhtml" value="Add Client" styleClass="addClient" propagation="none" /> -->
 										<ui:define name="label" style="margin-left:15px;">
 											<a class="btn btn-primary"
 												href="#{request.contextPath}/client/manage/add">#{msg['client.addClient']}</a>
 										</ui:define>
-									</s:decorate>
+									</ox:decorate>
 
 									<h:form>
-										<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-											id="searchPattern">
-											<ui:param name="_hideLabel" value="true" />
+										<ox:decorate
+											id="searchPattern" hideLabel="true">
 											<div style="width: 100%; float: left;margin-left:17px;">
 												<h:inputText style="width:60%; float:left;"
 													styleClass="form-control"
@@ -55,7 +55,7 @@
 													styleClass="btn btn-primary" value="#{msg['client.search']}"
 													action="#{searchClientAction.search}" />
 											</div>
-										</s:decorate>
+										</ox:decorate>
 									</h:form>
 								</div>
 

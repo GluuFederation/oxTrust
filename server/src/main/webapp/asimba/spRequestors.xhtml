@@ -6,7 +6,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+  	xmlns:ox="http://java.sun.com/jsf/composite/ox"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
@@ -31,12 +33,11 @@
         <richext:spacer height="16" />
 
         <h:form >
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
-                <ui:param name="_hideLabel" value="true" />
+            <ox:decorate id="searchPattern" hideLabel="true">
                 <h:inputText value="#{updateAsimbaSPRequestorAction.searchPattern}" size="30" maxlength="30" required="true" id="searchPatternId" styleClass="searchParameters form-control" style="width: 50%; float: left;"
                     alt="search parameters for person like uid,iname,email" />
                 <h:commandButton value="#{msg['asimba.search']}" action="#{updateAsimbaSPRequestorAction.search}" styleClass="btn btn-primary" style="float: left;" />
-            </s:decorate>
+            </ox:decorate>
         </h:form>
 
         <richext:spacer height="16" />
@@ -46,7 +47,6 @@
                 <richext:spacer height="30" />
                 <h:outputText value="#{msg['asimba.noSearchResult']}" />
             </s:fragment>
-
 
             <h:dataTable 
                 styleClass="table table-hover rt"
@@ -87,7 +87,6 @@
                 </h:column>
             </h:dataTable>
         </h:form>
-
 
         </h:panelGrid>
 

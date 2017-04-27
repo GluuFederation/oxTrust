@@ -40,27 +40,23 @@
 
             <h:form>
                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="resourceSet" rendered="#{updateResourceSetAction.update}">
-                        <ui:define name="label">#{msg['uma.resourceSet']}</ui:define>
+                    <ox:decorate id="resourceSet" rendered="#{updateResourceSetAction.update}" label="#{msg['uma.resourceSet']}">
                         <h:outputText value="#{_resourceSet.inum}" />
-                    </s:decorate>
+                    </ox:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                        <ui:define name="label">#{msg['uma.displayName']}</ui:define>
+                    <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
                        <div class = "col-sm-9">
                         <rich:inplaceInput style="margin-left:-16px;"  value="#{_resourceSet.name}" defaultLabel="Click to enter Display Name" maxlength="60"  required="true" id="displayNameId" />
                         </div>
-                    </s:decorate>
+                    </ox:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                        <ui:define name="label">#{msg['uma.iconURI']}</ui:define>
+                    <ox:decorate label="#{msg['uma.iconURI']}">
                         <div class = "col-sm-9">
                         <rich:inplaceInput style="margin-left:-16px;" value="#{_resourceSet.iconUri}" defaultLabel="Click to enter Icon Url" maxlength="60"  required="true" id="iconUrlId" />
                         </div>
-                    </s:decorate>
+                    </ox:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scopes">
-                        <ui:define name="label">#{msg['uma.scopes']}</ui:define>
+                    <ox:decorate id="scopes" label="#{msg['uma.scopes']}">
                         <h:panelGroup id="selectedScopesId">
                             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                                 <a4j:repeat value="#{updateResourceSetAction.scopes}" rowKeyVar="_scopeIdx" var="_scope">
@@ -79,10 +75,9 @@
                                 <richext:spacer height="8" />
                             </h:panelGrid>
                         </h:panelGroup>
-                    </s:decorate>
+                    </ox:decorate>
 
-<!--                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clients">
-                        <ui:define name="label">Clients</ui:define>
+<!--                     <ox:decorate id="clients" label="Clients">
                         <h:panelGroup id="selectedClientsId">
                         
                             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -104,7 +99,7 @@
                             </h:panelGrid>
                            
                         </h:panelGroup>
-                    </s:decorate> -->
+                    </ox:decorate> -->
 
                     <h:panelGroup>
                             <a4j:commandButton value="#{msg['uma.addScope']}" style = "margin-left:3px;" onclick="#{rich:component('scope:selectEntityModalPanel')}.show();" styleClass="btn btn-primary"/>

@@ -79,13 +79,12 @@
 										<div style="display: inline-block; width: 75% !important;">
 
 											<h:panelGroup >
-												<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-													<ui:define name="label">#{msg['logViewer.displayLastLinesCount']}</ui:define>
+												<ox:decorate label="#{msg['logViewer.displayLastLinesCount']}">
 													<h:inputText
 															value="#{viewLogFileAction.displayLastLinesCount}"
 															styleClass="form-control"
 															required="true" />
-												</s:decorate>
+												</ox:decorate>
 											</h:panelGroup>
 										</div>
 									</div>

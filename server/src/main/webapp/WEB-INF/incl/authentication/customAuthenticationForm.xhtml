@@ -68,27 +68,25 @@
 						<div class="tab-pane" id="authentication-method">
 							<div style="display: inline-block; width: 75% !important;">
 								<h:panelGroup>
-									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-										id="auntheticationMode">
-										<ui:define name="label">#{msg['manageAuthentication.authenticationMode']}</ui:define>
+									<ox:decorate
+										id="auntheticationMode" label="#{msg['manageAuthentication.authenticationMode']}">
 										<h:selectOneMenu value="#{_action.authenticationMode}"
 											styleClass="form-control">
 											<s:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
 												var="_name" label="#{_name}" />
 										</h:selectOneMenu>
-									</s:decorate>
+									</ox:decorate>
 
-									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-										id="oxTrustAuntheticationMode">
-										<ui:define name="label">#{msg['manageAuthentication.oxTrustAuthenticationMode']}</ui:define>
+									<ox:decorate
+										id="oxTrustAuntheticationMode" label="#{msg['manageAuthentication.oxTrustAuthenticationMode']}">
 										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
 											styleClass="form-control">
 											<s:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
 												var="_name" label="#{_name}" noSelectionLabel="Default" />
 										</h:selectOneMenu>
-									</s:decorate>
+									</ox:decorate>
 								</h:panelGroup>
 							</div>
 						</div>
@@ -100,9 +98,8 @@
                                                 
                                                 
 							
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="PassportEnabledState">
-									<ui:define name="label">#{msg['manageAuthentication.passportSupport']}</ui:define>
+						<ox:decorate
+									id="PassportEnabledState" label="#{msg['manageAuthentication.passportSupport']}">
 									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control"  
 										id="scimEnabledStateId">
 										<s:selectItems
@@ -110,7 +107,7 @@
 											var="_type" label="#{_type.displayName}"/>
 										<s:convertEnum />
 									</h:selectOneMenu>
-						</s:decorate>	
+						</ox:decorate>	
 						<hr></hr>					
 							
  					<h:panelGroup id="strategyId" rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
@@ -131,18 +128,16 @@
                                         <div class="tab-pane" id="cas">
                                                 <div style="display: inline-block; width: 75% !important;">
                                                     <h:panelGroup rendered="#{productInstallationCheckerAction.showIDP_CAS}">
-                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                                                                        id="casProtocolEnabled">
-                                                                        <ui:define name="label">#{msg['manageAuthentication.enabled']}</ui:define>
+                                                                <ox:decorate
+                                                                        id="casProtocolEnabled" label="#{msg['manageAuthentication.enabled']}">
                                                                         <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enabled}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="0" >
                                                                         </h:selectBooleanCheckbox>
-                                                                </s:decorate>
+                                                                </ox:decorate>
 
-                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                                                                        id="casProtocolSessionStorageType">
-                                                                        <ui:define name="label">#{msg['manageAuthentication.shibbolethSession']}</ui:define>
+                                                                <ox:decorate
+                                                                        id="casProtocolSessionStorageType" label="#{msg['manageAuthentication.shibbolethSession']}">
                                                                         <h:selectOneMenu value="#{updateCASAction.configuration.sessionStorageType}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="1">
@@ -150,42 +145,38 @@
                                                                                         value="#{updateCASAction.sessionStorageTypes}"
                                                                                         var="_name" label="#{_name}" noSelectionLabel="Default" />
                                                                         </h:selectOneMenu>
-                                                                </s:decorate>
+                                                                </ox:decorate>
 
-                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                                                                        id="casProtocolBaseURL">
-                                                                        <ui:define name="label">#{msg['manageAuthentication.baseCASServerURL']}</ui:define>
+                                                                <ox:decorate
+                                                                        id="casProtocolBaseURL" label="#{msg['manageAuthentication.baseCASServerURL']}">
                                                                         <h:outputText styleClass="form-control"
                                                                             title=""
                                                                             value="#{updateCASAction.casBaseURL}" size="100" />
-                                                                </s:decorate>
+                                                                </ox:decorate>
 
-                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                                                                        id="casProtocolToProxyPatternsEnabled">
-                                                                        <ui:define name="label">#{msg['manageAuthentication.enableProxyPatterns']}</ui:define>
+                                                                <ox:decorate
+                                                                        id="casProtocolToProxyPatternsEnabled" label="#{msg['manageAuthentication.enableProxyPatterns']}">
                                                                         <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enableToProxyPatterns}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="0" >
                                                                         </h:selectBooleanCheckbox>
-                                                                </s:decorate>
+                                                                </ox:decorate>
 
-                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                                                                        id="casProtocolAuthorizedToProxy">
-                                                                        <ui:define name="label">#{msg['manageAuthentication.authorizedProxyPattern']}</ui:define>
+                                                                <ox:decorate
+                                                                        id="casProtocolAuthorizedToProxy" label="#{msg['manageAuthentication.authorizedProxyPattern']}">
                                                                         <h:inputText styleClass="form-control"
                                                                             title=""
                                                                             value="#{updateCASAction.configuration.authorizedToProxyPattern}" size="100" tabindex="2" 
                                                                             required="false" disabled="true" />
-                                                                </s:decorate>
+                                                                </ox:decorate>
 
-                                                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-                                                                        id="casProtocolUnauthorizedToProxy">
-                                                                        <ui:define name="label">#{msg['manageAuthentication.unauthorizedProxyPattern']}</ui:define>
+                                                                <ox:decorate
+                                                                        id="casProtocolUnauthorizedToProxy" label="#{msg['manageAuthentication.unauthorizedProxyPattern']}">
                                                                         <h:inputText styleClass="form-control"
                                                                             title=""
                                                                             value="#{updateCASAction.configuration.unauthorizedToProxyPattern}" size="100" tabindex="3" 
                                                                             required="false" disabled="true" />
-                                                                </s:decorate>
+                                                                </ox:decorate>
 
                                                                 <h:commandButton styleClass="btn btn-primary"
                                                                     style="margin-left:4px" value="#{msg['manageAuthentication.updateConfigurationFiles']}"
@@ -197,7 +188,6 @@
 				</div>
 
 				<div class="box-footer">
-
 
 					<ui:insert name="controlButttons" />
 					<div id="updateButtons">
@@ -223,10 +213,8 @@
 				</div>
 
 
-
 			</div>
 		</div>
-
 
 		<richext:spacer height="16" />
 

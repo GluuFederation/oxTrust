@@ -29,7 +29,6 @@
 			<h:form id="form">
 				<h:panelGrid columns="2" columnClasses="alignTop, alignTop">
 
-
 					<rich:extendedDataTable value="#{whitePagesAction.persons}"
 						var="entry" id="table" width="563px" sortMode="multi"
 						style="width:100%;" styleClass="rf-dt data sortable"
@@ -77,7 +76,6 @@
 						<a4j:ajax render="selectiontable" event="selectionchange"
 							execute="@this" limitRender="true" />
 					</rich:extendedDataTable>
-
 
 					<h:panelGrid id="selectiontable">
 						<ui:param name="sel" value="#{whitePagesAction.selectedPerson}" />

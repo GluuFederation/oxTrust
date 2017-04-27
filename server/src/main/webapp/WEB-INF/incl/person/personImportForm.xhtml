@@ -8,12 +8,12 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
     <h:form id="personImportForm">
     
     <input type='hidden' name='cid' value='#{conversation.id}' />
-
 
         <div class="row">
             <div class="col-xs-12">
@@ -21,8 +21,7 @@
               <div style="display: inline-block;width: 75% !important;">
               
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['person.fileToImport']}</ui:define>
+            <ox:decorate label="#{msg['person.fileToImport']}">
                 <h:panelGroup id="fileImportPanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                 
                     <rich:fileUpload  id="fileUploadId" fileUploadListener="#{_importAction.uploadFile}" acceptedTypes="xls"
@@ -38,7 +37,7 @@
                             eventsQueue="personImportQueue" />
                     </h:panelGroup>
                 </h:panelGroup>
-            </s:decorate>
+            </ox:decorate>
 
             <richext:spacer height="16"/>       
 

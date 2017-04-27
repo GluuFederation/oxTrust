@@ -49,7 +49,6 @@
     <ox:changePasswordDialog id="bindPasswordDialogId" label="#{msg['organization.changeBackend']} '#{_configureCacheRefreshAction.activeLdapConfig.configId}' #{msg['organization.bindPassword']}" password="#{_configureCacheRefreshAction.activeLdapConfig.bindPassword}"
 	   setPasswordMethod="#{configureCacheRefreshAction.updateBindPassword}"/>
 
-
     <h:form id="cacheRefreshForm">
     <input type='hidden' name='cid' value='#{conversation.id}' />
     <div class="row">
@@ -69,28 +68,24 @@
                       <div style="display: inline-block;width: 75% !important;">
                       
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.lastRun']}</ui:define>
+            <ox:decorate label="#{msg['organization.lastRun']}">
                 <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
                     <s:convertDateTime pattern="MMM. d yyyy hh:mm a" />
                 </h:outputText>
-            </s:decorate>
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.updatesAtTheLastRun']}</ui:define>
+            </ox:decorate>
+            <ox:decorate label="#{msg['organization.updatesAtTheLastRun']}">
                 <h:outputText  value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdateCount}" />
-            </s:decorate>
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.problemsAtTheLastRun']}</ui:define>
+            </ox:decorate>
+            <ox:decorate label="#{msg['organization.problemsAtTheLastRun']}">
                 <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshProblemCount}" />
-            </s:decorate> <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="editType">
-                <ui:define name="label">#{msg['organization.refreshMethod']}</ui:define>
+            </ox:decorate> <ox:decorate id="editType" label="#{msg['organization.refreshMethod']}">
                 <h:selectOneMenu styleClass="form-control"  value="#{_configureCacheRefreshAction.updateMethod}" required="true" id="refreshMethodId">
                     <s:selectItems value="#{_configureCacheRefreshAction.allCacheRefreshUpdateMethods}" var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
                     <a4j:ajax event="change" render="vdsTogglePanelGroup, copyTogglePanelGroup" execute="@this" limitRender="true" />
                 </h:selectOneMenu>
-            </s:decorate>
+            </ox:decorate>
 			  <h:panelGroup id="copyTogglePanelGroup">
                     <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                         <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'copy'}" label="#{msg['organization.sourceAttributeToDesitnation']}" labelAdd="source attribute to destination attribute mapping"
@@ -106,46 +101,38 @@
                 validateCollapsiblePanel("cacheRefreshForm\\:copyTogglePanel");
            </h:outputScript>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.pollingInterval']}</ui:define>
+            <ox:decorate label="#{msg['organization.pollingInterval']}">
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshPollingInterval}" id="vdsCacheRefreshPollingIntervalId" size="5" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.serverIPAddress']}</ui:define>
+            <ox:decorate label="#{msg['organization.serverIPAddress']}">
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.appliance.cacheRefreshServerIpAddress}" id="cacheRefreshServerIpAddressId" size="16" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.snapshotFolder']}</ui:define>
+            <ox:decorate label="#{msg['organization.snapshotFolder']}">
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotFolder}" size="48" required="true" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.snapshotCount']}</ui:define>
+            <ox:decorate label="#{msg['organization.snapshotCount']}">
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotMaxCount}" size="5" required="true" />
-            </s:decorate>
+            </ox:decorate>
             
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.keepExternalPersons']}</ui:define>
+            <ox:decorate label="#{msg['organization.keepExternalPersons']}">
 
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"/>
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.loadSourceData']}</ui:define>
+            <ox:decorate label="#{msg['organization.loadSourceData']}">
 
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.useSearchLimit}"/>
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.searchSizeLimit']} </ui:define>
+            <ox:decorate label="#{msg['organization.searchSizeLimit']} ">
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.ldapSearchSizeLimit}" size="6" required="false" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-									id="vdsCacheRefreshState">
-									<ui:define name="label">#{msg['organization.cacheRefresh']}</ui:define>
+            <ox:decorate
+									id="vdsCacheRefreshState" label="#{msg['organization.cacheRefresh']}">
 									<h:selectOneMenu value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshEnabled}" styleClass="form-control"
 										id="vdsCacheRefreshStateId">
 										<s:selectItems
@@ -153,7 +140,7 @@
 											var="_type" label="#{_type.displayName}" />
 										<s:convertEnum />
 									</h:selectOneMenu>
-			</s:decorate>
+			</ox:decorate>
 
             </h:panelGroup>
             
@@ -177,13 +164,12 @@
                     <ox:simplePropertiesList label="#{msg['organization.sourceAttribute']}" labelAdd="source attribute" properties="#{_configureCacheRefreshAction.sourceAttributes}"
                         propertiesAction="#{_configureCacheRefreshAction}" required="true" />
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="customLdapFilter">
-                        <ui:define name="label">#{msg['organization.customLDAPFilter']}</ui:define>
+                    <ox:decorate id="customLdapFilter" label="#{msg['organization.customLDAPFilter']}">
                         <h:panelGroup>
                             <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.customLdapFilter}" size="48" />
                           
                         </h:panelGroup>
-                    </s:decorate>
+                    </ox:decorate>
                 </h:panelGroup></div></div>
             
             <div class="tab-pane" id="ldap-servers">              
@@ -210,12 +196,11 @@
              <div style="display: inline-block;width: 75% !important;">
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 			
-			<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['organization.defaultInumServer']}</ui:define>
+			<ox:decorate label="#{msg['organization.defaultInumServer']}">
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}">
                     <a4j:ajax event="click" render="inumServerId" execute="@this" limitRender="true" />
                 </h:selectBooleanCheckbox>
-            </s:decorate>
+            </ox:decorate>
 
                 <h:panelGroup id="inumServerId">
            

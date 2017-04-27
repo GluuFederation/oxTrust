@@ -8,6 +8,7 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://java.sun.com/jsf/composite/richext"
+ 		xmlns:ox="http://java.sun.com/jsf/composite/ox"
                 xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
     <section class="content-header">
@@ -40,25 +41,22 @@
                             <div style="display: inline-block;width: 75% !important;">
                                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 
-                                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="inu"
-                                                rendered="#{not _new}">
-                                        <ui:define name="label">#{msg['sectorIdentifier.inum']}</ui:define>
+                                    <ox:decorate id="inu"
+                                                rendered="#{not _new}" label="#{msg['sectorIdentifier.inum']}">
                                         <h:outputText value="#{_sectorIdentifierAction.sectorIdentifier.inum}"/>
-                                    </s:decorate>
+                                    </ox:decorate>
 
-                                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="url"
-                                                rendered="#{not _new}">
-                                        <ui:define name="label">#{msg['sectorIdentifier.url']}</ui:define>
+                                    <ox:decorate id="url"
+                                                rendered="#{not _new}" label="#{msg['sectorIdentifier.url']}">
                                         <h:outputLink value="#{_sectorIdentifierAction.sectorIdentifierUrl}"
                                                       target="_blank">
                                             <i class="icon-external-link"></i>
                                             <h:outputText value="&#160;"/>
                                             <h:outputText value="#{_sectorIdentifierAction.sectorIdentifierUrl}"/>
                                         </h:outputLink>
-                                    </s:decorate>
+                                    </ox:decorate>
 
-                                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="redirectLoginUrls">
-                                        <ui:define name="label">#{msg['sectorIdentifier.redirectLoginURIs']}</ui:define>
+                                    <ox:decorate id="redirectLoginUrls" label="#{msg['sectorIdentifier.redirectLoginURIs']}">
                                         <h:panelGroup id="selectedLoginURIsId">
                                             <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                           cellspacing="0">
@@ -83,10 +81,9 @@
                                                 <richext:spacer height="16"/>
                                             </h:panelGroup>
                                         </h:panelGroup>
-                                    </s:decorate>
+                                    </ox:decorate>
 
-                                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clients">
-                                        <ui:define name="label">#{msg['sectorIdentifier.clients']}</ui:define>
+                                    <ox:decorate id="clients" label="#{msg['sectorIdentifier.clients']}">
                                         <h:panelGroup id="selectedClientsId">
                                             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
                                                          cellspacing="0">
@@ -111,9 +108,9 @@
                                                 </a4j:repeat>
                                             </h:panelGrid>
                                         </h:panelGroup>
-                                    </s:decorate>
+                                    </ox:decorate>
 
-                                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="command">
+                                    <ox:decorate id="command">
                                         <h:panelGroup>
                                             <div class="btn-group" role="group" aria-label="..."
                                                  style="margin-left:105px;">
@@ -130,7 +127,7 @@
                                                                    eventsQueue="sectorIdentifierQueue"/>
                                             </div>
                                         </h:panelGroup>
-                                    </s:decorate>
+                                    </ox:decorate>
                                 </h:panelGrid>
                             </div>
                         </div>

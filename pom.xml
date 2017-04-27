@@ -136,8 +136,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.xdi</groupId>
-				<artifactId>oxJsfUtil</artifactId>
-				<version>${oxcore.version}</version>
+				<artifactId>oxcore-jsf-util</artifactId>
+				<version>3.1.0.weld-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.xdi</groupId>

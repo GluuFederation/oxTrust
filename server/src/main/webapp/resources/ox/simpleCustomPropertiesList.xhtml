@@ -7,6 +7,7 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:gluufn="http://www.gluu.org/jsf/functions"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
@@ -22,8 +23,7 @@
 
 <cc:implementation>
     <a4j:region>
-        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-            <ui:define name="label">#{cc.attrs.label}</ui:define>
+        <ox:decorate label="#{cc.attrs.label}">
             <h:panelGroup id="customList">
                 <a4j:region>
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
@@ -55,7 +55,7 @@
                     </a4j:commandLink>
                 </a4j:region>
             </h:panelGroup>
-        </s:decorate>
+        </ox:decorate>
     </a4j:region>
 </cc:implementation>
 </html>

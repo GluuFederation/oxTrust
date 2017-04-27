@@ -8,6 +8,7 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://java.sun.com/jsf/composite/richext"
+ 		xmlns:ox="http://java.sun.com/jsf/composite/ox"
                 template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
 
     <ui:define name="head">
@@ -71,8 +72,7 @@
                                                 <a4j:outputPanel>
                                                     <ui:param name="_mandatory" value="#{_custAttr.mandatory}"/>
                                                     <!-- Ordinary Attribute -->
-                                                    <s:decorate id="_custAttrIdx" style="margin-left: -15px;"
-                                                                template="/WEB-INF/incl/layout/edit.xhtml"
+                                                    <ox:decorate id="_custAttrIdx" style="margin-left: -15px;"
                                                                 rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')  and (_custAttr.metadata.displayName ne 'Email')}">
                                                         <ui:define
                                                                 name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
@@ -108,10 +108,9 @@
                                                                        datePattern="EEE MMM dd HH:mm:ss Z yyyy"
                                                                        readonly="#{_custAttr.readonly}"/>
 
-                                                    </s:decorate>
+                                                    </ox:decorate>
                                                     <!-- Special Attribute. Is this intended to be a combobox-based attribute? -->
-                                                    <s:decorate id="_custAttrIdx2"
-                                                                template="/WEB-INF/incl/layout/edit.xhtml"
+                                                    <ox:decorate id="_custAttrIdx2"
                                                                 rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and _custAttr.name.equals('exampleSpecialAttribute')}">
                                                         <ui:define
                                                                 name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
@@ -127,7 +126,7 @@
                                                         </h:selectOneMenu>
                                                         <h:outputText value="&#160;"/>
 
-                                                    </s:decorate>
+                                                    </ox:decorate>
                                                     <!-- Attribute Tooltip -->
                                                     <rich:tooltip value="#{_custAttr.metadata.gluuTooltip}"
                                                                   rendered="#{((not empty _custAttr) and (not empty _custAttr.metadata) and ( not empty _custAttr.metadata.gluuTooltip))}"/>
@@ -136,18 +135,16 @@
                                             </a4j:repeat>
 
                                             <!-- Passwords -->
-                                            <s:decorate id="passwordField" style="margin-left: -15px;"
-                                                        template="/WEB-INF/incl/layout/edit.xhtml">
-                                                <ui:define name="label">#{msg['register.password']}</ui:define>
+                                            <ox:decorate id="passwordField" style="margin-left: -15px;"
+                                                        template="/WEB-INF/incl/layout/edit.xhtml" label="#{msg['register.password']}">
                                                 <h:inputSecret id="password" class="form-control"
                                                                value="#{registerPersonAction.password}" maxlength="60"
                                                                size="40" tabindex="6" required="true" redisplay="true"
                                                                autocomplete="off"/>
                                                 <h:outputText value="&#160;"/>
-                                            </s:decorate>
-                                            <s:decorate id="repeatPasswordField" style="margin-left: -15px;"
-                                                        template="/WEB-INF/incl/layout/edit.xhtml">
-                                                <ui:define name="label">#{msg['register.repeatPassword']}</ui:define>
+                                            </ox:decorate>
+                                            <ox:decorate id="repeatPasswordField" style="margin-left: -15px;"
+                                                        template="/WEB-INF/incl/layout/edit.xhtml" label="#{msg['register.repeatPassword']}">
                                                 <h:inputSecret id="passwordValidation" class="form-control"
                                                                value="#{registerPersonAction.repeatPassword}"
                                                                maxlength="60"
@@ -157,13 +154,12 @@
                                                                         message="#{msg['register.passwordsDontMatch']}"/>
                                                 </h:inputSecret>
                                                 <h:outputText value="&#160;"/>
-                                            </s:decorate>
+                                            </ox:decorate>
                                             <!-- End Passwords -->
                                             
                                             
-                                            <s:decorate id="email" style="margin-left: -15px;"
-                                                        template="/WEB-INF/incl/layout/edit.xhtml">
-                                                <ui:define name="label">#{msg['register.email']} </ui:define>
+                                            <ox:decorate id="email" style="margin-left: -15px;"
+                                                        template="/WEB-INF/incl/layout/edit.xhtml" label="#{msg['register.email']} ">
                                                 <h:inputText id="emailValidation" class="form-control" validator="#{registerPersonAction.validateEmail}" 
                                                                value="#{registerPersonAction.email}"
                                                                maxlength="60"
@@ -174,7 +170,7 @@
                                                 <rich:validator event="keyup" />                                                                                                  
                                                 </h:inputText>                                               
                                                 <h:outputText value="&#160;"/>
-                                            </s:decorate>
+                                            </ox:decorate>
                                         </div>
                                         <!-- Captcha -->
                                         <s:fragment rendered="#{not registerPersonAction.captchaDisabled}">
@@ -196,7 +192,6 @@
                                     </div>
                                 </div>
 
-
                             </div>
                             <!-- /.login-box-body -->
                         </div>
@@ -213,15 +208,12 @@
 
                         </script>
 
-
                     </rich:panel>
-
 
                     <!-- Command Buttons -->
 
                 </h:form>
             </div>
-
 
         </div>
     </ui:define>
