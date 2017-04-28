@@ -61,24 +61,12 @@
 								size="#{cc.attrs.inputWidth}" required="true" />
 						</s:decorate>
 
-
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-							id="useAnonymousBind" rendered="#{cc.attrs.displayAnonymousBind}">
-							<ui:define name="label">#{msg['ldapConfig.useAnonymousBind']}</ui:define>
-							<h:selectBooleanCheckbox
-								value="#{cc.attrs.ldapConfig.useAnonymousBind}">
-								<a4j:ajax event="click" render="bindDnGroup" execute="@this" />
-							</h:selectBooleanCheckbox>
-						</s:decorate>
-
 						<h:panelGroup id="bindDnGroup">
 							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-								id="bindDn"
-								rendered="#{not cc.attrs.ldapConfig.useAnonymousBind}">
+								id="bindDn">
 								<ui:define name="label">#{msg['ldapConfig.bindDN']}</ui:define>
 								<h:inputText styleClass="form-control"
-									value="#{cc.attrs.ldapConfig.bindDN}" size="46"
-									required="#{not ldapConfig.useAnonymousBind}" />
+									value="#{cc.attrs.ldapConfig.bindDN}" size="46"/>
 							</s:decorate>
 						</h:panelGroup>
 

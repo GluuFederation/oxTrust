@@ -361,11 +361,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 	
 	private GluuLdapConfiguration fixLdapConfiguration(GluuLdapConfiguration ldapConfig) {
-		ldapConfig.updateStringsLists();
-		if (ldapConfig.isUseAnonymousBind()) {
-			ldapConfig.setBindDN(null);
-		}
-		
+		ldapConfig.updateStringsLists();	
 		return ldapConfig;
 	}
 
