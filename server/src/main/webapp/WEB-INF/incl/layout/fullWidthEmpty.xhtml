@@ -31,7 +31,7 @@
             <ui:insert name="head" />
 
             <ui:param name="themeColor" value="#{organizationService.organization.themeColor}" />
-            <s:fragment rendered="#{not empty themeColor}">
+            <ui:fragment rendered="#{not empty themeColor}">
                 <style type="text/css">
                     .rf-tb-itm,.rf-tb-emp {
                         height: 33px;
@@ -40,7 +40,7 @@
                     background-image :none;
                     }
                 </style>
-            </s:fragment>
+            </ui:fragment>
         </h:head>
         <h:body styleClass="login-page">
             <div class="wrapper">

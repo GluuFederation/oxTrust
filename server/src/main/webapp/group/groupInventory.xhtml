@@ -50,10 +50,10 @@
                 <richext:spacer height="16" />
 
                 <h:form id="groupsFormId">
-                    <s:fragment rendered="#{searchGroupAction.groupList.size eq 0}">
+                    <ui:fragment rendered="#{searchGroupAction.groupList.size eq 0}">
                         <richext:spacer height="30" />
                         <h:outputText value="#{msg['group.noSearchResultFound']}" />
-                    </s:fragment>
+                    </ui:fragment>
 
                     <rich:dataTable sortMode="single" id="groupsListId" value="#{searchGroupAction.groupList}" rows="20" styleClass="data sortable" var="grp"
                         rendered="#{searchGroupAction.groupList.size gt 0}">

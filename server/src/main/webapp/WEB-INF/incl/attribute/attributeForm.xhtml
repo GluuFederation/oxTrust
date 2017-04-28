@@ -56,12 +56,12 @@
                     <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectManyListbox>
 
-                <s:fragment rendered="#{not _attributeAction.canEdit()}">
+                <ui:fragment rendered="#{not _attributeAction.canEdit()}">
                     <a4j:repeat value="#{_attribute.editType}" var="_type" rowKeyVar="_idx">
                         <h:outputText value="#{_type.displayName}"/>
                         <h:outputText value=", " rendered="#{_idx lt fn:length(_attribute.editType) - 1}"/>
                     </a4j:repeat>
-                </s:fragment>
+                </ui:fragment>
              </ox:decorate>
 
              <ox:decorate id="viewType" label="#{msg['attribute.viewType']}">
@@ -72,12 +72,12 @@
                     <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectManyListbox>
 
-                <s:fragment rendered="#{not _attributeAction.canEdit()}">
+                <ui:fragment rendered="#{not _attributeAction.canEdit()}">
                     <a4j:repeat value="#{_attribute.viewType}" var="_type" rowKeyVar="_idx">
                         <h:outputText value="#{_type.displayName}"/>
                         <h:outputText value=", " rendered="#{_idx lt fn:length(_attribute.viewType) - 1}"/>
                     </a4j:repeat>
-                </s:fragment>
+                </ui:fragment>
              </ox:decorate>
 
              <ox:decorate id="usageType" label="#{msg['attribute.usageType']}">
@@ -87,12 +87,12 @@
                     <!-- <s:convertEnum/> --> <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectManyListbox>
 
-                <s:fragment rendered="#{not _attributeAction.canEdit()}">
+                <ui:fragment rendered="#{not _attributeAction.canEdit()}">
                     <a4j:repeat value="#{_attribute.usageType}" var="_type" rowKeyVar="_idx">
                         <h:outputText value="#{_type.displayName}"/>
                         <h:outputText value=", " rendered="#{_idx lt fn:length(_attribute.usageType) - 1}"/>
                     </a4j:repeat>
-                </s:fragment>
+                </ui:fragment>
              </ox:decorate>
 
              <ox:decorate id="multivalued" label="#{msg['attribute.multivalued']}">

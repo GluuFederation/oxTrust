@@ -36,7 +36,7 @@
         <ui:insert name="head"/>	
 
         <ui:param name="themeColor" value="#{organizationService.organization.themeColor}" />
-        <s:fragment rendered="#{not empty themeColor}">
+        <ui:fragment rendered="#{not empty themeColor}">
             <style type="text/css">
                 .rf-tb-itm, .rf-tb-emp{
                     height: 33px;
@@ -44,7 +44,7 @@
                     background-image: none;
                 }
             </style>
-        </s:fragment>
+        </ui:fragment>
     </h:head>
     <h:body>
         <img src="#{request.contextPath}/servlet/logo" alt="logo" id="logo"/>
@@ -65,14 +65,14 @@
                 </div>
             </div>
       </div>
-        <s:fragment rendered="#{not isLogin}">
+        <ui:fragment rendered="#{not isLogin}">
             <div class="footer">
                 <p>Copyright <a href="http://www.gluu.org">Gluu</a> All rights reserved.</p>
             </div>
-        </s:fragment>
+        </ui:fragment>
 
       <div class="footer">
-         <s:fragment rendered="#{init.debug}">
+         <ui:fragment rendered="#{init.debug}">
          <a:log hotkey="D"/>
          <p style="margin-top: -0.5em;">
             Conversation: id = #{conversation.id}, #{conversation.longRunning ? 'long running' : 'temporary'}#{conversation.nested ? ', nested, parent id = '.concat(conversation.parentId) : ''}
@@ -83,7 +83,7 @@
             #{' - '}
             <s:link id="resetSession" view="/home.xhtml" action="#{org.jboss.seam.web.session.invalidate()}" propagation="none" value="Terminate session"/>
          </p>
-         </s:fragment>
+         </ui:fragment>
       </div>
     </h:body>
 </f:view>

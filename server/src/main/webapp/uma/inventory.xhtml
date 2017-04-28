@@ -50,10 +50,10 @@
 
                                 <richext:spacer height="8" />
 
-                                <s:fragment rendered="#{umaInventoryAction.resourcesList.size eq 0}">
+                                <ui:fragment rendered="#{umaInventoryAction.resourcesList.size eq 0}">
                                     <richext:spacer height="30" />
                                     <h:outputText value="#{msg['uma.noSearchResultFound']}" />
-                                </s:fragment>
+                                </ui:fragment>
 
                                 <rich:dataTable sortMode="single" id="resourcesListId" value="#{umaInventoryAction.resourcesList}" rows="20" styleClass="data sortable" var="_row"
                                     rendered="#{umaInventoryAction.resourcesList.size gt 0}" style="width: 750px;">
@@ -98,10 +98,10 @@
                                 </s:button>
 
                                 <richext:spacer height="8" />
-                                <s:fragment rendered="#{umaInventoryAction.scopesList.size eq 0}">
+                                <ui:fragment rendered="#{umaInventoryAction.scopesList.size eq 0}">
                                     <richext:spacer height="30" />
                                     <h:outputText value="#{msg['uma.noSearchResultFound']}" />
-                                </s:fragment>
+                                </ui:fragment>
 
                                 <rich:dataTable sortMode="single" id="scopesListId" value="#{umaInventoryAction.scopesList}" rows="20" styleClass="data sortable" var="_row"
                                     rendered="#{umaInventoryAction.scopesList.size gt 0}" style="width: 750px;">
@@ -119,15 +119,15 @@
 
                                     <rich:column sortBy="#{_row.url}">
                                         <f:facet name="header">Reference</f:facet>
-                                        <s:fragment>
+                                        <ui:fragment>
 	                                        <h:outputText value="#{umaMetadataConfiguration.scopeEndpoint}/#{_row.displayName}" rendered="#{_row.type.value eq 'internal'}"/>
 	                                        <h:outputText value="#{_row.url}" rendered="#{_row.type.value ne 'internal'}"/>
-                                        </s:fragment>
+                                        </ui:fragment>
                                     </rich:column>
 
                                     <rich:column>
                                         <f:facet name="header">Action</f:facet>
-                                        <s:fragment rendered="#{_row.id != null}">
+                                        <ui:fragment rendered="#{_row.id != null}">
                                             <s:link value="#{msg['uma.download']}" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
                                                 <f:param name="scope" value="#{_row.id}" />
                                                 <f:param name="dl" value="#{true}" />
@@ -136,7 +136,7 @@
                                             <s:link value="#{msg['uma.link']}" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
                                                 <f:param name="scope" value="#{_row.id}" />
                                             </s:link>
-                                        </s:fragment>
+                                        </ui:fragment>
                                     </rich:column>
 
                                     <f:facet name="footer">

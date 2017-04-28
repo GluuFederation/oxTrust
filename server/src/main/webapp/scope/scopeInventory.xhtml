@@ -78,11 +78,11 @@
 											<div class="table-responsive" style="overflow: auto">
 
 												<h:form id="scopesFormId">
-													<s:fragment
+													<ui:fragment
 														rendered="#{searchScopeAction.scopeList.size eq 0}">
 
 														<h:outputText value="#{msg['scope.noSearchResultFound']}" />
-													</s:fragment>
+													</ui:fragment>
 
 													<h:dataTable sortMode="single" id="scopesListId"
 														styleClass="table table-hover rt"

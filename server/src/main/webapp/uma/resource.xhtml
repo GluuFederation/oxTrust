@@ -47,10 +47,10 @@
 
                                 <richext:spacer height="8" />
 
-                                <s:fragment rendered="#{umaInventoryAction.resourcesList.size eq 0}">
+                                <ui:fragment rendered="#{umaInventoryAction.resourcesList.size eq 0}">
                                     <richext:spacer height="30" />
                                     <h:outputText value="#{msg['uma.noSearchResultFound']}" />
-                                </s:fragment>
+                                </ui:fragment>
 
                                 <rich:dataTable sortMode="single" id="resourcesListId" value="#{umaInventoryAction.resourcesList}" rows="20" styleClass="data sortable" var="_row"
                                     rendered="#{umaInventoryAction.resourcesList.size gt 0}" style="width: 750px;">

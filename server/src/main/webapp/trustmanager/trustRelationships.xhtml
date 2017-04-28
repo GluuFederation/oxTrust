@@ -77,11 +77,11 @@
 								<div class="box-body">
 									<div class="table-responsive" style="overflow: auto">
 										<h:form id="trustRelationsshipList">
-											<s:fragment
+											<ui:fragment
 												rendered="#{trustRelationshipInventoryAction.trustedSpList.size eq 0}">
 												<richext:spacer height="30" />
 												<h:outputText value="#{msg['trustmanager.noTrsutRelationshipsFound']}" />
-											</s:fragment>
+											</ui:fragment>
 
 											<rich:dataTable sortMode="single" id="relationshipstable"
 												value="#{trustRelationshipInventoryAction.trustedSpList}"

@@ -21,11 +21,11 @@
              <ox:decorate id="baseUrl" label="#{msg['testOperationForm.baseURL']}">
                 <h:inputText value="#{_scimAction.baseUrl}" size="30" maxlength="60" required="true" id="baseUrlId"/>
              </ox:decorate>
-             <s:fragment rendered="#{_scimAction.responseResult ne null}">
+             <ui:fragment rendered="#{_scimAction.responseResult ne null}">
                  <hr/>
                  <h:inputTextarea value="#{_scimAction.responseResult}" style="width: 700px;" rows="30" disabled="true"/>
                  <hr/>
-             </s:fragment>
+             </ui:fragment>
         </h:panelGrid>
 
         <ui:insert name="controlButttons"/>

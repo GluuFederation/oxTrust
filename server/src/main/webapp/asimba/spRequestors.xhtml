@@ -43,10 +43,10 @@
         <richext:spacer height="16" />
 
         <h:form id="spRequestorsFormId">
-            <s:fragment rendered="#{updateAsimbaSPRequestorAction.spRequestorList.size eq 0}">
+            <ui:fragment rendered="#{updateAsimbaSPRequestorAction.spRequestorList.size eq 0}">
                 <richext:spacer height="30" />
                 <h:outputText value="#{msg['asimba.noSearchResult']}" />
-            </s:fragment>
+            </ui:fragment>
 
             <h:dataTable 
                 styleClass="table table-hover rt"

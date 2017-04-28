@@ -22,9 +22,9 @@
             }
         </style>
         
-        <s:fragment rendered="#{not registerPersonAction.captchaDisabled}">
+        <ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
 	        <script src="https://www.google.com/recaptcha/api.js" async="async" defer="defer"></script>
-        </s:fragment>
+        </ui:fragment>
     </ui:define>
 
     <ui:define name="body">
@@ -173,9 +173,9 @@
                                             </ox:decorate>
                                         </div>
                                         <!-- Captcha -->
-                                        <s:fragment rendered="#{not registerPersonAction.captchaDisabled}">
+                                        <ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
 	                                        <s class="g-recaptcha" data-sitekey="#{recaptchaService.recaptchaSiteKey}"/>
-                                        </s:fragment>
+                                        </ui:fragment>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div id="updateButtons" style="margin-top: 20px;">

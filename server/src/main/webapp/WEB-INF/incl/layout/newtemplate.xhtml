@@ -35,7 +35,7 @@
 		<h:outputScript name="jquery.js" />
 		<ui:param name="themeColor"
 			value="#{organizationService.organization.themeColor}" />
-		<s:fragment rendered="#{not empty themeColor}">
+		<ui:fragment rendered="#{not empty themeColor}">
 		<style type="text/css">
 		
 		.rf-tb-itm, .rf-tb-emp {
@@ -44,7 +44,7 @@
 		}
 		
 		</style>
-		</s:fragment>
+		</ui:fragment>
 		
 		<!-- Stylesheets new theme -->
 		<link
@@ -130,7 +130,7 @@
 		<rich:notifyMessages stayTime="5000" nonblocking="true" />
 
 	    <div class="footer">
-			<s:fragment rendered="#{init.debug}">
+			<ui:fragment rendered="#{init.debug}">
 				<a:log hotkey="D"/>
 				<p style="margin-top: -0.5em;">
 				   Conversation: id = #{conversation.id}, #{conversation.longRunning ? 'long running' : 'temporary'}#{conversation.nested ? ', nested, parent id = '.concat(conversation.parentId) : ''}
@@ -141,7 +141,7 @@
 				   #{' - '}
 				   <s:link id="resetSession" view="/home.xhtml" action="#{org.jboss.seam.web.session.invalidate()}" propagation="none" value="Terminate session"/>
 				</p>
-			</s:fragment>
+			</ui:fragment>
 	    </div>
 	</h:body>
 </f:view>

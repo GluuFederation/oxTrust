@@ -38,9 +38,9 @@
                             <a4j:commandButton value="Search" styleClass="btn btn-primary" style="margin-left:7px;" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" /></div>
                         </ox:decorate>
 
-                        <s:fragment rendered="#{not cc.attrs.displaySearchForm}">
+                        <ui:fragment rendered="#{not cc.attrs.displaySearchForm}">
                             <a4j:jsFunction name="executeSearch#{cc.attrs.id}" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />
-                        </s:fragment>
+                        </ui:fragment>
 
                         <h:panelGroup id="searchNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
                             <h:outputText value="No Search Result Found" />

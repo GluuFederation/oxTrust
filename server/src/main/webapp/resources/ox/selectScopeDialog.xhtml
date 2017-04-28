@@ -47,9 +47,9 @@
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
 
-                <s:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
+                <ui:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
                     <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="scopePanelId"/>
-                </s:fragment>
+                </ui:fragment>
 
                 <h:panelGroup style="overflow-y:auto; width:815px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
                     <h:dataTable styleClass="table table-hover rt" sortMode="single" id="scopeListId" value="#{cc.attrs.searchResult}"  var="prs" columnClasses=" , , ,selectscopedailoguefourthcolumn">

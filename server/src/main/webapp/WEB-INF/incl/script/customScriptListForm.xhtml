@@ -80,13 +80,13 @@
 		                                </ox:decorate>
 
 		                                <!-- Person Authentication specific parameters -->
-		                                <s:fragment rendered="#{_scriptType.value eq 'person_authentication'}">
+		                                <ui:fragment rendered="#{_scriptType.value eq 'person_authentication'}">
 			                                <ox:decorate label="#{msg['customScript.usageType']}">
 			                                    <h:selectOneMenu value="#{_customScript.usageType}" required="true" styleClass="form-control">
 			                                        <s:selectItems value="#{applianceService.scriptUsageTypes}" var="_usageType" label="#{_usageType.displayName}"/>
 			                                    </h:selectOneMenu>
 			                                </ox:decorate>
-		                                </s:fragment>
+		                                </ui:fragment>
 
 		                                <ox:simpleCustomPropertiesList label="#{msg['customScript.customProperty']}" labelAdd="custom property"
 		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" />

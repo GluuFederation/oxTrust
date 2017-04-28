@@ -17,10 +17,10 @@
             <richext:spacer height="16" />
 
             <h:form id="trustRelationsshipList">
-                <s:fragment rendered="#{federationProposalsInventoryAction.proposalsList.size eq 0}">
+                <ui:fragment rendered="#{federationProposalsInventoryAction.proposalsList.size eq 0}">
                     <richext:spacer height="30" />
                     <h:outputText value="#{msg['federation.noTrustRelationshipsFound']}" />
-                </s:fragment>
+                </ui:fragment>
 
                 <rich:dataTable sortMode="single" id="relationshipstable" value="#{federationProposalsInventoryAction.proposalsList}" rows="20" styleClass="data sortable" var="tsps"
                     rendered="#{federationProposalsInventoryAction.proposalsList.size gt 0}">

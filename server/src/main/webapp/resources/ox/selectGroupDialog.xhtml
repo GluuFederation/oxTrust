@@ -42,9 +42,9 @@
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
 
-                <s:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
+                <ui:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
                     <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="groupPanelId"/>
-                </s:fragment>
+                </ui:fragment>
 
                 <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
                     <rich:dataTable sortMode="single" id="groupListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">

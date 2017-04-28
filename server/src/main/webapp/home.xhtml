@@ -12,24 +12,24 @@
         <section class="content-header">
             <ui:param name="welcomeTitle" value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}"/>
 
-            <s:fragment rendered="#{not empty welcomeTitle and not s:hasPermission('configuration', 'access')}">
+            <ui:fragment rendered="#{not empty welcomeTitle and not s:hasPermission('configuration', 'access')}">
                 <h:panelGroup layout="block">
                     <h:outputText value="#{welcomeTitle}" escape="false"/>
                     <h:outputText value="#{organizationService.getVersion()}" escape="false"/>
                 </h:panelGroup>
-            </s:fragment>
-            <s:fragment rendered="#{empty welcomeTitle}">
+            </ui:fragment>
+            <ui:fragment rendered="#{empty welcomeTitle}">
                 <h1>
                     <h:outputFormat value="#{msg['home.welcome']}">
                         <f:param value="#{organizationService.getVersion()}"/>
                     </h:outputFormat>
                 </h1>
-            </s:fragment>
+            </ui:fragment>
 
         </section>
 
         <section class="content">
-            <s:fragment rendered="#{s:hasPermission('configuration', 'access')}">
+            <ui:fragment rendered="#{s:hasPermission('configuration', 'access')}">
                 <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                         <div class="info-box">
@@ -189,7 +189,7 @@
                     </div>
 
                 </div>
-            </s:fragment>
+            </ui:fragment>
 
         </section>
 

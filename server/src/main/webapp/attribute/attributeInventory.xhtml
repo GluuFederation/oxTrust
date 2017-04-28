@@ -33,17 +33,17 @@
 					styleClass="label label-success" value="#{msg['attribute.registerAttribute']}" propagation="none" style="padding:6px;" />
 
 				
-				<s:fragment rendered="#{attributeInventoryAction.showInactive}">
+				<ui:fragment rendered="#{attributeInventoryAction.showInactive}">
 					<a4j:commandLink value="#{msg['attribute.showOnlyActiveAttributes']}"
 						action="#{attributeInventoryAction.toggleShowInactive}"
 						styleClass="label label-success" render="attributesFormId" style="margin-left:5px;padding:6px;" />
-				</s:fragment>
+				</ui:fragment>
 
-				<s:fragment rendered="#{not attributeInventoryAction.showInactive}">
+				<ui:fragment rendered="#{not attributeInventoryAction.showInactive}">
 					<a4j:commandLink value="#{msg['attribute.showAllAttributes']}"
 						action="#{attributeInventoryAction.toggleShowInactive}"
 						render="attributesFormId" styleClass="label label-success" style="margin-left:5px;padding:6px;"/>
-				</s:fragment>
+				</ui:fragment>
 
 				
 					<div class="row" style="padding-top:20px">
@@ -76,10 +76,10 @@
 																<div class="table-responsive" style="overflow: auto">
 
 
-																	<s:fragment
+																	<ui:fragment
 																		rendered="#{attributeInventoryAction.attributeList.size eq 0}">
 																		<h:outputText value="#{msg['attribute.noAttributesFound']}" />
-																	</s:fragment>
+																	</ui:fragment>
 																	<h:dataTable sortMode="single" 
 																		styleClass="table table-hover rt"
 																		value="#{attributeInventoryAction.attributeList}"

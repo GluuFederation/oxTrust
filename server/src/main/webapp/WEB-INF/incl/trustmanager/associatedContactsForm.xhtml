@@ -17,14 +17,14 @@
                 <div class="col-sm-12 box box-primary" style="padding:0px !important;">
                 <rich:panel bodyClass="pbody"  >
                     <f:facet name="header">
-                        <s:fragment>
+                        <ui:fragment>
                             <h:outputText value="#{_contact.title} #{_contact.name}" rendered="#{(not empty _contact.title) or (not empty _contact.name)}" />
                             <h:outputText value="#{msg['trustmanager.newContact']}" rendered="#{(empty _contact.title) and (empty _contact.name)}" />
 
                             <a4j:commandLink style="float:right;" styleClass="glyphicon glyphicon-remove" action="#{trustContactsAction.removeContact(_contact)}" render="trustContacts" eventsQueue="trustQueue">
                                <!--  <h:graphicImage value="/img/remove.gif" />  -->
                             </a4j:commandLink>
-                        </s:fragment>
+                        </ui:fragment>
                     </f:facet>
 
                     <h:panelGroup columns="2" columnClasses="rf-iiii" style="height:200px;width:100%">

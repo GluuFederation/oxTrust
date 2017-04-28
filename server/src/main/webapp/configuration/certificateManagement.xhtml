@@ -47,10 +47,10 @@
         <h:form id="internalCertificatesFormId">
             <H3>#{msg['configuration.internalGluuCertificates']}</H3>
             
-            <s:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
+            <ui:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
                 <richext:spacer height="30" />
                 <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
-            </s:fragment>
+            </ui:fragment>
 
             <h:dataTable 
                 styleClass="table table-hover rt"
@@ -107,10 +107,10 @@
         <h:form id="trustStoreCertificatesFormId" rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
             <H3>#{msg['configuration.trustStoreCertificates']}</H3>
             
-            <s:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size eq 0}">
+            <ui:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size eq 0}">
                 <richext:spacer height="30" />
                 <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
-            </s:fragment>
+            </ui:fragment>
 
             <h:dataTable 
                 styleClass="table table-hover rt"
@@ -167,10 +167,10 @@
         <h:form id="asimbaCertificatesFormId" rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
             <H3>Asimba Certificates</H3>
             
-            <s:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
+            <ui:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
                 <richext:spacer height="30" />
                 <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
-            </s:fragment>
+            </ui:fragment>
 
             <h:dataTable 
                 styleClass="table table-hover rt"

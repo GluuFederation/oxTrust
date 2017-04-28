@@ -62,11 +62,11 @@
                                     <richext:spacer height="16"/>
 
                                     <h:form id="sectorIdentifiersFormId">
-                                        <s:fragment
+                                        <ui:fragment
                                                 rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size eq 0}">
                                             <richext:spacer height="30"/>
                                             <h:outputText value="#{msg['sectorIdentifier.noSearchResultFound']}"/>
-                                        </s:fragment>
+                                        </ui:fragment>
 
                                         <rich:dataTable sortMode="single" id="sectorIdentifierListId"
                                                         value="#{searchSectorIdentifierAction.sectorIdentifierList}"

@@ -59,10 +59,10 @@
 																<div class="table-responsive" style="overflow: auto">
 
 
-																	<s:fragment
+																	<ui:fragment
 																		rendered="#{attributeInventoryAction.attributeList.size eq 0}">
 																		<h:outputText value="No Attributes Found" />
-																	</s:fragment>
+																	</ui:fragment>
 																	<h:dataTable sortMode="single" 
 																		styleClass="table table-hover rt"
 																		value="#{attributeInventoryAction.attributeList}"

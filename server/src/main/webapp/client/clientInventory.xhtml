@@ -72,11 +72,11 @@
 										<div class="box-body">
 											<div class="table-responsive" style="overflow: auto">
 												<h:form id="clientsFormId">
-													<s:fragment
+													<ui:fragment
 														rendered="#{searchClientAction.clientList.size eq 0}">
 														
 														<h:outputText value="#{msg['client.noSearchResultFound']}" />
-													</s:fragment>
+													</ui:fragment>
 
 													<h:dataTable sortMode="single"
 														styleClass="table table-hover rt" id="clientsListId"
