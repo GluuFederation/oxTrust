@@ -21,7 +21,7 @@
 		</section>	<section class="content"> <!-- Small boxes (Stat box) -->
 		
         <div id="formArea">
-        	<h:link outcome="/attribute/attributeExport"
+        	<h:link includeViewParams="false" outcome="/attribute/attributeExport"
 					styleClass="label label-success" value="Export Attribute LDIF" style="padding:6px;" />
 			<div class="row" style="padding-top:20px">
             <ui:decorate template="/WEB-INF/incl/attribute/attributeImportForm.xhtml">

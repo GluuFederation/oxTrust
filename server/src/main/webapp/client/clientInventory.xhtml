@@ -30,34 +30,28 @@
 					<div class="box box-primary">
 						<div class="box-header"></div>
 						<div style="display: inline-block; width: 75% !important;">
-
 							<h:panelGroup>
-								<div class="row">
-									<ox:decorate
-										id="searchPattern">
-										<!--    <h:link outcome="/client/addClient" value="Add Client" styleClass="addClient" /> -->
-										<ui:define name="label" style="margin-left:15px;">
-											<a class="btn btn-primary"
-												href="#{request.contextPath}/client/manage/add">#{msg['client.addClient']}</a>
-										</ui:define>
-									</ox:decorate>
-
-									<h:form>
-										<ox:decorate
-											id="searchPattern" hideLabel="true">
-											<div style="width: 100%; float: left;margin-left:17px;">
-												<h:inputText style="width:60%; float:left;"
-													styleClass="form-control"
-													value="#{searchClientAction.searchPattern}" size="30"
-													maxlength="30" id="searchPatternId"
-													alt="Search parameters for client like inum,iname,displayName" />
-												<h:commandButton style="float:left;margin-left :3px;"
-													styleClass="btn btn-primary" value="#{msg['client.search']}"
-													action="#{searchClientAction.search}" />
-											</div>
-										</ox:decorate>
-									</h:form>
+								<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:15px">
+									<h:link includeViewParams="false" outcome="/client/addClient" value="#{msg['client.addClient']}" styleClass="btn btn-primary" />
 								</div>
+
+								<richext:spacer height="16" />
+
+								<h:form>
+									<ox:decorate
+										id="searchPattern" hideLabel="true">
+										<div style="width: 100%; float: left;margin-left:17px;">
+											<h:inputText style="width:60%; float:left;"
+												styleClass="form-control"
+												value="#{searchClientAction.searchPattern}" size="30"
+												maxlength="30" id="searchPatternId"
+												alt="Search parameters for client like inum,iname,displayName" />
+											<h:commandButton style="float:left;margin-left :3px;"
+												styleClass="btn btn-primary" value="#{msg['client.search']}"
+												action="#{searchClientAction.search}" />
+										</div>
+									</ox:decorate>
+								</h:form>
 
 								<div class="row">
 
@@ -87,7 +81,7 @@
 															<f:facet name="header">
 																#{msg['client.displayName']}
 															</f:facet>
-															<h:link outcome="/client/updateClient"
+															<h:link includeViewParams="false" outcome="/client/updateClient"
 																value="#{clt.displayName}">
 																<f:param name="inum" value="#{clt.inum}" />
 															</h:link>

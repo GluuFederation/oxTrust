@@ -35,7 +35,7 @@
         <div id="formArea">
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
                 
-                <h:link outcome="/group/addGroup" value="#{msg['group.addGroup']}" styleClass="addGroup btn btn-primary" style="margin-left:20px !important;" />
+                <h:link includeViewParams="false" outcome="/group/addGroup" value="#{msg['group.addGroup']}" styleClass="addGroup btn btn-primary" style="margin-left:20px !important;" />
                     
                 <richext:spacer height="16" />
 
@@ -59,7 +59,7 @@
                         rendered="#{searchGroupAction.groupList.size gt 0}">
                         <rich:column sortBy="#{grp.displayName}">
                             <f:facet name="header">#{msg['group.displayName']}</f:facet>
-                            <h:link outcome="/group/updateGroup" value="#{grp.displayName}">
+                            <h:link includeViewParams="false" outcome="/group/updateGroup" value="#{grp.displayName}">
                                 <f:param name="inum" value="#{grp.inum}" />
                             </h:link>
                         </rich:column>

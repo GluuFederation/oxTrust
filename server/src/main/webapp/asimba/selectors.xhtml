@@ -26,7 +26,7 @@
 
         <section class="content"> 
             <div style="margin-left: 16px;">
-                <h:link outcome="/asimba/editSelector" value="#{msg['asimba.addSelector']}" styleClass="addPerson btn btn-primary" />
+                <h:link includeViewParams="false" outcome="/asimba/editSelector" value="#{msg['asimba.addSelector']}" styleClass="addPerson btn btn-primary" />
             </div>
 
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -58,7 +58,7 @@
                        <f:facet name="header">  
                         <div style="text-align: center;"> #{msg['asimba.sp']}</div>
                     </f:facet>
-                    <h:link outcome="/asimba/editSelector" value="#{selector.id}">
+                    <h:link includeViewParams="false" outcome="/asimba/editSelector" value="#{selector.id}">
                         <f:param name="inum" value="#{selector.inum}" />
                     </h:link>
                 </h:column>

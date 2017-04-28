@@ -39,7 +39,7 @@
                             <div id="formArea">
                                 <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
 
-                                    <h:link outcome="/sectoridentifier/addSectorIdentifier"
+                                    <h:link includeViewParams="false" outcome="/sectoridentifier/addSectorIdentifier"
                                             value="#{msg['sectorIdentifier.addSectorIdentifiers']}"
                                             styleClass="addSectorIdentifier btn btn-primary"
                                             style="margin-left:20px !important;"/>
@@ -75,7 +75,7 @@
                                                         rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size gt 0}">
                                             <rich:column sortBy="#{si.inum}">
                                                 <f:facet name="header">inum</f:facet>
-                                                <h:link outcome="/sectoridentifier/updateSectorIdentifier"
+                                                <h:link includeViewParams="false" outcome="/sectoridentifier/updateSectorIdentifier"
                                                         value="#{si.inum}"
                                                        >
                                                     <f:param name="inum" value="#{si.inum}"/>

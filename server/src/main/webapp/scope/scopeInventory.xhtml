@@ -33,35 +33,28 @@
 						<div style="display: inline-block; width: 98% !important;">
 
 							<h:panelGroup>
-								<div class="row">
-									<ox:decorate
-										id="searchPattern">
-										<!-- <h:link  outcome="/scope/addScope" value="Add Scope" styleClass="form-control" /> -->
-										<ui:define name="label" style="margin-left:15px;">
-											<a class="btn btn-primary"
-												href="#{request.contextPath}/scope/manage/add">#{msg['scope.addScope']}</a>
-										</ui:define>
-									</ox:decorate>
-
-									<richext:spacer height="16" />
-
-									<h:form>
-										<ox:decorate
-											id="searchPattern" hideLabel="true">
-											<div style="width: 100%; float: left;margin-left:17px;">
-												<h:inputText style="width:50%; float:left;"
-													value="#{searchScopeAction.searchPattern}" size="30"
-													maxlength="30" id="searchPatternId"
-													styleClass="form-control"
-													alt="search parameters for scope like inum,displayName" />
-												<h:commandButton style="float:left;margin-left :3px;"
-													styleClass="btn btn-primary" value="Search"
-													action="#{searchScopeAction.search}" />
-											</div>
-										</ox:decorate>
-									</h:form>
-
+								<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:15px">
+									<h:link includeViewParams="false"  outcome="/scope/addScope" value="#{msg['scope.addScope']}" styleClass="btn btn-primary" />
 								</div>
+
+								<richext:spacer height="16" />
+
+								<h:form>
+									<ox:decorate
+										id="searchPattern" hideLabel="true">
+										<div style="width: 100%; float: left;margin-left:17px;">
+											<h:inputText style="width:50%; float:left;"
+												value="#{searchScopeAction.searchPattern}" size="30"
+												maxlength="30" id="searchPatternId"
+												styleClass="form-control"
+												alt="search parameters for scope like inum,displayName" />
+											<h:commandButton style="float:left;margin-left :3px;"
+												styleClass="btn btn-primary" value="Search"
+												action="#{searchScopeAction.search}" />
+										</div>
+									</ox:decorate>
+								</h:form>
+
 								<richext:spacer height="16" />
 
 								<div class="row" style="width:100%;">
@@ -92,7 +85,7 @@
 															<f:facet name="header">
 																<div style="text-align: left;">#{msg['scope.displayName']}</div>
 															</f:facet>
-															<h:link outcome="/scope/updateScope"
+															<h:link includeViewParams="false" outcome="/scope/updateScope"
 																value="#{clt.displayName}">
 																<f:param name="inum" value="#{clt.inum}" />
 															</h:link>

@@ -55,7 +55,7 @@
                                     </div>
 
                                     <div class="pull-left" style="width:72px;">
-                                        <h:link outcome="/logout" value="#{msg['topmenu.logout']}"
+                                        <h:link includeViewParams="false" outcome="/logout" value="#{msg['topmenu.logout']}"
                                                 styleClass="btn bg-green btn-flat"
                                                 rendered="#{identity.loggedIn}"/>
 

@@ -56,7 +56,7 @@
                                     rendered="#{umaInventoryAction.scopesList.size gt 0}" style="width: 750px;">
                                     <rich:column sortBy="#{_row.displayName}">
                                         <f:facet name="header">#{msg['uma.name']}</f:facet>
-                                        <h:link value="#{_row.displayName}" outcome="/uma/scope/modifyScopeDescription">
+                                        <h:link includeViewParams="false" value="#{_row.displayName}" outcome="/uma/scope/modifyScopeDescription">
                                             <f:param name="scope" value="#{_row.inum}" />
                                         </h:link>
                                     </rich:column>
@@ -77,12 +77,12 @@
                                     <rich:column>
                                         <f:facet name="header">#{msg['uma.action']}</f:facet>
                                         <ui:fragment rendered="#{_row.id != null}">
-                                            <h:link value="#{msg['uma.download']}" outcome="/uma/scope/scopeDescriptionFile">
+                                            <h:link includeViewParams="false" value="#{msg['uma.download']}" outcome="/uma/scope/scopeDescriptionFile">
                                                 <f:param name="scope" value="#{_row.id}" />
                                                 <f:param name="dl" value="#{true}" />
                                             </h:link>
                                             <h:outputText value="/" />
-                                            <h:link value="#{msg['uma.link']}" outcome="/uma/scope/scopeDescriptionFile">
+                                            <h:link includeViewParams="false" value="#{msg['uma.link']}" outcome="/uma/scope/scopeDescriptionFile">
                                                 <f:param name="scope" value="#{_row.id}" />
                                             </h:link>
                                         </ui:fragment>

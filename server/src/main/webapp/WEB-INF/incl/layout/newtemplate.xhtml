@@ -137,9 +137,9 @@
 				   #{' - '}
 				   Ajax4jsf Log (Ctrl+Shift+D)
 				   #{' - '}
-				   <h:link id="debugConsole" outcome="/debug" value="Debug console" target="debugConsole"/>
+				   <h:link includeViewParams="false" id="debugConsole" outcome="/debug" value="Debug console" target="debugConsole"/>
 				   #{' - '}
-				   <h:link id="resetSession" outcome="/home" action="#{org.jboss.seam.web.session.invalidate()}" value="Terminate session"/>
+				   <h:link includeViewParams="false" id="resetSession" outcome="/home" action="#{org.jboss.seam.web.session.invalidate()}" value="Terminate session"/>
 				</p>
 			</ui:fragment>
 	    </div>

@@ -261,7 +261,7 @@
                                     <ui:param name="_ownerGroup"
                                               value="#{gluufn:getDisplayNameEntry(_organization.ownerGroup)}"/>
                                     <ox:decorate id="ownerGroup" label="#{msg['organizationForm.ownerGroup']}">
-                                        <h:link outcome="/group/updateGroup" value="#{_ownerGroup.displayName}"
+                                        <h:link includeViewParams="false" outcome="/group/updateGroup" value="#{_ownerGroup.displayName}"
                                                >
                                             <f:param name="inum" value="#{_ownerGroup.inum}"/>
                                         </h:link>
@@ -270,7 +270,7 @@
                                     <ui:param name="_managerGroup"
                                               value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}"/>
                                     <ox:decorate id="managerGroup" label="#{msg['organizationForm.managerGroup']}">
-                                        <h:link styleClass="btn btn-link" outcome="/group/updateGroup"
+                                        <h:link includeViewParams="false" styleClass="btn btn-link" outcome="/group/updateGroup"
                                                 value="#{_managerGroup.displayName}">
                                             <f:param name="inum" value="#{_managerGroup.inum}"/>
                                         </h:link>

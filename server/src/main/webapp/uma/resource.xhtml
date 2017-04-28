@@ -56,7 +56,7 @@
                                     rendered="#{umaInventoryAction.resourcesList.size gt 0}" style="width: 750px;">
                                     <rich:column sortBy="#{_row.name}">
                                         <f:facet name="header">#{msg['uma.name']}</f:facet>
-                                        <h:link value="#{_row.name}" outcome="/uma/resource/modifyResourceSet">
+                                        <h:link includeViewParams="false" value="#{_row.name}" outcome="/uma/resource/modifyResourceSet">
                                             <f:param name="resource" value="#{_row.inum}" />
                                         </h:link>
                                     </rich:column>

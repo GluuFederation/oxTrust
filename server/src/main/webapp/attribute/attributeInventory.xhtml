@@ -29,7 +29,7 @@
 			<h:panelGroup columns="1" border="0" cellpadding="0" cellspacing="0"
 				width="100%">
 				<h:form id="attributesFormId">
-				<h:link outcome="/attribute/addAttribute"
+				<h:link includeViewParams="false" outcome="/attribute/addAttribute"
 					styleClass="label label-success" value="#{msg['attribute.registerAttribute']}" style="padding:6px;" />
 
 				
@@ -91,7 +91,7 @@
 																			<f:facet name="header" >  
               <div style="text-align: center;"> #{msg['attribute.displayName']}</div>
             </f:facet>
-																			<h:link outcome="/attribute/updateAttribute"
+																			<h:link includeViewParams="false" outcome="/attribute/updateAttribute"
 																				value="#{attr.displayName}">
 																				<f:param name="inum" value="#{attr.inum}" />
 																			</h:link>

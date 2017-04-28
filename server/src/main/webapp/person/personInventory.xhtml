@@ -34,7 +34,7 @@
 						<div style="display: inline-block; width: 100% !important;">
         <div id="formArea">
             <div style="margin-left: 16px;">
-                <h:link outcome="/person/addPerson" value="#{msg['person.addPerson']}" styleClass="addPerson btn btn-primary" rendered="#{organizationService.instance().allowPersonModification}" />
+                <h:link includeViewParams="false" outcome="/person/addPerson" value="#{msg['person.addPerson']}" styleClass="addPerson btn btn-primary" rendered="#{organizationService.instance().allowPersonModification}" />
             </div>
 
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -60,7 +60,7 @@
                         rendered="#{searchPersonAction.personList.size gt 0}">
                         <rich:column sortBy="#{prs.displayName}">
                             <f:facet name="header">#{msg['person.displayName']}</f:facet>
-                            <h:link outcome="/person/updatePerson" value="#{prs.displayName}">
+                            <h:link includeViewParams="false" outcome="/person/updatePerson" value="#{prs.displayName}">
                                 <f:param name="inum" value="#{prs.inum}" />
                             </h:link>
                         </rich:column>
@@ -70,7 +70,7 @@
                         </rich:column>
                         <rich:column sortBy="#{prs.uid}">
                             <f:facet name="header">#{msg['person.uid']}</f:facet>
-                            <h:link outcome="/person/updatePerson" value="#{prs.uid}">
+                            <h:link includeViewParams="false" outcome="/person/updatePerson" value="#{prs.uid}">
                                 <f:param name="inum" value="#{prs.inum}" />
                             </h:link>
                         </rich:column>
