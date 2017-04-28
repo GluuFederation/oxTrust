@@ -60,7 +60,7 @@
                         <rich:column>
                             <f:facet name="header">#{msg['deviceInventory.approvedAt']}</f:facet>
                             <h:outputText value="#{_device.deviceConfiguration.approvedTime}">
-		                        <s:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
+		                        <f:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
                             </h:outputText>
                         </rich:column>
                         <rich:column>

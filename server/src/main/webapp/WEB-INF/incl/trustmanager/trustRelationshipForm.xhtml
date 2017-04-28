@@ -204,7 +204,6 @@
 									<s:selectItems value="#{_trustRelationshipAction.entityTypeList}"
 										noSelectionLabel="Entity type" var="_type"
 										label="#{_type.displayName}" />
-									<!-- <s:convertEnum/> -->
 									<f:converter
 										converterId="org.gluu.jsf2.converter.EnumConverter" />
 									<a4j:ajax event="change"
@@ -223,7 +222,6 @@
 									<s:selectItems value="#{_trustRelationshipAction.metadataSourceTypesList}"
 										noSelectionLabel="Metadata type" var="_type"
 										label="#{_type.displayName}" />
-									<!-- <s:convertEnum/> -->
 									<f:converter
 										converterId="org.gluu.jsf2.converter.EnumConverter" />
 									<a4j:ajax event="change" 

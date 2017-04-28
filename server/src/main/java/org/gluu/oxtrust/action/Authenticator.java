@@ -459,83 +459,67 @@ public class Authenticator implements Serializable {
 		String accessToken = tokenResponse.getAccessToken();
 		log.debug(" accessToken : " + accessToken);
 
-		// 2. Validate the access token
-		ValidateTokenClient validateTokenClient = new ValidateTokenClient(openIdConfiguration.getValidateTokenEndpoint());
-		ValidateTokenResponse response3 = validateTokenClient.execValidateToken(accessToken);
-		log.debug(" response3.getStatus() : " + response3.getStatus());
+		log.info("Session validation successful. User is logged in");
+		UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
+		UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
-		log.debug("validate check session status:" + response3.getStatus());
-		if (response3.getErrorDescription() != null) {
-			log.debug("validate token status message:" + response3.getErrorDescription());
+		this.oauthData.setHost(oxAuthHost);
+		// Determine uid
+		List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
+		if ((uidValues == null) || (uidValues.size() == 0)) {
+			log.error("User info response doesn't contains uid claim");
+			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
+		
+		// Store request authentication method
+		if (Contexts.getSessionContext().isSet(OxTrustConstants.OXAUTH_ACR_VALUES)) {
+			String requestAcrValues = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_ACR_VALUES);
+			Jwt jwt;
+            try {
+				jwt = Jwt.parse(idToken);
+			} catch (InvalidJwtException ex) {
+				log.error("Failed to parse id_token");
+				return OxTrustConstants.RESULT_NO_PERMISSIONS;
+			}
+            
+            String issuer = openIdConfiguration.getIssuer();
+            String responseIssuer = (String) jwt.getClaims().getClaim(JwtClaimName.ISSUER);
+            if (issuer == null ||  responseIssuer == null || !issuer.equals(responseIssuer)) {
+				log.error("User info response :  Issuer.");
+				return OxTrustConstants.RESULT_NO_PERMISSIONS;
+			}
 
-		if (response3.getStatus() == 200) {
-			log.info("Session validation successful. User is logged in");
-			UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
-			UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
-
-			this.oauthData.setHost(oxAuthHost);
-			// Determine uid
-			List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
-			if ((uidValues == null) || (uidValues.size() == 0)) {
-				log.error("User info response doesn't contains uid claim");
+            List<String> acrValues = jwt.getClaims().getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
+			if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
+				log.error("User info response doesn't contains acr claim");
+				return OxTrustConstants.RESULT_NO_PERMISSIONS;
+			}
+			if (!acrValues.contains(requestAcrValues)) {
+				log.error("User info response contains acr='{0}' claim but expected acr='{1}'", acrValues, requestAcrValues);
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
 			
-			// Store request authentication method
-			if (Contexts.getSessionContext().isSet(OxTrustConstants.OXAUTH_ACR_VALUES)) {
-				String requestAcrValues = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_ACR_VALUES);
-				Jwt jwt;
-                try {
-					jwt = Jwt.parse(idToken);
-				} catch (InvalidJwtException ex) {
-					log.error("Failed to parse id_token");
-					return OxTrustConstants.RESULT_NO_PERMISSIONS;
-				}
-                
-                String issuer = openIdConfiguration.getIssuer();
-                String responseIssuer = (String) jwt.getClaims().getClaim(JwtClaimName.ISSUER);
-                if (issuer == null ||  responseIssuer == null || !issuer.equals(responseIssuer)) {
-					log.error("User info response :  Issuer.");
-					return OxTrustConstants.RESULT_NO_PERMISSIONS;
-				}
+			String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
+			String nonceSession = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_NONCE);
+			if (nonceResponse == null ||  nonceSession == null || !nonceSession.equals(nonceResponse)) {
+				log.error("User info response :  nonce is not matching.");
+				return OxTrustConstants.RESULT_NO_PERMISSIONS;
+			}			
+		}	
 
-                List<String> acrValues = jwt.getClaims().getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
-				if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
-					log.error("User info response doesn't contains acr claim");
-					return OxTrustConstants.RESULT_NO_PERMISSIONS;
-				}
-				if (!acrValues.contains(requestAcrValues)) {
-					log.error("User info response contains acr='{0}' claim but expected acr='{1}'", acrValues, requestAcrValues);
-					return OxTrustConstants.RESULT_NO_PERMISSIONS;
-				}
-				
-				String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
-				String nonceSession = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_NONCE);
-				if (nonceResponse == null ||  nonceSession == null || !nonceSession.equals(nonceResponse)) {
-					log.error("User info response :  nonce is not matching.");
-					return OxTrustConstants.RESULT_NO_PERMISSIONS;
-				}			
-			}	
-			
+		this.oauthData.setUserUid(uidValues.get(0));
+		this.oauthData.setAccessToken(accessToken);
+		this.oauthData.setAccessTokenExpirationInSeconds(tokenResponse.getExpiresIn());
+		this.oauthData.setScopes(scopes);
+		this.oauthData.setIdToken(idToken);
+		this.oauthData.setSessionState(sessionState);
 
-			this.oauthData.setUserUid(uidValues.get(0));
-			this.oauthData.setAccessToken(accessToken);
-			this.oauthData.setAccessTokenExpirationInSeconds(response3.getExpiresIn());
-			this.oauthData.setScopes(scopes);
-			this.oauthData.setIdToken(idToken);
-			this.oauthData.setSessionState(sessionState);
+		log.info("user uid:" + oauthData.getUserUid());
 
-			log.info("user uid:" + oauthData.getUserUid());
+		// Create session scope authentication service
+		Component.getInstance(AuthenticationSessionService.class);
 
-			// Create session scope authentication service
-			Component.getInstance(AuthenticationSessionService.class);
-
-			return OxTrustConstants.RESULT_SUCCESS;
-		}
-
-		log.info("Token validation failed. User is NOT logged in");
-		return OxTrustConstants.RESULT_NO_PERMISSIONS;
+		return OxTrustConstants.RESULT_SUCCESS;
 		
 	}
 
