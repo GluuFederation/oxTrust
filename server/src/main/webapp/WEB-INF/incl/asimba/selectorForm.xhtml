@@ -8,6 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://java.sun.com/jsf/composite/richext"
+ 	xmlns:ox="http://java.sun.com/jsf/composite/ox"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <h:outputStylesheet>
@@ -69,10 +70,9 @@
                 <div class="col-xs-12">
                     
             <h:panelGroup id="selectorSelectSPRequestorGroupId">
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+            <ox:decorate
                 id="selectorSelectSPRequestor"
-                rendered="true">
-                <ui:define name="label">#{msg['asimba.selectSPRequestor']}</ui:define>
+                rendered="true" label="#{msg['asimba.selectSPRequestor']}">
 
                 <h:selectOneMenu styleClass="form-control"
                     title=""
@@ -80,14 +80,13 @@
                     required="true" tabindex="0" >
                     <f:selectItems value="#{_updateAsimbaSelectorAction.spRequestorList}" />
                 </h:selectOneMenu>
-            </s:decorate>
+            </ox:decorate>
             </h:panelGroup>
                     
             <h:panelGroup id="selectorSelectIDPGroupId">
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+            <ox:decorate
                 id="selectorSelectIDP"
-                rendered="true">
-                <ui:define name="label">#{msg['asimba.selectIDP']}</ui:define>
+                rendered="true" label="#{msg['asimba.selectIDP']}">
 
                 <h:selectOneMenu styleClass="form-control"
                     title=""
@@ -95,21 +94,20 @@
                     required="true" tabindex="1" >
                     <f:selectItems value="#{_updateAsimbaSelectorAction.idpList}" />
                 </h:selectOneMenu>
-            </s:decorate>
+            </ox:decorate>
             </h:panelGroup>
             
             <h:panelGroup id="selectorEditFriendlyNameGroupId">
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+            <ox:decorate
                     id="selectorEditFriendlyName"
-                    rendered="true">
-                    <ui:define name="label">#{msg['asimba.friendlyName']}</ui:define>
+                    rendered="true" label="#{msg['asimba.friendlyName']}">
             <h:outputLabel 
                 title="#{msg['asimba.theSelectorRuleFriendlyName']}"
                 value="#{msg['asimba.theSelectorRuleFriendlyName']}"/>
             <h:inputText styleClass="form-control"
                 title="The selector rule friendly name"
                 value="#{_selector.friendlyName}" size="100" tabindex="2" />
-            </s:decorate>
+            </ox:decorate>
             </h:panelGroup>
             
             <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">

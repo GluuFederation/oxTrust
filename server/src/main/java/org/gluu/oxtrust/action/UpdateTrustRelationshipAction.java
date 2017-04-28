@@ -596,7 +596,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					}
 					
 				}
-				if(updatedLogoutRedirectUris.size() == 0){
+				if(updatedLogoutRedirectUris.isEmpty()){
 					client.setPostLogoutRedirectUris(null);
 				}else{
 					client.setPostLogoutRedirectUris(updatedLogoutRedirectUris.toArray(new String[0]));

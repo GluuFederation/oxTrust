@@ -548,7 +548,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
-			<artifactId>oxJsfUtil</artifactId>
+			<artifactId>oxcore-jsf-util</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.xdi</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>

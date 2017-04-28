@@ -8,18 +8,18 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     template="/WEB-INF/incl/layout/template.xhtml">
 
     <ui:define name="body">
         <div id="formArea">
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <h:form>
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
-                        <ui:param name="_hideLabel" value="true" />
+                    <ox:decorate id="searchPattern" hideLabel="true">
                         <h:inputText value="#{pushDeviceInventoryAction.searchPattern}" size="30" maxlength="30" id="searchPatternId" styleClass="searchParameters"
                             alt="Search parameters for client like inum,iname,displayName" />
                         <h:commandButton value="#{msg['deviceInventory.search']}" action="#{pushDeviceInventoryAction.search}" />
-                    </s:decorate>
+                    </ox:decorate>
                 </h:form>
 
                 <richext:spacer height="16" />

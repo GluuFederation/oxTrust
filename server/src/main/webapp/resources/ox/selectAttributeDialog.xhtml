@@ -8,6 +8,7 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:gluufn="http://www.gluu.org/jsf/functions"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
@@ -32,13 +33,12 @@
 
         <h:form>
             <h:panelGroup id="attributePanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft" style="float:left !important;width:100% !important;">
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
-                    <ui:param name="_hideLabel" value="true" />
+                <ox:decorate id="searchPattern" hideLabel="true">
                     <div class="row" style="float:left;margin-left:3px;">
                     <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" styleClass="searchParameters form-control" alt="Search parameters like Uid, Name, Display Name, E-mail" /></div>
                    <div class="row" style="float:left; margin-left: 20px;  margin-top: -5px;">
                     <a4j:commandButton value="Search" style = "margin-top:5px;" styleClass="btn btn-primary" action="#{cc.attrs.searchMethod}" render="attributePanelId" eventsQueue="#{cc.attrs.queue}" /></div>
-                </s:decorate>
+                </ox:decorate>
 
                 <h:panelGroup id="attributeNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
                     <h:outputText value="No Search Result Found" />

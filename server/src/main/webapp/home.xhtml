@@ -13,10 +13,10 @@
             <ui:param name="welcomeTitle" value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}"/>
 
             <s:fragment rendered="#{not empty welcomeTitle and not s:hasPermission('configuration', 'access')}">
-                <s:div>
+                <h:panelGroup layout="block">
                     <h:outputText value="#{welcomeTitle}" escape="false"/>
                     <h:outputText value="#{organizationService.getVersion()}" escape="false"/>
-                </s:div>
+                </h:panelGroup>
             </s:fragment>
             <s:fragment rendered="#{empty welcomeTitle}">
                 <h1>
@@ -130,7 +130,7 @@
 
                             <div class="box-body">
                                 <div class="row">
-                                    <div class="col-md-10">
+                                    <div>
                                         <p class="text-center">
                                             <strong></strong>
                                         </p>
@@ -140,27 +140,7 @@
                                                     style="width: 703px; height: 185px;"></canvas>
                                         </div>
 
-                                    </div>
-
-                                    <div class="col-md-2">
-
-                                        <div class="progress-group">
-                                            <span class="progress-text">#{msg['home.loginSuccessful']}</span>
-                                            <div class="progress sm">
-                                                <div class="progress-bar progress-bar-aqua"
-                                                     style="width: 100%; background-color: #00BE79;"></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="progress-group">
-                                            <span class="progress-text">#{msg['home.loginFailed']}</span>
-                                            <div class="progress sm">
-                                                <div class="progress-bar progress-bar-red"
-                                                     style="width: 100%; background-color: #F39C12;"></div>
-                                            </div>
-                                        </div>
-
-                                    </div>
+                                    </div>                                   
 
                                 </div>
 

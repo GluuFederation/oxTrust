@@ -7,7 +7,7 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+//import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor.getUserLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor.getFidoDeviceLdapAttributeName;
@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -88,6 +89,10 @@ public class BaseScimWebService {
 
 	@In
 	private ScimFilterParserService scimFilterParserService;
+	
+	public int getMaxCount(){
+		return applicationConfiguration.getScimProperties().getMaxCount() ;
+	}
 
 	protected Response processTestModeAuthorization(String token) throws Exception {
 		try {
@@ -194,7 +199,7 @@ public class BaseScimWebService {
 		startIndex = (startIndex < 1) ? 1 : startIndex;
 
 		count = (count < 1) ? DEFAULT_COUNT : count;
-		count = (count > MAX_COUNT) ? MAX_COUNT : count;
+		count = (count >getMaxCount()) ? getMaxCount() : count;
 
 		if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
 			sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "id";
@@ -289,7 +294,7 @@ public class BaseScimWebService {
 		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? new ObjectMapper().writeValueAsString(attributes) : null));
 
 		// List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
-		List<T> result = ldapEntryManager.findEntriesSearchSearchResult(dn, entryClass, filter, startIndex, count, MAX_COUNT, sortBy, sortOrderEnum, vlvResponse, attributes);
+		List<T> result = ldapEntryManager.findEntriesSearchSearchResult(dn, entryClass, filter, startIndex, count, getMaxCount(), sortBy, sortOrderEnum, vlvResponse, attributes);
 
 		log.info(" ### RESULTS INFO ###");
 		log.info(" totalResults = " + vlvResponse.getTotalResults());

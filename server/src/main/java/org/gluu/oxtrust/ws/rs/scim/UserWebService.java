@@ -40,7 +40,6 @@ import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.service.XmlService;
 
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
@@ -82,9 +81,9 @@ public class UserWebService extends BaseScimWebService {
 
 		try {
 
-			if (count > MAX_COUNT) {
+			if (count > getMaxCount()) {
 
-				String detail = "Too many results (=" + count + ") would be returned; max is " + MAX_COUNT + " only.";
+				String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
 				return getErrorResponse(detail, Response.Status.BAD_REQUEST.getStatusCode());
 
 			} else {

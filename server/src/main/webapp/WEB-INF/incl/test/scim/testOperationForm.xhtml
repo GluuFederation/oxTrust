@@ -7,22 +7,20 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
     <h:form id="operationForm">
         <h:panelGrid columns="1" width="100%">
-             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="userName">
-                <ui:define name="label">#{msg['testOperationForm.userName']}</ui:define>
+             <ox:decorate id="userName" label="#{msg['testOperationForm.userName']}">
                 <h:inputText value="#{_scimAction.userName}" size="30" maxlength="30" required="true" id="userNameId"/>
-             </s:decorate>
-             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="password">
-                <ui:define name="label">#{msg['testOperationForm.password']}</ui:define>
+             </ox:decorate>
+             <ox:decorate id="password" label="#{msg['testOperationForm.password']}">
                 <h:inputSecret value="#{_scimAction.password}" size="30" maxlength="30" required="true" id="passwordId"/>
-             </s:decorate>
-             <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="baseUrl">
-                <ui:define name="label">#{msg['testOperationForm.baseURL']}</ui:define>
+             </ox:decorate>
+             <ox:decorate id="baseUrl" label="#{msg['testOperationForm.baseURL']}">
                 <h:inputText value="#{_scimAction.baseUrl}" size="30" maxlength="60" required="true" id="baseUrlId"/>
-             </s:decorate>
+             </ox:decorate>
              <s:fragment rendered="#{_scimAction.responseResult ne null}">
                  <hr/>
                  <h:inputTextarea value="#{_scimAction.responseResult}" style="width: 700px;" rows="30" disabled="true"/>

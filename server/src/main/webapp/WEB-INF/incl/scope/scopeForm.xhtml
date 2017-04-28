@@ -19,23 +19,19 @@
                <div style="display: inline-block;width: 75% !important;">
         <h:panelGroup>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="inum" rendered="#{not _new}">
-                <ui:define name="label">#{msg['scope.inum']}</ui:define>
+            <ox:decorate id="inum" rendered="#{not _new}" label="#{msg['scope.inum']}">
                 <h:outputText styleClass="form-control" value="#{_scope.inum}" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                <ui:define name="label">#{msg['scope.displayName']}</ui:define>
+            <ox:decorate id="displayName" label="#{msg['scope.displayName']}">
                 <rich:inplaceInput value="#{_scope.displayName}"  defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="704"  required="true" id="displayNameId" />
-            </s:decorate>
+            </ox:decorate>
 
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
-                <ui:define name="label">#{msg['scope.description']}</ui:define>
+            <ox:decorate id="description" label="#{msg['scope.description']}">
                 <h:inputTextarea styleClass="form-control" value="#{_scope.description}" rows="3" cols="80" maxlength="4000" id="descriptionId" />
-            </s:decorate>
+            </ox:decorate>
   
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['scope.scopeType']}</ui:define>
+            <ox:decorate label="#{msg['scope.scopeType']}">
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
                     <s:selectItems value="#{scopeService.scopeTypes}" noSelectionLabel="Default" var="_type" label="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
@@ -43,19 +39,17 @@
 						render="dynamicScripts, selectedClaims"
 						execute="@this" />
                 </h:selectOneMenu>
-            </s:decorate>
+            </ox:decorate>
   
-            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                <ui:define name="label">#{msg['scope.defaultScope']}</ui:define>
+            <ox:decorate label="#{msg['scope.defaultScope']}">
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
                     <s:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" noSelectionLabel="Select"/>
 
                 </h:selectOneMenu>
-            </s:decorate>
+            </ox:decorate>
 			<h:panelGroup id="selectedClaims">
 				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'openid')}">
-		            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="claims">
-		                <ui:define name="label">#{msg['scope.claims']}</ui:define>
+		            <ox:decorate id="claims" label="#{msg['scope.claims']}">
 		                <h:panelGroup id="selectedClaimsId">
 		                    <h:panelGroup>
 		                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim">
@@ -73,13 +67,12 @@
 		                        <a4j:commandButton styleClass="btn btn-primary" value="Add Claim" oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();" execute="@this" eventsQueue="scopeQueue" />
 		                    </h:panelGroup>
 		                </h:panelGroup>
-		            </s:decorate>
+		            </ox:decorate>
 	            </a4j:region>
             </h:panelGroup>
 			<h:panelGroup id="dynamicScripts">
 				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
-					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-						<ui:define name="label">#{msg['scope.dynamicScopeScripts']}</ui:define>
+					<ox:decorate label="#{msg['scope.dynamicScopeScripts']}">
 						<h:panelGroup id="selectedDynamicScriptId">
 							<h:panelGrid columns="1" width="100%" border="0"
 								cellpadding="0" cellspacing="0">
@@ -103,8 +96,8 @@
 								<richext:spacer height="16" />
 							</h:panelGrid>
 						</h:panelGroup>
-					</s:decorate>
-					<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+					</ox:decorate>
+					<ox:decorate
 						id="command">
 						<h:panelGroup>
 							<a4j:commandButton value="#{msg['scope.addDynamicScopeScript']}"
@@ -112,7 +105,7 @@
 								execute="@this" styleClass="btn btn-primary"
 								style="margin-left:-95px;" />
 						</h:panelGroup>
-					</s:decorate>
+					</ox:decorate>
 				</a4j:region>
 			</h:panelGroup>
         </h:panelGroup>

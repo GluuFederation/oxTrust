@@ -37,7 +37,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
@@ -84,9 +83,9 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 		try {
 
-			if (count > MAX_COUNT) {
+			if (count > getMaxCount()) {
 
-				String detail = "Too many results (=" + count + ") would be returned; max is " + MAX_COUNT + " only.";
+				String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {

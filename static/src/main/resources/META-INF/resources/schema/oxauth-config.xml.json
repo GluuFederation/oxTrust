@@ -95,13 +95,6 @@
             "format": "url",
             "minLength": 1
         },
-        "validateTokenEndpoint": {
-            "id": "validateTokenEndpoint",
-            "description": "URL of the Endpoint for token validation.",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
         "openIdDiscoveryEndpoint": {
             "id": "openIdDiscoveryEndpoint",
             "description": "URL for the Discovery Endpoint.",
@@ -1091,7 +1084,6 @@
         "endSessionEndpoint",
         "jwksUri",
         "registrationEndpoint",
-        "validateTokenEndpoint",
         "openIdDiscoveryEndpoint",
         "openIdConfigurationEndpoint",
         "idGenerationEndpoint",
