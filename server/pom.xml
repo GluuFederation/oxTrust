@@ -695,6 +695,14 @@
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces-a4j</artifactId>
 		</dependency>
+
+		<!-- OmniFaces -->
+<!--
+		<dependency>
+			<groupId>org.omnifaces</groupId>
+			<artifactId>omnifaces</artifactId>
+		</dependency>
+ -->
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>

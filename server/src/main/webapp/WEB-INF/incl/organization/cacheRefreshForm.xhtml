@@ -82,7 +82,7 @@
                 <h:selectOneMenu styleClass="form-control"  value="#{_configureCacheRefreshAction.updateMethod}" required="true" id="refreshMethodId">
                     <s:selectItems value="#{_configureCacheRefreshAction.allCacheRefreshUpdateMethods}" var="_type" label="#{_type.displayName}" />
                     <!-- <s:convertEnum/> -->
-                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                    <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
                     <a4j:ajax event="change" render="vdsTogglePanelGroup, copyTogglePanelGroup" execute="@this" limitRender="true" />
                 </h:selectOneMenu>
             </ox:decorate>

@@ -14,6 +14,7 @@
 		<maven.min-version>3.0.3</maven.min-version>
 		<seam.version>2.3.1.Final</seam.version>
 		<richfaces.version>4.5.17.Final</richfaces.version>
+		<omnifaces.version>2.6.1</omnifaces.version>
 		<hibernate.version>4.1.8.Final</hibernate.version>
 		<jackson.version>1.9.11</jackson.version>
 		<jettison.version>1.3.2</jettison.version>
@@ -206,6 +207,14 @@
 				<version>${richfaces.version}</version>
 			</dependency>
 
+			<!-- Omnifaces -->
+<!--
+			<dependency>
+				<groupId>org.omnifaces</groupId>
+				<artifactId>omnifaces</artifactId>
+				<version>${omnifaces.version}</version>
+			</dependency>
+ -->
 			<!-- Commons libs -->
 			<dependency>
 				<groupId>commons-codec</groupId>

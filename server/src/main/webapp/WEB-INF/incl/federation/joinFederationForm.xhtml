@@ -88,7 +88,7 @@
                                 <h:selectOneMenu value="#{_federationProposal.spMetaDataSourceType}" required="#{empty param['sv']}" id="spMetaDataSourceTypeId">
                                     <s:selectItems value="#{federationService.metadataSourceTypes}" noSelectionLabel="#{msg['federation.metadataType']}" var="_type" label="#{_type.displayName}" />
                                     <!-- <s:convertEnum/> -->
-                                    <f:converter converterId="org.gluu.oxtrust.util.jsf.EnumConverter" />
+                                    <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
                                     <a4j:ajax event="change"
                                         render="fileWrapperGroupId, FederationWizard, spMetaDataUrlGroupId, 
                                                     FederationWizardEntitySelection" limitRender="true" execute="@this">
