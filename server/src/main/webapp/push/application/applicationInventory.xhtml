@@ -36,9 +36,9 @@
                             <f:facet name="header">Name</f:facet>
                             <h:outputText value="#{_application.name}" />
 <!--
-                            <s:link view="/push/application/updateApplication.xhtml" value="#{_application.name}" propagation="none">
+                            <h:link outcome="/push/application/updateApplication" value="#{_application.name}">
                                 <f:param name="id" value="#{_application.id}" />
-                            </s:link>
+                            </h:link>
 -->
                         </rich:column>
                         <rich:column sortBy="#{_application.displayName}">

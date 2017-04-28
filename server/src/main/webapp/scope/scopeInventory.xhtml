@@ -36,7 +36,7 @@
 								<div class="row">
 									<ox:decorate
 										id="searchPattern">
-										<!-- <s:link  view="/scope/addScope.xhtml" value="Add Scope" styleClass="form-control" propagation="none" /> -->
+										<!-- <h:link  outcome="/scope/addScope" value="Add Scope" styleClass="form-control" /> -->
 										<ui:define name="label" style="margin-left:15px;">
 											<a class="btn btn-primary"
 												href="#{request.contextPath}/scope/manage/add">#{msg['scope.addScope']}</a>
@@ -92,10 +92,10 @@
 															<f:facet name="header">
 																<div style="text-align: left;">#{msg['scope.displayName']}</div>
 															</f:facet>
-															<s:link view="/scope/updateScope.xhtml"
-																value="#{clt.displayName}" propagation="none">
+															<h:link outcome="/scope/updateScope"
+																value="#{clt.displayName}">
 																<f:param name="inum" value="#{clt.inum}" />
-															</s:link>
+															</h:link>
 														</h:column>
 														<h:column sortBy="#{clt.displayName}">
 															<f:facet name="header">

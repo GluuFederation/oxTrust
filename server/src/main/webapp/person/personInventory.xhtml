@@ -34,7 +34,7 @@
 						<div style="display: inline-block; width: 100% !important;">
         <div id="formArea">
             <div style="margin-left: 16px;">
-                <s:link view="/person/addPerson.xhtml" value="#{msg['person.addPerson']}" styleClass="addPerson btn btn-primary" propagation="none" rendered="#{organizationService.instance().allowPersonModification}" />
+                <h:link outcome="/person/addPerson" value="#{msg['person.addPerson']}" styleClass="addPerson btn btn-primary" rendered="#{organizationService.instance().allowPersonModification}" />
             </div>
 
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -60,9 +60,9 @@
                         rendered="#{searchPersonAction.personList.size gt 0}">
                         <rich:column sortBy="#{prs.displayName}">
                             <f:facet name="header">#{msg['person.displayName']}</f:facet>
-                            <s:link view="/person/updatePerson.xhtml" value="#{prs.displayName}" propagation="none">
+                            <h:link outcome="/person/updatePerson" value="#{prs.displayName}">
                                 <f:param name="inum" value="#{prs.inum}" />
-                            </s:link>
+                            </h:link>
                         </rich:column>
                         <rich:column sortBy="#{prs.iname}">
                             <f:facet name="header">#{msg['person.iName']}</f:facet>
@@ -70,9 +70,9 @@
                         </rich:column>
                         <rich:column sortBy="#{prs.uid}">
                             <f:facet name="header">#{msg['person.uid']}</f:facet>
-                            <s:link view="/person/updatePerson.xhtml" value="#{prs.uid}" propagation="none">
+                            <h:link outcome="/person/updatePerson" value="#{prs.uid}">
                                 <f:param name="inum" value="#{prs.inum}" />
-                            </s:link>
+                            </h:link>
                         </rich:column>
                         <rich:column sortBy="#{prs.mail}">
                             <f:facet name="header">#{msg['person.status']}</f:facet>

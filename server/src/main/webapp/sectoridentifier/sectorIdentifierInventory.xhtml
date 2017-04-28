@@ -39,9 +39,9 @@
                             <div id="formArea">
                                 <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
 
-                                    <s:link view="/sectoridentifier/addSectorIdentifier.xhtml"
+                                    <h:link outcome="/sectoridentifier/addSectorIdentifier"
                                             value="#{msg['sectorIdentifier.addSectorIdentifiers']}"
-                                            styleClass="addSectorIdentifier btn btn-primary" propagation="none"
+                                            styleClass="addSectorIdentifier btn btn-primary"
                                             style="margin-left:20px !important;"/>
 
                                     <richext:spacer height="16"/>
@@ -75,11 +75,11 @@
                                                         rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size gt 0}">
                                             <rich:column sortBy="#{si.inum}">
                                                 <f:facet name="header">inum</f:facet>
-                                                <s:link view="/sectoridentifier/updateSectorIdentifier.xhtml"
+                                                <h:link outcome="/sectoridentifier/updateSectorIdentifier"
                                                         value="#{si.inum}"
-                                                        propagation="none">
+                                                       >
                                                     <f:param name="inum" value="#{si.inum}"/>
-                                                </s:link>
+                                                </h:link>
                                             </rich:column>
                                             <f:facet name="footer">
                                                 <rich:dataScroller renderIfSinglePage="false"

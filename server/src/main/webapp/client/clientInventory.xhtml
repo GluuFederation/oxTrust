@@ -35,7 +35,7 @@
 								<div class="row">
 									<ox:decorate
 										id="searchPattern">
-										<!--    <s:link view="/client/addClient.xhtml" value="Add Client" styleClass="addClient" propagation="none" /> -->
+										<!--    <h:link outcome="/client/addClient" value="Add Client" styleClass="addClient" /> -->
 										<ui:define name="label" style="margin-left:15px;">
 											<a class="btn btn-primary"
 												href="#{request.contextPath}/client/manage/add">#{msg['client.addClient']}</a>
@@ -87,10 +87,10 @@
 															<f:facet name="header">
 																#{msg['client.displayName']}
 															</f:facet>
-															<s:link view="/client/updateClient.xhtml"
-																value="#{clt.displayName}" propagation="none">
+															<h:link outcome="/client/updateClient"
+																value="#{clt.displayName}">
 																<f:param name="inum" value="#{clt.inum}" />
-															</s:link>
+															</h:link>
 														</h:column>
 														<h:column sortBy="#{clt.iname}">
 															<f:facet name="header">

@@ -42,7 +42,7 @@
                   
                   <div class="tab-pane" id="scopeTab">
                   		<h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
-                                <s:button view="/uma/scope/modifyScopeDescription.xhtml" value="#{msg['uma.addScopeDescription']}" propagation="none" styleClass="btn btn-primary">
+                                <s:button outcome="/uma/scope/modifyScopeDescription" value="#{msg['uma.addScopeDescription']}" styleClass="btn btn-primary">
                                     <f:param name="scope" value="#{null}" />
                                 </s:button>
 
@@ -56,9 +56,9 @@
                                     rendered="#{umaInventoryAction.scopesList.size gt 0}" style="width: 750px;">
                                     <rich:column sortBy="#{_row.displayName}">
                                         <f:facet name="header">#{msg['uma.name']}</f:facet>
-                                        <s:link value="#{_row.displayName}" view="/uma/scope/modifyScopeDescription.xhtml" propagation="none">
+                                        <h:link value="#{_row.displayName}" outcome="/uma/scope/modifyScopeDescription">
                                             <f:param name="scope" value="#{_row.inum}" />
-                                        </s:link>
+                                        </h:link>
                                     </rich:column>
 
                                     <rich:column sortBy="#{_row.type.displayName}">
@@ -77,14 +77,14 @@
                                     <rich:column>
                                         <f:facet name="header">#{msg['uma.action']}</f:facet>
                                         <ui:fragment rendered="#{_row.id != null}">
-                                            <s:link value="#{msg['uma.download']}" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
+                                            <h:link value="#{msg['uma.download']}" outcome="/uma/scope/scopeDescriptionFile">
                                                 <f:param name="scope" value="#{_row.id}" />
                                                 <f:param name="dl" value="#{true}" />
-                                            </s:link>
+                                            </h:link>
                                             <h:outputText value="/" />
-                                            <s:link value="#{msg['uma.link']}" view="/uma/scope/scopeDescriptionFile.xhtml" propagation="none">
+                                            <h:link value="#{msg['uma.link']}" outcome="/uma/scope/scopeDescriptionFile">
                                                 <f:param name="scope" value="#{_row.id}" />
-                                            </s:link>
+                                            </h:link>
                                         </ui:fragment>
                                     </rich:column>
 

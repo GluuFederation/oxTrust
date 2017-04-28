@@ -21,8 +21,8 @@
 		</section>	<section class="content"> <!-- Small boxes (Stat box) -->
 		
         <div id="formArea">
-        	<s:link view="/attribute/attributeExport.xhtml"
-					styleClass="label label-success" value="Export Attribute LDIF" propagation="none" style="padding:6px;" />
+        	<h:link outcome="/attribute/attributeExport"
+					styleClass="label label-success" value="Export Attribute LDIF" style="padding:6px;" />
 			<div class="row" style="padding-top:20px">
             <ui:decorate template="/WEB-INF/incl/attribute/attributeImportForm.xhtml">
                 <ui:param name="_importAction" value="#{attributeImportAction}" />

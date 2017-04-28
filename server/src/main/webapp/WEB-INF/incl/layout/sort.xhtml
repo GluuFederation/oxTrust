@@ -4,8 +4,8 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:s="http://jboss.org/schema/seam/taglib">
-    <s:link styleClass="columnHeader" value="#{propertyLabel} #{entityList.orderColumn == propertyPath ? (entityList.orderDirection == 'desc' ? messages.down : messages.up) : ''}">
+    <h:link styleClass="columnHeader" value="#{propertyLabel} #{entityList.orderColumn == propertyPath ? (entityList.orderDirection == 'desc' ? messages.down : messages.up) : ''}">
         <f:param name="sort" value="#{propertyPath}"/>
         <f:param name="dir" value="#{entityList.orderColumn == propertyPath and entityList.orderDirection == 'asc' ? 'desc' : 'asc'}"/>
-    </s:link>
+    </h:link>
 </ui:composition>

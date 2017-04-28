@@ -47,9 +47,9 @@
                                         <h1>#{msg['register.signUp']}</h1>
                                         #{msg['register.toCreateAnAccount']}
                                         <richext:spacer width="4"/>
-                                        <s:link view="/login.xhtml" value="#{msg['register.login']}" style="color:white;font-weight:bold;"
+                                        <h:link outcome="/login" value="#{msg['register.login']}" style="color:white;font-weight:bold;"
                                                 rendered="#{not identity.loggedIn and not isLogin}"
-                                                propagation="none"/>
+                                               />
                                     </div>
                                 </div>
                             </div>

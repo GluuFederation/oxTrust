@@ -37,7 +37,7 @@
 		            </div><!-- /.col -->
 		            
 		             <div class="col-xs-4">
-			             <s:link view="/person/passwordReminder.xhtml" styleClass="btn btn-link" style="font-size: 13px;" value="#{msg['login.forgotPassword']}" propagation="none" rendered="#{passwordReminderAction.enabled()}"/>
+			             <h:link outcome="/person/passwordReminder" styleClass="btn btn-link" style="font-size: 13px;" value="#{msg['login.forgotPassword']}" rendered="#{passwordReminderAction.enabled()}"/>
 		            </div><!-- /.col -->
 		            
 		            <div class="col-xs-4">

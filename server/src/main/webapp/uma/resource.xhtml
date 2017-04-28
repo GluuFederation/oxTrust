@@ -41,7 +41,7 @@
                   <div class="tab-pane active" id="resourceTab">
                   	<h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
 
-                                <s:button view="/uma/resource/modifyResourceSet.xhtml" value="#{msg['uma.addResourceSet']}" propagation="none" styleClass="btn btn-primary">
+                                <s:button outcome="/uma/resource/modifyResourceSet" value="#{msg['uma.addResourceSet']}" styleClass="btn btn-primary">
                                     <f:param name="resource" value="#{null}" />
                                 </s:button>
 
@@ -56,9 +56,9 @@
                                     rendered="#{umaInventoryAction.resourcesList.size gt 0}" style="width: 750px;">
                                     <rich:column sortBy="#{_row.name}">
                                         <f:facet name="header">#{msg['uma.name']}</f:facet>
-                                        <s:link value="#{_row.name}" view="/uma/resource/modifyResourceSet.xhtml" propagation="none">
+                                        <h:link value="#{_row.name}" outcome="/uma/resource/modifyResourceSet">
                                             <f:param name="resource" value="#{_row.inum}" />
-                                        </s:link>
+                                        </h:link>
                                     </rich:column>
 
                                     <rich:column>

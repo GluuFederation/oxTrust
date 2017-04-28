@@ -143,11 +143,8 @@
                                                             rowKeyVar="_valueIdx">
                                                     <ui:param name="_aid"
                                                               value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
-                                                    <ox:decorate
+                                                    <ox:decorate label="#{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
                                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}">
-                                                        
-                                                        <ui:define
-                                                                name="label">#{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}</ui:define>
 
                                                         <div class="col-xs-10">
                                                             <rich:inplaceInput
@@ -210,13 +207,7 @@
                                                     </ox:decorate>
 
                                                     <ox:decorate
-                                                                rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}" label="
-                                                            <h:panelGroup>
-                                                                <h:outputText
-                                                                        value="#{_custAttr.metadata.displayName}"/>
-                                                                <!-- <h:outputText value="Undefined attribute" rendered="#{_custAttr.metadata == null}"/> -->
-                                                            </h:panelGroup>
-                                                        </ui:define>
+                                                                rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}" label="#{_custAttr.metadata.displayName}">
                                                         <h:outputText style="margin-left:19px;"
                                                                       value="#{_custAttr.values[_valueIdx]}"
                                                                       rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'memberOf')}"/>
@@ -235,9 +226,7 @@
                                                         </ox:decorate>
                                                         
                                                         
-                                                        <ox:decorate  rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-                                                        <ui:define
-                                                                name="label">#{msg['person.password']}</ui:define>
+                                                        <ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 														<div class="col-xs-10">                                                                                           
                                                             
                                                             <rich:inplaceInput
@@ -252,9 +241,7 @@
                                                         </div>
                                                      </ox:decorate>               
                                                         
-                                                        <ox:decorate  rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-                                                        <ui:define
-                                                                name="label">#{msg['person.confirmPassword']}</ui:define>
+                                                        <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 														<div class="col-xs-10">                                                                                           
                                                             <rich:inplaceInput       
                                                                     defaultLabel="#{msg['person.confirmPassword']}"

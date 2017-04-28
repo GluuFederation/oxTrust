@@ -32,7 +32,7 @@
 			<div class="box-header"></div>
 			   <div style="display: inline-block; width: 75% !important;">
 			
-				<s:link view="/trustmanager/addTrustRelationship.xhtml"
+				<h:link outcome="/trustmanager/addTrustRelationship"
 					styleClass="btn btn-primary btn-block btn-flat" value="#{msg['trustmanager.addRelationship']}"
 					propagation="none" style="width:200px;"/>
 			
@@ -90,10 +90,10 @@
 												rendered="#{trustRelationshipInventoryAction.trustedSpList.size gt 0}">
 												<rich:column sortBy="#{tsps.displayName}">
 													<f:facet name="header">#{msg['trustmanager.community']}</f:facet>
-													<s:link view="/trustmanager/updateTrustRelationship.xhtml"
-														value="#{tsps.displayName}" propagation="none">
+													<h:link outcome="/trustmanager/updateTrustRelationship"
+														value="#{tsps.displayName}">
 														<f:param name="inum" value="#{tsps.inum}" />
-													</s:link>
+													</h:link>
 												</rich:column>
 												<rich:column sortBy="#{tsps.description}">
 													<f:facet name="header">#{msg['trustmanager.description']}</f:facet>

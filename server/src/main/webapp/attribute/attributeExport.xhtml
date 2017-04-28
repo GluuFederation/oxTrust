@@ -30,8 +30,8 @@
 				width="100%">
 				<h:form id="attributesFormId">
 					
-				<s:link view="/attribute/attributeImport.xhtml"
-					styleClass="label label-success" value="Import Attribute LDIF" propagation="none" style="margin-left:5px;padding:6px;"/>
+				<h:link outcome="/attribute/attributeImport"
+					styleClass="label label-success" value="Import Attribute LDIF" style="margin-left:5px;padding:6px;"/>
 				
 					<div class="row" style="padding-top:20px">
 						<div class="col-xs-12">
@@ -81,10 +81,10 @@
 																			<f:facet name="header" >  
               <div style="text-align: center;"> Display Name</div>  
             </f:facet>
-																			<s:link view="/attribute/updateAttribute.xhtml"
-																				value="#{attr.displayName}" propagation="none">
+																			<h:link outcome="/attribute/updateAttribute"
+																				value="#{attr.displayName}">
 																				<f:param name="inum" value="#{attr.inum}" />
-																			</s:link>
+																			</h:link>
 																		</h:column>
 																		
 																		<h:column sortBy="#{attr.name}" >

@@ -12,7 +12,7 @@
 
     <div id="trustRelationships">
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
-            <s:link view="/federation/hosted/addFederation.xhtml" styleClass="addAttribute" value="#{msg['federation.addFederation']}" propagation="none" />
+            <h:link outcome="/federation/hosted/addFederation" styleClass="addAttribute" value="#{msg['federation.addFederation']}" />
 
             <richext:spacer height="16" />
 
@@ -26,9 +26,9 @@
                     rendered="#{federationProposalsInventoryAction.proposalsList.size gt 0}">
                     <rich:column sortBy="#{tsps.displayName}">
                         <f:facet name="header">#{msg['federation.community']}</f:facet>
-                        <s:link view="/federation/proposal/viewProposal.xhtml" value="#{tsps.displayName}" propagation="none">
+                        <h:link outcome="/federation/proposal/viewProposal" value="#{tsps.displayName}">
                             <f:param name="inum" value="#{tsps.inum}" />
-                        </s:link>
+                        </h:link>
                     </rich:column>
                     <rich:column sortBy="#{tsps.description}">
                         <f:facet name="header">#{msg['federation.description']}</f:facet>

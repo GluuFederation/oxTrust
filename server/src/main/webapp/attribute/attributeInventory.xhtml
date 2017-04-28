@@ -29,8 +29,8 @@
 			<h:panelGroup columns="1" border="0" cellpadding="0" cellspacing="0"
 				width="100%">
 				<h:form id="attributesFormId">
-				<s:link view="/attribute/addAttribute.xhtml"
-					styleClass="label label-success" value="#{msg['attribute.registerAttribute']}" propagation="none" style="padding:6px;" />
+				<h:link outcome="/attribute/addAttribute"
+					styleClass="label label-success" value="#{msg['attribute.registerAttribute']}" style="padding:6px;" />
 
 				
 				<ui:fragment rendered="#{attributeInventoryAction.showInactive}">
@@ -91,10 +91,10 @@
 																			<f:facet name="header" >  
               <div style="text-align: center;"> #{msg['attribute.displayName']}</div>
             </f:facet>
-																			<s:link view="/attribute/updateAttribute.xhtml"
-																				value="#{attr.displayName}" propagation="none">
+																			<h:link outcome="/attribute/updateAttribute"
+																				value="#{attr.displayName}">
 																				<f:param name="inum" value="#{attr.inum}" />
-																			</s:link>
+																			</h:link>
 																		</h:column>
 																		
 																		<h:column sortBy="#{attr.name}" >

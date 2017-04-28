@@ -275,10 +275,10 @@
 									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
 								<ox:decorate
 									id="managerGroup" label="#{msg['organizationForm.managerGroup']}">
-									<s:link view="/group/updateGroup.xhtml"
-										value="#{_managerGroup.displayName}" propagation="none">
+									<h:link outcome="/group/updateGroup"
+										value="#{_managerGroup.displayName}">
 										<f:param name="inum" value="#{_managerGroup.inum}" />
-									</s:link>
+									</h:link>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.organizationLogo']}">
