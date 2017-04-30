@@ -14,10 +14,10 @@ import java.util.Date;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 
 /**
@@ -25,8 +25,8 @@ import org.jboss.seam.log.Log;
  * 
  * @author Oleksiy Tataryn Date: 11.14.2013
  */
-@Scope(CONVERSATION)
-@Name("applianceStatusAction")
+@ConversationScoped
+@Named("applianceStatusAction")
 public class ApplianceStatusAction implements Serializable {
 
 	private static final long serialVersionUID = -7470520478553992898L;
@@ -34,7 +34,7 @@ public class ApplianceStatusAction implements Serializable {
 	@Logger
     private Log log;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
 	private String health;

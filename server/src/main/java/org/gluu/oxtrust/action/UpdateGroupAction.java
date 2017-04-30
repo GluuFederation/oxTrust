@@ -26,10 +26,10 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
@@ -47,8 +47,8 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 11.08.2010
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updateGroupAction")
+@ConversationScoped
+@Named("updateGroupAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateGroupAction implements Serializable {
 
@@ -73,22 +73,22 @@ public class UpdateGroupAction implements Serializable {
 	private List<GluuCustomPerson> availableMembers;
 
 	@SuppressWarnings("seam-unresolved-variable")
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private LookupService lookupService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	@Restrict("#{s:hasPermission('group', 'access')}")

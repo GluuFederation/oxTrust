@@ -21,10 +21,10 @@ import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -43,8 +43,8 @@ import org.xdi.util.Util;
  * 
  * @author Reda Zerrad Date: 06.18.2012
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updateScopeAction")
+@ConversationScoped
+@Named("updateScopeAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateScopeAction implements Serializable {
 
@@ -71,19 +71,19 @@ public class UpdateScopeAction implements Serializable {
 
 	private List<GluuAttribute> availableClaims;
 
-	@In
+	@Inject
 	private ScopeService scopeService;
 
-	@In
+	@Inject
 	private LookupService lookupService;
 
-	@In
+	@Inject
 	private transient AttributeService attributeService;
 
-	@In
+	@Inject
 	private CustomScriptService customScriptService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
 	private List<CustomScript> dynamicScripts;

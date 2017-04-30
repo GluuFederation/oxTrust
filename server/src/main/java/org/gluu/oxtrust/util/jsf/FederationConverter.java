@@ -14,12 +14,12 @@ import javax.faces.context.FacesContext;
 
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.faces.Converter;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;
 
 @Converter()
-@Name("federationConverter")
+@Named("federationConverter")
 @BypassInterceptors
 public class FederationConverter implements javax.faces.convert.Converter, Serializable {
 

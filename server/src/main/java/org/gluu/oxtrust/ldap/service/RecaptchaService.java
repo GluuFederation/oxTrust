@@ -12,10 +12,10 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.util.StringHelper;
 
@@ -24,11 +24,11 @@ import org.xdi.util.StringHelper;
  * @author Yuriy Movchan
  */
 @Scope(ScopeType.STATELESS)
-@Name("recaptchaService")
+@Named("recaptchaService")
 @AutoCreate
 public class RecaptchaService implements Serializable {
 	
-	@In
+	@Inject
 	private static OxTrustConfiguration oxTrustConfiguration;
 	
 	@Logger

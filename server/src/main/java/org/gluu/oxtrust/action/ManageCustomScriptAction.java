@@ -22,10 +22,10 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -50,8 +50,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 12/29/2014
  */
-@Name("manageCustomScriptAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("manageCustomScriptAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class ManageCustomScriptAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable {
 
@@ -60,26 +60,26 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private StatusMessages statusMessages;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In(value = "customScriptService")
+	@Inject(value = "customScriptService")
 	private AbstractCustomScriptService customScriptService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 
 	private boolean initialized;
 	
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
 	@Restrict("#{s:hasPermission('configuration', 'access')}")

@@ -13,13 +13,13 @@ import java.io.Serializable;
 import org.apache.commons.io.FileUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.util.StringHelper;
 
-@Name("fileViewerAction")
+@Named("fileViewerAction")
 @Scope(ScopeType.STATELESS)
 @Restrict("#{identity.loggedIn}")
 public class FileViewerAction implements Serializable {

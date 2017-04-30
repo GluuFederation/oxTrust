@@ -17,10 +17,10 @@ import org.gluu.oxtrust.service.push.PushApplicationConfigurationService;
 import org.gluu.oxtrust.service.push.PushApplicationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.util.Util;
@@ -30,8 +30,8 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 10/01/2014
  */
-@Name("pushApplicationInventoryAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("pushApplicationInventoryAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class PushApplicationInventoryAction implements Serializable {
 
@@ -48,10 +48,10 @@ public class PushApplicationInventoryAction implements Serializable {
 
 	private List<PushApplication> pushApplicationList;
 
-	@In
+	@Inject
 	private PushApplicationService pushApplicationService;
 	
-	@In
+	@Inject
 	private PushApplicationConfigurationService pushApplicationConfigurationService;
 
 	@Restrict("#{s:hasPermission('oxpush', 'access')}")

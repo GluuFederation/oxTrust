@@ -24,10 +24,10 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
@@ -36,17 +36,17 @@ import org.jboss.seam.log.Log;
 import org.xdi.service.XmlService;
 
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("logFileSizeChecker")
+@ApplicationScoped
+@Named("logFileSizeChecker")
 public class LogFileSizeChecker {
 
 	@Logger
 	Log log;
 
-	@In
+	@Inject
 	ApplianceService applianceService;
 
-	@In
+	@Inject
 	private XmlService xmlService;
 
 	@Create
@@ -55,7 +55,7 @@ public class LogFileSizeChecker {
 	}
 
 	@Asynchronous
-	public QuartzTriggerHandle scheduleSizeChecking(@Expiration Date when, @IntervalDuration Long interval) {
+	public QuartzTriggerHandle scheduleSizeChecking(@Expiration Date when, @InjecttervalDuration Long interval) {
 		process(when, interval);
 		return null;
 	}

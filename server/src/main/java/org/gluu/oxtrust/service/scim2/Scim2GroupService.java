@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author Val Pecaoco
  */
-@Name("scim2GroupService")
+@Named("scim2GroupService")
 @Scope(ScopeType.STATELESS)
 @AutoCreate
 public class Scim2GroupService implements Serializable {
@@ -38,10 +38,10 @@ public class Scim2GroupService implements Serializable {
     @Logger
     private Log log;
 
-    @In
+    @Inject
     private IGroupService groupService;
 
-    @In
+    @Inject
     private ExternalScimService externalScimService;
 
     public Group createGroup(Group group) throws Exception {

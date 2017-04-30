@@ -35,11 +35,11 @@ import org.gluu.site.ldap.persistence.AttributeData;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -59,8 +59,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 02.14.2011
  */
-@Name("personImportAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("personImportAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class PersonImportAction implements Serializable {
 
@@ -72,31 +72,31 @@ public class PersonImportAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	StatusMessages statusMessages;
 
-	@In
+	@Inject
 	private IPersonService personService;
 	
-	@In
+	@Inject
 	private AttributeService attributeService;
 	
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In
+	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
 
-	@In
+	@Inject
 	private transient ExcelService excelService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private transient ImportPersonConfiguration importPersonConfiguration;
 	
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private CustomAttributeAction customAttributeAction;
 

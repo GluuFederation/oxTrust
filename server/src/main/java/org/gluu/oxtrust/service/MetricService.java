@@ -23,10 +23,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
@@ -53,16 +53,16 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private CacheService cacheService;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
 
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
 	public AuthenticationChartDto genereateAuthenticationChartDto(int countDays) {

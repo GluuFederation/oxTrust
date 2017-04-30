@@ -20,15 +20,15 @@ import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
 
-@Scope(ScopeType.CONVERSATION)
-@Name("relyingPartyAction")
+@ConversationScoped
+@Named("relyingPartyAction")
 @Restrict("#{identity.loggedIn}")
 public class RelyingPartyAction implements Serializable{
 
@@ -45,11 +45,11 @@ public class RelyingPartyAction implements Serializable{
 	private ProfileConfiguration profileConfigurationSelected;
 
 	
-	@In
+	@Inject
 	private ProfileConfigurationService profileConfigurationService;
 
 	private GluuSAMLTrustRelationship trustRelationship;
-	@In
+	@Inject
 	private UpdateTrustRelationshipAction updateTrustRelationshipAction;
 
 	private Map<String, FileUploadWrapper> fileWrappers = new HashMap<String, FileUploadWrapper>();

@@ -18,9 +18,9 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.scim.ScimConfiguration;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
@@ -37,7 +37,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
  *
  * @author Yuriy Movchan Date: 11/06/2015
  */
-@Name("scimConfigurationRestWebService")
+@Named("scimConfigurationRestWebService")
 @Path("/oxtrust/scim-configuration")
 @Api(value = "/.well-known/scim-configuration", description = "The SCIM server endpoint that provides configuration data. ")
 public class ScimConfigurationWS {
@@ -45,10 +45,10 @@ public class ScimConfigurationWS {
     @Logger
     private Log log;
     
-    @In
+    @Inject
     private OxTrustConfiguration oxTrustConfiguration;
 
-    @In
+    @Inject
     private JsonService jsonService;
 
     @GET

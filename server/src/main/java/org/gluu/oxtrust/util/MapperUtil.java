@@ -10,9 +10,9 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.association.ClientAssociation;
 import org.gluu.oxtrust.model.association.PersonAssociation;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 
-@Name("mapperUtil")
+@Named("mapperUtil")
 public class MapperUtil {
 
 	/**

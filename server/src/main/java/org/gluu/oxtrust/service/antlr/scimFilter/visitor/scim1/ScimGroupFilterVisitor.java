@@ -99,7 +99,7 @@ public class ScimGroupFilterVisitor extends MainScimFilterVisitor {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -190,7 +190,7 @@ public class ScimGroupFilterVisitor extends MainScimFilterVisitor {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -221,7 +221,7 @@ public class ScimGroupFilterVisitor extends MainScimFilterVisitor {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -252,7 +252,7 @@ public class ScimGroupFilterVisitor extends MainScimFilterVisitor {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>

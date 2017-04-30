@@ -12,10 +12,10 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
@@ -27,7 +27,7 @@ import org.xdi.util.StringHelper;
  * 
  * @author Dmitry Ognyannikov, 2017
  */
-@Name("casService")
+@Named("casService")
 @AutoCreate
 @Scope(ScopeType.STATELESS)
 public class CASService {
@@ -35,10 +35,10 @@ public class CASService {
     @Logger
     private Log log;
     
-    @In
+    @Inject
     private LdapEntryManager ldapEntryManager;
     
-    @In
+    @Inject
     OrganizationService organizationService;
      
     @Create

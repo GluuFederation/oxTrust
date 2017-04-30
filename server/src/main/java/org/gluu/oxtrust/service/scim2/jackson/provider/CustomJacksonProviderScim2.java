@@ -17,7 +17,7 @@ import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserSerializer;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
 import javax.ws.rs.Consumes;
@@ -35,7 +35,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 @Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
 @Produces({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-@Name("customJacksonProviderScim2")
+@Named("customJacksonProviderScim2")
 public class CustomJacksonProviderScim2 extends JacksonJaxbJsonProvider implements ContextResolver<ObjectMapper> {
 
     @Logger

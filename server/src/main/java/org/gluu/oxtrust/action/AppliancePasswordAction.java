@@ -13,17 +13,17 @@ import org.gluu.oxtrust.ldap.service.CentralLdapService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
-@Name("appliancePasswordAction")
+@Named("appliancePasswordAction")
 @Scope(ScopeType.EVENT)
 @Restrict("#{identity.loggedIn}")
 public class AppliancePasswordAction implements Serializable {
@@ -34,16 +34,16 @@ public class AppliancePasswordAction implements Serializable {
     private String newPasswordConfirmation;
     private String passwordMessage;
 
-    @In
+    @Inject
     private ApplianceService applianceService;
 
-    @In
+    @Inject
     private CentralLdapService centralLdapService;
 
-    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
     private ApplicationConfiguration applicationConfiguration;
 
-    @In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+    @Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
     private String cryptoConfigurationSalt;
 
     @Logger

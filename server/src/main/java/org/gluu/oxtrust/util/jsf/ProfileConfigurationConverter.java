@@ -11,12 +11,12 @@ import java.io.Serializable;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.faces.Converter;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;
 
 @Converter()
-@Name("profileConfigurationConverter")
+@Named("profileConfigurationConverter")
 @BypassInterceptors
 public class ProfileConfigurationConverter implements javax.faces.convert.Converter, Serializable {
 

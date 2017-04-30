@@ -16,10 +16,10 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
@@ -30,8 +30,8 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 10.22.2010
  */
-@Name("searchPersonAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("searchPersonAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class SearchPersonAction implements Serializable {
 
@@ -40,7 +40,7 @@ public class SearchPersonAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	StatusMessages statusMessages;
 
 	@NotNull
@@ -51,7 +51,7 @@ public class SearchPersonAction implements Serializable {
 
 	private List<GluuCustomPerson> personList;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
 	@Restrict("#{s:hasPermission('person', 'access')}")

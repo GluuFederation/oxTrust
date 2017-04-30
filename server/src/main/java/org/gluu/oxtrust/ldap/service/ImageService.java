@@ -16,10 +16,10 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
@@ -34,21 +34,21 @@ import org.xdi.util.repository.RepositoryUtility;
  * 
  * @author Yuriy Movchan Date: 11.04.2010
  */
-@Name("imageService")
-@Scope(ScopeType.APPLICATION)
+@Named("imageService")
+@ApplicationScoped
 @AutoCreate
 public class ImageService {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private ImageRepository imageRepository;
 
-	@In
+	@Inject
 	private XmlService xmlService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	public String getXMLFromGluuImage(GluuImage photo) {

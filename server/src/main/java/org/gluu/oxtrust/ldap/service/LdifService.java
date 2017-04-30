@@ -17,10 +17,10 @@ import org.gluu.site.ldap.persistence.LdifDataUtility;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.model.GluuAttribute;
 
@@ -42,7 +42,7 @@ import com.unboundid.ldif.LDIFWriter;
  * @author Yuriy Movchan Date: 03/06/2017
  */
 @Scope(ScopeType.STATELESS)
-@Name("ldifService")
+@Named("ldifService")
 @AutoCreate
 public class LdifService implements Serializable {
 
@@ -51,10 +51,10 @@ public class LdifService implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 	
-	@In
+	@Inject
 	private AttributeService attributeService;
 
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {

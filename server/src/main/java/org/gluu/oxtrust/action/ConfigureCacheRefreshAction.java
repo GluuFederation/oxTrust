@@ -36,10 +36,10 @@ import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.jsf.ValidationUtil;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -61,8 +61,8 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * 
  * @author Yuriy Movchan Date: 07.26.2011
  */
-@Name("configureCacheRefreshAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("configureCacheRefreshAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
@@ -71,40 +71,40 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
-	@In
+	@Inject
 	private TemplateService templateService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private ExternalCacheRefreshService externalCacheRefreshService;
 
-	@In
+	@Inject
 	private InumService inumService;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private CacheRefreshService cacheRefreshService;
 
-	@In
+	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 
 	private CacheRefreshConfiguration cacheRefreshConfiguration;

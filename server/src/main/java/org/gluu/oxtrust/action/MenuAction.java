@@ -10,8 +10,8 @@ import java.io.Serializable;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 
 /**
  * Action class for helping with menu
@@ -19,7 +19,7 @@ import org.jboss.seam.annotations.Scope;
  * @author Yuriy Movchan Date: 12/18/2012
  */
 @Scope(ScopeType.STATELESS)
-@Name("menuAction")
+@Named("menuAction")
 public class MenuAction implements Serializable {
 
 	private static final long serialVersionUID = -172441515451149801L;

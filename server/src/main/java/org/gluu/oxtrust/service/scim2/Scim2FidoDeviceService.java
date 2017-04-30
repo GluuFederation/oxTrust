@@ -24,7 +24,7 @@ import java.util.Date;
 /**
  * @author Val Pecaoco
  */
-@Name("scim2FidoDeviceService")
+@Named("scim2FidoDeviceService")
 @Scope(ScopeType.STATELESS)
 @AutoCreate
 public class Scim2FidoDeviceService implements Serializable {
@@ -32,7 +32,7 @@ public class Scim2FidoDeviceService implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IFidoDeviceService fidoDeviceService;
 
 	public FidoDevice updateFidoDevice(String id, FidoDevice fidoDevice) throws Exception {

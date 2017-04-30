@@ -21,10 +21,10 @@ import org.gluu.oxtrust.model.RegistrationInterceptorScript;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.Tuple;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.model.GluuAttribute;
@@ -36,8 +36,8 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 10.17.2010
  */
-@Scope(CONVERSATION)
-@Name("registrationManagementAction")
+@ConversationScoped
+@Named("registrationManagementAction")
 @Restrict("#{identity.loggedIn}")
 
 //TODO: Remove configureInterceptors, registrationInterceptors, removeCustomAuthenticationConfiguration, addRegistrationInterceptor
@@ -54,7 +54,7 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 	
 	private boolean configureRegistrationForm;
 	
-	@In
+	@Inject
 	private AttributeService attributeService;
 	
 	private List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
@@ -64,7 +64,7 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 	
 	private String oldSearchPattern;
 	
-	@In 
+	@Inject 
 	private OrganizationService organizationService;
 	
 	@Logger

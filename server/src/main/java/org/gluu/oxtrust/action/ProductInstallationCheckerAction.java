@@ -12,8 +12,8 @@ import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 
@@ -22,8 +22,8 @@ import org.jboss.seam.log.Log;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.APPLICATION)
-@Name("productInstallationCheckerAction")
+@ApplicationScoped
+@Named("productInstallationCheckerAction")
 @Restrict("#{identity.loggedIn}")
 public class ProductInstallationCheckerAction implements Serializable {
 

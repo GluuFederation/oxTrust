@@ -31,9 +31,9 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
@@ -42,17 +42,17 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * @author Reda Zerrad Date: 04.13.2012
  */
-@Name("GroupWebService")
+@Named("GroupWebService")
 @Path("/scim/v1/Groups")
 public class GroupWebService extends BaseScimWebService {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private ExternalScimService externalScimService;
 
 	@GET

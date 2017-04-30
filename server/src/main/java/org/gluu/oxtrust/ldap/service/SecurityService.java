@@ -15,10 +15,10 @@ import org.gluu.oxtrust.model.User;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.model.GluuUserRole;
 
@@ -28,7 +28,7 @@ import org.xdi.model.GluuUserRole;
  * @author Yuriy Movchan Date: 11.02.2010
  */
 @Scope(ScopeType.STATELESS)
-@Name("securityService")
+@Named("securityService")
 @AutoCreate
 public class SecurityService implements Serializable {
 
@@ -37,13 +37,13 @@ public class SecurityService implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
 
 	/**

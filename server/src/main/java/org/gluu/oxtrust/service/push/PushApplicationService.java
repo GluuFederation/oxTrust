@@ -18,10 +18,10 @@ import org.hibernate.annotations.common.util.StringHelper;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.SimpleBranch;
 
@@ -33,13 +33,13 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Yuriy Movchan Date: 01/22/2014
  */
 @Scope(ScopeType.STATELESS)
-@Name("pushApplicationService")
+@Named("pushApplicationService")
 @AutoCreate
 public class PushApplicationService implements Serializable {
 
 	private static final long serialVersionUID = -1537567020929607771L;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
 	@Logger

@@ -41,7 +41,7 @@ import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
@@ -66,28 +66,28 @@ public class BaseScimWebService {
 	@Logger
 	private Log log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	protected ApplicationConfiguration applicationConfiguration;
 
-	@In
+	@Inject
 	protected JsonConfigurationService jsonConfigurationService;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private ScimUmaProtectionService scimUmaProtectionService;
 	
-	@In
+	@Inject
 	private UmaPermissionService umaPermissionService;
 
-	@In
+	@Inject
 	private OpenIdService openIdService;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
-	@In
+	@Inject
 	private ScimFilterParserService scimFilterParserService;
 	
 	public int getMaxCount(){

@@ -49,7 +49,7 @@ import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -57,7 +57,7 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.*;
 
-@Name("copyUtils2")
+@Named("copyUtils2")
 public class CopyUtils2 implements Serializable {
 
 	private static final long serialVersionUID = -1715995162448707004L;

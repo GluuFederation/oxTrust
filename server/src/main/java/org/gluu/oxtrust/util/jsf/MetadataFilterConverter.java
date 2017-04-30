@@ -14,12 +14,12 @@ import javax.faces.context.FacesContext;
 
 import org.gluu.oxtrust.ldap.service.FilterService;
 import org.gluu.oxtrust.model.MetadataFilter;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.faces.Converter;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;
 
 @Converter()
-@Name("metadataFilterConverter")
+@Named("metadataFilterConverter")
 @BypassInterceptors
 public class MetadataFilterConverter implements javax.faces.convert.Converter, Serializable {
 

@@ -15,9 +15,9 @@ import javax.faces.context.FacesContext;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 
 /**
  * Provides operations with view id
@@ -25,18 +25,18 @@ import org.jboss.seam.annotations.Scope;
  * @author Yuriy Movchan
  * @version 0.1, 12/14/2012
  */
-@Name("viewHandlerService")
+@Named("viewHandlerService")
 @Scope(ScopeType.STATELESS)
 @AutoCreate
 public class ViewHandlerService {
 
-	@In
+	@Inject
 	private FacesContext facesContext;
 
-	@In(value = "#{facesContext.externalContext}")
+	@Inject(value = "#{facesContext.externalContext}")
 	private ExternalContext externalContext;
 
-	@In(value = "#{facesContext.application.viewHandler}")
+	@Inject(value = "#{facesContext.application.viewHandler}")
 	private ViewHandler viewHandler;
 
 	public String getBookmarkableURL(String viewId, HashMap<String, List<String>> pageParams) {

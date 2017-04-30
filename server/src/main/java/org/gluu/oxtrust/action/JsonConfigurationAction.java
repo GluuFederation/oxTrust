@@ -13,10 +13,10 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -40,8 +40,8 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * @author Rahat Ali Date: 12/04/2015
  * @author Yuriy Movchan Date: 10/23/2015
  */
-@Name("jsonConfigAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("jsonConfigAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class JsonConfigurationAction implements Serializable {
 
@@ -49,22 +49,22 @@ public class JsonConfigurationAction implements Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
 
-	@In
+	@Inject
 	private StatusMessages statusMessages;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 
 	private ApplicationConfiguration oxTrustApplicationConfiguration;

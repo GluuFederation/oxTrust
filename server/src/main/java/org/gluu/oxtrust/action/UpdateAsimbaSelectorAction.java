@@ -21,11 +21,11 @@ import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
@@ -40,7 +40,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  * @author Dmitry Ognyannikov
  */
 @Scope(ScopeType.SESSION)
-@Name("updateAsimbaSelectorAction")
+@Named("updateAsimbaSelectorAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSelectorAction implements Serializable {
 
@@ -49,25 +49,25 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     @Logger
     private Log log;
 
-    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
     private ApplicationConfiguration applicationConfiguration;
 
-    @In
+    @Inject
     private Identity identity;
 
-    @In
+    @Inject
     private SvnSyncTimer svnSyncTimer;
     
-    @In
+    @Inject
     private FacesMessages facesMessages;
 
-    @In(value = "#{facesContext}")
+    @Inject(value = "#{facesContext}")
     private FacesContext facesContext;
     
-    @In
+    @Inject
     private ResourceLoader resourceLoader;
     
-    @In
+    @Inject
     private AsimbaService asimbaService;
     
     @Out

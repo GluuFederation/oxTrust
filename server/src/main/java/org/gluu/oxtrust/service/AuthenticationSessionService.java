@@ -13,10 +13,10 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.oxauth.client.EndSessionClient;
@@ -25,17 +25,17 @@ import org.xdi.oxauth.client.EndSessionResponse;
 import org.xdi.util.StringHelper;
 
 @Scope(ScopeType.SESSION)
-@Name("authenticationSessionService")
+@Named("authenticationSessionService")
 @AutoCreate()
 public class AuthenticationSessionService {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private OpenIdService openIdService;
 	
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
     @Destroy

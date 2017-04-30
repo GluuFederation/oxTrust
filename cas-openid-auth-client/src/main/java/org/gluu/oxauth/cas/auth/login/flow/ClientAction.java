@@ -63,7 +63,7 @@ public final class ClientAction extends AbstractAction {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InjectheritDoc}
 	 */
 	@Override
 	protected Event doExecute(final RequestContext context) throws Exception {

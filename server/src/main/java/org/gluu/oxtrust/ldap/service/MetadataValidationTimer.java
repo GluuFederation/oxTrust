@@ -29,10 +29,10 @@ import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
@@ -48,14 +48,14 @@ import org.xdi.xml.GluuErrorHandler;
  * 
  */
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("metadataValidationTimer")
+@ApplicationScoped
+@Named("metadataValidationTimer")
 public class MetadataValidationTimer {
 
 	@Logger
 	Log log;
 
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
 	private static LinkedBlockingQueue<String> metadataUpdates = new LinkedBlockingQueue<String>();
@@ -78,7 +78,7 @@ public class MetadataValidationTimer {
 	}
 
 	@Asynchronous
-	public QuartzTriggerHandle scheduleValidation(@Expiration Date when, @IntervalDuration Long interval) {
+	public QuartzTriggerHandle scheduleValidation(@Expiration Date when, @InjecttervalDuration Long interval) {
 		process(when, interval);
 		return null;
 	}

@@ -424,6 +424,24 @@
 				<groupId>org.asimba</groupId>
 				<artifactId>asimba-utility-ldap</artifactId>
 				<version>${oxasimba.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>slf4j-api</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.xdi</groupId>
+						<artifactId>oxService</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- Jackson -->
@@ -440,6 +458,11 @@
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-jaxrs</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-xc</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
 

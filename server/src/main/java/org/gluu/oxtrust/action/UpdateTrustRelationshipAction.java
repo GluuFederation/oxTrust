@@ -54,11 +54,11 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
@@ -83,8 +83,8 @@ import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
  * 
  * @author Yuriy Movchan Date: 11.04.2010
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updateTrustRelationshipAction")
+@ConversationScoped
+@Named("updateTrustRelationshipAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateTrustRelationshipAction implements Serializable {
 
@@ -93,7 +93,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	static final Class<?>[] NO_PARAM_SIGNATURE = new Class[0];
@@ -103,53 +103,53 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	private GluuSAMLTrustRelationship trustRelationship;
 
-	@In
+	@Inject
 	protected AttributeService attributeService;
 	
-	@In
+	@Inject
 	private MetadataValidationTimer metadataValidationTimer;
 
-	@In
+	@Inject
 	private TrustService trustService;
 	
-	@In
+	@Inject
 	private ClientService clientService;
 
-	@In
+	@Inject
 	private Identity identity;
 	
-	@In
+	@Inject
 	private TemplateService templateService;
 
-	@In
+	@Inject
 	private SvnSyncTimer svnSyncTimer;
 
-	@In
+	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 	
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In(value = "#{facesContext}")
+	@Inject(value = "#{facesContext}")
 	private FacesContext facesContext;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private TrustContactsAction trustContactsAction;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private MetadataFiltersAction metadataFiltersAction;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private RelyingPartyAction relyingPartyAction;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private CustomAttributeAction customAttributeAction;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private FederationDeconstructionAction federationDeconstructionAction;
 
@@ -180,10 +180,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	//private GluuEntityType entityType;	
 
 
-	@In(value="#{facesContext.externalContext}")
+	@Inject(value="#{facesContext.externalContext}")
 	private ExternalContext extCtx;
 
-	// @In
+	// @Inject
 	// private ResourceLoader resourceLoader;
 	
 	public List <GluuMetadataSourceType> getMetadataSourceTypesList() {

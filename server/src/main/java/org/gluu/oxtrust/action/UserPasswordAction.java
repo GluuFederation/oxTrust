@@ -13,17 +13,17 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 
 /**
  * Serves for password updates on UI.
  * 
  */
-@Name("userPasswordAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("userPasswordAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 @Deprecated
 public class UserPasswordAction implements Serializable {
@@ -37,7 +37,7 @@ public class UserPasswordAction implements Serializable {
 
 	private GluuCustomPerson person;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
 	public String validatePassword() {

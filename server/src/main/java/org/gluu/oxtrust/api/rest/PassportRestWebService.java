@@ -19,9 +19,9 @@ import org.gluu.oxtrust.model.passport.PassportConfigResponse;
 import org.gluu.oxtrust.model.passport.PassportStrategy;
 import org.gluu.oxtrust.service.uma.PassportUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.model.passport.FieldSet;
@@ -36,23 +36,23 @@ import org.xdi.util.Pair;
  * @author Yuriy Movchan Date: 12/06/2016
  */
 
-@Name("PassportConfigurationEndPoint")
+@Named("PassportConfigurationEndPoint")
 @Path("/passport/config")
 public class PassportRestWebService {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private PassportService passportService;
 
-	@In
+	@Inject
 	private PassportUmaProtectionService pasportUmaProtectionService;
 
-	@In
+	@Inject
 	private UmaPermissionService umaPermissionService;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
 	@GET

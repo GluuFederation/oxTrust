@@ -18,17 +18,17 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
 
-@Scope(ScopeType.CONVERSATION)
-@Name("metadataFiltersAction")
+@ConversationScoped
+@Named("metadataFiltersAction")
 @Restrict("#{identity.loggedIn}")
 public class MetadataFiltersAction implements Serializable {
 
@@ -44,7 +44,7 @@ public class MetadataFiltersAction implements Serializable {
 
 	private FileUploadWrapper filterCertWrapper = new FileUploadWrapper();
 
-	@In
+	@Inject
 	private FilterService filterService;
 
 	private GluuSAMLTrustRelationship trustRelationship;

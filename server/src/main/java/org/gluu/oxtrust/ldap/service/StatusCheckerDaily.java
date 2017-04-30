@@ -15,11 +15,11 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
@@ -30,8 +30,8 @@ import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("statusCheckerDaily")
+@ApplicationScoped
+@Named("statusCheckerDaily")
 public class StatusCheckerDaily {
 
     private final static String EVENT_TYPE = "StatusCheckerDailyTimerEvent";
@@ -41,19 +41,19 @@ public class StatusCheckerDaily {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private CentralLdapService centralLdapService;
 
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
     private AtomicBoolean isActive;

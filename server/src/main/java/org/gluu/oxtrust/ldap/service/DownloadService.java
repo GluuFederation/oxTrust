@@ -11,11 +11,11 @@ import java.io.Serializable;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 
 @Scope(ScopeType.STATELESS)
-@Name("downloadService")
+@Named("downloadService")
 @AutoCreate
 public class DownloadService implements Serializable {
 

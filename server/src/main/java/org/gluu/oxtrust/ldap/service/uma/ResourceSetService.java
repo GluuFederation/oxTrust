@@ -16,10 +16,10 @@ import org.hibernate.annotations.common.util.StringHelper;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
@@ -33,13 +33,13 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Yuriy Movchan Date: 12/06/2012
  */
 @Scope(ScopeType.STATELESS)
-@Name("resourceSetService")
+@Named("resourceSetService")
 @AutoCreate
 public class ResourceSetService implements Serializable {
 
 	private static final long serialVersionUID = -1537567020929600777L;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
 	@Logger

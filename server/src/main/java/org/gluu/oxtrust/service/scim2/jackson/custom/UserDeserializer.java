@@ -15,7 +15,7 @@ import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.User;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
@@ -26,7 +26,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
  * @author Val Pecaoco
  * @link User
  */
-@Name("userDeserializer")
+@Named("userDeserializer")
 public class UserDeserializer extends JsonDeserializer<User> {
 
     @Logger

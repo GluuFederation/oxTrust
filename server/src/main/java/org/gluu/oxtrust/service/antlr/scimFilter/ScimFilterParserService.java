@@ -16,8 +16,8 @@ import org.gluu.oxtrust.service.antlr.scimFilter.visitor.VisitorFactory;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 
 import java.io.Serializable;
@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @author Val Pecaoco
  */
 @Scope(ScopeType.STATELESS)
-@Name("scimFilterParserService")
+@Named("scimFilterParserService")
 @AutoCreate
 public class ScimFilterParserService implements Serializable {
 

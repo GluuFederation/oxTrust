@@ -25,8 +25,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
@@ -38,7 +38,7 @@ import org.xdi.service.PythonService;
  * @author Oleksiy Tataryn
  *
  */
-@Name("registrationInterceptionService")
+@Named("registrationInterceptionService")
 @Scope(ScopeType.STATELESS)
 @AutoCreate
 @Deprecated

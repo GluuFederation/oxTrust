@@ -10,10 +10,10 @@ import java.io.Serializable;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
@@ -27,8 +27,8 @@ import org.xdi.util.init.Initializable;
  *
  * @author Yuriy Movchan Date: 12/28/2016
  */
-@Scope(ScopeType.APPLICATION)
-@Name("openIdService")
+@ApplicationScoped
+@Named("openIdService")
 @AutoCreate
 public class OpenIdService extends Initializable implements Serializable {
 
@@ -37,7 +37,7 @@ public class OpenIdService extends Initializable implements Serializable {
 	@Logger
 	private Log log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	private OpenIdConfigurationResponse openIdConfiguration;

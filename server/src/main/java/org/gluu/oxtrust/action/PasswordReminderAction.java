@@ -26,10 +26,10 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.log.Log;
@@ -40,13 +40,13 @@ import org.xdi.util.StringHelper;
 /**
  * User: Dejan Maric
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("passwordReminderAction")
+@ConversationScoped
+@Named("passwordReminderAction")
 public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-    @In
+    @Inject
     private FacesMessages facesMessages;
 
     /**
@@ -81,10 +81,10 @@ public class PasswordReminderAction implements Serializable {
 	@NotEmpty
 	@NotBlank
 	private String email;
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 	
-	@In
+	@Inject
 	private RecaptchaService recaptchaService;
 	
 	private static String MESSAGE_NOT_FOUND = "You (or someone else) entered this email when trying to change the password of %1$s identity server account.\n\n" 

@@ -14,7 +14,7 @@ import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.node.*;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -27,7 +27,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * @author Val Pecaoco
  */
-@Name("listResponseGroupSerializer")
+@Named("listResponseGroupSerializer")
 public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
     @Logger

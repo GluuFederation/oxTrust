@@ -16,7 +16,7 @@ import org.gluu.oxtrust.model.scim2.schema.AttributeHolder;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.core.fido.FidoDeviceCoreSchema;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author Val Pecaoco
  */
-@Name("schemaTypeFidoDeviceSerializer")
+@Named("schemaTypeFidoDeviceSerializer")
 public class SchemaTypeFidoDeviceSerializer extends JsonSerializer<FidoDevice> {
 
 	@Logger

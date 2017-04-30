@@ -12,10 +12,10 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 
@@ -24,8 +24,8 @@ import org.jboss.seam.log.Log;
  * 
  * @author Yuriy Movchan Date: 05.10.2012
  */
-@Name("scimConfigureAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("scimConfigureAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class ScimConfigureAction implements Serializable {
 
@@ -34,7 +34,7 @@ public class ScimConfigureAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
 	private boolean isInitialized = false;

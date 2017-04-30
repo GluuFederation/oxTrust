@@ -17,11 +17,11 @@ import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ImportPerson;
 import org.xdi.model.GluuAttribute;
@@ -29,9 +29,9 @@ import org.xdi.model.GluuAttributeDataType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
-@Scope(ScopeType.APPLICATION)
+@ApplicationScoped
 @AutoCreate
-@Name("importPersonConfiguration")
+@Named("importPersonConfiguration")
 public class ImportPersonConfiguration {
 
 	private static final String GLUU_IMPORT_PERSON_PROPERTIES_FILE = "gluuImportPerson.properties";
@@ -44,10 +44,10 @@ public class ImportPersonConfiguration {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
 	private FileConfiguration importConfiguration;

@@ -24,10 +24,10 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Inject;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.xdi.ldap.model.GluuStatus;
@@ -36,8 +36,8 @@ import org.xdi.util.io.ExcludeFilterInputStream;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
 
-@Scope(ScopeType.CONVERSATION)
-@Name("joinFederationAction")
+@ConversationScoped
+@Named("joinFederationAction")
 public class JoinFederationAction implements Serializable {
 
 	private static final long serialVersionUID = -1032167044333943680L;
@@ -46,19 +46,19 @@ public class JoinFederationAction implements Serializable {
 
 	private String inum;
 
-	@In(value = "#{facesContext}")
+	@Inject(value = "#{facesContext}")
 	private FacesContext facesContext;
 
-	@In
+	@Inject
 	private FederationService federationService;
 
-	@In
+	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private TrustContactsAction trustContactsAction;
 

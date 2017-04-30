@@ -16,10 +16,10 @@ import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -44,8 +44,8 @@ import java.util.*;
  * @author Javier Rojas Blum
  * @version December 10, 2015
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updateClientAction")
+@ConversationScoped
+@Named("updateClientAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateClientAction implements Serializable {
 
@@ -54,19 +54,19 @@ public class UpdateClientAction implements Serializable {
     @Logger
     private Log log;
 
-    @In
+    @Inject
     private ClientService clientService;
 
-    @In
+    @Inject
     private ScopeService scopeService;
 
-    @In
+    @Inject
     private LookupService lookupService;
 
-    @In
+    @Inject
     private FacesMessages facesMessages;
     
-    @In
+    @Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
     private String inum;

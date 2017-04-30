@@ -22,17 +22,17 @@ import java.util.List;
  * @author Val Pecaoco
  */
 @Scope(ScopeType.STATELESS)
-@Name("fidoDeviceService")
+@Named("fidoDeviceService")
 @AutoCreate
 public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
 	public static IFidoDeviceService instance() {

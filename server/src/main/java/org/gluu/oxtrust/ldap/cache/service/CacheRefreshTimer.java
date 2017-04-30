@@ -47,11 +47,11 @@ import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
@@ -79,8 +79,8 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 05.05.2011
  */
-@Name("cacheRefreshTimer")
-@Scope(ScopeType.APPLICATION)
+@Named("cacheRefreshTimer")
+@ApplicationScoped
 @AutoCreate
 @Startup(depends = { "appInitializer", "oxTrustConfiguration", "cacheRefreshSnapshotFileService" })
 public class CacheRefreshTimer {
@@ -91,43 +91,43 @@ public class CacheRefreshTimer {
 	private static final String LETTERS_FOR_SEARCH = "abcdefghijklmnopqrstuvwxyz1234567890.";
 	private static final String[] TARGET_PERSON_RETURN_ATTRIBUTES = { OxTrustConstants.inum };
 
-	@In
+	@Inject
 	protected AttributeService attributeService;
 
-	@In(value = "oxTrustConfiguration")
+	@Inject(value = "oxTrustConfiguration")
 	private OxTrustConfiguration oxTrustConfiguration;
 
-	@In
+	@Inject
 	private CacheRefreshService cacheRefreshService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private CacheRefreshSnapshotFileService cacheRefreshSnapshotFileService;
 
-	@In
+	@Inject
 	private ExternalCacheRefreshService externalCacheRefreshService;
 
-	@In
+	@Inject
 	private SchemaService schemaService;
 
-	@In
+	@Inject
 	private InumService inumService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 	
-	@In
+	@Inject
 	private ObjectSerializationService objectSerializationService;
 
 	private AtomicBoolean isActive;

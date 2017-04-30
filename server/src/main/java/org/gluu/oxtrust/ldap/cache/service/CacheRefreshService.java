@@ -24,10 +24,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
@@ -41,7 +41,7 @@ import com.unboundid.ldap.sdk.LDAPException;
  * @author Yuriy Movchan Date: 07.04.2011
  */
 @Scope(ScopeType.STATELESS)
-@Name("cacheRefreshService")
+@Named("cacheRefreshService")
 @AutoCreate
 public class CacheRefreshService implements Serializable {
 
@@ -50,7 +50,7 @@ public class CacheRefreshService implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private InumService inumService;
 
 	public Filter createFilter(String customLdapFilter) {

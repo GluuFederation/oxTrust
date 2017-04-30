@@ -12,9 +12,9 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 
@@ -23,17 +23,17 @@ import org.xdi.ldap.model.GluuBoolean;
  * 
  * @author Yuriy Movchan Date: 012/06/2016
  */
-@Scope(ScopeType.APPLICATION)
-@Name("pasportUmaProtectionService")
+@ApplicationScoped
+@Named("pasportUmaProtectionService")
 @AutoCreate
 public class PassportUmaProtectionService extends BaseUmaProtectionService implements Serializable {
 
 	private static final long serialVersionUID = -5547131971095468865L;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
 	protected String getClientId() {

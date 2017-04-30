@@ -13,7 +13,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * @author Val Pecaoco
  */
-@Name("listResponseSerializer")
+@Named("listResponseSerializer")
 public class SchemaTypeAbstractSerializer extends JsonSerializer<SchemaType> {
 
     @Logger

@@ -8,10 +8,10 @@ import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
@@ -34,8 +34,8 @@ import java.util.*;
  * @author Javier Rojas Blum
  * @version January 15, 2016
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updateSectorIdentifierAction")
+@ConversationScoped
+@Named("updateSectorIdentifierAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateSectorIdentifierAction implements Serializable {
 
@@ -63,19 +63,19 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
     private List<OxAuthClient> availableClients;
 
-    @In
+    @Inject
     private SectorIdentifierService sectorIdentifierService;
 
-    @In
+    @Inject
     private LookupService lookupService;
 
-    @In
+    @Inject
     private ClientService clientService;
 
-    @In
+    @Inject
     private FacesMessages facesMessages;
 
-    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
     private ApplicationConfiguration applicationConfiguration;
 
     @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")

@@ -17,7 +17,7 @@ import org.gluu.oxtrust.model.scim2.schema.core.UserCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * @author Val Pecaoco
  */
-@Name("schemaTypeUserSerializer")
+@Named("schemaTypeUserSerializer")
 public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
     @Logger

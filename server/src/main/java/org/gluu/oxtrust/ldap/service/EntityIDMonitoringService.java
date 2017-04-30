@@ -21,11 +21,11 @@ import org.gluu.oxtrust.util.Utils;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
@@ -40,8 +40,8 @@ import org.xdi.util.StringHelper;
  */
 
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("entityIDMonitoringService")
+@ApplicationScoped
+@Named("entityIDMonitoringService")
 public class EntityIDMonitoringService {
 
 	private static final String ENTITY_ID_VANISHED_MESSAGE = "Invalidated because parent federation does not contain this entityId any more.";
@@ -49,7 +49,7 @@ public class EntityIDMonitoringService {
 	@Logger
 	Log log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	private boolean isActive;

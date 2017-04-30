@@ -30,8 +30,8 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
@@ -42,8 +42,8 @@ import org.xdi.util.ArrayHelper;
  * 
  * @author Yuriy Movchan Date: 06.09.2011
  */
-@Name("cacheRefreshSnapshotFileService")
-@Scope(ScopeType.APPLICATION)
+@Named("cacheRefreshSnapshotFileService")
+@ApplicationScoped
 @AutoCreate
 @Startup(depends = "appInitializer")
 public class CacheRefreshSnapshotFileService {

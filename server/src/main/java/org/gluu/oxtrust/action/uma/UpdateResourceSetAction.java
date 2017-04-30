@@ -22,10 +22,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.model.DisplayNameEntry;
@@ -42,8 +42,8 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
-@Name("updateResourceSetAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("updateResourceSetAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class UpdateResourceSetAction implements Serializable {
 
@@ -52,19 +52,19 @@ public class UpdateResourceSetAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
-	@In
+	@Inject
 	private ResourceSetService resourceSetService;
 
-	@In
+	@Inject
 	private ScopeDescriptionService scopeDescriptionService;
 
-	@In
+	@Inject
 	private ClientService clientService;
 
-	@In
+	@Inject
 	private LookupService lookupService;
 
 	private String resourceInum;

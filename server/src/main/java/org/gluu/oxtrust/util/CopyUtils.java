@@ -55,13 +55,13 @@ import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.hibernate.internal.util.StringHelper;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 
-@Name("copyUtils")
+@Named("copyUtils")
 public class CopyUtils implements Serializable {
 
 	private static final String GLUU_STATUS = "gluuStatus";

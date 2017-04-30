@@ -16,10 +16,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.hibernate.internal.util.collections.ArrayHelper;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -38,8 +38,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 10.19.2010
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updateAttributeAction")
+@ConversationScoped
+@Named("updateAttributeAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAttributeAction implements Serializable {
 
@@ -48,16 +48,16 @@ public class UpdateAttributeAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private SchemaService schemaService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 	
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	private String inum;

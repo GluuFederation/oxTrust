@@ -21,8 +21,8 @@ import java.util.Map;
 /**
  * @author Val Pecaoco
  */
-@Scope(ScopeType.APPLICATION)
-@Name("externalScimService")
+@ApplicationScoped
+@Named("externalScimService")
 @AutoCreate
 @Startup
 public class ExternalScimService extends ExternalScriptService {

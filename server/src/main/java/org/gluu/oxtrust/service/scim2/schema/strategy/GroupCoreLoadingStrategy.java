@@ -15,7 +15,7 @@ import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeGroupSerializer;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @author Val Pecaoco
  */
-@Name("groupCoreLoadingStrategy")
+@Named("groupCoreLoadingStrategy")
 public class GroupCoreLoadingStrategy implements LoadingStrategy {
 
     @Logger

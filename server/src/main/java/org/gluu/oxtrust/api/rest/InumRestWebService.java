@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.jboss.seam.Component;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 
 //Sets the path to base URL + /inum
 @Path("/inum")
@@ -23,7 +23,7 @@ public class InumRestWebService {
 	// private static final Logger log =
 	// Logger.getLogger(InumRestWebService.class);
 
-	@In
+	@Inject
 	private InumService inumService;
 
 	@GET

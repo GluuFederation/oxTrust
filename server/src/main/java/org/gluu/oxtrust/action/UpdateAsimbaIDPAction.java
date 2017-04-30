@@ -18,10 +18,10 @@ import javax.validation.constraints.Size;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
@@ -44,7 +44,7 @@ import org.richfaces.model.UploadedFile;
  * @author Dmitry Ognyannikov
  */
 @Scope(ScopeType.SESSION)
-@Name("updateAsimbaIDPAction")
+@Named("updateAsimbaIDPAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaIDPAction implements Serializable {
 
@@ -53,25 +53,25 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Logger
     private Log log;
 
-    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
     private ApplicationConfiguration applicationConfiguration;
 
-    @In
+    @Inject
     private SvnSyncTimer svnSyncTimer;
     
-    @In
+    @Inject
     private FacesMessages facesMessages;
 
-    @In(value = "#{facesContext}")
+    @Inject(value = "#{facesContext}")
     private FacesContext facesContext;
     
-    @In
+    @Inject
     private ResourceLoader resourceLoader;
     
-    @In
+    @Inject
     private AsimbaService asimbaService;
     
-    @In
+    @Inject
     private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
     
     @Out

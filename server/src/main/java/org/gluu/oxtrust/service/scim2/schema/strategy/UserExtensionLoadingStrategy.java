@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author Val Pecaoco
  */
-@Name("userExtensionLoadingStrategy")
+@Named("userExtensionLoadingStrategy")
 public class UserExtensionLoadingStrategy implements LoadingStrategy {
 
     @Logger

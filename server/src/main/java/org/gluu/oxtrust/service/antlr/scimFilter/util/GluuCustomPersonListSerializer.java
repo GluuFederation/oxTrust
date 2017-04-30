@@ -16,7 +16,7 @@ import org.codehaus.jackson.node.LongNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -29,7 +29,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * @author Val Pecaoco
  */
-@Name("gluuCustomPersonListSerializer")
+@Named("gluuCustomPersonListSerializer")
 public class GluuCustomPersonListSerializer extends JsonSerializer<ScimPerson> {
 
     @Logger

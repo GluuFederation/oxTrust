@@ -25,11 +25,11 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
@@ -45,8 +45,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@Name("userProfileAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("userProfileAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class UserProfileAction implements Serializable {
 
@@ -57,34 +57,34 @@ public class UserProfileAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private ImageService imageService;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private CustomAttributeAction customAttributeAction;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private UserPasswordAction userPasswordAction;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private WhitePagesAction whitePagesAction;
 
-	@In
+	@Inject
 	private GluuCustomPerson currentPerson;
 	
-	@In(create = true, value="imapDataService")
+	@Inject(create = true, value="imapDataService")
 	private ImapDataService imapDataService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	private GluuCustomPerson person;

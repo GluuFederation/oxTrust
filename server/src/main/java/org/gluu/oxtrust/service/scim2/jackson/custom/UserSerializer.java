@@ -16,7 +16,7 @@ import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -36,7 +36,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
  * @author Val Pecaoco
  * @link User
  */
-@Name("userSerializer")
+@Named("userSerializer")
 public class UserSerializer extends JsonSerializer<User> {
 
     @Logger

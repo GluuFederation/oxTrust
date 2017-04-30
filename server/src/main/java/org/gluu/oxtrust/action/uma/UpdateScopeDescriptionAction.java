@@ -14,10 +14,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
@@ -48,8 +48,8 @@ import java.util.Set;
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
-@Name("updateScopeDescriptionAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("updateScopeDescriptionAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class UpdateScopeDescriptionAction implements Serializable {
 
@@ -60,25 +60,25 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
-	@In
+	@Inject
 	protected ScopeDescriptionService scopeDescriptionService;
 
-	@In
+	@Inject
 	private ImageService imageService;
 	
-	@In
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private LookupService lookupService;
 	
-	@In
+	@Inject
 	private CustomScriptService customScriptService;
 
-    @In(required = false)
+    @Inject(required = false)
    	private UmaConfiguration umaMetadataConfiguration;
 
 	private String scopeInum;

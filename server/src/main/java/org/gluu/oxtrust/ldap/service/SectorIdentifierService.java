@@ -22,19 +22,19 @@ import java.util.List;
  * @version January 15, 2016
  */
 @Scope(ScopeType.STATELESS)
-@Name("sectorIdentifierService")
+@Named("sectorIdentifierService")
 @AutoCreate
 public class SectorIdentifierService implements Serializable {
 
     private static final long serialVersionUID = -9167587377957719153L;
 
-    @In
+    @Inject
     private LdapEntryManager ldapEntryManager;
 
     @Logger
     private Log log;
 
-    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
     private ApplicationConfiguration applicationConfiguration;
 
     /**

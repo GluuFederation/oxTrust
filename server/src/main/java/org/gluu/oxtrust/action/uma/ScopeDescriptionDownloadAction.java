@@ -21,10 +21,10 @@ import org.gluu.oxtrust.ldap.service.ViewHandlerService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.model.GluuImage;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
@@ -37,7 +37,7 @@ import org.xdi.util.io.ResponseHelper;
  * 
  * @author Yuriy Movchan Date: 12/06/2012
  */
-@Name("scopeDescriptionDownloadAction")
+@Named("scopeDescriptionDownloadAction")
 @Scope(ScopeType.EVENT)
 public class ScopeDescriptionDownloadAction implements Serializable {
 
@@ -46,19 +46,19 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	protected ScopeDescriptionService scopeDescriptionService;
 
-	@In
+	@Inject
 	protected ImageService imageService;
 
-	@In(value = "#{facesContext.externalContext}")
+	@Inject(value = "#{facesContext.externalContext}")
 	private ExternalContext externalContext;
 
-	@In(value = "#{facesContext}")
+	@Inject(value = "#{facesContext}")
 	private FacesContext facesContext;
 
-	@In
+	@Inject
 	private ViewHandlerService viewHandlerService;
 
 	private String scopeId;

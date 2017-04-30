@@ -16,10 +16,10 @@ import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.util.Util;
@@ -29,8 +29,8 @@ import org.xdi.util.Util;
  * 
  * @author Reda Zerrad Date: 06.18.2012
  */
-@Name("searchScopeAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("searchScopeAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class SearchScopeAction implements Serializable {
 
@@ -47,7 +47,7 @@ public class SearchScopeAction implements Serializable {
 
 	private List<OxAuthScope> scopeList;
 
-	@In
+	@Inject
 	private ScopeService scopeService;
 
 	@Restrict("#{s:hasPermission('scope', 'access')}")

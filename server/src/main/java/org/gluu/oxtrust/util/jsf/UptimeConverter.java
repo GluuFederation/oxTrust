@@ -15,7 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.faces.Converter;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;
 
@@ -23,7 +23,7 @@ import org.jboss.seam.annotations.intercept.BypassInterceptors;
  * @author: Yuriy Movchan Date: 11.24.2010
  */
 @Converter()
-@Name("uptimeConverter")
+@Named("uptimeConverter")
 @BypassInterceptors
 public class UptimeConverter implements javax.faces.convert.Converter, Serializable {
 

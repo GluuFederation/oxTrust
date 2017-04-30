@@ -46,10 +46,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
@@ -83,7 +83,7 @@ import org.xdi.xml.XMLValidator;
  * @author Dmitry Ognyannikov, 2016
  */
 @Scope(ScopeType.STATELESS)
-@Name("shibboleth3ConfService")
+@Named("shibboleth3ConfService")
 @AutoCreate
 public class Shibboleth3ConfService implements Serializable {
 
@@ -130,25 +130,25 @@ public class Shibboleth3ConfService implements Serializable {
 
 	public static final String SHIB3_IDP_SP_CERT_FILE = "spcert.crt";
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private TemplateService templateService;
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private FilterService filterService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 
-	@In
+	@Inject
 	private XmlService xmlService;
 
 	/*

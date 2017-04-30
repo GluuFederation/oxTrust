@@ -39,9 +39,9 @@ import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
@@ -63,20 +63,20 @@ import org.xdi.model.GluuUserRole;
 
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
-@Name("oxChooserWebService")
+@Named("oxChooserWebService")
 @Path("/scim/v1/Chooser")
 public class OxChooserWebService extends BaseScimWebService {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private SecurityService securityService;
 
-	@In
+	@Inject
 	Identity identity;
 
 	private static ConsumerManager manager = new ConsumerManager();

@@ -33,9 +33,9 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.service.XmlService;
@@ -47,20 +47,20 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
  * 
  * @author Reda Zerrad Date: 04.03.2012
  */
-@Name("userWebService")
+@Named("userWebService")
 @Path("/scim/v1/Users")
 public class UserWebService extends BaseScimWebService {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private ExternalScimService externalScimService;
 
-    @In
+    @Inject
     private XmlService xmlService;
 
 	@GET

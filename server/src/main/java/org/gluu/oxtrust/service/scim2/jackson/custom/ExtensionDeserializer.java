@@ -21,7 +21,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
@@ -33,7 +33,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * Custom deserializer for the SCIM 2.0 User Extension class.
  */
-@Name("extensionDeserializer")
+@Named("extensionDeserializer")
 public class ExtensionDeserializer extends JsonDeserializer<Extension> {
 
     @Logger

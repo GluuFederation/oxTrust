@@ -20,10 +20,10 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
@@ -36,8 +36,8 @@ import org.xdi.model.GluuUserRole;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@Name("whitePagesAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("whitePagesAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class WhitePagesAction implements Serializable {
 
@@ -50,16 +50,16 @@ public class WhitePagesAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private ImageService imageService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
 	private String tableState;

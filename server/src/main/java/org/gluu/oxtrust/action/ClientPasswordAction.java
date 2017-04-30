@@ -12,15 +12,15 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
-@Name("clientPasswordAction")
+@Named("clientPasswordAction")
 @Scope(ScopeType.EVENT)
 @Restrict("#{identity.loggedIn}")
 public class ClientPasswordAction implements Serializable {
@@ -31,10 +31,10 @@ public class ClientPasswordAction implements Serializable {
 	private String newPasswordConfirmation;
 	private String passwordMessage;
 	
-	@In
+	@Inject
 	private UpdateClientAction updateClientAction;
 
-	@In
+	@Inject
 	private ClientService clientService;
 	
 	@Logger

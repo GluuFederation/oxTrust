@@ -14,7 +14,7 @@ import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeUserSerializer;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author Val Pecaoco
  */
-@Name("userCoreLoadingStrategy")
+@Named("userCoreLoadingStrategy")
 public class UserCoreLoadingStrategy implements LoadingStrategy {
 
     @Logger

@@ -32,7 +32,7 @@ import java.util.List;
  */
 
 @Scope(ScopeType.STATELESS)
-@Name("clientService")
+@Named("clientService")
 @AutoCreate
 public class ClientService implements Serializable {
 
@@ -40,13 +40,13 @@ public class ClientService implements Serializable {
      *
      */
     private static final long serialVersionUID = 7912416439116338984L;
-    @In
+    @Inject
     private LdapEntryManager ldapEntryManager;
 
     @Logger
     private Log log;
 
-    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
     private ApplicationConfiguration applicationConfiguration;
 
     public boolean contains(String clientDn) {

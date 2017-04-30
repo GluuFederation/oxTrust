@@ -23,10 +23,10 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.GluuStatus;
@@ -41,8 +41,8 @@ import com.unboundid.ldap.sdk.SearchResultEntry;
  * 
  * @author Yuriy Movchan Date: 10.17.2010
  */
-@Scope(CONVERSATION)
-@Name("attributeInventoryAction")
+@ConversationScoped
+@Named("attributeInventoryAction")
 @Restrict("#{identity.loggedIn}")
 public class AttributeInventoryAction implements Serializable {
 
@@ -55,18 +55,18 @@ public class AttributeInventoryAction implements Serializable {
 
 	private List<GluuAttribute> attributeList;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 	
-	@In(value = "#{facesContext.externalContext}")
+	@Inject(value = "#{facesContext.externalContext}")
 	private ExternalContext extCtx;	
 
-	@In(value = "#{facesContext}")
+	@Inject(value = "#{facesContext}")
 	FacesContext facesContext;
 
 	private List<GluuAttribute> activeAttributeList;
 	
-	@In
+	@Inject
 	private LdifService ldifService;
 	
 	

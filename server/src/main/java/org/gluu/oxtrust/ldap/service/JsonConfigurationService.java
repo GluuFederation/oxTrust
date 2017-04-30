@@ -20,10 +20,10 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
@@ -45,7 +45,7 @@ import javax.ws.rs.core.Response;
  * @author Yuriy Movchan Date: 12.15.2010
  */
 @Scope(ScopeType.STATELESS)
-@Name("jsonConfigurationService")
+@Named("jsonConfigurationService")
 @AutoCreate
 public class JsonConfigurationService implements Serializable {
 
@@ -54,22 +54,22 @@ public class JsonConfigurationService implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private OpenIdService openIdService;
 
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 	
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
 	public ApplicationConfiguration getOxTrustApplicationConfiguration() {

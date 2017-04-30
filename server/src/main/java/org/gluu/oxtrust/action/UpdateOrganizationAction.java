@@ -31,10 +31,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
@@ -53,8 +53,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 11.16.2010
  */
-@Name("updateOrganizationAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("updateOrganizationAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class UpdateOrganizationAction implements Serializable {
 
@@ -63,28 +63,28 @@ public class UpdateOrganizationAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private StatusMessages statusMessages;
 
-	@In
+	@Inject
 	private GluuCustomPerson currentPerson;
 
-	@In
+	@Inject
 	private ImageService imageService;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	private GluuOrganization organization;

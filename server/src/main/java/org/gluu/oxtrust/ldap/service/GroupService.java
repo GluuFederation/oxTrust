@@ -21,10 +21,10 @@ import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.INumGenerator;
@@ -38,7 +38,7 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Yuriy Movchan Date: 11.02.2010
  */
 @Scope(ScopeType.STATELESS)
-@Name("groupService")
+@Named("groupService")
 @AutoCreate
 public class GroupService implements Serializable, IGroupService {
 
@@ -47,13 +47,13 @@ public class GroupService implements Serializable, IGroupService {
      */
 	private static final long serialVersionUID = -9167587377957719152L;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
 	@Logger
 	private Log log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	/* (non-Javadoc)

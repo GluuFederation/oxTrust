@@ -17,9 +17,9 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
@@ -27,17 +27,17 @@ import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
 @Scope(ScopeType.STATELESS)
-@Name("federationService")
+@Named("federationService")
 @AutoCreate
 public class FederationService {
 
-	@In
+	@Inject
 	LdapEntryManager ldapEntryManager;
 
-	@In
+	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	public void addFederationProposal(GluuSAMLFederationProposal federationProposal) {

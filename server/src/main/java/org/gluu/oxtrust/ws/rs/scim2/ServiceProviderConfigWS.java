@@ -17,13 +17,13 @@ import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
  */
-@Name("serviceProviderConfig")
+@Named("serviceProviderConfig")
 @Path("/scim/v2/ServiceProviderConfig")
 public class ServiceProviderConfigWS extends BaseScimWebService {
 

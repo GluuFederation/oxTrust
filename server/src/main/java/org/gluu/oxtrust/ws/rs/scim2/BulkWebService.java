@@ -40,8 +40,8 @@ import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Inject;
+import javax.inject.Named;
 // import org.xdi.context.J2EContext;
 
 import com.wordnik.swagger.annotations.Api;
@@ -58,23 +58,23 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
  * 
  * @author Rahat ALi Date: 05.08.2015
  */
-@Name("scim2BulkEndpoint")
+@Named("scim2BulkEndpoint")
 @Path("/scim/v2/Bulk")
 @Api(value = "/v2/Bulk", description = "SCIM 2.0 Bulk Endpoint (https://tools.ietf.org/html/rfc7644#section-3.7)", authorizations = {@Authorization(value = "Authorization", type = "uma")})
 public class BulkWebService extends BaseScimWebService {
 
 	private static final Logger log = Logger.getLogger(BulkWebService.class);
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-    @In
+    @Inject
     private Scim2UserService scim2UserService;
 
-    @In
+    @Inject
     private Scim2GroupService scim2GroupService;
 
     @POST

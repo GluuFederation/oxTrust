@@ -17,10 +17,10 @@ import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -37,8 +37,8 @@ import com.unboundid.ldap.sdk.ResultCode;
  * @author Shekhar L Date: 02.28.2017
  * @author Yuriy Movchan Date: 03/06/2017
  */
-@Name("attributeImportAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("attributeImportAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class AttributeImportAction implements Serializable {
 
@@ -47,13 +47,13 @@ public class AttributeImportAction implements Serializable {
 	@Logger
 	private Log log;
 	
-	@In
+	@Inject
 	private LdifService ldifService;
 	
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
 	private UploadedFile uploadedFile;

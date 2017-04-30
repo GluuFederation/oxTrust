@@ -12,8 +12,8 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.custom.script.CustomScriptType;
@@ -26,8 +26,8 @@ import org.xdi.service.custom.script.ExternalScriptService;
  * 
  * @author Yuriy Movchan Date: 01/12/2015
  */
-@Scope(ScopeType.APPLICATION)
-@Name("externalCacheRefreshService")
+@ApplicationScoped
+@Named("externalCacheRefreshService")
 @AutoCreate
 @Startup
 public class ExternalCacheRefreshService extends ExternalScriptService {

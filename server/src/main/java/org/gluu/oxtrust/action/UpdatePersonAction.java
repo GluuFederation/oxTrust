@@ -30,11 +30,11 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
@@ -51,8 +51,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 10.23.2010
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updatePersonAction")
+@ConversationScoped
+@Named("updatePersonAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdatePersonAction implements Serializable {
 
@@ -66,28 +66,28 @@ public class UpdatePersonAction implements Serializable {
 
 	private GluuCustomPerson person;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private CustomAttributeAction customAttributeAction;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private UserPasswordAction userPasswordAction;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private WhitePagesAction whitePagesAction;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In
+	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
 	
 	private GluuStatus gluuStatus ;

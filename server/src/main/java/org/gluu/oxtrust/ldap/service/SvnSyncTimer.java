@@ -18,10 +18,10 @@ import org.javatuples.Pair;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
@@ -32,20 +32,20 @@ import org.jboss.seam.log.Log;
 import org.xdi.util.StringHelper;
 
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("svnSyncTimer")
+@ApplicationScoped
+@Named("svnSyncTimer")
 public class SvnSyncTimer {
 
 	@Logger
 	Log log;
 
-	@In
+	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
-	@In
+	@Inject
 	private SubversionService subversionService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
 	private LinkedBlockingQueue<Pair<GluuSAMLTrustRelationship, String>> removedTrustRelationship;
@@ -54,7 +54,7 @@ public class SvnSyncTimer {
 
 	List<Pair<GluuSAMLTrustRelationship, String>> alteredTrustRelations;
 
-	@In
+	@Inject
 	private TrustService trustService;
 
 	@Create
@@ -64,7 +64,7 @@ public class SvnSyncTimer {
 	}
 
 	@Asynchronous
-	public QuartzTriggerHandle scheduleSvnSync(@Expiration Date when, @IntervalDuration Long interval) {
+	public QuartzTriggerHandle scheduleSvnSync(@Expiration Date when, @InjecttervalDuration Long interval) {
 		process(when, interval);
 		return null;
 	}

@@ -12,9 +12,9 @@ import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.contexts.Contexts;
@@ -25,9 +25,9 @@ import org.jboss.seam.log.Log;
  * @author Yuriy Movchan
  * @version 0.1, 11/18/2012
  */
-@Name("ldapStatusTimer")
+@Named("ldapStatusTimer")
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
+@ApplicationScoped
 public class LdapStatusTimer {
 
     private final static String EVENT_TYPE = "LdapStatusTimerEvent";

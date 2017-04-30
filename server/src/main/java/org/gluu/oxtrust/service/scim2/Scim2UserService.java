@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author Val Pecaoco
  */
-@Name("scim2UserService")
+@Named("scim2UserService")
 @Scope(ScopeType.STATELESS)
 @AutoCreate
 public class Scim2UserService implements Serializable {
@@ -41,10 +41,10 @@ public class Scim2UserService implements Serializable {
     @Logger
     private Log log;
 
-    @In
+    @Inject
     private IPersonService personService;
 
-    @In
+    @Inject
     private ExternalScimService externalScimService;
 
     public User createUser(User user) throws Exception {

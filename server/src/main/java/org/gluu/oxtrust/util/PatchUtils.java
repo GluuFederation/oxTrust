@@ -14,10 +14,10 @@ import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.User;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
-@Name("patchUtils")
+@Named("patchUtils")
 public class PatchUtils implements Serializable {
 
 	private static final long serialVersionUID = -1715995162448707004L;

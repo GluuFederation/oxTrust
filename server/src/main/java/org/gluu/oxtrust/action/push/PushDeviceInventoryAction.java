@@ -16,10 +16,10 @@ import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.oxtrust.service.push.PushDeviceService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.util.Util;
@@ -29,8 +29,8 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 02/03/2014
  */
-@Name("pushDeviceInventoryAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("pushDeviceInventoryAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class PushDeviceInventoryAction implements Serializable {
 
@@ -47,7 +47,7 @@ public class PushDeviceInventoryAction implements Serializable {
 
 	private List<PushDevice> pushDeviceList;
 
-	@In
+	@Inject
 	private PushDeviceService pushDeviceService;
 	
 	@Restrict("#{s:hasPermission('oxpush', 'access')}")

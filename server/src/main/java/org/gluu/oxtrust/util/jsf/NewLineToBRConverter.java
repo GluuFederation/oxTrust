@@ -12,7 +12,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.faces.Converter;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;
 
@@ -20,7 +20,7 @@ import org.jboss.seam.annotations.intercept.BypassInterceptors;
  * @author: Yuriy Movchan Date: 07.11.2012
  */
 @Converter()
-@Name("newLineToBRConverter")
+@Named("newLineToBRConverter")
 @BypassInterceptors
 public class NewLineToBRConverter implements javax.faces.convert.Converter, Serializable {
 

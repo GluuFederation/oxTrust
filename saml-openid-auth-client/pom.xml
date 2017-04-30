@@ -42,13 +42,12 @@
     <dependencies>
         <dependency>
             <groupId>org.xdi</groupId>
-            <artifactId>oxUtil</artifactId>
+            <artifactId>oxcore-util</artifactId>
             <scope>provided</scope>
         </dependency>
-
 		<dependency>
 			<groupId>org.xdi</groupId>
-			<artifactId>oxLdap</artifactId>
+			<artifactId>oxcore-ldap</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
@@ -63,7 +62,6 @@
             <artifactId>oxauth-model</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.xdi</groupId>
             <artifactId>oxauth-client</artifactId>
@@ -73,7 +71,6 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.7</version>
             <type>jar</type>
             <optional>true</optional>
         </dependency>
@@ -88,54 +85,18 @@
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
-            <version>1.3.2</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>stax-api</artifactId>
-                    <groupId>stax</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>jaxrs-api</artifactId>
-            <version>${resteasy.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
-            <version>${resteasy.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jcip-annotations</artifactId>
-                    <groupId>net.jcip</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsr250-api</artifactId>
-                    <groupId>javax.annotation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>scannotation</artifactId>
-                    <groupId>org.scannotation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>slf4j-simple</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>jaxrs-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
 		<dependency>

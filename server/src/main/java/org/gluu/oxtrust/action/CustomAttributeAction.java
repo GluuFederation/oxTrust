@@ -26,10 +26,10 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
@@ -43,8 +43,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 12/24/2012
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("customAttributeAction")
+@ConversationScoped
+@Named("customAttributeAction")
 public class CustomAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -719594782175672946L;
@@ -52,10 +52,10 @@ public class CustomAttributeAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private ImageService imageService;
 
 	private GluuImage uploadedImage;

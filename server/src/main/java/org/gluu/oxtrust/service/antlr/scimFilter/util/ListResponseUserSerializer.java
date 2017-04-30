@@ -20,7 +20,7 @@ import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserSerializer;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -33,7 +33,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * @author Val Pecaoco
  */
-@Name("listResponseUserSerializer")
+@Named("listResponseUserSerializer")
 public class ListResponseUserSerializer extends UserSerializer {
 
     @Logger

@@ -15,8 +15,8 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 
 /**
@@ -24,8 +24,8 @@ import org.jboss.seam.log.Log;
  * 
  * @author Yuriy Movchan Date: 02.15.2011
  */
-@Name("excelService")
-@Scope(ScopeType.APPLICATION)
+@Named("excelService")
+@ApplicationScoped
 @AutoCreate
 public class ExcelService {
 

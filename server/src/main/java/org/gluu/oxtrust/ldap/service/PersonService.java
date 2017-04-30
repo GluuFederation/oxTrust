@@ -26,10 +26,10 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.CustomAttribute;
@@ -46,7 +46,7 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Yuriy Movchan Date: 10.13.2010
  */
 @Scope(ScopeType.STATELESS)
-@Name("personService")
+@Named("personService")
 @AutoCreate
 public class PersonService implements Serializable, IPersonService {
 
@@ -55,16 +55,16 @@ public class PersonService implements Serializable, IPersonService {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	private List<GluuCustomAttribute> mandatoryAttributes;

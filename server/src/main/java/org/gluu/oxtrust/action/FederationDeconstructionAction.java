@@ -21,18 +21,18 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.util.StringHelper;
 
-@Name("federationDeconstructionAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("federationDeconstructionAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class FederationDeconstructionAction implements Serializable {
 	private static final long serialVersionUID = 1216276324815043884L;
@@ -49,7 +49,7 @@ public class FederationDeconstructionAction implements Serializable {
 
 	private List<String> managedFiltered;
 
-	@In
+	@Inject
 	private TrustService trustService;
 
 	private Set<String> selectedList = new HashSet<String>();
@@ -62,7 +62,7 @@ public class FederationDeconstructionAction implements Serializable {
 
 	private GluuSAMLTrustRelationship trustRelationship;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	public String initFederationDeconstructions(GluuSAMLTrustRelationship trustRelationship) {

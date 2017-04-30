@@ -32,28 +32,28 @@ import org.gluu.oxtrust.model.association.ClientAssociation;
 import org.gluu.oxtrust.model.association.PersonAssociation;
 import org.gluu.oxtrust.util.MapperUtil;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
-@Name("clientAssociationWebService")
+@Named("clientAssociationWebService")
 @Path("/scim/v1/ClientAssociation")
 public class ClientAssociationWebService extends BaseScimWebService {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private ClientService clientService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	@Path("/User/{uid}")

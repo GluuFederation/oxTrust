@@ -23,9 +23,9 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
@@ -42,17 +42,17 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 /**
  * @author Val Pecaoco
  */
-@Name("scim2FidoDeviceEndpoint")
+@Named("scim2FidoDeviceEndpoint")
 @Path("/scim/v2/FidoDevices")
 public class FidoDeviceWebService extends BaseScimWebService {
 
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IFidoDeviceService fidoDeviceService;
 
-	@In
+	@Inject
 	private Scim2FidoDeviceService scim2FidoDeviceService;
 
 	@GET

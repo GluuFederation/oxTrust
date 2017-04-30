@@ -19,7 +19,7 @@ import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeLoadingFactory;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeAbstractSerializer;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
 import javax.ws.rs.*;
@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author Val Pecaoco
  */
-@Name("scim2SchemaEndpoint")
+@Named("scim2SchemaEndpoint")
 @Path("/scim/v2/Schemas")
 @Api(value = "/v2/Schemas", description = "SCIM 2.0 Schema Endpoint (https://tools.ietf.org/html/rfc7643#section-4)")
 public class SchemaWebService extends BaseScimWebService {

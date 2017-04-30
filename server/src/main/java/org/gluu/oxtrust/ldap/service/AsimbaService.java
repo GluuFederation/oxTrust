@@ -28,10 +28,10 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.LdapOxAsimbaConfiguration;
@@ -43,9 +43,9 @@ import org.xdi.util.StringHelper;
  * 
  * @author Dmitry Ognyannikov, 2016
  */
-@Name("asimbaService")
+@Named("asimbaService")
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
+@ApplicationScoped
 public class AsimbaService implements Serializable {
     public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     public static String METADATA_SP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
@@ -53,13 +53,13 @@ public class AsimbaService implements Serializable {
     @Logger
     private Log log;
     
-    @In
+    @Inject
     private LdapEntryManager ldapEntryManager;
     
-//    @In
+//    @Inject
 //    ApplianceService applianceService;
     
-    @In
+    @Inject
     OrganizationService organizationService;
      
     @Create

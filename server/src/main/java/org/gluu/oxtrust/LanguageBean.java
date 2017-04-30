@@ -5,9 +5,9 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.security.Identity;
 
@@ -21,16 +21,16 @@ import java.util.Map;
 /**
  * Created by eugeniuparvan on 3/6/17.
  */
-@Name("language")
+@Named("language")
 @Scope(ScopeType.SESSION)
 public class LanguageBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @In
+    @Inject
     private Identity identity;
 
-    @In
+    @Inject
     private PersonService personService;
 
 

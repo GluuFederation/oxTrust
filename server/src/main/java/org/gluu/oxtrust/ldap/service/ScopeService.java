@@ -15,9 +15,9 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -29,7 +29,7 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Reda Zerrad Date: 06.18.2012
  */
 @Scope(ScopeType.STATELESS)
-@Name("scopeService")
+@Named("scopeService")
 @AutoCreate
 public class ScopeService implements Serializable {
 
@@ -38,7 +38,7 @@ public class ScopeService implements Serializable {
      */
 	private static final long serialVersionUID = 65734145678106186L;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
 	// @Logger

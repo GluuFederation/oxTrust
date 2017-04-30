@@ -27,10 +27,10 @@ import org.gluu.oxtrust.model.MetadataFilter;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.w3c.dom.Document;
 import org.xdi.service.XmlService;
@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
  * 
  */
 @Scope(ScopeType.STATELESS)
-@Name("filterService")
+@Named("filterService")
 @AutoCreate
 public class FilterService {
 
@@ -58,13 +58,13 @@ public class FilterService {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private TemplateService templateService;
 
-	@In
+	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
-	@In
+	@Inject
 	private XmlService xmlService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {

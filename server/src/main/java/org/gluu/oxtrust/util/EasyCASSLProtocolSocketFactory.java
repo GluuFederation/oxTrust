@@ -15,7 +15,7 @@ import javax.net.ssl.TrustManager;
 import org.apache.commons.httpclient.HttpClientError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.util.EasySSLProtocolSocketFactory;
 import org.xdi.util.EasyX509TrustManager;
@@ -24,7 +24,7 @@ import org.xdi.util.security.StringEncrypter;
 public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory {
 	private static final Log LOG = LogFactory.getLog(EasyCASSLProtocolSocketFactory.class);
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 	
 	protected SSLContext createEasySSLContext(ApplicationConfiguration applicationConfiguration) {

@@ -19,8 +19,8 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.richfaces.model.UploadedFile;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,7 +32,7 @@ import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.Utils;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.w3c.dom.Document;
 import org.xdi.service.XmlService;
 
@@ -41,9 +41,9 @@ import org.xdi.service.XmlService;
  * 
  * @author Dmitry Ognyannikov, 2016
  */
-@Name("asimbaXMLConfigurationService")
+@Named("asimbaXMLConfigurationService")
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
+@ApplicationScoped
 public class AsimbaXMLConfigurationService implements Serializable {
     
     /** Name of the file that contains property-list for configuring server */
@@ -57,10 +57,10 @@ public class AsimbaXMLConfigurationService implements Serializable {
     @Logger
     private Log log;
     
-    @In
+    @Inject
     private SSLService sslService;
 
-    @In
+    @Inject
     private XmlService xmlService;
     
     private String keystoreFilePath = null;

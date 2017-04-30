@@ -36,11 +36,11 @@ import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.hibernate.validator.constraints.Email;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Redirect;
@@ -56,8 +56,8 @@ import org.xdi.util.StringHelper;
  * @author Dejan Maric
  * @author Yuriy Movchan Date: 08.14.2015
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("registerPersonAction")
+@ConversationScoped
+@Named("registerPersonAction")
 public class RegisterPersonAction implements Serializable {
 
 	private static final long serialVersionUID = 6002737004324917338L;
@@ -65,31 +65,31 @@ public class RegisterPersonAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In(value = "#{facesContext.externalContext}")
+	@Inject(value = "#{facesContext.externalContext}")
 	private ExternalContext externalContext;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
 	
-	@In
+	@Inject
 	Redirect redirect;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
 	private CustomAttributeAction customAttributeAction;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private ExternalUserRegistrationService externalUserRegistrationService;
 
 	private GluuCustomPerson person;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
 	@NotNull
@@ -110,10 +110,10 @@ public class RegisterPersonAction implements Serializable {
 		this.email = email;
 	}
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In
+	@Inject
 	private RecaptchaService recaptchaService;
 
 	private List<String> hiddenAttributes;

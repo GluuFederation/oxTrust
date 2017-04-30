@@ -19,12 +19,12 @@ import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
  */
-@Name("resourceTypesWs")
+@Named("resourceTypesWs")
 @Path("/scim/v2/ResourceTypes")
 @Api(value = "/v2/ResourceTypes", description = "SCIM 2.0 ResourceType Endpoint (https://tools.ietf.org/html/rfc7643#section-6)")
 public class ResourceTypeWS extends BaseScimWebService {

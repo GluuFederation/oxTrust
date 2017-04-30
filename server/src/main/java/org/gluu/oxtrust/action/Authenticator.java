@@ -39,11 +39,11 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
@@ -77,7 +77,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * @author Reda Zerrad Date: 05.11.2012
  * @author Yuriy Movchan Date: 02.12.2013
  */
-@Name("authenticator")
+@Named("authenticator")
 @Scope(ScopeType.SESSION)
 public class Authenticator implements Serializable {
 
@@ -86,43 +86,43 @@ public class Authenticator implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private Identity identity;
 
-	@In
+	@Inject
 	private Credentials credentials;
 	
-	@In
+	@Inject
 	Redirect redirect;
 	
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private SecurityService securityService;
 
-	@In(create = true)
+	@Inject(create = true)
 	private SsoLoginAction ssoLoginAction;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 	
-	@In
+	@Inject
 	private OpenIdService openIdService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
 	String viewIdBeforeLoginRedirect;
 
-	@In(create = true)
+	@Inject(create = true)
 	@Out(scope = ScopeType.SESSION, required = false)
 	private OauthData oauthData;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 	
 	public boolean preAuthenticate() throws IOException, Exception {

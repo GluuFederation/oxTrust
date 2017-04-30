@@ -22,10 +22,10 @@ import org.gluu.oxtrust.util.svn.SvnHelper;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
@@ -45,17 +45,17 @@ import org.xdi.util.security.StringEncrypter;
  * @author Yuriy Movchan Date: 11.25.2010
  */
 @Scope(ScopeType.STATELESS)
-@Name("subversionService")
+@Named("subversionService")
 @AutoCreate
 public class SubversionService {
 
 	@Logger
 	private Log log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 
 	final private static String baseSvnDir = "/var/gluu/svn";

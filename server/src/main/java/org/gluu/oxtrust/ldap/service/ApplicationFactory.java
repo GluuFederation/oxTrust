@@ -8,10 +8,10 @@ package org.gluu.oxtrust.ldap.service;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.log.Log;
 import org.xdi.service.cache.CacheConfiguration;
@@ -22,12 +22,12 @@ import org.xdi.service.cache.InMemoryConfiguration;
  *
  * @author Yuriy Movchan Date: 02/14/2017
  */
-@Scope(ScopeType.APPLICATION)
-@Name("applicationFactory")
+@ApplicationScoped
+@Named("applicationFactory")
 @Startup
 public class ApplicationFactory {
     
-    @In
+    @Inject
     private ApplianceService applianceService;
 
     @Logger

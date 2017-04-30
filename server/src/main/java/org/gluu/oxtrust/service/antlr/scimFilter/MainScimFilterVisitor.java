@@ -24,7 +24,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     Logger logger = LoggerFactory.getLogger(MainScimFilterVisitor.class);
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -47,7 +47,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -61,7 +61,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -89,7 +89,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -110,7 +110,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -201,7 +201,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -225,7 +225,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -239,7 +239,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -253,7 +253,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -267,7 +267,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -287,7 +287,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -301,7 +301,7 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InjectheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>

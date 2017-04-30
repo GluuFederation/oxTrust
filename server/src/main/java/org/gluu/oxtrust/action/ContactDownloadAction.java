@@ -16,14 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.gluu.oxtrust.ldap.service.DownloadService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 
-@Name("contactDownloadAction")
+@Named("contactDownloadAction")
 @Scope(ScopeType.EVENT)
 @Restrict("#{identity.loggedIn}")
 public class ContactDownloadAction implements Serializable {
@@ -33,17 +33,17 @@ public class ContactDownloadAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In(value = "#{facesContext.externalContext}")
+	@Inject(value = "#{facesContext.externalContext}")
 	private ExternalContext extCtx;
 
 	@SuppressWarnings("seam-unresolved-variable")
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
-	@In(value = "#{facesContext}")
+	@Inject(value = "#{facesContext}")
 	FacesContext facesContext;
 
-	@In
+	@Inject
 	private DownloadService downloadService;
 
 	public String download() {

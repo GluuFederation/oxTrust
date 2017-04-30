@@ -39,11 +39,11 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
@@ -62,8 +62,8 @@ import org.xdi.util.process.ProcessHelper;
  * @author Yuriy Movchan Date: 11.22.2010
  */
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("statusCheckerTimer")
+@ApplicationScoped
+@Named("statusCheckerTimer")
 public class StatusCheckerTimer {
 
     private final static String EVENT_TYPE = "StatusCheckerTimerEvent";
@@ -72,26 +72,26 @@ public class StatusCheckerTimer {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private CentralLdapService centralLdapService;
 
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
 	private NumberFormat numberFormat;
 
     private AtomicBoolean isActive;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	@Create

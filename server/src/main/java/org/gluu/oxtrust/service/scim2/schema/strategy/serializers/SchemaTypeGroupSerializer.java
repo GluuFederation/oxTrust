@@ -18,7 +18,7 @@ import org.gluu.oxtrust.model.scim2.schema.AttributeHolder;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.core.GroupCoreSchema;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author Val Pecaoco
  */
-@Name("schemaTypeGroupSerializer")
+@Named("schemaTypeGroupSerializer")
 public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
 
     @Logger

@@ -21,10 +21,10 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 
@@ -33,8 +33,8 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  * 
  * @author Yuriy Movchan Date: 12.15.2010
  */
-@Scope(ScopeType.APPLICATION)
-@Name("templateService")
+@ApplicationScoped
+@Named("templateService")
 @AutoCreate
 public class TemplateService implements Serializable {
 
@@ -43,7 +43,7 @@ public class TemplateService implements Serializable {
 	@Logger
 	private Log log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	/*

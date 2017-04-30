@@ -13,10 +13,10 @@ import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 
@@ -26,7 +26,7 @@ import org.jboss.seam.log.Log;
  * @author Dmitry Ognyannikov
  */
 @Scope(ScopeType.SESSION)
-@Name("asimbaAddIDPAction")
+@Named("asimbaAddIDPAction")
 @Restrict("#{identity.loggedIn}")
 public class AsimbaAddIDPAction implements Serializable {
 
@@ -35,10 +35,10 @@ public class AsimbaAddIDPAction implements Serializable {
     @Logger
     private Log log;
 
-    @In
+    @Inject
     private SvnSyncTimer svnSyncTimer;
     
-    @In
+    @Inject
     private AsimbaService asimbaService;
     
     private IDPEntry idp;

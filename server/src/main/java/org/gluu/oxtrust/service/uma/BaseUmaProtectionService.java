@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.gluu.oxtrust.exception.UmaProtectionException;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.log.Log;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
@@ -27,7 +27,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 	@Logger
 	private Log log;
 
-	@In(required = false)
+	@Inject(required = false)
 	private UmaConfiguration umaMetadataConfiguration;
 
 	private Token umaPat;
@@ -35,7 +35,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	private final ReentrantLock lock = new ReentrantLock();
 
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 
 	public Token getPatToken() throws UmaProtectionException {

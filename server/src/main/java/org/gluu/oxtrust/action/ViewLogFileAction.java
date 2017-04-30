@@ -24,10 +24,10 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
@@ -41,8 +41,8 @@ import org.xdi.util.io.ReverseLineReader;
  * 
  * @author Yuriy Movchan Date: 07/08/2013
  */
-@Name("viewLogFileAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("viewLogFileAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class ViewLogFileAction implements Serializable {
 
@@ -51,10 +51,10 @@ public class ViewLogFileAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
 	private GluuAppliance appliance;

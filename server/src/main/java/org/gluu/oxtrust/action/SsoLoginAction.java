@@ -26,10 +26,10 @@ import org.drools.WorkingMemory;
 import org.drools.compiler.RuleBaseLoader;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
@@ -44,8 +44,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 11.26.2010
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("ssoLoginAction")
+@ConversationScoped
+@Named("ssoLoginAction")
 public class SsoLoginAction implements Serializable {
 
 	private static final long serialVersionUID = 7409229786722653317L;
@@ -53,16 +53,16 @@ public class SsoLoginAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private Identity identity;
 
-	@In(value = "#{facesContext}")
+	@Inject(value = "#{facesContext}")
 	private FacesContext facesContext;
 
-	@In
+	@Inject
 	private Renderer renderer;
 
 	private String userName;
@@ -76,10 +76,10 @@ public class SsoLoginAction implements Serializable {
 
 	private boolean initialized = false;
 
-	@In(value = "#{facesContext.externalContext}")
+	@Inject(value = "#{facesContext.externalContext}")
 	private ExternalContext extCtx;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	public String start() {

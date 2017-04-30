@@ -20,10 +20,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.log.Log;
@@ -39,8 +39,8 @@ import org.xdi.util.repository.RepositoryUtility;
  * 
  * @author Yuriy Movchan Date: 11.03.2010
  */
-@Name("imageRepository")
-@Scope(ScopeType.APPLICATION)
+@Named("imageRepository")
+@ApplicationScoped
 @AutoCreate
 @Startup
 public class ImageRepository {
@@ -48,10 +48,10 @@ public class ImageRepository {
 	@Logger
 	private Log log;
 
-	@In(required = false)
+	@Inject(required = false)
 	private ResourceLoader resourceLoader;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
 	private static final String TEMP_FOLDER = "tmp";

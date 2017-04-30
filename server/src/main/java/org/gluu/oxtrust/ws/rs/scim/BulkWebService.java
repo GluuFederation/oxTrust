@@ -41,27 +41,27 @@ import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * SCIM Bulk Implementation
  * 
  * @author Reda Zerrad Date: 04.19.2012
  */
-@Name("BulkWebService")
+@Named("BulkWebService")
 @Path("/scim/v1/Bulk")
 public class BulkWebService extends BaseScimWebService {
 
 	private static final Logger log = Logger.getLogger(BulkWebService.class);
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private ExternalScimService externalScimService;
 
 	@POST

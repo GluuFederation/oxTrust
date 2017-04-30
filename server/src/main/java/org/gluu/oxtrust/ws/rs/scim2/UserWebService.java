@@ -31,9 +31,9 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.ws.rs.scim.PATCH;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
@@ -45,7 +45,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
  * 
  * @author Rahat Ali Date: 05.08.2015
  */
-@Name("scim2UserEndpoint")
+@Named("scim2UserEndpoint")
 @Path("/scim/v2/Users")
 @Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = {@Authorization(value = "Authorization", type = "uma")})
 public class UserWebService extends BaseScimWebService {
@@ -53,10 +53,10 @@ public class UserWebService extends BaseScimWebService {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-    @In
+    @Inject
     private Scim2UserService scim2UserService;
 
 	@GET

@@ -26,10 +26,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 
@@ -39,7 +39,7 @@ import org.jboss.seam.log.Log;
  * @author Dmitry Ognyannikov
  */
 @Scope(ScopeType.SESSION)
-@Name("certificateManagementAction")
+@Named("certificateManagementAction")
 @Restrict("#{identity.loggedIn}")
 public class CertificateManagementAction implements Serializable {
 
@@ -52,13 +52,13 @@ public class CertificateManagementAction implements Serializable {
     @Logger
     private Log log;
 
-    @In
+    @Inject
     private SvnSyncTimer svnSyncTimer;
     
-    @In
+    @Inject
     private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
 
-    @In
+    @Inject
     private ApplianceService applianceService;
     
     private KeystoreWrapper asimbaKeystore;

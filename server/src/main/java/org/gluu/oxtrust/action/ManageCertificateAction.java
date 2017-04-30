@@ -52,10 +52,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -74,8 +74,8 @@ import org.xdi.util.io.ResponseHelper;
  * @author Yuriy Movchan Date: 03/03/2014
  * 
  */
-@Name("manageCertificateAction")
-@Scope(ScopeType.CONVERSATION)
+@Named("manageCertificateAction")
+@ConversationScoped
 @Restrict("#{identity.loggedIn}")
 public class ManageCertificateAction implements Serializable {
 	public static final String BEGIN_CERT_REQ = "-----BEGIN CERTIFICATE REQUEST-----";
@@ -86,23 +86,23 @@ public class ManageCertificateAction implements Serializable {
 	@Logger
 	private Log log;
 
-	@In(value = "#{facesContext}")
+	@Inject(value = "#{facesContext}")
 	FacesContext facesContext;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private SSLService sslService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	private ApplicationConfiguration applicationConfiguration;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 	
 	@SuppressWarnings("seam-unresolved-variable")
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
 	private TrustStoreConfiguration trustStoreConfiguration;

@@ -12,8 +12,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 
 /**
  * Provides operations to get property values
@@ -21,7 +21,7 @@ import org.jboss.seam.annotations.Scope;
  * @author Yuriy Movchan Date: 08/11/2013
  */
 @Scope(ScopeType.STATELESS)
-@Name("propertyService")
+@Named("propertyService")
 @AutoCreate
 public class PropertyService implements Serializable {
 

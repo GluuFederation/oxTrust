@@ -25,9 +25,9 @@ import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xdi.service.XmlService;
@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
  * 
  */
 @Scope(ScopeType.STATELESS)
-@Name("profileConfigurationService")
+@Named("profileConfigurationService")
 @AutoCreate
 public class ProfileConfigurationService {
 
@@ -51,13 +51,13 @@ public class ProfileConfigurationService {
 	private static final String SAML2_ARTIFACT_RESOLUTION = "SAML2ArtifactResolution";
 	private static final String SAML2_ATTRIBUTE_QUERY = "SAML2AttributeQuery";
 
-	@In
+	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
-	@In
+	@Inject
 	private TemplateService templateService;
 
-	@In
+	@Inject
 	private XmlService xmlService;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {

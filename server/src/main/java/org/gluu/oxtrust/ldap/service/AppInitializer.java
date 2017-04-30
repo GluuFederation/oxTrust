@@ -28,11 +28,11 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
+import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
@@ -67,8 +67,8 @@ import org.xdi.util.security.PropertiesDecrypter;
  */
 @Startup(depends = "oxTrustConfiguration")
 @AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("appInitializer")
+@ApplicationScoped
+@Named("appInitializer")
 public class AppInitializer {
 	private final static String EVENT_TYPE = "AppInitializerTimerEvent";
     private final static int DEFAULT_INTERVAL = 30; // 30 seconds
@@ -87,16 +87,16 @@ public class AppInitializer {
 	@Logger
 	private Log log;
 
-	@In
+	@Inject
 	private SvnSyncTimer svnSyncTimer;
 
-	@In
+	@Inject
 	private MetadataValidationTimer metadataValidationTimer;
 
-	@In
+	@Inject
 	private LogFileSizeChecker logFileSizeChecker;
 	
-	@In
+	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
 
     private AtomicBoolean isActive;

@@ -24,10 +24,10 @@ import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
 import org.xdi.oxauth.client.uma.PermissionRegistrationService;
@@ -47,8 +47,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 12/06/2016
  */
-@Scope(ScopeType.APPLICATION)
-@Name("umaPermissionService")
+@ApplicationScoped
+@Named("umaPermissionService")
 @AutoCreate
 public class UmaPermissionService implements Serializable {
 
@@ -57,16 +57,16 @@ public class UmaPermissionService implements Serializable {
 	@Logger
 	private Log log;
 
-	@In(required = false)
+	@Inject(required = false)
 	private UmaConfiguration umaMetadataConfiguration;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
+	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
 	protected ApplicationConfiguration applicationConfiguration;
 		
-	@In
+	@Inject
 	private JsonService jsonService;
 	
-	@In
+	@Inject
 	private AppInitializer appInitializer;
 
 	private PermissionRegistrationService resourceSetPermissionRegistrationService;

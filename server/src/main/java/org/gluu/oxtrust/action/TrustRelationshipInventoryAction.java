@@ -19,10 +19,10 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.In;
+import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Named;
+import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 import org.xdi.model.GluuAttribute;
@@ -36,17 +36,17 @@ import org.xdi.util.Util;
  * @author Yuriy Movchan Date: 11.05.2010
  * 
  */
-@Scope(CONVERSATION)
-@Name("trustRelationshipInventoryAction")
+@ConversationScoped
+@Named("trustRelationshipInventoryAction")
 @Restrict("#{identity.loggedIn}")
 public class TrustRelationshipInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 8388485274418394665L;
 
-	@In
+	@Inject
 	protected AttributeService attributeService;
 
-	@In
+	@Inject
 	private TrustService trustService;
 
 	@Logger
