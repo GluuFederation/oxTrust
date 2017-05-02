@@ -28,7 +28,7 @@ import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -43,15 +43,15 @@ import com.unboundid.ldap.sdk.SearchResultEntry;
  */
 @ConversationScoped
 @Named("attributeInventoryAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class AttributeInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
 
 	private boolean showInactive = false;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private List<GluuAttribute> attributeList;
 
@@ -81,7 +81,7 @@ public class AttributeInventoryAction implements Serializable {
 		this.checked = checked;
 	}
 
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String start() {
 		if (attributeList == null) {
 			try {

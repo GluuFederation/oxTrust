@@ -33,7 +33,7 @@ import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.AttributeData;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Destroy;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -44,10 +44,10 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
@@ -61,7 +61,7 @@ import org.xdi.util.StringHelper;
  */
 @Named("personImportAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class PersonImportAction implements Serializable {
 
 	private static final long serialVersionUID = -1270460481895022468L;
@@ -69,8 +69,8 @@ public class PersonImportAction implements Serializable {
 	private static final String[] PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES = { "uid", "displayName" };
 	public static final String PERSON_PASSWORD_ATTRIBUTE = "userPassword";
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	StatusMessages statusMessages;
@@ -82,7 +82,7 @@ public class PersonImportAction implements Serializable {
 	private AttributeService attributeService;
 	
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 	
 	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
@@ -112,7 +112,7 @@ public class PersonImportAction implements Serializable {
 
 	private String inum;
 
-	@Restrict("#{s:hasPermission('import', 'person')}")
+	//TODO CDI @Restrict("#{s:hasPermission('import', 'person')}")
 	public String init() {
 		if (this.isInitialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -128,7 +128,7 @@ public class PersonImportAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('import', 'person')}")
+	//TODO CDI @Restrict("#{s:hasPermission('import', 'person')}")
 	public String importPersons() throws Exception {
 		if (!fileDataToImport.isReady()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -162,7 +162,7 @@ public class PersonImportAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('import', 'person')}")
+	//TODO CDI @Restrict("#{s:hasPermission('import', 'person')}")
 	public void validateFileToImport() throws Exception {
 		removeFileDataToImport();
 
@@ -196,7 +196,7 @@ public class PersonImportAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('import', 'person')}")
+	//TODO CDI @Restrict("#{s:hasPermission('import', 'person')}")
 	public void cancel() {
 		destroy();
 	}
@@ -219,7 +219,7 @@ public class PersonImportAction implements Serializable {
 		this.fileDataToImport.reset();
 	}
 
-	@Restrict("#{s:hasPermission('import', 'person')}")
+	//TODO CDI @Restrict("#{s:hasPermission('import', 'person')}")
 	public void uploadFile(FileUploadEvent event) {
 		removeFileToImport();
 
@@ -227,7 +227,7 @@ public class PersonImportAction implements Serializable {
 		this.fileData = this.uploadedFile.getData();
 	}
 
-	@Restrict("#{s:hasPermission('import', 'person')}")
+	//TODO CDI @Restrict("#{s:hasPermission('import', 'person')}")
 	public void removeFileToImport() {
 		if (uploadedFile != null) {
 			try {

@@ -9,8 +9,8 @@ package org.gluu.oxtrust.ldap.service.status.ldap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.gluu.site.ldap.LDAPConnectionProvider;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
@@ -19,22 +19,21 @@ import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @author Yuriy Movchan
  * @version 0.1, 11/18/2012
  */
 @Named("ldapStatusTimer")
-@AutoCreate
 @ApplicationScoped
 public class LdapStatusTimer {
 
     private final static String EVENT_TYPE = "LdapStatusTimerEvent";
     private final static long DEFAULT_INTERVAL = 60 * 1000; // 1 minute
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     private AtomicBoolean isActive;
 

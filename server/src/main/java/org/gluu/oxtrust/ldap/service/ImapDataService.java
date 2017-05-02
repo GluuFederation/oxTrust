@@ -2,20 +2,13 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+
+import org.slf4j.Logger;
 import org.xdi.model.GluuIMAPData;
-import org.xdi.model.GluuImage;
 import org.xdi.service.JsonService;
-import org.xdi.service.XmlService;
 
 
 /**
@@ -25,12 +18,11 @@ import org.xdi.service.XmlService;
  */
 @Named("imapDataService")
 @ApplicationScoped
-@AutoCreate
 public class ImapDataService {
 
 	
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private JsonService jsonService;

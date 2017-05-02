@@ -10,8 +10,8 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 
@@ -20,9 +20,8 @@ import javax.enterprise.context.ConversationScoped;
  * 
  * @author Yuriy Movchan Date: 08/11/2013
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("propertyService")
-@AutoCreate
 public class PropertyService implements Serializable {
 
 	private static final long serialVersionUID = -1707238475653913313L;

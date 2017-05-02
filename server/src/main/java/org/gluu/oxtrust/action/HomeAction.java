@@ -10,13 +10,13 @@ import java.io.Serializable;
 
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.service.MetricService;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.jboss.seam.security.Identity;
 import org.xdi.service.JsonService;
 
@@ -27,13 +27,13 @@ import org.xdi.service.JsonService;
  */
 @Named("homeAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class HomeAction implements Serializable {
 
 	private static final long serialVersionUID = 5130372165991117114L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private MetricService metricService;

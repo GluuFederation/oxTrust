@@ -8,7 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.End;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
@@ -18,7 +18,7 @@ import javax.enterprise.context.ConversationScoped;
  * 
  * @author Yuriy Movchan Date: 12/18/2012
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("menuAction")
 public class MenuAction implements Serializable {
 

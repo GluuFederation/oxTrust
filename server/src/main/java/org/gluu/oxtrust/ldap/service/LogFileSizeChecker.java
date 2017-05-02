@@ -21,8 +21,8 @@ import org.dom4j.io.DOMReader;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.FileData;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -32,15 +32,14 @@ import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.service.XmlService;
 
-@AutoCreate
 @ApplicationScoped
 @Named("logFileSizeChecker")
 public class LogFileSizeChecker {
 
-	@Logger
+	@Inject
 	Log log;
 
 	@Inject
@@ -49,7 +48,7 @@ public class LogFileSizeChecker {
 	@Inject
 	private XmlService xmlService;
 
-	@Create
+	@PostConstruct
 	public void create() {
 		// Initialization Code
 	}

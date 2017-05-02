@@ -25,16 +25,16 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.jboss.seam.web.ServletContexts;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 /**
@@ -100,8 +100,8 @@ public class PasswordReminderAction implements Serializable {
 			+ "<a href='%3$s'> <button>Reset Password</button></a>";
 			
 	
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 
 	public String requestReminder() throws Exception {
@@ -109,7 +109,7 @@ public class PasswordReminderAction implements Serializable {
 		if (enabled()) {
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
-			ApplicationConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
+			AppConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
 			List<GluuCustomPerson> matchedPersons = PersonService.instance().findPersons(person, 0);
 			if(matchedPersons != null && matchedPersons.size()>0){
 				GluuAppliance appliance = ApplianceService.instance().getAppliance();

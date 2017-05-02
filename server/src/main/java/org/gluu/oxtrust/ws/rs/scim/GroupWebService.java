@@ -34,7 +34,7 @@ import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
@@ -46,8 +46,8 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 @Path("/scim/v1/Groups")
 public class GroupWebService extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private IGroupService groupService;

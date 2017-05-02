@@ -25,7 +25,7 @@ import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.drools.compiler.RuleBaseLoader;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -34,9 +34,9 @@ import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.jboss.seam.security.Identity;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 /**
@@ -50,8 +50,8 @@ public class SsoLoginAction implements Serializable {
 
 	private static final long serialVersionUID = 7409229786722653317L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -80,7 +80,7 @@ public class SsoLoginAction implements Serializable {
 	private ExternalContext extCtx;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	public String start() {
 		if (initialized) {

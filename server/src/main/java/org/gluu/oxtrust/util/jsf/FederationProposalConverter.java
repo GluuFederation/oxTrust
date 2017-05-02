@@ -6,24 +6,18 @@
 
 package org.gluu.oxtrust.util.jsf;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.FacesConverter;
 
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
-import javax.inject.Named;
-import org.jboss.seam.annotations.faces.Converter;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
 
-@Converter()
-@Named("federationProposalConverter")
-@BypassInterceptors
-public class FederationProposalConverter implements javax.faces.convert.Converter, Serializable {
-
-	private static final long serialVersionUID = 3376046924407678311L;
+@FacesConverter("federationProposalConverter")
+public class FederationProposalConverter implements Converter {
 
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String federationName) {
 		List<GluuSAMLFederationProposal> federations = FederationService.instance().getAllFederations();

@@ -12,14 +12,16 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Destroy;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.xdi.model.DisplayNameEntry;
@@ -50,15 +52,15 @@ import java.util.Set;
  */
 @Named("updateScopeDescriptionAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateScopeDescriptionAction implements Serializable {
 
 	private static final long serialVersionUID = 6180729281938167478L;
 
 	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description" };
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	protected GluuCustomPerson currentPerson;
@@ -92,7 +94,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	private boolean update;
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String modify() {
 		if (this.scopeDescription != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -152,11 +154,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String save() {
 		updateAuthorizationPolicies();
 
@@ -203,7 +205,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String delete() {
 		if (update) {
 			// Remove scope description
@@ -218,18 +220,18 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void removeIconImage() {
 		this.curIconImage = null;
 		this.scopeDescription.setFaviconImageAsXml(null);
 	}
 
-	@Destroy
+	@PreDestroy
 	public void destroy() throws Exception {
 		cancel();
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void setIconImage(FileUploadEvent event) {
 		UploadedFile uploadedFile = event.getUploadedFile();
 		try {
@@ -317,7 +319,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.scopeDescription.setAuthorizationPolicies(tmpAuthorizationPolicies);
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void acceptSelectAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies == null) {
 			return;
@@ -337,11 +339,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void cancelSelectAuthorizationPolicies() {
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void addAuthorizationPolicy(CustomScript addAuthorizationPolicy) {
 		if (addAuthorizationPolicy == null) {
 			return;
@@ -350,7 +352,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.authorizationPolicies.add(addAuthorizationPolicy);
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void removeAuthorizationPolicy(CustomScript removeAuthorizationPolicy) {
 		if (removeAuthorizationPolicy == null) {
 			return;
@@ -366,7 +368,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 	}
 	
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void searchAvailableAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies != null) {
 			selectAddedAuthorizationPolicies();

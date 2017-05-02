@@ -24,14 +24,14 @@ import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Action class for security certificate management.
@@ -40,7 +40,7 @@ import org.jboss.seam.log.Log;
  */
 @Scope(ScopeType.SESSION)
 @Named("certificateManagementAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class CertificateManagementAction implements Serializable {
 
     private static final long serialVersionUID = -1938167091985945238L;
@@ -49,8 +49,8 @@ public class CertificateManagementAction implements Serializable {
     private static final String HTTPD_CERTIFICATE_FILE = "/etc/certs/httpd.crt";
     private static final String SHIB_IDP_CERTIFICATE_FILE = "/etc/certs/shibIDP.crt";
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject
     private SvnSyncTimer svnSyncTimer;
@@ -74,7 +74,7 @@ public class CertificateManagementAction implements Serializable {
     
     private boolean searchObsoleteWarning = false;
     
-    @Create
+    @PostConstruct
     public void init() {
         log.info("init() CertificateManagement call");
         
@@ -97,7 +97,7 @@ public class CertificateManagementAction implements Serializable {
         updateTableView();
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add");
         // save
@@ -108,14 +108,14 @@ public class CertificateManagementAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel CertificateManagement");
         
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('person', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         log.info("search() CertificateManagement searchPattern:", searchPattern);
         

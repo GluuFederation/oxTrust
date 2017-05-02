@@ -23,8 +23,8 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
@@ -39,9 +39,8 @@ import org.xml.sax.SAXException;
  * Provides operations with metadata filters
  * 
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("profileConfigurationService")
-@AutoCreate
 public class ProfileConfigurationService {
 
 	private static final String SHIBBOLETH_SSO = "ShibbolethSSO";

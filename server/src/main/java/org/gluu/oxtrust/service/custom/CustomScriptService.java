@@ -7,8 +7,8 @@
 package org.gluu.oxtrust.service.custom;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
@@ -18,9 +18,8 @@ import org.xdi.service.custom.script.AbstractCustomScriptService;
  *
  * @author Yuriy Movchan Date: 12/03/2014
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("customScriptService")
-@AutoCreate
 public class CustomScriptService extends AbstractCustomScriptService{
 
 	private static final long serialVersionUID = -5283102477313448031L;

@@ -44,17 +44,17 @@ import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.w3c.dom.Document;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -82,9 +82,8 @@ import org.xdi.xml.XMLValidator;
  * 
  * @author Dmitry Ognyannikov, 2016
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("shibboleth3ConfService")
-@AutoCreate
 public class Shibboleth3ConfService implements Serializable {
 
 	private static final long serialVersionUID = 6752452480800274694L;
@@ -136,14 +135,14 @@ public class Shibboleth3ConfService implements Serializable {
 	@Inject
 	private TemplateService templateService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private FilterService filterService;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 	
 	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;

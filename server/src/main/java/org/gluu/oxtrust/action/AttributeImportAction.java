@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Destroy;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -24,7 +24,7 @@ import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 
@@ -39,13 +39,13 @@ import com.unboundid.ldap.sdk.ResultCode;
  */
 @Named("attributeImportAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class AttributeImportAction implements Serializable {
 
 	private static final long serialVersionUID = 8755036208872218664L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 	
 	@Inject
 	private LdifService ldifService;

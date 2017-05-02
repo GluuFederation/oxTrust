@@ -33,7 +33,7 @@ import org.joda.time.DateTime;
 import static org.testng.Assert.*;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
@@ -58,7 +58,7 @@ public class UserExtensionsTest extends BaseTest {
 
 				AttributeService attributeService = AttributeService.instance();
 				SchemaService schemaService = SchemaService.instance();
-				ApplicationConfiguration applicationConfiguration = ((OxTrustConfiguration) Component
+				AppConfiguration applicationConfiguration = ((OxTrustConfiguration) Component
 						.getInstance(OxTrustConfiguration.class)).getApplicationConfiguration();
 
 				// Create custom attributes
@@ -197,7 +197,7 @@ public class UserExtensionsTest extends BaseTest {
 
 				AttributeService attributeService = AttributeService.instance();
 				SchemaService schemaService = SchemaService.instance();
-				ApplicationConfiguration applicationConfiguration = ((OxTrustConfiguration) Component
+				AppConfiguration applicationConfiguration = ((OxTrustConfiguration) Component
 						.getInstance(OxTrustConfiguration.class)).getApplicationConfiguration();
 
 				// Create custom attributes
@@ -344,7 +344,7 @@ public class UserExtensionsTest extends BaseTest {
 	}
 
 	private GluuAttribute createCustomAttribute(AttributeService attributeService, SchemaService schemaService,
-			ApplicationConfiguration applicationConfiguration, String name, String displayName, String description,
+			AppConfiguration applicationConfiguration, String name, String displayName, String description,
 			GluuAttributeDataType gluuAttributeDataType, OxMultivalued oxMultivalued) throws Exception {
 
 		System.out.println(" createCustomAttribute() ");

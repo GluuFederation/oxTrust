@@ -25,7 +25,7 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -34,8 +34,8 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
@@ -49,13 +49,13 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("updateGroupAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateGroupAction implements Serializable {
 
 	private static final long serialVersionUID = 572441515451149801L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private String inum;
 	private boolean update;
@@ -89,9 +89,9 @@ public class UpdateGroupAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
-	@Restrict("#{s:hasPermission('group', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
 	public String add() throws Exception {
 		if (this.group != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -113,7 +113,7 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('group', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
 	public String update() throws Exception {
 		if (this.group != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -145,11 +145,11 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('group', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('group', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
 	public String save() throws Exception {
 		List<DisplayNameEntry> oldMembers = null;
 		try {
@@ -201,7 +201,7 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('group', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
 	public String delete() throws Exception {
 		if (update) {
 			// Remove group

@@ -9,13 +9,13 @@ import java.io.Serializable;
 
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Action class for updating and adding the SAML IDP to Asimba.
@@ -24,13 +24,13 @@ import org.jboss.seam.log.Log;
  */
 @ApplicationScoped
 @Named("productInstallationCheckerAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ProductInstallationCheckerAction implements Serializable {
 
     private static final long serialVersionUID = 1125167091541923404L;
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
     
     private boolean showSAMLMenu = true;
     private boolean showAsimbaSubmenu = true;
@@ -41,7 +41,7 @@ public class ProductInstallationCheckerAction implements Serializable {
     public ProductInstallationCheckerAction() {
     }
     
-    @Create
+    @PostConstruct
     public void init() {        
         log.info("init() ProductInstallationCheckerAction call");
         

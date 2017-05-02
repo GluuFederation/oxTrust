@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
@@ -27,9 +27,7 @@ import org.xdi.service.custom.script.ExternalScriptService;
  * @author Yuriy Movchan Date: 01/08/2015
  */
 @ApplicationScoped
-@Named("externalUpdateUserService")
-@AutoCreate
-@Startup
+@Named
 public class ExternalUpdateUserService extends ExternalScriptService {
 
 	private static final long serialVersionUID = 1416361273036208685L;
@@ -138,9 +136,5 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 
 		return result;
 	}
-
-    public static ExternalUpdateUserService instance() {
-        return (ExternalUpdateUserService) Component.getInstance(ExternalUpdateUserService.class);
-    }
 
 }

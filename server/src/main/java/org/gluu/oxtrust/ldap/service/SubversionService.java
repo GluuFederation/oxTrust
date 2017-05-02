@@ -20,13 +20,13 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.svn.SvnHelper;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
@@ -35,7 +35,7 @@ import org.tmatesoft.svn.core.internal.wc.admin.SVNAdminAreaFactory;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.xdi.config.CryptoConfigurationFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 
@@ -44,16 +44,15 @@ import org.xdi.util.security.StringEncrypter;
  * 
  * @author Yuriy Movchan Date: 11.25.2010
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("subversionService")
-@AutoCreate
 public class SubversionService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 	
 	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;

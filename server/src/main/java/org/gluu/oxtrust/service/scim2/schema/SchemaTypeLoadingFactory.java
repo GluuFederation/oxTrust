@@ -11,7 +11,7 @@ import org.gluu.oxtrust.model.scim2.schema.core.UserCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.core.fido.FidoDeviceCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.scim2.schema.strategy.*;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Factory for loading a SchemaType.
@@ -21,7 +21,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  */
 public class SchemaTypeLoadingFactory {
 
-    public SchemaType load(ApplicationConfiguration applicationConfiguration, String id) throws Exception {
+    public SchemaType load(AppConfiguration applicationConfiguration, String id) throws Exception {
 
         SchemaType schemaType = SchemaTypeMapping.getSchemaTypeInstance(id);
 
@@ -32,7 +32,7 @@ public class SchemaTypeLoadingFactory {
         return load(applicationConfiguration, schemaType);
     }
 
-    public SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
+    public SchemaType load(AppConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
 
         LoadingStrategy loadingStrategy = null;
 

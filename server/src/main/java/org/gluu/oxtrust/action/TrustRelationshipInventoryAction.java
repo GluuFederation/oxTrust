@@ -24,7 +24,7 @@ import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.util.Util;
@@ -38,7 +38,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("trustRelationshipInventoryAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class TrustRelationshipInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 8388485274418394665L;
@@ -49,8 +49,8 @@ public class TrustRelationshipInventoryAction implements Serializable {
 	@Inject
 	private TrustService trustService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -68,7 +68,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		this.trustedSpList = trustedSpList;
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String start() {
 		if (trustedSpList != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -77,7 +77,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		return search();
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String search() {
 		try {
 			if(searchPattern == null || searchPattern.isEmpty()){

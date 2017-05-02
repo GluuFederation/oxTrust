@@ -18,14 +18,14 @@ import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
@@ -44,15 +44,14 @@ import javax.ws.rs.core.Response;
  * 
  * @author Yuriy Movchan Date: 12.15.2010
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("jsonConfigurationService")
-@AutoCreate
 public class JsonConfigurationService implements Serializable {
 
 	private static final long serialVersionUID = -3840968275007784641L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
@@ -72,7 +71,7 @@ public class JsonConfigurationService implements Serializable {
 	@Inject
 	private ApplianceService applianceService;
 
-	public ApplicationConfiguration getOxTrustApplicationConfiguration() {
+	public AppConfiguration getOxTrustApplicationConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		return ldapOxTrustConfiguration.getApplication();
 	}
@@ -113,7 +112,7 @@ public class JsonConfigurationService implements Serializable {
 		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
 	}
 
-	public boolean saveOxTrustApplicationConfiguration(ApplicationConfiguration oxTrustApplicationConfiguration) {
+	public boolean saveOxTrustApplicationConfiguration(AppConfiguration oxTrustApplicationConfiguration) {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		ldapOxTrustConfiguration.setApplication(oxTrustApplicationConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
@@ -175,9 +174,9 @@ public class JsonConfigurationService implements Serializable {
 		return (JsonConfigurationService) Component.getInstance(JsonConfigurationService.class);
 	}
 
-	public void processScimTestModeIsTrue(ApplicationConfiguration source, ApplicationConfiguration current) throws Exception {
+	public void processScimTestModeIsTrue(AppConfiguration source, AppConfiguration current) throws Exception {
 
-		ApplicationConfiguration applicationConfiguration = getOxTrustApplicationConfiguration();
+		AppConfiguration applicationConfiguration = getOxTrustApplicationConfiguration();
 
 		if (current.isScimTestMode()) {
 			OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();

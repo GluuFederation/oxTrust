@@ -27,8 +27,8 @@ import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -37,8 +37,8 @@ import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.util.StringHelper;
 import org.xdi.xml.GluuErrorHandler;
@@ -47,12 +47,11 @@ import org.xdi.xml.GluuErrorHandler;
  * @author �Oleksiy Tataryn�
  * 
  */
-@AutoCreate
 @ApplicationScoped
 @Named("metadataValidationTimer")
 public class MetadataValidationTimer {
 
-	@Logger
+	@Inject
 	Log log;
 
 	@Inject
@@ -85,7 +84,7 @@ public class MetadataValidationTimer {
 
 	private void process(Date when, Long interval) {
 		log.debug("Starting metadata validation");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		boolean result = validateMetadata(applicationConfiguration.getShibboleth3IdpRootDir() + File.separator
 				+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator, applicationConfiguration
 				.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator);
@@ -97,7 +96,7 @@ public class MetadataValidationTimer {
 	}
 
 	private void regenerateConfigurationFiles() {
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		boolean createConfig = applicationConfiguration.isConfigGeneration();
 		log.info("IDP config generation is set to " + createConfig);
 		
@@ -117,7 +116,7 @@ public class MetadataValidationTimer {
 	private boolean validateMetadata(String shib3IdpTempmetadataFolder, String shib3IdpMetadataFolder) {
 		boolean result = false;
 		log.trace("Starting metadata validation process.");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 
 		String metadataFN = null;
 		synchronized (metadataUpdates) {

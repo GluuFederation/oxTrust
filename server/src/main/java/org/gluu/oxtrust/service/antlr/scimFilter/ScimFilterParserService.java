@@ -5,7 +5,12 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter;
 
-import com.unboundid.ldap.sdk.Filter;
+import java.io.Serializable;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -13,25 +18,19 @@ import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterLexer;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.exception.ScimFilterErrorHandler;
 import org.gluu.oxtrust.service.antlr.scimFilter.visitor.VisitorFactory;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
-import java.io.Serializable;
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * @author Val Pecaoco
  */
-@Scope(ScopeType.STATELESS)
-@Named("scimFilterParserService")
-@AutoCreate
+@Stateless
+@Named
 public class ScimFilterParserService implements Serializable {
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     public Filter createFilter(String filterString, Class clazz) throws Exception {
 

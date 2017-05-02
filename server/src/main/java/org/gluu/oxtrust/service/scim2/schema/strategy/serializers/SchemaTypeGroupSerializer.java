@@ -5,6 +5,15 @@
  */
 package org.gluu.oxtrust.service.scim2.schema.strategy.serializers;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.JsonSerializer;
@@ -17,15 +26,7 @@ import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.schema.AttributeHolder;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.core.GroupCoreSchema;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.log.Log;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.slf4j.Logger;
 
 /**
  * @author Val Pecaoco
@@ -33,8 +34,8 @@ import java.util.Map;
 @Named("schemaTypeGroupSerializer")
 public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     private SchemaType schemaType;
 
@@ -42,11 +43,9 @@ public class SchemaTypeGroupSerializer extends JsonSerializer<Group> {
 
     @Override
     public void serialize(Group group, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-
         log.info(" serialize() ");
 
         try {
-
             ObjectMapper mapper = new ObjectMapper();
             mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 

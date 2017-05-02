@@ -21,13 +21,13 @@ import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.counter.CounterMetricEntry;
@@ -40,9 +40,8 @@ import org.xdi.service.CacheService;
  * @author Rahat Ali Date: 07/30/2015
  * @author Yuriy Movchan Date: 08/28/2015
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Name(MetricService.METRIC_SERVICE_COMPONENT_NAME)
-@AutoCreate
 public class MetricService extends org.xdi.service.metric.MetricService {
 
 	private static final long serialVersionUID = 7875838160379126796L;
@@ -50,8 +49,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
 	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private CacheService cacheService;

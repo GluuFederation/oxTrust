@@ -15,7 +15,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.hibernate.internal.util.collections.ArrayHelper;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -23,8 +23,8 @@ import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.AttributeValidation;
 import org.xdi.model.GluuAttribute;
@@ -40,13 +40,13 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("updateAttributeAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -2932167044333943687L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private AttributeService attributeService;
@@ -58,7 +58,7 @@ public class UpdateAttributeAction implements Serializable {
 	private FacesMessages facesMessages;
 	
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	private String inum;
 	private GluuAttribute attribute;
@@ -70,7 +70,7 @@ public class UpdateAttributeAction implements Serializable {
 
 	private boolean canEdit;
 	
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String add() {
 		if (this.attribute != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -91,7 +91,7 @@ public class UpdateAttributeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String update() {
 		if (this.attribute != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -157,12 +157,12 @@ public class UpdateAttributeAction implements Serializable {
 		return this.attribute.isAdminCanEdit();
 	}
 
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public void cancel() {
 	}
 
 
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String save() {
 		if (!tooltipToggle) {
 			attribute.setGluuTooltip(null);
@@ -296,18 +296,18 @@ public class UpdateAttributeAction implements Serializable {
 		return result;
 	}
 
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String delete() {
 		showAttributeDeleteConfirmation = true;
 		return deleteAndAcceptUpdate();
 	}
 
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public void cancelDeleteAndAcceptUpdate() {
 		showAttributeDeleteConfirmation = false;
 	}
 
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String deleteAndAcceptUpdate() {
 		if (update && showAttributeDeleteConfirmation && this.attribute.isCustom()) {
 			showAttributeDeleteConfirmation = false;

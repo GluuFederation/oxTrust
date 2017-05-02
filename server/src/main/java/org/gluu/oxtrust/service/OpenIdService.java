@@ -8,14 +8,14 @@ package org.gluu.oxtrust.service;
 
 import java.io.Serializable;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.util.StringHelper;
@@ -29,16 +29,15 @@ import org.xdi.util.init.Initializable;
  */
 @ApplicationScoped
 @Named("openIdService")
-@AutoCreate
 public class OpenIdService extends Initializable implements Serializable {
 
 	private static final long serialVersionUID = 7875838160379126796L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	private OpenIdConfigurationResponse openIdConfiguration;
 

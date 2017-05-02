@@ -22,12 +22,14 @@ import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.RegistrationInterceptorScript;
 import org.gluu.oxtrust.service.python.interfaces.RegistrationScript;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Logger;
+
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.xdi.exception.PythonException;
@@ -39,13 +41,12 @@ import org.xdi.service.PythonService;
  *
  */
 @Named("registrationInterceptionService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
+@Stateless
 @Deprecated
 public class RegistrationInterceptionService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public boolean runPreRegistrationScripts(GluuCustomPerson person, Map<String, String[]> requestParameters) {
 		GluuOrganization org = OrganizationService.instance().getOrganization();

@@ -43,7 +43,7 @@ import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.jboss.seam.security.Identity;
 import org.openid4java.association.AssociationException;
 import org.openid4java.consumer.ConsumerException;
@@ -67,8 +67,8 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 @Path("/scim/v1/Chooser")
 public class OxChooserWebService extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private IPersonService personService;

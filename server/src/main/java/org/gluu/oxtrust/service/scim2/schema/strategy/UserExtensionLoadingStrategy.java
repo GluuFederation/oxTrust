@@ -12,8 +12,8 @@ import org.gluu.oxtrust.model.scim2.schema.AttributeHolder;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 
@@ -28,11 +28,11 @@ import java.util.List;
 @Named("userExtensionLoadingStrategy")
 public class UserExtensionLoadingStrategy implements LoadingStrategy {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     @Override
-    public SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
+    public SchemaType load(AppConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
 
         log.info(" load() ");
 

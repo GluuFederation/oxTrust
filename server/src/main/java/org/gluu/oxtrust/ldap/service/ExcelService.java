@@ -8,16 +8,14 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.InputStream;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.slf4j.Logger;
+
 import jxl.Sheet;
 import jxl.Workbook;
-
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
 
 /**
  * Service class to work with Excel files
@@ -26,11 +24,10 @@ import org.jboss.seam.log.Log;
  */
 @Named("excelService")
 @ApplicationScoped
-@AutoCreate
 public class ExcelService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public org.gluu.oxtrust.model.table.Table readExcelFile(InputStream excelFile) {
 		org.gluu.oxtrust.model.table.Table result = null;
@@ -57,15 +54,6 @@ public class ExcelService {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Get excelService instance
-	 * 
-	 * @return ExcelService instance
-	 */
-	public static ExcelService instance() {
-		return (ExcelService) Component.getInstance(ExcelService.class);
 	}
 
 }

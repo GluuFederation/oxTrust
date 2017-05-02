@@ -23,12 +23,12 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * User: Dejan Maric
@@ -46,8 +46,8 @@ public class PasswordResetAction implements Serializable {
 	private RecaptchaService recaptchaService;
 
 	
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 	
 	private PasswordResetRequest request;
 	private String guid;

@@ -26,14 +26,14 @@ import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.GluuAttribute;
@@ -52,13 +52,12 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Yuriy Movchan Date: 11.05.2010
  * 
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("trustService")
-@AutoCreate
 public class TrustService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	LdapEntryManager ldapEntryManager;
@@ -75,7 +74,7 @@ public class TrustService {
 	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	public void addTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
 		log.info("Creating TR " + trustRelationship.getInum());

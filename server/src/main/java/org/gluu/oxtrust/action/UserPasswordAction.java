@@ -12,7 +12,7 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
@@ -24,7 +24,7 @@ import org.jboss.seam.annotations.security.Restrict;
  */
 @Named("userPasswordAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 @Deprecated
 public class UserPasswordAction implements Serializable {
 
@@ -53,7 +53,7 @@ public class UserPasswordAction implements Serializable {
 		return result;
 	}
 
-	@Restrict("#{s:hasPermission('profile', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('profile', 'access')}")
 	public String update(boolean verifyPassword) throws Exception {
 		String result;
 		boolean verifyOldPass;

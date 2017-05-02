@@ -20,7 +20,7 @@ import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -28,7 +28,7 @@ import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SelectableEntity;
@@ -45,7 +45,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("updateScopeAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateScopeAction implements Serializable {
 
 	/**
@@ -54,8 +54,8 @@ public class UpdateScopeAction implements Serializable {
 	private static final long serialVersionUID = 8198574569820157032L;
 	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description", "gluuStatus" };
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private String inum;
 
@@ -90,7 +90,7 @@ public class UpdateScopeAction implements Serializable {
 	private List<SelectableEntity<CustomScript>> availableDynamicScripts;
 
 	
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String add() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -118,7 +118,7 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String update() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -157,11 +157,11 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String save() throws Exception {
 		// List<DisplayNameEntry> oldClaims = null;
 		// try {
@@ -228,7 +228,7 @@ public class UpdateScopeAction implements Serializable {
 		this.scope.setOxAuthClaims(resultClaims);
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String delete() throws Exception {
 		if (update) {
 			// Remove scope

@@ -9,15 +9,13 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -28,21 +26,20 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Reda Zerrad Date: 06.18.2012
  */
-@Scope(ScopeType.STATELESS)
-@Named("scopeService")
-@AutoCreate
+@Stateless
+@Named
 public class ScopeService implements Serializable {
 
-	/**
-     *
-     */
 	private static final long serialVersionUID = 65734145678106186L;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
+	
+	@Inject
+	private OrganizationService organizationService;
 
-	// @Logger
-	// private Log log;
+	// @Inject
+	// private Logger log;
 
 	/**
 	 * Add new scope entry
@@ -92,7 +89,7 @@ public class ScopeService implements Serializable {
 	 * @throws Exception
 	 */
 	public String getDnForScope(String inum) throws Exception {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=scopes,%s", orgDn);
 		}
@@ -159,7 +156,7 @@ public class ScopeService implements Serializable {
 	 * @throws Exception
 	 */
 	private String generateInumForNewScopeImpl() throws Exception {
-		String orgInum = OrganizationService.instance().getInumForOrganization();
+		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + "0009" + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
 
 	}
@@ -198,15 +195,6 @@ public class ScopeService implements Serializable {
 	 */
 	public org.xdi.oxauth.model.common.ScopeType[] getScopeTypes() {
 		return org.xdi.oxauth.model.common.ScopeType.values();
-	}
-
-	/**
-	 * Get ScopeService instance
-	 * 
-	 * @return ScopeService instance
-	 */
-	public static ScopeService instance() throws Exception {
-		return (ScopeService) Component.getInstance(ScopeService.class);
 	}
 
 	/**

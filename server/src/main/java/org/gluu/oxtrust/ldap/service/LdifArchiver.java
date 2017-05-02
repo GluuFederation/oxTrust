@@ -16,7 +16,7 @@ import org.gluu.site.ldap.persistence.DeleteNotifier;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 public class LdifArchiver implements DeleteNotifier {
 
@@ -29,7 +29,7 @@ public class LdifArchiver implements DeleteNotifier {
 	private boolean disable;
 
 	public LdifArchiver(LdapEntryManager ldapEntryManager) {
-		ApplicationConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
 		storeDir = applicationConfiguration.getLdifStore();
 		if (storeDir != null) {
 			File store = new File(storeDir);

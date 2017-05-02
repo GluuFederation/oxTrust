@@ -17,7 +17,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.model.GluuAttribute;
@@ -39,8 +39,8 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 @Named("userSerializer")
 public class UserSerializer extends JsonSerializer<User> {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     protected String attributesArray;
     protected Set<String> attributes;

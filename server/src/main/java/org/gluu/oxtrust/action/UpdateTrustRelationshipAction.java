@@ -53,7 +53,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -63,10 +63,10 @@ import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.jboss.seam.security.Identity;
 import org.jboss.seam.web.ServletContexts;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -85,16 +85,16 @@ import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
  */
 @ConversationScoped
 @Named("updateTrustRelationshipAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateTrustRelationshipAction implements Serializable {
 
 	private static final long serialVersionUID = -1032167044333943680L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	static final Class<?>[] NO_PARAM_SIGNATURE = new Class[0];
 
@@ -201,7 +201,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String add() {
 		if (this.trustRelationship != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -221,7 +221,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String update() {
 		if (this.trustRelationship != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -249,11 +249,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String save() {
 		synchronized (svnSyncTimer) {
 			if (StringHelper.isEmpty(this.trustRelationship.getInum())) {
@@ -847,7 +847,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return StringHelper.isNotEmpty(result);
 	}
 
-	@Restrict("#{s:hasPermission('person', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String delete() {
 		String result = OxTrustConstants.RESULT_FAILURE;
 		if (update) {
@@ -883,7 +883,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return result;
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String downloadConfiguration() {
 		Shibboleth3ConfService shibboleth3ConfService = Shibboleth3ConfService.instance();
 

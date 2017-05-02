@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Action class for health check display
@@ -31,8 +31,8 @@ public class ApplianceStatusAction implements Serializable {
 
 	private static final long serialVersionUID = -7470520478553992898L;
 
-	@Logger
-    private Log log;
+	@Inject
+    private Logger log;
 
 	@Inject
 	private ApplianceService applianceService;

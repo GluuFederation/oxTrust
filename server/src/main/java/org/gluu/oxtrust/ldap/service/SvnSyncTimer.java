@@ -15,8 +15,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.SubversionFile;
 import org.javatuples.Pair;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -28,15 +28,14 @@ import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
-@AutoCreate
 @ApplicationScoped
 @Named("svnSyncTimer")
 public class SvnSyncTimer {
 
-	@Logger
+	@Inject
 	Log log;
 
 	@Inject
@@ -57,7 +56,7 @@ public class SvnSyncTimer {
 	@Inject
 	private TrustService trustService;
 
-	@Create
+	@PostConstruct
 	public void create() {
 		removedTrustRelationship = new LinkedBlockingQueue<Pair<GluuSAMLTrustRelationship, String>>();
 		alteredTrustRelations = new ArrayList<Pair<GluuSAMLTrustRelationship, String>>();

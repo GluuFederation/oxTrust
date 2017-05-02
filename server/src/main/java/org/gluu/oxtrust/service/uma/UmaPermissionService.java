@@ -21,15 +21,15 @@ import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.uma.PermissionRegistrationService;
 import org.xdi.oxauth.client.uma.RptStatusService;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
@@ -49,19 +49,18 @@ import org.xdi.util.StringHelper;
  */
 @ApplicationScoped
 @Named("umaPermissionService")
-@AutoCreate
 public class UmaPermissionService implements Serializable {
 
 	private static final long serialVersionUID = -3347131971095468865L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject(required = false)
 	private UmaConfiguration umaMetadataConfiguration;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	protected ApplicationConfiguration applicationConfiguration;
+	protected AppConfiguration applicationConfiguration;
 		
 	@Inject
 	private JsonService jsonService;
@@ -75,7 +74,7 @@ public class UmaPermissionService implements Serializable {
 	private final Pair<Boolean, Response> authenticationFailure = new Pair<Boolean, Response>(false, null);
 	private final Pair<Boolean, Response> authenticationSuccess = new Pair<Boolean, Response>(true, null);
 
-	@Create
+	@PostConstruct
 	public void init() {
 		if (this.umaMetadataConfiguration != null) {
 			if (applicationConfiguration.isRptConnectionPoolUseConnectionPooling()) {

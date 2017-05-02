@@ -16,13 +16,13 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.hibernate.annotations.common.util.StringHelper;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
 
 import com.unboundid.ldap.sdk.Filter;
@@ -32,9 +32,8 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 01/22/2014
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("pushApplicationService")
-@AutoCreate
 public class PushApplicationService implements Serializable {
 
 	private static final long serialVersionUID = -1537567020929607771L;
@@ -42,8 +41,8 @@ public class PushApplicationService implements Serializable {
 	@Inject
 	private LdapEntryManager ldapEntryManager;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();

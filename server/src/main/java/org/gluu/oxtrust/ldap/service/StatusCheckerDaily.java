@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -26,10 +26,9 @@ import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
-@AutoCreate
 @ApplicationScoped
 @Named("statusCheckerDaily")
 public class StatusCheckerDaily {
@@ -38,8 +37,8 @@ public class StatusCheckerDaily {
 	// Group count and person count will now be checked daily
 	public static final long STATUS_CHECKER_DAILY = (long) (1000L * 60 * 60 * 24);
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private ApplianceService applianceService;
@@ -58,7 +57,7 @@ public class StatusCheckerDaily {
 
     private AtomicBoolean isActive;
 
-	@Create
+	@PostConstruct
 	public void create() {
 		// Initialization Code
 	}
@@ -99,7 +98,7 @@ public class StatusCheckerDaily {
 	 */
 	private void processInt() {
 		log.debug("Starting daily status checker");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		if (!applicationConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}

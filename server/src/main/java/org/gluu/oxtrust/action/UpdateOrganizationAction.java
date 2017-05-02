@@ -29,7 +29,7 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Destroy;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -40,10 +40,10 @@ import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.util.StringHelper;
@@ -55,13 +55,13 @@ import org.xdi.util.StringHelper;
  */
 @Named("updateOrganizationAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateOrganizationAction implements Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private StatusMessages statusMessages;
@@ -85,7 +85,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	private GluuOrganization organization;
 
@@ -103,7 +103,7 @@ public class UpdateOrganizationAction implements Serializable {
 	
 	private List<GluuAppliance> appliances;
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify()  {
 		String resultOrganization = modifyOrganization();
 		String resultApplliance = modifyApplliance();
@@ -172,7 +172,7 @@ public class UpdateOrganizationAction implements Serializable {
 		this.curFaviconImage = this.oldFaviconImage;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String save() {
 		// Update organization
 		try {
@@ -214,7 +214,7 @@ public class UpdateOrganizationAction implements Serializable {
 		appliance.setSmtpConfiguration(smtpConfiguration);
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String verifySmtpConfiguration() {
 		log.info("HostName: " + appliance.getSmtpHost() + " Port: " + appliance.getSmtpPort() + " RequireSSL: " + appliance.isRequiresSsl()
 				+ " RequireSSL: " + appliance.isRequiresAuthentication());
@@ -267,7 +267,7 @@ public class UpdateOrganizationAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String getBuildDate() {
 		if (this.buildDate != null) {
 			return this.buildDate;
@@ -285,7 +285,7 @@ public class UpdateOrganizationAction implements Serializable {
 		return this.buildDate;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String getBuildNumber() {
 		if (this.buildNumber != null) {
 			return this.buildNumber;
@@ -295,7 +295,7 @@ public class UpdateOrganizationAction implements Serializable {
 		return this.buildNumber;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();

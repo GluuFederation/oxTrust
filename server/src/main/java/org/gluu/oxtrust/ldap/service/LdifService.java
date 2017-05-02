@@ -12,27 +12,20 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.LdifDataUtility;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.model.GluuAttribute;
+import org.slf4j.Logger;
 
-import com.unboundid.ldap.sdk.Entry;
 import com.unboundid.ldap.sdk.LDAPConnection;
-import com.unboundid.ldap.sdk.LDAPConnectionPool;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
-import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldif.LDIFReader;
-import com.unboundid.ldif.LDIFRecord;
 import com.unboundid.ldif.LDIFWriter;
 
 /**
@@ -41,15 +34,14 @@ import com.unboundid.ldif.LDIFWriter;
  * @author Shekhar L Date: 02.28.2017
  * @author Yuriy Movchan Date: 03/06/2017
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("ldifService")
-@AutoCreate
 public class LdifService implements Serializable {
 
 	private static final long serialVersionUID = 6690460114767359078L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;

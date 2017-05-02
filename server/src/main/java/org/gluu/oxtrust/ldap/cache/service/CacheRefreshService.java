@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.service.InumService;
@@ -22,13 +26,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 
@@ -40,15 +38,14 @@ import com.unboundid.ldap.sdk.LDAPException;
  * 
  * @author Yuriy Movchan Date: 07.04.2011
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("cacheRefreshService")
-@AutoCreate
 public class CacheRefreshService implements Serializable {
 
 	private static final long serialVersionUID = -2225880517520443390L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private InumService inumService;

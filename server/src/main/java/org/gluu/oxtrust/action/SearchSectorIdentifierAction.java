@@ -3,14 +3,14 @@ package org.gluu.oxtrust.action;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.Util;
 
 import javax.validation.constraints.NotNull;
@@ -26,13 +26,13 @@ import java.util.List;
  */
 @Named("searchSectorIdentifierAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class SearchSectorIdentifierAction implements Serializable {
 
     private static final long serialVersionUID = -5270460481895022455L;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject
     StatusMessages statusMessages;
@@ -48,12 +48,12 @@ public class SearchSectorIdentifierAction implements Serializable {
     @Inject
     private SectorIdentifierService sectorIdentifierService;
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String start() {
         return search();
     }
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String search() {
         if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
             return OxTrustConstants.RESULT_SUCCESS;

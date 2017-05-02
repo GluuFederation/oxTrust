@@ -23,14 +23,14 @@ import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.xdi.model.GluuAttribute;
@@ -49,8 +49,8 @@ public class CustomAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -719594782175672946L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private AttributeService attributeService;
@@ -75,7 +75,7 @@ public class CustomAttributeAction implements Serializable {
 	private List<GluuCustomAttribute> customAttributes;
 	private ArrayList<GluuCustomAttribute> origCustomAttributes;
 
-	@Create
+	@PostConstruct
 	public void init() {
 		this.addedPhotos = new ArrayList<GluuImage>();
 		this.removedPhotos = new ArrayList<GluuImage>();

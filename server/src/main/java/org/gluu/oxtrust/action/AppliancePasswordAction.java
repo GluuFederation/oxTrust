@@ -12,20 +12,20 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.CentralLdapService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @Named("appliancePasswordAction")
 @Scope(ScopeType.EVENT)
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class AppliancePasswordAction implements Serializable {
 
     private static final long serialVersionUID = 6486111971437252913L;
@@ -41,13 +41,13 @@ public class AppliancePasswordAction implements Serializable {
     private CentralLdapService centralLdapService;
 
     @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+    private AppConfiguration applicationConfiguration;
 
     @Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
     private String cryptoConfigurationSalt;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     public String validatePassword() {
         String result;
@@ -63,7 +63,7 @@ public class AppliancePasswordAction implements Serializable {
 
     }
 
-    @Restrict("#{s:hasPermission('profile', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('profile', 'access')}")
     public String update() {
         String result;
 

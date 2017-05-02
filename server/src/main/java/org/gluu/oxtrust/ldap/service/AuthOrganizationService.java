@@ -16,12 +16,12 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
@@ -31,9 +31,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("authOrganizationService")
-@AutoCreate
 public class AuthOrganizationService implements Serializable {
 
 	private static final long serialVersionUID = 5537567020929600777L;
@@ -46,7 +45,7 @@ public class AuthOrganizationService implements Serializable {
 	private CacheService cacheService;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	/**
 	 * Update organization entry

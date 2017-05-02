@@ -9,25 +9,26 @@ package org.gluu.oxtrust.util;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 
+import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.apache.commons.httpclient.HttpClientError;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import javax.inject.Inject;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.EasySSLProtocolSocketFactory;
 import org.xdi.util.EasyX509TrustManager;
 import org.xdi.util.security.StringEncrypter;
 
 public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory {
-	private static final Log LOG = LogFactory.getLog(EasyCASSLProtocolSocketFactory.class);
+
+	@Inject
+	private Logger log;
 	
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject
 	private String cryptoConfigurationSalt;
 	
-	protected SSLContext createEasySSLContext(ApplicationConfiguration applicationConfiguration) {
+	protected SSLContext createEasySSLContext(AppConfiguration applicationConfiguration) {
 		try {
 
 			String password = applicationConfiguration.getCaCertsPassphrase();
@@ -48,7 +49,7 @@ public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory
 			context.init(null, new TrustManager[] { new EasyX509TrustManager(cacerts) }, null);
 			return context;
 		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 			throw new HttpClientError(e.toString());
 		}
 	}

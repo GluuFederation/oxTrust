@@ -5,10 +5,10 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -21,9 +21,8 @@ import java.util.List;
  * @author Javier Rojas Blum
  * @version January 15, 2016
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("sectorIdentifierService")
-@AutoCreate
 public class SectorIdentifierService implements Serializable {
 
     private static final long serialVersionUID = -9167587377957719153L;
@@ -31,11 +30,11 @@ public class SectorIdentifierService implements Serializable {
     @Inject
     private LdapEntryManager ldapEntryManager;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+    private AppConfiguration applicationConfiguration;
 
     /**
      * Build DN string for sector identifier

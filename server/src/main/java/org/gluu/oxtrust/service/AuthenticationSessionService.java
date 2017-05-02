@@ -10,15 +10,15 @@ import java.util.UUID;
 
 import org.gluu.oxtrust.security.OauthData;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Destroy;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.EndSessionClient;
 import org.xdi.oxauth.client.EndSessionRequest;
 import org.xdi.oxauth.client.EndSessionResponse;
@@ -26,17 +26,16 @@ import org.xdi.util.StringHelper;
 
 @Scope(ScopeType.SESSION)
 @Named("authenticationSessionService")
-@AutoCreate()
 public class AuthenticationSessionService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private OpenIdService openIdService;
 	
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
     @Destroy
     public void sessionDestroyed() {

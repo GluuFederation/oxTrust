@@ -15,13 +15,13 @@ import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.hibernate.annotations.common.util.StringHelper;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
 
 import com.unboundid.ldap.sdk.Filter;
@@ -31,9 +31,8 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 01/22/2014
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("pushDeviceService")
-@AutoCreate
 public class PushDeviceService implements Serializable {
 
 	private static final long serialVersionUID = -920736838757282684L;
@@ -41,8 +40,8 @@ public class PushDeviceService implements Serializable {
 	@Inject
 	private LdapEntryManager ldapEntryManager;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();
@@ -185,15 +184,6 @@ public class PushDeviceService implements Serializable {
 		}
 
 		return String.format("inum=%s,ou=device,ou=push,%s", inum, orgDn);
-	}
-
-	/**
-	 * Get PushDeviceService instance
-	 * 
-	 * @return PushDeviceService instance
-	 */
-	public static PushDeviceService instance() {
-		return (PushDeviceService) Component.getInstance(PushDeviceService.class);
 	}
 
 }

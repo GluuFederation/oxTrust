@@ -11,23 +11,23 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.commons.io.FileUtils;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
 @Named("fileViewerAction")
-@Scope(ScopeType.STATELESS)
-@Restrict("#{identity.loggedIn}")
+@Stateless
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class FileViewerAction implements Serializable {
 
 	private static final long serialVersionUID = 3968626531612060143L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public String getString(String fileName) {
 		if (StringHelper.isNotEmpty(fileName)) {

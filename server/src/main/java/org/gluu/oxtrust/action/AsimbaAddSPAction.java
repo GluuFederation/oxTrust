@@ -11,14 +11,14 @@ import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Action class for adding the SAML IDP to Asimba.
@@ -27,13 +27,13 @@ import org.jboss.seam.log.Log;
  */
 @Scope(ScopeType.SESSION)
 @Named("asimbaAddSPAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class AsimbaAddSPAction implements Serializable {
 
     private static final long serialVersionUID = -1024167091985943689L;
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject
     private SvnSyncTimer svnSyncTimer;
@@ -47,7 +47,7 @@ public class AsimbaAddSPAction implements Serializable {
     
     private String spType;
     
-    @Create
+    @PostConstruct
     public void init() {        
         log.info("init() SP call");
     }
@@ -58,7 +58,7 @@ public class AsimbaAddSPAction implements Serializable {
         spRequestor = new RequestorEntry();
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new SP", spRequestor);
         // save
@@ -69,7 +69,7 @@ public class AsimbaAddSPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel SP", spRequestor);
         

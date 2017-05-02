@@ -4,10 +4,11 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.gluu.oxtrust.exception.UmaProtectionException;
 import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.log.Log;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.exception.UmaProtectionException;
+import org.slf4j.Logger;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.wrapper.Token;
@@ -24,10 +25,10 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	private static final long serialVersionUID = -1147131971095468865L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@Inject(required = false)
+	@Inject
 	private UmaConfiguration umaMetadataConfiguration;
 
 	private Token umaPat;
@@ -35,7 +36,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	private final ReentrantLock lock = new ReentrantLock();
 
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject @Named("oxTrustConfiguration.cryptoConfigurationSalt")
 	private String cryptoConfigurationSalt;
 
 	public Token getPatToken() throws UmaProtectionException {

@@ -9,9 +9,9 @@ import com.unboundid.ldap.sdk.Filter;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
@@ -21,13 +21,12 @@ import java.util.List;
 /**
  * @author Val Pecaoco
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("fidoDeviceService")
-@AutoCreate
 public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private IPersonService personService;

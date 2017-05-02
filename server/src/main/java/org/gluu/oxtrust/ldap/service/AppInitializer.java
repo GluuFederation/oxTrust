@@ -12,6 +12,15 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -19,27 +28,17 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
-import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Factory;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.testng.annotations.Factory;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.exception.OxIntializationException;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
@@ -53,8 +52,10 @@ import org.xdi.oxauth.client.uma.UmaConfigurationService;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.util.SecurityProviderUtility;
 import org.xdi.service.PythonService;
+import org.xdi.service.cdi.event.ConfigurationUpdate;
 import org.xdi.service.custom.script.CustomScriptManager;
 import org.xdi.service.ldap.LdapConnectionService;
+import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
@@ -65,10 +66,8 @@ import org.xdi.util.security.PropertiesDecrypter;
  * 
  * @author Yuriy Movchan
  */
-@Startup(depends = "oxTrustConfiguration")
-@AutoCreate
 @ApplicationScoped
-@Named("appInitializer")
+@Named
 public class AppInitializer {
 	private final static String EVENT_TYPE = "AppInitializerTimerEvent";
     private final static int DEFAULT_INTERVAL = 30; // 30 seconds
@@ -84,11 +83,14 @@ public class AppInitializer {
 	private static final long VALIDATION_INTERVAL = (long) (1000L * 63 * 1);
 	private static final long LOG_MONITOR_INTERVAL = (long) (1000L * 60 * 64 * 24);
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private SvnSyncTimer svnSyncTimer;
+	
+	@Inject
+	private ApplianceService applianceService;
 
 	@Inject
 	private MetadataValidationTimer metadataValidationTimer;
@@ -98,29 +100,33 @@ public class AppInitializer {
 	
 	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
+	
+	@Inject
+	private BuildVersion buildVersion;
 
     private AtomicBoolean isActive;
 	private long lastFinishedTime;
 
+	@PostConstruct
+    public void createApplicationComponents() {
+    	SecurityProviderUtility.installBCProvider();
+    }
+
 	/**
 	 * Initialize components and schedule DS connection time checker
 	 */
-	@Create
-	public void createApplicationComponents() throws ConfigurationException {
-    	SecurityProviderUtility.installBCProvider();
-
+	public void applicationInitialized(@Observes @Initialized(ApplicationScoped.class) Object init) {
 		log.debug("Creating application components");
 		showBuildInfo();
 
 		// Initialize local LDAP connection provider
 		createConnectionProvider(oxTrustConfiguration.getLdapConfiguration(), "localLdapConfiguration", "connectionProvider");
-
 		oxTrustConfiguration.create();
 
 		initializeLdifArchiver();
 
 		// Initialize central LDAP connection provider
-		if ((oxTrustConfiguration.getLdapCentralConfiguration() != null) && oxTrustConfiguration.getApplicationConfiguration().isUpdateApplianceStatus()) {
+		if ((oxTrustConfiguration.getLdapCentralConfiguration() != null) && oxTrustConfiguration.getAppsConfiguration().isUpdateApplianceStatus()) {
 			createConnectionProvider(oxTrustConfiguration.getLdapCentralConfiguration(), "centralLdapConfiguration", "centralConnectionProvider");
 		}
 
@@ -133,8 +139,10 @@ public class AppInitializer {
 		// Initialize python interpreter
 		PythonService.instance().initPythonInterpreter(oxTrustConfiguration.getLdapConfiguration().getString("pythonModulesDir", null));
 
-//		checkAndUpdateLdapbaseConfiguration(); // We do not need to create ldapbase configuration any more because we 
-											   //supply working ldap data with either dashboard or python setup sript.
+		// Initialize script manager
+		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR, CustomScriptType.SCIM );
+        CustomScriptManager.instance().init(supportedCustomScriptTypes);
+
 		startSvnSync();
 		// Asynchronous metadata validation service
 		startMetadataValidator();
@@ -147,8 +155,6 @@ public class AppInitializer {
 	@Observer("org.jboss.seam.postInitialization")
 	@Asynchronous
     public void postInitialization() {
-		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR, CustomScriptType.SCIM );
-        CustomScriptManager.instance().init(supportedCustomScriptTypes);
 	}
 
     @Observer("org.jboss.seam.postInitialization")
@@ -213,7 +219,7 @@ public class AppInitializer {
 	
 	private boolean createShibbolethConfiguration() {
 
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		boolean createConfig = applicationConfiguration.isConfigGeneration();
 		log.info("IDP config generation is set to " + createConfig);
 		
@@ -271,7 +277,7 @@ public class AppInitializer {
 			Shibboleth3ConfService.instance().removeUnusedMetadata();
 
 			if (servicesNeedRestarting) {
-				ApplianceService.instance().restartServices();
+				applianceService.restartServices();
 			}
 		}
 
@@ -279,8 +285,8 @@ public class AppInitializer {
 	}
 
 	private void showBuildInfo() {
-		log.info("Build date {0}. Code revision {1} on {2}. Build {3}", OxTrustConstants.getGluuBuildDate(),
-				OxTrustConstants.getGluuRevisionVersion(), OxTrustConstants.getGluuRevisionDate(), OxTrustConstants.getGluuBuildNumber());
+		log.info("Build date {}. Code revision {} on {}. Build {}", getGluuBuildDate(),
+				getGluuRevisionVersion(), getGluuRevisionDate(), getGluuBuildNumber());
 	}
 
 	private void createConnectionProvider(FileConfiguration configuration, String configurationComponentName, String connectionProviderComponentName) {
@@ -295,7 +301,7 @@ public class AppInitializer {
 	}
 
 	private void startSvnSync() {
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		if (applicationConfiguration.isPersistSVN()) {
 			// Schedule first check after 60 seconds
 			final Calendar calendar = Calendar.getInstance();
@@ -418,7 +424,7 @@ public class AppInitializer {
 		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
 	}
 
-	@Factory(value ="openIdConfiguration", scope=ScopeType.APPLICATION, autoCreate = true)
+	@Produces @ApplicationScoped @Named("openIdConfiguration")
 	public OpenIdConfigurationResponse initOpenIdConfiguration() throws OxIntializationException {
 		String oxAuthIssuer = this.oxTrustConfiguration.getApplicationConfiguration().getOxAuthIssuer();
 		if (StringHelper.isEmpty(oxAuthIssuer)) {
@@ -454,7 +460,7 @@ public class AppInitializer {
         return openIdConfiguration;
 	}
 
-	@Factory(value ="umaMetadataConfiguration", scope=ScopeType.APPLICATION, autoCreate = true)
+	@Produces @ApplicationScoped @Named("umaMetadataConfiguration")
 	public UmaConfiguration initUmaMetadataConfiguration() throws OxIntializationException {
 		String umaConfigurationEndpoint = getUmaConfigurationEndpoint();
 		if (StringHelper.isEmpty(umaConfigurationEndpoint)) {
@@ -486,9 +492,8 @@ public class AppInitializer {
 		return umaConfigurationEndpoint;
 	}
 	
-	@Observer(OxTrustConfiguration.CONFIGURATION_UPDATE_EVENT)
-	public void updateLoggingSeverity(ApplicationConfiguration applicationConfiguration) {
-		String loggingLevel = applicationConfiguration.getLoggingLevel();
+	public void updateLoggingSeverity(@Observes @ConfigurationUpdate AppConfiguration appConfiguration) {
+		String loggingLevel = appConfiguration.getLoggingLevel();
 		if (StringHelper.isEmpty(loggingLevel)) {
 			return;
 		}
@@ -512,5 +517,21 @@ public class AppInitializer {
 			}
 		}
 	}
+
+    public String getGluuRevisionVersion() {
+        return buildVersion.getRevisionVersion();
+    }
+
+    public String getGluuRevisionDate() {
+        return buildVersion.getRevisionDate();
+    }
+
+    public String getGluuBuildDate() {
+        return buildVersion.getBuildDate();
+    }
+
+    public String getGluuBuildNumber() {
+        return buildVersion.class.getBuildNumber();
+    }
 
 }

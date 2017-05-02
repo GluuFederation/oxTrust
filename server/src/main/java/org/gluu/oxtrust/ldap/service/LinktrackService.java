@@ -17,27 +17,28 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Logger;
+
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Provides operations with Linktrack API
  * @author Oleksiy Tataryn Date: 06.04.2014
  * 
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("linktrackService")
-@AutoCreate
 public class LinktrackService {
 
 	private static final String CREATE_LINK_URL_PATTERN = 
 			"https://linktrack.info/api/v1_0/makeLink?login=%s&pass=%s&external_url=%s";
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public String newLink(@NotEmpty String login,@NotEmpty String password,@NotEmpty String link) {
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {

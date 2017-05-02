@@ -7,7 +7,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -16,8 +16,8 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
@@ -36,13 +36,13 @@ import java.util.*;
  */
 @ConversationScoped
 @Named("updateSectorIdentifierAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateSectorIdentifierAction implements Serializable {
 
     private static final long serialVersionUID = 572441515451149802L;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     private String inum;
     private boolean update;
@@ -76,9 +76,9 @@ public class UpdateSectorIdentifierAction implements Serializable {
     private FacesMessages facesMessages;
 
     @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+    private AppConfiguration applicationConfiguration;
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String add() throws Exception {
         if (this.sectorIdentifier != null) {
             return OxTrustConstants.RESULT_SUCCESS;
@@ -101,7 +101,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String update() throws Exception {
         if (this.sectorIdentifier != null) {
             return OxTrustConstants.RESULT_SUCCESS;
@@ -133,11 +133,11 @@ public class UpdateSectorIdentifierAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public void cancel() {
     }
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String save() throws Exception {
         List<DisplayNameEntry> oldClientDisplayNameEntries = null;
         try {
@@ -190,7 +190,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String delete() throws Exception {
         if (update) {
             // Remove sectorIdentifier
@@ -418,7 +418,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         this.sectorIdentifier.setRedirectUris(tmpUris);
     }
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public void removeLoginURI(String uri) {
         removeFromList(this.loginUris, uri);
     }

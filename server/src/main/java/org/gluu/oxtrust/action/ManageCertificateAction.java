@@ -51,7 +51,7 @@ import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -59,10 +59,10 @@ import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileHelper;
 import org.xdi.util.io.ResponseHelper;
@@ -76,15 +76,15 @@ import org.xdi.util.io.ResponseHelper;
  */
 @Named("manageCertificateAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ManageCertificateAction implements Serializable {
 	public static final String BEGIN_CERT_REQ = "-----BEGIN CERTIFICATE REQUEST-----";
 	public static final String END_CERT_REQ = "-----END CERTIFICATE REQUEST-----";
 
 	private static final long serialVersionUID = 4012709440384265524L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject(value = "#{facesContext}")
 	FacesContext facesContext;
@@ -96,7 +96,7 @@ public class ManageCertificateAction implements Serializable {
 	private SSLService sslService;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	@Inject
 	private ApplianceService applianceService;
@@ -120,7 +120,7 @@ public class ManageCertificateAction implements Serializable {
 	private boolean initialized;
 	private boolean wereAnyChanges;
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -165,7 +165,7 @@ public class ManageCertificateAction implements Serializable {
 	 * Fills issuer and subject maps with data about currently selected
 	 * certificate
 	 */
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void getCert(String fileName) {
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
 		loadCert(cert);
@@ -175,7 +175,7 @@ public class ManageCertificateAction implements Serializable {
 	 * Fills issuer and subject maps with data about currently selected
 	 * certificate
 	 */
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void getCert(TrustStoreCertificate trustStoreCertificate) {
 		this.issuer = new HashMap<String, String>();
 		this.subject = new HashMap<String, String>();
@@ -205,7 +205,7 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String generateCSR(String fileName) throws IOException {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
@@ -240,7 +240,7 @@ public class ManageCertificateAction implements Serializable {
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public boolean compare(String fileName) {
 		KeyPair pair = getKeyPair(fileName);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
@@ -327,7 +327,7 @@ public class ManageCertificateAction implements Serializable {
 		return pair;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public boolean certPresent(String filename) {
 		KeyPair pair = getKeyPair(filename);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + filename);
@@ -414,7 +414,7 @@ public class ManageCertificateAction implements Serializable {
 		return (ManageCertificateAction) Component.getInstance(ManageCertificateAction.class);
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!isCertsManagePossible()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -526,11 +526,11 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void certUpload(FileUploadEvent event) {
 		if (this.trustStoreCertificateUploadMarker == null) {
 			updateCert(event.getUploadedFile());
@@ -574,7 +574,7 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void keyUpload(FileUploadEvent event) {
 		updateKey(event.getUploadedFile());
 	}

@@ -45,8 +45,8 @@ import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -56,8 +56,8 @@ import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
@@ -80,12 +80,10 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Yuriy Movchan Date: 05.05.2011
  */
 @Named("cacheRefreshTimer")
-@ApplicationScoped
-@AutoCreate
-@Startup(depends = { "appInitializer", "oxTrustConfiguration", "cacheRefreshSnapshotFileService" })
+@ApplicationScoped(depends = { "appInitializer", "oxTrustConfiguration", "cacheRefreshSnapshotFileService" })
 public class CacheRefreshTimer {
 
-	@Logger
+	@Inject
 	Log log;
 
 	private static final String LETTERS_FOR_SEARCH = "abcdefghijklmnopqrstuvwxyz1234567890.";
@@ -122,7 +120,7 @@ public class CacheRefreshTimer {
 	private InumService inumService;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 	
 	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;

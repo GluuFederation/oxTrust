@@ -9,13 +9,13 @@ package org.gluu.oxtrust.ldap.service;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.MappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
@@ -26,13 +26,12 @@ import org.xdi.util.properties.FileConfiguration;
  * 
  * @author Shekhar L
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("passportService")
-@AutoCreate
 public class PassportService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private JsonService jsonService;

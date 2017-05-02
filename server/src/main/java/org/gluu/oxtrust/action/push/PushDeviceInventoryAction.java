@@ -9,19 +9,16 @@ package org.gluu.oxtrust.action.push;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.oxtrust.service.push.PushDeviceService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.Util;
 
 /**
@@ -31,13 +28,13 @@ import org.xdi.util.Util;
  */
 @Named("pushDeviceInventoryAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class PushDeviceInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 6613070802638642079L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -50,12 +47,12 @@ public class PushDeviceInventoryAction implements Serializable {
 	@Inject
 	private PushDeviceService pushDeviceService;
 	
-	@Restrict("#{s:hasPermission('oxpush', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	@Restrict("#{s:hasPermission('oxpush', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

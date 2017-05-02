@@ -8,12 +8,9 @@ package org.gluu.oxtrust.service.external;
 
 import java.util.Map;
 
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.Startup;
+
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.conf.CustomScriptConfiguration;
@@ -27,8 +24,6 @@ import org.xdi.service.custom.script.ExternalScriptService;
  */
 @ApplicationScoped
 @Named("externalIdGeneratorService")
-@AutoCreate
-@Startup
 public class ExternalIdGeneratorService extends ExternalScriptService {
 
 	private static final long serialVersionUID = 1727751544454591273L;
@@ -52,10 +47,6 @@ public class ExternalIdGeneratorService extends ExternalScriptService {
 
 	public String executeExternalDefaultGenerateIdMethod(String appId, String idType, String idPrefix) {
 		return executeExternalGenerateIdMethod(this.defaultExternalCustomScript, appId, idType, idPrefix);
-	}
-
-	public static ExternalIdGeneratorService instance() {
-		return (ExternalIdGeneratorService) Component.getInstance(ExternalIdGeneratorService.class);
 	}
 
 }

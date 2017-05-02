@@ -24,7 +24,7 @@ import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -35,11 +35,11 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.jboss.seam.security.Identity;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 
 /**
@@ -49,16 +49,16 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  */
 @Scope(ScopeType.SESSION)
 @Named("updateAsimbaSPRequestorAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPRequestorAction implements Serializable {
 
     private static final long serialVersionUID = -1342167044333943680L;
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+    private AppConfiguration applicationConfiguration;
 
     @Inject
     private Identity identity;
@@ -105,7 +105,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         
     }
     
-    @Create
+    @PostConstruct
     public void init() {
         log.info("init() SPRequestor call");
         
@@ -142,7 +142,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         uploadedCertBytes = null;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public void edit() {
         log.info("edit() SPRequestor call, inum: "+editEntryInum);
         if (editEntryInum == null || "".equals(editEntryInum)) {
@@ -158,7 +158,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         }
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new Requestor", spRequestor);
         spRequestor.setProperties(getProperties());
@@ -178,7 +178,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Requestor", spRequestor);
         spRequestor.setId(spRequestor.getId().trim());
@@ -200,14 +200,14 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel() Requestor", spRequestor);
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('person', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         log.info("delete() Requestor", spRequestor);
         synchronized (svnSyncTimer) {
@@ -217,7 +217,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadFile(FileUploadEvent event) {
         log.info("uploadFile() Requestor", spRequestor);
         try {
@@ -234,7 +234,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadCertificateFile(FileUploadEvent event) {
         log.info("uploadCertificateFile() Requestor", spRequestor);
         try {
@@ -266,7 +266,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('person', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         log.info("search() Requestor searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {

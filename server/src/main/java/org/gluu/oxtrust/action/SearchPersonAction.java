@@ -15,14 +15,14 @@ import javax.validation.constraints.Size;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.Util;
 
 /**
@@ -32,13 +32,13 @@ import org.xdi.util.Util;
  */
 @Named("searchPersonAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class SearchPersonAction implements Serializable {
 
 	private static final long serialVersionUID = -4672682869487324438L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	StatusMessages statusMessages;
@@ -54,12 +54,12 @@ public class SearchPersonAction implements Serializable {
 	@Inject
 	private IPersonService personService;
 
-	@Restrict("#{s:hasPermission('person', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	@Restrict("#{s:hasPermission('person', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

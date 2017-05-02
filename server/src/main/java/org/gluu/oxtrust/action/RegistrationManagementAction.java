@@ -26,7 +26,7 @@ import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.util.Util;
@@ -38,7 +38,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("registrationManagementAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 
 //TODO: Remove configureInterceptors, registrationInterceptors, removeCustomAuthenticationConfiguration, addRegistrationInterceptor
 //TODO: Clean up LDAP OC
@@ -67,8 +67,8 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 	@Inject 
 	private OrganizationService organizationService;
 	
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private List<String> customScriptTypes;
 

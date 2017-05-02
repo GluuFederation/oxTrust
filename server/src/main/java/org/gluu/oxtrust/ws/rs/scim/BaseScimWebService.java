@@ -36,8 +36,8 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
@@ -53,11 +53,11 @@ import com.unboundid.ldap.sdk.Filter;
  */
 public class BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	protected ApplicationConfiguration applicationConfiguration;
+	protected AppConfiguration applicationConfiguration;
 
 	@Inject
 	private ApplianceService applianceService;

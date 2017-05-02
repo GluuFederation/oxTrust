@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
@@ -28,8 +28,6 @@ import org.xdi.service.custom.script.ExternalScriptService;
  */
 @ApplicationScoped
 @Named("externalCacheRefreshService")
-@AutoCreate
-@Startup
 public class ExternalCacheRefreshService extends ExternalScriptService {
 
 	private static final long serialVersionUID = 1707751544454591273L;
@@ -61,10 +59,6 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 		}
 
 		return result;
-	}
-
-	public static ExternalCacheRefreshService instance() {
-		return (ExternalCacheRefreshService) Component.getInstance(ExternalCacheRefreshService.class);
 	}
 
 }

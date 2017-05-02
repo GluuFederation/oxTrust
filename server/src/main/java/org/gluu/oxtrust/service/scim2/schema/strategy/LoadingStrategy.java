@@ -7,7 +7,7 @@
 package org.gluu.oxtrust.service.scim2.schema.strategy;
 
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Loading strategy
@@ -16,5 +16,5 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  */
 public interface LoadingStrategy {
 
-    SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception;
+    SchemaType load(AppConfiguration applicationConfiguration, SchemaType schemaType) throws Exception;
 }

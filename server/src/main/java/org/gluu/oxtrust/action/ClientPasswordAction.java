@@ -11,18 +11,18 @@ import java.io.Serializable;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @Named("clientPasswordAction")
 @Scope(ScopeType.EVENT)
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ClientPasswordAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;
@@ -37,8 +37,8 @@ public class ClientPasswordAction implements Serializable {
 	@Inject
 	private ClientService clientService;
 	
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public String validatePassword() {
 		String result;
@@ -53,7 +53,7 @@ public class ClientPasswordAction implements Serializable {
 		return result;
 	}
 
-	@Restrict("#{s:hasPermission('client', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
 	public String update() {
 		OxAuthClient client = clientService.getClientByDn(updateClientAction.getClient().getDn());
 		try {

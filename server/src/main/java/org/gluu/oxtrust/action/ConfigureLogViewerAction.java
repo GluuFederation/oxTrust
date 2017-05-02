@@ -14,14 +14,14 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
@@ -33,13 +33,13 @@ import org.xdi.util.StringHelper;
  */
 @Named("configureLogViewerAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3310460481895022468L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -53,7 +53,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	private boolean initialized;
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.logViewerConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -72,7 +72,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		this.logViewerConfiguration = prepareLogViewerConfig();
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!validateLists()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -99,7 +99,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		return result;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 

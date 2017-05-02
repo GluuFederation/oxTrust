@@ -6,22 +6,30 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import com.unboundid.ldap.sdk.Filter;
+import java.io.Serializable;
+import java.util.List;
 
-import org.gluu.oxtrust.model.*;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.model.AuthenticationMethod;
+import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
+import org.gluu.oxtrust.model.KeyEncryptionAlgorithm;
+import org.gluu.oxtrust.model.OxAuthApplicationType;
+import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.oxtrust.model.OxAuthCustomClient;
+import org.gluu.oxtrust.model.OxAuthSubjectType;
+import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import java.io.Serializable;
-import java.util.List;
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * Provides operations with clients
@@ -31,23 +39,23 @@ import java.util.List;
  * @version July 19, 2016
  */
 
-@Scope(ScopeType.STATELESS)
-@Named("clientService")
-@AutoCreate
+@Stateless
+@Named
 public class ClientService implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 7912416439116338984L;
+
     @Inject
     private LdapEntryManager ldapEntryManager;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
+    
+    @Inject
+    private OrganizationService organizationService;
 
     public boolean contains(String clientDn) {
         return ldapEntryManager.contains(OxAuthClient.class, clientDn);
@@ -107,7 +115,7 @@ public class ClientService implements Serializable {
      * is null
      */
     public String getDnForClient(String inum) {
-        String orgDn = OrganizationService.instance().getDnForOrganization();
+        String orgDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
             return String.format("ou=clients,%s", orgDn);
         }
@@ -158,7 +166,7 @@ public class ClientService implements Serializable {
      * @return New inum for client
      */
     private String generateInumForNewClientImpl() {
-        String orgInum = OrganizationService.instance().getInumForOrganization();
+        String orgInum = organizationService.getInumForOrganization();
         return orgInum + OxTrustConstants.inumDelimiter + "0008" + OxTrustConstants.inumDelimiter + INumGenerator.generate(4);
 
     }
@@ -169,7 +177,7 @@ public class ClientService implements Serializable {
      * @return New iname for client
      */
     public String generateInameForNewClient(String name) {
-        return String.format("%s*clients*%s", applicationConfiguration.getOrgIname(), name);
+        return String.format("%s*clients*%s", appConfiguration.getOrgIname(), name);
     }
 
     /**
@@ -240,15 +248,6 @@ public class ClientService implements Serializable {
      *
      * @return oxAuthClient
      */
-
-    /**
-     * Get ClientService instance
-     *
-     * @return ClientService instance
-     */
-    public static ClientService instance() {
-        return (ClientService) Component.getInstance(ClientService.class);
-    }
 
     /**
      * Get Client by iname

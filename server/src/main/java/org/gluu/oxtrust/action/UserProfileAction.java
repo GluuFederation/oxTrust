@@ -23,7 +23,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -31,8 +31,8 @@ import javax.inject.Named;
 import org.jboss.seam.annotations.Out;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuIMAPData;
 import org.xdi.model.GluuImage;
@@ -47,15 +47,15 @@ import org.xdi.util.StringHelper;
  */
 @Named("userProfileAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UserProfileAction implements Serializable {
 
 	private static final long serialVersionUID = -8238855019631152823L;
 
 	private static final String tabName = "Attributes";
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private IPersonService personService;
@@ -85,7 +85,7 @@ public class UserProfileAction implements Serializable {
 	private ImapDataService imapDataService;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	private GluuCustomPerson person;
 
@@ -102,7 +102,7 @@ public class UserProfileAction implements Serializable {
 		this.imapData = imapData;
 	}
 	
-	@Create
+	@PostConstruct
 	public void init() {
 		this.imapData = new GluuIMAPData();
 		this.imapData.setImapPassword(new ImapPassword());
@@ -111,7 +111,7 @@ public class UserProfileAction implements Serializable {
 
 	private static final String photoAttributes[][] = new String[][] { { "gluuPerson", "photo1" }, };
 
-	@Restrict("#{s:hasPermission('profile', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('profile', 'access')}")
 	public String show() {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -138,7 +138,7 @@ public class UserProfileAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('profile', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('profile', 'access')}")
 	public String update() {
 		try {
 			if (this.imapData != null) {
@@ -171,7 +171,7 @@ public class UserProfileAction implements Serializable {
 		customAttributeAction.removeCustomAttribute(inum);
 	}
 
-//	@Restrict("#{s:hasPermission('person', 'access')}")
+//	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public void cancel() {
 	}
 

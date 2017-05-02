@@ -11,14 +11,14 @@ import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Action class for adding the SAML IDP to Asimba.
@@ -27,13 +27,13 @@ import org.jboss.seam.log.Log;
  */
 @Scope(ScopeType.SESSION)
 @Named("asimbaAddIDPAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class AsimbaAddIDPAction implements Serializable {
 
     private static final long serialVersionUID = -1024167091985943689L;
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject
     private SvnSyncTimer svnSyncTimer;
@@ -45,7 +45,7 @@ public class AsimbaAddIDPAction implements Serializable {
     
     private String idpURL;
     
-    @Create
+    @PostConstruct
     public void init() {        
         log.info("init() IDP call");
     }
@@ -56,7 +56,7 @@ public class AsimbaAddIDPAction implements Serializable {
         idp = new IDPEntry();
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new IDP", idp);
         // save
@@ -67,7 +67,7 @@ public class AsimbaAddIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel IDP", idp);
         

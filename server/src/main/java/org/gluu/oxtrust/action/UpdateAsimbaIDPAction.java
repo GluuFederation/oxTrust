@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -25,8 +25,8 @@ import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
@@ -45,16 +45,16 @@ import org.richfaces.model.UploadedFile;
  */
 @Scope(ScopeType.SESSION)
 @Named("updateAsimbaIDPAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaIDPAction implements Serializable {
 
     private static final long serialVersionUID = -1032167091333943680L;
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+    private AppConfiguration applicationConfiguration;
 
     @Inject
     private SvnSyncTimer svnSyncTimer;
@@ -97,7 +97,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         
     }
     
-    @Create
+    @PostConstruct
     public void init() {        
         log.info("init() IDP call");
         
@@ -139,7 +139,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         uploadedCertBytes = null;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public void edit() {
         log.info("edit() IDP call, inum: "+editEntryInum);
         if (editEntryInum == null || "".equals(editEntryInum)) {
@@ -152,7 +152,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         }
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new IDP", idp);
         // save
@@ -171,7 +171,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update IDP", idp);
         idp.setId(idp.getId().trim());
@@ -191,14 +191,14 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel IDP", idp);
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadFile(FileUploadEvent event) {
         log.info("uploadFile() call for IDP");
         try {
@@ -215,7 +215,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadCertificateFile(FileUploadEvent event) {
         log.info("uploadCertificateFile() call for IDP");
          try {
@@ -247,7 +247,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('person', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         synchronized (svnSyncTimer) {
             asimbaService.removeIDPEntry(idp);
@@ -256,7 +256,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('person', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         log.info("search() IDP searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {
@@ -274,7 +274,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public void moveIdpUp() {
         log.info("moveIdpUp()");
         log.info("selectedIdpId: " + selectedIdpId);

@@ -9,29 +9,37 @@ package org.gluu.oxtrust.config;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Observer;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.async.TimerSchedule;
-import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
+import org.xdi.config.oxtrust.Configuration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
+import org.xdi.service.cdi.event.ConfigurationEvent;
+import org.xdi.service.cdi.event.ConfigurationUpdate;
+import org.xdi.service.cdi.event.LdapConfigurationReload;
+import org.xdi.service.cdi.event.Scheduled;
+import org.xdi.service.timer.event.TimerEvent;
+import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
@@ -41,16 +49,31 @@ import org.xdi.util.properties.FileConfiguration;
  */
 @ApplicationScoped
 @Named("oxTrustConfiguration")
-@Startup
 public class OxTrustConfiguration {
 
-	public final static String CONFIGURATION_UPDATE_EVENT = "configurationUpdateEvent";
+	@Inject
+	private Logger log;
 
-    public final static String LDAP_CONFIGUARION_RELOAD_EVENT_TYPE = "LDAP_CONFIGUARION_RELOAD";
-    public final static String LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE = "LDAP_CENTRAL_CONFIGUARION_RELOAD";
+	@Inject
+	private JsonService jsonService;
 
-    public static final String EVENT_UPDATE_CONFIGURATION = "UpdateAppConfigurationEvent";
-    private final static String EVENT_TYPE = "OxTrustConfigurationTimerEvent";
+	@Inject
+	private Event<TimerEvent> timerEvent;
+
+	@Inject
+	private Event<LdapOxTrustConfiguration> configurationUpdateEvent;
+
+	@Inject
+	private Event<String> event;
+
+	@Inject @Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
+	private Instance<LdapEntryManager> ldapEntryManagerInstance;
+	
+	@Inject
+	private Instance<Configuration> configurationInstance;
+
+	public final static String LDAP_CONFIGUARION_RELOAD_EVENT_TYPE = "ldapConfigurationReloadEvent";
+	public final static String LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE = "ldapCentralConfigurationReloadEvent";
 
 	private final static int DEFAULT_INTERVAL = 30; // 30 seconds
 
@@ -80,20 +103,16 @@ public class OxTrustConfiguration {
 	public static final String LOG_ROTATION_CONFIGURATION = "oxTrustLogRotationConfiguration.xml";
 	public static final String SALT_FILE_NAME = "salt";
 
-	@Logger
-	private Log log;
-
-	@Inject
-	private JsonService jsonService;
 
 	private String confDir, configFilePath, cacheRefreshFilePath, logRotationFilePath, saltFilePath;
 
+	private boolean loaded = false;
 	private FileConfiguration ldapConfiguration;
 	private FileConfiguration ldapCentralConfiguration;
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 	private String cryptoConfigurationSalt;
-	private ImportPersonConfig  importPersonConfig;	////issue 102  : changed by shekhar
+	private ImportPersonConfig  importPersonConfig;
 
     private AtomicBoolean isActive;
 
@@ -104,7 +123,7 @@ public class OxTrustConfiguration {
     private long loadedRevision = -1;
     private boolean loadedFromLdap = true;
 	
-	@Create
+	@PostConstruct
 	public void init() {
         this.isActive = new AtomicBoolean(true);
     	try {
@@ -134,31 +153,34 @@ public class OxTrustConfiguration {
         }
 	}
 
-    @Observer("org.jboss.seam.postInitialization")
-    public void initReloadTimer() {
-        final long delayBeforeFirstRun = 30 * 1000L;
-        Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(delayBeforeFirstRun, DEFAULT_INTERVAL * 1000L));
-    }
+	public void initTimer() {
+		log.debug("Initializing Configuration Timer");
 
-    @Observer(EVENT_TYPE)
-    @Asynchronous
-    public void reloadConfigurationTimerEvent() {
-        if (this.isActive.get()) {
-            return;
-        }
+		final int delay = 30;
+		final int interval = DEFAULT_INTERVAL;
 
-        if (!this.isActive.compareAndSet(false, true)) {
-            return;
-        }
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new ConfigurationEvent(),
+				Scheduled.Literal.INSTANCE));
+	}
 
-        try {
-            reloadConfiguration();
-        } catch (Throwable ex) {
-            log.error("Exception happened while reloading application configuration", ex);
-        } finally {
-            this.isActive.set(false);
-        }
-    }
+	@Asynchronous
+	public void reloadConfigurationTimerEvent(@Observes @Scheduled ConfigurationEvent configurationEvent) {
+		if (this.isActive.get()) {
+			return;
+		}
+
+		if (!this.isActive.compareAndSet(false, true)) {
+			return;
+		}
+
+		try {
+			reloadConfiguration();
+		} catch (Throwable ex) {
+			log.error("Exception happened while reloading application configuration", ex);
+		} finally {
+			this.isActive.set(false);
+		}
+	}
 
     private void reloadConfiguration() {
         // Reload LDAP configuration if needed
@@ -167,8 +189,9 @@ public class OxTrustConfiguration {
         if (ldapFile.exists()) {
             final long lastModified = ldapFile.lastModified();
             if (!StringHelper.equalsIgnoreCase(this.prevLdapFileName, ldapFileName) || (lastModified > ldapFileLastModifiedTime)) { // reload configuration only if it was modified
+				// Reload configuration only if it was modified
             	this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
-                Events.instance().raiseAsynchronousEvent(LDAP_CONFIGUARION_RELOAD_EVENT_TYPE);
+				event.select(LdapConfigurationReload.Literal.INSTANCE).fire(LDAP_CONFIGUARION_RELOAD_EVENT_TYPE);
             }
         }
 
@@ -176,14 +199,15 @@ public class OxTrustConfiguration {
         File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
         if (ldapCentralFile.exists()) {
             final long lastModified = ldapCentralFile.lastModified();
-            if (lastModified > ldapCentralFileLastModifiedTime) { // reload configuration only if it was modified
+            if (lastModified > ldapCentralFileLastModifiedTime) {
+				// Reload configuration only if it was modified
             	loadLdapCentralConfiguration();
-                Events.instance().raiseAsynchronousEvent(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+				event.select(LdapCentralConfigurationReload.Literal.INSTANCE).fire(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
             }
         } else if (this.ldapCentralConfiguration != null) {
         	// Allow to remove not mandatory configuration file
     		this.ldapCentralConfiguration = null;
-            Events.instance().raiseAsynchronousEvent(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+			event.select(LdapCentralConfigurationReload.Literal.INSTANCE).fire(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
         }
 
     	if (!loadedFromLdap) {
@@ -202,6 +226,127 @@ public class OxTrustConfiguration {
     	createFromLdap(false);
     }
 
+    public String confDir() {
+        final String confDir = getLdapConfiguration().getString("confDir", null);
+        if (StringUtils.isNotBlank(confDir)) {
+            return confDir;
+        }
+
+        return DIR;
+    }
+
+	public FileConfiguration getLdapConfiguration() {
+		return ldapConfiguration;
+	}
+	
+	public FileConfiguration getLdapCentralConfiguration() {
+		return ldapCentralConfiguration;
+	}
+
+	@Produces
+	@ApplicationScoped
+	public AppConfiguration getAppConfiguration() {
+		return applicationConfiguration;
+	}
+
+	@Produces
+	@ApplicationScoped
+	public CacheRefreshConfiguration getCacheRefreshConfiguration() {
+		return cacheRefreshConfiguration;
+	}
+	
+	@Produces
+	@ApplicationScoped
+	public ImportPersonConfig getImportPersonConfig() {
+		return importPersonConfig;
+	}
+
+	public String getCryptoConfigurationSalt() {
+		return cryptoConfigurationSalt;
+	}
+
+	public String getCacheRefreshFilePath() {
+		return cacheRefreshFilePath;
+	}
+
+	public String getLogRotationFilePath() {
+		return logRotationFilePath;
+	}
+
+	public String getConfigurationDn() {
+		return getLdapConfiguration().getString("oxtrust_ConfigurationEntryDN");
+	}
+
+	private boolean createFromFile() {
+    	boolean result = reloadAppConfFromFile();
+    	
+    	return result;
+    }
+
+    private boolean reloadAppConfFromFile() {
+        final AppConfiguration applicationConfiguration = loadAppConfFromFile();
+        if (applicationConfiguration != null) {
+            log.info("Reloaded application configuration from file: " + configFilePath);
+            this.applicationConfiguration = applicationConfiguration;
+            return true;
+        } else {
+        	log.error("Failed to load application configuration from file: " + configFilePath);
+        }
+
+        return false;
+    }
+
+	private AppConfiguration loadAppConfFromFile() {
+		try {
+	        String jsonConfig = FileUtils.readFileToString(new File(configFilePath));
+	        AppConfiguration applicationConfiguration = jsonService.jsonToObject(jsonConfig, AppConfiguration.class);
+
+			return applicationConfiguration;
+		} catch (Exception ex) {
+			log.error("Failed to load configuration from {0}", ex, configFilePath);
+		}
+
+		return null;
+	}
+
+	private void loadLdapCentralConfiguration() {
+		this.ldapCentralConfiguration = createFileConfiguration(LDAP_CENTRAL_PROPERTIES_FILE, false);
+
+		File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
+		if (ldapCentralFile.exists()) {
+			this.ldapCentralFileLastModifiedTime = ldapCentralFile.lastModified();
+		}
+	}
+
+    public void loadCryptoConfigurationSalt() {
+        try {
+            FileConfiguration cryptoConfiguration = createFileConfiguration(saltFilePath, true);
+
+			this.cryptoConfigurationSalt = cryptoConfiguration.getString("encodeSalt");
+        } catch (Exception ex) {
+			log.error("Failed to load configuration from {0}", ex, this.saltFilePath);
+			throw new ConfigurationException("Failed to load configuration from " + this.saltFilePath, ex);
+        }
+    }
+
+	private FileConfiguration createFileConfiguration(String fileName, boolean isMandatory) {
+		try {
+			FileConfiguration fileConfiguration = new FileConfiguration(fileName);
+			if (fileConfiguration.isLoaded()) {
+				log.debug("########## fileName = " + fileConfiguration.getFileName());
+				log.debug("########## oxtrust_ConfigurationEntryDN = " + fileConfiguration.getString("oxtrust_ConfigurationEntryDN"));
+				return fileConfiguration;
+			}
+		} catch (Exception ex) {
+			if (isMandatory) {
+				log.error("Failed to load configuration from {0}", ex, fileName);
+				throw new ConfigurationException("Failed to load configuration from " + fileName, ex);
+			}
+		}
+
+		return null;
+	}
+
 	private boolean createFromLdap(boolean recoverFromFiles) {
 		log.info("Loading configuration from LDAP...");
         try {
@@ -209,7 +354,15 @@ public class OxTrustConfiguration {
             if (conf != null) {
                 init(conf);
 
-                Events.instance().raiseAsynchronousEvent(CONFIGURATION_UPDATE_EVENT, this.applicationConfiguration);
+                // Destroy old configuration
+				if (this.loaded) {
+					destroy(AppConfiguration.class);
+					destroy(CacheRefreshConfiguration.class);
+					destroy(ImportPersonConfig.class);
+				}
+
+				this.loaded = true;
+				configurationUpdateEvent.select(ConfigurationUpdate.Literal.INSTANCE).fire(conf);
 
                 return true;
             }
@@ -227,11 +380,15 @@ public class OxTrustConfiguration {
 
 		return false;
 	}
+
+	public void destroy(Class<? extends Configuration> clazz) {
+		Instance<? extends Configuration> confInstance = configurationInstance.select(clazz);
+		configurationInstance.destroy(confInstance.get());
+	}
     
     private LdapOxTrustConfiguration loadConfigurationFromLdap(String ... returnAttributes) {
-    	final LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance("ldapEntryManager");
+		final LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
     	final String configurationDn = getConfigurationDn();
-		// log.info("########## configurationDn = " + configurationDn);
         try {
             final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn, returnAttributes);
 
@@ -243,52 +400,11 @@ public class OxTrustConfiguration {
         return null;
     }
 
-    public String confDir() {
-        final String confDir = getLdapConfiguration().getString("confDir", null);
-        if (StringUtils.isNotBlank(confDir)) {
-            return confDir;
-        }
-
-        return DIR;
-    }
-
 	private void init(LdapOxTrustConfiguration conf) {
 		this.applicationConfiguration = conf.getApplication();
 		this.cacheRefreshConfiguration = conf.getCacheRefresh();
+		this.importPersonConfig = conf.getImportPersonConfig();
 		this.loadedRevision = conf.getRevision();
-		this.importPersonConfig = conf.getImportPersonConfig();//issue 102   : changed by shekhar
-	}
-
-	private boolean createFromFile() {
-    	boolean result = reloadAppConfFromFile();
-    	
-    	return result;
-    }
-
-    private boolean reloadAppConfFromFile() {
-        final ApplicationConfiguration applicationConfiguration = loadAppConfFromFile();
-        if (applicationConfiguration != null) {
-            log.info("Reloaded application configuration from file: " + configFilePath);
-            this.applicationConfiguration = applicationConfiguration;
-            return true;
-        } else {
-        	log.error("Failed to load application configuration from file: " + configFilePath);
-        }
-
-        return false;
-    }
-
-	private ApplicationConfiguration loadAppConfFromFile() {
-		try {
-	        String jsonConfig = FileUtils.readFileToString(new File(configFilePath));
-	        ApplicationConfiguration applicationConfiguration = jsonService.jsonToObject(jsonConfig, ApplicationConfiguration.class);
-
-			return applicationConfiguration;
-		} catch (Exception ex) {
-			log.error("Failed to load configuration from {0}", ex, configFilePath);
-		}
-
-		return null;
 	}
 
 	private String loadLdapConfiguration(String ldapFileName) {
@@ -312,90 +428,6 @@ public class OxTrustConfiguration {
 		return LDAP_DEFAULT_PROPERTIES_FILE;
 	}
 
-	private void loadLdapCentralConfiguration() {
-		this.ldapCentralConfiguration = createFileConfiguration(LDAP_CENTRAL_PROPERTIES_FILE, false);
-
-		File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
-		if (ldapCentralFile.exists()) {
-			this.ldapCentralFileLastModifiedTime = ldapCentralFile.lastModified();
-		}
-	}
-
-	private FileConfiguration createFileConfiguration(String fileName, boolean isMandatory) {
-		try {
-			FileConfiguration fileConfiguration = new FileConfiguration(fileName);
-			if (fileConfiguration.isLoaded()) {
-				log.info("########## fileName = " + fileConfiguration.getFileName());
-				log.info("########## oxtrust_ConfigurationEntryDN = " + fileConfiguration.getString("oxtrust_ConfigurationEntryDN"));
-				return fileConfiguration;
-			}
-		} catch (Exception ex) {
-			if (isMandatory) {
-				log.error("Failed to load configuration from {0}", ex, fileName);
-				throw new ConfigurationException("Failed to load configuration from " + fileName, ex);
-			}
-		}
-
-		return null;
-	}
-
-    public void loadCryptoConfigurationSalt() {
-        try {
-            FileConfiguration cryptoConfiguration = createFileConfiguration(saltFilePath, true);
-
-			this.cryptoConfigurationSalt = cryptoConfiguration.getString("encodeSalt");
-        } catch (Exception ex) {
-			log.error("Failed to load configuration from {0}", ex, this.saltFilePath);
-			throw new ConfigurationException("Failed to load configuration from " + this.saltFilePath, ex);
-        }
-    }
-
-	public FileConfiguration getLdapConfiguration() {
-		return ldapConfiguration;
-	}
-	
-	public FileConfiguration getLdapCentralConfiguration() {
-		return ldapCentralConfiguration;
-	}
-
-	public ApplicationConfiguration getApplicationConfiguration() {
-		return applicationConfiguration;
-	}
-
-	public CacheRefreshConfiguration getCacheRefreshConfiguration() {
-		return cacheRefreshConfiguration;
-	}
-
-	public String getCryptoConfigurationSalt() {
-		return cryptoConfigurationSalt;
-	}
-
-	public String getCacheRefreshFilePath() {
-		return cacheRefreshFilePath;
-	}
-
-	public String getLogRotationFilePath() {
-		return logRotationFilePath;
-	}
-
-	public String getConfigurationDn() {
-		return getLdapConfiguration().getString("oxtrust_ConfigurationEntryDN");
-	}
-	
-	// issue 102 - begin : changed by shekhar
-	public ImportPersonConfig getImportPersonConfig() {
-		return importPersonConfig;
-	}
-
-	public void setImportPersonConfig(ImportPersonConfig importPersonConfig) {
-		this.importPersonConfig = importPersonConfig;
-	}// issue 102 - end : changed by shekhar
-
-
-	public static OxTrustConfiguration instance() {
-		return (OxTrustConfiguration) Component.getInstance(OxTrustConfiguration.class);
-	}
-	
 	public String getIDPTemplatesLocation() {
 		String jetyBase = System.getProperty("jetty.base");
 		

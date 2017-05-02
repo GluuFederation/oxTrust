@@ -18,7 +18,7 @@ import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
@@ -27,8 +27,8 @@ import org.jboss.seam.log.Log;
 @Path("/scim/v2/ServiceProviderConfig")
 public class ServiceProviderConfigWS extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@GET
 	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")

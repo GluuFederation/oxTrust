@@ -35,7 +35,7 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.jsf.ValidationUtil;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
@@ -43,8 +43,8 @@ import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -63,13 +63,13 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  */
 @Named("configureCacheRefreshAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -5210460481895022468L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
@@ -102,7 +102,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private FacesMessages facesMessages;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 	
 	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
@@ -128,7 +128,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private CacheRefreshUpdateMethod updateMethod;
 	
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.cacheRefreshConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -170,7 +170,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return cacheRefreshConfiguration;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!vdsCacheRefreshPollingInterval()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -284,7 +284,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return true;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 

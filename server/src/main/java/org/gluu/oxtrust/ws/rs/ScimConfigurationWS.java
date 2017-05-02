@@ -4,12 +4,13 @@
  * Copyright (c) 2014, Gluu
  */
 
-
 package org.gluu.oxtrust.ws.rs;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -18,11 +19,8 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.model.scim.ScimConfiguration;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.UmaConstants;
 import org.xdi.service.JsonService;
@@ -42,8 +40,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/.well-known/scim-configuration", description = "The SCIM server endpoint that provides configuration data. ")
 public class ScimConfigurationWS {
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
     
     @Inject
     private OxTrustConfiguration oxTrustConfiguration;
@@ -62,7 +60,7 @@ public class ScimConfigurationWS {
     })
     public Response getConfiguration() {
         try {
-            final ApplicationConfiguration configuration = oxTrustConfiguration.getApplicationConfiguration();
+            final AppConfiguration configuration = oxTrustConfiguration.getApplicationConfiguration();
             final String baseEndpointUri = configuration.getBaseEndpoint();
 
             final List<ScimConfiguration> cl = new ArrayList<ScimConfiguration>();

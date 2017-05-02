@@ -5,32 +5,33 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.FidoDeviceService;
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import java.io.Serializable;
-import java.util.Date;
+import org.slf4j.Logger;
 
 /**
  * @author Val Pecaoco
  */
+@Stateless
 @Named("scim2FidoDeviceService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
 public class Scim2FidoDeviceService implements Serializable {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private IFidoDeviceService fidoDeviceService;

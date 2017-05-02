@@ -1,11 +1,12 @@
 package org.gluu.oxtrust.api.rest;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -16,13 +17,9 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
-import org.gluu.oxtrust.model.passport.PassportStrategy;
 import org.gluu.oxtrust.service.uma.PassportUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.model.passport.FieldSet;
 import org.xdi.oxauth.model.uma.wrapper.Token;
@@ -40,8 +37,8 @@ import org.xdi.util.Pair;
 @Path("/passport/config")
 public class PassportRestWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private PassportService passportService;

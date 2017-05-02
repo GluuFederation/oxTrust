@@ -9,17 +9,14 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.File;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.model.ScriptLocationType;
@@ -31,19 +28,21 @@ import org.xdi.util.StringHelper;
  * 
  * @author Reda Zerrad Date: 08.10.2012
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("applianceService")
-@AutoCreate
 public class ApplianceService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
+	
+	@Inject
+	private OrganizationService organizationService;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public boolean contains(String applianceDn) {
 		return ldapEntryManager.contains(GluuAppliance.class, applianceDn);
@@ -152,7 +151,7 @@ public class ApplianceService {
 	 * @throws Exception
 	 */
 	public String getDnForAppliance(String inum) {
-		String baseDn = OrganizationService.instance().getBaseDn();
+		String baseDn = organizationService.getBaseDn();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=appliances,%s", baseDn);
 		}
@@ -171,16 +170,7 @@ public class ApplianceService {
 	}
 
 	public String getApplianceInum() {
-		return applicationConfiguration.getApplianceInum();
-	}
-
-	/**
-	 * Get applianceService instance
-	 * 
-	 * @return ApplianceService instance
-	 */
-	public static ApplianceService instance() {
-		return (ApplianceService) Component.getInstance(ApplianceService.class);
+		return appConfiguration.getApplianceInum();
 	}
 
 	/**
@@ -189,7 +179,7 @@ public class ApplianceService {
 	 * @author �Oleksiy Tataryn�
 	 */
 	public void restartServices() {
-		String triggerFileName = applicationConfiguration.getServicesRestartTrigger();
+		String triggerFileName = appConfiguration.getServicesRestartTrigger();
 		if (StringHelper.isNotEmpty(triggerFileName)) {
 			log.info("Removing " + triggerFileName);
 			File triggerFile = new File(triggerFileName);

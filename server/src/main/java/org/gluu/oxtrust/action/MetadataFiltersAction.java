@@ -17,19 +17,19 @@ import org.gluu.oxtrust.ldap.service.FilterService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
 
 @ConversationScoped
 @Named("metadataFiltersAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class MetadataFiltersAction implements Serializable {
 
 	private static final long serialVersionUID = -5304171897858890801L;
@@ -49,8 +49,8 @@ public class MetadataFiltersAction implements Serializable {
 
 	private GluuSAMLTrustRelationship trustRelationship;
    
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
     
 	public String initMetadataFilters(GluuSAMLTrustRelationship trustRelationship) {
 		if (metadataFilters != null) {
@@ -125,7 +125,7 @@ public class MetadataFiltersAction implements Serializable {
 		return selectedList;
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String saveFilters() {
 		updateMetadataFilters();
 		filterService.saveFilters(trustRelationship, filterCertWrapper);

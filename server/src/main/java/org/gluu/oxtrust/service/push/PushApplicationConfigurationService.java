@@ -16,13 +16,15 @@ import org.gluu.oxtrust.model.push.PushApplication;
 import org.hibernate.annotations.common.util.StringHelper;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Logger;
+
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Allows to prepare oxPush platform specifis configurations
@@ -31,17 +33,16 @@ import org.jboss.seam.log.Log;
  */
 @ApplicationScoped
 @Named("pushApplicationConfigurationService")
-@AutoCreate
 public class PushApplicationConfigurationService implements Serializable {
 
 	private static final long serialVersionUID = -3486468321593831158L;
 
 	Map<String, String> supportedPlatforms;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@Create
+	@PostConstruct
 	public void init() {
 		this.supportedPlatforms = new HashMap<String, String>();
 		

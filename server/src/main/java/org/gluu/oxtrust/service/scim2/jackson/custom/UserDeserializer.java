@@ -16,7 +16,7 @@ import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.User;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
@@ -29,8 +29,8 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 @Named("userDeserializer")
 public class UserDeserializer extends JsonDeserializer<User> {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     @Override
     public User deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {

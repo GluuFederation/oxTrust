@@ -15,14 +15,14 @@ import javax.validation.constraints.Size;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.Util;
 
 /**
@@ -32,13 +32,13 @@ import org.xdi.util.Util;
  */
 @Named("searchGroupAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class SearchGroupAction implements Serializable {
 
 	private static final long serialVersionUID = -5270460481895022468L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	StatusMessages statusMessages;
@@ -54,12 +54,12 @@ public class SearchGroupAction implements Serializable {
 	@Inject
 	private IGroupService groupService;
 
-	@Restrict("#{s:hasPermission('group', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	@Restrict("#{s:hasPermission('group', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
 	public String search() {
 		if ((this.searchPattern != null) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

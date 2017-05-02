@@ -6,7 +6,21 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import com.wordnik.swagger.annotations.Api;
+import java.io.Serializable;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -15,19 +29,12 @@ import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
-import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeLoadingFactory;
+import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeAbstractSerializer;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import java.io.Serializable;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import com.wordnik.swagger.annotations.Api;
 
 /**
  * Web service for the /Schemas endpoint.
@@ -39,8 +46,8 @@ import java.util.List;
 @Api(value = "/v2/Schemas", description = "SCIM 2.0 Schema Endpoint (https://tools.ietf.org/html/rfc7643#section-4)")
 public class SchemaWebService extends BaseScimWebService {
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     /**
      * Retrieves the complete schema.

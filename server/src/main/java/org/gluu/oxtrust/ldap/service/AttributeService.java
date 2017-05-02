@@ -18,14 +18,14 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.core.Events;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuAttributeUsageType;
@@ -44,9 +44,8 @@ import com.unboundid.ldap.sdk.LDAPException;
  * 
  * @author Yuriy Movchan Date: 10.13.2010
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("attributeService")
-@AutoCreate
 public class AttributeService  extends org.xdi.service.AttributeService {
 
 	@Inject
@@ -56,7 +55,7 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	private TrustService trustService;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	public static final String CUSTOM_ATTRIBUTE_OBJECTCLASS_PREFIX = "ox-";
 

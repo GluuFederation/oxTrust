@@ -24,15 +24,15 @@ import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.LdapOxAsimbaConfiguration;
 import org.xdi.util.INumGenerator;
@@ -44,14 +44,13 @@ import org.xdi.util.StringHelper;
  * @author Dmitry Ognyannikov, 2016
  */
 @Named("asimbaService")
-@AutoCreate
 @ApplicationScoped
 public class AsimbaService implements Serializable {
     public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     public static String METADATA_SP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
     
     @Inject
     private LdapEntryManager ldapEntryManager;
@@ -62,7 +61,7 @@ public class AsimbaService implements Serializable {
     @Inject
     OrganizationService organizationService;
      
-    @Create
+    @PostConstruct
     public void init() {
     }
     

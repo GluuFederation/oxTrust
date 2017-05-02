@@ -6,14 +6,14 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Factory;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
 
@@ -24,14 +24,13 @@ import org.xdi.service.cache.InMemoryConfiguration;
  */
 @ApplicationScoped
 @Named("applicationFactory")
-@Startup
 public class ApplicationFactory {
     
     @Inject
     private ApplianceService applianceService;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Factory(value = "cacheConfiguration", scope = ScopeType.APPLICATION, autoCreate = true)
    	public CacheConfiguration createCacheConfiguration() {

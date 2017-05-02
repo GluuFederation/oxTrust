@@ -19,7 +19,7 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
@@ -29,7 +29,7 @@ import org.xdi.util.io.FileUploadWrapper;
 
 @ConversationScoped
 @Named("relyingPartyAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class RelyingPartyAction implements Serializable{
 
 	private static final long serialVersionUID = -5304171897858890801L;
@@ -160,7 +160,7 @@ public class RelyingPartyAction implements Serializable{
 		return selectedList;
 	}
 	
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String saveFilters() {
 
 		updateProfileConfigurations();

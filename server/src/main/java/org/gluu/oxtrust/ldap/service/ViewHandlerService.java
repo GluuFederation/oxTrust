@@ -13,8 +13,8 @@ import javax.faces.application.ViewHandler;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
@@ -26,8 +26,7 @@ import javax.enterprise.context.ConversationScoped;
  * @version 0.1, 12/14/2012
  */
 @Named("viewHandlerService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
+@Stateless
 public class ViewHandlerService {
 
 	@Inject

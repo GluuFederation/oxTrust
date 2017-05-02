@@ -5,6 +5,14 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -17,29 +25,22 @@ import org.gluu.oxtrust.util.PatchUtils;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import org.slf4j.Logger;
 
 /**
  * Centralizes calls by the UserWebService and BulkWebService service classes
  *
  * @author Val Pecaoco
  */
-@Named("scim2UserService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
+@Stateless
+@Named
 public class Scim2UserService implements Serializable {
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject
     private IPersonService personService;

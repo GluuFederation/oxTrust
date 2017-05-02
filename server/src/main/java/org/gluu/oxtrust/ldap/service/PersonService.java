@@ -24,14 +24,14 @@ import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.AttributeData;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.CustomAttribute;
 import org.xdi.ldap.model.SimpleUser;
 import org.xdi.util.ArrayHelper;
@@ -45,15 +45,14 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 10.13.2010
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("personService")
-@AutoCreate
 public class PersonService implements Serializable, IPersonService {
 
 	private static final long serialVersionUID = 6685720517520443399L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
@@ -65,7 +64,7 @@ public class PersonService implements Serializable, IPersonService {
 	private AttributeService attributeService;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	private List<GluuCustomAttribute> mandatoryAttributes;
 

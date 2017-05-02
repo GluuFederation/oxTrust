@@ -16,7 +16,7 @@ import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Out;
@@ -26,8 +26,8 @@ import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 
@@ -38,7 +38,7 @@ import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
  */
 @Scope(ScopeType.SESSION)
 @Named("updateCASAction")
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateCASAction implements Serializable {
 
     private static final long serialVersionUID = 1061838191485356624L;
@@ -56,11 +56,11 @@ public class UpdateCASAction implements Serializable {
     // client-side storage of user sessions
     private static final String SHIBBOLETH_MEMCACHEDSTORAGESERVICE = "shibboleth.MemcachedStorageService";
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+    private AppConfiguration applicationConfiguration;
 
     @Inject
     private SvnSyncTimer svnSyncTimer;
@@ -89,7 +89,7 @@ public class UpdateCASAction implements Serializable {
         
     }
     
-    @Create
+    @PostConstruct
     public void init() {        
         log.info("init() CAS call");
         
@@ -136,7 +136,7 @@ public class UpdateCASAction implements Serializable {
         return newConfiguration;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public void save() {
         log.info("save() CAS call");
         

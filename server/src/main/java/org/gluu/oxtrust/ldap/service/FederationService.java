@@ -15,20 +15,19 @@ import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("federationService")
-@AutoCreate
 public class FederationService {
 
 	@Inject
@@ -38,7 +37,7 @@ public class FederationService {
 	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	public void addFederationProposal(GluuSAMLFederationProposal federationProposal) {
 		String[] clusterMembers = applicationConfiguration.getClusteredInums();

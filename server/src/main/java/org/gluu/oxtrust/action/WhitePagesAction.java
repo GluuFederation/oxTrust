@@ -18,7 +18,7 @@ import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -26,7 +26,7 @@ import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuImage;
 import org.xdi.model.GluuUserRole;
@@ -38,7 +38,7 @@ import org.xdi.model.GluuUserRole;
  */
 @Named("whitePagesAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class WhitePagesAction implements Serializable {
 
 	private static final long serialVersionUID = 6730313815008211305L;
@@ -47,8 +47,8 @@ public class WhitePagesAction implements Serializable {
 
 	private List<String> tableAttributes;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -67,7 +67,7 @@ public class WhitePagesAction implements Serializable {
 	private List<GluuCustomPerson> persons;
 	private Set<Integer> selectedPersons;
 
-	@Create
+	@PostConstruct
 	public void init() {
 		this.tableAttributes = Arrays.asList("cn", "photo1", "mail", "phone");
 	}

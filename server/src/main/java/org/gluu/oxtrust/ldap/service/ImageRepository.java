@@ -13,12 +13,13 @@ import java.io.InputStream;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -26,9 +27,9 @@ import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.core.ResourceLoader;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.jboss.seam.ui.graphicImage.Image.Type;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.util.StringHelper;
 import org.xdi.util.image.ImageTransformationUtility;
@@ -41,18 +42,13 @@ import org.xdi.util.repository.RepositoryUtility;
  */
 @Named("imageRepository")
 @ApplicationScoped
-@AutoCreate
-@Startup
 public class ImageRepository {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@Inject(required = false)
-	private ResourceLoader resourceLoader;
-
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private static final String TEMP_FOLDER = "tmp";
 	private static final String REMOVED_FOLDER = "removed";
@@ -71,12 +67,12 @@ public class ImageRepository {
 
 	private FileTypeMap fileTypeMap;
 
-	@Create
+	@PostConstruct
 	public void init() throws Exception {
-		countLevels = applicationConfiguration.getPhotoRepositoryCountLeveles();
-		countFoldersPerLevel = applicationConfiguration.getPhotoRepositoryCountFoldersPerLevel();
+		countLevels = appConfiguration.getPhotoRepositoryCountLeveles();
+		countFoldersPerLevel = appConfiguration.getPhotoRepositoryCountFoldersPerLevel();
 
-		String photoRepositoryRootDir = applicationConfiguration.getPhotoRepositoryRootDir();
+		String photoRepositoryRootDir = appConfiguration.getPhotoRepositoryRootDir();
 		photoRepositoryRootDirFile = new File(photoRepositoryRootDir);
 
 		// Create folders for persistent images
@@ -249,7 +245,7 @@ public class ImageRepository {
 
 	public File getThumbFile(GluuImage image) {
 		if (image.isLogo() && !image.isStoreTemporary()) {
-			return new File(applicationConfiguration.getLogoLocation() + File.separator + image.getThumbFilePath());
+			return new File(appConfiguration.getLogoLocation() + File.separator + image.getThumbFilePath());
 		}
 
 		String parentFolder = image.isStoreTemporary() ? tmpThumbHome : thumbHome;
@@ -258,7 +254,7 @@ public class ImageRepository {
 
 	public File getSourceFile(GluuImage image) {
 		if (image.isLogo() && !image.isStoreTemporary()) {
-			return new File(applicationConfiguration.getLogoLocation() + File.separator + image.getSourceFilePath());
+			return new File(appConfiguration.getLogoLocation() + File.separator + image.getSourceFilePath());
 		}
 
 		String parentFolder = image.isStoreTemporary() ? tmpSourceHome : sourceHome;
@@ -350,7 +346,7 @@ public class ImageRepository {
 	}
 
 	private void prepareBlankImage() {
-		InputStream is = resourceLoader.getResourceAsStream("/WEB-INF/static/images/blank_image.gif");
+		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/blank_image.gif");
 		if(is != null){
 			try {
 				this.blankImage = IOUtils.toByteArray(is);
@@ -365,7 +361,7 @@ public class ImageRepository {
 	}
 
 	private void prepareBlankPhoto() {
-		InputStream is = resourceLoader.getResourceAsStream("/WEB-INF/static/images/anonymous.png");
+		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/anonymous.png");
 		if(is != null){
 			try {
 				this.blankPhoto = IOUtils.toByteArray(is);
@@ -381,7 +377,7 @@ public class ImageRepository {
 
 	private void prepareBlankIcon() {
 		
-		InputStream is = resourceLoader.getResourceAsStream("/WEB-INF/static/images/blank_icon.gif");
+		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/blank_icon.gif");
 		if(is != null){
 			try {
 				this.blankIcon = IOUtils.toByteArray(is);

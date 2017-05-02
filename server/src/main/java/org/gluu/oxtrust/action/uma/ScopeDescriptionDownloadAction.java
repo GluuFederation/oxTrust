@@ -20,12 +20,12 @@ import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.ViewHandlerService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuImage;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.util.io.FileDownloader;
@@ -43,8 +43,8 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	protected ScopeDescriptionService scopeDescriptionService;

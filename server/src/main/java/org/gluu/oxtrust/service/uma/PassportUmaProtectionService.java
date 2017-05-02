@@ -10,12 +10,12 @@ import java.io.Serializable;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 
 /**
@@ -25,13 +25,12 @@ import org.xdi.ldap.model.GluuBoolean;
  */
 @ApplicationScoped
 @Named("pasportUmaProtectionService")
-@AutoCreate
 public class PassportUmaProtectionService extends BaseUmaProtectionService implements Serializable {
 
 	private static final long serialVersionUID = -5547131971095468865L;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	@Inject
 	private ApplianceService applianceService;

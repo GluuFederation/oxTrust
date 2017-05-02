@@ -14,15 +14,15 @@ import java.util.List;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import org.jboss.seam.annotations.Observer;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.ImportPerson;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
@@ -30,7 +30,6 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 @ApplicationScoped
-@AutoCreate
 @Named("importPersonConfiguration")
 public class ImportPersonConfiguration {
 
@@ -41,8 +40,8 @@ public class ImportPersonConfiguration {
 	private static final String ATTRIBUTE_DATA_TYPE_SUFFIX = ".dataType";
 	private static final String ATTRIBUTE_DATA_REQUIRED_SUFFIX = ".required";
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private OxTrustConfiguration oxTrustConfiguration;
@@ -53,7 +52,7 @@ public class ImportPersonConfiguration {
 	private FileConfiguration importConfiguration;
 	private List<GluuAttribute> attributes;
 
-	@Create
+	@PostConstruct
 	public void create() {
 		this.importConfiguration = new FileConfiguration(oxTrustConfiguration.confDir() + File.separator + GLUU_IMPORT_PERSON_PROPERTIES_FILE, true);
 		try {

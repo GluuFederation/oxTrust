@@ -23,14 +23,14 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
@@ -43,13 +43,13 @@ import org.xdi.util.io.ReverseLineReader;
  */
 @Named("viewLogFileAction")
 @ConversationScoped
-@Restrict("#{identity.loggedIn}")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ViewLogFileAction implements Serializable {
 
 	private static final long serialVersionUID = -3310340481895022468L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -68,7 +68,7 @@ public class ViewLogFileAction implements Serializable {
 
 	private int displayLastLinesCount;
 
-	@Restrict("#{s:hasPermission('log', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('log', 'access')}")
 	public String init() {
 		if (this.logViewerConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;

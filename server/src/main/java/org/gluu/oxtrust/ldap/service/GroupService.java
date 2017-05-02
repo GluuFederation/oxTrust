@@ -10,23 +10,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupVisibility;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -37,24 +33,23 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@Scope(ScopeType.STATELESS)
+@Stateless
 @Named("groupService")
-@AutoCreate
 public class GroupService implements Serializable, IGroupService {
 
-	/**
-     *
-     */
 	private static final long serialVersionUID = -9167587377957719152L;
 
 	@Inject
+	private Logger log;
+
+	@Inject
 	private LdapEntryManager ldapEntryManager;
+	
+	@Inject
+	private OrganizationService organizationService;
 
-	@Logger
-	private Log log;
-
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#addGroup(org.gluu.oxtrust.model.GluuGroup)
@@ -150,7 +145,7 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public String getDnForGroup(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=groups,%s", orgDn);
 		}
@@ -190,7 +185,7 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public String generateInameForNewGroup(String name) throws Exception {
-		return String.format("%s*group*%s", applicationConfiguration.getOrgIname(), name);
+		return String.format("%s*group*%s", appConfiguration.getOrgIname(), name);
 	}
 
 	/* (non-Javadoc)
@@ -228,7 +223,7 @@ public class GroupService implements Serializable, IGroupService {
 	 * @return New inum for group
 	 */
 	private String generateInumForNewGroupImpl() throws Exception {
-		String orgInum = OrganizationService.instance().getInumForOrganization();
+		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_GROUP_OBJECTTYPE + OxTrustConstants.inumDelimiter
 				+ INumGenerator.generate(2);
 	}
@@ -255,15 +250,6 @@ public class GroupService implements Serializable, IGroupService {
 		GluuGroup result = ldapEntryManager.find(GluuGroup.class, Dn);
 
 		return result;
-	}
-
-	/**
-	 * Get GroupService instance
-	 * 
-	 * @return GroupService instance
-	 */
-	public static IGroupService instance() {
-		return (IGroupService) Component.getInstance(GroupService.class);
 	}
 
 	/* (non-Javadoc)

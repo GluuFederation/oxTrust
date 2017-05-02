@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 @ConversationScoped
 @Named("federationInventoryAction")
@@ -33,8 +33,8 @@ public class FederationInventoryAction implements Serializable {
 	@Inject
 	private FederationService federationService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private List<GluuSAMLFederationProposal> federations;
 

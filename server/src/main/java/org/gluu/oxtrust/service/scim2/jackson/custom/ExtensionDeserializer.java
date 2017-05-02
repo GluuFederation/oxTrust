@@ -22,7 +22,7 @@ import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.OxMultivalued;
@@ -36,8 +36,8 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 @Named("extensionDeserializer")
 public class ExtensionDeserializer extends JsonDeserializer<Extension> {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     private String id;
 

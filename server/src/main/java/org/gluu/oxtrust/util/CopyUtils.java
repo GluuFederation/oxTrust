@@ -53,10 +53,10 @@ import org.gluu.oxtrust.model.scim.ScimRolesPatch;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
 import org.gluu.oxtrust.model.scim2.Constants;
-import org.hibernate.internal.util.StringHelper;
-import org.jboss.seam.annotations.Logger;
+
+import javax.inject.Inject;
 import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
@@ -139,8 +139,8 @@ public class CopyUtils implements Serializable {
      */
 	private static final long serialVersionUID = -1715995162448707004L;
 
-	@Logger
-	private static Log log;
+	@Inject
+	private Logger log;
 
 	/**
 	 * Copy data from ScimPerson object to GluuCustomPerson object "Reda"

@@ -16,7 +16,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.jboss.seam.log.Logging;
 import org.jboss.seam.web.ServletContexts;
 import org.xdi.util.StringHelper;

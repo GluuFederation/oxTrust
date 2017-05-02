@@ -19,14 +19,14 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Provides operations with velocity templates
@@ -35,16 +35,15 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  */
 @ApplicationScoped
 @Named("templateService")
-@AutoCreate
 public class TemplateService implements Serializable {
 
 	private static final long serialVersionUID = 4898430090669045605L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
 	/*
 	 * Generate relying-party.xml using relying-party.xml.vm template

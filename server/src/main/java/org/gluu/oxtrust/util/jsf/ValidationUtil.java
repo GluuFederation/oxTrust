@@ -19,8 +19,7 @@ import org.jboss.seam.core.Expressions;
  */
 public class ValidationUtil {
 
-	private ValidationUtil() {
-	}
+	private ValidationUtil() {}
 
 	public static void addErrorMessageToInput(UIComponent uiComponent, String message) {
 		if (uiComponent instanceof UIInput) {

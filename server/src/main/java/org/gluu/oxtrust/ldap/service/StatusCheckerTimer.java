@@ -36,8 +36,8 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
@@ -50,8 +50,8 @@ import org.jboss.seam.annotations.async.IntervalDuration;
 import org.jboss.seam.async.QuartzTriggerHandle;
 import org.jboss.seam.async.TimerSchedule;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.process.ProcessHelper;
@@ -61,7 +61,6 @@ import org.xdi.util.process.ProcessHelper;
  * 
  * @author Yuriy Movchan Date: 11.22.2010
  */
-@AutoCreate
 @ApplicationScoped
 @Named("statusCheckerTimer")
 public class StatusCheckerTimer {
@@ -69,8 +68,8 @@ public class StatusCheckerTimer {
     private final static String EVENT_TYPE = "StatusCheckerTimerEvent";
     private final static long STATUS_CHECKER_INTERVAL = 60 * 1000L; // 1 minute
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@Inject
 	private ApplianceService applianceService;
@@ -92,9 +91,9 @@ public class StatusCheckerTimer {
     private AtomicBoolean isActive;
 
 	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	private AppConfiguration applicationConfiguration;
 
-	@Create
+	@PostConstruct
 	public void create() {
 		this.numberFormat = NumberFormat.getNumberInstance(Locale.US);
 	}
@@ -135,7 +134,7 @@ public class StatusCheckerTimer {
 	 */
 	private void processInt() {
 		log.debug("Starting update of appliance status");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		if (!applicationConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}
@@ -217,7 +216,7 @@ public class StatusCheckerTimer {
 
 	private void setHttpdAttributes(GluuAppliance appliance) {
 		log.debug("Setting httpd attributes");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 		String page = getHttpdPage(applicationConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
 		appliance.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
 

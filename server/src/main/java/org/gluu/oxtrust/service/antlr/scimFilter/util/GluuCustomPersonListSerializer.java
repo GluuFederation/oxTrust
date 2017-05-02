@@ -5,6 +5,18 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.util;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.JsonSerializer;
@@ -15,16 +27,9 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.LongNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.gluu.oxtrust.model.scim.ScimPerson;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.log.Log;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import java.io.IOException;
-import java.util.*;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+import org.slf4j.Logger;
 
 /**
  * @author Val Pecaoco
@@ -32,19 +37,17 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 @Named("gluuCustomPersonListSerializer")
 public class GluuCustomPersonListSerializer extends JsonSerializer<ScimPerson> {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     protected String attributesArray;
     protected Set<String> attributes;
 
     @Override
     public void serialize(ScimPerson scimPerson, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-
         log.info(" serialize() ");
 
         try {
-
             jsonGenerator.writeStartObject();
 
             ObjectMapper mapper = new ObjectMapper();

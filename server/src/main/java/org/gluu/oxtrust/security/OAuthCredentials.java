@@ -6,7 +6,7 @@
 
 package org.gluu.oxtrust.security;
 
-import org.jboss.seam.ScopeType;
+import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Install;
 import javax.inject.Named;
 import javax.enterprise.context.ConversationScoped;
@@ -19,8 +19,6 @@ import org.jboss.seam.security.Credentials;
  */
 @Named("org.jboss.seam.security.credentials")
 @Scope(ScopeType.SESSION)
-@Injectstall(precedence = Install.APPLICATION)
-@BypassInterceptors
 public class OAuthCredentials extends Credentials {
 
 	/**

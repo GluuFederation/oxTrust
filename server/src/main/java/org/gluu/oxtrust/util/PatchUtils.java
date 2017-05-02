@@ -15,15 +15,15 @@ import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.User;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 @Named("patchUtils")
 public class PatchUtils implements Serializable {
 
 	private static final long serialVersionUID = -1715995162448707004L;
 
-	@Logger
-	private static Log log;	
+	@Inject
+	private Logger log;	
 	
 	public static GluuCustomPerson replacePatch(User source, GluuCustomPerson destination) throws Exception {
 
