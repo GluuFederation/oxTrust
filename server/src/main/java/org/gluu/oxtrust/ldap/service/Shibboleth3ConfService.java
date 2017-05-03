@@ -1382,12 +1382,20 @@ public class Shibboleth3ConfService implements Serializable {
          * @return GluuErrorHandler
 	 */
 	public static GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
-
-		String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
-		// String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
-		String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
-		Schema schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
-                
+                Schema schema;
+                try {
+                    String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
+                    // String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
+                    String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
+                    schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
+                } catch (Exception e) {
+                    // Schema build error 
+                    final List<String> validationLog = new ArrayList<String>();
+                    validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
+                    validationLog.add(e.getMessage());
+                    // return internal error
+                    return new GluuErrorHandler(false, true, validationLog);
+                }
 		return XMLValidator.validateMetadata(stream, schema);
 	}
 
