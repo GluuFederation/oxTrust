@@ -4,9 +4,6 @@
  * Copyright (c) 2014, Gluu
  */
 
-/**
- * 
- */
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.File;
@@ -181,10 +178,10 @@ public class MetadataValidationTimer {
 				tr.setValidationStatus(GluuValidationStatus.VALIDATION);
 				trustService.updateTrustRelationship(tr);
 
-				GluuErrorHandler handler = null;
+				GluuErrorHandler errorHandler = null;
 				List<String> validationLog = null;
 				try {
-					handler = shibboleth3ConfService.validateMetadata(new FileInputStream(metadata));
+					errorHandler = shibboleth3ConfService.validateMetadata(new FileInputStream(metadata));
 				} catch (Exception e) {
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);
@@ -196,8 +193,8 @@ public class MetadataValidationTimer {
 
 					return false;
 				}
-				if (handler.isValid()) {
-					tr.setValidationLog(handler.getLog());
+				if (errorHandler.isValid()) {
+					tr.setValidationLog(errorHandler.getLog());
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_SUCCESS);
 					if (((!target.exists()) || target.delete()) && (!metadata.renameTo(target))) {
 						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
@@ -240,8 +237,8 @@ public class MetadataValidationTimer {
 
 					trustService.updateTrustRelationship(tr);
 					result = true;
-				}else if(appConfiguration.isIgnoreValidation()){
-					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(handler.getLog())));
+				} else if(appConfiguration.isIgnoreValidation() || errorHandler.isInternalError()){
+					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					if( (( ! target.exists() ) ||  target.delete()) && ( ! metadata.renameTo(target) )){
 						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
@@ -270,10 +267,21 @@ public class MetadataValidationTimer {
 					if(! duplicatesSet.isEmpty()){
 						validationLog.add("This metadata contains multiple instances of entityId: " + Arrays.toString(duplicatesSet.toArray()));
 					}
-					trustService.updateTrustRelationship(tr);
+					
+                                        if (errorHandler.isInternalError()) {
+                                            validationLog = tr.getValidationLog();
+                                            
+                                            validationLog.add("Warning: cannot validate metadata. Check internet connetion ans www.w3.org availability.");
+                                            
+                                            // update log with warning
+                                            for (String warningLogMessage : errorHandler.getLog()) 
+                                                validationLog.add("Warning: " + warningLogMessage);
+                                        }
+                                        
+                                        trustService.updateTrustRelationship(tr);
 					result = true;
 				} else {
-					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(handler.getLog())));
+					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);
 					trustService.updateTrustRelationship(tr);
