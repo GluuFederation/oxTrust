@@ -9,15 +9,19 @@ package org.gluu.oxtrust.ws.rs.scim2;
 import java.net.URI;
 import java.util.ArrayList;
 
-import javax.ws.rs.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
 import org.slf4j.Logger;
 
 /**
@@ -38,12 +42,12 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 		ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
 
 		Meta meta = new Meta();
-		meta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
+		meta.setLocation(super.appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
 		meta.setResourceType("ServiceProviderConfig");
 		serviceProviderConfig.setMeta(meta);
 
 		ArrayList<AuthenticationScheme> authenticationSchemes = new ArrayList<AuthenticationScheme>();
-		if (applicationConfiguration.isScimTestMode()) {
+		if (appConfiguration.isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authenticationSchemes.add(AuthenticationScheme.createOAuth2(true));
 		} else {
@@ -51,7 +55,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 		}
 		serviceProviderConfig.setAuthenticationSchemes(authenticationSchemes);
 
-		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
+		URI location = new URI(super.appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
 
 		return Response.ok(serviceProviderConfig).location(location).build();
 	}

@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.xdi.model.SimpleProperty;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
@@ -29,7 +29,7 @@ public class PropertyUtil {
 	
 	public PropertyUtil() {
 		// Init variable because velocity call method encryptString without AOP interceptor
-		this.cryptoConfigurationSalt = OxTrustConfiguration.instance().getCryptoConfigurationSalt();
+		this.cryptoConfigurationSalt = ConfigurationFactory.instance().getCryptoConfigurationSalt();
 	}
 	
 	public String encryptString(String value) {

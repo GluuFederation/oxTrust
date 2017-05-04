@@ -32,7 +32,6 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -76,7 +75,7 @@ import org.xdi.oxauth.model.configuration.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 @Stateless
-@Named("copyUtils2")
+@Named
 public class CopyUtils2 implements Serializable {
 
 	private static final long serialVersionUID = -1715995162448707004L;
@@ -91,7 +90,13 @@ public class CopyUtils2 implements Serializable {
 	private AppConfiguration appConfiguration;
 	
 	@Inject
+	private IPersonService personService;
+	
+	@Inject
 	private IGroupService groupService;
+	
+	@Inject
+	private AttributeService attributeService;
 
 	/**
 	 * Copy data from Person object to GluuCustomPerson object
@@ -153,12 +158,9 @@ public class CopyUtils2 implements Serializable {
 	 */
 
 	public GluuCustomPerson copy(User source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
-
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
-
-		IPersonService personService1 = PersonService.instance();
 
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
@@ -170,7 +172,7 @@ public class CopyUtils2 implements Serializable {
 
 		if (isUpdate) {
 
-			personService1.addCustomObjectClass(destination);
+			personService.addCustomObjectClass(destination);
 
 			log.trace(" setting userName ");
 			if (source.getUserName() != null && source.getUserName().length() > 0) {
@@ -417,11 +419,11 @@ public class CopyUtils2 implements Serializable {
 
 			try {
 
-				if (personService1.getPersonByUid(source.getUserName()) != null) {
+				if (personService.getPersonByUid(source.getUserName()) != null) {
 					throw new DuplicateEntryException("Duplicate UID value: " + source.getUserName());
 				}
 
-				personService1.addCustomObjectClass(destination);
+				personService.addCustomObjectClass(destination);
 
 				log.trace(" setting userName ");
 				if (source.getUserName() != null && source.getUserName().length() > 0) {
@@ -859,7 +861,6 @@ public class CopyUtils2 implements Serializable {
 
 		log.trace(" setting extensions ");
 
-		AttributeService attributeService = AttributeService.instance();
 		// List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributesImpl(attributeService.getCustomAttributes());
 		List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributes();
 
@@ -1102,15 +1103,12 @@ public class CopyUtils2 implements Serializable {
 	 */
 
 	public Group copy(GluuGroup source, Group destination) throws Exception {
-
 		if (source == null) {
 			return null;
 		}
 		if (destination == null) {
 			destination = new Group();
 		}
-
-		IPersonService personService = PersonService.instance();
 
 		destination.setDisplayName(source.getDisplayName());
 		destination.setId(source.getInum());
@@ -1210,9 +1208,8 @@ public class CopyUtils2 implements Serializable {
 		List<String> listMembers = new ArrayList<String>();
 		// mapMembers.
 
-		IPersonService personservice = PersonService.instance();
 		for (String dn : listMembers) {
-			GluuCustomPerson gluuPerson = personservice.getPersonByDn(dn);
+			GluuCustomPerson gluuPerson = personService.getPersonByDn(dn);
 			ScimGroupMembers member = new ScimGroupMembers();
 			member.setDisplay(gluuPerson.getDisplayName());
 			member.setValue(gluuPerson.getInum());
@@ -1268,7 +1265,6 @@ public class CopyUtils2 implements Serializable {
 				destination.setDisplayName(source.getDisplayName());
 			}
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
-				IPersonService personService = PersonService.instance();
 				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (MemberRef member : members) {
@@ -1297,9 +1293,6 @@ public class CopyUtils2 implements Serializable {
 			log.trace(" source.getMembers().size() : ", source.getMembers().size());
 
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
-
-				IPersonService personService = PersonService.instance();
-
 				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (MemberRef member : members) {

@@ -62,6 +62,9 @@ public class UserWebService extends BaseScimWebService {
 
     @Inject
     private XmlService xmlService;
+    
+    @Inject
+    private CopyUtils copyUtils;
 
 	@GET
 	@Produces({MediaType.APPLICATION_JSON,  MediaType.APPLICATION_XML})
@@ -80,17 +83,12 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
-
 			if (count > getMaxCount()) {
-
 				String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
 				return getErrorResponse(detail, Response.Status.BAD_REQUEST.getStatusCode());
 
 			} else {
-
 				log.info(" Searching persons from LDAP ");
-
-				personService = PersonService.instance();
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
@@ -114,7 +112,7 @@ public class UserWebService extends BaseScimWebService {
 
 					for (GluuCustomPerson gluuPerson : gluuCustomPersons) {
 
-						ScimPerson person = CopyUtils.copy(gluuPerson, null);
+						ScimPerson person = copyUtils.copy(gluuPerson, null);
 
 						log.info(" person to be added id : " + person.getUserName());
 
@@ -128,7 +126,7 @@ public class UserWebService extends BaseScimWebService {
 					personsList.setStartIndex(vlvResponse.getStartIndex());
 				}
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v1/Users");
+				URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v1/Users");
 
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
@@ -155,23 +153,19 @@ public class UserWebService extends BaseScimWebService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getUserByUid(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
-
-			personService = PersonService.instance();
-
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			ScimPerson person = copyUtils.copy(gluuPerson, null);
 
 			URI location = new URI("/Users/" + uid);
 
@@ -202,11 +196,8 @@ public class UserWebService extends BaseScimWebService {
 		// Return HTTP response with status code 201 Created
 
 		try {
-
-			personService = PersonService.instance();
-
 			log.debug(" copying gluuperson ");
-			GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
+			GluuCustomPerson gluuPerson = copyUtils.copy(person, null, false);
 			if (gluuPerson == null) {
 				return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
 			}
@@ -245,7 +236,7 @@ public class UserWebService extends BaseScimWebService {
 			log.debug("adding new GluuPerson");
 			personService.addPerson(gluuPerson);
 
-			ScimPerson newPerson = CopyUtils.copy(gluuPerson, null);
+			ScimPerson newPerson = copyUtils.copy(gluuPerson, null);
 
 			String uri = "/Users/" + newPerson.getId();
 
@@ -275,16 +266,12 @@ public class UserWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("id") String id, ScimPerson person) throws Exception {
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
-
-			personService = PersonService.instance();
-
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 			if (gluuPerson == null) {
 
@@ -309,7 +296,7 @@ public class UserWebService extends BaseScimWebService {
 				}
 			}
 
-			GluuCustomPerson newGluuPerson = CopyUtils.copy(person, gluuPerson, true);
+			GluuCustomPerson newGluuPerson = copyUtils.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
 				Utils.groupMembersAdder(newGluuPerson, personService.getDnForPerson(id));
@@ -326,9 +313,9 @@ public class UserWebService extends BaseScimWebService {
 			personService.updatePerson(newGluuPerson);
 			log.debug(" person updated ");
 
-			ScimPerson newPerson = CopyUtils.copy(newGluuPerson, null);
+			ScimPerson newPerson = copyUtils.copy(newGluuPerson, null);
 
-			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
+			// person_update = copyUtils.copy(gluuPerson, null, attributes);
 			URI location = new URI("/Users/" + id);
 
 			return Response.ok(newPerson).location(location).build();
@@ -363,9 +350,6 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			personService = PersonService.instance();
-
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 
 			if (gluuPerson == null) {
@@ -480,7 +464,7 @@ public class UserWebService extends BaseScimWebService {
 						+ "' please try again or use another pattern.", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			ScimPerson person = copyUtils.copy(gluuPerson, null);
 
 			URI location = new URI("/Users/" + gluuPerson.getInum());
 
@@ -519,7 +503,7 @@ public class UserWebService extends BaseScimWebService {
 				log.info(" LDAP person list is not empty ");
 				for (GluuCustomPerson gluuPerson : personList) {
 					log.info(" copying person from GluuPerson to ScimPerson ");
-					ScimPerson person = CopyUtils.copy(gluuPerson, null);
+					ScimPerson person = copyUtils.copy(gluuPerson, null);
 					log.info(" adding ScimPerson to the AllPersonList ");
 					log.info(" person to be added userid : " + person.getUserName());
 					allPersonList.getResources().add(person);

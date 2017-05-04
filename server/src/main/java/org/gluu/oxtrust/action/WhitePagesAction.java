@@ -12,19 +12,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;

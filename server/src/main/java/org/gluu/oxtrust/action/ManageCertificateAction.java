@@ -29,7 +29,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.security.auth.x500.X500Principal;
 
 import org.apache.commons.io.FileUtils;
@@ -42,7 +45,6 @@ import org.bouncycastle.jce.provider.JCERSAPrivateCrtKey;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -50,18 +52,10 @@ import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileHelper;
@@ -95,8 +89,8 @@ public class ManageCertificateAction implements Serializable {
 	@Inject
 	private SSLService sslService;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@Inject
 	private ApplianceService applianceService;
@@ -130,7 +124,7 @@ public class ManageCertificateAction implements Serializable {
 
 		this.certsMmanagePossible = prepareTempWorkspace();
 
-		this.orgInumFN = StringHelper.removePunctuation(OrganizationService.instance().getOrganizationInum());
+		this.orgInumFN = StringHelper.removePunctuation(organizationService.getOrganizationInum());
 		this.tomcatCertFN = orgInumFN + "-java.crt";
 		this.idpCertFN = orgInumFN + "-shib.crt";
 
@@ -214,7 +208,7 @@ public class ManageCertificateAction implements Serializable {
 		KeyPair pair = getKeyPair(fileName);
 		boolean result = false;
 		if (pair != null) {
-			String url = applicationConfiguration.getIdpUrl().replaceFirst(".*//", "");
+			String url = appConfiguration.getIdpUrl().replaceFirst(".*//", "");
 			String csrPrincipal = String.format("CN=%s", url);
 			X500Principal principal = new X500Principal(csrPrincipal);
 
@@ -346,7 +340,7 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	public String getTempCertDir() {
-		return applicationConfiguration.getTempCertDir() + File.separator;
+		return appConfiguration.getTempCertDir() + File.separator;
 	}
 
 	public HashMap<String, String> getIssuer() {
@@ -368,8 +362,8 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	private boolean prepareTempWorkspace() {
-		String tempDirFN = applicationConfiguration.getTempCertDir();
-		String dirFN = applicationConfiguration.getCertDir();
+		String tempDirFN = appConfiguration.getTempCertDir();
+		String dirFN = appConfiguration.getCertDir();
 		File certDir = new File(dirFN);
 		if (tempDirFN == null || dirFN == null || !certDir.isDirectory() || StringHelper.isEmpty(tempDirFN)) {
 
@@ -477,8 +471,8 @@ public class ManageCertificateAction implements Serializable {
 			return false;
 		}
 
-		String tempDirFN = applicationConfiguration.getTempCertDir();
-		String dirFN = applicationConfiguration.getCertDir();
+		String tempDirFN = appConfiguration.getTempCertDir();
+		String dirFN = appConfiguration.getCertDir();
 		File certDir = new File(dirFN);
 		File tempDir = new File(tempDirFN);
 		if (tempDirFN == null || dirFN == null || !certDir.isDirectory() || !tempDir.isDirectory()) {
@@ -505,7 +499,7 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	private void tirggerTrustStoreUpdate() {
-		String certDirFileName = applicationConfiguration.getCertDir();
+		String certDirFileName = appConfiguration.getCertDir();
 		File certDir = new File(certDirFileName);
 
 		if (this.wereAnyChanges) {
@@ -517,7 +511,7 @@ public class ManageCertificateAction implements Serializable {
 			log.info("Deleting %s : %s", orgInumFN + "-java.pem", pem.delete());
 			log.info("Deleting %s : %s", orgInumFN + "-java.jks", jks.delete());
 
-			ApplianceService.instance().restartServices();
+			applianceService.restartServices();
 
 			facesMessages.add(Severity.WARN,
 					"Certificates were updated and appliance service will be restarted. Please log in again in 5 minutes.");

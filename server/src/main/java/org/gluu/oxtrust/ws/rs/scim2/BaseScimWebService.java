@@ -21,7 +21,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -66,8 +66,8 @@ public class BaseScimWebService {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	protected AppConfiguration applicationConfiguration;
+	@Inject
+	protected AppConfiguration appConfiguration;
 
 	@Inject
 	protected JsonConfigurationService jsonConfigurationService;
@@ -91,7 +91,7 @@ public class BaseScimWebService {
 	private ScimFilterParserService scimFilterParserService;
 	
 	public int getMaxCount(){
-		return applicationConfiguration.getScimProperties().getMaxCount() ;
+		return appConfiguration.getScimProperties().getMaxCount() ;
 	}
 
 	protected Response processTestModeAuthorization(String token) throws Exception {
@@ -112,7 +112,6 @@ public class BaseScimWebService {
 				(validateTokenResponse.getStatus() != Response.Status.OK.getStatusCode())) {
 				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");

@@ -5,6 +5,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HeaderElement;
@@ -21,13 +25,6 @@ import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.uma.PermissionRegistrationService;
@@ -56,11 +53,11 @@ public class UmaPermissionService implements Serializable {
 	@Inject
 	private Logger log;
 
-	@Inject(required = false)
+	@Inject
 	private UmaConfiguration umaMetadataConfiguration;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	protected AppConfiguration applicationConfiguration;
+	@Inject
+	protected AppConfiguration appConfiguration;
 		
 	@Inject
 	private JsonService jsonService;
@@ -77,16 +74,16 @@ public class UmaPermissionService implements Serializable {
 	@PostConstruct
 	public void init() {
 		if (this.umaMetadataConfiguration != null) {
-			if (applicationConfiguration.isRptConnectionPoolUseConnectionPooling()) {
+			if (appConfiguration.isRptConnectionPoolUseConnectionPooling()) {
 
 				// For more information about PoolingHttpClientConnectionManager, please see:
 				// http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/index.html?org/apache/http/impl/conn/PoolingHttpClientConnectionManager.html
 
 				log.info("##### Initializing custom ClientExecutor...");
 				PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-				connectionManager.setMaxTotal(applicationConfiguration.getRptConnectionPoolMaxTotal());
-				connectionManager.setDefaultMaxPerRoute(applicationConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
-				connectionManager.setValidateAfterInactivity(applicationConfiguration.getRptConnectionPoolValidateAfterInactivity() * 1000);
+				connectionManager.setMaxTotal(appConfiguration.getRptConnectionPoolMaxTotal());
+				connectionManager.setDefaultMaxPerRoute(appConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
+				connectionManager.setValidateAfterInactivity(appConfiguration.getRptConnectionPoolValidateAfterInactivity() * 1000);
 				CloseableHttpClient client = HttpClients.custom()
 					.setKeepAliveStrategy(connectionKeepAliveStrategy)
 					.setConnectionManager(connectionManager)
@@ -225,7 +222,7 @@ public class UmaPermissionService implements Serializable {
         Response response = null;
 		try {
 			response = Response.status(Response.Status.FORBIDDEN).
-			        header("host_id", getHost(applicationConfiguration.getIdpUrl())).
+			        header("host_id", getHost(appConfiguration.getIdpUrl())).
 			        header("as_uri",  appInitializer.getUmaConfigurationEndpoint()).
 			        header("error", "insufficient_scope").
 			        entity(entity).
@@ -262,7 +259,7 @@ public class UmaPermissionService implements Serializable {
 			}
 
 			// Set own keep alive duration if server does not have it
-			return applicationConfiguration.getRptConnectionPoolCustomKeepAliveTimeout() * 1000;
+			return appConfiguration.getRptConnectionPoolCustomKeepAliveTimeout() * 1000;
 		}
 	};
 

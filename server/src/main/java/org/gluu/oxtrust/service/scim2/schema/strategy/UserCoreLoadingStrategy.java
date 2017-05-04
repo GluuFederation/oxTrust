@@ -38,7 +38,7 @@ public class UserCoreLoadingStrategy implements LoadingStrategy {
         log.info(" load() ");
 
         Meta meta = new Meta();
-        meta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + schemaType.getId());
+        meta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + schemaType.getId());
         meta.setResourceType("Schema");
         schemaType.setMeta(meta);
 

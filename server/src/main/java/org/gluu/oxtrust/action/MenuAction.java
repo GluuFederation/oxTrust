@@ -8,10 +8,10 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.End;
+import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import org.jboss.seam.annotations.End;
 
 /**
  * Action class for helping with menu

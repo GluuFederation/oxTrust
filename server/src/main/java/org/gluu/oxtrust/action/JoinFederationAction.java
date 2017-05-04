@@ -12,29 +12,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.FederationService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Out;
-import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.ExcludeFilterInputStream;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
+
+import jnr.ffi.annotations.Out;
 
 @ConversationScoped
 @Named("joinFederationAction")
@@ -70,7 +68,7 @@ public class JoinFederationAction implements Serializable {
 		}
 
 		this.federationProposal = new GluuSAMLFederationProposal();
-		this.federationProposal.setOwner(OrganizationService.instance().getOrganization().getDn());
+		this.federationProposal.setOwner(organizationService.getOrganization().getDn());
 		this.federationProposal.setStatus(GluuStatus.INACTIVE);
 
 		init();

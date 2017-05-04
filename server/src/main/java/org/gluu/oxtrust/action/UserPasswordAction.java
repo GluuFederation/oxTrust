@@ -8,15 +8,14 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 
 /**
  * Serves for password updates on UI.

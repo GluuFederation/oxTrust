@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -247,12 +247,12 @@ public class Utils implements Serializable {
 	}
 
 	public static String getPersonParentInum() {
-		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgInum() + OxTrustConstants.inumDelimiter
+		return ConfigurationFactory.instance().getApplicationConfiguration().getOrgInum() + OxTrustConstants.inumDelimiter
 				+ OxTrustConstants.INUM_PERSON_OBJECTTYPE;
 	}
 
 	public static String getPersonParentIname() {
-		return OxTrustConfiguration.instance().getApplicationConfiguration().getOrgIname() + OxTrustConstants.inameDelimiter
+		return ConfigurationFactory.instance().getApplicationConfiguration().getOrgIname() + OxTrustConstants.inameDelimiter
 				+ OxTrustConstants.INAME_PERSON_OBJECTTYPE;
 	}
         

@@ -1,5 +1,19 @@
 package org.gluu.oxtrust.action;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
@@ -7,12 +21,6 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
@@ -22,11 +30,6 @@ import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Action class for view and update sector identifier form.
@@ -75,8 +78,8 @@ public class UpdateSectorIdentifierAction implements Serializable {
     @Inject
     private FacesMessages facesMessages;
 
-    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private AppConfiguration applicationConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
 
     //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String add() throws Exception {
@@ -438,7 +441,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
     }
 
     public String getSectorIdentifierUrl() {
-        return applicationConfiguration.getOxAuthSectorIdentifierUrl() + "/" + inum;
+        return appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + inum;
     }
 
     public String getInum() {

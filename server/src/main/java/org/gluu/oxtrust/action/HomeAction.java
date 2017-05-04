@@ -7,17 +7,15 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.security.Identity;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.service.MetricService;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.slf4j.Logger;
-import org.jboss.seam.security.Identity;
 import org.xdi.service.JsonService;
 
 /**

@@ -74,7 +74,7 @@ public class SchemaWebService extends BaseScimWebService {
 
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
         for (SchemaType schemaType : schemaTypes) {
-            factory.load(super.applicationConfiguration, schemaType);
+            factory.load(appConfiguration, schemaType);
             resources.add(schemaType);
         }
 
@@ -83,7 +83,7 @@ public class SchemaWebService extends BaseScimWebService {
         listResponse.setItemsPerPage(10);
         listResponse.setStartIndex(1);
 
-        URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas");
+        URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas");
 
         // Serialize to JSON
         String json = serialize(listResponse);
@@ -108,14 +108,14 @@ public class SchemaWebService extends BaseScimWebService {
         log.info(" getSchemaById(), id = '" + id + "'");
 
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
-        SchemaType schemaType = factory.load(super.applicationConfiguration, id);
+        SchemaType schemaType = factory.load(appConfiguration, id);
 
         if (schemaType == null) {
             log.info(" NOT FOUND: schema with id = '" + id + "'");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + id);
+        URI location = new URI(super.appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + id);
 
         // Serialize to JSON
         String json = serialize(schemaType);

@@ -143,7 +143,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 				// Serialize to JSON
 				String json = serializeToJson(devicesListResponse, attributesArray);
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices");
+				URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices");
 
 				return Response.ok(json).location(location).build();
 			}
@@ -364,7 +364,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 				searchRequest.getAttributesArray()
 			);
 
-			URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices/.search");
+			URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices/.search");
 
 			log.info("LEAVING FidoDeviceWebService.searchDevicesPost()...");
 

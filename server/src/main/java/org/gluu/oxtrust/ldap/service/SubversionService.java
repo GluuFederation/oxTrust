@@ -14,18 +14,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.svn.SvnHelper;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
@@ -34,7 +31,6 @@ import org.tmatesoft.svn.core.internal.wc.admin.ISVNAdminAreaFactorySelector;
 import org.tmatesoft.svn.core.internal.wc.admin.SVNAdminAreaFactory;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.xdi.config.CryptoConfigurationFile;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
@@ -51,20 +47,20 @@ public class SubversionService {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 	
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private StringEncrypter stringEncrypter;
 
 	final private static String baseSvnDir = "/var/gluu/svn";
 
 	public boolean commitShibboleth3ConfigurationFiles(GluuOrganization organization, List<SubversionFile> newSubversionFiles,
 													   List<SubversionFile> removeSubversionFiles, String svnComment) {
 		// Retrieve properties and derive applianceSvnHome
-		String svnUrl = applicationConfiguration.getSvnConfigurationStoreRoot();
-		String inumFN = StringHelper.removePunctuation(applicationConfiguration.getApplianceInum());
-		String svnPassword = applicationConfiguration.getSvnConfigurationStorePassword();
+		String svnUrl = appConfiguration.getSvnConfigurationStoreRoot();
+		String inumFN = StringHelper.removePunctuation(appConfiguration.getApplianceInum());
+		String svnPassword = appConfiguration.getSvnConfigurationStorePassword();
 		String applianceSvnHomePath = String.format("%s/%s", baseSvnDir, inumFN);
 
 		if (StringHelper.isEmpty(svnUrl) || StringHelper.isEmpty(inumFN) || StringHelper.isEmpty(svnPassword)) {
@@ -75,7 +71,7 @@ public class SubversionService {
 		SVNClientManager clientManager = null;
 		try {
 			// Decrypt password
-			svnPassword = StringEncrypter.defaultInstance().decrypt(svnPassword, cryptoConfigurationSalt);
+			svnPassword = stringEncrypter.decrypt(svnPassword);
 
 			// Create an instance of SVNClientManager
 			log.debug("Creating an instance of SVNClientManager");
@@ -172,8 +168,8 @@ public class SubversionService {
 	
 	public void initSubversionService() {
 		String svnConfigurationStoreRoot = null;
-		if (applicationConfiguration.isPersistSVN()) { 
-			svnConfigurationStoreRoot  = applicationConfiguration.getSvnConfigurationStoreRoot();
+		if (appConfiguration.isPersistSVN()) { 
+			svnConfigurationStoreRoot  = appConfiguration.getSvnConfigurationStoreRoot();
 		}
 
 		SVNAdminAreaFactory.setSelector(new ISVNAdminAreaFactorySelector() {
@@ -200,17 +196,8 @@ public class SubversionService {
 		SvnHelper.setupLibrary(svnConfigurationStoreRoot);
 	}
 
-	/**
-	 * Get subversionService instance
-	 * 
-	 * @return SubversionService instance
-	 */
-	public static SubversionService instance() {
-		return (SubversionService) Component.getInstance(SubversionService.class);
-	}
-
 	public List<SubversionFile> getDifferentFiles(List<SubversionFile> files) throws IOException {
-		String inumFN = StringHelper.removePunctuation(applicationConfiguration.getApplianceInum());
+		String inumFN = StringHelper.removePunctuation(appConfiguration.getApplianceInum());
 		String applianceSvnHomePath = String.format("%s/%s", baseSvnDir, inumFN);
 		File dir = new File(applianceSvnHomePath);
 

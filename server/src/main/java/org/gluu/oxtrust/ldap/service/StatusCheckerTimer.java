@@ -31,7 +31,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -84,14 +84,14 @@ public class StatusCheckerTimer {
 	private CentralLdapService centralLdapService;
 
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
 
 	private NumberFormat numberFormat;
 
     private AtomicBoolean isActive;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@PostConstruct
 	public void create() {
@@ -134,8 +134,8 @@ public class StatusCheckerTimer {
 	 */
 	private void processInt() {
 		log.debug("Starting update of appliance status");
-		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		if (!applicationConfiguration.isUpdateApplianceStatus()) {
+		AppConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+		if (!appConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}
 
@@ -196,7 +196,7 @@ public class StatusCheckerTimer {
 
 	private void setCertificateExpiryAttributes(GluuAppliance appliance) {
 		try {
-			URL destinationURL = new URL(applicationConfiguration.getApplianceUrl());
+			URL destinationURL = new URL(appConfiguration.getApplianceUrl());
 			HttpsURLConnection conn = (HttpsURLConnection) destinationURL.openConnection();
 			conn.connect();
 			Certificate[] certs = conn.getServerCertificates();
@@ -216,38 +216,38 @@ public class StatusCheckerTimer {
 
 	private void setHttpdAttributes(GluuAppliance appliance) {
 		log.debug("Setting httpd attributes");
-		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		String page = getHttpdPage(applicationConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
+		AppConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+		String page = getHttpdPage(appConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
 		appliance.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
 
 	}
 /*
 	private void setVDSAttributes(GluuAppliance appliance) {
 		log.debug("Setting VDS attributes");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		ApplicationConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
 		// Run vds check only on if vds.test.filter is set
-		if (applicationConfiguration.getVdsFilter() == null) {
+		if (appConfiguration.getVdsFilter() == null) {
 			return;
 		}
-		String serverURL = applicationConfiguration.getVdsLdapServer().split(":")[0];
-		int serverPort = Integer.parseInt(applicationConfiguration.getVdsLdapServer().split(":")[1]);
-		String bindDN = applicationConfiguration.getVdsBindDn();
+		String serverURL = appConfiguration.getVdsLdapServer().split(":")[0];
+		int serverPort = Integer.parseInt(appConfiguration.getVdsLdapServer().split(":")[1]);
+		String bindDN = appConfiguration.getVdsBindDn();
 
 		String bindPassword = null;
 		try {
-			bindPassword = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getVdsBindPassword());
+			bindPassword = StringEncrypter.defaultInstance().decrypt(appConfiguration.getVdsBindPassword());
 		} catch (EncryptionException e1) {
 			log.error("Failed to decrypt VDS bind password: %s", e1.getMessage());
 		}
 
-		String vdsFilter = applicationConfiguration.getVdsFilter();
-		String baseDN = applicationConfiguration.getBaseDN();
+		String vdsFilter = appConfiguration.getVdsFilter();
+		String baseDN = appConfiguration.getBaseDN();
 
 		LDAPConnectionPool connectionPool = null;
 		String[] objectclasses = null;
 		try {
 			ServerSet vdsServerSet;
-			boolean useSSL = "ldaps".equals(applicationConfiguration.getVdsLdapProtocol());
+			boolean useSSL = "ldaps".equals(appConfiguration.getVdsLdapProtocol());
 			if (useSSL) {
 				SSLUtil sslUtil = new SSLUtil(new TrustAllTrustManager());
 				vdsServerSet = new SingleServerSet(serverURL, serverPort, sslUtil.createSSLSocketFactory());

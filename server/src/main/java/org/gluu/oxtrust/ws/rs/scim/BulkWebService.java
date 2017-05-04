@@ -11,6 +11,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -23,10 +25,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim.BulkRequests;
@@ -41,8 +41,6 @@ import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * SCIM Bulk Implementation
@@ -62,16 +60,18 @@ public class BulkWebService extends BaseScimWebService {
 	private IGroupService groupService;
 
 	@Inject
+	private IPersonService persinService;
+
+	@Inject
+	private CopyUtils copyUtils;
+
+	@Inject
 	private ExternalScimService externalScimService;
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response bulkOperation(@Context HttpServletRequest request, @HeaderParam("Authorization") String authorization, ScimBulkOperation operation) throws Exception {
-
-		personService = PersonService.instance();
-		groupService = GroupService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -215,7 +215,7 @@ public class BulkWebService extends BaseScimWebService {
 					String bulkId = oneRequest.getBulkId();
 					String method = oneRequest.getMethod();
 
-					ScimGroup group = CopyUtils.copy(oneRequest.getData(), null);
+					ScimGroup group = copyUtils.copy(oneRequest.getData(), null);
 					boolean status = createGroup(group);
 
 					if (status) {
@@ -253,7 +253,7 @@ public class BulkWebService extends BaseScimWebService {
 					String method = oneRequest.getMethod();
 					String version = oneRequest.getVersion();
 					String path = oneRequest.getPath();
-					ScimGroup group = CopyUtils.copy(oneRequest.getData(), null);
+					ScimGroup group = copyUtils.copy(oneRequest.getData(), null);
 					String groupiD = getId(path);
 
 					boolean status = updateGroup(groupiD, group);
@@ -335,15 +335,12 @@ public class BulkWebService extends BaseScimWebService {
 
 	private boolean createUser(ScimPerson person) throws Exception {
 
-		GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
+		GluuCustomPerson gluuPerson = copyUtils.copy(person, null, false);
 		if (gluuPerson == null) {
 			return false;
 		}
 
 		try {
-
-			personService = PersonService.instance();
-
 			String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
 																	// //personService.generateInumForNewPerson();
 
@@ -378,17 +375,13 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean updateUser(String uid, ScimPerson person_update) throws Exception {
-
 		try {
-
-			personService = PersonService.instance();
-
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 			if (gluuPerson == null) {
 				return false;
 			}
 
-			gluuPerson = CopyUtils.copy(person_update, gluuPerson, true);
+			gluuPerson = copyUtils.copy(person_update, gluuPerson, true);
 
 			if (person_update.getGroups().size() > 0) {
 				Utils.groupMembersAdder(gluuPerson, personService.getDnForPerson(uid));
@@ -417,11 +410,7 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean deleteUser(String uid) throws Exception {
-
 		try {
-
-			personService = PersonService.instance();
-
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 
 			if (gluuPerson == null) {
@@ -458,16 +447,13 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean createGroup(ScimGroup group) throws Exception {
-
 		log.debug(" copying gluuGroup ");
-		GluuGroup gluuGroup = CopyUtils.copy(group, null, false);
+		GluuGroup gluuGroup = copyUtils.copy(group, null, false);
 		if (gluuGroup == null) {
 			return false;
 		}
 
 		try {
-
-			groupService = GroupService.instance();
 
 			log.debug(" generating inum ");
 			String inum = groupService.generateInumForNewGroup();
@@ -503,17 +489,13 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean updateGroup(String id, ScimGroup group) throws Exception {
-
 		try {
-
-			groupService = GroupService.instance();
-
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
 				return false;
 			}
 
-			GluuGroup newGluuGroup = CopyUtils.copy(group, gluuGroup, true);
+			GluuGroup newGluuGroup = copyUtils.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
 				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
@@ -540,11 +522,7 @@ public class BulkWebService extends BaseScimWebService {
 	}
 
 	private boolean deleteGroup(String id) throws Exception {
-
 		try {
-
-			groupService = GroupService.instance();
-
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 
 			if (gluuGroup == null) {

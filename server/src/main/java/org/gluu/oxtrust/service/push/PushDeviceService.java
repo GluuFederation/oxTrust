@@ -178,7 +178,7 @@ public class PushDeviceService implements Serializable {
 	 * Build DN string for oxPush Device
 	 */
 	public String getDnForPushDevice(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=device,ou=push,%s", orgDn);
 		}

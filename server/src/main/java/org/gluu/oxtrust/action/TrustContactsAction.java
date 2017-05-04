@@ -10,16 +10,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.xdi.util.Util;
 import org.xdi.model.TrustContact;
 import org.xdi.service.XmlService;
+import org.xdi.util.Util;
 
 @ConversationScoped
 @Named("trustContactsAction")

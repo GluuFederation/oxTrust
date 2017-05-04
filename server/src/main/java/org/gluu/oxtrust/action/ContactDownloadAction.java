@@ -10,17 +10,13 @@ import java.io.Serializable;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.ldap.service.DownloadService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.slf4j.Logger;
 
 @Named("contactDownloadAction")

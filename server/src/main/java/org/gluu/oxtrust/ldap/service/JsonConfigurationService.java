@@ -9,10 +9,11 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.IOException;
 import java.io.Serializable;
 
+import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -29,7 +30,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
-import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
+import org.xdi.config.oxtrust.LdapconfigurationFactory;
 import org.xdi.oxauth.client.*;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.GrantType;
@@ -63,17 +64,20 @@ public class JsonConfigurationService implements Serializable {
 	private OpenIdService openIdService;
 
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
 
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private AppConfiguration appConfiguration;
+
+	@Inject
+	private StringEncrypter stringEncrypter;
 	
 	@Inject
 	private ApplianceService applianceService;
 
 	public AppConfiguration getOxTrustApplicationConfiguration() {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return ldapOxTrustConfiguration.getApplication();
+		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
+		return ldapconfigurationFactory.getApplication();
 	}
 	
 	public CacheConfiguration getOxMemCacheConfiguration() {
@@ -89,55 +93,55 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public ImportPersonConfig getOxTrustImportPersonConfiguration() {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return ldapOxTrustConfiguration.getImportPersonConfig();
+		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
+		return ldapconfigurationFactory.getImportPersonConfig();
 	}
 
 	public CacheRefreshConfiguration getOxTrustCacheRefreshConfiguration() {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return ldapOxTrustConfiguration.getCacheRefresh();
+		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
+		return ldapconfigurationFactory.getCacheRefresh();
 	}
 
-	private LdapOxTrustConfiguration getOxTrustConfiguration() {
-		String configurationDn = oxTrustConfiguration.getConfigurationDn();
+	private LdapconfigurationFactory getconfigurationFactory() {
+		String configurationDn = configurationFactory.getConfigurationDn();
 
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = loadOxTrustConfig(configurationDn);
-		return ldapOxTrustConfiguration;
+		LdapconfigurationFactory ldapconfigurationFactory = loadOxTrustConfig(configurationDn);
+		return ldapconfigurationFactory;
 	}
 
 	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
-		String configurationDn = oxTrustConfiguration.getConfigurationDn();
+		String configurationDn = configurationFactory.getConfigurationDn();
 
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
 		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
 	}
 
 	public boolean saveOxTrustApplicationConfiguration(AppConfiguration oxTrustApplicationConfiguration) {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		ldapOxTrustConfiguration.setApplication(oxTrustApplicationConfiguration);
-		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
+		ldapconfigurationFactory.setApplication(oxTrustApplicationConfiguration);
+		ldapconfigurationFactory.setRevision(ldapconfigurationFactory.getRevision() + 1);
+		ldapEntryManager.merge(ldapconfigurationFactory);
 		return true;
 	}
 
 	public boolean saveOxTrustImportPersonConfiguration(ImportPersonConfig oxTrustImportPersonConfiguration) {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		ldapOxTrustConfiguration.setImportPersonConfig(oxTrustImportPersonConfiguration);
-		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
+		ldapconfigurationFactory.setImportPersonConfig(oxTrustImportPersonConfiguration);
+		ldapconfigurationFactory.setRevision(ldapconfigurationFactory.getRevision() + 1);
+		ldapEntryManager.merge(ldapconfigurationFactory);
 		return true;
 	}
 
 	public boolean saveOxTrustCacheRefreshConfiguration(CacheRefreshConfiguration oxTrustCacheRefreshConfiguration) {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		ldapOxTrustConfiguration.setCacheRefresh(oxTrustCacheRefreshConfiguration);
-		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
+		ldapconfigurationFactory.setCacheRefresh(oxTrustCacheRefreshConfiguration);
+		ldapconfigurationFactory.setRevision(ldapconfigurationFactory.getRevision() + 1);
+		ldapEntryManager.merge(ldapconfigurationFactory);
 		return true;
 	}
 
 	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws JsonParseException, JsonMappingException, IOException {
-		String configurationDn = oxTrustConfiguration.getConfigurationDn();
+		String configurationDn = configurationFactory.getConfigurationDn();
 
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
 		ldapOxAuthConfiguration.setOxAuthConfigDynamic(oxAuthDynamicConfigJson);
@@ -146,9 +150,9 @@ public class JsonConfigurationService implements Serializable {
 		return true;
 	}
 
-	private LdapOxTrustConfiguration loadOxTrustConfig(String configurationDn) {
+	private LdapconfigurationFactory loadOxTrustConfig(String configurationDn) {
 		try {
-			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
+			LdapconfigurationFactory conf = ldapEntryManager.find(LdapconfigurationFactory.class, configurationDn);
 
 			return conf;
 		} catch (LdapMappingException ex) {
@@ -181,7 +185,7 @@ public class JsonConfigurationService implements Serializable {
 		if (current.isScimTestMode()) {
 			OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
 
-			String clientPassword = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getOxAuthClientPassword(), cryptoConfigurationSalt);
+			String clientPassword = StringEncrypter.defaultInstance().decrypt(appConfiguration.getOxAuthClientPassword(), cryptoConfigurationSalt);
 
 			if (source.getScimTestModeAccessToken() != null && !source.getScimTestModeAccessToken().isEmpty()) {
 				// Check if current token is still valid
@@ -206,7 +210,7 @@ public class JsonConfigurationService implements Serializable {
 					//  Request new long-lived access token
 					TokenRequest longLivedTokenRequest = new TokenRequest(GrantType.OXAUTH_EXCHANGE_TOKEN);
 					longLivedTokenRequest.setOxAuthExchangeToken(source.getScimTestModeAccessToken());
-					longLivedTokenRequest.setAuthUsername(applicationConfiguration.getOxAuthClientId());
+					longLivedTokenRequest.setAuthUsername(appConfiguration.getOxAuthClientId());
 					longLivedTokenRequest.setAuthPassword(clientPassword);
 					longLivedTokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 
@@ -228,8 +232,8 @@ public class JsonConfigurationService implements Serializable {
 
 				// 1. Request short-lived access token
 				TokenRequest tokenRequest = new TokenRequest(GrantType.CLIENT_CREDENTIALS);
-				tokenRequest.setScope(applicationConfiguration.getOxAuthClientScope());
-				tokenRequest.setAuthUsername(applicationConfiguration.getOxAuthClientId());
+				tokenRequest.setScope(appConfiguration.getOxAuthClientScope());
+				tokenRequest.setAuthUsername(appConfiguration.getOxAuthClientId());
 				tokenRequest.setAuthPassword(clientPassword);
 				tokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 
@@ -243,7 +247,7 @@ public class JsonConfigurationService implements Serializable {
 				// 2. Exchange for long-lived access token
 				TokenRequest longLivedTokenRequest = new TokenRequest(GrantType.OXAUTH_EXCHANGE_TOKEN);
 				longLivedTokenRequest.setOxAuthExchangeToken(accessToken);
-				longLivedTokenRequest.setAuthUsername(applicationConfiguration.getOxAuthClientId());
+				longLivedTokenRequest.setAuthUsername(appConfiguration.getOxAuthClientId());
 				longLivedTokenRequest.setAuthPassword(clientPassword);
 				longLivedTokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 

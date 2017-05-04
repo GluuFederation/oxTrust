@@ -34,7 +34,7 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Yuriy Movchan Date: 11.02.2010
  */
 @Stateless
-@Named("groupService")
+@Named
 public class GroupService implements Serializable, IGroupService {
 
 	private static final long serialVersionUID = -9167587377957719152L;
@@ -43,13 +43,16 @@ public class GroupService implements Serializable, IGroupService {
 	private Logger log;
 
 	@Inject
+	private AppConfiguration appConfiguration;
+
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 	
 	@Inject
 	private OrganizationService organizationService;
-
+	
 	@Inject
-	private AppConfiguration appConfiguration;
+	private PersonService personService;
 
 	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#addGroup(org.gluu.oxtrust.model.GluuGroup)
@@ -83,13 +86,13 @@ public class GroupService implements Serializable, IGroupService {
 		if (group.getMembers() != null) {
 			List<String> memberDNs = group.getMembers();
 			for (String memberDN : memberDNs) {
-				GluuCustomPerson person = PersonService.instance().getPersonByDn(memberDN);
+				GluuCustomPerson person = personService.getPersonByDn(memberDN);
 				List<String> groupDNs = person.getMemberOf();
 				List<String> updatedGroupDNs = new ArrayList<String>();
 				updatedGroupDNs.addAll(groupDNs);
 				updatedGroupDNs.remove(group.getDn());
 				person.setMemberOf(updatedGroupDNs);
-				PersonService.instance().updatePerson(person);
+				personService.updatePerson(person);
 			}
 		}
 

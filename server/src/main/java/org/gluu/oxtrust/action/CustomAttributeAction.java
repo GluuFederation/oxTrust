@@ -18,21 +18,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuImage;

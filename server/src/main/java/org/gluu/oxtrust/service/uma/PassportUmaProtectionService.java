@@ -29,34 +29,34 @@ public class PassportUmaProtectionService extends BaseUmaProtectionService imple
 
 	private static final long serialVersionUID = -5547131971095468865L;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@Inject
 	private ApplianceService applianceService;
 
 	protected String getClientId() {
-		return applicationConfiguration.getPassportUmaClientId();
+		return appConfiguration.getPassportUmaClientId();
 	}
 
 	protected String getClientKeyStorePassword() {
-		return applicationConfiguration.getPassportUmaClientKeyStorePassword();
+		return appConfiguration.getPassportUmaClientKeyStorePassword();
 	}
 
 	protected String getClientKeyStoreFile() {
-		return applicationConfiguration.getPassportUmaClientKeyStoreFile();
+		return appConfiguration.getPassportUmaClientKeyStoreFile();
 	}
 
 	protected String getClientKeyId() {
-		return applicationConfiguration.getPassportUmaClientKeyId();
+		return appConfiguration.getPassportUmaClientKeyId();
 	}
 
 	public String getUmaResourceId() {
-		return applicationConfiguration.getPassportUmaResourceId();
+		return appConfiguration.getPassportUmaResourceId();
 	}
 
 	public String getUmaScope() {
-		return applicationConfiguration.getPassportUmaScope();
+		return appConfiguration.getPassportUmaScope();
 	}
 
 	public boolean isEnabled() {

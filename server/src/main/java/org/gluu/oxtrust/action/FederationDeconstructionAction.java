@@ -13,19 +13,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.gluu.oxtrust.ldap.service.OrganizationService;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -62,8 +59,8 @@ public class FederationDeconstructionAction implements Serializable {
 
 	private GluuSAMLTrustRelationship trustRelationship;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public String initFederationDeconstructions(GluuSAMLTrustRelationship trustRelationship) {
 		this.trustRelationship = trustRelationship;
@@ -153,7 +150,7 @@ public class FederationDeconstructionAction implements Serializable {
 			String dn = trustService.getDnForTrustRelationShip(newTR.getInum());
 			newTR.setDn(dn);
 			newTR.setMaxRefreshDelay("PT8H");
-			newTR.setOwner(OrganizationService.instance().getOrganization().getDn());
+			newTR.setOwner(organizationService.getOrganization().getDn());
 			newTR.setSpMetaDataSourceType(GluuMetadataSourceType.FEDERATION);
 			newTR.setContainerFederation(trustRelationship);
 			newTR.setEntityId(entityName);
@@ -174,7 +171,7 @@ public class FederationDeconstructionAction implements Serializable {
 		filteredEntities = null;
 		if (StringHelper.isNotEmpty(filterString)) {
 			filteredEntities = new ArrayList<String>();
-			String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator
+			String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 			File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 			for (String entity : SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile)) {

@@ -9,11 +9,9 @@ package org.gluu.oxtrust.service;
 import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
@@ -36,8 +34,8 @@ public class OpenIdService extends Initializable implements Serializable {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private OpenIdConfigurationResponse openIdConfiguration;
 
@@ -47,7 +45,7 @@ public class OpenIdService extends Initializable implements Serializable {
 	}
 
 	private void loadOpenIdConfiguration() {
-		String openIdProvider = applicationConfiguration.getOxAuthIssuer();
+		String openIdProvider = appConfiguration.getOxAuthIssuer();
 		if (StringHelper.isEmpty(openIdProvider)) {
 			throw new ConfigurationException("OpenIdProvider Url is invalid");
 		}

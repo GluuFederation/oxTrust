@@ -25,7 +25,7 @@ public class CustomScriptService extends AbstractCustomScriptService{
 	private static final long serialVersionUID = -5283102477313448031L;
 
     public String baseDn() {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		return String.format("ou=scripts,%s", orgDn);
     }
 

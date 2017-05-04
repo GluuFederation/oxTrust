@@ -16,11 +16,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
@@ -35,14 +38,7 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.jsf.ValidationUtil;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
@@ -72,7 +68,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private Logger log;
 
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
 
 	@Inject
 	private TemplateService templateService;
@@ -101,10 +97,10 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	@Inject
 	private FacesMessages facesMessages;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 	
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
@@ -136,7 +132,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		this.showInterceptorValidationDialog = false;
 
-		this.appliance = ApplianceService.instance().getAppliance();
+		this.appliance = applianceService.getAppliance();
 
 		this.cacheRefreshConfiguration = getOxTrustCacheRefreshConfig();
 
@@ -207,11 +203,11 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 
 	private void updateAppliance() {
-		GluuAppliance updateAppliance = ApplianceService.instance().getAppliance();
+		GluuAppliance updateAppliance = applianceService.getAppliance();
 		updateAppliance.setVdsCacheRefreshEnabled(this.appliance.getVdsCacheRefreshEnabled());
 		updateAppliance.setVdsCacheRefreshPollingInterval(this.appliance.getVdsCacheRefreshPollingInterval());
 		updateAppliance.setCacheRefreshServerIpAddress(this.appliance.getCacheRefreshServerIpAddress());
-		ApplianceService.instance().updateAppliance(updateAppliance);
+		applianceService.updateAppliance(updateAppliance);
 	}
 
 	// TODO: Yuriy Movchan: Use @Min property annotation + convert type from String to Integer 
@@ -404,7 +400,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		// Prepare data for dummy entry
 		String targetInum = inumService.generateInums(OxTrustConstants.INUM_TYPE_PEOPLE_SLUG, false);
 		String targetPersonDn = personService.getDnForPerson(targetInum);
-		String[] targetCustomObjectClasses = applicationConfiguration.getPersonObjectClassTypes();
+		String[] targetCustomObjectClasses = appConfiguration.getPersonObjectClassTypes();
 
 		// Collect all attributes
 		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);

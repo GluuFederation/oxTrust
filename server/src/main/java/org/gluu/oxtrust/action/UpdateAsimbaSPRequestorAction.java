@@ -10,13 +10,19 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.security.Identity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
@@ -24,22 +30,14 @@ import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Out;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
-import org.slf4j.Logger;
-import org.jboss.seam.security.Identity;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+
+import jnr.ffi.annotations.Out;
 
 
 /**
@@ -57,8 +55,8 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Inject
     private Logger log;
 
-    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private AppConfiguration applicationConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
 
     @Inject
     private Identity identity;

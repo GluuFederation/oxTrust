@@ -10,9 +10,11 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -25,15 +27,9 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.slf4j.Logger;
 import org.jboss.seam.web.ServletContexts;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
@@ -109,10 +105,10 @@ public class PasswordReminderAction implements Serializable {
 		if (enabled()) {
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
-			AppConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
+			AppConfiguration applicationConfiguration = ConfigurationFactory.instance().getApplicationConfiguration();
 			List<GluuCustomPerson> matchedPersons = PersonService.instance().findPersons(person, 0);
 			if(matchedPersons != null && matchedPersons.size()>0){
-				GluuAppliance appliance = ApplianceService.instance().getAppliance();
+				GluuAppliance appliance = applianceService.getAppliance();
 				
 				OrganizationalUnit requests = new OrganizationalUnit();
 				requests.setOu("resetPasswordRequests");
@@ -129,27 +125,27 @@ public class PasswordReminderAction implements Serializable {
 					request.setBaseDn("oxGuid=" + request.getOxGuid()+ ", ou=resetPasswordRequests," + appliance.getDn());
 				}while(ldapEntryManager.contains(request));
 
-				String subj = String.format("Password reset was requested at %1$s identity server", OrganizationService.instance().getOrganization().getDisplayName());
+				String subj = String.format("Password reset was requested at %1$s identity server", organizationService.getOrganization().getDisplayName());
 				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
 						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), appliance.getSmtpPasswordStr());
 				
 				mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", email,
 						subj, String.format(MESSAGE_FOUND, matchedPersons.get(0).getGivenName(),
-								OrganizationService.instance().getOrganization().getDisplayName(), 
-								applicationConfiguration.getApplianceUrl() + ServletContexts.instance().getRequest().getContextPath() + "/resetPassword/" + request.getOxGuid()));
+								organizationService.getOrganization().getDisplayName(), 
+								appConfiguration.getApplianceUrl() + ServletContexts.instance().getRequest().getContextPath() + "/resetPassword/" + request.getOxGuid()));
 
 				ldapEntryManager.persist(request);
 			}else{
-				GluuAppliance appliance = ApplianceService.instance().getAppliance();
-				String subj = String.format("Password reset was requested at %1$s identity server", OrganizationService.instance().getOrganization().getDisplayName());
+				GluuAppliance appliance = applianceService.getAppliance();
+				String subj = String.format("Password reset was requested at %1$s identity server", organizationService.getOrganization().getDisplayName());
 				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
 						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), appliance.getSmtpPasswordStr());
 				String fromName = appliance.getSmtpFromName();
 				if(fromName == null){
-					fromName = String.format("%1$s identity server" , OrganizationService.instance().getOrganization().getDisplayName());
+					fromName = String.format("%1$s identity server" , organizationService.getOrganization().getDisplayName());
 				}
 				mail.sendMail(fromName + " <" + appliance.getSmtpFromEmailAddress() + ">", email,
-						subj, String.format(MESSAGE_NOT_FOUND, OrganizationService.instance().getOrganization().getDisplayName()));
+						subj, String.format(MESSAGE_NOT_FOUND, organizationService.getOrganization().getDisplayName()));
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
@@ -157,7 +153,7 @@ public class PasswordReminderAction implements Serializable {
 	}
 	
 	public boolean enabled(){
-		GluuAppliance appliance = ApplianceService.instance().getAppliance();
+		GluuAppliance appliance = applianceService.getAppliance();
 		boolean valid =	appliance.getSmtpHost() != null 
 					&& appliance.getSmtpPort() != null 
 					&&((! appliance.isRequiresAuthentication()) 

@@ -6,18 +6,16 @@
 
 package org.gluu.oxtrust.action;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
-
 import java.io.Serializable;
 import java.util.Date;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 
 /**

@@ -8,7 +8,12 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.PropertiesConfigurationLayout;
 import org.gluu.oxtrust.ldap.service.CASService;
@@ -16,20 +21,12 @@ import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
+
+import jnr.ffi.annotations.Out;
 
 /**
  * Action class for updating CAS protocol Shibboleth IDP properties.
@@ -59,8 +56,8 @@ public class UpdateCASAction implements Serializable {
     @Inject
     private Logger log;
 
-    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private AppConfiguration applicationConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
 
     @Inject
     private SvnSyncTimer svnSyncTimer;
@@ -97,7 +94,7 @@ public class UpdateCASAction implements Serializable {
         sessionStorageTypes.add(SHIBBOLETH_STORAGESERVICE);
         sessionStorageTypes.add(SHIBBOLETH_MEMCACHEDSTORAGESERVICE);
         
-        casBaseURL = applicationConfiguration.getIdpUrl() + "/idp/profile/cas";
+        casBaseURL = appConfiguration.getIdpUrl() + "/idp/profile/cas";
         
         try {
             configuration = casService.loadCASConfiguration();

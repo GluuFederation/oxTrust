@@ -28,16 +28,19 @@ public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory
 	@Inject
 	private String cryptoConfigurationSalt;
 	
+	@Inject
+	private AppConfiguration appConfiguration;
+	
 	protected SSLContext createEasySSLContext(AppConfiguration applicationConfiguration) {
 		try {
 
-			String password = applicationConfiguration.getCaCertsPassphrase();
+			String password = appConfiguration.getCaCertsPassphrase();
 			char[] passphrase = null;
 			if (password != null) {
 				passphrase = StringEncrypter.defaultInstance().decrypt(password, cryptoConfigurationSalt).toCharArray();
 			}
 			KeyStore cacerts = null;
-			String cacertsFN = applicationConfiguration.getCaCertsLocation();
+			String cacertsFN = appConfiguration.getCaCertsLocation();
 			if (cacertsFN != null) {
 				cacerts = KeyStore.getInstance(KeyStore.getDefaultType());
 				FileInputStream cacertsFile = new FileInputStream(cacertsFN);

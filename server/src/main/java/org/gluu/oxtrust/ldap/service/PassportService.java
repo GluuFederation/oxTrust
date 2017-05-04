@@ -6,15 +6,13 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.MappingException;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.site.ldap.persistence.exception.MappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.service.JsonService;
@@ -40,7 +38,7 @@ public class PassportService {
 	private LdapEntryManager ldapEntryManager;
 
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
 
 	public boolean containsPassportConfiguration() {
 		String configurationDn = getConfigurationDn();
@@ -66,7 +64,7 @@ public class PassportService {
 	}
 
 	private String getConfigurationDn() {
-		FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
+		FileConfiguration fc = configurationFactory.getLdapConfiguration();
 		String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
 		return configurationDn;
 	}

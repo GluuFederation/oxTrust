@@ -60,7 +60,7 @@ public class ApisConfigurationAction implements Serializable {
 	}
 	
 	public String save(){
-		GluuOrganization organization = OrganizationService.instance().getOrganization();
+		GluuOrganization organization = organizationService.getOrganization();
 		organization.setLinktrackEnabled(enableLinktrack);
 		organization.setLinktrackLogin(linktrackLogin);
 		organization.setLinktrackPassword(linktrackPassword);

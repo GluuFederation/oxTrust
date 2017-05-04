@@ -41,7 +41,7 @@ public class FaviconImageServlet extends HttpServlet {
 		String preview = httpServletRequest.getParameter("preview");
 		GluuOrganization organization = null;
 		try {
-			organization = OrganizationService.instance().getOrganization();
+			organization = organizationService.getOrganization();
 		} catch (Exception ex) {
 			log.error("an Error Occured", ex);
 		}

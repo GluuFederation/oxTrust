@@ -6,11 +6,25 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -18,7 +32,6 @@ import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
-import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupList;
@@ -31,13 +44,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
 import org.slf4j.Logger;
 import org.xdi.ldap.model.VirtualListViewResponse;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * @author Reda Zerrad Date: 04.13.2012
@@ -54,6 +62,9 @@ public class GroupWebService extends BaseScimWebService {
 
 	@Inject
 	private ExternalScimService externalScimService;
+
+	@Inject
+	private CopyUtils copyUtils;
 
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -79,10 +90,7 @@ public class GroupWebService extends BaseScimWebService {
 				return getErrorResponse(detail, Response.Status.BAD_REQUEST.getStatusCode());
 
 			} else {
-
 				log.info(" Searching groups from LDAP ");
-
-				groupService = GroupService.instance();
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
@@ -106,7 +114,7 @@ public class GroupWebService extends BaseScimWebService {
 
 					for (GluuGroup gluuGroup : gluuGroups) {
 
-						ScimGroup group = CopyUtils.copy(gluuGroup, null);
+						ScimGroup group = copyUtils.copy(gluuGroup, null);
 
 						log.info(" group to be added displayName : " + group.getDisplayName());
 
@@ -120,7 +128,7 @@ public class GroupWebService extends BaseScimWebService {
 					groupsList.setStartIndex(vlvResponse.getStartIndex());
 				}
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v1/Groups");
+				URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v1/Groups");
 
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
@@ -154,16 +162,13 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			groupService = GroupService.instance();
-
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
 				// sets HTTP status code 404 Not Found
 				return getErrorResponse("Resource " + id + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			ScimGroup group = CopyUtils.copy(gluuGroup, null);
+			ScimGroup group = copyUtils.copy(gluuGroup, null);
 
 			URI location = new URI("/Groups/" + id);
 
@@ -193,15 +198,12 @@ public class GroupWebService extends BaseScimWebService {
 		// Return HTTP response with status code 201 Created
 
 		log.debug(" copying gluuGroup ");
-		GluuGroup gluuGroup = CopyUtils.copy(group, null, false);
+		GluuGroup gluuGroup = copyUtils.copy(group, null, false);
 		if (gluuGroup == null) {
 			return getErrorResponse("Failed to create group", Response.Status.BAD_REQUEST.getStatusCode());
 		}
 
 		try {
-
-			groupService = GroupService.instance();
-
 			log.debug(" generating inum ");
 			String inum = groupService.generateInumForNewGroup();
 
@@ -233,7 +235,7 @@ public class GroupWebService extends BaseScimWebService {
 			log.debug("adding new GluuGroup");
 			groupService.addGroup(gluuGroup);
 
-			ScimGroup newGroup = CopyUtils.copy(gluuGroup, null);
+			ScimGroup newGroup = copyUtils.copy(gluuGroup, null);
 
 			String uri = "/Groups/" + newGroup.getId();
 
@@ -265,9 +267,6 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			groupService = GroupService.instance();
-
 			GluuGroup gluuGroup = groupService.getGroupByInum(id);
 			if (gluuGroup == null) {
 
@@ -292,7 +291,7 @@ public class GroupWebService extends BaseScimWebService {
 				}
 			}
 
-			GluuGroup newGluuGroup = CopyUtils.copy(group, gluuGroup, true);
+			GluuGroup newGluuGroup = copyUtils.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
 				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
@@ -306,7 +305,7 @@ public class GroupWebService extends BaseScimWebService {
 			groupService.updateGroup(newGluuGroup);
 			log.debug(" group updated ");
 
-			ScimGroup newGroup = CopyUtils.copy(newGluuGroup, null);
+			ScimGroup newGroup = copyUtils.copy(newGluuGroup, null);
 
 			URI location = new URI("/Groups/" + id);
 
@@ -342,9 +341,6 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			groupService = GroupService.instance();
-
 			log.info(" Checking if the group exists ");
 			log.info(" id : " + id);
 

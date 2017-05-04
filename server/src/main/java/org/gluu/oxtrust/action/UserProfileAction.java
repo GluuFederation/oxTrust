@@ -10,10 +10,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -23,14 +24,6 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Out;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -38,7 +31,8 @@ import org.xdi.model.GluuIMAPData;
 import org.xdi.model.GluuImage;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.ImapPassword;
-import org.xdi.util.StringHelper;
+
+import jnr.ffi.annotations.Out;
 
 /**
  * Action class for view and update profile actions.
@@ -84,8 +78,8 @@ public class UserProfileAction implements Serializable {
 	@Inject(create = true, value="imapDataService")
 	private ImapDataService imapDataService;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private GluuCustomPerson person;
 
@@ -182,7 +176,7 @@ public class UserProfileAction implements Serializable {
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
 
 		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, applicationConfiguration
-				.getPersonObjectClassTypes(), applicationConfiguration.getPersonObjectClassDisplayNames());
+				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 	}
 
 	public void addOpts() {

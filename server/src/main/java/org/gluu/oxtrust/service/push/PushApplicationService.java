@@ -179,7 +179,7 @@ public class PushApplicationService implements Serializable {
 	 * Build DN string for oxPush Application
 	 */
 	public String getDnForPushApplication(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=application,ou=push,%s", orgDn);
 		}

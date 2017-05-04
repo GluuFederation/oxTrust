@@ -34,8 +34,8 @@ public class AuthenticationSessionService {
 	@Inject
 	private OpenIdService openIdService;
 	
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
     @Destroy
     public void sessionDestroyed() {
@@ -49,7 +49,7 @@ public class AuthenticationSessionService {
     	try {
             String endSessionState = UUID.randomUUID().toString();
 
-            EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), applicationConfiguration.getLogoutRedirectUrl(), endSessionState);
+            EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), appConfiguration.getLogoutRedirectUrl(), endSessionState);
             endSessionRequest.setSessionState(oauthData.getSessionState());
 
             EndSessionClient endSessionClient = new EndSessionClient(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());

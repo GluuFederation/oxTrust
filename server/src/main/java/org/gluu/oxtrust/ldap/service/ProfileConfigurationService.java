@@ -13,21 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.velocity.VelocityContext;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xdi.service.XmlService;
@@ -58,11 +54,13 @@ public class ProfileConfigurationService {
 
 	@Inject
 	private XmlService xmlService;
+	
+	@Inject
+	private ConfigurationFactory configurationFactory;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
-
-		String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
-		// File profileConfigurationFolder = new File(OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
+		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		// File profileConfigurationFolder = new File(configurationFactory.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 		File profileConfigurationFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 
 		File[] profileConfigurationTemplates = null;
@@ -308,10 +306,6 @@ public class ProfileConfigurationService {
 	public void removeProfileConfiguration(GluuSAMLTrustRelationship trustRelationship, ProfileConfiguration profileConfiguration) {
 		trustRelationship.getProfileConfigurations().remove(profileConfiguration.getName());
 
-	}
-
-	public static ProfileConfigurationService instance() {
-		return (ProfileConfigurationService) Component.getInstance(ProfileConfigurationService.class);
 	}
 
 	public void saveProfileConfigurations(GluuSAMLTrustRelationship trustRelationship, Map<String, FileUploadWrapper> fileWrappers) {

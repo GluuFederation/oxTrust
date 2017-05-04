@@ -56,8 +56,8 @@ public class BaseScimWebService {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	protected AppConfiguration applicationConfiguration;
+	@Inject
+	protected AppConfiguration appConfiguration;
 
 	@Inject
 	private ApplianceService applianceService;
@@ -75,7 +75,7 @@ public class BaseScimWebService {
 	private ScimFilterParserService scimFilterParserService;
 	
 	public int getMaxCount(){
-		return applicationConfiguration.getScimProperties().getMaxCount() ;
+		return appConfiguration.getScimProperties().getMaxCount() ;
 	}
 	
 	protected Response processAuthorization(String authorization) throws Exception {

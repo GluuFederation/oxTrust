@@ -49,13 +49,19 @@ import com.unboundid.ldap.sdk.LDAPException;
 public class AttributeService  extends org.xdi.service.AttributeService {
 
 	@Inject
+	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private ApplianceService applianceService;
+
+	@Inject
 	private SchemaService schemaService;
 
 	@Inject
 	private TrustService trustService;
-
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	public static final String CUSTOM_ATTRIBUTE_OBJECTCLASS_PREFIX = "ox-";
 
@@ -88,10 +94,10 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	private List<GluuAttribute> getAllPersonAtributesImpl(GluuUserRole gluuUserRole, Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
-		String[] objectClassTypes = applicationConfiguration.getPersonObjectClassTypes();
+		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
 		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
 		for (GluuAttribute attribute : attributes) {
-			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass())
+			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
 					&& (GluuUserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
@@ -137,9 +143,9 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	private List<GluuAttribute> getAllContactAtributesImpl(GluuUserRole gluuUserRole, Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
-		String[] objectClassTypes = applicationConfiguration.getContactObjectClassTypes();
+		String[] objectClassTypes = appConfiguration.getContactObjectClassTypes();
 		for (GluuAttribute attribute : attributes) {
-			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass())
+			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
 					&& (GluuUserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
@@ -365,7 +371,7 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 							trustRelationship.setReleasedAttributes(updatedAttrs);
 						}
 
-						TrustService.instance().updateTrustRelationship(trustRelationship);
+						trustService.updateTrustRelationship(trustRelationship);
 						break;
 					}
 				}
@@ -440,8 +446,8 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	 * @return Array of attribute user roles
 	 */
 	public GluuUserRole[] getViewTypes() {
-		if (ApplianceService.instance().getAppliance().getWhitePagesEnabled() != null
-				&& ApplianceService.instance().getAppliance().getWhitePagesEnabled().isBooleanValue()) {
+		if (applianceService.getAppliance().getWhitePagesEnabled() != null
+				&& applianceService.getAppliance().getWhitePagesEnabled().isBooleanValue()) {
 			return new GluuUserRole[] { GluuUserRole.ADMIN, GluuUserRole.USER, GluuUserRole.WHITEPAGES };
 		}
 		return new GluuUserRole[] { GluuUserRole.ADMIN, GluuUserRole.USER };
@@ -503,7 +509,7 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewAttributeImpl() {
-		String orgInum = OrganizationService.instance().getInumForOrganization();
+		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + "0005" + OxTrustConstants.inumDelimiter + generateInum();
 	}
 
@@ -535,7 +541,7 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	 *         inum is null
 	 */
 	public String getDnForAttribute(String inum) {
-		String organizationDn = OrganizationService.instance().getDnForOrganization();
+		String organizationDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=attributes,%s", organizationDn);
 		}
@@ -549,7 +555,7 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	 * @return Current custom origin
 	 */
 	public String getCustomOrigin() {
-		return applicationConfiguration.getPersonCustomObjectClass();
+		return appConfiguration.getPersonCustomObjectClass();
 	}
 	
 	@Override
@@ -625,10 +631,6 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 		ldapEntryManager.sortListByProperties(GluuCustomAttribute.class, customAttributes, sortByProperties);
 	}
 
-	public static AttributeService instance() {
-		return (AttributeService) Component.getInstance(AttributeService.class);
-	}
-
 	/**
 	 * Build DN string for group
 	 * 
@@ -638,7 +640,7 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	 *         null
 	 */
 	public String getDnForGroup(String inum) throws Exception {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=groups,%s", orgDn);
 		}
@@ -670,11 +672,11 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 		Filter filter = Filter.createEqualityFilter("gluuStatus", "active");
 		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter);
 		String customOrigin = getCustomOrigin();
-		String[] objectClassTypes = applicationConfiguration.getPersonObjectClassTypes();
+		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
 		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 		for (GluuAttribute attribute : attributeList) {
-			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), applicationConfiguration.getPersonCustomObjectClass()) &&
+			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass()) &&
 				(GluuUserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
@@ -722,7 +724,7 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	}
 
 	public List<GluuAttribute> searchPersonAttributes(String pattern, int sizeLimit) throws Exception {
-		String[] objectClassTypes = applicationConfiguration.getPersonObjectClassTypes();
+		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
 		String[] targetArray = new String[] { pattern };
 		List<Filter> originFilters = new ArrayList<Filter>();
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);

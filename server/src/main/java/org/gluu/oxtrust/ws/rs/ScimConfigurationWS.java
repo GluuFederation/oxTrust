@@ -17,7 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.scim.ScimConfiguration;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -42,9 +42,12 @@ public class ScimConfigurationWS {
 
     @Inject
     private Logger log;
-    
+
     @Inject
-    private OxTrustConfiguration oxTrustConfiguration;
+    private ConfigurationFactory configurationFactory;
+
+    @Inject
+    private AppConfiguration appConfiguration;
 
     @Inject
     private JsonService jsonService;
@@ -60,8 +63,7 @@ public class ScimConfigurationWS {
     })
     public Response getConfiguration() {
         try {
-            final AppConfiguration configuration = oxTrustConfiguration.getApplicationConfiguration();
-            final String baseEndpointUri = configuration.getBaseEndpoint();
+            final String baseEndpointUri = appConfiguration.getBaseEndpoint();
 
             final List<ScimConfiguration> cl = new ArrayList<ScimConfiguration>();
 

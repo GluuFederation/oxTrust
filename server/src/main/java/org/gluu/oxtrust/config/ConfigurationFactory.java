@@ -48,8 +48,8 @@ import org.xdi.util.properties.FileConfiguration;
  * @version 0.1, 05/15/2013
  */
 @ApplicationScoped
-@Named("oxTrustConfiguration")
-public class OxTrustConfiguration {
+@Named
+public class ConfigurationFactory {
 
 	@Inject
 	private Logger log;
@@ -61,7 +61,7 @@ public class OxTrustConfiguration {
 	private Event<TimerEvent> timerEvent;
 
 	@Inject
-	private Event<LdapOxTrustConfiguration> configurationUpdateEvent;
+	private Event<AppConfiguration> configurationUpdateEvent;
 
 	@Inject
 	private Event<String> event;
@@ -109,7 +109,7 @@ public class OxTrustConfiguration {
 	private boolean loaded = false;
 	private FileConfiguration ldapConfiguration;
 	private FileConfiguration ldapCentralConfiguration;
-	private AppConfiguration applicationConfiguration;
+	private AppConfiguration appConfiguration;
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 	private String cryptoConfigurationSalt;
 	private ImportPersonConfig  importPersonConfig;
@@ -246,7 +246,7 @@ public class OxTrustConfiguration {
 	@Produces
 	@ApplicationScoped
 	public AppConfiguration getAppConfiguration() {
-		return applicationConfiguration;
+		return appConfiguration;
 	}
 
 	@Produces
@@ -265,14 +265,6 @@ public class OxTrustConfiguration {
 		return cryptoConfigurationSalt;
 	}
 
-	public String getCacheRefreshFilePath() {
-		return cacheRefreshFilePath;
-	}
-
-	public String getLogRotationFilePath() {
-		return logRotationFilePath;
-	}
-
 	public String getConfigurationDn() {
 		return getLdapConfiguration().getString("oxtrust_ConfigurationEntryDN");
 	}
@@ -284,10 +276,10 @@ public class OxTrustConfiguration {
     }
 
     private boolean reloadAppConfFromFile() {
-        final AppConfiguration applicationConfiguration = loadAppConfFromFile();
-        if (applicationConfiguration != null) {
+        final AppConfiguration appConfiguration = loadAppConfFromFile();
+        if (appConfiguration != null) {
             log.info("Reloaded application configuration from file: " + configFilePath);
-            this.applicationConfiguration = applicationConfiguration;
+            this.appConfiguration = appConfiguration;
             return true;
         } else {
         	log.error("Failed to load application configuration from file: " + configFilePath);
@@ -299,9 +291,9 @@ public class OxTrustConfiguration {
 	private AppConfiguration loadAppConfFromFile() {
 		try {
 	        String jsonConfig = FileUtils.readFileToString(new File(configFilePath));
-	        AppConfiguration applicationConfiguration = jsonService.jsonToObject(jsonConfig, AppConfiguration.class);
+	        AppConfiguration appConfiguration = jsonService.jsonToObject(jsonConfig, AppConfiguration.class);
 
-			return applicationConfiguration;
+			return appConfiguration;
 		} catch (Exception ex) {
 			log.error("Failed to load configuration from {0}", ex, configFilePath);
 		}
@@ -362,7 +354,7 @@ public class OxTrustConfiguration {
 				}
 
 				this.loaded = true;
-				configurationUpdateEvent.select(ConfigurationUpdate.Literal.INSTANCE).fire(conf);
+				configurationUpdateEvent.select(ConfigurationUpdate.Literal.INSTANCE).fire(this.appConfiguration);
 
                 return true;
             }
@@ -401,7 +393,7 @@ public class OxTrustConfiguration {
     }
 
 	private void init(LdapOxTrustConfiguration conf) {
-		this.applicationConfiguration = conf.getApplication();
+		this.appConfiguration = conf.getApplication();
 		this.cacheRefreshConfiguration = conf.getCacheRefresh();
 		this.importPersonConfig = conf.getImportPersonConfig();
 		this.loadedRevision = conf.getRevision();
@@ -432,7 +424,7 @@ public class OxTrustConfiguration {
 		String jetyBase = System.getProperty("jetty.base");
 		
 		if (StringHelper.isEmpty(jetyBase)) {
-			return OxTrustConfiguration.DIR;
+			return ConfigurationFactory.DIR;
 		}
 
 		return jetyBase + File.separator + "conf" + File.separator;

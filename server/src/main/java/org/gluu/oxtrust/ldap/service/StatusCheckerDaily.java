@@ -9,7 +9,7 @@ package org.gluu.oxtrust.ldap.service;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import javax.enterprise.context.ApplicationScoped;
@@ -53,7 +53,7 @@ public class StatusCheckerDaily {
 	private CentralLdapService centralLdapService;
 
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
 
     private AtomicBoolean isActive;
 
@@ -98,8 +98,8 @@ public class StatusCheckerDaily {
 	 */
 	private void processInt() {
 		log.debug("Starting daily status checker");
-		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		if (!applicationConfiguration.isUpdateApplianceStatus()) {
+		AppConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+		if (!appConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}
 

@@ -7,22 +7,16 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.hibernate.internal.util.collections.ArrayHelper;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -31,6 +25,7 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
 import org.xdi.service.SchemaService;
+import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 
 /**
@@ -57,8 +52,8 @@ public class UpdateAttributeAction implements Serializable {
 	@Inject
 	private FacesMessages facesMessages;
 	
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private String inum;
 	private GluuAttribute attribute;
@@ -267,7 +262,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private String determineOrigin(String attributeName) {
-		String[] objectClasses = ArrayHelper.join(new String[] { "gluuPerson" }, applicationConfiguration.getPersonObjectClassTypes());
+		String[] objectClasses = ArrayHelper.join(new String[] { "gluuPerson" }, appConfiguration.getPersonObjectClassTypes());
 
 		SchemaEntry schemaEntry = schemaService.getSchema();
 		
@@ -285,7 +280,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean containsAttributeInGluuObjectClasses(String attributeName) {
-		String[] objectClasses = ArrayHelper.join(new String[] { "gluuPerson" }, applicationConfiguration.getPersonObjectClassTypes());
+		String[] objectClasses = ArrayHelper.join(new String[] { "gluuPerson" }, appConfiguration.getPersonObjectClassTypes());
 
 		SchemaEntry schemaEntry = schemaService.getSchema();
 		Set<String> attributeNames = schemaService.getObjectClassesAttributes(schemaEntry, objectClasses);

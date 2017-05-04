@@ -8,16 +8,13 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.CentralLdapService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.security.StringEncrypter;
@@ -40,10 +37,10 @@ public class AppliancePasswordAction implements Serializable {
     @Inject
     private CentralLdapService centralLdapService;
 
-    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private AppConfiguration applicationConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
 
-    @Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+    @Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
     private String cryptoConfigurationSalt;
 
     @Inject

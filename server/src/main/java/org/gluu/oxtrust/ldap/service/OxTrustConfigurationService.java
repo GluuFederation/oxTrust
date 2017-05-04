@@ -23,7 +23,7 @@ import org.xdi.util.StringHelper;
 @Stateless
 @Named
 @Deprecated //TODO: We don't need this class
-public class OxTrustConfigurationService {
+public class configurationFactoryService {
 	
 	@Inject
 	private AppConfiguration appConfiguration;

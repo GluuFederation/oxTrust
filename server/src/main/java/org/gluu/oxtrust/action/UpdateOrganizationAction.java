@@ -15,11 +15,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -29,20 +32,13 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Destroy;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
-import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
@@ -79,13 +75,13 @@ public class UpdateOrganizationAction implements Serializable {
 	private ApplianceService applianceService;
 
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
 
 	@Inject
 	private FacesMessages facesMessages;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private GluuOrganization organization;
 
@@ -149,7 +145,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 		appliances = new ArrayList<GluuAppliance>();
 		try {
-			appliances.addAll(ApplianceService.instance().getAppliances());
+			appliances.addAll(applianceService.getAppliances());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

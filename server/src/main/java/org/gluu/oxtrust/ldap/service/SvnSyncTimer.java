@@ -8,44 +8,52 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.SubversionFile;
+import org.gluu.oxtrust.service.cdi.event.SvnSyncEvent;
 import org.javatuples.Pair;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.annotations.async.Expiration;
-import org.jboss.seam.annotations.async.IntervalDuration;
-import org.jboss.seam.async.QuartzTriggerHandle;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.cdi.event.Scheduled;
+import org.xdi.service.timer.event.TimerEvent;
+import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.StringHelper;
 
 @ApplicationScoped
-@Named("svnSyncTimer")
+@Named
 public class SvnSyncTimer {
 
+	private final static int DEFAULT_INTERVAL = 5 * 60; // 5 minutes
+
 	@Inject
-	Log log;
+	private Logger log;
+
+	@Inject
+	private Event<TimerEvent> timerEvent;
 
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@Inject
 	private SubversionService subversionService;
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	@Inject
-	private FacesMessages facesMessages;
+	private AppConfiguration appConfiguration;
 
 	private LinkedBlockingQueue<Pair<GluuSAMLTrustRelationship, String>> removedTrustRelationship;
 
@@ -56,20 +64,54 @@ public class SvnSyncTimer {
 	@Inject
 	private TrustService trustService;
 
+	private AtomicBoolean isActive;
+
 	@PostConstruct
-	public void create() {
-		removedTrustRelationship = new LinkedBlockingQueue<Pair<GluuSAMLTrustRelationship, String>>();
-		alteredTrustRelations = new ArrayList<Pair<GluuSAMLTrustRelationship, String>>();
+	public void init() {
+		this.isActive = new AtomicBoolean(true);
+		try {
+			this.removedTrustRelationship = new LinkedBlockingQueue<Pair<GluuSAMLTrustRelationship, String>>();
+			this.alteredTrustRelations = new ArrayList<Pair<GluuSAMLTrustRelationship, String>>();
+		} finally {
+			this.isActive.set(false);
+		}
+	}
+
+	public void initTimer() {
+		log.debug("Initializing SVN Sync Timer");
+
+		if (!appConfiguration.isPersistSVN()) {
+			return;
+		}
+
+		final int delay = 30;
+		final int interval = DEFAULT_INTERVAL;
+
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new SvnSyncEvent(),
+				Scheduled.Literal.INSTANCE));
 	}
 
 	@Asynchronous
-	public QuartzTriggerHandle scheduleSvnSync(@Expiration Date when, @InjecttervalDuration Long interval) {
-		process(when, interval);
-		return null;
+	public void processSvnSyncTimerEvent(@Observes @Scheduled SvnSyncEvent svnSyncEvent) {
+		if (this.isActive.get()) {
+			return;
+		}
+
+		if (!this.isActive.compareAndSet(false, true)) {
+			return;
+		}
+
+		try {
+			processSvnSync();
+		} catch (Throwable ex) {
+			log.error("Exception happened while running SVN sync", ex);
+		} finally {
+			this.isActive.set(false);
+		}
 	}
 
-	private void process(Date when, Long interval) {
-		commitShibboleth3Configuration(TrustService.instance().getAllActiveTrustRelationships());
+	private void processSvnSync() {
+		commitShibboleth3Configuration(trustService.getAllActiveTrustRelationships());
 	}
 
 	private void commitShibboleth3Configuration(List<GluuSAMLTrustRelationship> trustRelationships) {
@@ -119,15 +161,13 @@ public class SvnSyncTimer {
 			log.debug("Files to be persisted in repository: " + StringHelper.toString(subversionFiles.toArray(new SubversionFile[] {})));
 			log.debug("Files to be removed from repository: "
 					+ StringHelper.toString(removeSubversionFiles.toArray(new SubversionFile[] {})));
-			if (!subversionService.commitShibboleth3ConfigurationFiles(OrganizationService.instance().getOrganization(), subversionFiles,
+			if (!subversionService.commitShibboleth3ConfigurationFiles(organizationService.getOrganization(), subversionFiles,
 					removeSubversionFiles, svnComment + idpSvnComment)) {
 				log.error("Failed to commit Shibboleth3 configuration to SVN repository");
-				facesMessages.add(Severity.ERROR, "Failed to commit Shibboleth3 configuration to SVN repository");
 			} else {
 				svnComment = "";
 				alteredTrustRelations.clear();
 				log.info("Shibboleth3 configuration commited successfully to SVN repository");
-				facesMessages.add(Severity.INFO, "Shibboleth3 configuration comited successfully to SVN repository");
 			}
 		}
 	}

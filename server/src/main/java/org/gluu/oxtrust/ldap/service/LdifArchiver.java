@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Calendar;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.site.ldap.persistence.DeleteNotifier;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
@@ -29,8 +29,8 @@ public class LdifArchiver implements DeleteNotifier {
 	private boolean disable;
 
 	public LdifArchiver(LdapEntryManager ldapEntryManager) {
-		AppConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
-		storeDir = applicationConfiguration.getLdifStore();
+		AppConfiguration applicationConfiguration = ConfigurationFactory.instance().getApplicationConfiguration();
+		storeDir = appConfiguration.getLdifStore();
 		if (storeDir != null) {
 			File store = new File(storeDir);
 			store.mkdirs();

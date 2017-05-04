@@ -10,16 +10,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
@@ -27,21 +25,24 @@ import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
 @Stateless
-@Named("federationService")
+@Named
 public class FederationService {
 
 	@Inject
-	LdapEntryManager ldapEntryManager;
+	private LdapEntryManager ldapEntryManager;
+
+	@Inject
+	private ApplianceService applianceService;
 
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public void addFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		String[] clusterMembers = applicationConfiguration.getClusteredInums();
-		String applianceInum = applicationConfiguration.getApplianceInum();
+		String[] clusterMembers = appConfiguration.getClusteredInums();
+		String applianceInum = appConfiguration.getApplianceInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			clusterMembers = new String[] { applianceInum };
 		}
@@ -62,7 +63,7 @@ public class FederationService {
 	 */
 	public String generateInumForNewFederationProposal() {
 		InumEntry entry = new InumEntry();
-		String newDn = applicationConfiguration.getBaseDN();
+		String newDn = appConfiguration.getBaseDN();
 		entry.setDn(newDn);
 		String newInum;
 		do {
@@ -98,7 +99,7 @@ public class FederationService {
 	 * @return Current organization inum
 	 */
 	private String getApplianceInum() {
-		return applicationConfiguration.getApplianceInum();
+		return appConfiguration.getApplianceInum();
 	}
 
 	/**
@@ -110,7 +111,7 @@ public class FederationService {
 	 *         proposal branch if inum is null
 	 */
 	public String getDnForFederationProposal(String inum) {
-		String applianceDn = ApplianceService.instance().getDnForAppliance();
+		String applianceDn = applianceService.getDnForAppliance();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=federations,%s", applianceDn);
 		}
@@ -119,8 +120,8 @@ public class FederationService {
 	}
 
 	public void updateFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		String[] clusterMembers = applicationConfiguration.getClusteredInums();
-		String applianceInum = applicationConfiguration.getApplianceInum();
+		String[] clusterMembers = appConfiguration.getClusteredInums();
+		String applianceInum = appConfiguration.getApplianceInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			clusterMembers = new String[] { applianceInum };
 		}
@@ -159,8 +160,8 @@ public class FederationService {
 			shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
 		}
 
-		String[] clusterMembers = applicationConfiguration.getClusteredInums();
-		String applianceInum = applicationConfiguration.getApplianceInum();
+		String[] clusterMembers = appConfiguration.getClusteredInums();
+		String applianceInum = appConfiguration.getApplianceInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			clusterMembers = new String[] { applianceInum };
 		}
@@ -204,10 +205,6 @@ public class FederationService {
 		}
 
 		return result;
-	}
-
-	public static FederationService instance() {
-		return (FederationService) Component.getInstance(FederationService.class);
 	}
 
 	public GluuSAMLFederationProposal getProposalByDn(String dn) {

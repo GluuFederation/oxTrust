@@ -77,7 +77,7 @@ public class OxChooserWebService extends BaseScimWebService {
 	private SecurityService securityService;
 
 	@Inject
-	Identity identity;
+	private Identity identity;
 
 	private static ConsumerManager manager = new ConsumerManager();
 
@@ -248,7 +248,7 @@ public class OxChooserWebService extends BaseScimWebService {
 		// Return HTTP response with status code 201 Created
 
 		log.debug(" copying gluuperson ");
-		GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
+		GluuCustomPerson gluuPerson = copyUtils.copy(person, null, false);
 		if (gluuPerson == null) {
 			return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
 		}
@@ -279,7 +279,7 @@ public class OxChooserWebService extends BaseScimWebService {
 			log.debug("adding new GluuPerson");
 
 			personService.addPerson(gluuPerson);
-			final ScimPerson newPerson = CopyUtils.copy(gluuPerson, null);
+			final ScimPerson newPerson = copyUtils.copy(gluuPerson, null);
 			String uri = "/oxChooser/AddUser/" + newPerson.getId();
 			return Response.created(URI.create(uri)).entity(newPerson).build();
 		} catch (Exception ex) {
@@ -308,7 +308,7 @@ public class OxChooserWebService extends BaseScimWebService {
 			if (gluuPerson == null) {
 				return getErrorResponse("Resource " + email + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
-			GluuCustomPerson newGluuPesron = CopyUtils.copy(person_update, gluuPerson, true);
+			GluuCustomPerson newGluuPesron = copyUtils.copy(person_update, gluuPerson, true);
 
 			if (person_update.getGroups().size() > 0) {
 				Utils.groupMembersAdder(newGluuPesron, personService.getDnForPerson(gluuPerson.getUid()));
@@ -316,7 +316,7 @@ public class OxChooserWebService extends BaseScimWebService {
 
 			personService.updatePerson(newGluuPesron);
 			log.debug(" person updated ");
-			ScimPerson newPerson = CopyUtils.copy(newGluuPesron, null);
+			ScimPerson newPerson = copyUtils.copy(newGluuPesron, null);
 
 			URI location = new URI("/oxChooser/AddUser/" + gluuPerson.getUid());
 			return Response.ok(newPerson).location(location).build();
@@ -347,7 +347,7 @@ public class OxChooserWebService extends BaseScimWebService {
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			ScimPerson person = copyUtils.copy(gluuPerson, null);
 			URI location = new URI("/oxChooser/AddUser/" + uid);
 			return Response.ok(person).location(location).build();
 		} catch (EntryPersistenceException ex) {

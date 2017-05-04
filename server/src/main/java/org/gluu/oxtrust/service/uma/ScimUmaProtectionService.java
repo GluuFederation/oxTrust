@@ -29,34 +29,34 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 
 	private static final long serialVersionUID = -5447131971095468865L;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@Inject
 	private ApplianceService applianceService;
 
 	protected String getClientId() {
-		return applicationConfiguration.getScimUmaClientId();
+		return appConfiguration.getScimUmaClientId();
 	}
 
 	protected String getClientKeyStorePassword() {
-		return applicationConfiguration.getScimUmaClientKeyStorePassword();
+		return appConfiguration.getScimUmaClientKeyStorePassword();
 	}
 
 	protected String getClientKeyStoreFile() {
-		return applicationConfiguration.getScimUmaClientKeyStoreFile();
+		return appConfiguration.getScimUmaClientKeyStoreFile();
 	}
 
 	protected String getClientKeyId() {
-		return applicationConfiguration.getScimUmaClientKeyId();
+		return appConfiguration.getScimUmaClientKeyId();
 	}
 
 	public String getUmaResourceId() {
-		return applicationConfiguration.getScimUmaResourceId();
+		return appConfiguration.getScimUmaResourceId();
 	}
 
 	public String getUmaScope() {
-		return applicationConfiguration.getScimUmaScope();
+		return appConfiguration.getScimUmaScope();
 	}
 
 	public boolean isEnabled() {

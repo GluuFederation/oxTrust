@@ -5,13 +5,17 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
-import com.unboundid.ldap.sdk.Filter;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.idp.LdapIDPEntry;
@@ -24,27 +28,21 @@ import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Destroy;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.slf4j.Logger;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxAsimbaConfiguration;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
+
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * Asimba LDAP configuration service.
  * 
  * @author Dmitry Ognyannikov, 2016
  */
-@Named("asimbaService")
 @ApplicationScoped
+@Named
 public class AsimbaService implements Serializable {
     public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     public static String METADATA_SP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
@@ -55,19 +53,8 @@ public class AsimbaService implements Serializable {
     @Inject
     private LdapEntryManager ldapEntryManager;
     
-//    @Inject
-//    ApplianceService applianceService;
-    
     @Inject
     OrganizationService organizationService;
-     
-    @PostConstruct
-    public void init() {
-    }
-    
-    @Destroy
-    public void destroy() {
-    }
     
     public LdapOxAsimbaConfiguration loadAsimbaConfiguration() {
         String organizationDn = organizationService.getDnForOrganization();

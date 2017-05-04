@@ -15,6 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -23,17 +27,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.AttributeData;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.CustomAttribute;
-import org.xdi.ldap.model.SimpleUser;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -46,7 +41,7 @@ import com.unboundid.ldap.sdk.Filter;
  * @author Yuriy Movchan Date: 10.13.2010
  */
 @Stateless
-@Named("personService")
+@Named
 public class PersonService implements Serializable, IPersonService {
 
 	private static final long serialVersionUID = 6685720517520443399L;
@@ -63,8 +58,11 @@ public class PersonService implements Serializable, IPersonService {
 	@Inject
 	private AttributeService attributeService;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	private List<GluuCustomAttribute> mandatoryAttributes;
 
@@ -350,7 +348,7 @@ public class PersonService implements Serializable, IPersonService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewPersonImpl() {
-		String orgInum = OrganizationService.instance().getInumForOrganization();
+		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_PERSON_OBJECTTYPE + OxTrustConstants.inumDelimiter + generateInum();
 	}
 
@@ -359,7 +357,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public String generateInameForNewPerson(String uid) {
-		return String.format("%s*person*%s", applicationConfiguration.getOrgIname(), uid);
+		return String.format("%s*person*%s", appConfiguration.getOrgIname(), uid);
 	}
 
 	private String generateInum() {
@@ -384,7 +382,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public String getDnForPerson(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=people,%s", orgDn);
 		}
@@ -397,18 +395,9 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public boolean authenticate(String userName, String password) {
-		boolean result = ldapEntryManager.authenticate(userName, password, applicationConfiguration.getBaseDN());
+		boolean result = ldapEntryManager.authenticate(userName, password, appConfiguration.getBaseDN());
 
 		return result;
-	}
-
-	/**
-	 * Get personService instance
-	 * 
-	 * @return PersonService instance
-	 */
-	public static IPersonService instance() {
-		return (IPersonService) Component.getInstance(PersonService.class);
 	}
 
 	/* (non-Javadoc)

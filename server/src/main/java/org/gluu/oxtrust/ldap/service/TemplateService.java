@@ -13,18 +13,15 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 
@@ -42,8 +39,11 @@ public class TemplateService implements Serializable {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	/*
 	 * Generate relying-party.xml using relying-party.xml.vm template
@@ -81,11 +81,11 @@ public class TemplateService implements Serializable {
 		try {
 			properties.load(is);
 			String loaderType = properties.getProperty("resource.loader").trim();
-			properties.setProperty("runtime.log", applicationConfiguration.getVelocityLog());
+			properties.setProperty("runtime.log", appConfiguration.getVelocityLog());
 
 			// Set right folder for file loader
 			if (loaderType.indexOf("file") == 0) {
-				String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
+				String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
 				String folder1 = idpTemplatesLocation + "shibboleth3"
 						+ File.separator + "idp";
 				String folder2 = idpTemplatesLocation + "shibboleth3"
@@ -122,15 +122,6 @@ public class TemplateService implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to initialize Velocity", ex);
 		}
-	}
-
-	/**
-	 * Get TemplateService instance
-	 * 
-	 * @return TemplateService instance
-	 */
-	public static TemplateService instance() {
-		return (TemplateService) Component.getInstance(TemplateService.class);
 	}
 
 }

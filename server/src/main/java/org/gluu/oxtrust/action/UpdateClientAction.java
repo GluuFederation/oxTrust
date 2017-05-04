@@ -6,8 +6,20 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -15,14 +27,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
@@ -32,9 +37,6 @@ import org.xdi.oxauth.model.util.URLPatternList;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
-
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Action class for viewing and updating clients.
@@ -67,7 +69,7 @@ public class UpdateClientAction implements Serializable {
     private FacesMessages facesMessages;
     
     @Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
 
     private String inum;
 
@@ -959,7 +961,7 @@ public class UpdateClientAction implements Serializable {
 	private boolean checkWhiteListRedirectUris(String redirectUri) {
 		try {
 			boolean valid = true;
-			List<String> whiteList = oxTrustConfiguration.getApplicationConfiguration().getClientWhiteList();
+			List<String> whiteList = configurationFactory.getApplicationConfiguration().getClientWhiteList();
 			URLPatternList urlPatternList = new URLPatternList(whiteList);
 
 			// for (String redirectUri : redirectUris) {
@@ -978,7 +980,7 @@ public class UpdateClientAction implements Serializable {
 	private boolean checkBlackListRedirectUris(String redirectUri) {
 		try {
 			boolean valid = true;
-			List<String> blackList = oxTrustConfiguration.getApplicationConfiguration().getClientBlackList();
+			List<String> blackList = configurationFactory.getApplicationConfiguration().getClientBlackList();
 			URLPatternList urlPatternList = new URLPatternList(blackList);
 
 			// for (String redirectUri : redirectUris) {

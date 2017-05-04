@@ -5,14 +5,27 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import java.net.URI;
-import java.util.*;
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
-import javax.ws.rs.*;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.wordnik.swagger.annotations.*;
 
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -20,10 +33,14 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.ScimPatchUser;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
+import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.gluu.oxtrust.util.CopyUtils2;
@@ -31,14 +48,14 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.ws.rs.scim.PATCH;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
 import org.slf4j.Logger;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.Authorization;
 
 /**
  * scim2UserEndpoint Implementation
@@ -58,6 +75,9 @@ public class UserWebService extends BaseScimWebService {
 
     @Inject
     private Scim2UserService scim2UserService;
+
+    @Inject
+    private CopyUtils2 copyUtils2;
 
 	@GET
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
@@ -94,10 +114,7 @@ public class UserWebService extends BaseScimWebService {
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {
-
 				log.info(" Searching users from LDAP ");
-
-				personService = PersonService.instance();
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
@@ -121,7 +138,7 @@ public class UserWebService extends BaseScimWebService {
 
 					for (GluuCustomPerson gluuPerson : gluuCustomPersons) {
 
-						User user = CopyUtils2.copy(gluuPerson, null);
+						User user = copyUtils2.copy(gluuPerson, null);
 
 						log.info(" user to be added id : " + user.getUserName());
 
@@ -138,7 +155,7 @@ public class UserWebService extends BaseScimWebService {
 				// Serialize to JSON
 				String json = serializeToJson(usersListResponse, attributesArray);
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users");
+				URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Users");
 
 				return Response.ok(json).location(location).build();
 			}
@@ -174,9 +191,6 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			personService = PersonService.instance();
-
 			String filterString = "id eq \"" + id + "\"";
 			VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
@@ -192,7 +206,7 @@ public class UserWebService extends BaseScimWebService {
 
 			GluuCustomPerson gluuPerson = personList.get(0);
 
-			User user = CopyUtils2.copy(gluuPerson, null);
+			User user = copyUtils2.copy(gluuPerson, null);
 
 			// Serialize to JSON
 			String json = serializeToJson(user, attributesArray);
@@ -413,7 +427,7 @@ public class UserWebService extends BaseScimWebService {
 				searchRequest.getAttributesArray()
 			);
 
-			URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Users/.search");
+			URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Users/.search");
 
 			log.info("LEAVING UserWebService.searchUsersPost()...");
 

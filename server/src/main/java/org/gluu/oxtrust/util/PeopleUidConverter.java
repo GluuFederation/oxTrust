@@ -10,13 +10,16 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 
 @FacesConverter("PeopleUidConverter")
 public class PeopleUidConverter implements Converter {
+	
+	@Inject
+	private IPersonService personService;
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component,
@@ -24,7 +27,6 @@ public class PeopleUidConverter implements Converter {
         if (value == null) {
             return null;
         }
-        IPersonService personService = PersonService.instance();
         GluuCustomPerson person = personService.getPersonByUid(value);
         return person;
     }

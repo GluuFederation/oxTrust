@@ -11,10 +11,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -23,11 +25,6 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 
 /**
@@ -60,7 +57,7 @@ public class PasswordResetAction implements Serializable {
 
 
 	public String start() throws ParseException{
-		GluuAppliance appliance = ApplianceService.instance().getAppliance();
+		GluuAppliance appliance = applianceService.getAppliance();
 		this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
 		Calendar requestCalendarExpiry = Calendar.getInstance();
 		Calendar currentCalendar = Calendar.getInstance();
@@ -92,7 +89,7 @@ public class PasswordResetAction implements Serializable {
 		}
 
 		if (valid) {
-			GluuAppliance appliance = ApplianceService.instance().getAppliance();
+			GluuAppliance appliance = applianceService.getAppliance();
 			this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
 			Calendar requestCalendarExpiry = Calendar.getInstance();
 			Calendar currentCalendar = Calendar.getInstance();

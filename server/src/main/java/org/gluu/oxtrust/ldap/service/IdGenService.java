@@ -7,15 +7,12 @@
 package org.gluu.oxtrust.ldap.service;
 
 
-import org.gluu.oxtrust.service.external.ExternalIdGeneratorService;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import org.gluu.oxtrust.service.external.ExternalIdGeneratorService;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -26,7 +23,7 @@ import org.xdi.util.StringHelper;
  */
 
 @Stateless
-@Named("idGenService")
+@Named
 public class IdGenService {
 
     @Inject
@@ -34,10 +31,6 @@ public class IdGenService {
     
     @Inject
     private ExternalIdGeneratorService externalIdGenerationService;
-
-    public static IdGenService instance() {
-		return (IdGenService) Component.getInstance(IdGenService.class);
-    }
 
     public String generateId(String orgInum, String prefix) {
 		if (StringHelper.isEmptyString(orgInum) || StringHelper.isEmptyString(prefix)) {

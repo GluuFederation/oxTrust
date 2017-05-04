@@ -11,11 +11,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
+import java.security.Identity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,17 +29,9 @@ import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.drools.compiler.RuleBaseLoader;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.faces.Renderer;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.slf4j.Logger;
-import org.jboss.seam.security.Identity;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
@@ -79,8 +75,8 @@ public class SsoLoginAction implements Serializable {
 	@Inject(value = "#{facesContext.externalContext}")
 	private ExternalContext extCtx;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public String start() {
 		if (initialized) {
@@ -162,7 +158,7 @@ public class SsoLoginAction implements Serializable {
 				HttpServletResponse userResponse = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 				HttpServletRequest userRequest = (HttpServletRequest) facesContext.getExternalContext().getRequest();
 
-				String redirectUrl = String.format("%s%s", applicationConfiguration.getIdpUrl(), "/idp/logout.jsp");
+				String redirectUrl = String.format("%s%s", appConfiguration.getIdpUrl(), "/idp/logout.jsp");
 				String url = String.format("%s://%s/Shibboleth.sso/Logout?return=%s", userRequest.getScheme(), userRequest.getServerName(),
 						redirectUrl);
 

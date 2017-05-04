@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -21,16 +23,9 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.velocity.VelocityContext;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.xdi.service.XmlService;
@@ -58,6 +53,9 @@ public class FilterService {
 	private Logger log;
 
 	@Inject
+	private ConfigurationFactory configurationFactory;
+
+	@Inject
 	private TemplateService templateService;
 
 	@Inject
@@ -67,9 +65,8 @@ public class FilterService {
 	private XmlService xmlService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
-
-		String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
-		// File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
+		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		// File filterFolder = new File(configurationFactory.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
 		File filterFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
 
 		File[] filterTemplates = null;
@@ -104,15 +101,6 @@ public class FilterService {
 	public List<MetadataFilter> getMetadataFiltersForTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
 		// TODO Auto-generated method stub
 		return new ArrayList<MetadataFilter>();
-	}
-
-	/**
-	 * Get filterService instance
-	 * 
-	 * @return FilterService instance
-	 */
-	public static FilterService instance() {
-		return (FilterService) Component.getInstance(FilterService.class);
 	}
 
 	public void updateFilter(GluuSAMLTrustRelationship trustRelationship, MetadataFilter metadataFilterSelected) {

@@ -9,19 +9,20 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -29,22 +30,16 @@ import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.Utils;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Out;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
+
+import jnr.ffi.annotations.Out;
 
 /**
  * Action class for updating person's attributes
@@ -84,8 +79,8 @@ public class UpdatePersonAction implements Serializable {
 	@Out(scope = ScopeType.CONVERSATION)
 	private WhitePagesAction whitePagesAction;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
@@ -111,7 +106,7 @@ public class UpdatePersonAction implements Serializable {
 	 */
 	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String add() {
-		if (!OrganizationService.instance().isAllowPersonModification()) {
+		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -166,7 +161,7 @@ public class UpdatePersonAction implements Serializable {
 	 */
 	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String save() throws Exception {
-		if (!OrganizationService.instance().isAllowPersonModification()) {
+		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -245,7 +240,7 @@ public class UpdatePersonAction implements Serializable {
 		personService.addCustomObjectClass(this.person);
 
 		// Update objectClasses
-		String[] allObjectClasses = ArrayHelper.arrayMerge(applicationConfiguration.getPersonObjectClassTypes(), this.person.getCustomObjectClasses());
+		String[] allObjectClasses = ArrayHelper.arrayMerge(appConfiguration.getPersonObjectClassTypes(), this.person.getCustomObjectClasses());
 		String[] resultObjectClasses = new HashSet<String>(Arrays.asList(allObjectClasses)).toArray(new String[0]);
 		
 		this.person.setCustomObjectClasses(resultObjectClasses);
@@ -259,7 +254,7 @@ public class UpdatePersonAction implements Serializable {
 	 */
 	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String delete() {
-		if (!OrganizationService.instance().isAllowPersonModification()) {
+		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -296,7 +291,7 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, applicationConfiguration
-				.getPersonObjectClassTypes(), applicationConfiguration.getPersonObjectClassDisplayNames());
+				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 
 		if (newPerson) {
 			customAttributeAction.addCustomAttributes(personService.getMandatoryAtributes());

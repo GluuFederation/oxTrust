@@ -18,13 +18,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -33,26 +36,20 @@ import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.AttributeData;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import javax.enterprise.context.ApplicationScoped;
 import org.jboss.seam.annotations.Destroy;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Out;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
-import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuUserRole;
 import org.xdi.util.StringHelper;
+
+import jnr.ffi.annotations.Out;
 
 /**
  * Action class for load persons from Excel file
@@ -81,8 +78,8 @@ public class PersonImportAction implements Serializable {
 	@Inject
 	private AttributeService attributeService;
 	
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 	
 	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
@@ -508,7 +505,7 @@ public class PersonImportAction implements Serializable {
 		}
 
 		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, applicationConfiguration
-				.getPersonObjectClassTypes(), applicationConfiguration.getPersonObjectClassDisplayNames());
+				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 
 		if (newPerson) {
 			customAttributeAction.addCustomAttributes(personService.getMandatoryAtributes());
@@ -516,7 +513,7 @@ public class PersonImportAction implements Serializable {
 	}
 	
 	public String save() {
-		if (!OrganizationService.instance().isAllowPersonModification()) {
+		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -561,7 +558,7 @@ public class PersonImportAction implements Serializable {
 
 	
 	public String initializePerson() {
-		if (!OrganizationService.instance().isAllowPersonModification()) {
+		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

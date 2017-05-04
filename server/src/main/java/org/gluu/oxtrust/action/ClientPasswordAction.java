@@ -8,15 +8,12 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.slf4j.Logger;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 

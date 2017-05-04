@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,27 +16,32 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.PostConstruct;
 import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.BeforeDestroyed;
 import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
+import org.gluu.oxtrust.service.MetricService;
+import org.gluu.oxtrust.service.status.ldap.LdapStatusTimer;
 import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.testng.annotations.Factory;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -51,14 +57,21 @@ import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.client.uma.UmaConfigurationService;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.util.SecurityProviderUtility;
+import org.xdi.oxauth.service.cdi.event.AuthConfigurationEvent;
+import org.xdi.service.JsonService;
 import org.xdi.service.PythonService;
 import org.xdi.service.cdi.event.ConfigurationUpdate;
+import org.xdi.service.cdi.event.Scheduled;
 import org.xdi.service.custom.script.CustomScriptManager;
 import org.xdi.service.ldap.LdapConnectionService;
+import org.xdi.service.timer.QuartzSchedulerManager;
+import org.xdi.service.timer.event.TimerEvent;
 import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
+import org.xdi.util.security.StringEncrypter;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Perform startup time initialization. Provides factory methods for non Seam
@@ -77,14 +90,23 @@ public class AppInitializer {
 
 	// We are going to start connection checker every 120 seconds
 	public static final long CONNECTION_CHECKER_INTERVAL = (long) (1000L * 60 * 2);
-	// We are going to start svn synchronization every 5 minutes
-	public static final long SVN_SYNC_INTERVAL = (long) (1000L * 62 * 5);
 
-	private static final long VALIDATION_INTERVAL = (long) (1000L * 63 * 1);
 	private static final long LOG_MONITOR_INTERVAL = (long) (1000L * 60 * 64 * 24);
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private BeanManager beanManager;
+
+	@Inject
+	private Event<String> event;
+
+	@Inject
+	private Event<TimerEvent> timerEvent;
+
+	@Inject @Named(LDAP_ENTRY_MANAGER_NAME)
+	private Instance<LdapEntryManager> ldapEntryManagerInstance;
 
 	@Inject
 	private SvnSyncTimer svnSyncTimer;
@@ -99,8 +121,29 @@ public class AppInitializer {
 	private LogFileSizeChecker logFileSizeChecker;
 	
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
+
+    @Inject
+    private PythonService pythonService;
+    
+    @Inject
+    private MetricService metricService;
+
+    @Inject
+    private CustomScriptManager customScriptManager;
+
+	@Inject
+	private LdapStatusTimer ldapStatusTimer;
+
+	@Inject
+	private ShibbolethInitializer shibbolethInitializer;
+
+	@Inject
+	private JsonService jsonService;
 	
+	@Inject
+	private QuartzSchedulerManager quartzSchedulerManager;
+
 	@Inject
 	private BuildVersion buildVersion;
 
@@ -120,15 +163,17 @@ public class AppInitializer {
 		showBuildInfo();
 
 		// Initialize local LDAP connection provider
-		createConnectionProvider(oxTrustConfiguration.getLdapConfiguration(), "localLdapConfiguration", "connectionProvider");
-		oxTrustConfiguration.create();
+		createConnectionProvider(configurationFactory.getLdapConfiguration(), "localLdapConfiguration", "connectionProvider");
 
-		initializeLdifArchiver();
+		configurationFactory.create();
+        LdapEntryManager localLdapEntryManager = ldapEntryManagerInstance.get();
 
 		// Initialize central LDAP connection provider
-		if ((oxTrustConfiguration.getLdapCentralConfiguration() != null) && oxTrustConfiguration.getAppsConfiguration().isUpdateApplianceStatus()) {
-			createConnectionProvider(oxTrustConfiguration.getLdapCentralConfiguration(), "centralLdapConfiguration", "centralConnectionProvider");
+		if ((configurationFactory.getLdapCentralConfiguration() != null) && configurationFactory.getAppConfiguration().isUpdateApplianceStatus()) {
+			createConnectionProvider(configurationFactory.getLdapCentralConfiguration(), "centralLdapConfiguration", "centralConnectionProvider");
 		}
+
+		initializeLdifArchiver();
 
 		// Initialize template engine
 		TemplateService.instance().initTemplateEngine();
@@ -137,152 +182,50 @@ public class AppInitializer {
 		SubversionService.instance().initSubversionService();
 
 		// Initialize python interpreter
-		PythonService.instance().initPythonInterpreter(oxTrustConfiguration.getLdapConfiguration().getString("pythonModulesDir", null));
+		pythonService.initPythonInterpreter(configurationFactory.getLdapConfiguration().getString("pythonModulesDir", null));
 
 		// Initialize script manager
 		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR, CustomScriptType.SCIM );
-        CustomScriptManager.instance().init(supportedCustomScriptTypes);
+        customScriptManager.init(supportedCustomScriptTypes);
 
-		startSvnSync();
-		// Asynchronous metadata validation service
-		startMetadataValidator();
+        metricService.init();
 
-		createShibbolethConfiguration();
+        // Initialize Shibboleth
+        shibbolethInitializer.createShibbolethConfiguration();
 
+        // Start timer
+        quartzSchedulerManager.start();
+
+        // Schedule timer tasks
+        ldapStatusTimer.initTimer();
+        configurationFactory.initTimer();
+        svnSyncTimer.initTimer();
+		metadataValidationTimer.initTimer();
 		logSizeChecker();
 	}
 
-	@Observer("org.jboss.seam.postInitialization")
-	@Asynchronous
-    public void postInitialization() {
+    @Produces @ApplicationScoped
+	public StringEncrypter getStringEncrypter() {
+		String encodeSalt = configurationFactory.getCryptoConfigurationSalt();
+    	
+    	if (StringHelper.isEmpty(encodeSalt)) {
+    		throw new ConfigurationException("Encode salt isn't defined");
+    	}
+    	
+    	try {
+    		StringEncrypter stringEncrypter = StringEncrypter.instance(encodeSalt);
+    		
+    		return stringEncrypter;
+		} catch (EncryptionException ex) {
+    		throw new ConfigurationException("Failed to create StringEncrypter instance");
+		}
 	}
 
-    @Observer("org.jboss.seam.postInitialization")
-    public void initReloadTimer() {
-		this.isActive = new AtomicBoolean(false);
-		this.lastFinishedTime = System.currentTimeMillis();
-
-		Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(1 * 60 * 1000L, DEFAULT_INTERVAL * 1000L));
+    public void destroy(@Observes @BeforeDestroyed(ApplicationScoped.class) ServletContext init) {
+    	log.info("Closing LDAP connection at server shutdown...");
+        LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
+        closeLdapEntryManager(ldapEntryManager);
     }
-
-	@Observer(EVENT_TYPE)
-	@Asynchronous
-	public void reloadConfigurationTimerEvent() {
-		if (this.isActive.get()) {
-			return;
-		}
-
-		if (!this.isActive.compareAndSet(false, true)) {
-			return;
-		}
-
-		try {
-			reloadConfiguration();
-		} catch (Throwable ex) {
-			log.error("Exception happened while reloading application configuration", ex);
-		} finally {
-			this.isActive.set(false);
-			this.lastFinishedTime = System.currentTimeMillis();
-		}
-	}
-
-	private void reloadConfiguration() {
-	}
-
-	private String buildServersString(List<SimpleProperty> servers) {
-		StringBuilder sb = new StringBuilder();
-
-		if (servers == null) {
-			return sb.toString();
-		}
-
-		boolean first = true;
-		for (SimpleProperty server : servers) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(",");
-			}
-
-			sb.append(server.getValue());
-		}
-
-		return sb.toString();
-	}
-
-	private void startMetadataValidator() {
-		// Schedule first check after 60 seconds
-		final Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, 60);
-		metadataValidationTimer.scheduleValidation(calendar.getTime(), VALIDATION_INTERVAL);
-	}
-	
-	private boolean createShibbolethConfiguration() {
-
-		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		boolean createConfig = applicationConfiguration.isConfigGeneration();
-		log.info("IDP config generation is set to " + createConfig);
-		
-		if (createConfig) {
-
-			String gluuSPInum;
-			GluuSAMLTrustRelationship gluuSP;
-
-			try {
-
-				gluuSPInum = ApplianceService.instance().getAppliance().getGluuSPTR();
-
-				// log.info("########## gluuSPInum = " + gluuSPInum);
-
-				gluuSP = new GluuSAMLTrustRelationship();
-				gluuSP.setDn(TrustService.instance().getDnForTrustRelationShip(gluuSPInum));
-
-			} catch (EntryPersistenceException ex) {
-				log.error("Failed to determine SP inum", ex);
-				return false;
-			}
-
-			// log.info("########## gluuSP.getDn() = " + gluuSP.getDn());
-
-			boolean servicesNeedRestarting = false;
-			if (gluuSPInum == null || ! TrustService.instance().containsTrustRelationship(gluuSP)) {
-
-				log.info("No trust relationships exist in LDAP. Adding gluuSP");
-//				GluuAppliance appliance = ApplianceService.instance().getAppliance();
-//				appliance.setGluuSPTR(null);
-//				ApplianceService.instance().updateAppliance(appliance);
-				TrustService.instance().addGluuSP();
-				servicesNeedRestarting = true;
-			}
-
-			gluuSP = TrustService.instance().getRelationshipByInum(ApplianceService.instance().getAppliance().getGluuSPTR());
-
-			List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
-
-			/*
-			if (trustRelationships != null && !trustRelationships.isEmpty()) {
-				for (GluuSAMLTrustRelationship gluuSAMLTrustRelationship : trustRelationships) {
-					log.info("########## gluuSAMLTrustRelationship.getDn() = " + gluuSAMLTrustRelationship.getDn());
-				}
-			}
-			*/
-
-			String shibbolethVersion = applicationConfiguration.getShibbolethVersion();
-			log.info("########## shibbolethVersion = " + shibbolethVersion);
-
-			Shibboleth3ConfService.instance().generateMetadataFiles(gluuSP);
-			Shibboleth3ConfService.instance().generateConfigurationFiles(trustRelationships);
-
-			Shibboleth3ConfService.instance().removeUnusedCredentials();
-			Shibboleth3ConfService.instance().removeUnusedMetadata();
-
-			if (servicesNeedRestarting) {
-				applianceService.restartServices();
-			}
-		}
-
-		return true;
-	}
 
 	private void showBuildInfo() {
 		log.info("Build date {}. Code revision {} on {}. Build {}", getGluuBuildDate(),
@@ -295,20 +238,9 @@ public class AppInitializer {
 		LdapConnectionService connectionProvider = null;
 		if (configuration != null) {
 			connectionProvider = new LdapConnectionService(PropertiesDecrypter.decryptProperties(configuration
-				.getProperties(), oxTrustConfiguration.getCryptoConfigurationSalt()));
+				.getProperties(), configurationFactory.getCryptoConfigurationSalt()));
 		}
 		Contexts.getApplicationContext().set(connectionProviderComponentName, connectionProvider);
-	}
-
-	private void startSvnSync() {
-		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		if (applicationConfiguration.isPersistSVN()) {
-			// Schedule first check after 60 seconds
-			final Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.SECOND, 60);
-
-			svnSyncTimer.scheduleSvnSync(calendar.getTime(), SVN_SYNC_INTERVAL);
-		}
 	}
 
 	/**
@@ -351,13 +283,13 @@ public class AppInitializer {
 		return centralLdapEntryManager;
 	}
 
-    @Observer(OxTrustConfiguration.LDAP_CONFIGUARION_RELOAD_EVENT_TYPE)
+    @Observer(ConfigurationFactory.LDAP_CONFIGUARION_RELOAD_EVENT_TYPE)
     public void recreateLdapEntryManager() {
     	// Backup current references to objects to allow shutdown properly
     	LdapEntryManager oldLdapEntryManager = (LdapEntryManager) Component.getInstance(LDAP_ENTRY_MANAGER_NAME);
 
     	// Recreate components
-		createConnectionProvider(oxTrustConfiguration.getLdapConfiguration(), "localLdapConfiguration", "connectionProvider");
+		createConnectionProvider(configurationFactory.getLdapConfiguration(), "localLdapConfiguration", "connectionProvider");
 
         // Destroy old components
     	Contexts.getApplicationContext().remove(LDAP_ENTRY_MANAGER_NAME);
@@ -366,14 +298,14 @@ public class AppInitializer {
     	log.debug("Destroyed {0}: {1}", LDAP_ENTRY_MANAGER_NAME, oldLdapEntryManager);
     }
 
-    @Observer(OxTrustConfiguration.LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE)
+    @Observer(ConfigurationFactory.LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE)
     public void recreateCentralLdapEntryManager() {
     	// Backup current references to objects to allow shutdown properly
     	LdapEntryManager oldCentralLdapEntryManager = (LdapEntryManager) Component.getInstance(LDAP_CENTRAL_ENTRY_MANAGER_NAME);
 
     	// Recreate components
-		if ((oxTrustConfiguration.getLdapCentralConfiguration() != null) && oxTrustConfiguration.getApplicationConfiguration().isUpdateApplianceStatus()) {
-			createConnectionProvider(oxTrustConfiguration.getLdapCentralConfiguration(), "centralLdapConfiguration", "centralConnectionProvider");
+		if ((configurationFactory.getLdapCentralConfiguration() != null) && configurationFactory.getApplicationConfiguration().isUpdateApplianceStatus()) {
+			createConnectionProvider(configurationFactory.getLdapCentralConfiguration(), "centralLdapConfiguration", "centralConnectionProvider");
 		} else {
 	    	Contexts.getApplicationContext().remove("centralConnectionProvider");
 		}
@@ -388,8 +320,7 @@ public class AppInitializer {
     	}
     }
 
-	private void initializeLdifArchiver() {
-		LdapEntryManager ldapEntryManager = (LdapEntryManager) Component.getInstance(LDAP_ENTRY_MANAGER_NAME);
+	private void initializeLdifArchiver(LdapEntryManager ldapEntryManager) {
 		ldapEntryManager.addDeleteSubscriber(new LdifArchiver(ldapEntryManager));
 	}
 
@@ -399,34 +330,17 @@ public class AppInitializer {
 		logFileSizeChecker.scheduleSizeChecking(calendar.getTime(), LOG_MONITOR_INTERVAL);
 	}
 
-	private Object jsonToObject(String json, Class<?> clazz) throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
-		Object clazzObject = mapper.readValue(json, clazz);
-		return clazzObject;
-	}
-
-	@Deprecated
-	// Remove it after 2013/10/01
-	private GluuLdapConfiguration mapLdapOldConfig(OxIDPAuthConf oneConf) {
-		GluuLdapConfiguration ldapConfig = new GluuLdapConfiguration();
-		ldapConfig.setServers(Arrays.asList(
-				new SimpleProperty(oneConf.getFields().get(0).getValues().get(0) + ":" + oneConf.getFields().get(1).getValues().get(0))));
-		ldapConfig.setBindDN(oneConf.getFields().get(2).getValues().get(0));
-		ldapConfig.setBindPassword(oneConf.getFields().get(3).getValues().get(0));
-		ldapConfig.setUseSSL(Boolean.valueOf(oneConf.getFields().get(4).getValues().get(0)));
-		ldapConfig.setMaxConnections(3);
-		ldapConfig.setConfigId("auth_ldap_server");
-		ldapConfig.setEnabled(oneConf.getEnabled());
-		return ldapConfig;
-	}
-
-	private GluuLdapConfiguration mapLdapConfig(String config) throws Exception {
-		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
+	private GluuLdapConfiguration mapLdapConfig(String config) {
+		try {
+			return (GluuLdapConfiguration) jsonService.jsonToObject(config, GluuLdapConfiguration.class);
+		} catch (IOException ex) {
+			log.error("Failed to parse JSON", ex);
+		}
 	}
 
 	@Produces @ApplicationScoped @Named("openIdConfiguration")
 	public OpenIdConfigurationResponse initOpenIdConfiguration() throws OxIntializationException {
-		String oxAuthIssuer = this.oxTrustConfiguration.getApplicationConfiguration().getOxAuthIssuer();
+		String oxAuthIssuer = this.configurationFactory.getAppConfiguration().getOxAuthIssuer();
 		if (StringHelper.isEmpty(oxAuthIssuer)) {
 			log.info("oxAuth issuer isn't specified");
 			return null;
@@ -478,7 +392,7 @@ public class AppInitializer {
 	}
 
 	public String getUmaConfigurationEndpoint() {
-		String umaIssuer = this.oxTrustConfiguration.getApplicationConfiguration().getUmaIssuer();
+		String umaIssuer = this.configurationFactory.getAppConfiguration().getUmaIssuer();
 		if (StringHelper.isEmpty(umaIssuer)) {
 			log.trace("oxAuth UMA issuer isn't specified");
 			return null;
@@ -531,7 +445,7 @@ public class AppInitializer {
     }
 
     public String getGluuBuildNumber() {
-        return buildVersion.class.getBuildNumber();
+        return buildVersion.getBuildNumber();
     }
 
 }

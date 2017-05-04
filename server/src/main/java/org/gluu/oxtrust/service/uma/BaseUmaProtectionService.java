@@ -36,7 +36,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	private final ReentrantLock lock = new ReentrantLock();
 
-	@Inject @Named("oxTrustConfiguration.cryptoConfigurationSalt")
+	@Inject @Named("configurationFactory.cryptoConfigurationSalt")
 	private String cryptoConfigurationSalt;
 
 	public Token getPatToken() throws UmaProtectionException {

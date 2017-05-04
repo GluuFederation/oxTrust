@@ -14,26 +14,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
@@ -88,8 +83,8 @@ public class UpdateGroupAction implements Serializable {
 	@Inject
 	private FacesMessages facesMessages;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
 	public String add() throws Exception {
@@ -100,7 +95,7 @@ public class UpdateGroupAction implements Serializable {
 		this.update = false;
 		this.group = new GluuGroup();
 		this.group.setOwner(currentPerson.getDn());
-		this.group.setOrganization(OrganizationService.instance().getOrganization().getDn());
+		this.group.setOrganization(organizationService.getOrganization().getDn());
 
 		try {
 			this.members = getMemberDisplayNameEntiries();
@@ -324,7 +319,7 @@ public class UpdateGroupAction implements Serializable {
 
 		String groupDn = this.group.getDn();
 
-		GluuOrganization organization = OrganizationService.instance().getOrganization();
+		GluuOrganization organization = organizationService.getOrganization();
 		String organizationGroups[] = { organization.getManagerGroup() };
 
 		// Convert members to array of DNs
@@ -366,7 +361,7 @@ public class UpdateGroupAction implements Serializable {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
 			log.debug("Adding group {0} to person {1} memberOf", groupDn, person.getDisplayName());
 
-			if (applicationConfiguration.isUpdateApplianceStatus()) {
+			if (appConfiguration.isUpdateApplianceStatus()) {
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
@@ -383,7 +378,7 @@ public class UpdateGroupAction implements Serializable {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
 			log.debug("Removing group {0} from person {1} memberOf", groupDn, person.getDisplayName());
 
-			if (applicationConfiguration.isUpdateApplianceStatus()) {
+			if (appConfiguration.isUpdateApplianceStatus()) {
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
@@ -396,7 +391,7 @@ public class UpdateGroupAction implements Serializable {
 			Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_REMOVED_FROM_GROUP, person, groupDn);
 		}
 
-		if (applicationConfiguration.isUpdateApplianceStatus()) {
+		if (appConfiguration.isUpdateApplianceStatus()) {
 			// Update existing members if needed
 			for (String dn : existingMembers) {
 				GluuCustomPerson person = personService.getPersonByDn(dn);

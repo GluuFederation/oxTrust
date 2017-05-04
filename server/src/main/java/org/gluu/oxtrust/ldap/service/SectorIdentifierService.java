@@ -1,19 +1,22 @@
 package org.gluu.oxtrust.ldap.service;
 
-import com.unboundid.ldap.sdk.Filter;
+import java.io.Serializable;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.*;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import java.io.Serializable;
-import java.util.List;
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * Provides operations with Sector Identifiers
@@ -22,19 +25,25 @@ import java.util.List;
  * @version January 15, 2016
  */
 @Stateless
-@Named("sectorIdentifierService")
+@Named
 public class SectorIdentifierService implements Serializable {
 
     private static final long serialVersionUID = -9167587377957719153L;
 
     @Inject
-    private LdapEntryManager ldapEntryManager;
-
-    @Inject
     private Logger log;
 
-    @Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private AppConfiguration applicationConfiguration;
+    @Inject
+    private LdapEntryManager ldapEntryManager;
+    
+    @Inject
+    private OrganizationService organizationService;
+    
+    @Inject
+    private ClientService clientService;
+
+    @Inject
+    private AppConfiguration appConfiguration;
 
     /**
      * Build DN string for sector identifier
@@ -44,7 +53,7 @@ public class SectorIdentifierService implements Serializable {
      * @throws Exception
      */
     public String getDnForSectorIdentifier(String inum) {
-        String orgDn = OrganizationService.instance().getDnForOrganization();
+        String orgDn = organizationService.getDnForOrganization();
         if (StringHelper.isEmpty(inum)) {
             return String.format("ou=sector_identifiers,%s", orgDn);
         }
@@ -108,7 +117,7 @@ public class SectorIdentifierService implements Serializable {
      * @return New inum for sector identifier
      */
     private String generateInumForNewSectorIdentifierImpl() throws Exception {
-        String orgInum = OrganizationService.instance().getInumForOrganization();
+        String orgInum = organizationService.getInumForOrganization();
         return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_SECTOR_IDENTIFIER_OBJECTTYPE + OxTrustConstants.inumDelimiter
                 + INumGenerator.generate(2);
     }
@@ -142,9 +151,9 @@ public class SectorIdentifierService implements Serializable {
 
             // clear references in Client entries
             for (String clientDN : clientDNs) {
-                OxAuthClient client = ClientService.instance().getClientByDn(clientDN);
+                OxAuthClient client = clientService.getClientByDn(clientDN);
                 client.setSectorIdentifierUri(null);
-                ClientService.instance().updateClient(client);
+                clientService.updateClient(client);
             }
         }
 

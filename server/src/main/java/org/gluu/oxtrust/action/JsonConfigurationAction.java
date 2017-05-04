@@ -9,17 +9,14 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -64,7 +61,7 @@ public class JsonConfigurationAction implements Serializable {
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 	
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 
 	private AppConfiguration oxTrustApplicationConfiguration;
@@ -166,9 +163,9 @@ public class JsonConfigurationAction implements Serializable {
 	}
 
 	private void trimUriProperties() {
-		this.oxTrustApplicationConfiguration.setLogoutRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLogoutRedirectUrl()));
-		this.oxTrustApplicationConfiguration.setLoginRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLoginRedirectUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthSectorIdentifierUrl()));
+		this.oxTrustappConfiguration.setLogoutRedirectUrl(StringHelper.trimAll(this.oxTrustappConfiguration.getLogoutRedirectUrl()));
+		this.oxTrustappConfiguration.setLoginRedirectUrl(StringHelper.trimAll(this.oxTrustappConfiguration.getLoginRedirectUrl()));
+		this.oxTrustappConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustappConfiguration.getOxAuthSectorIdentifierUrl()));
 	}
 
 	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -193,12 +190,12 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			AppConfiguration resultOxTrustApplicationConfiguration = (AppConfiguration) BeanUtils.cloneBean(oxTrustApplicationConfiguration);
 
-			resultOxTrustApplicationConfiguration.setSvnConfigurationStorePassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setSvnConfigurationStorePassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
 
 			return jsonService.objectToJson(resultOxTrustApplicationConfiguration);
 		} catch (Exception ex) {

@@ -38,9 +38,9 @@ public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 //            	}
 //            	
 //            	ClientService clientService = (ClientService) getInstance("clientService");
-//            	OxTrustConfiguration oxTrustConfiguration = (OxTrustConfiguration) getInstance("oxTrustConfiguration");
-//            	ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-//            	OxAuthClient client = clientService.getClientByInum(applicationConfiguration.getOxAuthClientId());
+//            	configurationFactory configurationFactory = (configurationFactory) getInstance("configurationFactory");
+//            	ApplicationConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+//            	OxAuthClient client = clientService.getClientByInum(appConfiguration.getOxAuthClientId());
 //            	String randomUrl1 = random(1)>0?"http":"https" + "://"+ StringHelper.getRandomString(random(10)+1) + "." + StringHelper.getRandomString(random(3)+1);
 //            	String randomUrl2 = random(1)>0?"http":"https" + "://"+ StringHelper.getRandomString(random(10)+1) + "." + StringHelper.getRandomString(random(3)+1);
 //            	data.put("tr1Inum", tr1.getInum());

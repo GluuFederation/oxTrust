@@ -16,11 +16,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,16 +37,8 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.hibernate.validator.constraints.Email;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Out;
-import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.faces.Redirect;
 import org.jboss.seam.international.StatusMessage;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -51,6 +46,8 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.util.StringHelper;
+
+import jnr.ffi.annotations.Out;
 
 /**
  * @author Dejan Maric
@@ -110,8 +107,8 @@ public class RegisterPersonAction implements Serializable {
 		this.email = email;
 	}
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@Inject
 	private RecaptchaService recaptchaService;
@@ -285,8 +282,8 @@ public class RegisterPersonAction implements Serializable {
 			this.person.setCustomAttributes(customAttributes);
 		}
 
-		String[] personOCs = applicationConfiguration.getPersonObjectClassTypes();
-		String[] personOCDisplayNames = applicationConfiguration.getPersonObjectClassDisplayNames();
+		String[] personOCs = appConfiguration.getPersonObjectClassTypes();
+		String[] personOCDisplayNames = appConfiguration.getPersonObjectClassDisplayNames();
 		customAttributeAction.initCustomAttributes(allPersonAttributes, customAttributes, allAttributOrigins, personOCs, personOCDisplayNames);
 
 		List<GluuCustomAttribute> mandatoryAttributes = new ArrayList<GluuCustomAttribute>();

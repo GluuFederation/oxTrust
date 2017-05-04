@@ -15,20 +15,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -79,8 +76,8 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	private boolean initialized;
 	
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 	
 	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify() {
@@ -152,7 +149,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
 					if (StringHelper.isEmpty(dn)) {
-						String basedInum = OrganizationService.instance().getOrganizationInum();
+						String basedInum = organizationService.getOrganizationInum();
 						customScriptId = basedInum + "!" + INumGenerator.generate(2);
 						dn = customScriptService.buildDn(customScriptId);
 	

@@ -47,8 +47,8 @@ public class ImageService {
 	@Inject
 	private XmlService xmlService;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public String getXMLFromGluuImage(GluuImage photo) {
 		return xmlService.getXMLFromGluuImage(photo);
@@ -118,7 +118,7 @@ public class ImageService {
 	 * @throws Exception
 	 */
 	public boolean createImageFiles(GluuImage image) {
-		return createImageFiles(image, applicationConfiguration.getPhotoRepositoryThumbWidth(), applicationConfiguration.getPhotoRepositoryThumbHeight());
+		return createImageFiles(image, appConfiguration.getPhotoRepositoryThumbWidth(), appConfiguration.getPhotoRepositoryThumbHeight());
 	}
 
 	/**
@@ -230,15 +230,6 @@ public class ImageService {
 
 	public boolean isIconImage(GluuImage image) {
 		return imageRepository.isIconImage(image);
-	}
-
-	/**
-	 * Get imageService instance
-	 * 
-	 * @return ImageService instance
-	 */
-	public static ImageService instance() {
-		return (ImageService) Component.getInstance(ImageService.class);
 	}
 
 	public byte[] getImageDate(UploadedFile uploadedFile) {

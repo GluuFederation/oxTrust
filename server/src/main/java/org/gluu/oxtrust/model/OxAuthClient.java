@@ -6,7 +6,7 @@
 
 package org.gluu.oxtrust.model;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
@@ -522,7 +522,7 @@ public class OxAuthClient extends Entry implements Serializable {
     public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
         this.oxAuthClientSecret = oxAuthClientSecret;
         if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
-            setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, OxTrustConfiguration.instance().getCryptoConfigurationSalt()));
+            setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, ConfigurationFactory.instance().getCryptoConfigurationSalt()));
         }
     }
 

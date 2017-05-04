@@ -10,12 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-import org.apache.commons.io.FileUtils;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Logger;
+import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
+
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 

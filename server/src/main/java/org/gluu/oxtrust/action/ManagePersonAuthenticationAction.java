@@ -11,14 +11,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -30,14 +33,7 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -56,13 +52,6 @@ import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Action class for configuring person authentication
@@ -128,10 +117,10 @@ public class ManagePersonAuthenticationAction
 		this.ldapPassportConfigurations = ldapPassportConfigurations;
 	}
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 
 	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
@@ -310,9 +299,9 @@ public class ManagePersonAuthenticationAction
 	public String testLdapConnection() {
 
 		try {
-			FileConfiguration configuration = new FileConfiguration(OxTrustConfiguration.LDAP_PROPERTIES_FILE);
+			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
 			if (!configuration.isLoaded()) {
-				configuration = new FileConfiguration(OxTrustConfiguration.LDAP_DEFAULT_PROPERTIES_FILE);
+				configuration = new FileConfiguration(ConfigurationFactory.LDAP_DEFAULT_PROPERTIES_FILE);
 			}
 			Properties properties = configuration.getProperties();
 			properties.setProperty("bindDN", this.ldapConfig.getBindDN());

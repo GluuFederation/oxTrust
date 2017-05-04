@@ -22,5 +22,5 @@ import javax.ws.rs.HttpMethod;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @HttpMethod("PATCH")
-public @Injectterface PATCH {
+public @interface PATCH {
 }

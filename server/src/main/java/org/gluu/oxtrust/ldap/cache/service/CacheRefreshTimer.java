@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.io.FilenameUtils;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
@@ -79,12 +79,12 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 05.05.2011
  */
-@Named("cacheRefreshTimer")
-@ApplicationScoped(depends = { "appInitializer", "oxTrustConfiguration", "cacheRefreshSnapshotFileService" })
+@ApplicationScoped
+@Named
 public class CacheRefreshTimer {
 
 	@Inject
-	Log log;
+	private Logger log;
 
 	private static final String LETTERS_FOR_SEARCH = "abcdefghijklmnopqrstuvwxyz1234567890.";
 	private static final String[] TARGET_PERSON_RETURN_ATTRIBUTES = { OxTrustConstants.inum };
@@ -92,8 +92,8 @@ public class CacheRefreshTimer {
 	@Inject
 	protected AttributeService attributeService;
 
-	@Inject(value = "oxTrustConfiguration")
-	private OxTrustConfiguration oxTrustConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
 
 	@Inject
 	private CacheRefreshService cacheRefreshService;
@@ -119,10 +119,10 @@ public class CacheRefreshTimer {
 	@Inject
 	private InumService inumService;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 	
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 	
 	@Inject
@@ -138,7 +138,7 @@ public class CacheRefreshTimer {
 		this.lastFinishedTime = System.currentTimeMillis();
 		
 		// Clean up previous Inum cache
-		CacheRefreshConfiguration cacheRefreshConfiguration = oxTrustConfiguration.getCacheRefreshConfiguration();
+		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
 		if (cacheRefreshConfiguration != null) {
 			String snapshotFolder = cacheRefreshConfiguration.getSnapshotFolder();
 			if (StringHelper.isNotEmpty(snapshotFolder)) {
@@ -159,7 +159,7 @@ public class CacheRefreshTimer {
 			return;
 		}
 
-		CacheRefreshConfiguration cacheRefreshConfiguration = oxTrustConfiguration.getCacheRefreshConfiguration();
+		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
 
 		if (!this.isActive.compareAndSet(false, true)) {
 			log.debug("Failed to start process exclusively");
@@ -532,7 +532,7 @@ public class CacheRefreshTimer {
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap, Set<String> changedInums) {
 		HashMap<String, CacheCompoundKey> inumCacheCompoundKeyMap = getInumCacheCompoundKeyMap(primaryKeyAttrValueInumMap);
 		Map<String, String> targetServerAttributesMapping = getTargetServerAttributesMapping(cacheRefreshConfiguration);
-		String[] customObjectClasses = applicationConfiguration.getPersonObjectClassTypes();
+		String[] customObjectClasses = appConfiguration.getPersonObjectClassTypes();
 
 		List<String> result = new ArrayList<String>();
 
@@ -1096,7 +1096,7 @@ public class CacheRefreshTimer {
 		appliance.setVdsCacheRefreshLastUpdateCount(currentAppliance.getVdsCacheRefreshLastUpdateCount());
 		appliance.setVdsCacheRefreshProblemCount(currentAppliance.getVdsCacheRefreshProblemCount());
 
-		ApplianceService.instance().updateAppliance(appliance);
+		applianceService.updateAppliance(appliance);
 	}
 
 	private String toIntString(Number number) {

@@ -5,16 +5,18 @@
  */
 package org.gluu.oxtrust.action;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.validation.constraints.NotNull;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.Size;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -24,13 +26,6 @@ import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.slf4j.Logger;
 
 /**

@@ -12,15 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.gluu.oxtrust.model.GluuOrganization;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
@@ -44,8 +42,8 @@ public class AuthOrganizationService implements Serializable {
 	@Inject
 	private CacheService cacheService;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	/**
 	 * Update organization entry
@@ -155,7 +153,7 @@ public class AuthOrganizationService implements Serializable {
 	 * @return DN string for organization
 	 */
 	public String getDnForOrganization(String inum) throws Exception {
-		return String.format("o=%s,%s", inum, applicationConfiguration.getBaseDN());
+		return String.format("o=%s,%s", inum, appConfiguration.getBaseDN());
 	}
 
 	/**
@@ -164,7 +162,7 @@ public class AuthOrganizationService implements Serializable {
 	 * @return DN string for organization
 	 */
 	public String getBaseDn() throws Exception {
-		return applicationConfiguration.getBaseDN();
+		return appConfiguration.getBaseDN();
 	}
 
 	/**
@@ -173,29 +171,20 @@ public class AuthOrganizationService implements Serializable {
 	 * @return Inum for organization
 	 */
 	public String getInumForOrganization() throws Exception {
-		return applicationConfiguration.getOrgInum();
+		return appConfiguration.getOrgInum();
 	}
 
 	public boolean isAllowPersonModification() throws Exception {
-		return applicationConfiguration.isAllowPersonModification(); // todo &&
-																		// ApplianceService.instance().getAppliance().getManageIdentityPermission()
+		return appConfiguration.isAllowPersonModification(); // todo &&
+																		// applianceService.getAppliance().getManageIdentityPermission()
 																		// !=
 																		// null
 																		// &&
-																		// ApplianceService.instance().getAppliance().getProfileManagment().isBooleanValue();
+																		// applianceService.getAppliance().getProfileManagment().isBooleanValue();
 	}
 
 	public String getOrganizationInum() throws Exception {
-		return applicationConfiguration.getOrgInum();
-	}
-
-	/**
-	 * Get organizationService instance
-	 * 
-	 * @return OrganizationService instance
-	 */
-	public static OrganizationService instance() {
-		return (OrganizationService) Component.getInstance(OrganizationService.class);
+		return appConfiguration.getOrgInum();
 	}
 
 }

@@ -6,24 +6,20 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.hibernate.validator.constraints.NotEmpty;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 
 /**
@@ -40,7 +36,7 @@ public class LinktrackService {
 	@Inject
 	private Logger log;
 
-	public String newLink(@NotEmpty String login,@NotEmpty String password,@NotEmpty String link) {
+	public String newLink(@NotNull String login,@NotNull String password,@NotNull String link) {
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 				return null;
@@ -53,7 +49,7 @@ public class LinktrackService {
 			}
 		} };
 
-		// Install the all-trusting trust manager
+		// Install the all-trusting trust managers
 		try {
 			SSLContext sc = SSLContext.getInstance("SSL");
 			sc.init(null, trustAllCerts, new java.security.SecureRandom());

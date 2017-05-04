@@ -7,7 +7,7 @@
 package org.gluu.oxtrust.model;
 
 import org.apache.log4j.Logger;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
@@ -256,7 +256,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 			this.smtpPassword = smtpPassword;
 			smtpPasswordStr = smtpPassword;
 			try {
-				String cryptoConfigurationSalt = OxTrustConfiguration.instance().getCryptoConfigurationSalt();
+				String cryptoConfigurationSalt = ConfigurationFactory.instance().getCryptoConfigurationSalt();
 				smtpPasswordStr = StringEncrypter.defaultInstance().decrypt(smtpPasswordStr, cryptoConfigurationSalt);
 			} catch (Exception ex) {
 				log.error("Failed to decrypt password: " + smtpPassword, ex);
@@ -273,7 +273,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 			this.smtpPasswordStr = smtpPasswordStr;
 			smtpPassword = smtpPasswordStr;
 			try {
-				String cryptoConfigurationSalt = OxTrustConfiguration.instance().getCryptoConfigurationSalt();
+				String cryptoConfigurationSalt = ConfigurationFactory.instance().getCryptoConfigurationSalt();
 				smtpPassword = StringEncrypter.defaultInstance().encrypt(smtpPassword, cryptoConfigurationSalt);
 			} catch (Exception ex) {
 				log.error("Failed to encrypt password: " + smtpPassword, ex);

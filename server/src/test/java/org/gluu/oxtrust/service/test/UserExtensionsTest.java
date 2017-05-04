@@ -16,7 +16,7 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.action.test.BaseTest;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -58,8 +58,8 @@ public class UserExtensionsTest extends BaseTest {
 
 				AttributeService attributeService = AttributeService.instance();
 				SchemaService schemaService = SchemaService.instance();
-				AppConfiguration applicationConfiguration = ((OxTrustConfiguration) Component
-						.getInstance(OxTrustConfiguration.class)).getApplicationConfiguration();
+				AppConfiguration applicationConfiguration = ((ConfigurationFactory) Component
+						.getInstance(ConfigurationFactory.class)).getApplicationConfiguration();
 
 				// Create custom attributes
 				GluuAttribute scimCustomFirst = null; // String, not
@@ -197,8 +197,8 @@ public class UserExtensionsTest extends BaseTest {
 
 				AttributeService attributeService = AttributeService.instance();
 				SchemaService schemaService = SchemaService.instance();
-				AppConfiguration applicationConfiguration = ((OxTrustConfiguration) Component
-						.getInstance(OxTrustConfiguration.class)).getApplicationConfiguration();
+				AppConfiguration applicationConfiguration = ((ConfigurationFactory) Component
+						.getInstance(ConfigurationFactory.class)).getApplicationConfiguration();
 
 				// Create custom attributes
 				GluuAttribute scimCustomFirst = null; // String, not
@@ -378,7 +378,7 @@ public class UserExtensionsTest extends BaseTest {
 
 //		We don't support schema update at runtime
 //		schemaService.addStringAttribute(ldapAttributedName, name,
-//				applicationConfiguration.getSchemaAddAttributeDefinition());
+//				appConfiguration.getSchemaAddAttributeDefinition());
 		schemaService.addAttributeTypeToObjectClass(objectClassName, name);
 
 		attributeService.addAttribute(gluuAttribute);

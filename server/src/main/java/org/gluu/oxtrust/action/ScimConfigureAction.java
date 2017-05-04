@@ -8,15 +8,13 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.slf4j.Logger;
 
 /**
@@ -24,8 +22,8 @@ import org.slf4j.Logger;
  * 
  * @author Yuriy Movchan Date: 05.10.2012
  */
-@Named("scimConfigureAction")
 @ConversationScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class ScimConfigureAction implements Serializable {
 

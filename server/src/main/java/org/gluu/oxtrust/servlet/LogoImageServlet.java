@@ -43,7 +43,7 @@ public class LogoImageServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse response) {
 		log.debug("Starting organization logo upload");
 		try {
-			GluuOrganization organization = OrganizationService.instance().getOrganization();
+			GluuOrganization organization = organizationService.getOrganization();
 			ImageService imageService = ImageService.instance();
 			GluuImage image = imageService.getGluuImageFromXML(organization.getLogoImage());
 			if (image != null) {

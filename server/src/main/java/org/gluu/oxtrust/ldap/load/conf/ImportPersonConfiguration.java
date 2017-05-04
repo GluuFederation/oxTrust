@@ -11,17 +11,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Observer;
-import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.ImportPerson;
 import org.xdi.model.GluuAttribute;
@@ -30,7 +27,7 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
 @ApplicationScoped
-@Named("importPersonConfiguration")
+@Named
 public class ImportPersonConfiguration {
 
 	private static final String GLUU_IMPORT_PERSON_PROPERTIES_FILE = "gluuImportPerson.properties";
@@ -44,7 +41,7 @@ public class ImportPersonConfiguration {
 	private Logger log;
 
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private ConfigurationFactory configurationFactory;
 
 	@Inject
 	private AttributeService attributeService;
@@ -54,7 +51,7 @@ public class ImportPersonConfiguration {
 
 	@PostConstruct
 	public void create() {
-		this.importConfiguration = new FileConfiguration(oxTrustConfiguration.confDir() + File.separator + GLUU_IMPORT_PERSON_PROPERTIES_FILE, true);
+		this.importConfiguration = new FileConfiguration(configurationFactory.confDir() + File.separator + GLUU_IMPORT_PERSON_PROPERTIES_FILE, true);
 		try {
 			this.attributes = prepareAttributes();
 		} catch (Exception ex) {
@@ -64,7 +61,7 @@ public class ImportPersonConfiguration {
 
 	private List<GluuAttribute> prepareAttributes() throws Exception {
 		List<GluuAttribute> result = new ArrayList<GluuAttribute>();
-		List<ImportPerson>  mappings = oxTrustConfiguration.getImportPersonConfig().getMappings();
+		List<ImportPerson>  mappings = configurationFactory.getImportPersonConfig().getMappings();
 		Iterator<ImportPerson> it = mappings.iterator();
 
 		while (it.hasNext()) {

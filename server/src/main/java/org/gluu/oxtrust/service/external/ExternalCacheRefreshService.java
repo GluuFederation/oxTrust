@@ -8,13 +8,10 @@ package org.gluu.oxtrust.service.external;
 
 import java.util.Map;
 
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.jboss.seam.Component;
 import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.Startup;
+
+import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.conf.CustomScriptConfiguration;

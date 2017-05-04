@@ -11,61 +11,122 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.gluu.oxtrust.action.UpdateTrustRelationshipAction;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
+import org.gluu.oxtrust.service.cdi.event.MetadataValidationEvent;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.annotations.async.Expiration;
-import org.jboss.seam.annotations.async.IntervalDuration;
-import org.jboss.seam.async.QuartzTriggerHandle;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.service.cdi.event.Scheduled;
+import org.xdi.service.timer.event.TimerEvent;
+import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.StringHelper;
 import org.xdi.xml.GluuErrorHandler;
 
 /**
  * @author �Oleksiy Tataryn�
+ * @author Yuriy Mochan
  * 
  */
 @ApplicationScoped
-@Named("metadataValidationTimer")
+@Named
 public class MetadataValidationTimer {
 
-	@Inject
-	Log log;
+	private final static int DEFAULT_INTERVAL = 60; // 60 seconds
 
 	@Inject
-	private OxTrustConfiguration oxTrustConfiguration;
+	private Logger log;
 
-	private static LinkedBlockingQueue<String> metadataUpdates = new LinkedBlockingQueue<String>();
+	@Inject
+	private Event<TimerEvent> timerEvent;
+	
+	@Inject
+	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private Shibboleth3ConfService shibboleth3ConfService;
 
-	public static void queue(String fileName) {
+	private AtomicBoolean isActive;
+
+	private LinkedBlockingQueue<String> metadataUpdates;
+
+	@PostConstruct
+	public void init() {
+		this.isActive = new AtomicBoolean(true);
+		try {
+			this.metadataUpdates = new LinkedBlockingQueue<String>();
+		} finally {
+			this.isActive.set(false);
+		}
+	}
+
+	public void initTimer() {
+		log.debug("Initializing Metadata Validation Timer");
+
+		final int delay = 30;
+		final int interval = DEFAULT_INTERVAL;
+
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new MetadataValidationEvent(),
+				Scheduled.Literal.INSTANCE));
+	}
+
+	@Asynchronous
+	public void processMetadataValidationTimerEvent(@Observes @Scheduled MetadataValidationEvent metadataValidationEvent) {
+		if (this.isActive.get()) {
+			return;
+		}
+
+		if (!this.isActive.compareAndSet(false, true)) {
+			return;
+		}
+
+		try {
+			procesMetadataValidation();
+		} catch (Throwable ex) {
+			log.error("Exception happened while reloading application configuration", ex);
+		} finally {
+			this.isActive.set(false);
+		}
+	}
+
+	private void procesMetadataValidation() {
+		log.debug("Starting metadata validation");
+		boolean result = validateMetadata(appConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator, appConfiguration
+				.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator);
+		log.debug("Metadata validation finished with result: '{0}'", result);
+		
+		if (result) {
+			regenerateConfigurationFiles();
+		}
+	}
+
+	public void queue(String fileName) {
 		synchronized (metadataUpdates) {
 			metadataUpdates.add(fileName);
 		}
 	}
 
-	public static boolean isQueued(String gluuSAMLspMetaDataFN) {
+	public boolean isQueued(String gluuSAMLspMetaDataFN) {
 		synchronized (metadataUpdates) {
 			for (String filename : metadataUpdates) {
 				if (filename.contains(gluuSAMLspMetaDataFN)) {
@@ -76,33 +137,13 @@ public class MetadataValidationTimer {
 		}
 	}
 
-	@Asynchronous
-	public QuartzTriggerHandle scheduleValidation(@Expiration Date when, @InjecttervalDuration Long interval) {
-		process(when, interval);
-		return null;
-	}
-
-	private void process(Date when, Long interval) {
-		log.debug("Starting metadata validation");
-		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		boolean result = validateMetadata(applicationConfiguration.getShibboleth3IdpRootDir() + File.separator
-				+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator, applicationConfiguration
-				.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator);
-		log.debug("Metadata validation finished with result: '{0}'", result);
-		
-		if (result) {
-			regenerateConfigurationFiles();
-		}
-	}
-
 	private void regenerateConfigurationFiles() {
-		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		boolean createConfig = applicationConfiguration.isConfigGeneration();
+		boolean createConfig = appConfiguration.isConfigGeneration();
 		log.info("IDP config generation is set to " + createConfig);
 		
 		if (createConfig) {
 			List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
-			Shibboleth3ConfService.instance().generateConfigurationFiles(trustRelationships);
+			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 
 			log.info("IDP config generation files finished. TR count: '{0}'", trustRelationships.size());
 		}
@@ -116,7 +157,6 @@ public class MetadataValidationTimer {
 	private boolean validateMetadata(String shib3IdpTempmetadataFolder, String shib3IdpMetadataFolder) {
 		boolean result = false;
 		log.trace("Starting metadata validation process.");
-		AppConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
 
 		String metadataFN = null;
 		synchronized (metadataUpdates) {
@@ -141,7 +181,7 @@ public class MetadataValidationTimer {
 				GluuErrorHandler handler = null;
 				List<String> validationLog = null;
 				try {
-					handler = Shibboleth3ConfService.validateMetadata(new FileInputStream(metadata));
+					handler = shibboleth3ConfService.validateMetadata(new FileInputStream(metadata));
 				} catch (Exception e) {
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);
@@ -164,7 +204,7 @@ public class MetadataValidationTimer {
 					}
 					boolean federation = TrustService.instance().isFederation(tr);
 					tr.setFederation(federation);
-					String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator
+					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					
@@ -197,7 +237,7 @@ public class MetadataValidationTimer {
 
 					TrustService.instance().updateTrustRelationship(tr);
 					result = true;
-				}else if(applicationConfiguration.isIgnoreValidation()){
+				}else if(appConfiguration.isIgnoreValidation()){
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(handler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					if( (( ! target.exists() ) ||  target.delete()) && ( ! metadata.renameTo(target) )){
@@ -208,7 +248,7 @@ public class MetadataValidationTimer {
 					}
 					boolean federation = TrustService.instance().isFederation(tr);
 					tr.setFederation(federation);
-					String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
+					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					
 					List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
@@ -240,4 +280,5 @@ public class MetadataValidationTimer {
 
 		return result;
 	}
+
 }

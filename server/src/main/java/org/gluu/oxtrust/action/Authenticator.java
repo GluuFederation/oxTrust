@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.Identity;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.util.Arrays;
@@ -21,6 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,22 +40,12 @@ import org.gluu.oxtrust.service.AuthenticationSessionService;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Out;
-import javax.enterprise.context.ConversationScoped;
+import org.jboss.resteasy.plugins.server.embedded.SimplePrincipal;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.faces.Redirect;
-import org.slf4j.Logger;
 import org.jboss.seam.navigation.Pages;
-import org.jboss.seam.security.Credentials;
-import org.jboss.seam.security.Identity;
-import org.jboss.seam.security.SimplePrincipal;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
@@ -61,8 +54,6 @@ import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
 import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
-import org.xdi.oxauth.client.ValidateTokenClient;
-import org.xdi.oxauth.client.ValidateTokenResponse;
 import org.xdi.oxauth.model.exception.InvalidJwtException;
 import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
@@ -70,6 +61,8 @@ import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import jnr.ffi.annotations.Out;
 
 /**
  * Provides authentication using oAuth
@@ -119,10 +112,10 @@ public class Authenticator implements Serializable {
 	@Out(scope = ScopeType.SESSION, required = false)
 	private OauthData oauthData;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-	@Inject(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
+	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
 	private String cryptoConfigurationSalt;
 	
 	public boolean preAuthenticate() throws IOException, Exception {
@@ -240,7 +233,7 @@ public class Authenticator implements Serializable {
 
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
-		clientRequest.queryParameter(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI, applicationConfiguration.getLogoutRedirectUrl());
+		clientRequest.queryParameter(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI, appConfiguration.getLogoutRedirectUrl());
 
 		// Clean up OAuth token
 		oauthData.setUserUid(null);
@@ -335,13 +328,13 @@ public class Authenticator implements Serializable {
 	 */
 	public boolean oAuthLogin() throws IOException, Exception {
 		ClientRequest clientRequest = new ClientRequest(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
-		String clientId = applicationConfiguration.getOxAuthClientId();
-		String scope = applicationConfiguration.getOxAuthClientScope();
+		String clientId = appConfiguration.getOxAuthClientId();
+		String scope = appConfiguration.getOxAuthClientScope();
 		String responseType = "code+id_token";
 		String nonce = UUID.randomUUID().toString();
 
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_CLIENT_ID, clientId);
-		clientRequest.queryParameter(OxTrustConstants.OXAUTH_REDIRECT_URI, applicationConfiguration.getLoginRedirectUrl());
+		clientRequest.queryParameter(OxTrustConstants.OXAUTH_REDIRECT_URI, appConfiguration.getLoginRedirectUrl());
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_RESPONSE_TYPE, responseType);
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SCOPE, scope);
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_NONCE, nonce);
@@ -409,20 +402,20 @@ public class Authenticator implements Serializable {
 		}
 		// todo hardcoded for now. Once clients are dynamically registered with
 		// oxAuth, change this
-		// String credentials = applicationConfiguration.getOxAuthClientId() +
+		// String credentials = appConfiguration.getOxAuthClientId() +
 		// ":secret";
-//		String credentials = applicationConfiguration.getOxAuthClientId() + ":5967d41c-ce9c-4137-9068-42578df0c606";
+//		String credentials = appConfiguration.getOxAuthClientId() + ":5967d41c-ce9c-4137-9068-42578df0c606";
 		// String clientCredentials =
-		// applicationConfiguration.getOxAuthClientCredentials();
+		// appConfiguration.getOxAuthClientCredentials();
 		log.info("authorizationCode : " + authorizationCode);
 
 		String scopes = requestParameterMap.get(OxTrustConstants.OXAUTH_SCOPE);
 		log.info(" scopes : " + scopes);
 
-		String clientID = applicationConfiguration.getOxAuthClientId();
+		String clientID = appConfiguration.getOxAuthClientId();
 		log.info("clientID : " + clientID);
 
-		String clientPassword = applicationConfiguration.getOxAuthClientPassword();
+		String clientPassword = appConfiguration.getOxAuthClientPassword();
 		if (clientPassword != null) {
 			try {
 				clientPassword = StringEncrypter.defaultInstance().decrypt(clientPassword, cryptoConfigurationSalt);
@@ -444,7 +437,7 @@ public class Authenticator implements Serializable {
 		TokenClient tokenClient1 = new TokenClient(openIdConfiguration.getTokenEndpoint());
 
 		log.info("Sending request to token endpoint");
-		String redirectURL = applicationConfiguration.getLoginRedirectUrl();
+		String redirectURL = appConfiguration.getLoginRedirectUrl();
 		log.info("redirectURI : " + redirectURL);
 		TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID, clientPassword);
 

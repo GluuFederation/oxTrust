@@ -6,8 +6,16 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.io.StringWriter;
 import java.math.BigInteger;
+import java.security.Identity;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
@@ -25,9 +33,13 @@ import java.util.TreeSet;
 import java.util.zip.Deflater;
 import java.util.zip.ZipOutputStream;
 
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +56,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
-import org.gluu.oxtrust.ldap.service.*;
+import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
+import org.gluu.oxtrust.ldap.service.SSLService;
+import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
+import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
+import org.gluu.oxtrust.ldap.service.TemplateService;
+import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuEntityType;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
@@ -53,19 +72,9 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.jboss.seam.annotations.Out;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.slf4j.Logger;
-import org.jboss.seam.security.Identity;
 import org.jboss.seam.web.ServletContexts;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
@@ -77,6 +86,8 @@ import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
+
+import jnr.ffi.annotations.Out;
 
 /**
  * Action class for updating and adding the trust relationships
@@ -93,8 +104,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private AppConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	static final Class<?>[] NO_PARAM_SIGNATURE = new Class[0];
 
@@ -211,7 +222,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		this.trustRelationship = new GluuSAMLTrustRelationship();
 		this.trustRelationship.setMaxRefreshDelay("PT8H");
 		this.fileWrapper = new FileUploadWrapper();
-		this.trustRelationship.setOwner(OrganizationService.instance().getOrganization().getDn());
+		this.trustRelationship.setOwner(organizationService.getOrganization().getDn());
 
 		boolean initActionsResult = initActions();
 		if (!initActionsResult) {
@@ -265,7 +276,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				update=true;
 			}
 
-			boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration();
+			boolean updateShib3Configuration = appConfiguration.isConfigGeneration();
 			switch (trustRelationship.getSpMetaDataSourceType()) {
 			case GENERATE:
 				String certificate = getCertForGeneratedSP();
@@ -431,7 +442,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		initTrustRelationship(trust, attributes);
 
 		customAttributeAction.initCustomAttributes(attributes, trust.getReleasedCustomAttributes(), origins, applicationConfiguration
-				.getPersonObjectClassTypes(), applicationConfiguration.getPersonObjectClassDisplayNames());
+				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 	}
 
 	public void initTrustRelationship(GluuSAMLTrustRelationship trust, List<GluuAttribute> attributes) {
@@ -454,7 +465,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	 */
 	private void setEntityId() {
 
-		String idpMetadataFolder = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator	+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator	+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 		File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 		
 		List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
@@ -531,7 +542,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				e.printStackTrace();
 			}
 
-//			String certName = applicationConfiguration.getCertDir() + File.separator + StringHelper.removePunctuation(applicationConfiguration.getOrgInum())
+//			String certName = appConfiguration.getCertDir() + File.separator + StringHelper.removePunctuation(appConfiguration.getOrgInum())
 //					+ "-shib.crt";
 //			File certFile = new File(certName);
 //			if (certFile.exists()) {
@@ -584,7 +595,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			
 
 			if(oxClientUpdateNeeded){
-				OxAuthClient client = clientService.getClientByInum(applicationConfiguration.getOxAuthClientId());
+				OxAuthClient client = clientService.getClientByInum(appConfiguration.getOxAuthClientId());
 				Set<String> updatedLogoutRedirectUris = new HashSet<String>();
 				List<GluuSAMLTrustRelationship> trs = trustService.getAllTrustRelationships();
 				if(trs != null && ! trs.isEmpty()){
@@ -644,7 +655,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	 */
 	private void saveCert(GluuSAMLTrustRelationship trustRelationship,
 			String certificate) {
-		String sslDirFN = applicationConfiguration.getShibboleth3IdpRootDir()
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
 				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
 				+ File.separator;
 		File sslDir = new File(sslDirFN);
@@ -686,7 +697,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			String key) {
 		
 		
-		String sslDirFN = applicationConfiguration.getShibboleth3IdpRootDir()
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
 				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
 				+ File.separator;
 		File sslDir = new File(sslDirFN);
@@ -909,7 +920,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				log.error("Failed to add " + spMetadataFilePath + " to zip");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			String sslDirFN = applicationConfiguration.getShibboleth3IdpRootDir() + File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
+			String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
 			String spKeyFilePath = sslDirFN + shibboleth3ConfService.getSpNewMetadataFileName(this.trustRelationship).replaceFirst("\\.xml$", ".key");
 			if (!ResponseHelper.addFileToZip(spKeyFilePath, zos, Shibboleth3ConfService.SHIB3_IDP_SP_KEY_FILE)) {
 				log.error("Failed to add " + spKeyFilePath + " to zip");
@@ -938,12 +949,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			context.put("gluuSPEntityId", gluuSPEntityId);
 			String spHost = trustRelationship.getUrl().replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 			context.put("spHost", spHost);
-			String idpUrl = applicationConfiguration.getIdpUrl();
+			String idpUrl = appConfiguration.getIdpUrl();
 			context.put("idpUrl", idpUrl);
 			String idpHost = idpUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 			context.put("idpHost", idpHost);
-			context.put("orgInum", StringHelper.removePunctuation(OrganizationService.instance().getOrganizationInum()));
-			context.put("orgSupportEmail", applicationConfiguration.getOrgSupportEmail());
+			context.put("orgInum", StringHelper.removePunctuation(organizationService.getOrganizationInum()));
+			context.put("orgSupportEmail", appConfiguration.getOrgSupportEmail());
 
 			String spShibboleth3FilePath = shibboleth3ConfService.getSpShibboleth3FilePath();
 			String shibConfig = templateService.generateConfFile(Shibboleth3ConfService.SHIB3_SP_SHIBBOLETH2_FILE, context);

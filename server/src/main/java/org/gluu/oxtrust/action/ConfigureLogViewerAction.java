@@ -9,17 +9,14 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.List;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.faces.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
@@ -59,7 +56,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		this.appliance = ApplianceService.instance().getAppliance();
+		this.appliance = applianceService.getAppliance();
 
 		initConfigurations();
 
@@ -84,10 +81,10 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	}
 
 	private void updateAppliance() {
-		GluuAppliance updateAppliance = ApplianceService.instance().getAppliance();
+		GluuAppliance updateAppliance = applianceService.getAppliance();
 		try {
 			updateAppliance.setOxLogViewerConfig(jsonService.objectToJson(logViewerConfiguration));
-			ApplianceService.instance().updateAppliance(updateAppliance);
+			applianceService.updateAppliance(updateAppliance);
 		} catch (Exception ex) {
 			log.error("Failed to save log viewer configuration '{0}'", ex);
 		}

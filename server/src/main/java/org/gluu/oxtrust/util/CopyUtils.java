@@ -13,17 +13,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-// import org.codehaus.jackson.type.TypeReference;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -53,94 +53,106 @@ import org.gluu.oxtrust.model.scim.ScimRolesPatch;
 import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
 import org.gluu.oxtrust.model.scim2.Constants;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
+import org.xdi.util.StringHelper;
 
-@Named("copyUtils")
+@Stateless
+@Named
 public class CopyUtils implements Serializable {
 
-	private static final String GLUU_STATUS = "gluuStatus";
+	private final String GLUU_STATUS = "gluuStatus";
 
-	private static final String OX_TRUST_PHOTOS_TYPE = "oxTrustPhotosType";
+	private final String OX_TRUST_PHOTOS_TYPE = "oxTrustPhotosType";
 
-	private static final String OX_TRUST_PHONE_TYPE = "oxTrustPhoneType";
+	private final String OX_TRUST_PHONE_TYPE = "oxTrustPhoneType";
 
-	private static final String OX_TRUST_ADDRESS_PRIMARY = "oxTrustAddressPrimary";
+	private final String OX_TRUST_ADDRESS_PRIMARY = "oxTrustAddressPrimary";
 
-	private static final String OX_TRUST_ADDRESS_TYPE = "oxTrustAddressType";
+	private final String OX_TRUST_ADDRESS_TYPE = "oxTrustAddressType";
 
-	private static final String OX_TRUST_COUNTRY = "oxTrustCountry";
+	private final String OX_TRUST_COUNTRY = "oxTrustCountry";
 
-	private static final String OX_TRUST_POSTAL_CODE = "oxTrustPostalCode";
+	private final String OX_TRUST_POSTAL_CODE = "oxTrustPostalCode";
 
-	private static final String OX_TRUST_REGION = "oxTrustRegion";
+	private final String OX_TRUST_REGION = "oxTrustRegion";
 
-	private static final String OX_TRUST_LOCALITY = "oxTrustLocality";
+	private final String OX_TRUST_LOCALITY = "oxTrustLocality";
 
-	private static final String OX_TRUST_ADDRESS_FORMATTED = "oxTrustAddressFormatted";
+	private final String OX_TRUST_ADDRESS_FORMATTED = "oxTrustAddressFormatted";
 
-	private static final String OX_TRUST_STREET = "oxTrustStreet";
+	private final String OX_TRUST_STREET = "oxTrustStreet";
 
-	private static final String OX_TRUST_EMAIL_PRIMARY = "oxTrustEmailPrimary";
+	private final String OX_TRUST_EMAIL_PRIMARY = "oxTrustEmailPrimary";
 
-	private static final String OX_TRUST_EMAIL_TYPE = "oxTrustEmailType";
+	private final String OX_TRUST_EMAIL_TYPE = "oxTrustEmailType";
 
-	private static final String OX_TRUST_META_LOCATION = "oxTrustMetaLocation";
+	private final String OX_TRUST_META_LOCATION = "oxTrustMetaLocation";
 
-	private static final String OX_TRUST_META_VERSION = "oxTrustMetaVersion";
+	private final String OX_TRUST_META_VERSION = "oxTrustMetaVersion";
 
-	private static final String OX_TRUST_META_LAST_MODIFIED = "oxTrustMetaLastModified";
+	private final String OX_TRUST_META_LAST_MODIFIED = "oxTrustMetaLastModified";
 
-	private static final String OX_TRUST_META_CREATED = "oxTrustMetaCreated";
+	private final String OX_TRUST_META_CREATED = "oxTrustMetaCreated";
 
-	private static final String OX_TRUSTX509_CERTIFICATE = "oxTrustx509Certificate";
+	private final String OX_TRUSTX509_CERTIFICATE = "oxTrustx509Certificate";
 
-	private static final String OX_TRUST_ENTITLEMENTS = "oxTrustEntitlements";
+	private final String OX_TRUST_ENTITLEMENTS = "oxTrustEntitlements";
 
-	private static final String OX_TRUST_ROLE = "oxTrustRole";
+	private final String OX_TRUST_ROLE = "oxTrustRole";
 
-	private static final String OX_TRUST_ACTIVE = "oxTrustActive";
+	private final String OX_TRUST_ACTIVE = "oxTrustActive";
 
-	private static final String OX_TRUST_LOCALE = "locale";
+	private final String OX_TRUST_LOCALE = "locale";
 
-	private static final String OX_TRUST_TITLE = "oxTrustTitle";
+	private final String OX_TRUST_TITLE = "oxTrustTitle";
 
-	private static final String OX_TRUST_USER_TYPE = "oxTrustUserType";
+	private final String OX_TRUST_USER_TYPE = "oxTrustUserType";
 
-	private static final String OX_TRUST_PHOTOS = "oxTrustPhotos";
+	private final String OX_TRUST_PHOTOS = "oxTrustPhotos";
 
-	private static final String OX_TRUST_IMS_VALUE = "oxTrustImsValue";
+	private final String OX_TRUST_IMS_VALUE = "oxTrustImsValue";
 
-	private static final String OX_TRUST_PHONE_VALUE = "oxTrustPhoneValue";
+	private final String OX_TRUST_PHONE_VALUE = "oxTrustPhoneValue";
 
-	private static final String OX_TRUST_ADDRESSES = "oxTrustAddresses";
+	private final String OX_TRUST_ADDRESSES = "oxTrustAddresses";
 
-	private static final String OX_TRUST_EMAIL = "oxTrustEmail";
+	private final String OX_TRUST_EMAIL = "oxTrustEmail";
 
-	private static final String OX_TRUST_PROFILE_URL = "oxTrustProfileURL";
+	private final String OX_TRUST_PROFILE_URL = "oxTrustProfileURL";
 
-	private static final String OX_TRUST_NICK_NAME = "nickName";
+	private final String OX_TRUST_NICK_NAME = "nickName";
 
-	private static final String OX_TRUST_EXTERNAL_ID = "oxTrustExternalId";
+	private final String OX_TRUST_EXTERNAL_ID = "oxTrustExternalId";
 
-	private static final String OX_TRUSTHONORIFIC_SUFFIX = "oxTrusthonorificSuffix";
+	private final String OX_TRUSTHONORIFIC_SUFFIX = "oxTrusthonorificSuffix";
 
-	private static final String OX_TRUSTHONORIFIC_PREFIX = "oxTrusthonorificPrefix";
+	private final String OX_TRUSTHONORIFIC_PREFIX = "oxTrusthonorificPrefix";
 
-	private static final String OX_TRUST_MIDDLE_NAME = "middleName";
+	private final String OX_TRUST_MIDDLE_NAME = "middleName";
 
-	/**
-     *
-     */
-	private static final long serialVersionUID = -1715995162448707004L;
+	private final long serialVersionUID = -1715995162448707004L;
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private PersonService personService;
+
+	@Inject
+	private IGroupService groupService;
+
+	@Inject
+	private AttributeService attributeService;
+	
+	@Inject
+	private OrganizationService organizationService;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	/**
 	 * Copy data from ScimPerson object to GluuCustomPerson object "Reda"
@@ -151,13 +163,11 @@ public class CopyUtils implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static GluuCustomPerson copy(ScimPerson source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
+	public GluuCustomPerson copy(ScimPerson source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
 
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
-
-		IPersonService personService1 = PersonService.instance();
 
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
@@ -166,7 +176,7 @@ public class CopyUtils implements Serializable {
 
 		if (isUpdate) {
 
-			personService1.addCustomObjectClass(destination);
+			personService.addCustomObjectClass(destination);
 
 			if (StringUtils.isNotEmpty(source.getUserName())) {
 				log.trace(" setting userName ");
@@ -310,11 +320,11 @@ public class CopyUtils implements Serializable {
 
 			try {
 
-				if (personService1.getPersonByUid(source.getUserName()) != null) {
+				if (personService.getPersonByUid(source.getUserName()) != null) {
 					return null;
 				}
 
-				personService1.addCustomObjectClass(destination);
+				personService.addCustomObjectClass(destination);
 
 				log.trace(" setting userName ");
 				if (source.getUserName() != null && source.getUserName().length() > 0) {
@@ -456,10 +466,9 @@ public class CopyUtils implements Serializable {
 		return destination;
 	}
 
-	private static void setGroups(ScimPerson source, GluuCustomPerson destination) {
+	private void setGroups(ScimPerson source, GluuCustomPerson destination) {
 		log.trace(" setting groups ");
 		if (source.getGroups() != null && source.getGroups().size() > 0) {
-			IGroupService groupService = GroupService.instance();
 			List<ScimPersonGroups> listGroups = source.getGroups();
 			List<String> members = new ArrayList<String>();
 			for (ScimPersonGroups group : listGroups) {
@@ -470,7 +479,7 @@ public class CopyUtils implements Serializable {
 		}
 	}
 
-	private static void setMetaData(ScimPerson source, GluuCustomPerson destination) {
+	private void setMetaData(ScimPerson source, GluuCustomPerson destination) {
 		log.trace(" setting meta ");
 
 		if (source.getMeta().getCreated() != null && source.getMeta().getCreated().length() > 0) {
@@ -487,7 +496,7 @@ public class CopyUtils implements Serializable {
 		}
 	}
 
-	private static void setOrRemoveOptionalAttributeList(GluuCustomPerson destination, List<?> items, String attributeName)
+	private void setOrRemoveOptionalAttributeList(GluuCustomPerson destination, List<?> items, String attributeName)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		if (items == null) {
 			log.trace(" removing " + attributeName);
@@ -504,7 +513,7 @@ public class CopyUtils implements Serializable {
 
 	}
 
-	private static void setOrRemoveOptionalAttribute(GluuCustomPerson destination, String attributevalue, String attributeName) {
+	private void setOrRemoveOptionalAttribute(GluuCustomPerson destination, String attributevalue, String attributeName) {
 		if (attributevalue == null) {
 			log.trace(" removing " + attributeName);
 			destination.removeAttribute(attributeName);
@@ -522,7 +531,7 @@ public class CopyUtils implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ScimPerson copy(GluuCustomPerson source, ScimPerson destination) throws Exception {
+	public ScimPerson copy(GluuCustomPerson source, ScimPerson destination) throws Exception {
 
 		if (source == null) {
 			return null;
@@ -784,8 +793,6 @@ public class CopyUtils implements Serializable {
 		// getting user groups
 		log.trace(" setting  groups ");
 		if (source.getMemberOf() != null) {
-			IGroupService groupService = GroupService.instance();
-
 			List<String> listOfGroups = source.getMemberOf();
 
 			List<ScimPersonGroups> groupsList = new ArrayList<ScimPersonGroups>();
@@ -882,18 +889,16 @@ public class CopyUtils implements Serializable {
 			String location = source.getAttribute(OX_TRUST_META_LOCATION);
 			if (location != null && !location.isEmpty()) {
 				if (!location.startsWith("https://") && !location.startsWith("http://")) {
-					location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + location;
+					location = appConfiguration.getBaseEndpoint() + location;
 				}
 			} else {
-				location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v1/Users/" + source.getInum();
+				location = appConfiguration.getBaseEndpoint() + "/scim/v1/Users/" + source.getInum();
 			}
 			destination.getMeta().setLocation(location);
 		// }
 
 		log.trace(" getting custom Attributes ");
 		// getting custom Attributes
-
-		AttributeService attributeService = AttributeService.instance();
 
 		List<GluuAttribute> listOfAttr = attributeService.getSCIMRelatedAttributes();
 
@@ -933,7 +938,7 @@ public class CopyUtils implements Serializable {
 		return destination;
 	}
 
-	public static boolean isValidData(ScimPerson person, boolean isUpdate) throws Exception {
+	public boolean isValidData(ScimPerson person, boolean isUpdate) throws Exception {
 
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
@@ -954,7 +959,7 @@ public class CopyUtils implements Serializable {
 		return true;
 	}
 
-	public static boolean isEmpty(String value) {
+	public boolean isEmpty(String value) {
 		if (value == null || value.trim().equals(""))
 			return true;
 		return false;
@@ -969,14 +974,13 @@ public class CopyUtils implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static ScimGroup copy(GluuGroup source, ScimGroup destination) throws Exception {
+	public ScimGroup copy(GluuGroup source, ScimGroup destination) throws Exception {
 		if (source == null) {
 			return null;
 		}
 		if (destination == null) {
 			destination = new ScimGroup();
 		}
-		IPersonService personService = PersonService.instance();
 
 		List<String> schemas = new ArrayList<String>();
 		schemas.add(Constants.SCIM1_CORE_SCHEMA_ID);
@@ -1003,7 +1007,7 @@ public class CopyUtils implements Serializable {
 
 	}
 
-	public static GluuCustomPerson patch(ScimPersonPatch source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
+	public GluuCustomPerson patch(ScimPersonPatch source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
@@ -1300,7 +1304,6 @@ public class CopyUtils implements Serializable {
 		// getting user groups
 		log.trace(" setting groups ");
 		if (source.getGroups() != null && source.getGroups().size() > 0) {
-			IGroupService groupService = GroupService.instance();
 			List<ScimPersonGroupsPatch> listGroups = source.getGroups();
 			List<String> members = new ArrayList<String>();
 			for (ScimPersonGroups group : listGroups) {
@@ -1400,7 +1403,7 @@ public class CopyUtils implements Serializable {
 		return destination;
 	}
 
-	private static boolean isValidData(ScimPersonPatch person, boolean isUpdate) {
+	private boolean isValidData(ScimPersonPatch person, boolean isUpdate) {
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
 			// isEmpty(person.getDisplayName())
@@ -1431,7 +1434,7 @@ public class CopyUtils implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static GluuGroup copy(ScimGroup source, GluuGroup destination, boolean isUpdate) throws Exception {
+	public GluuGroup copy(ScimGroup source, GluuGroup destination, boolean isUpdate) throws Exception {
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
@@ -1446,7 +1449,6 @@ public class CopyUtils implements Serializable {
 				destination.setDisplayName(source.getDisplayName());
 			}
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
-				IPersonService personService = PersonService.instance();
 				List<ScimGroupMembers> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (ScimGroupMembers member : members) {
@@ -1458,10 +1460,9 @@ public class CopyUtils implements Serializable {
 
 		} else {
 			log.trace(" creating a new GroupService instant ");
-			IGroupService groupService1 = GroupService.instance();
 			log.trace(" source.getDisplayName() : ", source.getDisplayName());
 
-			if (groupService1.getGroupByDisplayName(source.getDisplayName()) != null) {
+			if (groupService.getGroupByDisplayName(source.getDisplayName()) != null) {
 				log.trace(" groupService1.getGroupByDisplayName(source.getDisplayName() != null : ");
 
 				return null;
@@ -1474,7 +1475,6 @@ public class CopyUtils implements Serializable {
 			log.trace(" source.getMembers().size() : ", source.getMembers().size());
 
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
-				IPersonService personService = PersonService.instance();
 				List<ScimGroupMembers> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (ScimGroupMembers member : members) {
@@ -1486,8 +1486,7 @@ public class CopyUtils implements Serializable {
 			}
 
 			destination.setStatus(GluuStatus.ACTIVE);
-			OrganizationService orgService = OrganizationService.instance();
-			destination.setOrganization(orgService.getDnForOrganization());
+			destination.setOrganization(organizationService.getDnForOrganization());
 
 		}
 
@@ -1495,7 +1494,7 @@ public class CopyUtils implements Serializable {
 
 	}
 
-	public static boolean isValidData(ScimGroup group, boolean isUpdate) {
+	public boolean isValidData(ScimGroup group, boolean isUpdate) {
 		if (isUpdate) {
 
 		} else if (isEmpty(group.getDisplayName())) {
@@ -1512,7 +1511,7 @@ public class CopyUtils implements Serializable {
 	 * @return ScimGroup
 	 * @throws Exception
 	 */
-	public static ScimGroup copy(ScimData source, ScimGroup destination) {
+	public ScimGroup copy(ScimData source, ScimGroup destination) {
 		if (source == null) {
 			return null;
 		}
@@ -1537,17 +1536,17 @@ public class CopyUtils implements Serializable {
 
 	}
 
-	private static void setGluuStatus(ScimPerson source, GluuCustomPerson destination) {
+	private void setGluuStatus(ScimPerson source, GluuCustomPerson destination) {
 		String active = source.getActive();
 		setGluuStatus(destination, active);
 	}
 
-	private static void setGluuStatus(ScimPersonPatch source, GluuCustomPerson destination) {
+	private void setGluuStatus(ScimPersonPatch source, GluuCustomPerson destination) {
 		String active = source.getActive();
 		setGluuStatus(destination, active);
 	}
 
-	private static void setGluuStatus(GluuCustomPerson destination, String active) {
+	private void setGluuStatus(GluuCustomPerson destination, String active) {
 		if (StringHelper.isNotEmpty(active) && (destination.getAttribute(GLUU_STATUS) == null)) {
 			GluuBoolean gluuStatus = GluuBoolean.getByValue(org.xdi.util.StringHelper.toLowerCase(active));
 			if (gluuStatus != null) {
@@ -1556,7 +1555,7 @@ public class CopyUtils implements Serializable {
 		}
 	}
 
-	private static <T> void setOrRemoveAttributeListValue(GluuCustomPerson destination, List<T> items, String attributeName) throws Exception {
+	private <T> void setOrRemoveAttributeListValue(GluuCustomPerson destination, List<T> items, String attributeName) throws Exception {
 
 		if (items == null) {
 
@@ -1578,7 +1577,7 @@ public class CopyUtils implements Serializable {
 		}
 	}
 
-	private static <T> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attributeName) throws Exception {
+	private <T> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attributeName) throws Exception {
 
 		ObjectMapper mapper = Utils.getObjectMapper();
 

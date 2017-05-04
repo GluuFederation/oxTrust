@@ -18,7 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.DOMReader;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.FileData;
 import org.gluu.oxtrust.model.GluuAppliance;
 import javax.enterprise.context.ApplicationScoped;
@@ -40,7 +40,7 @@ import org.xdi.service.XmlService;
 public class LogFileSizeChecker {
 
 	@Inject
-	Log log;
+	private Logger log;
 
 	@Inject
 	ApplianceService applianceService;
@@ -92,8 +92,8 @@ public class LogFileSizeChecker {
 			String todayStr = sdf.format(today);
 
 			log.debug("Getting the tomcat home directory");
-			String filePath = OxTrustConfiguration.DIR
-					+ OxTrustConfiguration.LOG_ROTATION_CONFIGURATION;
+			String filePath = ConfigurationFactory.DIR
+					+ ConfigurationFactory.LOG_ROTATION_CONFIGURATION;
 			log.debug("FilePath: " + filePath);
 
 			List<LogDir> logDirs = readConfig(filePath);
