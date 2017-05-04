@@ -379,7 +379,7 @@ public class PersonImportAction implements Serializable {
 					}
 					continue;
 				}
-
+				
 				String ldapValue = getTypedValue(attribute, cellValue);
 				if (StringHelper.isEmpty(ldapValue)) {
 					facesMessages.add(Severity.ERROR, "Invalid value '{0}' in column '{1}' at row {2} were specified", cellValue,
@@ -413,6 +413,11 @@ public class PersonImportAction implements Serializable {
 									person.setUserPassword(AttributeData1.getValue());
 									flag=true;
 									break;
+								} else if(AttributeData1.getName().equalsIgnoreCase("gluuStatus")){
+									
+									person.setStatus(GluuStatus.getByValue(AttributeData1.getValue()));
+									flag=true;
+									break;
 								}
 							}						
 						}
@@ -432,7 +437,7 @@ public class PersonImportAction implements Serializable {
 		if (GluuAttributeDataType.STRING.equals(attribute.getDataType())) {
 			return value;
 		}
-
+		
 		return null;
 	}
 
@@ -521,7 +526,6 @@ public class PersonImportAction implements Serializable {
 		}
 
 		personService.addCustomObjectClass(this.person);
-		this.person.setStatus(GluuStatus.ACTIVE);
 		
 			if (personService.getPersonByUid(this.person.getUid()) != null) {
 				return OxTrustConstants.RESULT_DUPLICATE;

@@ -57,10 +57,10 @@
             </h:panelGroup>
         </h:panelGroup></div> <div class="box-footer">
 					
-							<ui:insert name="controlButttons" />
-							<div id="updateButtons">
+					<ui:insert name="controlButttons" />
+					<div id="updateButtons">
                         <h:commandButton value="#{msg['person.validation']}" styleClass="btn btn-primary" action="#{personImportAction.validateFileToImport}" rendered="#{not personImportAction.fileDataToImport.ready}" />
-                        <h:commandButton value="#{msg['person.validation']}" styleClass="btn btn-primary" action="#{personImportAction.importPersons}" rendered="#{personImportAction.fileDataToImport.ready}" />
+                        <h:commandButton value="#{msg['person.import']}" styleClass="btn btn-primary" action="#{personImportAction.importPersons}" rendered="#{personImportAction.fileDataToImport.ready}" />
                         <h:commandButton value="#{msg['person.cancel']}" styleClass="btn btn-primary" action="#{personImportAction.cancel}" immediate="true" style="margin-left:5px;" />
                     </div></div>
         
