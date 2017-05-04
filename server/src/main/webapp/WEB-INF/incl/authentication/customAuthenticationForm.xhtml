@@ -73,7 +73,7 @@
 								<h:panelGroup>
 									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 										id="auntheticationMode">
-										<ui:define name="label">Authentication mode</ui:define>
+										<ui:define name="label">Default acr</ui:define>
 										<h:selectOneMenu value="#{_action.authenticationMode}"
 											styleClass="form-control">
 											<s:selectItems
@@ -84,7 +84,7 @@
 
 									<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 										id="oxTrustAuntheticationMode">
-										<ui:define name="label">oxTrust authentication mode</ui:define>
+										<ui:define name="label">oxTrust acr</ui:define>
 										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
 											styleClass="form-control">
 											<s:selectItems
