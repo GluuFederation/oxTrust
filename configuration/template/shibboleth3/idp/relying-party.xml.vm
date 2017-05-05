@@ -68,7 +68,7 @@
     <util:list id="shibboleth.RelyingPartyOverrides">
 
 #foreach( $trustRelationship in $trustParams.trusts )
-    #if($trustRelationship.specificRelyingPartyConfig and (not $trustRelationship.isFederation()))
+    
 
         #set ($profileConfigMap = $trustRelationship.profileConfigurations)
         #if(!$profileConfigMap.isEmpty())
@@ -79,6 +79,7 @@
         <bean parent="RelyingPartyByName" id="$relyingPartyId" c:relyingPartyIds="$entityId">
             <property name="profileConfigurations">
                 <list>
+            #if($trustRelationship.specificRelyingPartyConfig and (not $trustRelationship.isFederation()))
                 #foreach ($mapEntry in $profileConfigMap.entrySet())
 
                     #set($profileConfig = $mapEntry.value)
@@ -284,12 +285,11 @@
 
                     #end
                 #end
-
+            #end
                 </list>
             </property>
         </bean>
         #end
-    #end
 #end
 
     </util:list>
