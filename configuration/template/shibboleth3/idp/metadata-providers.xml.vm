@@ -25,7 +25,6 @@
     <!-- ========================================================================================== -->
 
 #foreach( $trustRelationship in $trustParams.trusts )
-    #if($trustRelationship.specificRelyingPartyConfig and (not $trustRelationship.isFederation()))
 
         #set ($profileConfigMap = $trustRelationship.profileConfigurations)
         #if(!$profileConfigMap.isEmpty())
@@ -65,7 +64,6 @@
             #end
 
         #end
-    #end
 #end
 
 </MetadataProvider>
