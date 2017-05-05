@@ -292,7 +292,7 @@ public class Shibboleth3ConfService implements Serializable {
 		int id = 1;
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
 
-			boolean isPartOfFederation = !(trustRelationship.getSpMetaDataSourceType() == GluuMetadataSourceType.URI || trustRelationship.getSpMetaDataSourceType() == GluuMetadataSourceType.FILE);
+			boolean isPartOfFederation = !(trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.URI) || trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FILE));
 
 			if (!isPartOfFederation) {
 
