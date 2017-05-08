@@ -10,7 +10,8 @@ import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
+
+import javax.faces.application.FacesMessage;import javax.servlet.ServletContext;
 
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;

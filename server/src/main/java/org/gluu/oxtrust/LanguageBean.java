@@ -7,9 +7,12 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.SessionScoped;
+
 import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.security.Identity;
+import org.xdi.model.security.Identity;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -22,7 +25,7 @@ import java.util.Map;
  * Created by eugeniuparvan on 3/6/17.
  */
 @Named("language")
-@Scope(ScopeType.SESSION)
+@SessionScoped
 public class LanguageBean implements Serializable {
 
     private static final long serialVersionUID = 1L;

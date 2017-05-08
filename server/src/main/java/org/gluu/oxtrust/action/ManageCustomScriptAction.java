@@ -19,14 +19,15 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessages;
+import org.gluu.jsf2.message.FacesMessages;
+import javax.faces.application.FacesMessage;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
@@ -58,7 +59,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	private Logger log;
 
 	@Inject
-	private StatusMessages statusMessages;
+	private FacesMessages FacesMessages;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -66,7 +67,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	@Inject
 	private ApplianceService applianceService;
 
-	@Inject(value = "customScriptService")
+	@Inject
 	private AbstractCustomScriptService customScriptService;
 
 	@Inject
@@ -139,7 +140,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					
 					String configId = customScript.getName();
 					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
-						facesMessages.add(Severity.ERROR, "'{0}' is reserved script name", configId);
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'{0}' is reserved script name", configId);
 						return OxTrustConstants.RESULT_FAILURE;
 					}
 

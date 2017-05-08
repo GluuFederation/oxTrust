@@ -17,14 +17,15 @@ import org.apache.commons.collections.CollectionUtils;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.annotations.Observer;
+
+import javax.faces.application.FacesMessage;import org.jboss.seam.annotations.Observer;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;
@@ -86,7 +87,7 @@ public class EntityIDMonitoringService {
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 					List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 					
-					log.trace("entityIds from metadata: " + Utils.iterableToString(entityIds)); 
+					log.trace("entityIds from metadata: " + ServiceUtil.iterableToString(entityIds)); 
 					Set<String> entityIdSet = new TreeSet<String>();
 					
 					if(entityIds != null && ! entityIds.isEmpty()){
@@ -98,9 +99,9 @@ public class EntityIDMonitoringService {
 						}
 					}
 
-					log.trace("unique entityIds: " + Utils.iterableToString(entityIdSet));
+					log.trace("unique entityIds: " + ServiceUtil.iterableToString(entityIdSet));
 					Collection<String> disjunction = CollectionUtils.disjunction(entityIdSet, tr.getGluuEntityId());
-					log.trace("entityIds disjunction: " + Utils.iterableToString(disjunction));
+					log.trace("entityIds disjunction: " + ServiceUtil.iterableToString(disjunction));
 					
 					if(! disjunction.isEmpty()){
 						log.trace("entityIds disjunction is not empty. Somthing has changed. Processing further.");

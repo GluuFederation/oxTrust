@@ -26,7 +26,7 @@ import org.gluu.asimba.util.ldap.sp.LDAPRequestorPoolEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -54,7 +54,10 @@ public class AsimbaService implements Serializable {
     private LdapEntryManager ldapEntryManager;
     
     @Inject
-    OrganizationService organizationService;
+    private OrganizationService organizationService;
+    
+    @Inject
+    private ServiceUtil serviceUtil;
     
     public LdapOxAsimbaConfiguration loadAsimbaConfiguration() {
         String organizationDn = organizationService.getDnForOrganization();
@@ -494,19 +497,19 @@ public class AsimbaService implements Serializable {
         String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "conf" + File.separator + "asimba" 
                 + File.separator + "metadata" + File.separator + "idp";
         
-        byte[] fileContent = Utils.copyUploadedFile(uploadedFile);
+        byte[] fileContent = serviceUtil.copyUploadedFile(uploadedFile);
         
         // save copy to LDAP:
         idp.setMetadataXMLText(new String(fileContent, "UTF8"));
         
-        return Utils.saveRandomFile(fileContent, baseDir, "xml");
+        return ServiceUtil.saveRandomFile(fileContent, baseDir, "xml");
     }
     
     public String saveSPRequestorMetadataFile(UploadedFile uploadedFile) throws IOException {
         String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "conf" + File.separator + "asimba" 
                 + File.separator + "metadata" + File.separator + "sp";
         
-        return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
+        return serviceUtil.saveUploadedFile(uploadedFile, baseDir, "xml");
     }
     
 }

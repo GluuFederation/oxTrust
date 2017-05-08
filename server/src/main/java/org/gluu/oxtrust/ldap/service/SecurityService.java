@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.User;
 import org.slf4j.Logger;

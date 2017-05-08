@@ -15,12 +15,15 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
+
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -80,7 +83,7 @@ public class AttributeImportAction implements Serializable {
 		try {
 			result = ldifService.importLdifFileInLdap(is);
 		} catch (LDAPException ex) {
-			facesMessages.add(Severity.ERROR, "Failed to import LDIF file");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to import LDIF file");
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
@@ -91,7 +94,7 @@ public class AttributeImportAction implements Serializable {
 			facesMessages.add(Severity.INFO,"Attributes added successfully");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
-			facesMessages.add(Severity.ERROR, "Failed to import LDIF file");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to import LDIF file");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 	}
@@ -109,7 +112,7 @@ public class AttributeImportAction implements Serializable {
 		try {
 			result = ldifService.validateLdifFile(is, dn);
 		} catch (LDAPException ex) {
-			facesMessages.add(Severity.ERROR, "Failed to parse LDIF file");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to parse LDIF file");
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
@@ -120,7 +123,7 @@ public class AttributeImportAction implements Serializable {
 		} else {
 			removeFileDataToImport();
 			this.fileDataToImport.setReady(false);
-			facesMessages.add(Severity.ERROR, "Invalid LDIF File. Validation failed");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Invalid LDIF File. Validation failed");
 		}
 	}
 

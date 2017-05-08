@@ -12,7 +12,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +31,14 @@ import org.xdi.util.io.DownloadWrapper;
 import org.xdi.util.io.FileDownloader;
 import org.xdi.util.io.FileDownloader.ContentDisposition;
 
+@WebServlet(urlPatterns = "/servlet/logo")
 public class FaviconImageServlet extends HttpServlet {
+	
+	@Inject
+	private OrganizationService organizationService;
+	
+	@Inject
+	private ImageService imageService;
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
@@ -45,7 +54,7 @@ public class FaviconImageServlet extends HttpServlet {
 		} catch (Exception ex) {
 			log.error("an Error Occured", ex);
 		}
-		ImageService imageService = ImageService.instance();
+
 		GluuImage image = null;
 		if ("true".equals(preview)) {
 			image = imageService.getGluuImageFromXML(organization.getTempFaviconImage());

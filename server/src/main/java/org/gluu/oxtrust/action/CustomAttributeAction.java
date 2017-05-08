@@ -19,10 +19,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -524,7 +526,7 @@ public class CustomAttributeAction implements Serializable {
 		removeRemovedPhotos();
 	}
 
-	@Destroy
+	@PreDestroy
 	public void destroy() {
 		// When user decided to leave form without saving we must remove added
 		// images from disk

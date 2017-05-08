@@ -42,7 +42,8 @@ import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import javax.inject.Inject;
 import javax.inject.Named;
-// import org.xdi.context.J2EContext;
+
+import javax.faces.application.FacesMessage;// import org.xdi.context.J2EContext;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -92,7 +93,7 @@ public class BulkWebService extends BaseScimWebService {
 			@ApiParam(value = "BulkRequest", required = true) BulkRequest bulkRequest) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {

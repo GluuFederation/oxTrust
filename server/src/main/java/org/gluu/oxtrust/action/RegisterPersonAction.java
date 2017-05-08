@@ -24,7 +24,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
+
+import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -38,8 +39,8 @@ import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage;
+import org.gluu.jsf2.message.FacesMessages;
+import org.jboss.seam.international.FacesMessage;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -62,7 +63,7 @@ public class RegisterPersonAction implements Serializable {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{facesContext.externalContext}")
+	@Inject
 	private ExternalContext externalContext;
 
 	@Inject
@@ -72,7 +73,7 @@ public class RegisterPersonAction implements Serializable {
 	private OrganizationService organizationService;
 	
 	@Inject
-	Redirect redirect;
+	private Redirect redirect;
 
 	@Inject(create = true)
 	@Out(scope = ScopeType.CONVERSATION)
@@ -253,7 +254,7 @@ public class RegisterPersonAction implements Serializable {
 				}
 			} catch (Exception ex) {
 				log.error("Failed to add new person {0}", ex, this.person.getInum());
-				facesMessages.add(StatusMessage.Severity.ERROR, "Failed to add new person");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person");
 				this.person = archivedPerson;
 				return OxTrustConstants.RESULT_FAILURE;
 			}

@@ -35,7 +35,7 @@ import org.xdi.model.GluuUserRole;
  * @author Yuriy Movchan Date: 10.17.2010
  */
 @ConversationScoped
-@Named("attributeInventoryAction")
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class AttributeInventoryAction implements Serializable {
 
@@ -51,20 +51,18 @@ public class AttributeInventoryAction implements Serializable {
 	@Inject
 	private AttributeService attributeService;
 	
-	@Inject(value = "#{facesContext.externalContext}")
-	private ExternalContext extCtx;	
+	@Inject
+	private ExternalContext externalContext;	
 
-	@Inject(value = "#{facesContext}")
-	FacesContext facesContext;
+	@Inject
+	private FacesContext facesContext;
 
 	private List<GluuAttribute> activeAttributeList;
 	
 	@Inject
 	private LdifService ldifService;
-	
-	
+
 	private Map<String, Boolean> checked = new HashMap<String, Boolean>();
-	
 
 	public Map<String, Boolean> getChecked() {
 		return checked;
@@ -148,7 +146,7 @@ public class AttributeInventoryAction implements Serializable {
             }
         }
         log.info("the selections are : {0}", checkedItems.size());
-        HttpServletResponse response = (HttpServletResponse) extCtx.getResponse();
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"attributes.ldif\"");
 		try {

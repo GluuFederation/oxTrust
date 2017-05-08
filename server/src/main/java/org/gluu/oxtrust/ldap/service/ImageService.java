@@ -19,7 +19,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.richfaces.model.UploadedFile;
 import org.xdi.config.oxtrust.AppConfiguration;

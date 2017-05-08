@@ -9,7 +9,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
+
+import javax.faces.application.FacesMessage;import javax.ws.rs.core.Response;
 
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;

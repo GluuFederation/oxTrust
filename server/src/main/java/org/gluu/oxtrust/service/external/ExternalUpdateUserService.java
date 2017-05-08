@@ -13,7 +13,8 @@ import org.jboss.seam.Component;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.custom.script.CustomScriptType;

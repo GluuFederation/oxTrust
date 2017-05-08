@@ -14,7 +14,10 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -27,7 +30,7 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.jboss.seam.web.ServletContexts;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -41,6 +44,15 @@ import org.xdi.util.StringHelper;
 public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private ApplianceService applianceService;
+	
+	@Inject
+	private OrganizationService organizationService;
+	
+	@Inject
+	private PersonService personService;
 
     @Inject
     private FacesMessages facesMessages;
@@ -105,8 +117,7 @@ public class PasswordReminderAction implements Serializable {
 		if (enabled()) {
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
-			AppConfiguration applicationConfiguration = ConfigurationFactory.instance().getApplicationConfiguration();
-			List<GluuCustomPerson> matchedPersons = PersonService.instance().findPersons(person, 0);
+			List<GluuCustomPerson> matchedPersons = personService.findPersons(person, 0);
 			if(matchedPersons != null && matchedPersons.size()>0){
 				GluuAppliance appliance = applianceService.getAppliance();
 				
@@ -165,10 +176,10 @@ public class PasswordReminderAction implements Serializable {
 			if (recaptchaService.isEnabled()) {
 				valid = recaptchaService.verifyRecaptchaResponse();
 				if(!valid)
-					facesMessages.add(Severity.ERROR, "Please check your input and CAPTCHA answer.");
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Please check your input and CAPTCHA answer.");
 			}			
 		}else{
-			facesMessages.add(Severity.ERROR, "Sorry the Password Reminder functionality is not enabled.Please contact to administrator.");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Sorry the Password Reminder functionality is not enabled.Please contact to administrator.");
 		}
 		return valid;
 		

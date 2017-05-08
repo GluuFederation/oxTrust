@@ -13,7 +13,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import javax.faces.application.FacesMessage;
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -21,26 +30,24 @@ import org.dom4j.io.DOMReader;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.FileData;
 import org.gluu.oxtrust.model.GluuAppliance;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.annotations.async.Expiration;
-import org.jboss.seam.annotations.async.IntervalDuration;
-import org.jboss.seam.async.QuartzTriggerHandle;
+import org.gluu.oxtrust.service.cdi.event.LogFileSizeChekerEvent;
 import org.slf4j.Logger;
 import org.xdi.service.XmlService;
+import org.xdi.service.cdi.event.Scheduled;
+import org.xdi.service.timer.event.TimerEvent;
+import org.xdi.service.timer.schedule.TimerSchedule;
 
 @ApplicationScoped
 @Named("logFileSizeChecker")
 public class LogFileSizeChecker {
 
+	private static final int DEFAULT_INTERVAL = 60 * 60 * 24; // 24 hours
+
 	@Inject
 	private Logger log;
+
+	@Inject
+	private Event<TimerEvent> timerEvent;
 
 	@Inject
 	ApplianceService applianceService;
@@ -48,26 +55,40 @@ public class LogFileSizeChecker {
 	@Inject
 	private XmlService xmlService;
 
-	@PostConstruct
-	public void create() {
-		// Initialization Code
-	}
+	private AtomicBoolean isActive;
 
-	@Asynchronous
-	public QuartzTriggerHandle scheduleSizeChecking(@Expiration Date when, @InjecttervalDuration Long interval) {
-		process(when, interval);
-		return null;
-	}
+    public void initTimer() {
+        log.info("Initializing Log File Size Checker Timer");
+        this.isActive = new AtomicBoolean(false);
+
+		final int delay = 2 * 60;
+		final int interval = DEFAULT_INTERVAL;
+
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, DEFAULT_INTERVAL), new LogFileSizeChekerEvent(),
+				Scheduled.Literal.INSTANCE));
+    }
+
+    @Asynchronous
+    public void process(@Observes @Scheduled LogFileSizeChekerEvent logFileSizeChekerEvent) {
+        if (this.isActive.get()) {
+            return;
+        }
+
+        if (!this.isActive.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            processInt();
+        } finally {
+            this.isActive.set(false);
+        }
+    }
 
 	/**
 	 * Gather periodically site and server status
-	 * 
-	 * @param when
-	 *            Date
-	 * @param interval
-	 *            Interval
 	 */
-	private void process(Date when, Long interval) {
+	private void processInt() {
 		GluuAppliance appliance;
 		appliance = applianceService.getAppliance();
 		String maxLogSize = appliance.getMaxLogSize();

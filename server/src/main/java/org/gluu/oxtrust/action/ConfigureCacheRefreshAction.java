@@ -20,10 +20,12 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
+import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
@@ -38,7 +40,7 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.jsf.ValidationUtil;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
@@ -69,6 +71,9 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private ApplianceService applianceService;
 
 	@Inject
 	private TemplateService templateService;
@@ -255,14 +260,15 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		boolean result = true;
 		if (ldapConfig.getServers().size() == 0) {
 			log.error("{0} LDAP configuration '{1}' should contains at least one server", configType, ldapConfig.getConfigId());
-			facesMessages.add(Severity.ERROR, "{0} LDAP configuration '{1}' should contains at least one server", configType,
+			log.
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{0} LDAP configuration '{1}' should contains at least one server", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
 
 		if (validateBaseDNs && (ldapConfig.getBaseDNs().size() == 0)) {
 			log.error("{0} LDAP configuration '{1}' should contains at least one Base DN", configType, ldapConfig.getConfigId());
-			facesMessages.add(Severity.ERROR, "{0} LDAP configuration '{1}' should contains at least one Base DN", configType,
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{0} LDAP configuration '{1}' should contains at least one Base DN", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
@@ -273,7 +279,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean validateList(List<String> values, String attributeName) {
 		if (values.size() == 0) {
 			log.error("{0} should contains at least one {0}", attributeName);
-			facesMessages.add(Severity.ERROR, "{0} should contains at least one {0}", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{0} should contains at least one {0}", attributeName);
 			return false;
 		}
 

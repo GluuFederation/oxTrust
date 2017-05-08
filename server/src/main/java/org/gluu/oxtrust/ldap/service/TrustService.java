@@ -15,7 +15,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mail.AuthenticationFailedException;
+
+import javax.faces.application.FacesMessage;import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.io.FileUtils;

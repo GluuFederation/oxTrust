@@ -21,7 +21,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
  */
 public class SchemaTypeLoadingFactory {
 
-    public SchemaType load(AppConfiguration applicationConfiguration, String id) throws Exception {
+    public SchemaType load(AppConfiguration appConfiguration, String id) throws Exception {
 
         SchemaType schemaType = SchemaTypeMapping.getSchemaTypeInstance(id);
 
@@ -29,10 +29,10 @@ public class SchemaTypeLoadingFactory {
             return null;
         }
 
-        return load(applicationConfiguration, schemaType);
+        return load(appConfiguration, schemaType);
     }
 
-    public SchemaType load(AppConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
+    public SchemaType load(AppConfiguration appConfiguration, SchemaType schemaType) throws Exception {
 
         LoadingStrategy loadingStrategy = null;
 
@@ -50,6 +50,6 @@ public class SchemaTypeLoadingFactory {
             return null;
         }
 
-        return loadingStrategy.load(applicationConfiguration, schemaType);
+        return loadingStrategy.load(appConfiguration, schemaType);
     }
 }

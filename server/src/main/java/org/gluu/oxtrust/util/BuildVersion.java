@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 /**
  * Constants with current build info
  * 

@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.util.RecaptchaUtils;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;

@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -25,9 +26,11 @@ import org.xdi.util.StringHelper;
  * User: Dejan Maric
  */
 public class RecaptchaUtils {
-	private final static Log log = Logging.getLog(RecaptchaUtils.class);
+	
+	@Inject
+	private Logger log;
 
-	public static boolean verifyGoogleRecaptchaFromServletContext(String secretKey) {
+	public boolean verifyGoogleRecaptchaFromServletContext(String secretKey) {
 		HttpServletRequest httpServletRequest = ServletContexts.instance().getRequest();
 
 		String gRecaptchaResponse = httpServletRequest.getParameter("g-recaptcha-response");
@@ -38,7 +41,7 @@ public class RecaptchaUtils {
 		return false;
 	}
 
-	public static boolean verifyGoogleRecaptcha(String gRecaptchaResponse, String secretKey) {
+	public boolean verifyGoogleRecaptcha(String gRecaptchaResponse, String secretKey) {
 		boolean result = false;
 		try {
 			ClientRequest request = new ClientRequest("https://www.google.com/recaptcha/api/siteverify");

@@ -31,7 +31,7 @@ public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory
 	@Inject
 	private AppConfiguration appConfiguration;
 	
-	protected SSLContext createEasySSLContext(AppConfiguration applicationConfiguration) {
+	protected SSLContext createEasySSLContext(AppConfiguration appConfiguration) {
 		try {
 
 			String password = appConfiguration.getCaCertsPassphrase();

@@ -17,6 +17,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -1566,7 +1567,7 @@ public class CopyUtils implements Serializable {
 
 			log.trace(" setting " + attributeName);
 
-			ObjectMapper mapper = Utils.getObjectMapper();
+			ObjectMapper mapper = ServiceUtil.getObjectMapper();
 
 			List<String> itemList = new ArrayList<String>();
 			for (T item : items) {
@@ -1579,7 +1580,7 @@ public class CopyUtils implements Serializable {
 
 	private <T> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attributeName) throws Exception {
 
-		ObjectMapper mapper = Utils.getObjectMapper();
+		ObjectMapper mapper = ServiceUtil.getObjectMapper();
 
 		String[] attributeArray = source.getAttributeArray(attributeName);
 		List<T> items = new ArrayList<T>();

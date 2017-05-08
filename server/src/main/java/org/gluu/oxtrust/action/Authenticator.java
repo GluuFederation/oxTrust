@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Identity;
+import org.gluu.oxtrust.security.Identity;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,11 +25,13 @@ import java.util.regex.Pattern;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.Cookie;
+
+import javax.faces.application.FacesMessage;import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
+import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
@@ -43,12 +46,13 @@ import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.plugins.server.embedded.SimplePrincipal;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.jboss.seam.navigation.Pages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
+import org.xdi.model.security.Credentials;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
@@ -71,7 +75,7 @@ import jnr.ffi.annotations.Out;
  * @author Yuriy Movchan Date: 02.12.2013
  */
 @Named("authenticator")
-@Scope(ScopeType.SESSION)
+@SessionScoped
 public class Authenticator implements Serializable {
 
 	private static final long serialVersionUID = -3975272457541385597L;
@@ -86,7 +90,7 @@ public class Authenticator implements Serializable {
 	private Credentials credentials;
 	
 	@Inject
-	Redirect redirect;
+	private FacesService facesService;
 	
 	@Inject
 	private IPersonService personService;
@@ -139,10 +143,10 @@ public class Authenticator implements Serializable {
 				log.error("Person '{0}' not found in LDAP", userName);
 				return false;
 			}else if(GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus")) || GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))){
-			     redirect.setViewId("/register.xhtml");
-			     redirect.setParameter("inum", user.getInum());
-			     redirect.execute();
-			     return false;
+				HashMap<String, Object> params = new HashMap<String, Object>();
+				params.put("inum", user.getInum());
+				facesService.redirect("/register.xhtml", params);
+				return false;
 			}
 
 			postLogin(user);
@@ -174,15 +178,6 @@ public class Authenticator implements Serializable {
 		}
 		for (GluuUserRole userRole : userRoles) {
 			identity.addRole(userRole.getRoleName());
-		}
-		
-		if (log.isDebugEnabled()) {
-			for (Group sg : identity.getSubject().getPrincipals(java.security.acl.Group.class)) {
-				if ("Roles".equals(sg.getName())) {
-					log.debug("Using next user roles: '{0}'", sg.members());
-					break;
-				}
-			}
 		}
 	}
 
@@ -509,9 +504,6 @@ public class Authenticator implements Serializable {
 
 		log.info("user uid:" + oauthData.getUserUid());
 
-		// Create session scope authentication service
-		Component.getInstance(AuthenticationSessionService.class);
-
 		return OxTrustConstants.RESULT_SUCCESS;
 		
 	}
@@ -525,25 +517,6 @@ public class Authenticator implements Serializable {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Used to remember the view user tried to access prior to login. This is
-	 * the view user will be redirected after successful login.
-	 */
-	public void captureCurrentView() {
-		FacesContext context = FacesContext.getCurrentInstance();
-
-		// If this isn't a faces request then just return
-		if (context == null)
-			return;
-
-		viewIdBeforeLoginRedirect = Pages.getViewId(context);
-	}
-
-
-	public static Authenticator instance() {
-		return (Authenticator) Component.getInstance(Authenticator.class, true);
 	}
 
 }

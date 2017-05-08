@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.render.Renderer;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -28,9 +30,9 @@ import org.drools.CheckedDroolsException;
 import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.drools.compiler.RuleBaseLoader;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.faces.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
@@ -55,7 +57,7 @@ public class SsoLoginAction implements Serializable {
 	@Inject
 	private Identity identity;
 
-	@Inject(value = "#{facesContext}")
+	@Inject
 	private FacesContext facesContext;
 
 	@Inject
@@ -72,8 +74,8 @@ public class SsoLoginAction implements Serializable {
 
 	private boolean initialized = false;
 
-	@Inject(value = "#{facesContext.externalContext}")
-	private ExternalContext extCtx;
+	@Inject
+	private ExternalContext externalContext;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -82,13 +84,13 @@ public class SsoLoginAction implements Serializable {
 		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-		HttpServletRequest request = (HttpServletRequest) extCtx.getRequest();
+		HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
 		relyingPartyId = request.getHeader("relyingPartyId");
 		setActionUrl(request.getHeader("actionUrl"));
 		log.debug("relyingPartyId is" + relyingPartyId);
 		log.debug("actionUrl is" + actionUrl);
 		if (StringHelper.isEmpty(relyingPartyId)) {
-			facesMessages.add(Severity.ERROR, "Direct access to this page is not supported");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Direct access to this page is not supported");
 			// return Configuration.RESULT_FAILURE;
 		}
 
@@ -103,7 +105,7 @@ public class SsoLoginAction implements Serializable {
 
 		} catch (Exception ex) {
 			log.error("Failed to initialize HTTP Client", ex);
-			facesMessages.add(Severity.ERROR, "Failed to prepare login form");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare login form");
 
 			// return Configuration.RESULT_FAILURE;
 		}
@@ -133,7 +135,7 @@ public class SsoLoginAction implements Serializable {
 					workingMemory.fireAllRules();
 					if (viewId.size() > 0) {
 						log.info("Login page customization rules fired: " + viewId.get(0));
-						extCtx.redirect(viewId.get(0));
+						externalContext.redirect(viewId.get(0));
 					}
 				} finally {
 					IOUtils.closeQuietly(reader);

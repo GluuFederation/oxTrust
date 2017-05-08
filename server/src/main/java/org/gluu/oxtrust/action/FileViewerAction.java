@@ -13,6 +13,7 @@ import java.io.Serializable;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;

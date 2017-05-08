@@ -7,12 +7,10 @@
 package org.gluu.oxtrust.ldap.service;
 
 import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Factory;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.Startup;
+
 import org.slf4j.Logger;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
@@ -32,7 +30,7 @@ public class ApplicationFactory {
     @Inject
     private Logger log;
 
-    @Factory(value = "cacheConfiguration", scope = ScopeType.APPLICATION, autoCreate = true)
+    @Produces @ApplicationScoped @Named("cacheConfiguration")
    	public CacheConfiguration createCacheConfiguration() {
    		CacheConfiguration cacheConfiguration = applianceService.getAppliance().getCacheConfiguration();
    		if (cacheConfiguration == null || cacheConfiguration.getCacheProviderType() == null) {

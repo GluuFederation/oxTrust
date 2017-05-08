@@ -24,7 +24,8 @@ import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.core.ResourceLoader;
 import org.slf4j.Logger;

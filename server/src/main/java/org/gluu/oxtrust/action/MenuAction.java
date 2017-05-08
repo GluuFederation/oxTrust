@@ -11,6 +11,7 @@ import java.io.Serializable;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.jboss.seam.annotations.End;
 
 /**

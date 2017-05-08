@@ -23,10 +23,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.faces.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.service.JsonService;
@@ -38,8 +39,8 @@ import org.xdi.util.io.ReverseLineReader;
  * 
  * @author Yuriy Movchan Date: 07/08/2013
  */
-@Named("viewLogFileAction")
 @ConversationScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class ViewLogFileAction implements Serializable {
 
@@ -47,6 +48,9 @@ public class ViewLogFileAction implements Serializable {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private ApplianceService applianceService;
 
 	@Inject
 	private FacesMessages facesMessages;

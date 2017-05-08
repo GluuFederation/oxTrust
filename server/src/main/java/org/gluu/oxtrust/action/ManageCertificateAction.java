@@ -30,10 +30,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.security.auth.x500.X500Principal;
+
+import javax.faces.application.FacesMessage;import javax.security.auth.x500.X500Principal;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -52,7 +54,7 @@ import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -68,8 +70,8 @@ import org.xdi.util.io.ResponseHelper;
  * @author Yuriy Movchan Date: 03/03/2014
  * 
  */
-@Named("manageCertificateAction")
 @ConversationScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class ManageCertificateAction implements Serializable {
 	public static final String BEGIN_CERT_REQ = "-----BEGIN CERTIFICATE REQUEST-----";
@@ -80,8 +82,8 @@ public class ManageCertificateAction implements Serializable {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{facesContext}")
-	FacesContext facesContext;
+	@Inject
+	private FacesContext facesContext;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -404,10 +406,6 @@ public class ManageCertificateAction implements Serializable {
 		return true;
 	}
 
-	public static ManageCertificateAction instance() {
-		return (ManageCertificateAction) Component.getInstance(ManageCertificateAction.class);
-	}
-
 	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!isCertsManagePossible()) {
@@ -451,7 +449,7 @@ public class ManageCertificateAction implements Serializable {
 			applianceService.updateAppliance(tmpAppliance);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update appliance");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
 			return false;
 		}
 
@@ -467,7 +465,7 @@ public class ManageCertificateAction implements Serializable {
 	 */
 	private boolean updateCertificates() {
 		if (!compare(tomcatCertFN) || !compare(idpCertFN)) {
-			facesMessages.add(Severity.ERROR, "Certificates and private keys should match. Certificate update aborted.");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificates and private keys should match. Certificate update aborted.");
 			return false;
 		}
 
@@ -476,7 +474,7 @@ public class ManageCertificateAction implements Serializable {
 		File certDir = new File(dirFN);
 		File tempDir = new File(tempDirFN);
 		if (tempDirFN == null || dirFN == null || !certDir.isDirectory() || !tempDir.isDirectory()) {
-			facesMessages.add(Severity.ERROR, "Certificate update aborted due to filesystem error");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificate update aborted due to filesystem error");
 			return false;
 		} else {
 			File[] files = tempDir.listFiles();
@@ -488,9 +486,9 @@ public class ManageCertificateAction implements Serializable {
 					}
 				} catch (IOException e) {
 					facesMessages
-							.add(Severity.FATAL,
+							.add(FacesMessage.SEVERITY_FATAL,
 									"Certificate update failed. Certificates may have been corrupted. Please contact a Gluu administrator for help.");
-					log.fatal("Error occured on certificates update:", e);
+					log.error("Error occured on certificates update:", e);
 				}
 			}
 		}
@@ -513,7 +511,7 @@ public class ManageCertificateAction implements Serializable {
 
 			applianceService.restartServices();
 
-			facesMessages.add(Severity.WARN,
+			facesMessages.add(FacesMessage.SEVERITY_WARN,
 					"Certificates were updated and appliance service will be restarted. Please log in again in 5 minutes.");
 
 			this.wereAnyChanges = false;

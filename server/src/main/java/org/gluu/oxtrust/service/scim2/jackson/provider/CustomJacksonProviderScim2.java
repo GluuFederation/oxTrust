@@ -6,6 +6,14 @@
 
 package org.gluu.oxtrust.service.scim2.jackson.provider;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
+
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -13,18 +21,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
 import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserSerializer;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
 import org.slf4j.Logger;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
 
 /**
  * RESTEasy custom Jackson provider-interceptor for registration of custom serializers and deserializers

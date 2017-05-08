@@ -13,10 +13,11 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -183,7 +184,7 @@ public class UpdateAttributeAction implements Serializable {
 				attributeService.updateAttribute(this.attribute);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update attribute {0}", ex, inum);
-				facesMessages.add(Severity.ERROR, "Failed to update attribute");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update attribute");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -222,7 +223,7 @@ public class UpdateAttributeAction implements Serializable {
 
 		String attributeOrigin = determineOrigin(attributeName);
 		if (StringHelper.isEmpty(attributeOrigin)) {
-			facesMessages.add(Severity.ERROR, "Failed to determine object class by attribute name");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to determine object class by attribute name");
 			return false;
 		}
 
@@ -237,7 +238,7 @@ public class UpdateAttributeAction implements Serializable {
 		} catch (LdapMappingException ex) {
 			log.error("Failed to add new attribute {0}", ex, this.attribute.getInum());
 
-			facesMessages.add(Severity.ERROR, "Failed to add new attribute");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new attribute");
 			return false;
 		}
 
@@ -247,14 +248,14 @@ public class UpdateAttributeAction implements Serializable {
 	private boolean validateAttributeDefinition(String attributeName) {
 		boolean containsAttribute = schemaService.containsAttributeTypeInSchema(attributeName);
 		if (!containsAttribute) {
-			facesMessages.add(Severity.ERROR, "The attribute type '{0}' not defined in LDAP schema", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The attribute type '{0}' not defined in LDAP schema", attributeName);
 			return false;
 		}
 
 		// Check if attribute defined in gluuPerson or in custom object class
 		boolean containsAttributeInGluuObjectClasses = containsAttributeInGluuObjectClasses(attributeName);
 		if (!containsAttributeInGluuObjectClasses) {
-			facesMessages.add(Severity.ERROR, "Attribute type '{0}' definition not belong to list of allowed object classes", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Attribute type '{0}' definition not belong to list of allowed object classes", attributeName);
 			return false;
 		}
 		
@@ -321,7 +322,7 @@ public class UpdateAttributeAction implements Serializable {
 
 	public boolean validateEditType() {
 		if (!(this.attribute.allowEditBy(GluuUserRole.USER) || this.attribute.allowEditBy(GluuUserRole.ADMIN))) {
-			facesMessages.add(Severity.WARN, "Please select Edit Type.");
+			facesMessages.add(FacesMessage.SEVERITY_WARN, "Please select Edit Type.");
 			return false;
 		}
 
@@ -334,7 +335,7 @@ public class UpdateAttributeAction implements Serializable {
 		tmpAttribute.setName(attributeName);
 
 		if (attributeService.containsAttribute(tmpAttribute)) {
-			facesMessages.addToControl("nameId", Severity.ERROR, "Attribute with specified name already exist");
+			facesMessages.addToControl("nameId", FacesMessage.SEVERITY_ERROR, "Attribute with specified name already exist");
 			return false;
 		}
 

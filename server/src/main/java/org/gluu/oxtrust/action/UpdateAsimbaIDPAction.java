@@ -17,7 +17,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
+
+import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
@@ -25,9 +26,9 @@ import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage;
+import org.gluu.oxtrust.util.ServiceUtil;
+import org.gluu.jsf2.message.FacesMessages;
+import org.jboss.seam.international.FacesMessage;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ import jnr.ffi.annotations.Out;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
+@SessionScoped
 @Named("updateAsimbaIDPAction")
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaIDPAction implements Serializable {
@@ -60,7 +61,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Inject
     private FacesMessages facesMessages;
 
-    @Inject(value = "#{facesContext}")
+    @Inject
     private FacesContext facesContext;
     
     @Inject
@@ -204,10 +205,10 @@ public class UpdateAsimbaIDPAction implements Serializable {
             String filepath = asimbaService.saveIDPMetadataFile(uploadedFile, idp);
             idp.setMetadataFile(filepath);
             idp.setMetadataUrl("");
-            facesMessages.add(StatusMessage.Severity.INFO, "File uploaded");
+            facesMessages.add(FacesMessage.SEVERITY_INFO, "File uploaded");
         } catch (Exception e) {
             log.error("IDP metadata - uploadFile() exception", e);
-            facesMessages.add(StatusMessage.Severity.ERROR, "Requestor metadata - uploadFile exception", e);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Requestor metadata - uploadFile exception", e);
             return OxTrustConstants.RESULT_FAILURE;
         }
         return OxTrustConstants.RESULT_SUCCESS;
@@ -218,7 +219,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         log.info("uploadCertificateFile() call for IDP");
          try {
             UploadedFile uploadedFile = event.getUploadedFile();
-            uploadedCertBytes = Utils.readFully(uploadedFile.getInputStream());
+            uploadedCertBytes = ServiceUtil.readFully(uploadedFile.getInputStream());
             
             // check alias for valid url
             String id = idp.getId();
@@ -230,16 +231,16 @@ public class UpdateAsimbaIDPAction implements Serializable {
                 String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, id);
                 // display message
                 if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
-                    facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+                    facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add Certificate ERROR: ", message);
                 } else {
-                    facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+                    facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate uploaded");
                 }
             } else {
-                facesMessages.add(StatusMessage.Severity.INFO, "Add valid URL to ID");
+                facesMessages.add(FacesMessage.SEVERITY_INFO, "Add valid URL to ID");
             }
         } catch (Exception e) {
             log.info("IDP certificate - uploadCertificateFile() exception", e);
-            facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", e.getMessage());
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add Certificate ERROR: ", e.getMessage());
             return OxTrustConstants.RESULT_VALIDATION_ERROR;
         }
         return OxTrustConstants.RESULT_SUCCESS;

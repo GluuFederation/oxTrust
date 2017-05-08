@@ -6,24 +6,29 @@
 
 package org.gluu.oxtrust.action.uma;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import org.jboss.seam.annotations.Destroy;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.security.Restrict;
-import org.slf4j.Logger;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SelectableEntity;
@@ -36,22 +41,13 @@ import org.xdi.service.JsonService;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Action class for view and update UMA scope description
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
-@Named("updateScopeDescriptionAction")
 @ConversationScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateScopeDescriptionAction implements Serializable {
 
@@ -80,7 +76,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	@Inject
 	private CustomScriptService customScriptService;
 
-    @Inject(required = false)
+    @Inject
    	private UmaConfiguration umaMetadataConfiguration;
 
 	private String scopeInum;

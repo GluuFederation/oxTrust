@@ -17,6 +17,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -33,8 +34,8 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessages;
+import org.gluu.jsf2.message.FacesMessages;
+import javax.faces.application.FacesMessage;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
@@ -70,7 +71,7 @@ public class ManagePersonAuthenticationAction
 	private Logger log;
 
 	@Inject
-	private StatusMessages statusMessages;
+	private FacesMessages FacesMessages;
 
 	@Inject
 	private ImageService imageService;
@@ -209,7 +210,7 @@ public class ManagePersonAuthenticationAction
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update appliance");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

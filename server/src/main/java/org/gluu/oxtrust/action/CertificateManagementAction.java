@@ -13,9 +13,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.Size;
+
+import javax.faces.application.FacesMessage;import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
@@ -33,8 +35,8 @@ import org.slf4j.Logger;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
-@Named("certificateManagementAction")
+@SessionScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class CertificateManagementAction implements Serializable {
 

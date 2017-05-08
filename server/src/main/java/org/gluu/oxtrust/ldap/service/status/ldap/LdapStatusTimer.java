@@ -12,8 +12,11 @@ import org.gluu.site.ldap.LDAPConnectionProvider;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import org.jboss.seam.annotations.Logger;
+
+import javax.inject.Inject;
 import javax.inject.Named;
-import org.jboss.seam.annotations.Observer;
+
+import javax.faces.application.FacesMessage;import org.jboss.seam.annotations.Observer;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.async.TimerSchedule;

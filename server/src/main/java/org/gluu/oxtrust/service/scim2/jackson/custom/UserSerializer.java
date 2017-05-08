@@ -6,29 +6,40 @@
 
 package org.gluu.oxtrust.service.scim2.jackson.custom;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.SerializerProvider;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-import org.slf4j.Logger;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.OxMultivalued;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * Custom serializer for the SCIM 2.0 User class.
@@ -41,6 +52,9 @@ public class UserSerializer extends JsonSerializer<User> {
 
     @Inject
     private Logger log;
+    
+    @Inject
+    private AttributeService attributeService;
 
     protected String attributesArray;
     protected Set<String> attributes;
@@ -85,8 +99,6 @@ public class UserSerializer extends JsonSerializer<User> {
     }
 
     protected void serializeUserExtension(Map.Entry<String, JsonNode> rootNodeEntry, ObjectMapper mapper, User user, JsonGenerator jsonGenerator) throws Exception {
-
-        AttributeService attributeService = AttributeService.instance();
         Extension extension = user.getExtension(rootNodeEntry.getKey());
 
         Map<String, Object> list = new HashMap<String, Object>();

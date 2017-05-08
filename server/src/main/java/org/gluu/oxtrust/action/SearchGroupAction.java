@@ -12,13 +12,13 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
+
+import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.international.StatusMessages;
 import org.slf4j.Logger;
 import org.xdi.util.Util;
 
@@ -36,9 +36,6 @@ public class SearchGroupAction implements Serializable {
 
 	@Inject
 	private Logger log;
-
-	@Inject
-	StatusMessages statusMessages;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be between 0 and 30")

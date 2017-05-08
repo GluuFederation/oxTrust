@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Produces;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
@@ -25,19 +28,16 @@ import javax.validation.constraints.Size;
 
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-
-import jnr.ffi.annotations.Out;
 
 
 /**
@@ -45,7 +45,7 @@ import jnr.ffi.annotations.Out;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
+@SessionScoped
 @Named("updateAsimbaSPRequestorAction")
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPRequestorAction implements Serializable {
@@ -67,11 +67,8 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Inject
     private FacesMessages facesMessages;
 
-    @Inject(value = "#{facesContext}")
-    private FacesContext facesContext;
-    
     @Inject
-    private ResourceLoader resourceLoader;
+    private FacesContext facesContext;
     
     @Inject
     private AsimbaService asimbaService;
@@ -79,7 +76,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
     @Inject
     private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
     
-    @Out
+    @Produces
     private RequestorEntry spRequestor;
     
     private boolean newEntry = true;
@@ -223,10 +220,10 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             String filepath = asimbaService.saveSPRequestorMetadataFile(uploadedFile);
             spRequestor.setMetadataFile(filepath);
             spRequestor.setMetadataUrl("");
-            facesMessages.add(StatusMessage.Severity.INFO, "File uploaded");
+            facesMessages.add(FacesMessage.SEVERITY_INFO, "File uploaded");
         } catch (Exception e) {
             log.error("Requestor metadata - uploadFile() exception", e);
-            facesMessages.add(StatusMessage.Severity.ERROR, "Requestor metadata - uploadFile exception", e);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Requestor metadata - uploadFile exception", e);
             return OxTrustConstants.RESULT_FAILURE;
         }
         return OxTrustConstants.RESULT_SUCCESS;
@@ -237,7 +234,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         log.info("uploadCertificateFile() Requestor", spRequestor);
         try {
             UploadedFile uploadedFile = event.getUploadedFile();
-            uploadedCertBytes = Utils.readFully(uploadedFile.getInputStream());
+            uploadedCertBytes = ServiceUtil.readFully(uploadedFile.getInputStream());
             
             // check alias for valid url
             String id = spRequestor.getId();
@@ -249,16 +246,16 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
                 String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, spRequestor.getId());
                 // display message
                 if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
-                    facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+                    facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add Certificate ERROR: ", message);
                 } else {
-                    facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+                    facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate uploaded");
                 }
             } else {
-                facesMessages.add(StatusMessage.Severity.INFO, "Add valid URL to ID");
+                facesMessages.add(FacesMessage.SEVERITY_INFO, "Add valid URL to ID");
             }
         } catch (Exception e) {
             log.info("Requestor certificate - uploadCertificateFile() exception", e);
-            facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", e.getMessage());
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add Certificate ERROR: ", e.getMessage());
             return OxTrustConstants.RESULT_VALIDATION_ERROR;
         }
         return OxTrustConstants.RESULT_SUCCESS;

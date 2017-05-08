@@ -21,6 +21,7 @@ import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 /**
  * @author Rahat Ali Date: 05.08.2015
  */

@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -28,7 +29,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
@@ -182,7 +183,7 @@ public class UpdatePersonAction implements Serializable {
 		this.person.getCustomAttributes().addAll(removedAttributes);
 
 		// Sync email, in reverse ("oxTrustEmail" <- "mail")
-		this.person = Utils.syncEmailReverse(this.person, true);
+		this.person = ServiceUtil.syncEmailReverse(this.person, true);
 
 		if (update) {
 			try {
@@ -290,7 +291,7 @@ public class UpdatePersonAction implements Serializable {
 			this.person.setCustomAttributes(customAttributes);
 		}
 
-		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, applicationConfiguration
+		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, appConfiguration
 				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 
 		if (newPerson) {

@@ -6,20 +6,26 @@
 
 package org.gluu.oxtrust.util;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -28,15 +34,26 @@ import org.gluu.oxtrust.model.scim2.Email;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * User: Dejan Maric
  */
-public class Utils implements Serializable {
+@Named
+public class ServiceUtil implements Serializable {
 
-	private static Logger logger = LoggerFactory.getLogger(Utils.class);
+	private static Logger logger = LoggerFactory.getLogger(ServiceUtil.class);
 
 	private static final long serialVersionUID = -2842459224631032594L;
+	
+	@Inject
+	private IPersonService personService;
+	
+	@Inject
+	private IGroupService groupService;
+	
+	@Inject
+	private AppConfiguration appConfiguration;
     
 	private static final SecureRandom random = new SecureRandom();
 
@@ -53,10 +70,7 @@ public class Utils implements Serializable {
 	 * @return void
 	 * @throws Exception
 	 */
-	public static void deleteGroupFromPerson(GluuGroup group, String dn) throws Exception {
-
-		IPersonService personService = PersonService.instance();
-
+	public void deleteGroupFromPerson(GluuGroup group, String dn) throws Exception {
 		List<String> persons = group.getMembers();
 		for (String onePerson : persons) {
 
@@ -88,7 +102,7 @@ public class Utils implements Serializable {
 
 	}
 
-	public static String iterableToString(Iterable<?> list) {
+	public String iterableToString(Iterable<?> list) {
 		if (list == null) {
 			return "";
 		}
@@ -110,10 +124,7 @@ public class Utils implements Serializable {
 	 * @return void
 	 * @throws Exception
 	 */
-	public static void deleteUserFromGroup(GluuCustomPerson person, String dn) throws Exception {
-
-		IGroupService groupService = GroupService.instance();
-
+	public void deleteUserFromGroup(GluuCustomPerson person, String dn) throws Exception {
 		List<String> groups = person.getMemberOf();
 		for (String oneGroup : groups) {
 
@@ -158,9 +169,7 @@ public class Utils implements Serializable {
 	 * @return void
 	 * @throws Exception
 	 */
-	public static void personMembersAdder(GluuGroup gluuGroup, String dn) throws Exception {
-		IPersonService personService = PersonService.instance();
-
+	public void personMembersAdder(GluuGroup gluuGroup, String dn) throws Exception {
 		List<String> members = gluuGroup.getMembers();
 
 		for (String member : members) {
@@ -174,7 +183,7 @@ public class Utils implements Serializable {
 				for (String aGroup : groups) {
 					cleanGroups.add(aGroup);
 				}
-				;
+
 				gluuPerson.setMemberOf(cleanGroups);
 				personService.updatePerson(gluuPerson);
 			}
@@ -188,7 +197,7 @@ public class Utils implements Serializable {
 	 * 
 	 * @return boolean
 	 */
-	private static boolean isMemberOfExist(List<String> groups, String dn) {
+	private boolean isMemberOfExist(List<String> groups, String dn) {
 		for (String group : groups) {
 			if (group.equalsIgnoreCase(dn)) {
 				return true;
@@ -204,10 +213,7 @@ public class Utils implements Serializable {
 	 * @return void
 	 * @throws Exception
 	 */
-	public static void groupMembersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
-
-		IGroupService groupService = GroupService.instance();
-
+	public void groupMembersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
 		List<String> groups = gluuPerson.getMemberOf();
 
 		for (String group : groups) {
@@ -236,7 +242,7 @@ public class Utils implements Serializable {
 	 * 
 	 * @return boolean
 	 */
-	private static boolean isMemberExist(List<String> groupMembers, String dn) {
+	private boolean isMemberExist(List<String> groupMembers, String dn) {
 
 		for (String member : groupMembers) {
 			if (member.equalsIgnoreCase(dn)) {
@@ -246,13 +252,13 @@ public class Utils implements Serializable {
 		return false;
 	}
 
-	public static String getPersonParentInum() {
-		return ConfigurationFactory.instance().getApplicationConfiguration().getOrgInum() + OxTrustConstants.inumDelimiter
+	public String getPersonParentInum() {
+		return appConfiguration.getOrgInum() + OxTrustConstants.inumDelimiter
 				+ OxTrustConstants.INUM_PERSON_OBJECTTYPE;
 	}
 
-	public static String getPersonParentIname() {
-		return ConfigurationFactory.instance().getApplicationConfiguration().getOrgIname() + OxTrustConstants.inameDelimiter
+	public String getPersonParentIname() {
+		return appConfiguration.getOrgIname() + OxTrustConstants.inameDelimiter
 				+ OxTrustConstants.INAME_PERSON_OBJECTTYPE;
 	}
         
@@ -263,7 +269,7 @@ public class Utils implements Serializable {
      * @return byte array
      * @throws IOException 
      */
-    public static byte[] copyUploadedFile(UploadedFile uploadedFile) throws IOException {
+    public byte[] copyUploadedFile(UploadedFile uploadedFile) throws IOException {
         
         InputStream in = uploadedFile.getInputStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -318,7 +324,7 @@ public class Utils implements Serializable {
      * @return Return full path
      * @throws IOException 
      */
-    public static String saveUploadedFile(UploadedFile uploadedFile, String baseDir, String extension) throws IOException {
+    public String saveUploadedFile(UploadedFile uploadedFile, String baseDir, String extension) throws IOException {
         byte[] fileContent = copyUploadedFile(uploadedFile);
         
         return saveRandomFile(fileContent, baseDir, extension);

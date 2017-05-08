@@ -12,6 +12,7 @@ import org.gluu.oxtrust.model.association.ClientAssociation;
 import org.gluu.oxtrust.model.association.PersonAssociation;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 @Named("mapperUtil")
 public class MapperUtil {
 

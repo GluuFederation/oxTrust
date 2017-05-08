@@ -14,7 +14,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.Consumes;
+
+import javax.faces.application.FacesMessage;import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -41,7 +42,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.GluuGroupListSerializer;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
@@ -65,6 +66,9 @@ public class GroupWebService extends BaseScimWebService {
 
 	@Inject
 	private CopyUtils copyUtils;
+
+	@Inject
+	private ServiceUtil serviceUtil;
 
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -224,7 +228,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			log.info("group.getMembers().size() : " + group.getMembers().size());
 			if (group.getMembers().size() > 0) {
-				Utils.personMembersAdder(gluuGroup, dn);
+				serviceUtil.personMembersAdder(gluuGroup, dn);
 			}
 
 			// For custom script: create group
@@ -294,7 +298,7 @@ public class GroupWebService extends BaseScimWebService {
 			GluuGroup newGluuGroup = copyUtils.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
-				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
+				serviceUtil.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
 			}
 
 			// For custom script: update group
@@ -368,7 +372,7 @@ public class GroupWebService extends BaseScimWebService {
 						String dn = groupService.getDnForGroup(id);
 						log.info(" DN : " + dn);
 
-						Utils.deleteGroupFromPerson(gluuGroup, dn);
+						serviceUtil.deleteGroupFromPerson(gluuGroup, dn);
 					}
 				}
 

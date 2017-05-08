@@ -9,7 +9,8 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import org.gluu.oxtrust.model.GluuCustomPerson;
+
+import javax.faces.application.FacesMessage;import org.gluu.oxtrust.model.GluuCustomPerson;
 
 @Stateless
 @Named("downloadService")

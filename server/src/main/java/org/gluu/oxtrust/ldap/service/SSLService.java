@@ -29,10 +29,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.slf4j.Logger;
 
 /**
@@ -126,7 +127,7 @@ public class SSLService implements Serializable {
      * @return The array of certificates
      */
     public static X509Certificate[] loadCertificates(InputStream is) throws Exception {
-        byte[] certsBytes =  Utils.readFully(is);
+        byte[] certsBytes =  ServiceUtil.readFully(is);
 
         return loadCertificates(certsBytes);
     }

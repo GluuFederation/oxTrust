@@ -18,6 +18,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
@@ -40,8 +41,8 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
-@Named("updateResourceSetAction")
 @ConversationScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateResourceSetAction implements Serializable {
 

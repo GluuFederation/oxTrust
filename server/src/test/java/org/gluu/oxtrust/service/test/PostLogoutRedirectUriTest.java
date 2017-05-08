@@ -23,9 +23,6 @@ public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 //		loginAndCheckLoggedInFacesRequest("test.login.user.admin");
 		
 		final Map<String, Object> data = new HashMap<String, Object>(6);
-		new FacesRequest() {
-            @Override
-            public void invokeApplication() throws Exception {
 //            	TrustService trustService = (TrustService) getInstance("trustService");
 //            	List<GluuSAMLTrustRelationship> trs = trustService.getAllTrustRelationships();
 //            	int trСount = trs.size();
@@ -39,7 +36,7 @@ public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 //            	
 //            	ClientService clientService = (ClientService) getInstance("clientService");
 //            	configurationFactory configurationFactory = (configurationFactory) getInstance("configurationFactory");
-//            	ApplicationConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+//            	appConfiguration appConfiguration = configurationFactory.getappConfiguration();
 //            	OxAuthClient client = clientService.getClientByInum(appConfiguration.getOxAuthClientId());
 //            	String randomUrl1 = random(1)>0?"http":"https" + "://"+ StringHelper.getRandomString(random(10)+1) + "." + StringHelper.getRandomString(random(3)+1);
 //            	String randomUrl2 = random(1)>0?"http":"https" + "://"+ StringHelper.getRandomString(random(10)+1) + "." + StringHelper.getRandomString(random(3)+1);
@@ -51,8 +48,6 @@ public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 //            	data.put("randomUrl1", randomUrl1);
 //            	data.put("randomUrl2", randomUrl2);
 //            	data.put("clientLogout", client.getPostLogoutRedirectUris());
-            }
-        }.run();
         
 		new FacesRequest("/trustmanager/update/" + (String) data.get("tr1Inum")) {
 //			

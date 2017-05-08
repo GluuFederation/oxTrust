@@ -6,11 +6,25 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -20,7 +34,6 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuCustomPersonList;
 import org.gluu.oxtrust.model.scim.ScimPerson;
@@ -30,17 +43,12 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.GluuCustomPersonListSerial
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
 import org.slf4j.Logger;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.service.XmlService;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * SCIM UserWebService Implementation
@@ -65,6 +73,9 @@ public class UserWebService extends BaseScimWebService {
     
     @Inject
     private CopyUtils copyUtils;
+
+	@Inject
+	private ServiceUtil serviceUtil;
 
 	@GET
 	@Produces({MediaType.APPLICATION_JSON,  MediaType.APPLICATION_XML})
@@ -222,11 +233,11 @@ public class UserWebService extends BaseScimWebService {
 				log.info(" jumping to groupMembersAdder ");
 				log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
 
-				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
+				serviceUtil.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
 			// Sync email, forward ("oxTrustEmail" -> "mail")
-			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
+			gluuPerson = ServiceUtil.syncEmailForward(gluuPerson, false);
 
 			// For custom script: create user
 			if (externalScimService.isEnabled()) {
@@ -299,11 +310,11 @@ public class UserWebService extends BaseScimWebService {
 			GluuCustomPerson newGluuPerson = copyUtils.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMembersAdder(newGluuPerson, personService.getDnForPerson(id));
+				serviceUtil.groupMembersAdder(newGluuPerson, personService.getDnForPerson(id));
 			}
 
 			// Sync email, forward ("oxTrustEmail" -> "mail")
-			newGluuPerson = Utils.syncEmailForward(newGluuPerson, false);
+			newGluuPerson = ServiceUtil.syncEmailForward(newGluuPerson, false);
 
 			// For custom script: update user
 			if (externalScimService.isEnabled()) {
@@ -371,7 +382,7 @@ public class UserWebService extends BaseScimWebService {
 						String dn = personService.getDnForPerson(id);
 						log.info("DN : " + dn);
 
-						Utils.deleteUserFromGroup(gluuPerson, dn);
+						serviceUtil.deleteUserFromGroup(gluuPerson, dn);
 					}
 				}
 

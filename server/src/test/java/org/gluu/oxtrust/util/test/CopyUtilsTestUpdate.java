@@ -94,6 +94,9 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 
 	private static final String OX_TRUST_MIDDLE_NAME = "oxTrustMiddleName";
 
+	@Inject
+	private CopyUtils copyUtils;
+
 	@Test
 	public void testCopyScim1EmptyUpdate() throws Exception {
 		new ComponentTest() {
@@ -101,7 +104,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 			protected void testComponents() throws Exception {
 				GluuCustomPerson destination = new GluuCustomPerson();
 				ScimPerson source = new ScimPerson();
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNotNull(copy);
 				assertNull(copy.getUid());
 				assertNull(copy.getGivenName());
@@ -279,7 +282,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -518,7 +521,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -736,7 +739,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -955,7 +958,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -1132,7 +1135,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -1298,7 +1301,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 				
 				source.setX509Certificates(null);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -1358,7 +1361,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 			protected void testComponents() throws Exception {
 				GluuCustomPerson destination = new GluuCustomPerson();
 				ScimPerson source = null;
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNull(copy);
 			}
 
@@ -1372,7 +1375,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 			protected void testComponents() throws Exception {
 				GluuCustomPerson destination = null;
 				ScimPerson source = new ScimPerson();;
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, true);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 				assertNotNull(copy);
 			}
 

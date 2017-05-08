@@ -17,6 +17,8 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
@@ -28,8 +30,8 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.util.StringHelper;
 
-@Named("federationDeconstructionAction")
 @ConversationScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class FederationDeconstructionAction implements Serializable {
 	private static final long serialVersionUID = 1216276324815043884L;
@@ -41,6 +43,9 @@ public class FederationDeconstructionAction implements Serializable {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private OrganizationService organizationService;
 	
 	private List<String> bulkFiltered;
 

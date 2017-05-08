@@ -13,7 +13,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.Consumes;
+
+import javax.faces.application.FacesMessage;import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -88,7 +89,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -172,7 +173,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -233,7 +234,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -283,7 +284,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -335,7 +336,7 @@ public class GroupWebService extends BaseScimWebService {
 		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {

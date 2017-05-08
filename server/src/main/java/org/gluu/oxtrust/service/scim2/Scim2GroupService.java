@@ -13,12 +13,13 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils2;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.joda.time.DateTime;
@@ -44,9 +45,12 @@ public class Scim2GroupService implements Serializable {
     @Inject
     private ExternalScimService externalScimService;
 
+    @Inject
+    private CopyUtils2 copyUtils2;
+
     public Group createGroup(Group group) throws Exception {
         log.debug(" copying gluuGroup ");
-        GluuGroup gluuGroup = CopyUtils2.copy(group, null, false);
+        GluuGroup gluuGroup = copyUtils2.copy(group, null, false);
         if (gluuGroup == null) {
             throw new Exception("Scim2GroupService.createGroup(): Failed to create group; GluuGroup is null");
         }
@@ -71,7 +75,7 @@ public class Scim2GroupService implements Serializable {
 
         log.info("group.getMembers().size() : " + group.getMembers().size());
         if (group.getMembers().size() > 0) {
-            Utils.personMembersAdder(gluuGroup, dn);
+            ServiceUtil.personMembersAdder(gluuGroup, dn);
         }
 
         // As per spec, the SP must be the one to assign the meta attributes
@@ -91,7 +95,7 @@ public class Scim2GroupService implements Serializable {
         log.debug("adding new GluuGroup");
         groupService.addGroup(gluuGroup);
 
-        Group createdGroup = CopyUtils2.copy(gluuGroup, null);
+        Group createdGroup = copyUtils2.copy(gluuGroup, null);
 
         return createdGroup;
     }
@@ -121,10 +125,10 @@ public class Scim2GroupService implements Serializable {
             }
         }
 
-        GluuGroup updatedGluuGroup = CopyUtils2.copy(group, gluuGroup, true);
+        GluuGroup updatedGluuGroup = copyUtils2.copy(group, gluuGroup, true);
 
         if (group.getMembers().size() > 0) {
-            Utils.personMembersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
+            ServiceUtil.personMembersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
         }
 
         log.info(" Setting meta: update group ");
@@ -145,7 +149,7 @@ public class Scim2GroupService implements Serializable {
 
         log.debug(" group updated ");
 
-        Group updatedGroup = CopyUtils2.copy(updatedGluuGroup, null);
+        Group updatedGroup = copyUtils2.copy(updatedGluuGroup, null);
 
         return updatedGroup;
     }
@@ -176,7 +180,7 @@ public class Scim2GroupService implements Serializable {
                     String dn = groupService.getDnForGroup(id);
                     log.info(" DN : " + dn);
 
-                    Utils.deleteGroupFromPerson(gluuGroup, dn);
+                    ServiceUtil.deleteGroupFromPerson(gluuGroup, dn);
                 }
             }
 

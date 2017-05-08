@@ -251,19 +251,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 		return smtpPassword;
 	}
 
-	public void setSmtpPassword(String smtpPassword) {
-		if (smtpPassword != null && !smtpPassword.equals("")) {
-			this.smtpPassword = smtpPassword;
-			smtpPasswordStr = smtpPassword;
-			try {
-				String cryptoConfigurationSalt = ConfigurationFactory.instance().getCryptoConfigurationSalt();
-				smtpPasswordStr = StringEncrypter.defaultInstance().decrypt(smtpPasswordStr, cryptoConfigurationSalt);
-			} catch (Exception ex) {
-				log.error("Failed to decrypt password: " + smtpPassword, ex);
-			}
-		}
-	}
-
 	public String getSmtpPasswordStr() {
 		return smtpPasswordStr;
 	}

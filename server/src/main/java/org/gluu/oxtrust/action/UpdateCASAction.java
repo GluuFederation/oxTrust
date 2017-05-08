@@ -10,31 +10,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.PropertiesConfigurationLayout;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.CASService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.jboss.seam.faces.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
-
-import jnr.ffi.annotations.Out;
 
 /**
  * Action class for updating CAS protocol Shibboleth IDP properties.
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
-@Named("updateCASAction")
+@SessionScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateCASAction implements Serializable {
 
@@ -65,21 +65,24 @@ public class UpdateCASAction implements Serializable {
     @Inject
     private FacesMessages facesMessages;
 
-    @Inject(value = "#{facesContext}")
+    @Inject
     private FacesContext facesContext;
     
     @Inject
-    private ResourceLoader resourceLoader;
+    private TrustService trustService;
+    
+    @Inject
+    private Shibboleth3ConfService shibboleth3ConfService;
     
     @Inject
     private CASService casService;
     
-    @Out
+    @Produces
     private String casBaseURL;
     
     private List<String> sessionStorageTypes = new ArrayList<String>();
     
-    @Out
+    @Produces
     private ShibbolethCASProtocolConfiguration configuration;
     
     public UpdateCASAction() {
@@ -157,7 +160,7 @@ public class UpdateCASAction implements Serializable {
         try {
             log.info("enable() CAS call");
             // enable server-side storage in idp.properties
-            String idpConfFolder = Shibboleth3ConfService.instance().getIdpConfDir();
+            String idpConfFolder = shibboleth3ConfService.getIdpConfDir();
             PropertiesConfiguration idpPropertiesConfiguration = new PropertiesConfiguration(idpConfFolder + Shibboleth3ConfService.SHIB3_IDP_PROPERTIES_FILE);
             PropertiesConfigurationLayout layoutConfiguration = new PropertiesConfigurationLayout(idpPropertiesConfiguration);
             
@@ -180,7 +183,7 @@ public class UpdateCASAction implements Serializable {
         try {
             log.info("disable() CAS call");
             // enable server-side storage in idp.properties
-            String idpConfFolder = Shibboleth3ConfService.instance().getIdpConfDir();
+            String idpConfFolder = shibboleth3ConfService.getIdpConfDir();
             PropertiesConfiguration idpPropertiesConfiguration = new PropertiesConfiguration(idpConfFolder + Shibboleth3ConfService.SHIB3_IDP_PROPERTIES_FILE);
             PropertiesConfigurationLayout layoutConfiguration = new PropertiesConfigurationLayout(idpPropertiesConfiguration);
             
@@ -198,10 +201,10 @@ public class UpdateCASAction implements Serializable {
             log.error("disable() CAS exception", e);
         }
     }
-    
+
     private void updateShibboleth3Configuration() {
-        List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
-        Shibboleth3ConfService.instance().generateConfigurationFiles(trustRelationships);
+        List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
+        shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
     }
 
     /**

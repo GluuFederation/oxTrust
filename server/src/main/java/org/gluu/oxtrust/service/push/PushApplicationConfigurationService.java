@@ -22,7 +22,8 @@ import org.jboss.seam.annotations.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.enterprise.context.ApplicationScoped;
+
+import javax.faces.application.FacesMessage;import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 
@@ -32,7 +33,7 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan Date: 02/03/2014
  */
 @ApplicationScoped
-@Named("pushApplicationConfigurationService")
+@Named("PushApplicationConfigurationService")
 public class PushApplicationConfigurationService implements Serializable {
 
 	private static final long serialVersionUID = -3486468321593831158L;
@@ -53,7 +54,7 @@ public class PushApplicationConfigurationService implements Serializable {
 	public List<String> getPlatformDescriptionList(PushApplication pushApplication) {
 		List<String> result = new ArrayList<String>();
 		
-		List<HashMap<String, String>> platformConfigurations = pushApplication.getApplicationConfiguration().getPlatforms();
+		List<HashMap<String, String>> platformConfigurations = pushApplication.getappConfiguration().getPlatforms();
 		for (HashMap<String, String> platformConfiguration : platformConfigurations) {
 			String platformId = platformConfiguration.get("name");
 			String platform = this.supportedPlatforms.get(platformId);

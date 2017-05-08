@@ -42,7 +42,8 @@ import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.annotations.Observer;
+
+import javax.faces.application.FacesMessage;import org.jboss.seam.annotations.Observer;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
@@ -134,7 +135,7 @@ public class StatusCheckerTimer {
 	 */
 	private void processInt() {
 		log.debug("Starting update of appliance status");
-		AppConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+		AppConfiguration appConfiguration = configurationFactory.getappConfiguration();
 		if (!appConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}
@@ -216,7 +217,7 @@ public class StatusCheckerTimer {
 
 	private void setHttpdAttributes(GluuAppliance appliance) {
 		log.debug("Setting httpd attributes");
-		AppConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+		AppConfiguration appConfiguration = configurationFactory.getappConfiguration();
 		String page = getHttpdPage(appConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
 		appliance.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
 
@@ -224,7 +225,7 @@ public class StatusCheckerTimer {
 /*
 	private void setVDSAttributes(GluuAppliance appliance) {
 		log.debug("Setting VDS attributes");
-		ApplicationConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+		appConfiguration appConfiguration = configurationFactory.getappConfiguration();
 		// Run vds check only on if vds.test.filter is set
 		if (appConfiguration.getVdsFilter() == null) {
 			return;

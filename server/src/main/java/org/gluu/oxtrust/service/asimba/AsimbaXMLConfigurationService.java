@@ -17,7 +17,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.xml.xpath.XPath;
+
+import javax.faces.application.FacesMessage;import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
@@ -25,7 +26,7 @@ import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -121,7 +122,7 @@ public class AsimbaXMLConfigurationService implements Serializable {
      * @throws IOException 
      */
     public synchronized String addCertificateFile(UploadedFile uploadedFile, String alias) throws IOException {
-        byte[] certsBytes = Utils.readFully(uploadedFile.getInputStream());
+        byte[] certsBytes = ServiceUtil.readFully(uploadedFile.getInputStream());
         return addCertificateFile(certsBytes, alias);
     }
     

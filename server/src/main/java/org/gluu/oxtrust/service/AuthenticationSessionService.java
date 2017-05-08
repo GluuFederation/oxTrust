@@ -6,17 +6,15 @@
 
 package org.gluu.oxtrust.service;
 
+import java.awt.Component;
 import java.util.UUID;
 
-import org.gluu.oxtrust.security.OauthData;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Destroy;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import org.gluu.oxtrust.security.OauthData;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.EndSessionClient;
@@ -24,8 +22,8 @@ import org.xdi.oxauth.client.EndSessionRequest;
 import org.xdi.oxauth.client.EndSessionResponse;
 import org.xdi.util.StringHelper;
 
-@Scope(ScopeType.SESSION)
-@Named("authenticationSessionService")
+@SessionScoped
+@Named
 public class AuthenticationSessionService {
 
 	@Inject
@@ -37,7 +35,7 @@ public class AuthenticationSessionService {
 	@Inject
 	private AppConfiguration appConfiguration;
 
-    @Destroy
+    @PreDestroy
     public void sessionDestroyed() {
     	OauthData oauthData = (OauthData) Component.getInstance(OauthData.class, false);
     	if ((oauthData == null) || StringHelper.isEmpty(oauthData.getSessionState())) {

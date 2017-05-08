@@ -10,12 +10,13 @@ import java.io.Serializable;
 
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 /**
  * @author Dejan Maric
  * @author Yuriy Movchan
  * @version 0.1, 12/10/2012
  */
-@Named("oauthData")
+@Named
 public class OauthData implements Serializable {
 
 	private static final long serialVersionUID = 3768651940107346004L;

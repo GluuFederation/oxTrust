@@ -8,6 +8,8 @@ import static org.testng.AssertJUnit.assertNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.gluu.oxtrust.action.test.ConfigurableTest;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -27,9 +29,8 @@ import org.gluu.oxtrust.model.scim.Scimx509Certificates;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.testng.annotations.Test;
 
-
-
 public class CopyUtilsTestCreate extends ConfigurableTest {
+
 	private static final String GLUU_STATUS = "gluuStatus";
 
 	private static final String OX_TRUST_PHOTOS_TYPE = "oxTrustPhotosType";
@@ -100,6 +101,9 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 
 	private static final String OX_TRUST_MIDDLE_NAME = "oxTrustMiddleName";
 
+	@Inject
+	private CopyUtils copyUtils;
+
 	@Test
 	public void testCopyScim1EmptyCreate() throws Exception {
 		new ComponentTest() {
@@ -107,7 +111,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 			protected void testComponents() throws Exception {
 				GluuCustomPerson destination = new GluuCustomPerson();
 				ScimPerson source = new ScimPerson();
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNull(copy);
 			}
 		}.run();
@@ -239,7 +243,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -478,7 +482,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNull(copy);
 			}
 		}.run();
@@ -618,7 +622,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -795,7 +799,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -961,7 +965,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 				
 				source.setX509Certificates(null);
 				
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNotNull(copy);
 				assertEquals(copy.getUid(),"userName");
 				assertEquals(copy.getGivenName(),"givenName");
@@ -1021,7 +1025,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 			protected void testComponents() throws Exception {
 				GluuCustomPerson destination = new GluuCustomPerson();
 				ScimPerson source = null;
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNull(copy);
 			}
 
@@ -1153,7 +1157,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 				List<Scimx509Certificates> x509Certificates = new ArrayList<Scimx509Certificates>();
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNotNull(copy);
 			}
 
@@ -1284,7 +1288,7 @@ public class CopyUtilsTestCreate extends ConfigurableTest {
 				List<Scimx509Certificates> x509Certificates = new ArrayList<Scimx509Certificates>();
 				x509Certificates.add(cert);
 				source.setX509Certificates(x509Certificates);
-				GluuCustomPerson copy = CopyUtils.copy(source, destination, false);
+				GluuCustomPerson copy = copyUtils.copy(source, destination, false);
 				assertNull(copy);
 			}
 

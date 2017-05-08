@@ -18,13 +18,14 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuAttribute;
@@ -167,7 +168,7 @@ public class UpdateScopeAction implements Serializable {
 		// } catch (LdapMappingException ex) {
 		// log.error("error getting oldClaims",ex);
 		//
-		// facesMessages.add(Severity.ERROR, "Failed to update scope");
+		// facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope");
 		// return Configuration.RESULT_FAILURE;
 		// }
 
@@ -182,7 +183,7 @@ public class UpdateScopeAction implements Serializable {
 				log.info("error updating scope ", ex);
 				log.error("Failed to update scope {0}", ex, this.inum);
 
-				facesMessages.add(Severity.ERROR, "Failed to update scope");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -198,7 +199,7 @@ public class UpdateScopeAction implements Serializable {
 				log.info("error saving scope ");
 				log.error("Failed to add new scope {0}", ex, this.scope.getInum());
 
-				facesMessages.add(Severity.ERROR, "Failed to add new scope");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
 				return OxTrustConstants.RESULT_FAILURE;
 
 			}

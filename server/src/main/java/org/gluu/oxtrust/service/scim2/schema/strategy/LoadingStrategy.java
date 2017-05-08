@@ -16,5 +16,5 @@ import org.xdi.config.oxtrust.AppConfiguration;
  */
 public interface LoadingStrategy {
 
-    SchemaType load(AppConfiguration applicationConfiguration, SchemaType schemaType) throws Exception;
+    SchemaType load(AppConfiguration appConfiguration, SchemaType schemaType) throws Exception;
 }

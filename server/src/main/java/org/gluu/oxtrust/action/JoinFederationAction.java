@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,19 +22,18 @@ import javax.inject.Named;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.FederationService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.faces.FacesMessages;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.ExcludeFilterInputStream;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
-
-import jnr.ffi.annotations.Out;
 
 @ConversationScoped
 @Named("joinFederationAction")
@@ -44,8 +45,11 @@ public class JoinFederationAction implements Serializable {
 
 	private String inum;
 
-	@Inject(value = "#{facesContext}")
+	@Inject
 	private FacesContext facesContext;
+
+	@Inject
+	private OrganizationService organizationService;
 
 	@Inject
 	private FederationService federationService;
@@ -56,8 +60,8 @@ public class JoinFederationAction implements Serializable {
 	@Inject
 	private FacesMessages facesMessages;
 
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
+	@Produces
 	private TrustContactsAction trustContactsAction;
 
 	private FileUploadWrapper fileWrapper = new FileUploadWrapper();
@@ -141,7 +145,7 @@ public class JoinFederationAction implements Serializable {
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
-			facesMessages.add(Severity.ERROR, "You should accept Federation Policies and Operating Procedures");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "You should accept Federation Policies and Operating Procedures");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 	}
@@ -159,7 +163,7 @@ public class JoinFederationAction implements Serializable {
 		}
 
 		if (!result) {
-			facesMessages.add(Severity.ERROR, "Failed to save meta-data file. Please check if you provide correct file");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to save meta-data file. Please check if you provide correct file");
 			return result;
 		}
 
@@ -167,7 +171,7 @@ public class JoinFederationAction implements Serializable {
 			return true;
 		}
 
-		facesMessages.add(Severity.ERROR, "Failed to parse meta-data file. Please check if you provide correct file");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to parse meta-data file. Please check if you provide correct file");
 		shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
 
 		return false;
@@ -277,7 +281,6 @@ public class JoinFederationAction implements Serializable {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			Shibboleth3ConfService shibboleth3ConfService = Shibboleth3ConfService.instance();
 			ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
 			String head = String
 					.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<EntitiesDescriptor Name=\"%s\"  xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\">\n",

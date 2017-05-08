@@ -13,7 +13,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+
+import javax.faces.application.FacesMessage;import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -39,7 +40,7 @@ import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 
 /**
@@ -64,6 +65,9 @@ public class BulkWebService extends BaseScimWebService {
 
 	@Inject
 	private CopyUtils copyUtils;
+
+	@Inject
+	private ServiceUtil serviceUtil;
 
 	@Inject
 	private ExternalScimService externalScimService;
@@ -353,11 +357,11 @@ public class BulkWebService extends BaseScimWebService {
 			gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
+				serviceUtil.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
 			// Sync email, forward ("oxTrustEmail" -> "mail")
-			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
+			gluuPerson = ServiceUtil.syncEmailForward(gluuPerson, false);
 
 			// For custom script: create user
 			if (externalScimService.isEnabled()) {
@@ -384,11 +388,11 @@ public class BulkWebService extends BaseScimWebService {
 			gluuPerson = copyUtils.copy(person_update, gluuPerson, true);
 
 			if (person_update.getGroups().size() > 0) {
-				Utils.groupMembersAdder(gluuPerson, personService.getDnForPerson(uid));
+				serviceUtil.groupMembersAdder(gluuPerson, personService.getDnForPerson(uid));
 			}
 
 			// Sync email, forward ("oxTrustEmail" -> "mail")
-			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
+			gluuPerson = ServiceUtil.syncEmailForward(gluuPerson, false);
 
 			// For custom script: update user
 			if (externalScimService.isEnabled()) {
@@ -428,7 +432,7 @@ public class BulkWebService extends BaseScimWebService {
 
 					if (gluuPerson.getMemberOf().size() > 0) {
 						String dn = personService.getDnForPerson(uid);
-						Utils.deleteUserFromGroup(gluuPerson, dn);
+						serviceUtil.deleteUserFromGroup(gluuPerson, dn);
 					}
 				}
 
@@ -470,7 +474,7 @@ public class BulkWebService extends BaseScimWebService {
 			log.debug("adding new GluuGroup");
 
 			if (group.getMembers().size() > 0) {
-				Utils.personMembersAdder(gluuGroup, dn);
+				serviceUtil.personMembersAdder(gluuGroup, dn);
 			}
 
 			// For custom script: create group
@@ -498,7 +502,7 @@ public class BulkWebService extends BaseScimWebService {
 			GluuGroup newGluuGroup = copyUtils.copy(group, gluuGroup, true);
 
 			if (group.getMembers().size() > 0) {
-				Utils.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
+				serviceUtil.personMembersAdder(newGluuGroup, groupService.getDnForGroup(id));
 			}
 
 			// For custom script: update group
@@ -540,7 +544,7 @@ public class BulkWebService extends BaseScimWebService {
 
 					if (gluuGroup.getMembers().size() > 0) {
 						String dn = groupService.getDnForGroup(id);
-						Utils.deleteGroupFromPerson(gluuGroup, dn);
+						serviceUtil.deleteGroupFromPerson(gluuGroup, dn);
 					}
 				}
 

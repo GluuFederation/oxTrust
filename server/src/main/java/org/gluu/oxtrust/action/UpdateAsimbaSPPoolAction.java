@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,14 +25,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.faces.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-
-import jnr.ffi.annotations.Out;
 
 
 /**
@@ -38,8 +38,8 @@ import jnr.ffi.annotations.Out;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
-@Named("updateAsimbaSPPoolAction")
+@SessionScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPPoolAction implements Serializable {
 
@@ -60,16 +60,13 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     @Inject
     private FacesMessages facesMessages;
 
-    @Inject(value = "#{facesContext}")
-    private FacesContext facesContext;
-    
     @Inject
-    private ResourceLoader resourceLoader;
+    private FacesContext facesContext;
     
     @Inject
     private AsimbaService asimbaService;
     
-    @Out
+    @Produces
     private RequestorPoolEntry spPool;
     
     private boolean newEntry = true;

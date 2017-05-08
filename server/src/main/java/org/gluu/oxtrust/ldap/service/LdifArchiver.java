@@ -11,25 +11,36 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Calendar;
 
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import javax.faces.application.FacesMessage;
 import org.gluu.site.ldap.persistence.DeleteNotifier;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xdi.config.oxtrust.AppConfiguration;
 
+@Stateless
+@Named
 public class LdifArchiver implements DeleteNotifier {
 
-	LdapEntryManager ldapEntryManager;
+	@Inject
+	private Logger log;
 
-	private static final Logger log = LoggerFactory.getLogger(LdifArchiver.class);
+	@Inject
+	private LdapEntryManager ldapEntryManager;
+	
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private String storeDir;
 
 	private boolean disable;
 
-	public LdifArchiver(LdapEntryManager ldapEntryManager) {
-		AppConfiguration applicationConfiguration = ConfigurationFactory.instance().getApplicationConfiguration();
+	@PostConstruct
+	public void init() {
 		storeDir = appConfiguration.getLdifStore();
 		if (storeDir != null) {
 			File store = new File(storeDir);
@@ -37,8 +48,6 @@ public class LdifArchiver implements DeleteNotifier {
 		} else {
 			disable = true;
 		}
-
-		this.ldapEntryManager = ldapEntryManager;
 	}
 
 	public void onBeforeRemove(String dn) {

@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.slf4j.Logger;
 import org.xdi.model.GluuIMAPData;
 import org.xdi.service.JsonService;

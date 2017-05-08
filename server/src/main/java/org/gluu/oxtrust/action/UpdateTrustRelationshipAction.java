@@ -40,7 +40,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
+
+import javax.faces.application.FacesMessage;import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -72,7 +73,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.jboss.seam.web.ServletContexts;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -141,7 +142,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	@Inject
 	private FacesMessages facesMessages;
 
-	@Inject(value = "#{facesContext}")
+	@Inject
 	private FacesContext facesContext;
 
 	@Inject(create = true)
@@ -192,7 +193,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 
 	@Inject(value="#{facesContext.externalContext}")
-	private ExternalContext extCtx;
+	private ExternalContext externalContext;
 
 	// @Inject
 	// private ResourceLoader resourceLoader;
@@ -441,7 +442,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		initTrustRelationship(trust, attributes);
 
-		customAttributeAction.initCustomAttributes(attributes, trust.getReleasedCustomAttributes(), origins, applicationConfiguration
+		customAttributeAction.initCustomAttributes(attributes, trust.getReleasedCustomAttributes(), origins, appConfiguration
 				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 	}
 
@@ -562,7 +563,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 			} catch (CertificateEncodingException e) {
 				certificate = null;
-				facesMessages.add(Severity.ERROR, "Failed to encode provided certificate. Please notify Gluu support about this.");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to encode provided certificate. Please notify Gluu support about this.");
 				log.error("Failed to encode certificate to DER", e);
 			}
 
@@ -756,13 +757,13 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
 
 			log.error("Failed to update Shibboleth v3 configuration");
-			facesMessages.add(Severity.ERROR, "Failed to update Shibboleth v3 configuration");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");
 
 		} else {
 
 			log.info("Shibboleth v3 configuration updated successfully");
 			facesMessages.add(Severity.INFO, "Shibboleth v3 configuration updated successfully");
-			facesMessages.add(Severity.WARN, "Please note it may take several minutes before new settings are actually loaded and applied by Shibboleth module!");
+			facesMessages.add(FacesMessage.SEVERITY_WARN, "Please note it may take several minutes before new settings are actually loaded and applied by Shibboleth module!");
 		}
 	}
 
@@ -771,9 +772,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		if (result) {
 			this.trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
-			facesMessages.add(Severity.WARN, "SP meta-data file generated.");
+			facesMessages.add(FacesMessage.SEVERITY_WARN, "SP meta-data file generated.");
 		} else {
-			facesMessages.add(Severity.ERROR, "Failed to generate SP meta-data file");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to generate SP meta-data file");
 			markAsInactive();
 		}
 		return result;
@@ -832,7 +833,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		if (StringHelper.isNotEmpty(result)) {
 			MetadataValidationTimer.queue(result);
 		} else {
-			facesMessages.add(Severity.ERROR, "Failed to save SP meta-data file. Please check if you provide correct file");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to save SP meta-data file. Please check if you provide correct file");
 		}
 
 		return StringHelper.isNotEmpty(result);
@@ -852,7 +853,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		if (StringHelper.isNotEmpty(result)) {
 			MetadataValidationTimer.queue(result);
 		} else {
-			facesMessages.add(Severity.ERROR, "Failed to download metadata");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download metadata");
 		}
 
 		return StringHelper.isNotEmpty(result);

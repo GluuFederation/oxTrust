@@ -9,7 +9,8 @@ package org.gluu.oxtrust.ldap.service;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.net.ssl.HttpsURLConnection;
+
+import javax.faces.application.FacesMessage;import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;

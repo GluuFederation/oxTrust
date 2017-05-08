@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -23,7 +24,7 @@ import org.slf4j.Logger;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
+@SessionScoped
 @Named("asimbaAddSPAction")
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class AsimbaAddSPAction implements Serializable {

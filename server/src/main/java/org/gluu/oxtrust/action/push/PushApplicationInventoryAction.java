@@ -12,7 +12,8 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
+
+import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.model.push.PushApplication;
@@ -49,7 +50,7 @@ public class PushApplicationInventoryAction implements Serializable {
 	private PushApplicationService pushApplicationService;
 	
 	@Inject
-	private PushApplicationConfigurationService pushApplicationConfigurationService;
+	private PushApplicationConfigurationService PushApplicationConfigurationService;
 
 	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
 	public String start() {
@@ -76,7 +77,7 @@ public class PushApplicationInventoryAction implements Serializable {
 
 	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
 	public List<String> getPlatforms(PushApplication pushApplication) {
-		List<String> platforms = pushApplicationConfigurationService.getPlatformDescriptionList(pushApplication);
+		List<String> platforms = PushApplicationConfigurationService.getPlatformDescriptionList(pushApplication);
 		
 		return platforms;
 	}

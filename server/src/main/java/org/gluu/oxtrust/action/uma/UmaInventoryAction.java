@@ -13,7 +13,8 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
+
+import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.ClientService;
@@ -34,8 +35,8 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 04/24/2013
  */
-@Named("umaInventoryAction")
 @ConversationScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class UmaInventoryAction implements Serializable {
 

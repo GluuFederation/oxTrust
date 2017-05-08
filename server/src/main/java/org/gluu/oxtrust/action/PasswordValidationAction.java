@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -27,9 +28,8 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 12/20/2012
  */
-@Scope(ScopeType.EVENT)
-@Named("passwordValidationAction")
-
+@RequestScoped
+@Named
 public class PasswordValidationAction implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1952428504080910113L;

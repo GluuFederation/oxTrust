@@ -11,7 +11,8 @@ import java.util.Set;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
+
+import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,8 +23,8 @@ import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage;
+import org.gluu.jsf2.message.FacesMessages;
+import org.jboss.seam.international.FacesMessage;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
@@ -149,7 +150,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
             log.info("error getting old clients");
             log.error("Failed to load client display names", ex);
 
-            facesMessages.add(StatusMessage.Severity.ERROR, "Failed to update sector identifier");
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier");
             return OxTrustConstants.RESULT_FAILURE;
         }
 
@@ -164,7 +165,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 log.info("error updating sector identifier ", ex);
                 log.error("Failed to update sector identifier {0}", ex, this.inum);
 
-                facesMessages.add(StatusMessage.Severity.ERROR, "Failed to update sector identifier");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier");
                 return OxTrustConstants.RESULT_FAILURE;
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -183,7 +184,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 log.info("error saving sector identifier ");
                 log.error("Failed to add new sector identifier {0}", ex, this.sectorIdentifier.getInum());
 
-                facesMessages.add(StatusMessage.Severity.ERROR, "Failed to add new sector identifier");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
                 return OxTrustConstants.RESULT_FAILURE;
             }
 

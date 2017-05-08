@@ -11,6 +11,7 @@ import java.io.Serializable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.CentralLdapService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -21,7 +22,7 @@ import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @Named("appliancePasswordAction")
-@Scope(ScopeType.EVENT)
+@RequestScoped
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class AppliancePasswordAction implements Serializable {
 

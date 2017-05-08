@@ -24,12 +24,14 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
+import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.config.oxtrust.LdapconfigurationFactory;
 import org.xdi.oxauth.client.*;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
@@ -75,9 +77,9 @@ public class JsonConfigurationService implements Serializable {
 	@Inject
 	private ApplianceService applianceService;
 
-	public AppConfiguration getOxTrustApplicationConfiguration() {
-		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
-		return ldapconfigurationFactory.getApplication();
+	public AppConfiguration getOxTrustappConfiguration() {
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		return ldapOxTrustConfiguration.getApplication();
 	}
 	
 	public CacheConfiguration getOxMemCacheConfiguration() {
@@ -93,20 +95,20 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public ImportPersonConfig getOxTrustImportPersonConfiguration() {
-		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
-		return ldapconfigurationFactory.getImportPersonConfig();
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		return ldapOxTrustConfiguration.getImportPersonConfig();
 	}
 
 	public CacheRefreshConfiguration getOxTrustCacheRefreshConfiguration() {
-		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
-		return ldapconfigurationFactory.getCacheRefresh();
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		return ldapOxTrustConfiguration.getCacheRefresh();
 	}
 
-	private LdapconfigurationFactory getconfigurationFactory() {
+	private LdapOxTrustConfiguration getOxTrustConfiguration() {
 		String configurationDn = configurationFactory.getConfigurationDn();
 
-		LdapconfigurationFactory ldapconfigurationFactory = loadOxTrustConfig(configurationDn);
-		return ldapconfigurationFactory;
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = loadOxTrustConfig(configurationDn);
+		return ldapOxTrustConfiguration;
 	}
 
 	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
@@ -116,27 +118,27 @@ public class JsonConfigurationService implements Serializable {
 		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
 	}
 
-	public boolean saveOxTrustApplicationConfiguration(AppConfiguration oxTrustApplicationConfiguration) {
-		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
-		ldapconfigurationFactory.setApplication(oxTrustApplicationConfiguration);
-		ldapconfigurationFactory.setRevision(ldapconfigurationFactory.getRevision() + 1);
-		ldapEntryManager.merge(ldapconfigurationFactory);
+	public boolean saveOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		ldapOxTrustConfiguration.setApplication(oxTrustappConfiguration);
+		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
+		ldapEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
 	}
 
 	public boolean saveOxTrustImportPersonConfiguration(ImportPersonConfig oxTrustImportPersonConfiguration) {
-		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
-		ldapconfigurationFactory.setImportPersonConfig(oxTrustImportPersonConfiguration);
-		ldapconfigurationFactory.setRevision(ldapconfigurationFactory.getRevision() + 1);
-		ldapEntryManager.merge(ldapconfigurationFactory);
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		ldapOxTrustConfiguration.setImportPersonConfig(oxTrustImportPersonConfiguration);
+		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
+		ldapEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
 	}
 
 	public boolean saveOxTrustCacheRefreshConfiguration(CacheRefreshConfiguration oxTrustCacheRefreshConfiguration) {
-		LdapconfigurationFactory ldapconfigurationFactory = getconfigurationFactory();
-		ldapconfigurationFactory.setCacheRefresh(oxTrustCacheRefreshConfiguration);
-		ldapconfigurationFactory.setRevision(ldapconfigurationFactory.getRevision() + 1);
-		ldapEntryManager.merge(ldapconfigurationFactory);
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		ldapOxTrustConfiguration.setCacheRefresh(oxTrustCacheRefreshConfiguration);
+		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
+		ldapEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
 	}
 
@@ -150,9 +152,9 @@ public class JsonConfigurationService implements Serializable {
 		return true;
 	}
 
-	private LdapconfigurationFactory loadOxTrustConfig(String configurationDn) {
+	private LdapOxTrustConfiguration loadOxTrustConfig(String configurationDn) {
 		try {
-			LdapconfigurationFactory conf = ldapEntryManager.find(LdapconfigurationFactory.class, configurationDn);
+			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
 
 			return conf;
 		} catch (LdapMappingException ex) {
@@ -174,13 +176,9 @@ public class JsonConfigurationService implements Serializable {
 		return null;
 	}
 
-	public static JsonConfigurationService instance() {
-		return (JsonConfigurationService) Component.getInstance(JsonConfigurationService.class);
-	}
-
 	public void processScimTestModeIsTrue(AppConfiguration source, AppConfiguration current) throws Exception {
 
-		AppConfiguration applicationConfiguration = getOxTrustApplicationConfiguration();
+		AppConfiguration appConfiguration = getOxTrustappConfiguration();
 
 		if (current.isScimTestMode()) {
 			OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
@@ -189,7 +187,6 @@ public class JsonConfigurationService implements Serializable {
 
 			if (source.getScimTestModeAccessToken() != null && !source.getScimTestModeAccessToken().isEmpty()) {
 				// Check if current token is still valid
-
 				String validateTokenEndpoint = openIdConfiguration.getValidateTokenEndpoint();
 
 				ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);

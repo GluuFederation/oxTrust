@@ -6,35 +6,45 @@
 
 package org.gluu.oxtrust.service.scim2.schema.strategy;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.Address;
+import org.gluu.oxtrust.model.scim2.Email;
+import org.gluu.oxtrust.model.scim2.Entitlement;
+import org.gluu.oxtrust.model.scim2.GroupRef;
+import org.gluu.oxtrust.model.scim2.Im;
+import org.gluu.oxtrust.model.scim2.Meta;
+import org.gluu.oxtrust.model.scim2.PhoneNumber;
+import org.gluu.oxtrust.model.scim2.Photo;
+import org.gluu.oxtrust.model.scim2.Role;
+import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeUserSerializer;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Loading strategy for the User Core schema.
  *
  * @author Val Pecaoco
  */
-@Named("userCoreLoadingStrategy")
+@Named
 public class UserCoreLoadingStrategy implements LoadingStrategy {
 
     @Inject
     private Logger log;
 
     @Override
-    public SchemaType load(AppConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
-
+    public SchemaType load(AppConfiguration appConfiguration, SchemaType schemaType) throws Exception {
         log.info(" load() ");
 
         Meta meta = new Meta();

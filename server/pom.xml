@@ -280,6 +280,20 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- Richfaces -->
+		<dependency>
+			<groupId>org.richfaces</groupId>
+			<artifactId>richfaces-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.richfaces</groupId>
+			<artifactId>richfaces</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.richfaces</groupId>
+			<artifactId>richfaces-a4j</artifactId>
+		</dependency>
 
 		<!-- Pretty Faces -->
 		<dependency>

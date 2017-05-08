@@ -17,7 +17,8 @@ import java.util.Set;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
+
+import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.IGroupService;
@@ -28,7 +29,7 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.faces.FacesMessages;
+import org.gluu.jsf2.message.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
@@ -153,7 +154,7 @@ public class UpdateGroupAction implements Serializable {
 			log.info("error getting oldmembers");
 			log.error("Failed to load person display names", ex);
 
-			facesMessages.add(Severity.ERROR, "Failed to update group");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -168,7 +169,7 @@ public class UpdateGroupAction implements Serializable {
 				log.info("error updating group ", ex);
 				log.error("Failed to update group {0}", ex, this.inum);
 
-				facesMessages.add(Severity.ERROR, "Failed to update group");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -185,7 +186,7 @@ public class UpdateGroupAction implements Serializable {
 				log.info("error saving group ");
 				log.error("Failed to add new group {0}", ex, this.group.getInum());
 
-				facesMessages.add(Severity.ERROR, "Failed to add new group");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
 				return OxTrustConstants.RESULT_FAILURE;
 
 			}

@@ -18,7 +18,8 @@ import org.jboss.seam.annotations.Create;
 import javax.inject.Inject;
 import org.jboss.seam.annotations.Logger;
 import javax.inject.Named;
-import org.jboss.seam.annotations.Observer;
+
+import javax.faces.application.FacesMessage;import org.jboss.seam.annotations.Observer;
 import javax.enterprise.context.ConversationScoped;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
@@ -98,7 +99,7 @@ public class StatusCheckerDaily {
 	 */
 	private void processInt() {
 		log.debug("Starting daily status checker");
-		AppConfiguration applicationConfiguration = configurationFactory.getApplicationConfiguration();
+		AppConfiguration appConfiguration = configurationFactory.getappConfiguration();
 		if (!appConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}

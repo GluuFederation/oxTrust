@@ -15,14 +15,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mail.AuthenticationFailedException;
+
+import javax.faces.application.FacesMessage;import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -34,8 +37,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.core.Events;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessages;
+import org.gluu.jsf2.message.FacesMessages;
+import javax.faces.application.FacesMessage;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -60,7 +63,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private StatusMessages statusMessages;
+	private FacesMessages FacesMessages;
 
 	@Inject
 	private GluuCustomPerson currentPerson;
@@ -82,6 +85,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+
+	@Inject
+	private AppInitializer appInitializer;
 
 	private GluuOrganization organization;
 
@@ -189,7 +195,7 @@ public class UpdateOrganizationAction implements Serializable {
 			/* Resolv.conf update */
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update organization", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update organization");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update organization");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -271,7 +277,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 		try {
-			String buildDate = OxTrustConstants.getGluuBuildDate();
+			String buildDate = appInitializer.getGluuBuildDate();
 			final Date date = formatter.parse(buildDate);
 			this.buildDate = new SimpleDateFormat("hh:mm MMM dd yyyy").format(date) + " UTC";
 		} catch (ParseException e) {
@@ -287,7 +293,7 @@ public class UpdateOrganizationAction implements Serializable {
 			return this.buildNumber;
 		}
 
-		this.buildNumber = OxTrustConstants.getGluuBuildNumber();
+		this.buildNumber = appInitializer.getGluuBuildNumber();
 		return this.buildNumber;
 	}
 
@@ -486,7 +492,7 @@ public class UpdateOrganizationAction implements Serializable {
 		return organization;
 	}
 
-	@Destroy
+	@PreDestroy
 	public void destroy() throws Exception {
 		// When user decided to leave form without saving we must remove added
 		// logo image from disk

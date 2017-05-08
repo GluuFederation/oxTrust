@@ -13,7 +13,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.Consumes;
+
+import javax.faces.application.FacesMessage;import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -69,6 +70,9 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	@Inject
 	private Scim2FidoDeviceService scim2FidoDeviceService;
 
+        @Inject
+        private CopyUtils2 copyUtils2;
+
 	@GET
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
@@ -85,7 +89,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -98,15 +102,11 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		try {
 
 			if (count > getMaxCount()) {
-
 				String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {
-
 				log.info(" Searching devices from LDAP ");
-
-				fidoDeviceService = FidoDeviceService.instance();
 
 				String baseDn = fidoDeviceService.getDnForFidoDevice(userId, null);
 				log.info("##### baseDn = " + baseDn);
@@ -130,7 +130,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 					for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
 
-						FidoDevice fidoDevice = CopyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
+						FidoDevice fidoDevice = copyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
 
 						devicesListResponse.getResources().add(fidoDevice);
 					}
@@ -169,7 +169,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -180,9 +180,6 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			fidoDeviceService = FidoDeviceService.instance();
-
 			String baseDn = fidoDeviceService.getDnForFidoDevice(userId, id);
 			log.info("##### baseDn = " + baseDn);
 
@@ -200,7 +197,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 			GluuCustomFidoDevice gluuCustomFidoDevice = gluuCustomFidoDevices.get(0);
 
-			FidoDevice fidoDevice = CopyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
+			FidoDevice fidoDevice = copyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
 
 			// Serialize to JSON
 			String json = serializeToJson(fidoDevice, attributesArray);
@@ -246,7 +243,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -306,7 +303,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {

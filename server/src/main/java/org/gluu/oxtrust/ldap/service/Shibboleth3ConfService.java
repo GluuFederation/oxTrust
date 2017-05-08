@@ -25,7 +25,8 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.xml.parsers.ParserConfigurationException;
+
+import javax.faces.application.FacesMessage;import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;

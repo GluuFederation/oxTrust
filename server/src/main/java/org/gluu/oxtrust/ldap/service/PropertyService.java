@@ -13,7 +13,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 
 /**
  * Provides operations to get property values

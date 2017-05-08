@@ -12,7 +12,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.FidoDeviceService;
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
@@ -36,16 +36,16 @@ public class Scim2FidoDeviceService implements Serializable {
 	@Inject
 	private IFidoDeviceService fidoDeviceService;
 
+	@Inject
+	private CopyUtils2 copyUtils2;
+
 	public FidoDevice updateFidoDevice(String id, FidoDevice fidoDevice) throws Exception {
-
-		fidoDeviceService = FidoDeviceService.instance();
-
 		GluuCustomFidoDevice gluuCustomFidoDevice = fidoDeviceService.getGluuCustomFidoDeviceById(fidoDevice.getUserId(), id);
 		if (gluuCustomFidoDevice == null) {
 			throw new EntryPersistenceException("Scim2FidoDeviceService.updateFidoDevice(): Resource " + id + " not found");
 		}
 
-		GluuCustomFidoDevice updatedGluuCustomFidoDevice = CopyUtils2.updateGluuCustomFidoDevice(fidoDevice, gluuCustomFidoDevice);
+		GluuCustomFidoDevice updatedGluuCustomFidoDevice = copyUtils2.updateGluuCustomFidoDevice(fidoDevice, gluuCustomFidoDevice);
 
 		log.info(" Setting meta: update device ");
 		DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
@@ -58,15 +58,12 @@ public class Scim2FidoDeviceService implements Serializable {
 
 		fidoDeviceService.updateGluuCustomFidoDevice(gluuCustomFidoDevice);
 
-		FidoDevice updatedFidoDevice = CopyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
+		FidoDevice updatedFidoDevice = copyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
 
 		return updatedFidoDevice;
 	}
 
 	public void deleteFidoDevice(String id) throws Exception {
-
-		fidoDeviceService = FidoDeviceService.instance();
-
 		GluuCustomFidoDevice gluuCustomFidoDevice = fidoDeviceService.getGluuCustomFidoDeviceById(null, id);
 		if (gluuCustomFidoDevice == null) {
 			throw new EntryPersistenceException("Scim2FidoDeviceService.deleteFidoDevice(): Resource " + id + " not found");

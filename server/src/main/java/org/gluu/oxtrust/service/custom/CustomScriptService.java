@@ -6,11 +6,11 @@
 
 package org.gluu.oxtrust.service.custom;
 
-import org.gluu.oxtrust.ldap.service.OrganizationService;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 
 /**
@@ -19,8 +19,11 @@ import org.xdi.service.custom.script.AbstractCustomScriptService;
  * @author Yuriy Movchan Date: 12/03/2014
  */
 @Stateless
-@Named("customScriptService")
+@Named
 public class CustomScriptService extends AbstractCustomScriptService{
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	private static final long serialVersionUID = -5283102477313448031L;
 

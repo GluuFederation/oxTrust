@@ -8,17 +8,19 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
-@Named("clientPasswordAction")
-@Scope(ScopeType.EVENT)
+@RequestScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class ClientPasswordAction implements Serializable {
 

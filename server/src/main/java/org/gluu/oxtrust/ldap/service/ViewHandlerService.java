@@ -17,7 +17,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.enterprise.context.ConversationScoped;
+
+import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 
 /**
  * Provides operations with view id
@@ -32,7 +33,7 @@ public class ViewHandlerService {
 	@Inject
 	private FacesContext facesContext;
 
-	@Inject(value = "#{facesContext.externalContext}")
+	@Inject
 	private ExternalContext externalContext;
 
 	@Inject(value = "#{facesContext.application.viewHandler}")

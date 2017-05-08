@@ -44,7 +44,7 @@ public class PushApplication extends Entry implements Serializable {
 
 	@LdapAttribute(name = "oxPushApplicationConf")
 	@LdapJsonObject
-	private PushApplicationConfiguration applicationConfiguration;
+	private PushApplicationConfiguration appConfiguration;
 
 	public String getId() {
 		return id;
@@ -70,19 +70,19 @@ public class PushApplication extends Entry implements Serializable {
 		this.displayName = displayName;
 	}
 
-	public PushApplicationConfiguration getApplicationConfiguration() {
-		return applicationConfiguration;
+	public PushApplicationConfiguration getappConfiguration() {
+		return appConfiguration;
 	}
 
-	public void setApplicationConfiguration(PushApplicationConfiguration applicationConfiguration) {
-		this.applicationConfiguration = applicationConfiguration;
+	public void setappConfiguration(PushApplicationConfiguration appConfiguration) {
+		this.appConfiguration = appConfiguration;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PushApplication [id=").append(id).append(", name=").append(name).append(", displayName=").append(displayName)
-				.append(", applicationConfiguration=").append(applicationConfiguration).append("]");
+				.append(", appConfiguration=").append(appConfiguration).append("]");
 		return builder.toString();
 	}
 

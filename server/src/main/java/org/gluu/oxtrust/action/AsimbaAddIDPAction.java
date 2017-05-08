@@ -9,9 +9,11 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.faces.application.FacesMessage;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -23,8 +25,8 @@ import org.slf4j.Logger;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
-@Named("asimbaAddIDPAction")
+@SessionScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class AsimbaAddIDPAction implements Serializable {
 

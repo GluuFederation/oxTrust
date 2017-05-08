@@ -12,15 +12,16 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.ServletOutputStream;
+import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.ldap.service.DownloadService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.slf4j.Logger;
 
-@Named("contactDownloadAction")
-@Scope(ScopeType.EVENT)
+@RequestScoped
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class ContactDownloadAction implements Serializable {
 
@@ -29,21 +30,20 @@ public class ContactDownloadAction implements Serializable {
 	@Inject
 	private Logger log;
 
-	@Inject(value = "#{facesContext.externalContext}")
-	private ExternalContext extCtx;
+	@Inject
+	private ExternalContext externalContext;
 
-	@SuppressWarnings("seam-unresolved-variable")
 	@Inject
 	protected GluuCustomPerson currentPerson;
 
-	@Inject(value = "#{facesContext}")
-	FacesContext facesContext;
+	@Inject
+	private FacesContext facesContext;
 
 	@Inject
 	private DownloadService downloadService;
 
 	public String download() {
-		HttpServletResponse response = (HttpServletResponse) extCtx.getResponse();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"" + currentPerson.getDisplayName() + "_contacts.csv\"");
 		try {

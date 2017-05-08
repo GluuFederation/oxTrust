@@ -6,9 +6,18 @@
 
 package org.gluu.oxtrust.service.scim2.jackson.custom;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
@@ -20,30 +29,28 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.OxMultivalued;
 import org.xdi.model.ScimCustomAtribute;
 
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
-
 /**
  * Custom deserializer for the SCIM 2.0 User Extension class.
  */
-@Named("extensionDeserializer")
+@Named
 public class ExtensionDeserializer extends JsonDeserializer<Extension> {
 
     @Inject
     private Logger log;
+    
+    @Inject
+    private AttributeService attributeService;
 
     private String id;
 
     @Override
     public Extension deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-
         log.info(" deserialize() ");
 
         try {
@@ -56,8 +63,6 @@ public class ExtensionDeserializer extends JsonDeserializer<Extension> {
             if (!rootNode.isObject()) {
                 throw new IllegalArgumentException("Extension is of wrong JSON type");
             }
-
-            AttributeService attributeService = AttributeService.instance();
 
             Extension.Builder extensionBuilder = new Extension.Builder(id);
 

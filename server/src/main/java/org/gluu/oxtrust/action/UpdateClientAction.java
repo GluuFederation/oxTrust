@@ -15,10 +15,12 @@ import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
@@ -27,8 +29,8 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.faces.FacesMessages;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
 import org.xdi.oxauth.model.common.GrantType;
@@ -70,6 +72,9 @@ public class UpdateClientAction implements Serializable {
     
     @Inject
 	private ConfigurationFactory configurationFactory;
+    
+    @Inject
+    private AppConfiguration appConfiguration;
 
     private String inum;
 
@@ -216,7 +221,7 @@ public class UpdateClientAction implements Serializable {
 
                 log.error("Failed to update client {0}", ex, this.inum);
 
-                facesMessages.add(Severity.ERROR, "Failed to update client");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client");
                 return OxTrustConstants.RESULT_FAILURE;
             }
         } else {
@@ -232,7 +237,7 @@ public class UpdateClientAction implements Serializable {
                 log.info("error saving client ");
                 log.error("Failed to add new client {0}", ex, this.inum);
 
-                facesMessages.add(Severity.ERROR, "Failed to add new client");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
                 return OxTrustConstants.RESULT_FAILURE;
             }
 
@@ -371,7 +376,7 @@ public class UpdateClientAction implements Serializable {
         	
             this.loginUris.add(this.availableLoginUri);
         }else{
-        	facesMessages.add(Severity.ERROR, "The URL is not valid or may be Blacklisted.");
+        	facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.");
         }
 
         this.availableLoginUri = "https://";
@@ -385,7 +390,7 @@ public class UpdateClientAction implements Serializable {
         if (!this.logoutUris.contains(this.availableLogoutUri)   &&  checkWhiteListRedirectUris(availableLogoutUri) && checkBlackListRedirectUris(availableLogoutUri)) {
             this.logoutUris.add(this.availableLogoutUri);
         }else{
-        	facesMessages.add(Severity.ERROR, "The URL is not valid or may be Blacklisted.");
+        	facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.");
         }
 
         this.availableLogoutUri = "https://";
@@ -961,7 +966,7 @@ public class UpdateClientAction implements Serializable {
 	private boolean checkWhiteListRedirectUris(String redirectUri) {
 		try {
 			boolean valid = true;
-			List<String> whiteList = configurationFactory.getApplicationConfiguration().getClientWhiteList();
+			List<String> whiteList = appConfiguration.getClientWhiteList();
 			URLPatternList urlPatternList = new URLPatternList(whiteList);
 
 			// for (String redirectUri : redirectUris) {
@@ -980,7 +985,7 @@ public class UpdateClientAction implements Serializable {
 	private boolean checkBlackListRedirectUris(String redirectUri) {
 		try {
 			boolean valid = true;
-			List<String> blackList = configurationFactory.getApplicationConfiguration().getClientBlackList();
+			List<String> blackList = appConfiguration.getClientBlackList();
 			URLPatternList urlPatternList = new URLPatternList(blackList);
 
 			// for (String redirectUri : redirectUris) {

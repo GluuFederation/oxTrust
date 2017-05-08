@@ -6,20 +6,23 @@
 
 package org.gluu.oxtrust.service.test;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.action.test.BaseTest;
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Email;
@@ -28,9 +31,7 @@ import org.gluu.oxtrust.model.scim2.PhoneNumber;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
 import org.gluu.oxtrust.util.CopyUtils2;
-import org.jboss.seam.Component;
 import org.joda.time.DateTime;
-import static org.testng.Assert.*;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -47,250 +48,238 @@ import org.xdi.service.SchemaService;
  */
 public class UserExtensionsTest extends BaseTest {
 
+	@Inject
+	private CopyUtils2 copyUtils2;
+
+	@Inject
+	private IPersonService personService;
+
+	@Inject
+	private AttributeService attributeService;
+
+	@Inject
+	private SchemaService schemaService;
+
+	@Inject
+	private AppConfiguration appConfiguration;
+
 	@Test
 	@Parameters({ "test.scim2.userext.create_json" })
 	public void testCreatePersonFromJsonString(final String createJson) throws Exception {
-		new FacesRequest() {
-			@Override
-			protected void invokeApplication() throws Exception {
+		System.out.println(" testCreatePersonFromJsonString() ");
 
-				System.out.println(" testCreatePersonFromJsonString() ");
+		// Create custom attributes
+		GluuAttribute scimCustomFirst = null; // String, not
+												// multi-valued
+		if (attributeService.getAttributeByName("scimCustomFirst") == null) {
+			scimCustomFirst = createCustomAttribute(attributeService, schemaService, appConfiguration,
+					"scimCustomFirst", "Custom First", "First custom attribute", GluuAttributeDataType.STRING,
+					OxMultivalued.FALSE);
+		}
+		GluuAttribute scimCustomSecond = null; // Date, multi-valued
+		if (attributeService.getAttributeByName("scimCustomSecond") == null) {
+			scimCustomSecond = createCustomAttribute(attributeService, schemaService, appConfiguration,
+					"scimCustomSecond", "Custom Second", "Second custom attribute", GluuAttributeDataType.DATE,
+					OxMultivalued.TRUE);
+		}
+		GluuAttribute scimCustomThird = null; // Numeric, not
+												// multi-valued
+		if (attributeService.getAttributeByName("scimCustomThird") == null) {
+			scimCustomThird = createCustomAttribute(attributeService, schemaService, appConfiguration,
+					"scimCustomThird", "Custom Third", "Third custom attribute", GluuAttributeDataType.NUMERIC,
+					OxMultivalued.FALSE);
+		}
 
-				AttributeService attributeService = AttributeService.instance();
-				SchemaService schemaService = SchemaService.instance();
-				AppConfiguration applicationConfiguration = ((ConfigurationFactory) Component
-						.getInstance(ConfigurationFactory.class)).getApplicationConfiguration();
+		// String CREATEJSON =
+		// "{\"schemas\":[\"urn:ietf:params:scim:schemas:core:2.0:User\",\"urn:ietf:params:scim:schemas:extension:gluu:2.0:User\"],\"urn:ietf:params:scim:schemas:extension:gluu:2.0:User\":
+		// {\"scimCustomFirst\":\"[1000,2000]\",\"scimCustomSecond\":[\"2016-02-23T15:35:22Z\"],\"scimCustomThird\":3000},\"externalId\":\"scimclient\",\"userName\":\"userjson.add.username\",\"name\":{\"givenName\":\"json\",\"familyName\":\"json\",\"middleName\":\"N/A\",\"honorificPrefix\":\"N/A\",\"honorificSuffix\":\"N/A\"},\"displayName\":\"json
+		// json\",\"nickName\":\"json\",\"profileUrl\":\"http://www.gluu.org/\",\"emails\":[{\"value\":\"json@gluu.org\",\"type\":\"work\",\"primary\":\"true\"},{\"value\":\"json2@gluu.org\",\"type\":\"home\",\"primary\":\"false\"}],\"addresses\":[{\"type\":\"work\",\"streetAddress\":\"621
+		// East 6th Street Suite
+		// 200\",\"locality\":\"Austin\",\"region\":\"TX\",\"postalCode\":\"78701\",\"country\":\"US\",\"formatted\":\"621
+		// East 6th Street Suite 200 Austin , TX 78701
+		// US\",\"primary\":\"true\"}],\"phoneNumbers\":[{\"value\":\"646-345-2346\",\"type\":\"work\"}],\"ims\":[{\"value\":\"nynytest_user\",\"type\":\"Skype\"}],\"userType\":\"CEO\",\"title\":\"CEO\",\"preferredLanguage\":\"en-us\",\"locale\":\"en_US\",\"active\":\"true\",\"password\":\"secret\",\"roles\":[{\"value\":\"Owner\"}],\"entitlements\":[{\"value\":\"full
+		// access\"}],\"x509Certificates\":[{\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFa
+		// MH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bc1FLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5iPSi8xO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1+GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"}],\"meta\":{\"created\":\"2010-01-23T04:56:22Z\",\"lastModified\":\"2011-05-13T04:42:34Z\",\"version\":\"aversion\",\"location\":\"http://localhost:8080/identity/seam/resource/restv1/Users/8c4b6c26-efaf-4840-bddf-c0146a8eb2a9\"}}";
 
-				// Create custom attributes
-				GluuAttribute scimCustomFirst = null; // String, not
-														// multi-valued
-				if (attributeService.getAttributeByName("scimCustomFirst") == null) {
-					scimCustomFirst = createCustomAttribute(attributeService, schemaService, applicationConfiguration,
-							"scimCustomFirst", "Custom First", "First custom attribute", GluuAttributeDataType.STRING,
-							OxMultivalued.FALSE);
-				}
-				GluuAttribute scimCustomSecond = null; // Date, multi-valued
-				if (attributeService.getAttributeByName("scimCustomSecond") == null) {
-					scimCustomSecond = createCustomAttribute(attributeService, schemaService, applicationConfiguration,
-							"scimCustomSecond", "Custom Second", "Second custom attribute", GluuAttributeDataType.DATE,
-							OxMultivalued.TRUE);
-				}
-				GluuAttribute scimCustomThird = null; // Numeric, not
-														// multi-valued
-				if (attributeService.getAttributeByName("scimCustomThird") == null) {
-					scimCustomThird = createCustomAttribute(attributeService, schemaService, applicationConfiguration,
-							"scimCustomThird", "Custom Third", "Third custom attribute", GluuAttributeDataType.NUMERIC,
-							OxMultivalued.FALSE);
-				}
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, ""));
+		simpleModule.addDeserializer(User.class, new UserDeserializer());
+		mapper.registerModule(simpleModule);
 
-				// String CREATEJSON =
-				// "{\"schemas\":[\"urn:ietf:params:scim:schemas:core:2.0:User\",\"urn:ietf:params:scim:schemas:extension:gluu:2.0:User\"],\"urn:ietf:params:scim:schemas:extension:gluu:2.0:User\":
-				// {\"scimCustomFirst\":\"[1000,2000]\",\"scimCustomSecond\":[\"2016-02-23T15:35:22Z\"],\"scimCustomThird\":3000},\"externalId\":\"scimclient\",\"userName\":\"userjson.add.username\",\"name\":{\"givenName\":\"json\",\"familyName\":\"json\",\"middleName\":\"N/A\",\"honorificPrefix\":\"N/A\",\"honorificSuffix\":\"N/A\"},\"displayName\":\"json
-				// json\",\"nickName\":\"json\",\"profileUrl\":\"http://www.gluu.org/\",\"emails\":[{\"value\":\"json@gluu.org\",\"type\":\"work\",\"primary\":\"true\"},{\"value\":\"json2@gluu.org\",\"type\":\"home\",\"primary\":\"false\"}],\"addresses\":[{\"type\":\"work\",\"streetAddress\":\"621
-				// East 6th Street Suite
-				// 200\",\"locality\":\"Austin\",\"region\":\"TX\",\"postalCode\":\"78701\",\"country\":\"US\",\"formatted\":\"621
-				// East 6th Street Suite 200 Austin , TX 78701
-				// US\",\"primary\":\"true\"}],\"phoneNumbers\":[{\"value\":\"646-345-2346\",\"type\":\"work\"}],\"ims\":[{\"value\":\"nynytest_user\",\"type\":\"Skype\"}],\"userType\":\"CEO\",\"title\":\"CEO\",\"preferredLanguage\":\"en-us\",\"locale\":\"en_US\",\"active\":\"true\",\"password\":\"secret\",\"roles\":[{\"value\":\"Owner\"}],\"entitlements\":[{\"value\":\"full
-				// access\"}],\"x509Certificates\":[{\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFa
-				// MH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bc1FLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5iPSi8xO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1+GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"}],\"meta\":{\"created\":\"2010-01-23T04:56:22Z\",\"lastModified\":\"2011-05-13T04:42:34Z\",\"version\":\"aversion\",\"location\":\"http://localhost:8080/identity/seam/resource/restv1/Users/8c4b6c26-efaf-4840-bddf-c0146a8eb2a9\"}}";
+		User user = mapper.readValue(createJson, User.class);
+		String testUserName = user.getUserName() + " (" + System.currentTimeMillis() + ")";
+		user.setUserName(testUserName);
 
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-				SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, ""));
-				simpleModule.addDeserializer(User.class, new UserDeserializer());
-				mapper.registerModule(simpleModule);
+		Extension extension = user.getExtension(Constants.USER_EXT_SCHEMA_ID);
+		assertNotNull(extension, "(Deserialization) Custom extension not deserialized.");
 
-				User user = mapper.readValue(createJson, User.class);
-				String testUserName = user.getUserName() + " (" + System.currentTimeMillis() + ")";
-				user.setUserName(testUserName);
+		Extension.Field customFirstField = extension.getFields().get("scimCustomFirst");
+		assertNotNull(customFirstField, "(Deserialization) \"scimCustomFirst\" field not deserialized.");
+		assertEquals(customFirstField.getValue(), "[1000,2000]");
+		System.out.println("##### (Deserialization) customFirstField.getValue() = " + customFirstField.getValue());
 
-				Extension extension = user.getExtension(Constants.USER_EXT_SCHEMA_ID);
-				assertNotNull(extension, "(Deserialization) Custom extension not deserialized.");
+		Extension.Field customSecondField = extension.getFields().get("scimCustomSecond");
+		assertNotNull(customSecondField, "(Deserialization) \"scimCustomSecond\" field not deserialized.");
+		List<Date> dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
+		assertEquals(dateList.size(), 1);
+		System.out.println("##### (Deserialization) dateList.get(0) = " + dateList.get(0));
 
-				Extension.Field customFirstField = extension.getFields().get("scimCustomFirst");
-				assertNotNull(customFirstField, "(Deserialization) \"scimCustomFirst\" field not deserialized.");
-				assertEquals(customFirstField.getValue(), "[1000,2000]");
-				System.out.println(
-						"##### (Deserialization) customFirstField.getValue() = " + customFirstField.getValue());
+		Extension.Field customThirdField = extension.getFields().get("scimCustomThird");
+		assertNotNull(customThirdField, "(Deserialization) \"scimCustomThird\" field not deserialized.");
+		assertEquals(new BigDecimal(customThirdField.getValue()), new BigDecimal(3000));
+		System.out.println("##### (Deserialization) customThirdField.getValue() = " + customThirdField.getValue());
 
-				Extension.Field customSecondField = extension.getFields().get("scimCustomSecond");
-				assertNotNull(customSecondField, "(Deserialization) \"scimCustomSecond\" field not deserialized.");
-				List<Date> dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
-				assertEquals(dateList.size(), 1);
-				System.out.println("##### (Deserialization) dateList.get(0) = " + dateList.get(0));
+		// Create Person
+		GluuCustomPerson gluuPerson = copyUtils2.copy(user, null, false);
+		assertNotNull(gluuPerson, "gluuPerson is null!");
+		System.out.println(">>>>> gluuPerson.getUid() = " + gluuPerson.getUid());
 
-				Extension.Field customThirdField = extension.getFields().get("scimCustomThird");
-				assertNotNull(customThirdField, "(Deserialization) \"scimCustomThird\" field not deserialized.");
-				assertEquals(new BigDecimal(customThirdField.getValue()), new BigDecimal(3000));
-				System.out.println(
-						"##### (Deserialization) customThirdField.getValue() = " + customThirdField.getValue());
+		String inum = personService.generateInumForNewPerson();
+		String dn = personService.getDnForPerson(inum);
+		String iname = personService.generateInameForNewPerson(user.getUserName());
+		gluuPerson.setDn(dn);
+		gluuPerson.setInum(inum);
+		gluuPerson.setIname(iname);
+		gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
 
-				// Create Person
-				GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
-				assertNotNull(gluuPerson, "gluuPerson is null!");
-				System.out.println(">>>>> gluuPerson.getUid() = " + gluuPerson.getUid());
+		personService.addPerson(gluuPerson);
 
-				IPersonService personService = PersonService.instance();
-				String inum = personService.generateInumForNewPerson();
-				String dn = personService.getDnForPerson(inum);
-				String iname = personService.generateInameForNewPerson(user.getUserName());
-				gluuPerson.setDn(dn);
-				gluuPerson.setInum(inum);
-				gluuPerson.setIname(iname);
-				gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
+		// Retrieve Person
+		GluuCustomPerson retrievedPerson = personService.getPersonByUid(gluuPerson.getUid());
+		assertNotNull(retrievedPerson, "Failed to find person.");
 
-				personService.addPerson(gluuPerson);
+		User newPerson = copyUtils2.copy(retrievedPerson, null);
 
-				// Retrieve Person
-				GluuCustomPerson retrievedPerson = personService.getPersonByUid(gluuPerson.getUid());
-				assertNotNull(retrievedPerson, "Failed to find person.");
+		extension = newPerson.getExtension(Constants.USER_EXT_SCHEMA_ID);
+		assertNotNull(extension, "(Persistence) Custom extension not persisted.");
 
-				User newPerson = CopyUtils2.copy(retrievedPerson, null);
+		customFirstField = extension.getFields().get("scimCustomFirst");
+		assertNotNull(customFirstField, "(Persistence) \"scimCustomFirst\" field not persisted.");
+		assertEquals(customFirstField.getValue(), "[1000,2000]");
+		System.out.println("##### (Persistence) customFirstField.getValue() = " + customFirstField.getValue());
 
-				extension = newPerson.getExtension(Constants.USER_EXT_SCHEMA_ID);
-				assertNotNull(extension, "(Persistence) Custom extension not persisted.");
+		customSecondField = extension.getFields().get("scimCustomSecond");
+		assertNotNull(customSecondField, "(Persistence) \"scimCustomSecond\" field not persisted.");
+		dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
+		assertEquals(dateList.size(), 1);
+		System.out.println("##### (Persistence) dateList.get(0) = " + dateList.get(0));
 
-				customFirstField = extension.getFields().get("scimCustomFirst");
-				assertNotNull(customFirstField, "(Persistence) \"scimCustomFirst\" field not persisted.");
-				assertEquals(customFirstField.getValue(), "[1000,2000]");
-				System.out.println("##### (Persistence) customFirstField.getValue() = " + customFirstField.getValue());
+		customThirdField = extension.getFields().get("scimCustomThird");
+		assertNotNull(customThirdField, "(Persistence) \"scimCustomThird\" field not persisted.");
+		assertEquals(new BigDecimal(customThirdField.getValue()), new BigDecimal(3000));
+		System.out.println("##### (Persistence) customThirdField.getValue() = " + customThirdField.getValue());
 
-				customSecondField = extension.getFields().get("scimCustomSecond");
-				assertNotNull(customSecondField, "(Persistence) \"scimCustomSecond\" field not persisted.");
-				dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
-				assertEquals(dateList.size(), 1);
-				System.out.println("##### (Persistence) dateList.get(0) = " + dateList.get(0));
+		// Remove Person
+		personService.removePerson(retrievedPerson);
 
-				customThirdField = extension.getFields().get("scimCustomThird");
-				assertNotNull(customThirdField, "(Persistence) \"scimCustomThird\" field not persisted.");
-				assertEquals(new BigDecimal(customThirdField.getValue()), new BigDecimal(3000));
-				System.out.println("##### (Persistence) customThirdField.getValue() = " + customThirdField.getValue());
-
-				// Remove Person
-				personService.removePerson(retrievedPerson);
-
-				// Remove custom attributes
-				// schemaService.removeAttributeTypeFromObjectClass(scimCustomFirst.getOrigin(),
-				// scimCustomFirst.getName());
-				// schemaService.removeStringAttribute(scimCustomFirst.getName());
-				// attributeService.removeAttribute(scimCustomFirst);
-				// schemaService.removeAttributeTypeFromObjectClass(scimCustomSecond.getOrigin(),
-				// scimCustomSecond.getName());
-				// schemaService.removeStringAttribute(scimCustomSecond.getName());
-				// attributeService.removeAttribute(scimCustomSecond);
-				// schemaService.removeAttributeTypeFromObjectClass(scimCustomThird.getOrigin(),
-				// scimCustomThird.getName());
-				// schemaService.removeStringAttribute(scimCustomThird.getName());
-				// attributeService.removeAttribute(scimCustomThird);
-			}
-		}.run();
+		// Remove custom attributes
+		// schemaService.removeAttributeTypeFromObjectClass(scimCustomFirst.getOrigin(),
+		// scimCustomFirst.getName());
+		// schemaService.removeStringAttribute(scimCustomFirst.getName());
+		// attributeService.removeAttribute(scimCustomFirst);
+		// schemaService.removeAttributeTypeFromObjectClass(scimCustomSecond.getOrigin(),
+		// scimCustomSecond.getName());
+		// schemaService.removeStringAttribute(scimCustomSecond.getName());
+		// attributeService.removeAttribute(scimCustomSecond);
+		// schemaService.removeAttributeTypeFromObjectClass(scimCustomThird.getOrigin(),
+		// scimCustomThird.getName());
+		// schemaService.removeStringAttribute(scimCustomThird.getName());
+		// attributeService.removeAttribute(scimCustomThird);
 	}
 
 	@Test(dependsOnMethods = "testCreatePersonFromJsonString")
 	@Parameters
 	public void testCreatePersonFromUserObject() throws Exception {
-		new FacesRequest() {
-			@Override
-			protected void invokeApplication() throws Exception {
+		System.out.println(" testCreatePersonFromUserObject() ");
 
-				System.out.println(" testCreatePersonFromUserObject() ");
+		// Create custom attributes
+		GluuAttribute scimCustomFirst = null; // String, not
+												// multi-valued
+		if (attributeService.getAttributeByName("scimCustomFirst") == null) {
+			scimCustomFirst = createCustomAttribute(attributeService, schemaService, appConfiguration,
+					"scimCustomFirst", "Custom First", "First custom attribute", GluuAttributeDataType.STRING,
+					OxMultivalued.FALSE);
+		}
+		GluuAttribute scimCustomSecond = null; // Date, multi-valued
+		if (attributeService.getAttributeByName("scimCustomSecond") == null) {
+			scimCustomSecond = createCustomAttribute(attributeService, schemaService, appConfiguration,
+					"scimCustomSecond", "Custom Second", "Second custom attribute", GluuAttributeDataType.DATE,
+					OxMultivalued.TRUE);
+		}
+		GluuAttribute scimCustomThird = null; // Numeric, not
+												// multi-valued
+		if (attributeService.getAttributeByName("scimCustomThird") == null) {
+			scimCustomThird = createCustomAttribute(attributeService, schemaService, appConfiguration,
+					"scimCustomThird", "Custom Third", "Third custom attribute", GluuAttributeDataType.NUMERIC,
+					OxMultivalued.FALSE);
+		}
 
-				AttributeService attributeService = AttributeService.instance();
-				SchemaService schemaService = SchemaService.instance();
-				AppConfiguration applicationConfiguration = ((ConfigurationFactory) Component
-						.getInstance(ConfigurationFactory.class)).getApplicationConfiguration();
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-				// Create custom attributes
-				GluuAttribute scimCustomFirst = null; // String, not
-														// multi-valued
-				if (attributeService.getAttributeByName("scimCustomFirst") == null) {
-					scimCustomFirst = createCustomAttribute(attributeService, schemaService, applicationConfiguration,
-							"scimCustomFirst", "Custom First", "First custom attribute", GluuAttributeDataType.STRING,
-							OxMultivalued.FALSE);
-				}
-				GluuAttribute scimCustomSecond = null; // Date, multi-valued
-				if (attributeService.getAttributeByName("scimCustomSecond") == null) {
-					scimCustomSecond = createCustomAttribute(attributeService, schemaService, applicationConfiguration,
-							"scimCustomSecond", "Custom Second", "Second custom attribute", GluuAttributeDataType.DATE,
-							OxMultivalued.TRUE);
-				}
-				GluuAttribute scimCustomThird = null; // Numeric, not
-														// multi-valued
-				if (attributeService.getAttributeByName("scimCustomThird") == null) {
-					scimCustomThird = createCustomAttribute(attributeService, schemaService, applicationConfiguration,
-							"scimCustomThird", "Custom Third", "Third custom attribute", GluuAttributeDataType.NUMERIC,
-							OxMultivalued.FALSE);
-				}
+		User user = createUserObject();
 
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+		// Create Person
+		GluuCustomPerson gluuPerson = copyUtils2.copy(user, null, false);
+		assertNotNull(gluuPerson, "gluuPerson is null!");
+		System.out.println(">>>>>>>>>> gluuPerson.getUid() = " + gluuPerson.getUid());
 
-				User user = createUserObject();
+		String inum = personService.generateInumForNewPerson();
+		String dn = personService.getDnForPerson(inum);
+		String iname = personService.generateInameForNewPerson(user.getUserName());
+		gluuPerson.setDn(dn);
+		gluuPerson.setInum(inum);
+		gluuPerson.setIname(iname);
+		gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
 
-				// Create Person
-				GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
-				assertNotNull(gluuPerson, "gluuPerson is null!");
-				System.out.println(">>>>>>>>>> gluuPerson.getUid() = " + gluuPerson.getUid());
+		personService.addPerson(gluuPerson);
 
-				IPersonService personService = PersonService.instance();
-				String inum = personService.generateInumForNewPerson();
-				String dn = personService.getDnForPerson(inum);
-				String iname = personService.generateInameForNewPerson(user.getUserName());
-				gluuPerson.setDn(dn);
-				gluuPerson.setInum(inum);
-				gluuPerson.setIname(iname);
-				gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
+		// Retrieve Person
+		GluuCustomPerson retrievedPerson = personService.getPersonByUid(gluuPerson.getUid());
+		assertNotNull(retrievedPerson, "Failed to find person.");
 
-				personService.addPerson(gluuPerson);
+		User newPerson = copyUtils2.copy(retrievedPerson, null);
 
-				// Retrieve Person
-				GluuCustomPerson retrievedPerson = personService.getPersonByUid(gluuPerson.getUid());
-				assertNotNull(retrievedPerson, "Failed to find person.");
+		Extension extension = newPerson.getExtension(Constants.USER_EXT_SCHEMA_ID);
+		assertNotNull(extension, "(Persistence) Custom extension not persisted.");
 
-				User newPerson = CopyUtils2.copy(retrievedPerson, null);
+		Extension.Field customFirstField = extension.getFields().get("scimCustomFirst");
+		assertNotNull(customFirstField, "(Persistence) \"scimCustomFirst\" field not persisted.");
+		assertEquals(customFirstField.getValue(), "customFirstValue");
+		System.out.println("##### (Persistence) customFirstField.getValue() = " + customFirstField.getValue());
 
-				Extension extension = newPerson.getExtension(Constants.USER_EXT_SCHEMA_ID);
-				assertNotNull(extension, "(Persistence) Custom extension not persisted.");
+		Extension.Field customSecondField = extension.getFields().get("scimCustomSecond");
+		assertNotNull(customSecondField, "(Persistence) \"scimCustomSecond\" field not persisted.");
+		List<Date> dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
+		assertEquals(dateList.size(), 2);
+		System.out.println("##### (Persistence) dateList.get(0) = " + dateList.get(0));
+		System.out.println("##### (Persistence) dateList.get(1) = " + dateList.get(1));
 
-				Extension.Field customFirstField = extension.getFields().get("scimCustomFirst");
-				assertNotNull(customFirstField, "(Persistence) \"scimCustomFirst\" field not persisted.");
-				assertEquals(customFirstField.getValue(), "customFirstValue");
-				System.out.println("##### (Persistence) customFirstField.getValue() = " + customFirstField.getValue());
+		Extension.Field customThirdField = extension.getFields().get("scimCustomThird");
+		assertNotNull(customThirdField, "(Persistence) \"scimCustomThird\" field not persisted.");
+		assertEquals(new BigDecimal(customThirdField.getValue()), new BigDecimal(3000));
+		System.out.println("##### (Persistence) customThirdField.getValue() = " + customThirdField.getValue());
 
-				Extension.Field customSecondField = extension.getFields().get("scimCustomSecond");
-				assertNotNull(customSecondField, "(Persistence) \"scimCustomSecond\" field not persisted.");
-				List<Date> dateList = Arrays.asList(mapper.readValue(customSecondField.getValue(), Date[].class));
-				assertEquals(dateList.size(), 2);
-				System.out.println("##### (Persistence) dateList.get(0) = " + dateList.get(0));
-				System.out.println("##### (Persistence) dateList.get(1) = " + dateList.get(1));
+		// Remove Person
+		personService.removePerson(retrievedPerson);
 
-				Extension.Field customThirdField = extension.getFields().get("scimCustomThird");
-				assertNotNull(customThirdField, "(Persistence) \"scimCustomThird\" field not persisted.");
-				assertEquals(new BigDecimal(customThirdField.getValue()), new BigDecimal(3000));
-				System.out.println("##### (Persistence) customThirdField.getValue() = " + customThirdField.getValue());
-
-				// Remove Person
-				personService.removePerson(retrievedPerson);
-
-				// Remove custom attributes
-				// schemaService.removeAttributeTypeFromObjectClass(scimCustomFirst.getOrigin(),
-				// scimCustomFirst.getName());
-				// schemaService.removeStringAttribute(scimCustomFirst.getName());
-				// attributeService.removeAttribute(scimCustomFirst);
-				// schemaService.removeAttributeTypeFromObjectClass(scimCustomSecond.getOrigin(),
-				// scimCustomSecond.getName());
-				// schemaService.removeStringAttribute(scimCustomSecond.getName());
-				// attributeService.removeAttribute(scimCustomSecond);
-				// schemaService.removeAttributeTypeFromObjectClass(scimCustomThird.getOrigin(),
-				// scimCustomThird.getName());
-				// schemaService.removeStringAttribute(scimCustomThird.getName());
-				// attributeService.removeAttribute(scimCustomThird);
-			}
-		}.run();
+		// Remove custom attributes
+		// schemaService.removeAttributeTypeFromObjectClass(scimCustomFirst.getOrigin(),
+		// scimCustomFirst.getName());
+		// schemaService.removeStringAttribute(scimCustomFirst.getName());
+		// attributeService.removeAttribute(scimCustomFirst);
+		// schemaService.removeAttributeTypeFromObjectClass(scimCustomSecond.getOrigin(),
+		// scimCustomSecond.getName());
+		// schemaService.removeStringAttribute(scimCustomSecond.getName());
+		// attributeService.removeAttribute(scimCustomSecond);
+		// schemaService.removeAttributeTypeFromObjectClass(scimCustomThird.getOrigin(),
+		// scimCustomThird.getName());
+		// schemaService.removeStringAttribute(scimCustomThird.getName());
+		// attributeService.removeAttribute(scimCustomThird);
 	}
 
 	private User createUserObject() throws Exception {
-
 		User user = new User();
 
 		user.setUserName("userjson.add.username");
@@ -344,7 +333,7 @@ public class UserExtensionsTest extends BaseTest {
 	}
 
 	private GluuAttribute createCustomAttribute(AttributeService attributeService, SchemaService schemaService,
-			AppConfiguration applicationConfiguration, String name, String displayName, String description,
+			AppConfiguration appConfiguration, String name, String displayName, String description,
 			GluuAttributeDataType gluuAttributeDataType, OxMultivalued oxMultivalued) throws Exception {
 
 		System.out.println(" createCustomAttribute() ");
@@ -376,9 +365,9 @@ public class UserExtensionsTest extends BaseTest {
 			gluuAttribute.setSaml2Uri("urn:oid:" + gluuAttribute);
 		}
 
-//		We don't support schema update at runtime
-//		schemaService.addStringAttribute(ldapAttributedName, name,
-//				appConfiguration.getSchemaAddAttributeDefinition());
+		// We don't support schema update at runtime
+		// schemaService.addStringAttribute(ldapAttributedName, name,
+		// appConfiguration.getSchemaAddAttributeDefinition());
 		schemaService.addAttributeTypeToObjectClass(objectClassName, name);
 
 		attributeService.addAttribute(gluuAttribute);
