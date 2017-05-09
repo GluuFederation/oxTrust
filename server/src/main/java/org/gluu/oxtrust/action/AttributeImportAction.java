@@ -91,7 +91,7 @@ public class AttributeImportAction implements Serializable {
 		removeFileToImport();
 
 		if ((result != null) && result.equals(ResultCode.SUCCESS)) {
-			facesMessages.add(Severity.INFO,"Attributes added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,"Attributes added successfully");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to import LDIF file");

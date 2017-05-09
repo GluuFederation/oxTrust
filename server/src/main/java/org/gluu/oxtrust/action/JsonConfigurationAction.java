@@ -111,7 +111,7 @@ public class JsonConfigurationAction implements Serializable {
 			log.debug("Saving oxauth-config.json:" + oxAuthDynamicConfigJson);
 			jsonConfigurationService.saveOxAuthDynamicConfigJson(oxAuthDynamicConfigJson);
 
-			facesMessages.add(Severity.INFO, "oxAuthDynamic Configuration is updated.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
@@ -133,7 +133,7 @@ public class JsonConfigurationAction implements Serializable {
 			trimUriProperties();
 			
 			jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
-			facesMessages.add(Severity.INFO, "oxTrust Configuration is updated.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
@@ -152,7 +152,7 @@ public class JsonConfigurationAction implements Serializable {
 			this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
 			
 			jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
-			facesMessages.add(Severity.INFO, "OxMemcache  Configuration is updated.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "OxMemcache  Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
@@ -176,7 +176,7 @@ public class JsonConfigurationAction implements Serializable {
 			log.debug("Saving oxtrust-import-person.json:" + this.oxTrustImportPersonConfigJson);
 			this.oxTrustImportPersonConfiguration = convertToOxTrustImportPersonConfiguration(this.oxTrustImportPersonConfigJson);
 			jsonConfigurationService.saveOxTrustImportPersonConfiguration(this.oxTrustImportPersonConfiguration);
-			facesMessages.add(Severity.INFO, "oxTrust Import Person Configuration is updated.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust Import Person Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {

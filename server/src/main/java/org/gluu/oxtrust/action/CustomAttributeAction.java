@@ -44,7 +44,7 @@ import org.xdi.util.StringHelper;
  * @author Yuriy Movchan Date: 12/24/2012
  */
 @ConversationScoped
-@Named("customAttributeAction")
+@Named
 public class CustomAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -719594782175672946L;

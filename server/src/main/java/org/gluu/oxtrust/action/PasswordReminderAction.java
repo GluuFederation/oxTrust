@@ -89,6 +89,7 @@ public class PasswordReminderAction implements Serializable {
 	@NotEmpty
 	@NotBlank
 	private String email;
+
 	@Inject
 	private LdapEntryManager ldapEntryManager;
 	
@@ -219,20 +220,6 @@ public class PasswordReminderAction implements Serializable {
      */
     public void setRecaptchaService(RecaptchaService recaptchaService) {
         this.recaptchaService = recaptchaService;
-    }
-
-    /**
-     * @return the log
-     */
-    public Log getLog() {
-        return log;
-    }
-
-    /**
-     * @param log the log to set
-     */
-    public void setLog(Log log) {
-        this.log = log;
     }
 	
 }

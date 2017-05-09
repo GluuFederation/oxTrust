@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
@@ -71,12 +72,8 @@ public class RegisterPersonAction implements Serializable {
 
 	@Inject
 	private OrganizationService organizationService;
-	
-	@Inject
-	private Redirect redirect;
 
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private CustomAttributeAction customAttributeAction;
 
 	@Inject

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import javax.faces.application.FacesMessage;

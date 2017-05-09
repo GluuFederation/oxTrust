@@ -10,21 +10,17 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushApplication;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
+import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
 
@@ -38,6 +34,9 @@ import com.unboundid.ldap.sdk.Filter;
 public class PushApplicationService implements Serializable {
 
 	private static final long serialVersionUID = -1537567020929607771L;
+
+	@Inject
+	private OrganizationService organizationService;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
@@ -186,15 +185,6 @@ public class PushApplicationService implements Serializable {
 		}
 
 		return String.format("inum=%s,ou=application,ou=push,%s", inum, orgDn);
-	}
-
-	/**
-	 * Get PushApplicationService instance
-	 * 
-	 * @return PushApplicationService instance
-	 */
-	public static PushApplicationService instance() {
-		return (PushApplicationService) Component.getInstance(PushApplicationService.class);
 	}
 
 }

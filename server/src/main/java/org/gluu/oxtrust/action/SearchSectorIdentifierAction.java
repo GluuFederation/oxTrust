@@ -34,7 +34,7 @@ public class SearchSectorIdentifierAction implements Serializable {
     private Logger log;
 
     @Inject
-    FacesMessages FacesMessages;
+    private FacesMessages FacesMessages;
 
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be between 0 and 30")

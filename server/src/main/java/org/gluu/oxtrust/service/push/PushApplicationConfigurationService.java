@@ -12,20 +12,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.gluu.oxtrust.model.push.PushApplication;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Logger;
-
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.ConversationScoped;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.model.push.PushApplication;
 import org.slf4j.Logger;
+import org.xdi.util.StringHelper;
 
 /**
  * Allows to prepare oxPush platform specifis configurations
@@ -42,6 +37,9 @@ public class PushApplicationConfigurationService implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private OrganizationService organizationService;
 
 	@PostConstruct
 	public void init() {

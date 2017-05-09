@@ -260,7 +260,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		boolean result = true;
 		if (ldapConfig.getServers().size() == 0) {
 			log.error("{0} LDAP configuration '{1}' should contains at least one server", configType, ldapConfig.getConfigId());
-			log.
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{0} LDAP configuration '{1}' should contains at least one server", configType,
 					ldapConfig.getConfigId());
 			result = false;

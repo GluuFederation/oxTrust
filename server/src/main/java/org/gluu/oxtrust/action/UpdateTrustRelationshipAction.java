@@ -504,7 +504,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		if (cert == null) {
 
-			facesMessages.add(Severity.INFO, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
 			if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 				Security.addProvider(new BouncyCastleProvider());
 			}
@@ -568,7 +568,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			}
 
 		} else {
-			facesMessages.add(Severity.INFO, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
 		}
 
 		return certificate;
@@ -762,7 +762,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		} else {
 
 			log.info("Shibboleth v3 configuration updated successfully");
-			facesMessages.add(Severity.INFO, "Shibboleth v3 configuration updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Shibboleth v3 configuration updated successfully");
 			facesMessages.add(FacesMessage.SEVERITY_WARN, "Please note it may take several minutes before new settings are actually loaded and applied by Shibboleth module!");
 		}
 	}

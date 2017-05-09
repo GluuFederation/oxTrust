@@ -10,20 +10,16 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
+import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
 
@@ -40,6 +36,9 @@ public class PushDeviceService implements Serializable {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
+
+	@Inject
+	private OrganizationService organizationService;
 
 	@Inject
 	private Logger log;

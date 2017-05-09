@@ -9,6 +9,7 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -25,7 +26,7 @@ import org.slf4j.Logger;
  * @author Dmitry Ognyannikov
  */
 @SessionScoped
-@Named("asimbaAddSPAction")
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class AsimbaAddSPAction implements Serializable {
 

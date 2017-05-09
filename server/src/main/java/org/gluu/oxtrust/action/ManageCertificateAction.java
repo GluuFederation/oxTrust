@@ -34,8 +34,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.security.auth.x500.X500Principal;
+import javax.security.auth.x500.X500Principal;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,7 +45,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.JCERSAPrivateCrtKey;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -54,7 +55,6 @@ import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.gluu.jsf2.message.FacesMessages;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -81,6 +81,9 @@ public class ManageCertificateAction implements Serializable {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	@Inject
 	private FacesContext facesContext;
