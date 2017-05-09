@@ -29,6 +29,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.security.Identity;
 import org.jboss.seam.annotations.Destroy;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
@@ -51,6 +52,9 @@ public class CustomAttributeAction implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private Identity identity;
 
 	@Inject
 	private AttributeService attributeService;
@@ -405,7 +409,7 @@ public class CustomAttributeAction implements Serializable {
 		UploadedFile uploadedFile = event.getUploadedFile();
 		this.uploadedImage = null;
 		try {
-			GluuImage image = imageService.constructImage((GluuCustomPerson) Component.getInstance("currentPerson"), uploadedFile);
+			GluuImage image = imageService.constructImage(identity.getUser(), uploadedFile);
 			image.setStoreTemporary(true);
 			if (imageService.createImageFiles(image)) {
 				this.uploadedImage = image;

@@ -13,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.Group;
@@ -47,6 +46,9 @@ public class Scim2GroupService implements Serializable {
 
     @Inject
     private CopyUtils2 copyUtils2;
+    
+    @Inject
+    private ServiceUtil serviceUtil;
 
     public Group createGroup(Group group) throws Exception {
         log.debug(" copying gluuGroup ");
@@ -75,7 +77,7 @@ public class Scim2GroupService implements Serializable {
 
         log.info("group.getMembers().size() : " + group.getMembers().size());
         if (group.getMembers().size() > 0) {
-            ServiceUtil.personMembersAdder(gluuGroup, dn);
+        	serviceUtil.personMembersAdder(gluuGroup, dn);
         }
 
         // As per spec, the SP must be the one to assign the meta attributes
@@ -128,7 +130,7 @@ public class Scim2GroupService implements Serializable {
         GluuGroup updatedGluuGroup = copyUtils2.copy(group, gluuGroup, true);
 
         if (group.getMembers().size() > 0) {
-            ServiceUtil.personMembersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
+        	serviceUtil.personMembersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
         }
 
         log.info(" Setting meta: update group ");
@@ -180,7 +182,7 @@ public class Scim2GroupService implements Serializable {
                     String dn = groupService.getDnForGroup(id);
                     log.info(" DN : " + dn);
 
-                    ServiceUtil.deleteGroupFromPerson(gluuGroup, dn);
+                    serviceUtil.deleteGroupFromPerson(gluuGroup, dn);
                 }
             }
 

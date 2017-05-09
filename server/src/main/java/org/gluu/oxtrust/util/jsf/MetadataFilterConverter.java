@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 import org.gluu.oxtrust.ldap.service.FilterService;
 import org.gluu.oxtrust.model.MetadataFilter;
@@ -19,8 +20,11 @@ import org.gluu.oxtrust.model.MetadataFilter;
 @FacesConverter("metadataFilterConverter")
 public class MetadataFilterConverter implements Converter {
 
+	@Inject
+	private FilterService filterService;
+
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String metadataFilterName) {
-		List<MetadataFilter> filters = FilterService.instance().getAvailableMetadataFilters();
+		List<MetadataFilter> filters = filterService.getAvailableMetadataFilters();
 		for (MetadataFilter filter : filters) {
 			if (filter.getName().equals(metadataFilterName)) {
 				return filter;

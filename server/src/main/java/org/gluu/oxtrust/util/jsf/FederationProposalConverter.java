@@ -12,15 +12,19 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 
 @FacesConverter("federationProposalConverter")
 public class FederationProposalConverter implements Converter {
+	
+	@Inject
+	private FederationService federationService;
 
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String federationName) {
-		List<GluuSAMLFederationProposal> federations = FederationService.instance().getAllFederations();
+		List<GluuSAMLFederationProposal> federations = federationService.getAllFederations();
 		for (GluuSAMLFederationProposal federation : federations) {
 			if (federation.getDisplayName().equals(federationName)) {
 				return federation;

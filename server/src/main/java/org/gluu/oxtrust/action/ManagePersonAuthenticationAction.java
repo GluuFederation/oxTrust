@@ -14,14 +14,15 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -34,8 +35,6 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.gluu.jsf2.message.FacesMessages;
-import javax.faces.application.FacesMessage;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
@@ -121,7 +120,7 @@ public class ManagePersonAuthenticationAction
 	@Inject
 	private AppConfiguration appConfiguration;
 
-	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
+	@Inject
 	private String cryptoConfigurationSalt;
 
 	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")

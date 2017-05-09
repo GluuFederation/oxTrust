@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.service;
 
-import java.awt.Component;
 import java.util.UUID;
 
 import javax.annotation.PreDestroy;
@@ -14,6 +13,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.security.OauthData;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -30,6 +30,9 @@ public class AuthenticationSessionService {
 	private Logger log;
 
 	@Inject
+	private Identity identity;
+
+	@Inject
 	private OpenIdService openIdService;
 	
 	@Inject
@@ -37,7 +40,7 @@ public class AuthenticationSessionService {
 
     @PreDestroy
     public void sessionDestroyed() {
-    	OauthData oauthData = (OauthData) Component.getInstance(OauthData.class, false);
+    	OauthData oauthData = identity.getOauthData();
     	if ((oauthData == null) || StringHelper.isEmpty(oauthData.getSessionState())) {
     		return;
     	}

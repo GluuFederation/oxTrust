@@ -11,19 +11,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
-
 import org.apache.commons.io.IOUtils;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.Destroy;
-import org.gluu.jsf2.message.FacesMessages;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -131,7 +129,7 @@ public class AttributeImportAction implements Serializable {
 		destroy();
 	}
 
-	@Destroy
+	@PreDestroy
 	public void destroy() {
 		removeFileDataToImport();
 		removeFileToImport();

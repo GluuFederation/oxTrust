@@ -14,10 +14,10 @@ import java.util.Calendar;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
+import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -36,16 +36,21 @@ import org.slf4j.Logger;
 public class PasswordResetAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private Logger log;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
 	
 	@Inject
 	private RecaptchaService recaptchaService;
-
 	
 	@Inject
-	private Logger log;
+	private ApplianceService applianceService;
+	
+	@Inject
+	private PersonService personService;
 	
 	private PasswordResetRequest request;
 	private String guid;
@@ -67,7 +72,7 @@ public class PasswordResetAction implements Serializable {
 		    requestCalendarExpiry.setTime(sdf.parse(request.getCreationDate()));
 		    requestCalendarExpiry.add(Calendar.HOUR, 2);
 		}
-		GluuCustomPerson person = PersonService.instance().getPersonByInum(request.getPersonInum());
+		GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
 		GluuCustomAttribute question = null;
 		if(person != null ){
 			question = person.getGluuCustomAttribute("secretQuestion");
@@ -99,7 +104,7 @@ public class PasswordResetAction implements Serializable {
 			    requestCalendarExpiry.setTime(sdf.parse(request.getCreationDate()));
 			    requestCalendarExpiry.add(Calendar.HOUR, 2);
 			}
-			GluuCustomPerson person = PersonService.instance().getPersonByInum(request.getPersonInum());
+			GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
 			GluuCustomAttribute question = null;
 			GluuCustomAttribute answer = null;
 			if(person != null ){
@@ -112,12 +117,12 @@ public class PasswordResetAction implements Serializable {
 				    Boolean securityQuestionAnswered = (securityAnswer != null) && securityAnswer.equals(correctAnswer);
 				    if(securityQuestionAnswered){
 				    	person.setUserPassword(password);
-				    	PersonService.instance().updatePerson(person);
+				    	personService.updatePerson(person);
 				    	return OxTrustConstants.RESULT_SUCCESS;
 				    }
 				}else{
 					person.setUserPassword(password);
-			    	PersonService.instance().updatePerson(person);
+			    	personService.updatePerson(person);
 					return OxTrustConstants.RESULT_SUCCESS;
 				}
 			}

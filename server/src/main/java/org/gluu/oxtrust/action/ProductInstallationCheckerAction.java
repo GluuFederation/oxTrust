@@ -12,7 +12,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.slf4j.Logger;
@@ -23,7 +22,7 @@ import org.slf4j.Logger;
  * @author Dmitry Ognyannikov
  */
 @ApplicationScoped
-@Named("productInstallationCheckerAction")
+@Named
 //TODO CDI @Restrict("#{identity.loggedIn}")
 public class ProductInstallationCheckerAction implements Serializable {
 
@@ -31,6 +30,9 @@ public class ProductInstallationCheckerAction implements Serializable {
     
     @Inject
     private Logger log;
+
+    @Inject
+    private Shibboleth3ConfService shibboleth3ConfService;
     
     private boolean showSAMLMenu = true;
     private boolean showAsimbaSubmenu = true;
@@ -45,11 +47,11 @@ public class ProductInstallationCheckerAction implements Serializable {
     public void init() {        
         log.info("init() ProductInstallationCheckerAction call");
         
-        showSAMLMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled() || Shibboleth3ConfService.instance().isIdpInstalled();
+        showSAMLMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled() || shibboleth3ConfService.isIdpInstalled();
         
         showAsimbaSubmenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled();
         
-        showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || Shibboleth3ConfService.instance().isIdpInstalled();
+        showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || shibboleth3ConfService.isIdpInstalled();
         
         showIDP_CAS = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isShibbolethIDP3Installed();
     }

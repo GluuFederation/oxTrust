@@ -34,7 +34,7 @@ import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.slf4j.Logger;
 
 @Named("patchUtils")
-public class PatchUtils implements Serializable {
+public class PatchUtil implements Serializable {
 
 	private static final long serialVersionUID = -1715995162448707004L;
 

@@ -157,16 +157,6 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	}
 
 	/**
-	 * Remove organization from cache after receiving event that organization
-	 * were changed
-	 */
-	@Observer(OxTrustConstants.EVENT_CLEAR_ORGANIZATION)
-	public void clearOrganizationCache() throws Exception {
-		log.debug("Removing organization from cache");
-		cacheService.removeAll(OxTrustConstants.CACHE_APPLICATION_NAME);
-	}
-
-	/**
 	 * Build DN string for organization
 	 * 
 	 * @return DN string for organization

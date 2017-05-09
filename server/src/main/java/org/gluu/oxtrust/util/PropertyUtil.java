@@ -8,9 +8,12 @@ package org.gluu.oxtrust.util;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.xdi.model.SimpleProperty;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
@@ -21,16 +24,14 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * 
  * @author Yuriy Movchan Date: 08.02.2011
  */
+@Stateless
+@Named
 public class PropertyUtil {
 
 	private static final Logger log = Logger.getLogger(PropertyUtil.class);
 
+	@Inject
 	private String cryptoConfigurationSalt;
-	
-	public PropertyUtil() {
-		// Init variable because velocity call method encryptString without AOP interceptor
-		this.cryptoConfigurationSalt = ConfigurationFactory.instance().getCryptoConfigurationSalt();
-	}
 	
 	public String encryptString(String value) {
 		try {

@@ -23,6 +23,7 @@ import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -71,6 +72,9 @@ public class UpdateGroupAction implements Serializable {
 	@SuppressWarnings("seam-unresolved-variable")
 	@Inject
 	protected GluuCustomPerson currentPerson;
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	@Inject
 	private IGroupService groupService;

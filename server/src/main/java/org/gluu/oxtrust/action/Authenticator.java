@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 

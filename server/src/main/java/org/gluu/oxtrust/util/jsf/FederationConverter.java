@@ -12,15 +12,19 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 
 @FacesConverter("federationConverter")
 public class FederationConverter implements Converter {
+	
+	@Inject
+	private TrustService trustService;
 
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String federationName) {
-		List<GluuSAMLTrustRelationship> federations = TrustService.instance().getAllFederations();
+		List<GluuSAMLTrustRelationship> federations = trustService.getAllFederations();
 		for (GluuSAMLTrustRelationship federation : federations) {
 			if (federation.getDisplayName().equals(federationName)) {
 				return federation;
