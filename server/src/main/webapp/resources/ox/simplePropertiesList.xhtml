@@ -23,8 +23,7 @@
 
 <cc:implementation>
     <a4j:region>
-        <ox:decorate>
-            <ui:define  name="label">#{cc.attrs.label}</ui:define>
+        <ox:decorate label="#{cc.attrs.label}">
             <h:panelGroup id="propertiesList">
                 <a4j:region>
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
