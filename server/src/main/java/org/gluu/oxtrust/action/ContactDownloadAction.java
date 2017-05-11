@@ -8,12 +8,12 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
-import javax.faces.application.FacesMessage;import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.ldap.service.DownloadService;

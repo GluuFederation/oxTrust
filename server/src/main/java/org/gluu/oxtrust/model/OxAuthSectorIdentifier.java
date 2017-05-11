@@ -1,12 +1,12 @@
 package org.gluu.oxtrust.model;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.Entry;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * Sector Identifier

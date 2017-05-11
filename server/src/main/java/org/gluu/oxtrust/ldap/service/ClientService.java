@@ -13,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.model.AuthenticationMethod;
 import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
 import org.gluu.oxtrust.model.KeyEncryptionAlgorithm;

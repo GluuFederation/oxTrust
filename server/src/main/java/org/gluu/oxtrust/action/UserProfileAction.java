@@ -16,7 +16,6 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -32,8 +31,6 @@ import org.xdi.model.GluuIMAPData;
 import org.xdi.model.GluuImage;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.ImapPassword;
-
-import jnr.ffi.annotations.Out;
 
 /**
  * Action class for view and update profile actions.
@@ -61,22 +58,19 @@ public class UserProfileAction implements Serializable {
 	@Inject
 	private ImageService imageService;
 
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private CustomAttributeAction customAttributeAction;
 
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private UserPasswordAction userPasswordAction;
 
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private WhitePagesAction whitePagesAction;
 
 	@Inject
 	private GluuCustomPerson currentPerson;
 	
-	@Inject(create = true, value="imapDataService")
+	@Inject
 	private ImapDataService imapDataService;
 
 	@Inject

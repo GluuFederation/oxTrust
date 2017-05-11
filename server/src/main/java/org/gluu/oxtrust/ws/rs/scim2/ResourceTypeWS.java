@@ -9,19 +9,22 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.*;
+import javax.inject.Named;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.annotations.Api;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
-import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
+import com.wordnik.swagger.annotations.Api;
 /**
  * @author Rahat Ali Date: 05.08.2015
  */

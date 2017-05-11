@@ -9,13 +9,11 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.BeforeDestroyed;
 import javax.enterprise.context.Initialized;
@@ -26,30 +24,21 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletContext;
 
-import javax.faces.application.FacesMessage;import javax.servlet.ServletContext;
-
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.gluu.oxtrust.model.OxIDPAuthConf;
+import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.oxtrust.service.status.ldap.LdapStatusTimer;
 import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
-import org.testng.annotations.Factory;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.exception.OxIntializationException;
-import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
@@ -60,23 +49,17 @@ import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.client.uma.UmaConfigurationService;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.util.SecurityProviderUtility;
-import org.xdi.oxauth.service.EncryptionService;
-import org.xdi.oxauth.service.cdi.event.AuthConfigurationEvent;
-import org.xdi.oxauth.util.ServerUtil;
 import org.xdi.service.JsonService;
 import org.xdi.service.PythonService;
 import org.xdi.service.cdi.event.ConfigurationUpdate;
 import org.xdi.service.cdi.event.LdapConfigurationReload;
-import org.xdi.service.cdi.event.Scheduled;
 import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.service.custom.script.CustomScriptManager;
 import org.xdi.service.ldap.LdapConnectionService;
 import org.xdi.service.timer.QuartzSchedulerManager;
 import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
-import org.xdi.util.security.PropertiesDecrypter;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
@@ -122,12 +105,24 @@ public class AppInitializer {
 
 	@Inject
 	private MetadataValidationTimer metadataValidationTimer;
+	
+	@Inject
+	private EntityIDMonitoringService entityIDMonitoringService;
 
 	@Inject
 	private LogFileSizeChecker logFileSizeChecker;
-	
+
 	@Inject
 	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private CacheRefreshTimer cacheRefreshTimer;
+	
+	@Inject
+	private StatusCheckerDaily statusCheckerDaily;
+	
+	@Inject
+	private StatusCheckerTimer statusCheckerTimer;
 
     @Inject
     private PythonService pythonService;
@@ -215,10 +210,14 @@ public class AppInitializer {
         quartzSchedulerManager.start();
 
         // Schedule timer tasks
-        ldapStatusTimer.initTimer();
         configurationFactory.initTimer();
-        svnSyncTimer.initTimer();
 		metadataValidationTimer.initTimer();
+		entityIDMonitoringService.initTimer();
+		cacheRefreshTimer.initTimer();
+        ldapStatusTimer.initTimer();
+        statusCheckerDaily.initTimer();
+        statusCheckerTimer.initTimer();
+        svnSyncTimer.initTimer();
 		logFileSizeChecker.initTimer();
 	}
 

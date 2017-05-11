@@ -29,7 +29,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;

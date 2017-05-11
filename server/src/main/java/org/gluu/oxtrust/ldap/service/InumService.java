@@ -12,8 +12,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import org.gluu.oxtrust.model.GluuAppliance;

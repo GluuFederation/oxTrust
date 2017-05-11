@@ -5,15 +5,28 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_OPERATIONS;
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_PAYLOAD_SIZE;
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 // import javax.servlet.http.HttpServletRequest;
 // import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 // import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -25,13 +38,18 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
-import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.BulkOperation;
+import org.gluu.oxtrust.model.scim2.BulkRequest;
+import org.gluu.oxtrust.model.scim2.BulkResponse;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.ErrorResponse;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.Group;
+import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerializer;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
@@ -40,19 +58,11 @@ import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;// import org.xdi.context.J2EContext;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.Authorization;
-
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_OPERATIONS;
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_PAYLOAD_SIZE;
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * SCIM Bulk Endpoint Implementation

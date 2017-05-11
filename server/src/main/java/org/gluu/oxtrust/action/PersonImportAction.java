@@ -18,14 +18,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
@@ -38,9 +40,6 @@ import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.AttributeData;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.Destroy;
-import org.gluu.jsf2.message.FacesMessages;
-import javax.faces.application.FacesMessage;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -50,8 +49,6 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuUserRole;
 import org.xdi.util.StringHelper;
-
-import jnr.ffi.annotations.Out;
 
 /**
  * Action class for load persons from Excel file
@@ -75,9 +72,6 @@ public class PersonImportAction implements Serializable {
 	private OrganizationService organizationService;
 
 	@Inject
-	private FacesMessages FacesMessages;
-
-	@Inject
 	private IPersonService personService;
 	
 	@Inject
@@ -98,8 +92,7 @@ public class PersonImportAction implements Serializable {
 	@Inject
 	private transient ImportPersonConfiguration importPersonConfiguration;
 	
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private CustomAttributeAction customAttributeAction;
 
 	private UploadedFile uploadedFile;
@@ -203,7 +196,7 @@ public class PersonImportAction implements Serializable {
 		destroy();
 	}
 
-	@Destroy
+	@PreDestroy
 	public void destroy() {
 		removeFileDataToImport();
 		removeFileToImport();

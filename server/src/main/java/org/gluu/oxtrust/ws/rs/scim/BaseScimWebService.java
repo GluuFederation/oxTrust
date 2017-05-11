@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -27,15 +28,12 @@ import org.gluu.oxtrust.model.scim.Error;
 import org.gluu.oxtrust.model.scim.Errors;
 import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim.ScimPerson;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.contexts.Contexts;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
@@ -55,6 +53,9 @@ public class BaseScimWebService {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private Identity identity;
 
 	@Inject
 	protected AppConfiguration appConfiguration;
@@ -100,7 +101,7 @@ public class BaseScimWebService {
 
 	protected boolean getAuthorizedUser() {
 		try {
-			GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
+			GluuCustomPerson authUser = identity.getUser();
 
 			if (authUser == null) {
 				return false;

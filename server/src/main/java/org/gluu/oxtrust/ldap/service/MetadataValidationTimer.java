@@ -29,7 +29,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.oxtrust.service.cdi.event.MetadataValidationEvent;
@@ -62,6 +61,9 @@ public class MetadataValidationTimer {
 	
 	@Inject
 	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private TrustService trustService;
 	
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
@@ -143,7 +145,7 @@ public class MetadataValidationTimer {
 		log.info("IDP config generation is set to " + createConfig);
 		
 		if (createConfig) {
-			List<GluuSAMLTrustRelationship> trustRelationships = TrustService.instance().getAllActiveTrustRelationships();
+			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 
 			log.info("IDP config generation files finished. TR count: '{0}'", trustRelationships.size());
@@ -170,14 +172,14 @@ public class MetadataValidationTimer {
 			if (StringHelper.isNotEmpty(metadataFN)) {
 				File metadata = new File(shib3IdpTempmetadataFolder + metadataFN);
 				File target = new File(shib3IdpMetadataFolder + metadataFN.replaceAll(".{4}\\..{4}$", ""));
-				GluuSAMLTrustRelationship tr = TrustService.instance().getTrustByUnpunctuatedInum(
+				GluuSAMLTrustRelationship tr = trustService.getTrustByUnpunctuatedInum(
 						metadataFN.split("-" + Shibboleth3ConfService.SHIB3_IDP_SP_METADATA_FILE)[0]);
 				if (tr == null) {
 					metadataUpdates.add(metadataFN);
 					return false;
 				}
 				tr.setValidationStatus(GluuValidationStatus.VALIDATION);
-				TrustService.instance().updateTrustRelationship(tr);
+				trustService.updateTrustRelationship(tr);
 
 				GluuErrorHandler handler = null;
 				List<String> validationLog = null;
@@ -190,7 +192,7 @@ public class MetadataValidationTimer {
 					validationLog.add(e.getMessage());
 					log.warn("Validation of " + tr.getInum() + " failed: " + e.getMessage() );
 					tr.setValidationLog(validationLog);
-					TrustService.instance().updateTrustRelationship(tr);
+					trustService.updateTrustRelationship(tr);
 
 					return false;
 				}
@@ -203,7 +205,7 @@ public class MetadataValidationTimer {
 					} else {
 						tr.setSpMetaDataFN(metadataFN.replaceAll(".{4}\\..{4}$", ""));
 					}
-					boolean federation = TrustService.instance().isFederation(tr);
+					boolean federation = trustService.isFederation(tr);
 					tr.setFederation(federation);
 					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
@@ -236,7 +238,7 @@ public class MetadataValidationTimer {
 					tr.setGluuEntityId(entityIdSet);
 					tr.setStatus(GluuStatus.ACTIVE);
 
-					TrustService.instance().updateTrustRelationship(tr);
+					trustService.updateTrustRelationship(tr);
 					result = true;
 				}else if(appConfiguration.isIgnoreValidation()){
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(handler.getLog())));
@@ -247,7 +249,7 @@ public class MetadataValidationTimer {
 					}else{
 						tr.setSpMetaDataFN(metadataFN.replaceAll("....$", ""));
 					}
-					boolean federation = TrustService.instance().isFederation(tr);
+					boolean federation = trustService.isFederation(tr);
 					tr.setFederation(federation);
 					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
@@ -268,13 +270,13 @@ public class MetadataValidationTimer {
 					if(! duplicatesSet.isEmpty()){
 						validationLog.add("This metadata contains multiple instances of entityId: " + Arrays.toString(duplicatesSet.toArray()));
 					}
-					TrustService.instance().updateTrustRelationship(tr);
+					trustService.updateTrustRelationship(tr);
 					result = true;
 				} else {
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(handler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);
-					TrustService.instance().updateTrustRelationship(tr);
+					trustService.updateTrustRelationship(tr);
 				}
 			}
 		}

@@ -10,7 +10,11 @@ import org.gluu.oxtrust.model.scim2.schema.core.GroupCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.core.UserCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.core.fido.FidoDeviceCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
-import org.gluu.oxtrust.service.scim2.schema.strategy.*;
+import org.gluu.oxtrust.service.scim2.schema.strategy.FidoDeviceCoreLoadingStrategy;
+import org.gluu.oxtrust.service.scim2.schema.strategy.GroupCoreLoadingStrategy;
+import org.gluu.oxtrust.service.scim2.schema.strategy.LoadingStrategy;
+import org.gluu.oxtrust.service.scim2.schema.strategy.UserCoreLoadingStrategy;
+import org.gluu.oxtrust.service.scim2.schema.strategy.UserExtensionLoadingStrategy;
 import org.xdi.config.oxtrust.AppConfiguration;
 
 /**

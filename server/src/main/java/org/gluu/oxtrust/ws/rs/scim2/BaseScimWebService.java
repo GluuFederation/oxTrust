@@ -18,10 +18,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -41,8 +41,6 @@ import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.contexts.Contexts;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;

@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,11 +39,14 @@ import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
+import org.gluu.oxtrust.service.cdi.event.LogFileSizeChekerEvent;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;
@@ -50,8 +55,6 @@ import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
@@ -62,11 +65,12 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.ObjectSerializationService;
 import org.xdi.service.SchemaService;
+import org.xdi.service.cdi.event.Scheduled;
+import org.xdi.service.timer.event.TimerEvent;
 import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.PropertiesDecrypter;
 
 import com.unboundid.ldap.sdk.Filter;
 
@@ -80,11 +84,16 @@ import com.unboundid.ldap.sdk.Filter;
 @Named
 public class CacheRefreshTimer {
 
+	private static final String LETTERS_FOR_SEARCH = "abcdefghijklmnopqrstuvwxyz1234567890.";
+	private static final String[] TARGET_PERSON_RETURN_ATTRIBUTES = { OxTrustConstants.inum };
+
+	private static final int DEFAULT_INTERVAL = 60;
+
 	@Inject
 	private Logger log;
 
-	private static final String LETTERS_FOR_SEARCH = "abcdefghijklmnopqrstuvwxyz1234567890.";
-	private static final String[] TARGET_PERSON_RETURN_ATTRIBUTES = { OxTrustConstants.inum };
+	@Inject
+	private Event<TimerEvent> timerEvent;
 
 	@Inject
 	protected AttributeService attributeService;
@@ -119,8 +128,8 @@ public class CacheRefreshTimer {
 	@Inject
 	private AppConfiguration appConfiguration;
 	
-	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private EncryptionService encryptionService;
 	
 	@Inject
 	private ObjectSerializationService objectSerializationService;
@@ -128,11 +137,9 @@ public class CacheRefreshTimer {
 	private AtomicBoolean isActive;
 	private long lastFinishedTime;
 
-	@Observer("org.jboss.seam.postInitialization")
-	public void init() {
-		log.info("Initializing CacheRefreshTimer...");
-		this.isActive = new AtomicBoolean(false);
-		this.lastFinishedTime = System.currentTimeMillis();
+    public void initTimer() {
+        log.info("Initializing Cache Refresh Timer");
+        this.isActive = new AtomicBoolean(false);
 		
 		// Clean up previous Inum cache
 		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
@@ -145,12 +152,33 @@ public class CacheRefreshTimer {
 		}
 
 		// Schedule to start cache refresh every 1 minute
-		Events.instance().raiseTimedEvent(OxTrustConstants.EVENT_CACHE_REFRESH_TIMER, new TimerSchedule(1 * 60 * 1000L, 1 * 60 * 1000L));
-	}
+		final int delay = 1 * 60;
+		final int interval = DEFAULT_INTERVAL;
 
-	@Observer(OxTrustConstants.EVENT_CACHE_REFRESH_TIMER)
-	@Asynchronous
-	public void process() {
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, DEFAULT_INTERVAL), new CacheRefreshEvent(),
+				Scheduled.Literal.INSTANCE));
+
+        this.lastFinishedTime = System.currentTimeMillis();
+    }
+
+    @Asynchronous
+    public void process(@Observes @Scheduled CacheRefreshEvent cacheRefreshEvent) {
+        if (this.isActive.get()) {
+            return;
+        }
+
+        if (!this.isActive.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            processInt();
+        } finally {
+            this.isActive.set(false);
+        }
+    }
+
+	public void processInt() {
 		if (this.isActive.get()) {
 			log.debug("Another process is active");
 			return;
@@ -1044,7 +1072,7 @@ public class CacheRefreshTimer {
 
 		Properties ldapProperties = toLdapProperties(ldapConfiguration);
 
-		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(PropertiesDecrypter.decryptProperties(ldapProperties, cryptoConfigurationSalt));
+		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(encryptionService.decryptProperties(ldapProperties));
 
 		if (!ldapConnectionProvider.isConnected()) {
 			log.error("Failed to connect to LDAP server using configuration {0}", ldapConfig);

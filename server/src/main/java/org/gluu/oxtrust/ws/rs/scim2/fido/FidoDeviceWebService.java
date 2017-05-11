@@ -13,8 +13,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.ws.rs.Consumes;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -32,7 +31,6 @@ import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
-import org.gluu.oxtrust.ldap.service.FidoDeviceService;
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.scim2.Constants;

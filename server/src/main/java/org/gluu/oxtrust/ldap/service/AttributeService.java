@@ -13,19 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.gluu.oxtrust.model.GluuCustomAttribute;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;import org.jboss.seam.annotations.Observer;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.core.Events;
+import org.gluu.oxtrust.model.GluuCustomAttribute;
+import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;

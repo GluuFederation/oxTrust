@@ -6,13 +6,12 @@
 
 package org.gluu.oxtrust.util;
 
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.association.ClientAssociation;
 import org.gluu.oxtrust.model.association.PersonAssociation;
-import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;
 @Named("mapperUtil")
 public class MapperUtil {
 

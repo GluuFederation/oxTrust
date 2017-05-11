@@ -9,12 +9,10 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.beanutils.BeanUtils;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  * Provides operations to get property values

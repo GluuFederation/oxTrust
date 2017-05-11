@@ -393,7 +393,7 @@ public class OxChooserWebService extends BaseScimWebService {
 
 	public void postLogin(GluuCustomPerson person) throws Exception {
 		log.debug("Configuring application after user '{0}' login", person.getUid());
-		Contexts.getSessionContext().set(OxTrustConstants.CURRENT_PERSON, person);
+		identity.setUser(person);
 
 		// Set user roles
 		GluuUserRole[] userRoles = securityService.getUserRoles(person);

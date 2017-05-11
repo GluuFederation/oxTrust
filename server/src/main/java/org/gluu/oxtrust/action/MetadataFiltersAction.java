@@ -16,7 +16,6 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.FilterService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;

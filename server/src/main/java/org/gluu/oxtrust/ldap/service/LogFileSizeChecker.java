@@ -22,7 +22,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -64,7 +63,7 @@ public class LogFileSizeChecker {
 		final int delay = 2 * 60;
 		final int interval = DEFAULT_INTERVAL;
 
-		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, DEFAULT_INTERVAL), new LogFileSizeChekerEvent(),
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new LogFileSizeChekerEvent(),
 				Scheduled.Literal.INSTANCE));
     }
 

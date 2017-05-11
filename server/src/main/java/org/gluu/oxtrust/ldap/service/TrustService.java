@@ -15,8 +15,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.mail.AuthenticationFailedException;
+import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.io.FileUtils;
@@ -364,7 +363,7 @@ public class TrustService {
 				GluuAppliance appliance = applianceService.getAppliance();
 				String subj = "Attributes with Privacy level 5 are released in a Trust Relationaship";
 				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), appliance.getSmtpPasswordStr());
+						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
 				mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", appliance.getContactEmail(),
 						subj, preMsg + mailMsg);
 			} catch (AuthenticationFailedException ex) {

@@ -6,16 +6,12 @@
 
 package org.gluu.oxauth.client.util;
 
-import java.io.File;
-
-import org.apache.commons.lang.StringUtils;
 import org.gluu.oxauth.client.OpenIdClient;
 import org.gluu.oxauth.client.conf.AppConfiguration;
 import org.gluu.oxauth.client.conf.LdapAppConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.model.util.Util;
 import org.xdi.util.StringHelper;
-import org.xdi.util.properties.FileConfiguration;
 
 /**
  * oAuth properties and constants
@@ -55,7 +51,6 @@ public final class Configuration {
 	 */
 	public static final String OAUTH_PROPERTY_AUTHORIZE_URL = "oxauth.authorize.url";
 	public static final String OAUTH_PROPERTY_TOKEN_URL = "oxauth.token.url";
-	public static final String OAUTH_PROPERTY_TOKEN_VALIDATION_URL = "oxauth.token.validation.url";
 	public static final String OAUTH_PROPERTY_USERINFO_URL = "oxauth.userinfo.url";
 	public static final String OAUTH_PROPERTY_LOGOUT_URL = "oxauth.logout.url";
 	public static final String OAUTH_PROPERTY_LOGOUT_REDIRECT_URL = "oxauth.logout.redirect_url";
@@ -92,8 +87,6 @@ public final class Configuration {
     		return openIdConfiguration.getAuthorizationEndpoint();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_TOKEN_URL, propertyName)) {
     		return openIdConfiguration.getTokenEndpoint();
-    	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_TOKEN_VALIDATION_URL, propertyName)) {
-    		return openIdConfiguration.getValidateTokenEndpoint();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_USERINFO_URL, propertyName)) {
     		return openIdConfiguration.getUserInfoEndpoint();
     	} else if (StringHelper.equalsIgnoreCase(Configuration.OAUTH_PROPERTY_LOGOUT_URL, propertyName)) {

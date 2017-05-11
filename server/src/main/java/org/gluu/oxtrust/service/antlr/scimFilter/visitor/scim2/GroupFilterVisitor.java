@@ -5,8 +5,15 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.Group;
+import org.gluu.oxtrust.model.scim2.Meta;
+import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
@@ -14,11 +21,6 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Val Pecaoco

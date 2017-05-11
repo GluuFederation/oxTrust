@@ -9,7 +9,11 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.IOException;
 import java.io.Serializable;
 
-import org.bouncycastle.asn1.cms.EncryptedContentInfo;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -18,29 +22,21 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
-import org.xdi.config.oxtrust.LdapconfigurationFactory;
-import org.xdi.oxauth.client.*;
+import org.xdi.oxauth.client.OpenIdConfigurationResponse;
+import org.xdi.oxauth.client.TokenClient;
+import org.xdi.oxauth.client.TokenRequest;
+import org.xdi.oxauth.client.TokenResponse;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.util.security.StringEncrypter;
-
-import javax.ws.rs.core.Response;
 
 /**
  * Provides operations with JSON oxAuth/oxTrust configuration
@@ -183,7 +179,7 @@ public class JsonConfigurationService implements Serializable {
 		if (current.isScimTestMode()) {
 			OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
 
-			String clientPassword = StringEncrypter.defaultInstance().decrypt(appConfiguration.getOxAuthClientPassword(), cryptoConfigurationSalt);
+			String clientPassword = stringEncrypter.decrypt(appConfiguration.getOxAuthClientPassword());
 
 			if (source.getScimTestModeAccessToken() != null && !source.getScimTestModeAccessToken().isEmpty()) {
 				// Check if current token is still valid

@@ -10,15 +10,14 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.apache.commons.beanutils.BeanUtils;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.jsf2.message.FacesMessages;
-import javax.faces.application.FacesMessage.Severity;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
@@ -48,9 +47,6 @@ public class JsonConfigurationAction implements Serializable {
 	private static final long serialVersionUID = -4470460481895022468L;
 
 	@Inject
-	private FacesMessages FacesMessages;
-
-	@Inject
 	private FacesMessages facesMessages;
 
 	@Inject
@@ -62,8 +58,8 @@ public class JsonConfigurationAction implements Serializable {
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 	
-	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private StringEncrypter stringEncrypter;
 
 	private AppConfiguration oxTrustappConfiguration;
 	private ImportPersonConfig oxTrustImportPersonConfiguration;
@@ -277,7 +273,7 @@ public class JsonConfigurationAction implements Serializable {
 			String sourceValue = BeanUtils.getSimpleProperty(source, property);
 			BeanUtils.setProperty(current, property, sourceValue);
 		} else {
-			String currentValueEncrypted = StringEncrypter.defaultInstance().encrypt(currentValue, cryptoConfigurationSalt);
+			String currentValueEncrypted = stringEncrypter.encrypt(currentValue);
 			BeanUtils.setProperty(current, property, currentValueEncrypted);
 		}
 	}

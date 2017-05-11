@@ -6,6 +6,13 @@
 
 package org.gluu.oxtrust.model;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
@@ -17,12 +24,6 @@ import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * oxAuthClient

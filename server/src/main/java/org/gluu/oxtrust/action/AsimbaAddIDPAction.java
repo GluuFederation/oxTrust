@@ -13,7 +13,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;

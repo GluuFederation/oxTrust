@@ -70,7 +70,7 @@ public class ManagePersonAuthenticationAction
 	private Logger log;
 
 	@Inject
-	private FacesMessages FacesMessages;
+	private FacesMessages facesMessages;
 
 	@Inject
 	private ImageService imageService;
@@ -81,14 +81,11 @@ public class ManagePersonAuthenticationAction
 	@Inject
 	private ApplianceService applianceService;
 
-	@Inject(value = "customScriptService")
+	@Inject
 	private AbstractCustomScriptService customScriptService;
 
 	@Inject
 	private PassportService passportService;
-
-	@Inject
-	private FacesMessages facesMessages;
 
 	private GluuLdapConfiguration ldapConfig;
 	private boolean existLdapConfigIdpAuthConf;

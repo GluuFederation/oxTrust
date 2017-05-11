@@ -10,8 +10,7 @@ import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.servlet.ServletContext;
+import javax.servlet.ServletContext;
 
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
@@ -24,7 +23,7 @@ import org.xdi.util.StringHelper;
 @Stateless
 @Named
 @Deprecated //TODO: We don't need this class
-public class configurationFactoryService {
+public class OxTrustConfigurationService {
 	
 	@Inject
 	private AppConfiguration appConfiguration;

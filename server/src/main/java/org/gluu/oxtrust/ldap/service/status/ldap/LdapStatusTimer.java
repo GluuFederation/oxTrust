@@ -8,21 +8,17 @@ package org.gluu.oxtrust.ldap.service.status.ldap;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.gluu.site.ldap.LDAPConnectionProvider;
+import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Logger;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;import org.jboss.seam.annotations.Observer;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.async.TimerSchedule;
+import org.gluu.site.ldap.LDAPConnectionProvider;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
+import org.xdi.service.timer.schedule.TimerSchedule;
 
 /**
  * @author Yuriy Movchan

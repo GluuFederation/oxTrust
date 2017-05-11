@@ -8,9 +8,10 @@ package org.gluu.oxtrust.util;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
-import java.util.Properties;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,21 +19,22 @@ import org.codehaus.jackson.type.TypeReference;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.slf4j.Logger;
-import org.jboss.seam.log.Logging;
-import org.jboss.seam.web.ServletContexts;
 import org.xdi.util.StringHelper;
 
 /**
  * User: Dejan Maric
  */
-public class RecaptchaUtils {
+@Stateless
+@Named
+public class RecaptchaUtil {
 	
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private HttpServletRequest httpServletRequest;
 
 	public boolean verifyGoogleRecaptchaFromServletContext(String secretKey) {
-		HttpServletRequest httpServletRequest = ServletContexts.instance().getRequest();
-
 		String gRecaptchaResponse = httpServletRequest.getParameter("g-recaptcha-response");
 		if (StringHelper.isNotEmpty(gRecaptchaResponse)) {
 			return verifyGoogleRecaptcha(gRecaptchaResponse, secretKey);

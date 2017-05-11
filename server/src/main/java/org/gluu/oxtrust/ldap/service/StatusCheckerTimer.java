@@ -6,11 +6,15 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +28,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -33,27 +44,15 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.service.cdi.event.StatusCheckerTimerEvent;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import org.jboss.seam.annotations.Observer;
-import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.annotations.async.Expiration;
-import org.jboss.seam.annotations.async.IntervalDuration;
-import org.jboss.seam.async.QuartzTriggerHandle;
-import org.jboss.seam.async.TimerSchedule;
-import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.util.ArrayHelper;
+import org.xdi.service.cdi.event.Scheduled;
+import org.xdi.service.timer.event.TimerEvent;
+import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.StringHelper;
 import org.xdi.util.process.ProcessHelper;
 
@@ -66,11 +65,13 @@ import org.xdi.util.process.ProcessHelper;
 @Named("statusCheckerTimer")
 public class StatusCheckerTimer {
 
-    private final static String EVENT_TYPE = "StatusCheckerTimerEvent";
-    private final static long STATUS_CHECKER_INTERVAL = 60 * 1000L; // 1 minute
+    private final static int DEFAULT_INTERVAL = 60; // 1 minute
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private Event<TimerEvent> timerEvent;
 
 	@Inject
 	private ApplianceService applianceService;
@@ -99,17 +100,19 @@ public class StatusCheckerTimer {
 		this.numberFormat = NumberFormat.getNumberInstance(Locale.US);
 	}
 
-    @Observer("org.jboss.seam.postInitialization")
-    public void init() {
-        log.info("Initializing update appliance status timer");
+    public void initTimer() {
+        log.info("Initializing Daily Status Cheker Timer");
         this.isActive = new AtomicBoolean(false);
 
-        Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(60 * 1000L, STATUS_CHECKER_INTERVAL));
+		final int delay = 1 * 60;
+		final int interval = DEFAULT_INTERVAL;
+
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new StatusCheckerTimerEvent(),
+				Scheduled.Literal.INSTANCE));
     }
 
-    @Observer(EVENT_TYPE)
     @Asynchronous
-    public void process() {
+    public void process(@Observes @Scheduled StatusCheckerTimerEvent statusCheckerTimerEvent) {
         if (this.isActive.get()) {
             return;
         }
@@ -135,7 +138,7 @@ public class StatusCheckerTimer {
 	 */
 	private void processInt() {
 		log.debug("Starting update of appliance status");
-		AppConfiguration appConfiguration = configurationFactory.getappConfiguration();
+		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		if (!appConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}
@@ -217,7 +220,7 @@ public class StatusCheckerTimer {
 
 	private void setHttpdAttributes(GluuAppliance appliance) {
 		log.debug("Setting httpd attributes");
-		AppConfiguration appConfiguration = configurationFactory.getappConfiguration();
+		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		String page = getHttpdPage(appConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
 		appliance.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
 
@@ -225,7 +228,7 @@ public class StatusCheckerTimer {
 /*
 	private void setVDSAttributes(GluuAppliance appliance) {
 		log.debug("Setting VDS attributes");
-		appConfiguration appConfiguration = configurationFactory.getappConfiguration();
+		appConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		// Run vds check only on if vds.test.filter is set
 		if (appConfiguration.getVdsFilter() == null) {
 			return;

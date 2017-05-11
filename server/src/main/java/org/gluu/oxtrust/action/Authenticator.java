@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.gluu.oxtrust.security.Identity;
 import java.security.Principal;
-import java.security.acl.Group;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -22,15 +20,16 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;import javax.servlet.http.Cookie;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -38,16 +37,14 @@ import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.security.OauthData;
-import org.gluu.oxtrust.service.AuthenticationSessionService;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.plugins.server.embedded.SimplePrincipal;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
-import org.gluu.jsf2.message.FacesMessages;
-import org.jboss.seam.navigation.Pages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -65,8 +62,6 @@ import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
-
-import jnr.ffi.annotations.Out;
 
 /**
  * Provides authentication using oAuth
@@ -98,7 +93,7 @@ public class Authenticator implements Serializable {
 	@Inject
 	private SecurityService securityService;
 
-	@Inject(create = true)
+	@Inject
 	private SsoLoginAction ssoLoginAction;
 
 	@Inject
@@ -110,17 +105,11 @@ public class Authenticator implements Serializable {
 	@Inject
 	private FacesMessages facesMessages;
 
-	String viewIdBeforeLoginRedirect;
-
-	@Inject(create = true)
-	@Out(scope = ScopeType.SESSION, required = false)
-	private OauthData oauthData;
-
 	@Inject
 	private AppConfiguration appConfiguration;
 
-	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private StringEncrypter stringEncrypter;
 	
 	public boolean preAuthenticate() throws IOException, Exception {
 		boolean result = true;
@@ -134,7 +123,7 @@ public class Authenticator implements Serializable {
 	public boolean authenticate() {
 		String userName = null;
 		try {
-			userName = oauthData.getUserUid();
+			userName = identity.getOauthData().getUserUid();
 			identity.getCredentials().setUsername(userName);
 			log.info("Authenticating user '{0}'", userName);
 
@@ -167,7 +156,7 @@ public class Authenticator implements Serializable {
 	private void postLogin(User user) {
 		log.debug("Configuring application after user '{0}' login", user.getUid());
 		GluuCustomPerson person = findPersonByDn(user.getDn());
-		Contexts.getSessionContext().set(OxTrustConstants.CURRENT_PERSON, person);
+		identity.setUser(person);
 
 		// Set user roles
 		GluuUserRole[] userRoles = securityService.getUserRoles(user);
@@ -220,6 +209,7 @@ public class Authenticator implements Serializable {
 
 
 	public void oAuthlLogout() throws Exception {
+		OauthData oauthData = identity.getOauthData();
 		if (StringHelper.isEmpty(oauthData.getUserUid())) {
 			return;
 		}
@@ -344,11 +334,7 @@ public class Authenticator implements Serializable {
 			Contexts.getSessionContext().set(OxTrustConstants.OXAUTH_NONCE, nonce);
 		}
 
-		if (viewIdBeforeLoginRedirect != null) {
-			clientRequest.queryParameter(OxTrustConstants.OXAUTH_STATE, viewIdBeforeLoginRedirect);
-		}
-
-		FacesContext.getCurrentInstance().getExternalContext().redirect(clientRequest.getUri().replaceAll("%2B", "+"));
+		facesService.redirect(clientRequest.getUri().replaceAll("%2B", "+"));
 		
 		return true;
 	}
@@ -391,10 +377,6 @@ public class Authenticator implements Serializable {
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
 
-		if (viewIdBeforeLoginRedirect != null && !viewIdBeforeLoginRedirect.equals("")) {
-			Redirect.instance().setViewId(viewIdBeforeLoginRedirect);
-			viewIdBeforeLoginRedirect = "";
-		}
 		// todo hardcoded for now. Once clients are dynamically registered with
 		// oxAuth, change this
 		// String credentials = appConfiguration.getOxAuthClientId() +
@@ -413,7 +395,7 @@ public class Authenticator implements Serializable {
 		String clientPassword = appConfiguration.getOxAuthClientPassword();
 		if (clientPassword != null) {
 			try {
-				clientPassword = StringEncrypter.defaultInstance().decrypt(clientPassword, cryptoConfigurationSalt);
+				clientPassword = stringEncrypter.decrypt(clientPassword);
 			} catch (EncryptionException ex) {
 				log.error("Failed to decrypt client password", ex);
 			}
@@ -450,8 +432,11 @@ public class Authenticator implements Serializable {
 		log.info("Session validation successful. User is logged in");
 		UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
 		UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
+		
+		OauthData oauthData = identity.getOauthData();
 
-		this.oauthData.setHost(oxAuthHost);
+		oauthData.setHost(oxAuthHost);
+
 		// Determine uid
 		List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
 		if ((uidValues == null) || (uidValues.size() == 0)) {
@@ -495,12 +480,12 @@ public class Authenticator implements Serializable {
 			}			
 		}	
 
-		this.oauthData.setUserUid(uidValues.get(0));
-		this.oauthData.setAccessToken(accessToken);
-		this.oauthData.setAccessTokenExpirationInSeconds(tokenResponse.getExpiresIn());
-		this.oauthData.setScopes(scopes);
-		this.oauthData.setIdToken(idToken);
-		this.oauthData.setSessionState(sessionState);
+		oauthData.setUserUid(uidValues.get(0));
+		oauthData.setAccessToken(accessToken);
+		oauthData.setAccessTokenExpirationInSeconds(tokenResponse.getExpiresIn());
+		oauthData.setScopes(scopes);
+		oauthData.setIdToken(idToken);
+		oauthData.setSessionState(sessionState);
 
 		log.info("user uid:" + oauthData.getUserUid());
 

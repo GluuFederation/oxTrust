@@ -9,8 +9,6 @@ package org.gluu.oxtrust.security;
 import java.io.Serializable;
 
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;
 /**
  * @author Dejan Maric
  * @author Yuriy Movchan

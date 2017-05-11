@@ -13,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
@@ -23,6 +22,8 @@ import org.xdi.model.ProgrammingLanguage;
 import org.xdi.model.ScriptLocationType;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.util.StringHelper;
+import org.xdi.util.security.StringEncrypter;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * GluuAppliance service
@@ -44,6 +45,9 @@ public class ApplianceService {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private StringEncrypter stringEncrypter;
 
 	public boolean contains(String applianceDn) {
 		return ldapEntryManager.contains(GluuAppliance.class, applianceDn);
@@ -210,6 +214,35 @@ public class ApplianceService {
 		return new CustomScriptType[] { CustomScriptType.PERSON_AUTHENTICATION, CustomScriptType.UPDATE_USER,
 				CustomScriptType.USER_REGISTRATION, CustomScriptType.CLIENT_REGISTRATION, CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR,
 				CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_AUTHORIZATION_POLICY, CustomScriptType.APPLICATION_SESSION, CustomScriptType.SCIM };
+	}
+
+	public String getDecryptedSmtpPassword(GluuAppliance appliance) {
+		String password = appliance.getSmtpPassword();
+		if (StringHelper.isEmpty(password)) {
+			return null;
+		}
+
+		try {
+			return stringEncrypter.decrypt(password);
+		} catch (EncryptionException ex) {
+			log.error("Failed to decrypt SMTP password", ex);
+		}
+		
+		return null;
+	}
+
+	public void setEncryptedSmtpPassword(GluuAppliance appliance, String password) {
+		if (StringHelper.isEmpty(password)) {
+			return;
+		}
+
+		String encryptedPassword;
+		try {
+			encryptedPassword = stringEncrypter.encrypt(password);
+			appliance.setSmtpPassword(encryptedPassword);
+		} catch (EncryptionException ex) {
+			log.error("Failed to encrypt SMTP password", ex);
+		}
 	}
 
 }

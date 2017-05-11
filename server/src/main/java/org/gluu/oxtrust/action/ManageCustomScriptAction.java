@@ -16,18 +16,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.gluu.jsf2.message.FacesMessages;
-import javax.faces.application.FacesMessage;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
@@ -59,7 +58,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	private Logger log;
 
 	@Inject
-	private FacesMessages FacesMessages;
+	private FacesMessages facesMessages;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -69,9 +68,6 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
-
-	@Inject
-	private FacesMessages facesMessages;
 
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 

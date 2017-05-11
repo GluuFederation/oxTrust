@@ -6,14 +6,13 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import javax.faces.application.FacesMessage;
 import org.slf4j.Logger;
 import org.xdi.util.Util;
 
@@ -34,7 +33,7 @@ public class SearchSectorIdentifierAction implements Serializable {
     private Logger log;
 
     @Inject
-    private FacesMessages FacesMessages;
+    private FacesMessages facesMessages;
 
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be between 0 and 30")

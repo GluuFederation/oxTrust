@@ -9,16 +9,12 @@ package org.gluu.oxtrust.ldap.service;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.faces.application.ViewHandler;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
 
 /**
  * Provides operations with view id
@@ -36,7 +32,7 @@ public class ViewHandlerService {
 	@Inject
 	private ExternalContext externalContext;
 
-	@Inject(value = "#{facesContext.application.viewHandler}")
+	@Inject
 	private ViewHandler viewHandler;
 
 	public String getBookmarkableURL(String viewId, HashMap<String, List<String>> pageParams) {

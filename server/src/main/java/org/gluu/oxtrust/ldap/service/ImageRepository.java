@@ -14,22 +14,14 @@ import java.io.InputStream;
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
-import org.jboss.seam.annotations.Create;
-import javax.inject.Inject;
-import org.jboss.seam.annotations.Logger;
-import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.core.ResourceLoader;
 import org.slf4j.Logger;
-import org.jboss.seam.ui.graphicImage.Image.Type;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.util.StringHelper;

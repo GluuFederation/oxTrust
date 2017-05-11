@@ -6,8 +6,13 @@
 
 package org.gluu.oxtrust.model;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.constraints.Min;
+
 import org.apache.log4j.Logger;
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
@@ -19,13 +24,6 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
-import org.xdi.util.security.StringEncrypter;
-
-import javax.persistence.Transient;
-import javax.validation.constraints.Min;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * GluuAppliance
@@ -188,9 +186,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "gluuSmtpPassword")
 	private String smtpPassword;
 
-	@Transient
-	private String smtpPasswordStr;
-
 	@LdapAttribute(name = "gluuSmtpRequiresSsl")
 	private String smtpRequiresSsl;
 
@@ -251,21 +246,8 @@ public class GluuAppliance extends InumEntry implements Serializable {
 		return smtpPassword;
 	}
 
-	public String getSmtpPasswordStr() {
-		return smtpPasswordStr;
-	}
-
-	public void setSmtpPasswordStr(String smtpPasswordStr) {
-		if (smtpPasswordStr != null && !smtpPasswordStr.equals("")) {
-			this.smtpPasswordStr = smtpPasswordStr;
-			smtpPassword = smtpPasswordStr;
-			try {
-				String cryptoConfigurationSalt = ConfigurationFactory.instance().getCryptoConfigurationSalt();
-				smtpPassword = StringEncrypter.defaultInstance().encrypt(smtpPassword, cryptoConfigurationSalt);
-			} catch (Exception ex) {
-				log.error("Failed to encrypt password: " + smtpPassword, ex);
-			}
-		}
+	public void setSmtpPassword(String smtpPassword) {
+		this.smtpPassword = smtpPassword;
 	}
 
 	public boolean isRequiresSsl() {

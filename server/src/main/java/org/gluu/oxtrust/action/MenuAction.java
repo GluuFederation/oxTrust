@@ -9,10 +9,9 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 
 import javax.ejb.Stateless;
+import javax.enterprise.context.Conversation;
+import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;
-import org.jboss.seam.annotations.End;
 
 /**
  * Action class for helping with menu
@@ -22,11 +21,15 @@ import org.jboss.seam.annotations.End;
 @Stateless
 @Named("menuAction")
 public class MenuAction implements Serializable {
+	
+	@Inject
+	private Conversation conversation;
 
 	private static final long serialVersionUID = -172441515451149801L;
 
-	@End(beforeRedirect = true)
 	public String endConversation(final String viewId) {
+		// TODO: CDI Review
+		conversation.end();
 		return viewId;
 	}
 }

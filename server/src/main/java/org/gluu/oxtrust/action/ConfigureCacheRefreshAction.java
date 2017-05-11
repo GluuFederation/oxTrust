@@ -17,10 +17,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
@@ -30,6 +31,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
+import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.ldap.service.TemplateService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -40,7 +42,6 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.jsf.ValidationUtil;
-import org.gluu.jsf2.message.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
@@ -106,8 +107,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private AppConfiguration appConfiguration;
 	
 	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
-
+	private SecurityService securityService;
+SecurityService
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 
 	private boolean cacheRefreshEnabled;

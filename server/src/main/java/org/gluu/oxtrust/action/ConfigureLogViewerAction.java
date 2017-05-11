@@ -13,14 +13,12 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
-
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.jsf2.message.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.service.JsonService;

@@ -8,14 +8,12 @@ package org.gluu.oxtrust.service.uma;
 
 import java.io.Serializable;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
 import javax.enterprise.context.ApplicationScoped;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;import javax.enterprise.context.ConversationScoped;
+import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.model.GluuAppliance;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 

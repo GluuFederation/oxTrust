@@ -11,11 +11,15 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
-import javax.faces.application.FacesMessage;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -27,11 +31,6 @@ import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.gluu.jsf2.message.FacesMessages;
-import org.jboss.seam.web.ServletContexts;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
@@ -50,12 +49,18 @@ public class PasswordReminderAction implements Serializable {
 	
 	@Inject
 	private OrganizationService organizationService;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 	
 	@Inject
 	private PersonService personService;
 
     @Inject
     private FacesMessages facesMessages;
+
+    @Inject
+    private HttpServletRequest httpServletRequest;
 
     /**
      * @return the MESSAGE_NOT_FOUND
@@ -139,19 +144,19 @@ public class PasswordReminderAction implements Serializable {
 
 				String subj = String.format("Password reset was requested at %1$s identity server", organizationService.getOrganization().getDisplayName());
 				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), appliance.getSmtpPasswordStr());
+						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
 				
 				mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", email,
 						subj, String.format(MESSAGE_FOUND, matchedPersons.get(0).getGivenName(),
 								organizationService.getOrganization().getDisplayName(), 
-								appConfiguration.getApplianceUrl() + ServletContexts.instance().getRequest().getContextPath() + "/resetPassword/" + request.getOxGuid()));
+								appConfiguration.getApplianceUrl() + httpServletRequest.getContextPath() + "/resetPassword/" + request.getOxGuid()));
 
 				ldapEntryManager.persist(request);
 			}else{
 				GluuAppliance appliance = applianceService.getAppliance();
 				String subj = String.format("Password reset was requested at %1$s identity server", organizationService.getOrganization().getDisplayName());
 				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), appliance.getSmtpPasswordStr());
+						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
 				String fromName = appliance.getSmtpFromName();
 				if(fromName == null){
 					fromName = String.format("%1$s identity server" , organizationService.getOrganization().getDisplayName());
@@ -170,7 +175,7 @@ public class PasswordReminderAction implements Serializable {
 					&& appliance.getSmtpPort() != null 
 					&&((! appliance.isRequiresAuthentication()) 
 							|| (appliance.getSmtpUserName() != null 
-								&& appliance.getSmtpPasswordStr() != null))
+								&& applianceService.getDecryptedSmtpPassword(appliance) != null))
 					&& appliance.getPasswordResetAllowed()!=null 
 					&& appliance.getPasswordResetAllowed().isBooleanValue();
 		if(valid){

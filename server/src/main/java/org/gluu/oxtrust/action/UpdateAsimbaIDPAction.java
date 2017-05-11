@@ -14,21 +14,22 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.jsf2.message.FacesMessages;
-import org.jboss.seam.international.FacesMessage;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;

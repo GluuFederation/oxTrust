@@ -18,21 +18,18 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.selector.ApplicationSelectorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.jsf2.message.FacesMessages;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-
-import jnr.ffi.annotations.Out;
 
 
 /**

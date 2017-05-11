@@ -17,13 +17,14 @@ import java.util.List;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import javax.faces.application.FacesMessage;import javax.mail.AuthenticationFailedException;
+import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
@@ -35,10 +36,7 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.core.Events;
-import org.gluu.jsf2.message.FacesMessages;
-import javax.faces.application.FacesMessage;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -63,7 +61,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private FacesMessages FacesMessages;
+	private FacesMessages facesMessages;
 
 	@Inject
 	private GluuCustomPerson currentPerson;
@@ -79,9 +77,6 @@ public class UpdateOrganizationAction implements Serializable {
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
-
-	@Inject
-	private FacesMessages facesMessages;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -202,6 +197,14 @@ public class UpdateOrganizationAction implements Serializable {
 		return modify();
 	}
 
+	public String getSmtpPassword() {
+		return applianceService.getDecryptedSmtpPassword(appliance);		
+	}
+
+	public void setSmtpPassword(String smptPassword) {
+		applianceService.setEncryptedSmtpPassword(appliance, smptPassword);		
+	}
+
 	private void updateSmptConfiguration(GluuAppliance appliance) {
 		SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
 		smtpConfiguration.setHost(appliance.getSmtpHost());
@@ -220,11 +223,11 @@ public class UpdateOrganizationAction implements Serializable {
 	public String verifySmtpConfiguration() {
 		log.info("HostName: " + appliance.getSmtpHost() + " Port: " + appliance.getSmtpPort() + " RequireSSL: " + appliance.isRequiresSsl()
 				+ " RequireSSL: " + appliance.isRequiresAuthentication());
-		log.info("UserName: " + appliance.getSmtpUserName() + " Password: " + appliance.getSmtpPasswordStr());
+		log.info("UserName: " + appliance.getSmtpUserName() + " Password: " + applianceService.getDecryptedSmtpPassword(appliance));
 
 		try {
 			MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-					appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), appliance.getSmtpPasswordStr());
+					appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
 			mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">",
 					appliance.getSmtpFromEmailAddress(), "SMTP Server Configuration Verification",
 					"SMTP Server Configuration Verification Successful.");

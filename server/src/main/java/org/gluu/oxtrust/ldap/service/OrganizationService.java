@@ -13,18 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.faces.context.FacesContext;
-
-import org.gluu.oxtrust.model.GluuOrganization;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.Component;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ejb.Stateless;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;import org.jboss.seam.annotations.Observer;
-import javax.enterprise.context.ConversationScoped;
+import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;

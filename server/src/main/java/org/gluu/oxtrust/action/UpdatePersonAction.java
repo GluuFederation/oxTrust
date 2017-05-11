@@ -20,10 +20,10 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -61,6 +61,12 @@ public class UpdatePersonAction implements Serializable {
 	private boolean update;
 
 	private GluuCustomPerson person;
+	
+	@Inject
+	private OrganizationService organizationService;
+	
+	@Inject
+	private GroupService groupService;
 
 	@Inject
 	private AttributeService attributeService;
@@ -68,16 +74,13 @@ public class UpdatePersonAction implements Serializable {
 	@Inject
 	private IPersonService personService;
 
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private CustomAttributeAction customAttributeAction;
 
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private UserPasswordAction userPasswordAction;
 
-	@Inject(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private WhitePagesAction whitePagesAction;
 
 	@Inject
@@ -301,7 +304,7 @@ public class UpdatePersonAction implements Serializable {
 	
 	public String getGroupName(String dn){
 		if(dn != null){
-			GluuGroup group = GroupService.instance().getGroupByDn(dn);
+			GluuGroup group = groupService.getGroupByDn(dn);
 			if( group != null ){
 				String groupName = group.getDisplayName();
 				if(groupName != null && ! groupName.isEmpty()){

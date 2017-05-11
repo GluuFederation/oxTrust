@@ -7,14 +7,13 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
-import java.security.Identity;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import javax.faces.application.FacesMessage;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.MetricService;
 import org.slf4j.Logger;
 import org.xdi.service.JsonService;
