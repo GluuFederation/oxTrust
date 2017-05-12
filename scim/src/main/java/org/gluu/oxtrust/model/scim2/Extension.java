@@ -432,6 +432,8 @@ public class Extension {
          *        the new value
          * @param type
          *        the scim2 type of the field
+         * @param isMultiValued
+         *        has few values
          * @return the builder itself
          */
         @JsonAnySetter

@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,20 +20,24 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.DOMReader;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.FileData;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.cdi.event.LogFileSizeChekerEvent;
 import org.slf4j.Logger;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xdi.service.XmlService;
 import org.xdi.service.cdi.event.Scheduled;
 import org.xdi.service.timer.event.TimerEvent;
 import org.xdi.service.timer.schedule.TimerSchedule;
+import org.xdi.util.StringHelper;
 
 @ApplicationScoped
 @Named("logFileSizeChecker")
@@ -173,19 +176,32 @@ public class LogFileSizeChecker {
 		List<LogDir> logDirs = new ArrayList<LogDir>();
 		try {
 			org.w3c.dom.Document document = xmlService.getXmlDocument(FileUtils.readFileToByteArray(new File(source)));
-			DOMReader reader = new DOMReader();
-			Document doc = reader.read(document);
-			Element element = doc.getRootElement();
-			Iterator itr = element.elementIterator();
-			while (itr.hasNext()) {
-				element = (Element) itr.next();
-				String prefix = element.element("prefix").getText();
-				String location = element.element("location").getText();
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			XPathExpression entriesXPath = xPath.compile("/entries/entry");
 
-				String extension = "";
-				if (element.element("extension") != null) {
-					extension = element.element("extension").getText();
+			NodeList list = (NodeList) entriesXPath.evaluate(document, XPathConstants.NODESET);
+			for (int i = 0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+
+				String prefix = null;
+				String location = null;
+				String extension = null;
+				
+				NodeList subList = node.getChildNodes();
+				for (int j = 0; j < subList.getLength(); j++) {
+					Node subNode = subList.item(j);
+					String subNodeName = subNode.getNodeName();
+					String subNodeValue = subNode.getTextContent();
+				
+					if (StringHelper.equalsIgnoreCase(subNodeName, "prefix")) {
+						prefix = subNodeValue;
+					} else if (StringHelper.equalsIgnoreCase(subNodeName, "location")) {
+						location = subNodeValue;
+					} else if (StringHelper.equalsIgnoreCase(subNodeName, "extension")) {
+						extension = subNodeValue;
+					}
 				}
+
 				if (extension == null || extension.trim().equals("")) {
 					extension = "log";
 				}
@@ -194,7 +210,6 @@ public class LogFileSizeChecker {
 				logDirs.add(logDir);
 				log.debug("Prefix: " + prefix + " Location: " + location);
 			}
-			log.info("OutXML: " + doc.asXML());
 		} catch (Exception ex) {
 			log.debug("Exception while reading configuration file: " + ex);
 		}
