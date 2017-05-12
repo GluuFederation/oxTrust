@@ -21,7 +21,7 @@ import org.gluu.oxtrust.model.exception.SCIMDataValidationException;
 import com.google.common.base.Strings;
 
 /**
- * A URI of the form data:[< mediatype >][;base64],< data >
+ * A URI of the form data:[mediatype][;base64],data
  */
 public class DataURI {
 
@@ -32,7 +32,7 @@ public class DataURI {
     /**
      * 
      * @param dataUri
-     *        A String presenting a URI of the form data:[< mediatype >][;base64],< data >
+     *        A String presenting a URI of the form data:[mediatype][;base64],data
      * @throws SCIMDataValidationException
      *         if the dataUri violates RFC 2396, as augmented by the above deviations
      */
@@ -53,7 +53,7 @@ public class DataURI {
     /**
      * 
      * @param dataUri
-     *        A URI of the form data:[< mediatype >][;base64],< data >
+     *        A URI of the form data:[mediatype][;base64],data
      * @throws SCIMDataValidationException
      *         if the URI doesn't expects the schema
      */
