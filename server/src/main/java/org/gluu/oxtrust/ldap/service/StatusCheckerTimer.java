@@ -62,7 +62,7 @@ import org.xdi.util.process.ProcessHelper;
  * @author Yuriy Movchan Date: 11.22.2010
  */
 @ApplicationScoped
-@Named("statusCheckerTimer")
+@Named
 public class StatusCheckerTimer {
 
     private final static int DEFAULT_INTERVAL = 60; // 1 minute
@@ -88,12 +88,12 @@ public class StatusCheckerTimer {
 	@Inject
 	private ConfigurationFactory configurationFactory;
 
+	@Inject
+	private AppConfiguration appConfiguration;
+
 	private NumberFormat numberFormat;
 
     private AtomicBoolean isActive;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	@PostConstruct
 	public void create() {

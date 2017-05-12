@@ -66,10 +66,10 @@ public class BaseScimWebService {
 	private Identity identity;
 
 	@Inject
-	protected AppConfiguration appConfiguration;
+	private AppConfiguration appConfiguration;
 
 	@Inject
-	protected JsonConfigurationService jsonConfigurationService;
+	private JsonConfigurationService jsonConfigurationService;
 
 	@Inject
 	private ApplianceService applianceService;
