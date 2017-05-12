@@ -13,7 +13,7 @@ import java.net.URI;
 import org.gluu.oxtrust.model.exception.SCIMDataValidationException;
 
 /**
- * A URI of the form data:image/[image extension][;base64],<data>
+ * A URI of the form data:image/[image extension][;base64],< data >
  */
 public class ImageDataURI extends DataURI {
 
@@ -22,7 +22,7 @@ public class ImageDataURI extends DataURI {
     /**
      * 
      * @param imageUri
-     *        A String presenting a URI of the form data:image/[image extension][;base64],<data>
+     *        A String presenting a URI of the form data:image/[image extension][;base64],< data >
      * @throws SCIMDataValidationException
      *         If the given string violates RFC 2396, as augmented by the above deviations
      */
@@ -37,7 +37,7 @@ public class ImageDataURI extends DataURI {
     /**
      * 
      * @param dataUri
-     *        A URI of the form data:image/[image extension][;base64],<data>
+     *        A URI of the form data:image/[image extension][;base64],< data >
      * @throws SCIMDataValidationException
      *         if the URI doesn't expects the schema
      */
