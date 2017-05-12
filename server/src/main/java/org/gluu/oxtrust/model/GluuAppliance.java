@@ -108,9 +108,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "userPassword", ignoreDuringRead = true)
 	private String userPassword;
 
-	@LdapAttribute(name = "blowfishPassword")
-	private String blowfishPassword;
-
 	@LdapAttribute(name = "gluuHTTPstatus", updateOnly = true)
 	private String gluuHttpStatus;
 
@@ -281,14 +278,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	public void setOxTrustAuthenticationMode(String oxTrustAuthenticationMode) {
 		this.oxTrustAuthenticationMode = oxTrustAuthenticationMode;
 	}
-
-	public String getBlowfishPassword() {
-        return blowfishPassword;
-    }
-
-    public void setBlowfishPassword(String blowfishPassword) {
-        this.blowfishPassword = blowfishPassword;
-    }
 
     public String getCacheRefreshServerIpAddress() {
         return cacheRefreshServerIpAddress;
