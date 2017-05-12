@@ -36,7 +36,7 @@ public class ImageDataURI extends DataURI {
 
     /**
      * 
-     * @param dataUri
+     * @param imageUri
      *        A URI of the form data:image/[image extension][;base64],data
      * @throws SCIMDataValidationException
      *         if the URI doesn't expects the schema

@@ -115,8 +115,6 @@ public class Photo extends MultiValuedAttribute {
      * "http://tools.ietf.org/html/draft-ietf-scim-core-schema-02#section-3.2" >SCIM core schema 2.0, section 3.2</a>
      * </p>
      * 
-     * @return
-     * 
      * @return the actual type
      */
     public Type getType() {
