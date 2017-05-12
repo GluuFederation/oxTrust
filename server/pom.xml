@@ -141,10 +141,6 @@
 								<include>**/*.ico</include>
 							</includes>
 						</resource>
-						<resource>
-							<directory>src/main/webapp-jetty</directory>
-							<filtering>true</filtering>
-						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
@@ -717,12 +713,17 @@
 										<include>**/*.ico</include>
 									</includes>
 								</resource>
+								<resource>
+									<directory>src/main/webapp-jetty</directory>
+									<filtering>true</filtering>
+								</resource>
 							</webResources>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>jetty-embedded</id>
 			<activation>
