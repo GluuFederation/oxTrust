@@ -60,6 +60,7 @@ public class Extension {
     /**
      * Return the value for the field with a given name and type.
      * 
+     * @param <T> This is the type parameter
      * @param field
      *        The name of the field to retrieve the value of.
      * @param extensionFieldType
@@ -424,6 +425,7 @@ public class Extension {
          * Sets the field specified by the given field name with the given value of the given type. <br>
          * Can only be set and saved if extension field is registered in the database
          * 
+         * @param <T> This is the type parameter
          * @param fieldName
          *        the field name
          * @param value
@@ -476,6 +478,7 @@ public class Extension {
         /**
          * Constructs a new {@link Field} with the given type and value.
          * 
+         * @param <T> This is the type parameter
          * @param type
          *        the type of the field
          * @param value

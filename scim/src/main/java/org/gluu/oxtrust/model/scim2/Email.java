@@ -108,7 +108,7 @@ public class Email extends MultiValuedAttribute {
     }
 
     /**
-     * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
+     * Sets the label indicating the attribute's function
      *
      * @param type
      *        the type of the attribute
