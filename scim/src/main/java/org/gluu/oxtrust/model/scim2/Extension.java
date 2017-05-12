@@ -477,14 +477,15 @@ public class Extension {
 
         /**
          * Constructs a new {@link Field} with the given type and value.
-         * 
-         * @param <?> This is the type parameter
+         * @param <T> This is the type parameter
          * @param type
          *        the type of the field
          * @param value
          *        the value of the field
+         * @param isMultiValued
+         *        has few values
          */
-        public Field(ExtensionFieldType<?> type, String value, boolean isMultiValued) {
+        public <T> Field(ExtensionFieldType<T> type, String value, boolean isMultiValued) {
             this.type = type;
             this.value = value;
             this.isMultiValued = isMultiValued;
