@@ -35,7 +35,6 @@ public class AuthOrganizationService implements Serializable {
 
 	private static final long serialVersionUID = 5537567020929600777L;
 
-
 	@Inject
 	private LdapEntryManager ldapAuthEntryManager;
 

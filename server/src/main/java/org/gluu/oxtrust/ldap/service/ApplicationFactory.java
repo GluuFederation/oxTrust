@@ -21,7 +21,7 @@ import org.xdi.service.cache.InMemoryConfiguration;
  * @author Yuriy Movchan Date: 02/14/2017
  */
 @ApplicationScoped
-@Named("applicationFactory")
+@Named
 public class ApplicationFactory {
     
     @Inject
@@ -30,8 +30,8 @@ public class ApplicationFactory {
     @Inject
     private Logger log;
 
-    @Produces @ApplicationScoped @Named("cacheConfiguration")
-   	public CacheConfiguration createCacheConfiguration() {
+    @Produces @ApplicationScoped
+   	public CacheConfiguration getCacheConfiguration() {
    		CacheConfiguration cacheConfiguration = applianceService.getAppliance().getCacheConfiguration();
    		if (cacheConfiguration == null || cacheConfiguration.getCacheProviderType() == null) {
    			log.error("Failed to read cache configuration from LDAP. Please check appliance oxCacheConfiguration attribute " +

@@ -61,7 +61,6 @@ public class JoinFederationAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
-	@Produces
 	private TrustContactsAction trustContactsAction;
 
 	private FileUploadWrapper fileWrapper = new FileUploadWrapper();

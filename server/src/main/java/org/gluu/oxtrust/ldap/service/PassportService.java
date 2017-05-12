@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.Serializable;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,7 +28,9 @@ import org.xdi.util.properties.FileConfiguration;
  */
 @Stateless
 @Named("passportService")
-public class PassportService {
+public class PassportService implements Serializable {
+
+	private static final long serialVersionUID = -4787990021407949332L;
 
 	@Inject
 	private Logger log;

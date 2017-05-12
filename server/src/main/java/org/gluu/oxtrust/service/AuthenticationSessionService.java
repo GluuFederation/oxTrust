@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.service;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import javax.annotation.PreDestroy;
@@ -24,7 +25,9 @@ import org.xdi.util.StringHelper;
 
 @SessionScoped
 @Named
-public class AuthenticationSessionService {
+public class AuthenticationSessionService implements Serializable {
+
+	private static final long serialVersionUID = 8569580900768794363L;
 
 	@Inject
 	private Logger log;
