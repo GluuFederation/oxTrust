@@ -174,7 +174,7 @@ public class JsonConfigurationService implements Serializable {
 	public void processScimTestModeIsTrue(AppConfiguration source, AppConfiguration current) throws Exception {
 
 		AppConfiguration appConfiguration = getOxTrustappConfiguration();
-
+/*
 		if (current.isScimTestMode()) {
 			OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
 
@@ -254,7 +254,7 @@ public class JsonConfigurationService implements Serializable {
 				source.setScimTestModeAccessToken(longLivedAccessToken);
 			}
 		}
-
+*/
 		source.setScimTestMode(current.isScimTestMode());
 	}
 }

@@ -47,8 +47,6 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
-import org.xdi.oxauth.client.ValidateTokenClient;
-import org.xdi.oxauth.client.ValidateTokenResponse;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 
@@ -97,6 +95,7 @@ public class BaseScimWebService {
 
 	protected Response processTestModeAuthorization(String token) throws Exception {
 		try {
+/*
 			String validateTokenEndpoint = openIdService.getOpenIdConfiguration().getValidateTokenEndpoint();
 
 			ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);
@@ -113,12 +112,14 @@ public class BaseScimWebService {
 				(validateTokenResponse.getStatus() != Response.Status.OK.getStatusCode())) {
 				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
+*/
+			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 		}
 
-		return null;
+//		return null;
 	}
 
 	protected Response processAuthorization(String authorization) throws Exception {
