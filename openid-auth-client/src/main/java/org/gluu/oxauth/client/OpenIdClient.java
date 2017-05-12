@@ -171,7 +171,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@InjectheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public String getName() {
@@ -179,7 +179,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@InjectheritDoc}
+	 * {@InheritDoc}
 	 */
 	public String getRedirectionUrl(final WebContext context) {
 		init();
@@ -202,7 +202,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@InjectheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public boolean isAuthorizationResponse(final WebContext context) {
@@ -216,7 +216,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@InjectheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public boolean isValidRequestState(final WebContext context) {
@@ -238,7 +238,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@InjectheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public final OpenIdCredentials getCredentials(final WebContext context) {
@@ -252,7 +252,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@InjectheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public UserProfile getUserProfile(final OpenIdCredentials credential, final WebContext context) {
