@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Any;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,8 +21,6 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
-import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
-import org.gluu.oxtrust.service.cdi.event.Events;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;

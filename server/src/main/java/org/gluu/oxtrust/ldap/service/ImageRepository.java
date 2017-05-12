@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

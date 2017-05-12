@@ -12,7 +12,6 @@ import java.io.Serializable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
@@ -28,12 +27,6 @@ import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
-import org.xdi.oxauth.client.OpenIdConfigurationResponse;
-import org.xdi.oxauth.client.TokenClient;
-import org.xdi.oxauth.client.TokenRequest;
-import org.xdi.oxauth.client.TokenResponse;
-import org.xdi.oxauth.model.common.AuthenticationMethod;
-import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
 
