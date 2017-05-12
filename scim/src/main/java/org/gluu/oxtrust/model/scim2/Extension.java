@@ -478,7 +478,7 @@ public class Extension {
         /**
          * Constructs a new {@link Field} with the given type and value.
          * 
-         * @param <T> This is the type parameter
+         * @param <?> This is the type parameter
          * @param type
          *        the type of the field
          * @param value
