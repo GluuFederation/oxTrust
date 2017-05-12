@@ -1302,7 +1302,7 @@ public class CopyUtils2 implements Serializable {
 				destination.setMembers(listMembers);
 			}
 
-			/*GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
+			/*GluuCustomPerson authUser = (GluuCustomPerson) identity.getSessionMap().get(OxTrustConstants.CURRENT_PERSON);
 			destination.setOwner(authUser.getDn());
 			log.trace(" authUser.getDn() : ", authUser.getDn());*/
 			destination.setStatus(GluuStatus.ACTIVE);

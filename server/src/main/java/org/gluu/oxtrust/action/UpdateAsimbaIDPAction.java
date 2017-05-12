@@ -22,7 +22,6 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
@@ -34,8 +33,6 @@ import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-
-import jnr.ffi.annotations.Out;
 
 
 /**
@@ -66,15 +63,11 @@ public class UpdateAsimbaIDPAction implements Serializable {
     private FacesContext facesContext;
     
     @Inject
-    private ResourceLoader resourceLoader;
-    
-    @Inject
     private AsimbaService asimbaService;
     
     @Inject
     private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
     
-    @Out
     private IDPEntry idp;
     
     private String selectedIdpId = "";
@@ -415,4 +408,5 @@ public class UpdateAsimbaIDPAction implements Serializable {
     public void setSelectedIdpId(String selectedIdpId) {
         this.selectedIdpId = selectedIdpId;
     }
+
 }

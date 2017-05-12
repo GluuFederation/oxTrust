@@ -63,7 +63,6 @@ import org.xdi.util.Util;
 import org.xdi.util.exception.InvalidConfigurationException;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.HTTPFileDownloader;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 import org.xdi.xml.GluuErrorHandler;
 import org.xdi.xml.XMLValidator;
@@ -146,7 +145,7 @@ public class Shibboleth3ConfService implements Serializable {
 	private AppConfiguration appConfiguration;
 	
 	@Inject
-	private StringEncrypter stringEncrypter;
+	private EncryptionService encryptionService;
 
 	@Inject
 	private XmlService xmlService;
@@ -552,7 +551,7 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("bindDN", appConfiguration.getIdpBindDn());
 
 		try {
-			context.put("ldapPass", stringEncrypter.decrypt(appConfiguration.getIdpBindPassword()));
+			context.put("ldapPass", encryptionService.decrypt(appConfiguration.getIdpBindPassword()));
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt bindPassword", e);
 			e.printStackTrace();
@@ -562,7 +561,7 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("securityCert", appConfiguration.getIdpSecurityCert());
 
 		try {
-			context.put("securityKeyPassword", stringEncrypter.decrypt(appConfiguration.getIdpSecurityKeyPassword()));
+			context.put("securityKeyPassword", encryptionService.decrypt(appConfiguration.getIdpSecurityKeyPassword()));
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt idp.securityKeyPassword", e);
 			e.printStackTrace();
@@ -1020,7 +1019,7 @@ public class Shibboleth3ConfService implements Serializable {
 		String serviceUser = appConfiguration.getIdpBindDn();
 		String serviceCredential = "";
 		try {
-			serviceCredential = stringEncrypter.decrypt(appConfiguration.getIdpBindPassword());
+			serviceCredential = encryptionService.decrypt(appConfiguration.getIdpBindPassword());
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt bindPassword", e);
 			e.printStackTrace();

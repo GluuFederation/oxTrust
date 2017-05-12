@@ -46,7 +46,6 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
-import org.gluu.oxtrust.service.cdi.event.LogFileSizeChekerEvent;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;

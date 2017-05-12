@@ -40,7 +40,6 @@ import org.gluu.oxtrust.model.oxchooser.OxChooserError;
 import org.gluu.oxtrust.model.scim.ScimPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.CopyUtils;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.openid4java.association.AssociationException;

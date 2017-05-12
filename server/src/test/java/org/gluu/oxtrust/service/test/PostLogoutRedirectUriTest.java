@@ -49,7 +49,7 @@ public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 //            	data.put("randomUrl2", randomUrl2);
 //            	data.put("clientLogout", client.getPostLogoutRedirectUris());
         
-		new FacesRequest("/trustmanager/update/" + (String) data.get("tr1Inum")) {
+//		new FacesRequest("/trustmanager/update/" + (String) data.get("tr1Inum")) {
 //			
 //			  @Override
 //			  protected void processValidations() throws Exception {
@@ -68,7 +68,7 @@ public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
 //		    	  System.out.println("#{updateTrustRelationshipAction.save} resulted in " + invokeMethod("#{updateTrustRelationshipAction.save}"));
 //		      }
 			           
-        }.run();
+//        }.run();
         
 //        logoutUserFacesRequest();
     }

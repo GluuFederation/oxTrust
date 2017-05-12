@@ -30,7 +30,6 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
@@ -376,7 +375,6 @@ public class UpdateGroupAction implements Serializable {
 			person.setMemberOf(personMemberOf);
 
 			personService.updatePerson(person);
-			Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_ADDED_TO_GROUP, person, groupDn);
 		}
 
 		for (String dn : removedMembers) {
@@ -393,7 +391,6 @@ public class UpdateGroupAction implements Serializable {
 			person.setMemberOf(personMemberOf);
 
 			personService.updatePerson(person);
-			Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_REMOVED_FROM_GROUP, person, groupDn);
 		}
 
 		if (appConfiguration.isUpdateApplianceStatus()) {

@@ -9,7 +9,6 @@ package org.gluu.oxtrust.ldap.service;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;

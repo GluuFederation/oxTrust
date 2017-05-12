@@ -263,7 +263,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private String determineOrigin(String attributeName) {
-		String[] objectClasses = ArrayHelper.join(new String[] { "gluuPerson" }, appConfiguration.getPersonObjectClassTypes());
+		String[] objectClasses = ArrayHelper.arrayMerge(new String[] { "gluuPerson" }, appConfiguration.getPersonObjectClassTypes());
 
 		SchemaEntry schemaEntry = schemaService.getSchema();
 		
@@ -281,7 +281,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean containsAttributeInGluuObjectClasses(String attributeName) {
-		String[] objectClasses = ArrayHelper.join(new String[] { "gluuPerson" }, appConfiguration.getPersonObjectClassTypes());
+		String[] objectClasses = ArrayHelper.arrayMerge(new String[] { "gluuPerson" }, appConfiguration.getPersonObjectClassTypes());
 
 		SchemaEntry schemaEntry = schemaService.getSchema();
 		Set<String> attributeNames = schemaService.getObjectClassesAttributes(schemaEntry, objectClasses);
@@ -335,7 +335,7 @@ public class UpdateAttributeAction implements Serializable {
 		tmpAttribute.setName(attributeName);
 
 		if (attributeService.containsAttribute(tmpAttribute)) {
-			facesMessages.addToControl("nameId", FacesMessage.SEVERITY_ERROR, "Attribute with specified name already exist");
+			facesMessages.add("nameId", FacesMessage.SEVERITY_ERROR, "Attribute with specified name already exist");
 			return false;
 		}
 

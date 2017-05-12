@@ -25,6 +25,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
@@ -50,7 +51,6 @@ import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.PropertiesDecrypter;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -86,6 +86,9 @@ public class ManagePersonAuthenticationAction
 
 	@Inject
 	private PassportService passportService;
+	
+	@Inject
+	private EncryptionService encryptionService;
 
 	private GluuLdapConfiguration ldapConfig;
 	private boolean existLdapConfigIdpAuthConf;
@@ -345,8 +348,7 @@ public class ManagePersonAuthenticationAction
 	public void updateLdapBindPassword() {
 		String encryptedLdapBindPassword = null;
 		try {
-			encryptedLdapBindPassword = StringEncrypter.defaultInstance().encrypt(this.ldapConfig.getBindPassword(),
-					cryptoConfigurationSalt);
+			encryptedLdapBindPassword = encryptionService.encrypt(this.ldapConfig.getBindPassword());
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt LDAP bind password", ex);
 		}

@@ -13,7 +13,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
@@ -21,8 +21,8 @@ import org.xdi.ldap.model.Entry;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -523,7 +523,8 @@ public class OxAuthClient extends Entry implements Serializable {
     public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
         this.oxAuthClientSecret = oxAuthClientSecret;
         if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
-            setEncodedClientSecret(StringEncrypter.defaultInstance().encrypt(oxAuthClientSecret, ConfigurationFactory.instance().getCryptoConfigurationSalt()));
+        	EncryptionService encryptionService = CdiUtil.bean(EncryptionService.class);
+            setEncodedClientSecret(encryptionService.encrypt(oxAuthClientSecret));
         }
     }
 

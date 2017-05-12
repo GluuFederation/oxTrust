@@ -6,9 +6,14 @@
 
 package org.gluu.oxtrust.action.test;
 
-import org.jboss.seam.core.Manager;
-import org.jboss.seam.mock.JUnitSeamTest;
-import org.jboss.seam.web.Session;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import javax.enterprise.context.Conversation;
+import javax.inject.Inject;
+
+import org.gluu.oxtrust.security.Identity;
+import org.xdi.model.security.Credentials;
 
 /**
  * Base class for all seam test which require authorization
@@ -16,6 +21,12 @@ import org.jboss.seam.web.Session;
  * @author Yuriy Movchan
  */
 public abstract class AbstractAuthorizationTest extends ConfigurableTest {
+	
+	@Inject
+	private Identity identity;
+
+	@Inject
+	private Conversation conversation;
 
 	/**
 	 * Make attempt to login using specified userPropsKey. 
@@ -25,10 +36,10 @@ public abstract class AbstractAuthorizationTest extends ConfigurableTest {
 	 * @param userPropsKey Prefix of the key in properties file
 	 * @throws java.lang.Exception 
 	 */
-	protected void loginAndCheckLoggedInFacesRequest(String userPropsKey) throws Exception {
-		checkLoggedInFacesRequest(false);
-		checkLoginUserFacesRequest(testData.getString(userPropsKey + ".uid"), testData.getString(userPropsKey + ".password"));
-		checkLoggedInFacesRequest(true);
+	protected void loginAndCheckLoggedIn(String userPropsKey) throws Exception {
+		checkLoggedIn(false);
+		checkLoginUser(testData.getString(userPropsKey + ".uid"), testData.getString(userPropsKey + ".password"));
+		checkLoggedIn(true);
 	}
 
 	/**
@@ -37,17 +48,8 @@ public abstract class AbstractAuthorizationTest extends ConfigurableTest {
 	 * @param loggedIn Current user logged in state
 	 * @throws java.lang.Exception
 	 */
-	protected void checkLoggedInFacesRequest(final boolean loggedIn) throws Exception {
-		new JUnitSeamTest.FacesRequest() {
-
-			@Override
-			protected void invokeApplication() {
-				assert !isSessionInvalid();
-
-				assert getValue("#{identity.loggedIn}").equals(loggedIn);
-			}
-
-		}.run();
+	protected void checkLoggedIn(final boolean loggedIn) throws Exception {
+		assertTrue(identity.isLoggedIn());
 	}
 
 	/**
@@ -57,28 +59,14 @@ public abstract class AbstractAuthorizationTest extends ConfigurableTest {
 	 * @param password User login password
 	 * @throws java.lang.Exception 
 	 */
-	protected void checkLoginUserFacesRequest(final String user, final String password) throws Exception {
-		new JUnitSeamTest.FacesRequest("/home.htm") {
-
-			@Override
-			protected void updateModelValues() throws Exception {
-				assert !isSessionInvalid();
-				setValue("#{credentials.username}", user);
-				setValue("#{credentials.password}", password);
-			}
-
-			@Override
-			protected void invokeApplication() {
-				invokeAction("#{identity.login}");
-			}
-
-			@Override
-			protected void renderResponse() {
-				assert !Manager.instance().isLongRunningConversation();
-				assert getValue("#{identity.loggedIn}").equals(true);
-				assert !isSessionInvalid();
-			}
-		}.run();
+	protected void checkLoginUser(final String user, final String password) throws Exception {
+		Credentials credentials = identity.getCredentials();
+		credentials.setUsername(user);
+		credentials.setPassword(password);
+		
+		identity.login();
+		
+		assertTrue(identity.isLoggedIn());
 	}
 
 	/**
@@ -86,23 +74,10 @@ public abstract class AbstractAuthorizationTest extends ConfigurableTest {
 	 * 
 	 * @throws java.lang.Exception 
 	 */
-	protected void logoutUserFacesRequest() throws Exception {
-		new JUnitSeamTest.FacesRequest() {
+	protected void logoutUser() throws Exception {
+		identity.logout();
 
-			@Override
-			protected void invokeApplication() {
-				assert !Manager.instance().isLongRunningConversation();
-				assert !isSessionInvalid();
-				invokeMethod("#{identity.logout}");
-				assert Session.instance().isInvalid();
-			}
-
-			@Override
-			protected void renderResponse() {
-				assert getValue("#{identity.loggedIn}").equals(false);
-				assert Session.instance().isInvalid();
-			}
-		}.run();
+		assertFalse(identity.isLoggedIn());
 	}
 
 }

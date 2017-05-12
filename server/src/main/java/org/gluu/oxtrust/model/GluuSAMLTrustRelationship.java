@@ -25,6 +25,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
+import org.xdi.service.cdi.util.CdiUtil;
 
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuSAMLconfig" })
@@ -138,7 +139,8 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	}
 
 	public GluuSAMLTrustRelationship getContainerFederation() {
-		return TrustService.instance().getRelationshipByDn(this.gluuContainerFederation);
+		TrustService trustService = CdiUtil.bean(TrustService.class);
+		return trustService.getRelationshipByDn(this.gluuContainerFederation);
 	}
 
 

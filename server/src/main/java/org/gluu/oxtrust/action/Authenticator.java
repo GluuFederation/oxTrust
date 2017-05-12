@@ -32,6 +32,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -42,14 +43,12 @@ import org.gluu.oxtrust.security.OauthData;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.plugins.server.embedded.SimplePrincipal;
-import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.security.Credentials;
+import org.xdi.model.security.SimplePrincipal;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
@@ -60,7 +59,6 @@ import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -83,10 +81,10 @@ public class Authenticator implements Serializable {
 
 	@Inject
 	private Credentials credentials;
-	
+
 	@Inject
 	private FacesService facesService;
-	
+
 	@Inject
 	private IPersonService personService;
 
@@ -98,7 +96,7 @@ public class Authenticator implements Serializable {
 
 	@Inject
 	private ApplianceService applianceService;
-	
+
 	@Inject
 	private OpenIdService openIdService;
 
@@ -109,14 +107,14 @@ public class Authenticator implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private StringEncrypter stringEncrypter;
-	
+	private EncryptionService encryptionService;
+
 	public boolean preAuthenticate() throws IOException, Exception {
 		boolean result = true;
 		if (!identity.isLoggedIn()) {
 			result = oAuthLogin();
 		}
-		
+
 		return result;
 	}
 
@@ -131,7 +129,8 @@ public class Authenticator implements Serializable {
 			if (user == null) {
 				log.error("Person '{0}' not found in LDAP", userName);
 				return false;
-			}else if(GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus")) || GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))){
+			} else if (GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus"))
+					|| GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))) {
 				HashMap<String, Object> params = new HashMap<String, Object>();
 				params.put("inum", user.getInum());
 				facesService.redirect("/register.xhtml", params);
@@ -171,15 +170,15 @@ public class Authenticator implements Serializable {
 	}
 
 	private User findUserByUserName(String userName) {
-        User user = null;
+		User user = null;
 		try {
 			user = personService.getUserByUid(userName);
 		} catch (Exception ex) {
 			log.error("Failed to find user '{0}' in ldap", ex, userName);
 		}
-			
+
 		return user;
-    }
+	}
 
 	private GluuCustomPerson findPersonByDn(String userDn) {
 		GluuCustomPerson person = null;
@@ -188,9 +187,9 @@ public class Authenticator implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to find person '{0}' in ldap", ex, userDn);
 		}
-			
+
 		return person;
-    }
+	}
 
 	public void processLogout() throws Exception {
 		ssoLoginAction.logout();
@@ -207,7 +206,6 @@ public class Authenticator implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-
 	public void oAuthlLogout() throws Exception {
 		OauthData oauthData = identity.getOauthData();
 		if (StringHelper.isEmpty(oauthData.getUserUid())) {
@@ -218,7 +216,8 @@ public class Authenticator implements Serializable {
 
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
-		clientRequest.queryParameter(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI, appConfiguration.getLogoutRedirectUrl());
+		clientRequest.queryParameter(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI,
+				appConfiguration.getLogoutRedirectUrl());
 
 		// Clean up OAuth token
 		oauthData.setUserUid(null);
@@ -235,7 +234,8 @@ public class Authenticator implements Serializable {
 	public boolean Shibboleth3Authenticate() {
 		log.debug("Checking if user authenticated with shibboleth already");
 		boolean result = false;
-		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+				.getRequest();
 
 		String authType = request.getAuthType();
 		String userUid = request.getHeader("REMOTE_USER");
@@ -249,7 +249,8 @@ public class Authenticator implements Serializable {
 		log.debug("UsernameLower is " + userUidlower);
 		log.debug("AuthType is " + authType);
 
-		Map<String, String[]> headers = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderValuesMap();
+		Map<String, String[]> headers = FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestHeaderValuesMap();
 		for (String name : headers.keySet()) {
 			log.trace(name + "==>" + StringUtils.join(headers.get(name)));
 		}
@@ -277,42 +278,40 @@ public class Authenticator implements Serializable {
 		}
 		log.debug("Person Inum is " + user.getInum());
 
-		if (GluuStatus.ACTIVE.getValue().equals(user.getAttribute("gluuStatus"))){
-		
+		if (GluuStatus.ACTIVE.getValue().equals(user.getAttribute("gluuStatus"))) {
+
 			credentials.setUsername(user.getUid());
 			// credentials.setPassword("");
 			Principal principal = new SimplePrincipal(user.getUid());
 			log.debug("Principal is " + principal.toString());
-	
+
 			identity.acceptExternallyAuthenticatedPrincipal(principal);
-	
+
 			log.info("User '{0}' authenticated with shibboleth already", userUid);
 			identity.quietLogin();
 			postLogin(user);
-	
-			Contexts.getSessionContext().set(OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE,
+
+			identity.getSessionMap().put(OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE,
 					OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3);
-	
+
 			result = true;
-			if (Events.exists()) {
-				facesMessages.clear();
-				Events.instance().raiseEvent(Identity.EVENT_LOGIN_SUCCESSFUL);
-			}
-		}else{
+		} else {
 			result = false;
 		}
-		
+
 		return result;
 	}
 
 	/**
 	 * Main entry point for oAuth authentication.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 * 
 	 * @throws Exception
 	 */
 	public boolean oAuthLogin() throws IOException, Exception {
-		ClientRequest clientRequest = new ClientRequest(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
+		ClientRequest clientRequest = new ClientRequest(
+				openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
 		String clientId = appConfiguration.getOxAuthClientId();
 		String scope = appConfiguration.getOxAuthClientScope();
 		String responseType = "code+id_token";
@@ -324,18 +323,18 @@ public class Authenticator implements Serializable {
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SCOPE, scope);
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_NONCE, nonce);
 
-		GluuAppliance appliance = applianceService.getAppliance(new String[] {"oxTrustAuthenticationMode"});
+		GluuAppliance appliance = applianceService.getAppliance(new String[] { "oxTrustAuthenticationMode" });
 		String acrValues = appliance.getOxTrustAuthenticationMode();
 		if (StringHelper.isNotEmpty(acrValues)) {
 			clientRequest.queryParameter(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
-			
+
 			// Store request authentication method
-			Contexts.getSessionContext().set(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
-			Contexts.getSessionContext().set(OxTrustConstants.OXAUTH_NONCE, nonce);
+			identity.getSessionMap().put(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
+			identity.getSessionMap().put(OxTrustConstants.OXAUTH_NONCE, nonce);
 		}
 
 		facesService.redirect(clientRequest.getUri().replaceAll("%2B", "+"));
-		
+
 		return true;
 	}
 
@@ -355,8 +354,10 @@ public class Authenticator implements Serializable {
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
 
-		Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-		Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext().getRequestCookieMap();
+		Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestParameterMap();
+		Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestCookieMap();
 
 		String authorizationCode = requestParameterMap.get(OxTrustConstants.OXAUTH_CODE);
 
@@ -370,8 +371,7 @@ public class Authenticator implements Serializable {
 
 		if (authorizationCode == null) {
 			String error = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR);
-			String errorDescription = requestParameterMap
-					.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
+			String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
 
 			log.info("No authorization code sent. Error: " + error + ". Error description: " + errorDescription);
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
@@ -381,7 +381,8 @@ public class Authenticator implements Serializable {
 		// oxAuth, change this
 		// String credentials = appConfiguration.getOxAuthClientId() +
 		// ":secret";
-//		String credentials = appConfiguration.getOxAuthClientId() + ":5967d41c-ce9c-4137-9068-42578df0c606";
+		// String credentials = appConfiguration.getOxAuthClientId() +
+		// ":5967d41c-ce9c-4137-9068-42578df0c606";
 		// String clientCredentials =
 		// appConfiguration.getOxAuthClientCredentials();
 		log.info("authorizationCode : " + authorizationCode);
@@ -395,19 +396,20 @@ public class Authenticator implements Serializable {
 		String clientPassword = appConfiguration.getOxAuthClientPassword();
 		if (clientPassword != null) {
 			try {
-				clientPassword = stringEncrypter.decrypt(clientPassword);
+				clientPassword = encryptionService.decrypt(clientPassword);
 			} catch (EncryptionException ex) {
 				log.error("Failed to decrypt client password", ex);
 			}
 		}
 
-		String result = requestAccessToken(oxAuthHost, authorizationCode, sessionState, idToken, scopes, clientID, clientPassword);
+		String result = requestAccessToken(oxAuthHost, authorizationCode, sessionState, idToken, scopes, clientID,
+				clientPassword);
 
 		return result;
 	}
 
-	private String requestAccessToken(String oxAuthHost, String authorizationCode, String sessionState, String idToken, String scopes,
-			String clientID, String clientPassword) {
+	private String requestAccessToken(String oxAuthHost, String authorizationCode, String sessionState, String idToken,
+			String scopes, String clientID, String clientPassword) {
 		OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
 
 		// 1. Request access token using the authorization code.
@@ -416,7 +418,8 @@ public class Authenticator implements Serializable {
 		log.info("Sending request to token endpoint");
 		String redirectURL = appConfiguration.getLoginRedirectUrl();
 		log.info("redirectURI : " + redirectURL);
-		TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID, clientPassword);
+		TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID,
+				clientPassword);
 
 		log.debug(" tokenResponse : " + tokenResponse);
 		if (tokenResponse == null) {
@@ -432,7 +435,7 @@ public class Authenticator implements Serializable {
 		log.info("Session validation successful. User is logged in");
 		UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
 		UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
-		
+
 		OauthData oauthData = identity.getOauthData();
 
 		oauthData.setHost(oxAuthHost);
@@ -443,42 +446,44 @@ public class Authenticator implements Serializable {
 			log.error("User info response doesn't contains uid claim");
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
-		
+
 		// Store request authentication method
-		if (Contexts.getSessionContext().isSet(OxTrustConstants.OXAUTH_ACR_VALUES)) {
-			String requestAcrValues = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_ACR_VALUES);
+		if (identity.getSessionMap().containsKey(OxTrustConstants.OXAUTH_ACR_VALUES)) {
+			String requestAcrValues = (String) identity.getSessionMap().get(OxTrustConstants.OXAUTH_ACR_VALUES);
 			Jwt jwt;
-            try {
+			try {
 				jwt = Jwt.parse(idToken);
 			} catch (InvalidJwtException ex) {
 				log.error("Failed to parse id_token");
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
-            
-            String issuer = openIdConfiguration.getIssuer();
-            String responseIssuer = (String) jwt.getClaims().getClaim(JwtClaimName.ISSUER);
-            if (issuer == null ||  responseIssuer == null || !issuer.equals(responseIssuer)) {
+
+			String issuer = openIdConfiguration.getIssuer();
+			String responseIssuer = (String) jwt.getClaims().getClaim(JwtClaimName.ISSUER);
+			if (issuer == null || responseIssuer == null || !issuer.equals(responseIssuer)) {
 				log.error("User info response :  Issuer.");
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
 
-            List<String> acrValues = jwt.getClaims().getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
+			List<String> acrValues = jwt.getClaims()
+					.getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
 			if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
 				log.error("User info response doesn't contains acr claim");
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
 			if (!acrValues.contains(requestAcrValues)) {
-				log.error("User info response contains acr='{0}' claim but expected acr='{1}'", acrValues, requestAcrValues);
+				log.error("User info response contains acr='{0}' claim but expected acr='{1}'", acrValues,
+						requestAcrValues);
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
-			
+
 			String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
-			String nonceSession = (String) Contexts.getSessionContext().get(OxTrustConstants.OXAUTH_NONCE);
-			if (nonceResponse == null ||  nonceSession == null || !nonceSession.equals(nonceResponse)) {
+			String nonceSession = (String) identity.getSessionMap().get(OxTrustConstants.OXAUTH_NONCE);
+			if (!StringHelper.equals(nonceSession, nonceResponse)) {
 				log.error("User info response :  nonce is not matching.");
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}			
-		}	
+			}
+		}
 
 		oauthData.setUserUid(uidValues.get(0));
 		oauthData.setAccessToken(accessToken);
@@ -490,7 +495,7 @@ public class Authenticator implements Serializable {
 		log.info("user uid:" + oauthData.getUserUid());
 
 		return OxTrustConstants.RESULT_SUCCESS;
-		
+
 	}
 
 	private String getOxAuthHost(String oxAuthAuthorizeUrl) {

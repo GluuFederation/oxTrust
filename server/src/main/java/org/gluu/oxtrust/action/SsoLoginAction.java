@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
-import java.security.Identity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +30,8 @@ import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.drools.compiler.RuleBaseLoader;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.contexts.Contexts;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
@@ -151,7 +150,7 @@ public class SsoLoginAction implements Serializable {
 	}
 
 	public String logout() {
-		boolean isShib3Authentication = OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3.equals(Contexts.getSessionContext().get(
+		boolean isShib3Authentication = OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3.equals(identity.getSessionMap().get(
 				OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE));
 
 		if (isShib3Authentication) {

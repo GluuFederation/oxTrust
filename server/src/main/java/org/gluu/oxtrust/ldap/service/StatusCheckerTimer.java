@@ -239,7 +239,7 @@ public class StatusCheckerTimer {
 
 		String bindPassword = null;
 		try {
-			bindPassword = StringEncrypter.defaultInstance().decrypt(appConfiguration.getVdsBindPassword());
+			bindPassword = encryptionService.defaultInstance().decrypt(appConfiguration.getVdsBindPassword());
 		} catch (EncryptionException e1) {
 			log.error("Failed to decrypt VDS bind password: %s", e1.getMessage());
 		}

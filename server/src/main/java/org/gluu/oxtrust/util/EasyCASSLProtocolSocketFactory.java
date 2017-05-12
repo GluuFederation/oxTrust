@@ -14,11 +14,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.apache.commons.httpclient.HttpClientError;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.EasySSLProtocolSocketFactory;
 import org.xdi.util.EasyX509TrustManager;
-import org.xdi.util.security.StringEncrypter;
 
 public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory {
 
@@ -26,7 +26,7 @@ public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory
 	private Logger log;
 	
 	@Inject
-	private String cryptoConfigurationSalt;
+	private EncryptionService encryptionService;
 	
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -37,7 +37,7 @@ public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory
 			String password = appConfiguration.getCaCertsPassphrase();
 			char[] passphrase = null;
 			if (password != null) {
-				passphrase = StringEncrypter.defaultInstance().decrypt(password, cryptoConfigurationSalt).toCharArray();
+				passphrase = encryptionService.decrypt(password).toCharArray();
 			}
 			KeyStore cacerts = null;
 			String cacertsFN = appConfiguration.getCaCertsLocation();

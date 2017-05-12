@@ -36,7 +36,6 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.core.Events;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -182,8 +181,6 @@ public class UpdateOrganizationAction implements Serializable {
 			updateSmptConfiguration(this.appliance);
 			
 			applianceService.updateAppliance(this.appliance);
-
-			Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ORGANIZATION);
 
 			/* Resolv.conf update */
 			// saveDnsInformation(); // This will be handled by puppet.

@@ -28,10 +28,10 @@ import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.ldap.service.TemplateService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -41,7 +41,6 @@ import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.jsf.ValidationUtil;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
@@ -52,7 +51,6 @@ import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -106,9 +104,10 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	@Inject
 	private AppConfiguration appConfiguration;
 	
-	@Inject(value = "#{configurationFactory.cryptoConfigurationSalt}")
-	private SecurityService securityService;
-SecurityService
+	@Inject
+	private EncryptionService encryptionService;
+
+	@Inject
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 
 	private boolean cacheRefreshEnabled;
@@ -231,7 +230,7 @@ SecurityService
 
 		if ((interval == null) || (interval < 0)) {
 			log.error("Invalid cache refresh pooling interval specified: {0}", intervalString);
-			ValidationUtil.addErrorMessageToInput("vdsCacheRefreshPollingIntervalId", "Invalid cache refresh pooling interval specified");
+			facesMessages.add("vdsCacheRefreshPollingIntervalId", FacesMessage.SEVERITY_ERROR, "Invalid cache refresh pooling interval specified");
 			return false;
 		}
 
@@ -555,7 +554,7 @@ SecurityService
 		}
 
 		try {
-        	this.activeLdapConfig.setBindPassword(StringEncrypter.defaultInstance().encrypt(this.activeLdapConfig.getBindPassword(), cryptoConfigurationSalt));
+        	this.activeLdapConfig.setBindPassword(encryptionService.encrypt(this.activeLdapConfig.getBindPassword()));
         } catch (EncryptionException ex) {
             log.error("Failed to encrypt password", ex);
         }

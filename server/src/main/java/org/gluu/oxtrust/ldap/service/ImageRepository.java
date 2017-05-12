@@ -7,6 +7,9 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +18,7 @@ import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,6 +31,8 @@ import org.xdi.model.GluuImage;
 import org.xdi.util.StringHelper;
 import org.xdi.util.image.ImageTransformationUtility;
 import org.xdi.util.repository.RepositoryUtility;
+
+import com.google.common.net.MediaType;
 
 /**
  * Manage images in photo repository
@@ -131,7 +137,7 @@ public class ImageRepository {
 		}
 
 		// Generate paths
-		setGeneratedImagePathes(image, Type.IMAGE_JPEG.getExtension());
+		setGeneratedImagePathes(image, ".jpg");
 
 		// Create folders tree
 		createImagePathes(image);
@@ -151,31 +157,31 @@ public class ImageRepository {
 		}
 
 		// Load source image
-		org.jboss.seam.ui.graphicImage.Image graphicsImage = new org.jboss.seam.ui.graphicImage.Image();
-
-		graphicsImage.setInput(image.getData());
-		graphicsImage.setContentType(Type.IMAGE_PNG);
-
-		if (graphicsImage.getBufferedImage() == null) {
+		BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(image.getData()));
+		if (bufferedImage == null) {
 			throw new IOException("The image data is empty");
 		}
 
 		// Set source image size
-		image.setWidth(graphicsImage.getWidth());
-		image.setHeight(graphicsImage.getHeight());
+		image.setWidth(bufferedImage.getWidth());
+		image.setHeight(bufferedImage.getHeight());
 
-		BufferedImage bi = ImageTransformationUtility.scaleImage(graphicsImage.getBufferedImage(), thumbWidth, thumbHeight);
-		graphicsImage.setBufferedImage(bi);
+		BufferedImage bi = ImageTransformationUtility.scaleImage(bufferedImage, thumbWidth, thumbHeight);
 
 		// Set thumb properties
-		image.setThumbWidth(graphicsImage.getWidth());
-		image.setThumbHeight(graphicsImage.getHeight());
-		image.setThumbContentType(graphicsImage.getContentType().getMimeType());
+		image.setThumbWidth(bi.getWidth());
+		image.setThumbHeight(bi.getHeight());
 		
-		// Store thumb image
-		image.setThumbData(graphicsImage.getImage());
-
-		graphicsImage = null;
+		image.setThumbContentType(MediaType.PNG.toString());
+		
+		// Store thumb image 
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(bufferedImage, "png", bos);
+			image.setThumbData(bos.toByteArray());
+		} finally {
+			bos.close();
+		}
 
 		return true;
 	}

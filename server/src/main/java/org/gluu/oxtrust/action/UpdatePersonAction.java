@@ -31,7 +31,6 @@ import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -39,8 +38,6 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
-
-import jnr.ffi.annotations.Out;
 
 /**
  * Action class for updating person's attributes
@@ -265,7 +262,6 @@ public class UpdatePersonAction implements Serializable {
 		if (update) {
 			// Remove person
 			try {
-				Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_DELETED, this.person);
 				if (externalUpdateUserService.isEnabled()) {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
                 }

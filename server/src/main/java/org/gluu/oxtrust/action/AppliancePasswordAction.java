@@ -14,11 +14,11 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.CentralLdapService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @Named("appliancePasswordAction")
@@ -42,7 +42,7 @@ public class AppliancePasswordAction implements Serializable {
     private AppConfiguration appConfiguration;
 
     @Inject
-    private StringEncrypter stringEncrypter;
+    private EncryptionService encryptionService;
 
     @Inject
     private Logger log;
@@ -67,7 +67,7 @@ public class AppliancePasswordAction implements Serializable {
 
         GluuAppliance appliance = applianceService.getAppliance();
         try {
-			appliance.setBlowfishPassword(stringEncrypter.decrypt(newPassword));
+			appliance.setBlowfishPassword(encryptionService.decrypt(newPassword));
         } catch (EncryptionException e) {
             log.error("Failed to encrypt password", e);
         }

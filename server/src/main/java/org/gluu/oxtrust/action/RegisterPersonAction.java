@@ -38,7 +38,6 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -239,7 +238,6 @@ public class RegisterPersonAction implements Serializable {
 				
 				result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person, requestParameters);
 
-				Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_SAVED, this.person, null, null, null, null, true);
 				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;

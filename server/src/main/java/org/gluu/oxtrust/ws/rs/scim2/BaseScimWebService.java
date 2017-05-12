@@ -34,6 +34,7 @@ import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
@@ -41,7 +42,6 @@ import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.contexts.Contexts;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
@@ -63,6 +63,9 @@ public class BaseScimWebService {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private Identity identity;
 
 	@Inject
 	protected AppConfiguration appConfiguration;
@@ -141,7 +144,7 @@ public class BaseScimWebService {
 
 	protected boolean getAuthorizedUser() {
 		try {
-			GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
+			GluuCustomPerson authUser = (GluuCustomPerson) identity.getSessionMap().get(OxTrustConstants.CURRENT_PERSON);
 
 			if (authUser == null) {
 				return false;

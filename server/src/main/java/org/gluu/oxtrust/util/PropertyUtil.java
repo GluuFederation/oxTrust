@@ -14,9 +14,9 @@ import javax.inject.Named;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.xdi.model.SimpleProperty;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -31,11 +31,11 @@ public class PropertyUtil {
 	private static final Logger log = Logger.getLogger(PropertyUtil.class);
 
 	@Inject
-	private String cryptoConfigurationSalt;
+	private EncryptionService encryptionService;
 	
 	public String encryptString(String value) {
 		try {
-			return StringEncrypter.defaultInstance().encrypt(value, cryptoConfigurationSalt);
+			return encryptionService.encrypt(value);
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt string: " + value, ex);
 		}

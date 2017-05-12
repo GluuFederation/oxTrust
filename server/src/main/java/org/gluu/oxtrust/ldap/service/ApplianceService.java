@@ -22,7 +22,6 @@ import org.xdi.model.ProgrammingLanguage;
 import org.xdi.model.ScriptLocationType;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -47,7 +46,7 @@ public class ApplianceService {
 	private AppConfiguration appConfiguration;
 	
 	@Inject
-	private StringEncrypter stringEncrypter;
+	private EncryptionService encryptionService;
 
 	public boolean contains(String applianceDn) {
 		return ldapEntryManager.contains(GluuAppliance.class, applianceDn);
@@ -223,7 +222,7 @@ public class ApplianceService {
 		}
 
 		try {
-			return stringEncrypter.decrypt(password);
+			return encryptionService.decrypt(password);
 		} catch (EncryptionException ex) {
 			log.error("Failed to decrypt SMTP password", ex);
 		}
@@ -238,7 +237,7 @@ public class ApplianceService {
 
 		String encryptedPassword;
 		try {
-			encryptedPassword = stringEncrypter.encrypt(password);
+			encryptedPassword = encryptionService.encrypt(password);
 			appliance.setSmtpPassword(encryptedPassword);
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt SMTP password", ex);

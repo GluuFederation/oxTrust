@@ -16,6 +16,7 @@ import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -59,7 +59,7 @@ public class JsonConfigurationAction implements Serializable {
 	private JsonConfigurationService jsonConfigurationService;
 	
 	@Inject
-	private StringEncrypter stringEncrypter;
+	private EncryptionService encryptionService;
 
 	private AppConfiguration oxTrustappConfiguration;
 	private ImportPersonConfig oxTrustImportPersonConfiguration;
@@ -273,7 +273,7 @@ public class JsonConfigurationAction implements Serializable {
 			String sourceValue = BeanUtils.getSimpleProperty(source, property);
 			BeanUtils.setProperty(current, property, sourceValue);
 		} else {
-			String currentValueEncrypted = stringEncrypter.encrypt(currentValue);
+			String currentValueEncrypted = encryptionService.encrypt(currentValue);
 			BeanUtils.setProperty(current, property, currentValueEncrypted);
 		}
 	}

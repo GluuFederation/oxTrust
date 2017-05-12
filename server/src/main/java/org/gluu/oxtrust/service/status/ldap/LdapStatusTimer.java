@@ -9,13 +9,13 @@ package org.gluu.oxtrust.service.status.ldap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.ejb.Asynchronous;
-import javax.ejb.DependsOn;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
@@ -29,7 +29,6 @@ import org.xdi.service.timer.schedule.TimerSchedule;
  * @version 0.1, 11/18/2012
  */
 @ApplicationScoped
-@DependsOn("appInitializer")
 @Named
 public class LdapStatusTimer {
 
@@ -41,8 +40,11 @@ public class LdapStatusTimer {
 	@Inject
 	private Event<TimerEvent> timerEvent;
 
-	@Inject
+	@Inject @Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
     private LdapEntryManager ldapEntryManager;
+
+	@Inject @Named(AppInitializer.LDAP_CENTRAL_ENTRY_MANAGER_NAME)
+    private LdapEntryManager ldapCentralEntryManager;
 
     private AtomicBoolean isActive;
 
@@ -73,6 +75,7 @@ public class LdapStatusTimer {
 
     private void processInt() {
     	logConnectionProviderStatistic(ldapEntryManager, "connectionProvider", "bindConnectionProvider");
+    	logConnectionProviderStatistic(ldapCentralEntryManager, "centralConnectionProvider", "centralBindConnectionProvider");
     }
 
 	public void logConnectionProviderStatistic(LdapEntryManager ldapEntryManager, String connectionProviderName, String bindConnectionProviderName) {

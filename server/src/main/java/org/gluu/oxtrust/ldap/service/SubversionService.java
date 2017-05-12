@@ -33,7 +33,6 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 
 /**
  * Provides operations with SVN
@@ -51,7 +50,7 @@ public class SubversionService {
 	private AppConfiguration appConfiguration;
 	
 	@Inject
-	private StringEncrypter stringEncrypter;
+	private EncryptionService encryptionService;
 
 	final private static String baseSvnDir = "/var/gluu/svn";
 
@@ -71,7 +70,7 @@ public class SubversionService {
 		SVNClientManager clientManager = null;
 		try {
 			// Decrypt password
-			svnPassword = stringEncrypter.decrypt(svnPassword);
+			svnPassword = encryptionService.decrypt(svnPassword);
 
 			// Create an instance of SVNClientManager
 			log.debug("Creating an instance of SVNClientManager");

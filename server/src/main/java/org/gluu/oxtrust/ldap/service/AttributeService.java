@@ -14,11 +14,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.service.cdi.event.EventType;
+import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
+import org.gluu.oxtrust.service.cdi.event.Events;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -57,6 +63,9 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	
 	@Inject
 	private OrganizationService organizationService;
+
+	@Inject @Any
+	private Event<Events> event;
 
 	public static final String CUSTOM_ATTRIBUTE_OBJECTCLASS_PREFIX = "ox-";
 
@@ -321,7 +330,7 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	public void addAttribute(GluuAttribute attribute) {
 		ldapEntryManager.persist(attribute);
 
-		Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ATTRIBUTES);
+		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
 	/**
@@ -375,7 +384,9 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 
 		log.trace("Removing attribute for good.");
 		ldapEntryManager.remove(attribute);
-		Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ATTRIBUTES);
+
+		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
+
 		return true;
 	}
 
@@ -387,14 +398,14 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	 */
 	public void updateAttribute(GluuAttribute attribute) {
 		ldapEntryManager.merge(attribute);
-		Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ATTRIBUTES);
+
+		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
 	/**
 	 * Clear attributes cache after receiving event that attributes were changed
 	 */
-	@Observer(OxTrustConstants.EVENT_CLEAR_ATTRIBUTES)
-	public void clearAttributesCache() {
+	public void clearAttributesCache(@Observes @EventType(Events.EVENT_CLEAR_ATTRIBUTES) Events event) {
 		log.debug("Removing attributes from cache");
 		cacheService.removeAll(OxTrustConstants.CACHE_ATTRIBUTE_NAME);
 	}

@@ -36,7 +36,6 @@ import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
-import org.xdi.util.security.StringEncrypter;
 
 /**
  * Provides operations with JSON oxAuth/oxTrust configuration
@@ -68,7 +67,7 @@ public class JsonConfigurationService implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private StringEncrypter stringEncrypter;
+	private EncryptionService encryptionService;
 	
 	@Inject
 	private ApplianceService applianceService;
@@ -179,7 +178,7 @@ public class JsonConfigurationService implements Serializable {
 		if (current.isScimTestMode()) {
 			OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
 
-			String clientPassword = stringEncrypter.decrypt(appConfiguration.getOxAuthClientPassword());
+			String clientPassword = encryptionService.decrypt(appConfiguration.getOxAuthClientPassword());
 
 			if (source.getScimTestModeAccessToken() != null && !source.getScimTestModeAccessToken().isEmpty()) {
 				// Check if current token is still valid

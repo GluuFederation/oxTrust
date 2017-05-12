@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.Any;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,9 +23,10 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
+import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
+import org.gluu.oxtrust.service.cdi.event.Events;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.core.Events;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
@@ -367,7 +370,6 @@ public class UpdateSectorIdentifierAction implements Serializable {
             client.setSectorIdentifierUri(getSectorIdentifierUrl());
 
             clientService.updateClient(client);
-            Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_ADDED_TO_GROUP, client, sectorIdentifierDn);
         }
 
         for (String dn : removedMembers) {
@@ -377,7 +379,6 @@ public class UpdateSectorIdentifierAction implements Serializable {
             client.setSectorIdentifierUri(null);
 
             clientService.updateClient(client);
-            Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_REMOVED_FROM_GROUP, client, sectorIdentifierDn);
         }
     }
 

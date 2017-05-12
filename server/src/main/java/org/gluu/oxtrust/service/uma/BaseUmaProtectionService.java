@@ -8,12 +8,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.exception.UmaProtectionException;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.slf4j.Logger;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -27,6 +27,9 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private EncryptionService encryptionService;
 
 	@Inject
 	private UmaConfiguration umaMetadataConfiguration;
@@ -87,7 +90,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 		if (umaClientKeyStorePassword != null) {
 			try {
-				umaClientKeyStorePassword = StringEncrypter.defaultInstance().decrypt(umaClientKeyStorePassword, cryptoConfigurationSalt);
+				umaClientKeyStorePassword = encryptionService.decrypt(umaClientKeyStorePassword);
 			} catch (EncryptionException ex) {
 				log.error("Failed to decrypt UmaClientKeyStorePassword password", ex);
 			}
