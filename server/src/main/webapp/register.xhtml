@@ -72,10 +72,9 @@
                                                 <a4j:outputPanel>
                                                     <ui:param name="_mandatory" value="#{_custAttr.mandatory}"/>
                                                     <!-- Ordinary Attribute -->
-                                                    <ox:decorate id="_custAttrIdx" style="margin-left: -15px;"
+                                                    <ox:decorate id="_custAttrIdx" style="margin-left: -15px;" label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
                                                                 rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')  and (_custAttr.metadata.displayName ne 'Email')}">
-                                                        <ui:define
-                                                                name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
+                                        
                                                         <!-- String Attribute -->
                                                         <h:inputText
                                                                 label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
@@ -110,10 +109,9 @@
 
                                                     </ox:decorate>
                                                     <!-- Special Attribute. Is this intended to be a combobox-based attribute? -->
-                                                    <ox:decorate id="_custAttrIdx2"
+                                                    <ox:decorate id="_custAttrIdx2" label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
                                                                 rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and _custAttr.name.equals('exampleSpecialAttribute')}">
-                                                        <ui:define
-                                                                name="label">#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }</ui:define>
+                                                        
                                                         <h:selectOneMenu value="#{_custAttr.value}"
                                                                          required="#{_mandatory}" id="custId"
                                                                          tabindex="#{_custAttrIdx + 1}">
