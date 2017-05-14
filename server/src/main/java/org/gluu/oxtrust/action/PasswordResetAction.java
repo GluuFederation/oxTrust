@@ -66,7 +66,7 @@ public class PasswordResetAction implements Serializable {
 		Calendar currentCalendar = Calendar.getInstance();
 		if (request!= null ){
 		    SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-		    requestCalendarExpiry.setTime(sdf.parse(request.getCreationDate()));
+		    requestCalendarExpiry.setTime(request.getCreationDate());
 		    requestCalendarExpiry.add(Calendar.HOUR, 2);
 		}
 		GluuCustomPerson person = PersonService.instance().getPersonByInum(request.getPersonInum());
@@ -98,7 +98,7 @@ public class PasswordResetAction implements Serializable {
 			Calendar currentCalendar = Calendar.getInstance();
 			if (request!= null ){
 			    SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-			    requestCalendarExpiry.setTime(sdf.parse(request.getCreationDate()));
+			    requestCalendarExpiry.setTime((request.getCreationDate()));
 			    requestCalendarExpiry.add(Calendar.HOUR, 2);
 			}
 			GluuCustomPerson person = PersonService.instance().getPersonByInum(request.getPersonInum());

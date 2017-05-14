@@ -10,6 +10,7 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
@@ -26,7 +27,7 @@ public class PasswordResetRequest extends Entry implements Serializable {
 	@LdapAttribute
 	private String personInum;
 	@LdapAttribute
-	private String creationDate;
+	private Date creationDate;
 
 	public String getOxGuid() {
 		return oxGuid;
@@ -44,11 +45,11 @@ public class PasswordResetRequest extends Entry implements Serializable {
 		this.personInum = personInum;
 	}
 
-	public String getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(String creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
