@@ -12,7 +12,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,15 +23,22 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.xdi.model.GluuImage;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xdi.model.GluuImage;
 import org.xdi.util.io.DownloadWrapper;
 import org.xdi.util.io.FileDownloader;
 import org.xdi.util.io.FileDownloader.ContentDisposition;
 
+@WebServlet(urlPatterns = "/servlet/logo")
 public class FaviconImageServlet extends HttpServlet {
+	
+	@Inject
+	private OrganizationService organizationService;
+	
+	@Inject
+	private ImageService imageService;
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
@@ -41,11 +50,11 @@ public class FaviconImageServlet extends HttpServlet {
 		String preview = httpServletRequest.getParameter("preview");
 		GluuOrganization organization = null;
 		try {
-			organization = OrganizationService.instance().getOrganization();
+			organization = organizationService.getOrganization();
 		} catch (Exception ex) {
 			log.error("an Error Occured", ex);
 		}
-		ImageService imageService = ImageService.instance();
+
 		GluuImage image = null;
 		if ("true".equals(preview)) {
 			image = imageService.getGluuImageFromXML(organization.getTempFaviconImage());

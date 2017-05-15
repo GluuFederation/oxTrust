@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
+import javax.inject.Inject;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,10 +22,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.xdi.model.GluuImage;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xdi.model.GluuImage;
 import org.xdi.util.io.DownloadWrapper;
 import org.xdi.util.io.FileDownloader;
 import org.xdi.util.io.FileDownloader.ContentDisposition;
@@ -33,18 +35,24 @@ import org.xdi.util.io.FileDownloader.ContentDisposition;
  * 
  * @author Yuriy Movchan Date: 11.16.2010
  */
+@WebServlet(urlPatterns = "/servlet/favicon")
 public class LogoImageServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
 	private static final Logger log = LoggerFactory.getLogger(LogoImageServlet.class);
+	
+	@Inject
+	private OrganizationService organizationService;
+	
+	@Inject
+	private ImageService imageService;
 
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse response) {
 		log.debug("Starting organization logo upload");
 		try {
-			GluuOrganization organization = OrganizationService.instance().getOrganization();
-			ImageService imageService = ImageService.instance();
+			GluuOrganization organization = organizationService.getOrganization();
 			GluuImage image = imageService.getGluuImageFromXML(organization.getLogoImage());
 			if (image != null) {
 				image.setLogo(true);

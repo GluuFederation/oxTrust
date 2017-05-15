@@ -5,6 +5,15 @@
  */
 package org.gluu.oxtrust.service.scim2.schema.strategy.serializers;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.JsonSerializer;
@@ -12,32 +21,22 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+import org.slf4j.Logger;
 
 /**
  * @author Val Pecaoco
  */
-@Name("listResponseSerializer")
+@Named("listResponseSerializer")
 public class SchemaTypeAbstractSerializer extends JsonSerializer<SchemaType> {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     @Override
     public void serialize(SchemaType schemaType, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-
         log.info(" serialize() ");
 
         try {
-
             jsonGenerator.writeStartObject();
 
             ObjectMapper mapper = new ObjectMapper();

@@ -12,21 +12,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuImage;
 import org.xdi.model.GluuUserRole;
@@ -36,9 +34,9 @@ import org.xdi.model.GluuUserRole;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@Name("whitePagesAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("whitePagesAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class WhitePagesAction implements Serializable {
 
 	private static final long serialVersionUID = 6730313815008211305L;
@@ -47,19 +45,19 @@ public class WhitePagesAction implements Serializable {
 
 	private List<String> tableAttributes;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private ImageService imageService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
 	private String tableState;
@@ -67,7 +65,7 @@ public class WhitePagesAction implements Serializable {
 	private List<GluuCustomPerson> persons;
 	private Set<Integer> selectedPersons;
 
-	@Create
+	@PostConstruct
 	public void init() {
 		this.tableAttributes = Arrays.asList("cn", "photo1", "mail", "phone");
 	}

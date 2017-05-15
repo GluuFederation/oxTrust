@@ -14,20 +14,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
-import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.counter.CounterMetricEntry;
@@ -40,9 +38,8 @@ import org.xdi.service.CacheService;
  * @author Rahat Ali Date: 07/30/2015
  * @author Yuriy Movchan Date: 08/28/2015
  */
-@Scope(ScopeType.STATELESS)
-@Name(MetricService.METRIC_SERVICE_COMPONENT_NAME)
-@AutoCreate
+@Stateless
+@Named(MetricService.METRIC_SERVICE_COMPONENT_NAME)
 public class MetricService extends org.xdi.service.metric.MetricService {
 
 	private static final long serialVersionUID = 7875838160379126796L;
@@ -50,20 +47,47 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
 	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
+    private Instance<MetricService> instance;
+
+	@Inject
 	private CacheService cacheService;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
 
-	@In
-	private OxTrustConfiguration oxTrustConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private AppConfiguration appConfiguration;
+
+    public void init() {
+//    	init(this.appConfiguration.getMetricReporterInterval());
+    }
+
+	@Override
+	public String baseDn() {
+		String orgDn = organizationService.getDnForOrganization();
+		String baseDn = String.format("ou=metric,%s", orgDn);
+		return baseDn;
+	}
+
+	@Override
+	public String applianceInum() {
+		return applianceService.getApplianceInum();
+	}
+
+	@Override
+	public org.xdi.service.metric.MetricService getMetricServiceInstance() {
+		return instance.get();
+	}
 
 	public AuthenticationChartDto genereateAuthenticationChartDto(int countDays) {
 		String key = OxTrustConstants.CACHE_METRICS_KEY + "#home";
@@ -107,7 +131,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date startDate = calendar.getTime();
 
-		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(ApplicationType.OX_AUTH, oxTrustConfiguration.getApplicationConfiguration()
+		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(ApplicationType.OX_AUTH, appConfiguration
 				.getApplianceInum(), metricTypes, startDate, endDate);
 
 		return entries;
@@ -187,23 +211,6 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			long count = metric.getMetricData().getCount();
 			System.out.println(date + " : " + count);
 		}
-	}
-
-	@Override
-	public String applianceInum() {
-		return applianceService.getApplianceInum();
-	}
-
-	@Override
-	public String getComponentName() {
-		return METRIC_SERVICE_COMPONENT_NAME;
-	}
-
-	@Override
-	public String baseDn() {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
-		String baseDn = String.format("ou=metric,%s", orgDn);
-		return baseDn;
 	}
 
 }

@@ -6,39 +6,47 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Calendar;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.site.ldap.persistence.DeleteNotifier;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 
+@Stateless
+@Named
 public class LdifArchiver implements DeleteNotifier {
 
-	LdapEntryManager ldapEntryManager;
+	@Inject
+	private Logger log;
 
-	private static final Logger log = LoggerFactory.getLogger(LdifArchiver.class);
+	@Inject
+	private LdapEntryManager ldapEntryManager;	
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private String storeDir;
 
 	private boolean disable;
 
-	public LdifArchiver(LdapEntryManager ldapEntryManager) {
-		ApplicationConfiguration applicationConfiguration = OxTrustConfiguration.instance().getApplicationConfiguration();
-		storeDir = applicationConfiguration.getLdifStore();
+	public void init() {
+		storeDir = appConfiguration.getLdifStore();
 		if (storeDir != null) {
 			File store = new File(storeDir);
 			store.mkdirs();
 		} else {
 			disable = true;
 		}
-
-		this.ldapEntryManager = ldapEntryManager;
 	}
 
 	public void onBeforeRemove(String dn) {

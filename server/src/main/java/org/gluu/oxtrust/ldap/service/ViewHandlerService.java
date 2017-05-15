@@ -9,15 +9,12 @@ package org.gluu.oxtrust.ldap.service;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.faces.application.ViewHandler;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Provides operations with view id
@@ -25,18 +22,17 @@ import org.jboss.seam.annotations.Scope;
  * @author Yuriy Movchan
  * @version 0.1, 12/14/2012
  */
-@Name("viewHandlerService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
+@Named("viewHandlerService")
+@Stateless
 public class ViewHandlerService {
 
-	@In
+	@Inject
 	private FacesContext facesContext;
 
-	@In(value = "#{facesContext.externalContext}")
+	@Inject
 	private ExternalContext externalContext;
 
-	@In(value = "#{facesContext.application.viewHandler}")
+	@Inject
 	private ViewHandler viewHandler;
 
 	public String getBookmarkableURL(String viewId, HashMap<String, List<String>> pageParams) {

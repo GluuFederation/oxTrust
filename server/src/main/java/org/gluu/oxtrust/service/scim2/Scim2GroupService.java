@@ -5,54 +5,57 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
-import org.gluu.oxtrust.ldap.service.GroupService;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils2;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import org.slf4j.Logger;
 
 /**
  * Centralizes calls by the GroupWebService and BulkWebService service classes
  *
  * @author Val Pecaoco
  */
-@Name("scim2GroupService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
+@Stateless
+@Named
 public class Scim2GroupService implements Serializable {
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @In
+    @Inject
     private IGroupService groupService;
 
-    @In
+    @Inject
     private ExternalScimService externalScimService;
 
-    public Group createGroup(Group group) throws Exception {
+    @Inject
+    private CopyUtils2 copyUtils2;
+    
+    @Inject
+    private ServiceUtil serviceUtil;
 
+    public Group createGroup(Group group) throws Exception {
         log.debug(" copying gluuGroup ");
-        GluuGroup gluuGroup = CopyUtils2.copy(group, null, false);
+        GluuGroup gluuGroup = copyUtils2.copy(group, null, false);
         if (gluuGroup == null) {
             throw new Exception("Scim2GroupService.createGroup(): Failed to create group; GluuGroup is null");
         }
-
-        groupService = GroupService.instance();
 
         log.debug(" generating inum ");
         String inum = groupService.generateInumForNewGroup();
@@ -74,7 +77,7 @@ public class Scim2GroupService implements Serializable {
 
         log.info("group.getMembers().size() : " + group.getMembers().size());
         if (group.getMembers().size() > 0) {
-            Utils.personMembersAdder(gluuGroup, dn);
+        	serviceUtil.personMembersAdder(gluuGroup, dn);
         }
 
         // As per spec, the SP must be the one to assign the meta attributes
@@ -94,15 +97,12 @@ public class Scim2GroupService implements Serializable {
         log.debug("adding new GluuGroup");
         groupService.addGroup(gluuGroup);
 
-        Group createdGroup = CopyUtils2.copy(gluuGroup, null);
+        Group createdGroup = copyUtils2.copy(gluuGroup, null);
 
         return createdGroup;
     }
 
     public Group updateGroup(String id, Group group) throws Exception {
-
-        groupService = GroupService.instance();
-
         GluuGroup gluuGroup = groupService.getGroupByInum(id);
         if (gluuGroup == null) {
 
@@ -127,10 +127,10 @@ public class Scim2GroupService implements Serializable {
             }
         }
 
-        GluuGroup updatedGluuGroup = CopyUtils2.copy(group, gluuGroup, true);
+        GluuGroup updatedGluuGroup = copyUtils2.copy(group, gluuGroup, true);
 
         if (group.getMembers().size() > 0) {
-            Utils.personMembersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
+        	serviceUtil.personMembersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
         }
 
         log.info(" Setting meta: update group ");
@@ -151,15 +151,12 @@ public class Scim2GroupService implements Serializable {
 
         log.debug(" group updated ");
 
-        Group updatedGroup = CopyUtils2.copy(updatedGluuGroup, null);
+        Group updatedGroup = copyUtils2.copy(updatedGluuGroup, null);
 
         return updatedGroup;
     }
 
     public void deleteGroup(String id) throws Exception {
-
-        groupService = GroupService.instance();
-
         log.info(" Checking if the group exists ");
         log.info(" id : " + id);
 
@@ -185,7 +182,7 @@ public class Scim2GroupService implements Serializable {
                     String dn = groupService.getDnForGroup(id);
                     log.info(" DN : " + dn);
 
-                    Utils.deleteGroupFromPerson(gluuGroup, dn);
+                    serviceUtil.deleteGroupFromPerson(gluuGroup, dn);
                 }
             }
 

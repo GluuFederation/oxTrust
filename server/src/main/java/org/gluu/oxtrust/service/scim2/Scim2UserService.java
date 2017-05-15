@@ -5,57 +5,67 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim2.Operation;
 import org.gluu.oxtrust.model.scim2.ScimPatchUser;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils2;
-import org.gluu.oxtrust.util.PatchUtils;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.PatchUtil;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import org.slf4j.Logger;
 
 /**
  * Centralizes calls by the UserWebService and BulkWebService service classes
  *
  * @author Val Pecaoco
  */
-@Name("scim2UserService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
+@Stateless
+@Named
 public class Scim2UserService implements Serializable {
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @In
+	@Inject
+	private MemberService memberService;
+
+    @Inject
     private IPersonService personService;
 
-    @In
+    @Inject
     private ExternalScimService externalScimService;
 
-    public User createUser(User user) throws Exception {
+    @Inject
+    private CopyUtils2 copyUtils2;
+    
+    @Inject
+    private ServiceUtil serviceUtil;
+    
+    @Inject
+    private PatchUtil patchUtil;
 
+    public User createUser(User user) throws Exception {
         log.debug(" copying gluuperson ");
-        GluuCustomPerson gluuPerson = CopyUtils2.copy(user, null, false);
+        GluuCustomPerson gluuPerson = copyUtils2.copy(user, null, false);
         if (gluuPerson == null) {
             throw new Exception("Scim2UserService.createUser(): Failed to create user; GluuCustomPerson is null");
         }
-
-        personService = PersonService.instance();
 
         log.debug(" generating inum ");
         String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
@@ -82,7 +92,7 @@ public class Scim2UserService implements Serializable {
         if (user.getGroups().size() > 0) {
             log.info(" jumping to groupMembersAdder ");
             log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
-            Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
+            serviceUtil.groupMembersAdder(gluuPerson, gluuPerson.getDn());
         }
 
         // As per spec, the SP must be the one to assign the meta attributes
@@ -95,7 +105,7 @@ public class Scim2UserService implements Serializable {
         gluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
 
         // Sync email, forward ("oxTrustEmail" -> "mail")
-        gluuPerson = Utils.syncEmailForward(gluuPerson, true);
+        gluuPerson = serviceUtil.syncEmailForward(gluuPerson, true);
 
         // For custom script: create user
         if (externalScimService.isEnabled()) {
@@ -105,15 +115,12 @@ public class Scim2UserService implements Serializable {
         log.debug("adding new GluuPerson");
         personService.addPerson(gluuPerson);
 
-        User createdUser = CopyUtils2.copy(gluuPerson, null);
+        User createdUser = copyUtils2.copy(gluuPerson, null);
 
         return createdUser;
     }
 
     public User updateUser(String id, User user) throws Exception {
-
-        personService = PersonService.instance();
-
         GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
         if (gluuPerson == null) {
 
@@ -138,10 +145,10 @@ public class Scim2UserService implements Serializable {
             }
         }
 
-        GluuCustomPerson updatedGluuPerson = CopyUtils2.copy(user, gluuPerson, true);
+        GluuCustomPerson updatedGluuPerson = copyUtils2.copy(user, gluuPerson, true);
 
         if (user.getGroups().size() > 0) {
-            Utils.groupMembersAdder(updatedGluuPerson, personService.getDnForPerson(id));
+            serviceUtil.groupMembersAdder(updatedGluuPerson, personService.getDnForPerson(id));
         }
 
         log.info(" Setting meta: update user ");
@@ -154,7 +161,7 @@ public class Scim2UserService implements Serializable {
         }
 
         // Sync email, forward ("oxTrustEmail" -> "mail")
-        updatedGluuPerson = Utils.syncEmailForward(updatedGluuPerson, true);
+        updatedGluuPerson = serviceUtil.syncEmailForward(updatedGluuPerson, true);
 
         // For custom script: update user
         if (externalScimService.isEnabled()) {
@@ -165,15 +172,12 @@ public class Scim2UserService implements Serializable {
 
         log.debug(" person updated ");
 
-        User updatedUser = CopyUtils2.copy(updatedGluuPerson, null);
+        User updatedUser = copyUtils2.copy(updatedGluuPerson, null);
 
         return updatedUser;
     }
 
     public void deleteUser(String id) throws Exception {
-
-        personService = PersonService.instance();
-
         GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
         if (gluuPerson == null) {
 
@@ -194,11 +198,11 @@ public class Scim2UserService implements Serializable {
                     String dn = personService.getDnForPerson(id);
                     log.info("DN : " + dn);
 
-                    Utils.deleteUserFromGroup(gluuPerson, dn);
+                    serviceUtil.deleteUserFromGroup(gluuPerson, dn);
                 }
             }
 
-            personService.removePerson(gluuPerson);
+            memberService.removePerson(gluuPerson);
         }
     }
     
@@ -221,18 +225,17 @@ public class Scim2UserService implements Serializable {
     		}       
     		
     	}
-    	personService = PersonService.instance();
+
     	GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-    	User updatedUser = CopyUtils2.copy(gluuPerson, null);   	
+    	User updatedUser = copyUtils2.copy(gluuPerson, null);   	
     	
 		return updatedUser;  	
-    	
     }
     
    private void removeUserPatch(Operation operation,String id) throws Exception{	   
 	   User user = operation.getValue();	
 		
-		GluuCustomPerson updatedGluuPerson = PatchUtils.removePatch(user, validUsernameByInum(user, id));
+		GluuCustomPerson updatedGluuPerson = patchUtil.removePatch(user, validUsernameByInum(user, id));
 		log.info(" Setting meta: removeUserPatch update user ");
 		setMeta(updatedGluuPerson);    	
     }
@@ -240,7 +243,7 @@ public class Scim2UserService implements Serializable {
 	private void replaceUserPatch(Operation operation, String id) throws Exception {
 		User user = operation.getValue();		
 		
-		GluuCustomPerson updatedGluuPerson = PatchUtils.replacePatch(user, validUsernameByInum(user, id));
+		GluuCustomPerson updatedGluuPerson = patchUtil.replacePatch(user, validUsernameByInum(user, id));
 		log.info(" Setting meta: replaceUserPatch update user ");
 		setMeta(updatedGluuPerson);
 	}
@@ -248,14 +251,12 @@ public class Scim2UserService implements Serializable {
 	private void addUserPatch(Operation operation, String id) throws Exception {
 		User user = operation.getValue();		
 		
-		GluuCustomPerson updatedGluuPerson = PatchUtils.addPatch(user, validUsernameByInum(user, id));
+		GluuCustomPerson updatedGluuPerson = patchUtil.addPatch(user, validUsernameByInum(user, id));
 		log.info(" Setting meta: addUserPatch update user ");
 		setMeta(updatedGluuPerson);
 	}
 	
 	private GluuCustomPerson validUsernameByInum(User user,String id) throws DuplicateEntryException{
-		personService = PersonService.instance();
-
 		GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 		if (gluuPerson == null) {
 
@@ -295,7 +296,7 @@ public class Scim2UserService implements Serializable {
 			String relativeLocation = "/scim/v2/Users/" + updatedGluuPerson.getInum();
 			updatedGluuPerson.setAttribute("oxTrustMetaLocation",relativeLocation);
 		}
-		updatedGluuPerson = Utils.syncEmailForward(updatedGluuPerson, true);
+		updatedGluuPerson = serviceUtil.syncEmailForward(updatedGluuPerson, true);
 
 		// For custom script: update user
 		if (externalScimService.isEnabled()) {

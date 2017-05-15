@@ -9,20 +9,16 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.Util;
 
 /**
@@ -30,18 +26,15 @@ import org.xdi.util.Util;
  * 
  * @author Reda Zerrad Date: 06.11.2012
  */
-@Name("searchClientAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("searchClientAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class SearchClientAction implements Serializable {
 
 	private static final long serialVersionUID = 8361095046179474395L;
 
-	@Logger
-	private Log log;
-
-	@In
-	StatusMessages statusMessages;
+	@Inject
+	private Logger log;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -51,15 +44,15 @@ public class SearchClientAction implements Serializable {
 
 	private List<OxAuthClient> clientList;
 
-	@In
+	@Inject
 	private ClientService clientService;
 
-	@Restrict("#{s:hasPermission('client', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	@Restrict("#{s:hasPermission('client', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

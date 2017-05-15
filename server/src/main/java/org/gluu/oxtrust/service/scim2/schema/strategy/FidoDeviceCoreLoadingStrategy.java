@@ -5,6 +5,9 @@
  */
 package org.gluu.oxtrust.service.scim2.schema.strategy;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -13,27 +16,25 @@ import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeFidoDeviceSerializer;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * @author Val Pecaoco
  */
-@Name("fidoDeviceCoreLoadingStrategy")
+@Named
 public class FidoDeviceCoreLoadingStrategy implements LoadingStrategy {
 
-	@Logger
-	private static Log log;
+	@Inject
+	private Logger log;
 
 	@Override
-	public SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
+	public SchemaType load(AppConfiguration appConfiguration, SchemaType schemaType) throws Exception {
 
 		log.info(" load() ");
 
 		Meta meta = new Meta();
-		meta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + schemaType.getId());
+		meta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + schemaType.getId());
 		meta.setResourceType("Schema");
 		schemaType.setMeta(meta);
 

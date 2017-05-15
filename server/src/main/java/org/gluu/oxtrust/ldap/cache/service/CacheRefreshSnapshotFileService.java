@@ -24,16 +24,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.util.ArrayHelper;
 
@@ -42,14 +40,12 @@ import org.xdi.util.ArrayHelper;
  * 
  * @author Yuriy Movchan Date: 06.09.2011
  */
-@Name("cacheRefreshSnapshotFileService")
-@Scope(ScopeType.APPLICATION)
-@AutoCreate
-@Startup(depends = "appInitializer")
+@ApplicationScoped
+@Named("cacheRefreshSnapshotFileService")
 public class CacheRefreshSnapshotFileService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private static final String SNAPSHOT_FILE_NAME_PATTERN = "inum-snapshot-%s.txt";
 	private static final String PROBLEM_LIST_FILE_NAME = "problem-inum-list.txt";

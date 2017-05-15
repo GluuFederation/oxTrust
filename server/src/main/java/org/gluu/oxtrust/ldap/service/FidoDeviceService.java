@@ -5,45 +5,40 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
-import com.unboundid.ldap.sdk.Filter;
-import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
 import java.io.Serializable;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.slf4j.Logger;
+import org.xdi.ldap.model.SortOrder;
+import org.xdi.ldap.model.VirtualListViewResponse;
+
+import com.unboundid.ldap.sdk.Filter;
+
 /**
  * @author Val Pecaoco
  */
-@Scope(ScopeType.STATELESS)
-@Name("fidoDeviceService")
-@AutoCreate
+@Stateless
+@Named
 public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
-
-	public static IFidoDeviceService instance() {
-		return (IFidoDeviceService) Component.getInstance(FidoDeviceService.class);
-	}
-
 	@Override
 	public String getDnForFidoDevice(String userId, String id) {
-
-		personService = PersonService.instance();
-
 		String baseDn;
 		if (userId != null && !userId.isEmpty()) {
 			baseDn = "ou=fido," + personService.getDnForPerson(userId);
@@ -75,10 +70,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	}
 
 	private GluuCustomFidoDevice searchFidoDevice(Filter filter, String userId, String id) throws Exception {
-
 		GluuCustomFidoDevice gluuCustomFidoDevice = null;
-
-		personService = PersonService.instance();
 
 		VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 

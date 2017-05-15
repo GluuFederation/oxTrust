@@ -9,26 +9,34 @@ package org.gluu.oxtrust.ws.rs.scim2;
 import java.net.URI;
 import java.util.ArrayList;
 
-import javax.ws.rs.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
  */
-@Name("serviceProviderConfig")
+@Named("serviceProviderConfig")
 @Path("/scim/v2/ServiceProviderConfig")
 public class ServiceProviderConfigWS extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@GET
 	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
@@ -38,12 +46,12 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 		ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
 
 		Meta meta = new Meta();
-		meta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
+		meta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
 		meta.setResourceType("ServiceProviderConfig");
 		serviceProviderConfig.setMeta(meta);
 
 		ArrayList<AuthenticationScheme> authenticationSchemes = new ArrayList<AuthenticationScheme>();
-		if (applicationConfiguration.isScimTestMode()) {
+		if (appConfiguration.isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authenticationSchemes.add(AuthenticationScheme.createOAuth2(true));
 		} else {
@@ -51,7 +59,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 		}
 		serviceProviderConfig.setAuthenticationSchemes(authenticationSchemes);
 
-		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
+		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
 
 		return Response.ok(serviceProviderConfig).location(location).build();
 	}

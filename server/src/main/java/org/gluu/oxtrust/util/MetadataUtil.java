@@ -5,20 +5,6 @@
  */
 package org.gluu.oxtrust.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.DefaultHttpParams;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpParams;
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.xml.sax.InputSource;
-
 /**
  * Extract SAML Metadata fields.
  *

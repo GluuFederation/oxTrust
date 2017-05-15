@@ -5,13 +5,17 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
-import com.unboundid.ldap.sdk.Filter;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.idp.LdapIDPEntry;
@@ -22,53 +26,38 @@ import org.gluu.asimba.util.ldap.sp.LDAPRequestorPoolEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxAsimbaConfiguration;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
+
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * Asimba LDAP configuration service.
  * 
  * @author Dmitry Ognyannikov, 2016
  */
-@Name("asimbaService")
-@AutoCreate
-@Scope(ScopeType.APPLICATION)
+@ApplicationScoped
+@Named
 public class AsimbaService implements Serializable {
     public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     public static String METADATA_SP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
     
-    @In
+    @Inject
     private LdapEntryManager ldapEntryManager;
     
-//    @In
-//    ApplianceService applianceService;
+    @Inject
+    private OrganizationService organizationService;
     
-    @In
-    OrganizationService organizationService;
-     
-    @Create
-    public void init() {
-    }
-    
-    @Destroy
-    public void destroy() {
-    }
+    @Inject
+    private ServiceUtil serviceUtil;
     
     public LdapOxAsimbaConfiguration loadAsimbaConfiguration() {
         String organizationDn = organizationService.getDnForOrganization();
@@ -508,19 +497,19 @@ public class AsimbaService implements Serializable {
         String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "conf" + File.separator + "asimba" 
                 + File.separator + "metadata" + File.separator + "idp";
         
-        byte[] fileContent = Utils.copyUploadedFile(uploadedFile);
+        byte[] fileContent = serviceUtil.copyUploadedFile(uploadedFile);
         
         // save copy to LDAP:
         idp.setMetadataXMLText(new String(fileContent, "UTF8"));
         
-        return Utils.saveRandomFile(fileContent, baseDir, "xml");
+        return ServiceUtil.saveRandomFile(fileContent, baseDir, "xml");
     }
     
     public String saveSPRequestorMetadataFile(UploadedFile uploadedFile) throws IOException {
         String baseDir = LDAPUtility.getBaseDirectory() + File.separator + "conf" + File.separator + "asimba" 
                 + File.separator + "metadata" + File.separator + "sp";
         
-        return Utils.saveUploadedFile(uploadedFile, baseDir, "xml");
+        return serviceUtil.saveUploadedFile(uploadedFile, baseDir, "xml");
     }
     
 }

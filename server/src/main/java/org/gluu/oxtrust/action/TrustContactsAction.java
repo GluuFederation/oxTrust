@@ -10,25 +10,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.xdi.util.Util;
 import org.xdi.model.TrustContact;
 import org.xdi.service.XmlService;
+import org.xdi.util.Util;
 
-@Scope(ScopeType.CONVERSATION)
-@Name("trustContactsAction")
+@ConversationScoped
+@Named("trustContactsAction")
 public class TrustContactsAction implements Serializable {
 
 	private static final long serialVersionUID = -1032167044333943680L;
-	@In
+	@Inject
 	XmlService xmlService;
-	@In
+	@Inject
 	private TrustService trustService;
 
 	private List<TrustContact> contacts;

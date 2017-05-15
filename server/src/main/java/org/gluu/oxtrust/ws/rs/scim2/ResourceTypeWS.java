@@ -9,25 +9,34 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.annotations.Api;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
-import org.jboss.seam.annotations.Name;
+import org.xdi.config.oxtrust.AppConfiguration;
 
+import com.wordnik.swagger.annotations.Api;
 /**
  * @author Rahat Ali Date: 05.08.2015
  */
-@Name("resourceTypesWs")
+@Named("resourceTypesWs")
 @Path("/scim/v2/ResourceTypes")
 @Api(value = "/v2/ResourceTypes", description = "SCIM 2.0 ResourceType Endpoint (https://tools.ietf.org/html/rfc7643#section-6)")
 public class ResourceTypeWS extends BaseScimWebService {
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@GET
 	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
@@ -49,7 +58,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		userResourceType.setSchema(Constants.USER_CORE_SCHEMA_ID);
 
 		Meta userMeta = new Meta();
-		userMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
+		userMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
 		userMeta.setResourceType("ResourceType");
 		userResourceType.setMeta(userMeta);
 
@@ -69,7 +78,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		groupResourceType.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
 
 		Meta groupMeta = new Meta();
-		groupMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
+		groupMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
 		groupMeta.setResourceType("ResourceType");
 		groupResourceType.setMeta(groupMeta);
 
@@ -82,7 +91,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		fidoDeviceResourceType.setSchema(Constants.FIDO_DEVICES_CORE_SCHEMA_ID);
 
 		Meta fidoDeviceMeta = new Meta();
-		fidoDeviceMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
+		fidoDeviceMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
 		fidoDeviceMeta.setResourceType("ResourceType");
 		fidoDeviceResourceType.setMeta(fidoDeviceMeta);
 
@@ -98,7 +107,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		listResponse.setItemsPerPage(10);
 		listResponse.setStartIndex(1);
 
-		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes");
+		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes");
 
 		// return Response.ok(resourceTypes).location(location).build();
 		return Response.ok(listResponse).location(location).build();
@@ -118,7 +127,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 		userResourceType.setSchema(Constants.USER_CORE_SCHEMA_ID);
 
 		Meta userMeta = new Meta();
-		userMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
+		userMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
 		userMeta.setResourceType("ResourceType");
 		userResourceType.setMeta(userMeta);
 
@@ -131,7 +140,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 
 		// ResourceType[] resourceTypes = new ResourceType[]{userResourceType};
 
-		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
+		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
 
 		// return Response.ok(resourceTypes).location(location).build();
 		return Response.ok(userResourceType).location(location).build();
@@ -151,13 +160,13 @@ public class ResourceTypeWS extends BaseScimWebService {
 		groupResourceType.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
 
 		Meta groupMeta = new Meta();
-		groupMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
+		groupMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
 		groupMeta.setResourceType("ResourceType");
 		groupResourceType.setMeta(groupMeta);
 
 		// ResourceType[] resourceTypes = new ResourceType[]{groupResourceType};
 
-		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
+		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
 
 		// return Response.ok(resourceTypes).location(location).build();
 		return Response.ok(groupResourceType).location(location).build();
@@ -177,11 +186,11 @@ public class ResourceTypeWS extends BaseScimWebService {
 		fidoDeviceResourceType.setSchema(Constants.FIDO_DEVICES_CORE_SCHEMA_ID);
 
 		Meta fidoDeviceMeta = new Meta();
-		fidoDeviceMeta.setLocation(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
+		fidoDeviceMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
 		fidoDeviceMeta.setResourceType("ResourceType");
 		fidoDeviceResourceType.setMeta(fidoDeviceMeta);
 
-		URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
+		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
 
 		return Response.ok(fidoDeviceResourceType).location(location).build();
 	}

@@ -6,11 +6,25 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -20,7 +34,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuCustomPersonList;
 import org.gluu.oxtrust.model.scim.ScimPerson;
@@ -30,38 +44,42 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.GluuCustomPersonListSerial
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.CopyUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.service.XmlService;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
  * SCIM UserWebService Implementation
  * 
  * @author Reda Zerrad Date: 04.03.2012
  */
-@Name("userWebService")
+@Named("userWebService")
 @Path("/scim/v1/Users")
 public class UserWebService extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
+	private MemberService memberService;
+
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private ExternalScimService externalScimService;
 
-    @In
+    @Inject
     private XmlService xmlService;
+    
+    @Inject
+    private CopyUtils copyUtils;
+
+	@Inject
+	private ServiceUtil serviceUtil;
 
 	@GET
 	@Produces({MediaType.APPLICATION_JSON,  MediaType.APPLICATION_XML})
@@ -80,17 +98,12 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
-
 			if (count > getMaxCount()) {
-
 				String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
 				return getErrorResponse(detail, Response.Status.BAD_REQUEST.getStatusCode());
 
 			} else {
-
 				log.info(" Searching persons from LDAP ");
-
-				personService = PersonService.instance();
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
@@ -114,7 +127,7 @@ public class UserWebService extends BaseScimWebService {
 
 					for (GluuCustomPerson gluuPerson : gluuCustomPersons) {
 
-						ScimPerson person = CopyUtils.copy(gluuPerson, null);
+						ScimPerson person = copyUtils.copy(gluuPerson, null);
 
 						log.info(" person to be added id : " + person.getUserName());
 
@@ -128,7 +141,7 @@ public class UserWebService extends BaseScimWebService {
 					personsList.setStartIndex(vlvResponse.getStartIndex());
 				}
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v1/Users");
+				URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v1/Users");
 
 				// Serialize to JSON
 				ObjectMapper mapper = new ObjectMapper();
@@ -155,23 +168,19 @@ public class UserWebService extends BaseScimWebService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getUserByUid(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
-
-			personService = PersonService.instance();
-
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(uid);
 			if (gluuPerson == null) {
 				// sets HTTP status code 404 Not Found
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			ScimPerson person = copyUtils.copy(gluuPerson, null);
 
 			URI location = new URI("/Users/" + uid);
 
@@ -202,11 +211,8 @@ public class UserWebService extends BaseScimWebService {
 		// Return HTTP response with status code 201 Created
 
 		try {
-
-			personService = PersonService.instance();
-
 			log.debug(" copying gluuperson ");
-			GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
+			GluuCustomPerson gluuPerson = copyUtils.copy(person, null, false);
 			if (gluuPerson == null) {
 				return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
 			}
@@ -231,11 +237,11 @@ public class UserWebService extends BaseScimWebService {
 				log.info(" jumping to groupMembersAdder ");
 				log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
 
-				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
+				serviceUtil.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
 			// Sync email, forward ("oxTrustEmail" -> "mail")
-			gluuPerson = Utils.syncEmailForward(gluuPerson, false);
+			gluuPerson = ServiceUtil.syncEmailForward(gluuPerson, false);
 
 			// For custom script: create user
 			if (externalScimService.isEnabled()) {
@@ -245,7 +251,7 @@ public class UserWebService extends BaseScimWebService {
 			log.debug("adding new GluuPerson");
 			personService.addPerson(gluuPerson);
 
-			ScimPerson newPerson = CopyUtils.copy(gluuPerson, null);
+			ScimPerson newPerson = copyUtils.copy(gluuPerson, null);
 
 			String uri = "/Users/" + newPerson.getId();
 
@@ -275,16 +281,12 @@ public class UserWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateUser(@HeaderParam("Authorization") String authorization, @PathParam("id") String id, ScimPerson person) throws Exception {
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
 		}
 
 		try {
-
-			personService = PersonService.instance();
-
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 			if (gluuPerson == null) {
 
@@ -309,14 +311,14 @@ public class UserWebService extends BaseScimWebService {
 				}
 			}
 
-			GluuCustomPerson newGluuPerson = CopyUtils.copy(person, gluuPerson, true);
+			GluuCustomPerson newGluuPerson = copyUtils.copy(person, gluuPerson, true);
 
 			if (person.getGroups().size() > 0) {
-				Utils.groupMembersAdder(newGluuPerson, personService.getDnForPerson(id));
+				serviceUtil.groupMembersAdder(newGluuPerson, personService.getDnForPerson(id));
 			}
 
 			// Sync email, forward ("oxTrustEmail" -> "mail")
-			newGluuPerson = Utils.syncEmailForward(newGluuPerson, false);
+			newGluuPerson = ServiceUtil.syncEmailForward(newGluuPerson, false);
 
 			// For custom script: update user
 			if (externalScimService.isEnabled()) {
@@ -326,9 +328,9 @@ public class UserWebService extends BaseScimWebService {
 			personService.updatePerson(newGluuPerson);
 			log.debug(" person updated ");
 
-			ScimPerson newPerson = CopyUtils.copy(newGluuPerson, null);
+			ScimPerson newPerson = copyUtils.copy(newGluuPerson, null);
 
-			// person_update = CopyUtils.copy(gluuPerson, null, attributes);
+			// person_update = copyUtils.copy(gluuPerson, null, attributes);
 			URI location = new URI("/Users/" + id);
 
 			return Response.ok(newPerson).location(location).build();
@@ -363,9 +365,6 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			personService = PersonService.instance();
-
 			GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 
 			if (gluuPerson == null) {
@@ -387,11 +386,11 @@ public class UserWebService extends BaseScimWebService {
 						String dn = personService.getDnForPerson(id);
 						log.info("DN : " + dn);
 
-						Utils.deleteUserFromGroup(gluuPerson, dn);
+						serviceUtil.deleteUserFromGroup(gluuPerson, dn);
 					}
 				}
 
-				personService.removePerson(gluuPerson);
+				memberService.removePerson(gluuPerson);
 			}
 
 			return Response.ok().build();
@@ -480,7 +479,7 @@ public class UserWebService extends BaseScimWebService {
 						+ "' please try again or use another pattern.", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			ScimPerson person = copyUtils.copy(gluuPerson, null);
 
 			URI location = new URI("/Users/" + gluuPerson.getInum());
 
@@ -519,7 +518,7 @@ public class UserWebService extends BaseScimWebService {
 				log.info(" LDAP person list is not empty ");
 				for (GluuCustomPerson gluuPerson : personList) {
 					log.info(" copying person from GluuPerson to ScimPerson ");
-					ScimPerson person = CopyUtils.copy(gluuPerson, null);
+					ScimPerson person = copyUtils.copy(gluuPerson, null);
 					log.info(" adding ScimPerson to the AllPersonList ");
 					log.info(" person to be added userid : " + person.getUserName());
 					allPersonList.getResources().add(person);

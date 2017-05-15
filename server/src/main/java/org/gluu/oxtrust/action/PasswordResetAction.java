@@ -6,11 +6,16 @@
 
 package org.gluu.oxtrust.action;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
@@ -23,31 +28,30 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * User: Dejan Maric
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("passwordResetAction")
+@ConversationScoped
+@Named("passwordResetAction")
 public class PasswordResetAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	@In
-	private LdapEntryManager ldapEntryManager;
 	
-	@In
+	@Inject
+	private Logger log;
+
+	@Inject
+	private LdapEntryManager ldapEntryManager;	
+	@Inject
 	private RecaptchaService recaptchaService;
-
 	
-	@Logger
-	private Log log;
+	@Inject
+	private ApplianceService applianceService;
+	
+	@Inject
+	private PersonService personService;
 	
 	private PasswordResetRequest request;
 	private String guid;
@@ -60,7 +64,7 @@ public class PasswordResetAction implements Serializable {
 
 
 	public String start() throws ParseException{
-		GluuAppliance appliance = ApplianceService.instance().getAppliance();
+		GluuAppliance appliance = applianceService.getAppliance();
 		this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
 		Calendar requestCalendarExpiry = Calendar.getInstance();
 		Calendar currentCalendar = Calendar.getInstance();
@@ -69,7 +73,7 @@ public class PasswordResetAction implements Serializable {
 		    requestCalendarExpiry.setTime(request.getCreationDate());
 		    requestCalendarExpiry.add(Calendar.HOUR, 2);
 		}
-		GluuCustomPerson person = PersonService.instance().getPersonByInum(request.getPersonInum());
+		GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
 		GluuCustomAttribute question = null;
 		if(person != null ){
 			question = person.getGluuCustomAttribute("secretQuestion");
@@ -92,7 +96,7 @@ public class PasswordResetAction implements Serializable {
 		}
 
 		if (valid) {
-			GluuAppliance appliance = ApplianceService.instance().getAppliance();
+			GluuAppliance appliance = applianceService.getAppliance();
 			this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
 			Calendar requestCalendarExpiry = Calendar.getInstance();
 			Calendar currentCalendar = Calendar.getInstance();
@@ -101,7 +105,7 @@ public class PasswordResetAction implements Serializable {
 			    requestCalendarExpiry.setTime((request.getCreationDate()));
 			    requestCalendarExpiry.add(Calendar.HOUR, 2);
 			}
-			GluuCustomPerson person = PersonService.instance().getPersonByInum(request.getPersonInum());
+			GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
 			GluuCustomAttribute question = null;
 			GluuCustomAttribute answer = null;
 			if(person != null ){
@@ -114,12 +118,12 @@ public class PasswordResetAction implements Serializable {
 				    Boolean securityQuestionAnswered = (securityAnswer != null) && securityAnswer.equals(correctAnswer);
 				    if(securityQuestionAnswered){
 				    	person.setUserPassword(password);
-				    	PersonService.instance().updatePerson(person);
+				    	personService.updatePerson(person);
 				    	return OxTrustConstants.RESULT_SUCCESS;
 				    }
 				}else{
 					person.setUserPassword(password);
-			    	PersonService.instance().updatePerson(person);
+			    	personService.updatePerson(person);
 					return OxTrustConstants.RESULT_SUCCESS;
 				}
 			}

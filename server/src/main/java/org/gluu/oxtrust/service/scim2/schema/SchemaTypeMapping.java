@@ -6,14 +6,17 @@
 
 package org.gluu.oxtrust.service.scim2.schema;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.core.GroupCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.core.UserCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.core.fido.FidoDeviceCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
-
-import java.util.*;
 
 /**
  * Mapping definitions

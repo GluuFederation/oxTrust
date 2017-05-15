@@ -6,13 +6,20 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -20,21 +27,18 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.XmlService;
 import org.xdi.util.StringHelper;
+import org.xdi.util.exception.InvalidConfigurationException;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xml.sax.SAXException;
 
@@ -42,10 +46,9 @@ import org.xml.sax.SAXException;
  * Provides operations with metadata filters
  * 
  */
-@Scope(ScopeType.STATELESS)
-@Name("filterService")
-@AutoCreate
-public class FilterService {
+@Stateless
+@Named("filterService")
+public class FilterService implements Serializable {
 
 	public static final String VALIDATION_TYPE = "SchemaValidation";
 
@@ -55,22 +58,24 @@ public class FilterService {
 
 	public static final Object SIGNATURE_VALIDATION_TYPE = "SignatureValidation";
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
+	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private AppConfiguration appConfiguration;
+
+	@Inject
 	private TemplateService templateService;
 
-	@In
-	private Shibboleth3ConfService shibboleth3ConfService;
-
-	@In
+	@Inject
 	private XmlService xmlService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
-
-		String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
-		// File filterFolder = new File(OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
+		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		// File filterFolder = new File(configurationFactory.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
 		File filterFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
 
 		File[] filterTemplates = null;
@@ -105,15 +110,6 @@ public class FilterService {
 	public List<MetadataFilter> getMetadataFiltersForTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
 		// TODO Auto-generated method stub
 		return new ArrayList<MetadataFilter>();
-	}
-
-	/**
-	 * Get filterService instance
-	 * 
-	 * @return FilterService instance
-	 */
-	public static FilterService instance() {
-		return (FilterService) Component.getInstance(FilterService.class);
 	}
 
 	public void updateFilter(GluuSAMLTrustRelationship trustRelationship, MetadataFilter metadataFilterSelected) {
@@ -173,7 +169,7 @@ public class FilterService {
 		if (trustRelationship.getMetadataFilters().get("signatureValidation") != null) {
 			String filterCertFileName = StringHelper.removePunctuation(trustRelationship.getInum());
 			if (filterCertWrapper.getStream() != null) {
-				shibboleth3ConfService.saveFilterCert(filterCertFileName, filterCertWrapper.getStream());
+				saveFilterCert(filterCertFileName, filterCertWrapper.getStream());
 				trustRelationship.getMetadataFilters().get("signatureValidation")
 						.setFilterCertFileName(StringHelper.removePunctuation(trustRelationship.getInum()));
 			}
@@ -250,4 +246,32 @@ public class FilterService {
 			}
 		}
 	}
+
+	public String saveFilterCert(String filterCertFileName, InputStream input) {
+		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
+			IOUtils.closeQuietly(input);
+			throw new InvalidConfigurationException("Failed to save filter certificate file due to undefined IDP root folder");
+		}
+
+		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator
+				+ "credentials" + File.separator;
+		File filterCertFile = new File(idpMetadataFolder + filterCertFileName);
+
+		FileOutputStream os = null;
+		try {
+			os = FileUtils.openOutputStream(filterCertFile);
+			IOUtils.copy(input, os);
+			os.flush();
+		} catch (IOException ex) {
+			log.error("Failed to write  filter certificate file '{0}'", ex, filterCertFile);
+			ex.printStackTrace();
+			return null;
+		} finally {
+			IOUtils.closeQuietly(os);
+			IOUtils.closeQuietly(input);
+		}
+
+		return filterCertFile.getAbsolutePath();
+	}
+
 }

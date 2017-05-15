@@ -9,37 +9,31 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -51,44 +45,50 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 10.23.2010
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updatePersonAction")
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named("updatePersonAction")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdatePersonAction implements Serializable {
 
 	private static final long serialVersionUID = -3242167044333943689L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private String inum;
 	private boolean update;
 
 	private GluuCustomPerson person;
+	
+	@Inject
+	private OrganizationService organizationService;
+	
+	@Inject
+	private GroupService groupService;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private CustomAttributeAction customAttributeAction;
 
-	@In(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private UserPasswordAction userPasswordAction;
 
-	@In(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private WhitePagesAction whitePagesAction;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-	@In
+	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
+
+	@Inject
+	private MemberService memberService;
 	
 	private GluuStatus gluuStatus ;
 
@@ -109,9 +109,9 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	@Restrict("#{s:hasPermission('person', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String add() {
-		if (!OrganizationService.instance().isAllowPersonModification()) {
+		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -133,7 +133,7 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	@Restrict("#{s:hasPermission('person', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String update() {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -155,7 +155,7 @@ public class UpdatePersonAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('person', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public void cancel() {
 	}
 
@@ -164,9 +164,9 @@ public class UpdatePersonAction implements Serializable {
 	 * 
 	 * @return String describing success of the operation
 	 */
-	@Restrict("#{s:hasPermission('person', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String save() throws Exception {
-		if (!OrganizationService.instance().isAllowPersonModification()) {
+		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -187,7 +187,7 @@ public class UpdatePersonAction implements Serializable {
 		this.person.getCustomAttributes().addAll(removedAttributes);
 
 		// Sync email, in reverse ("oxTrustEmail" <- "mail")
-		this.person = Utils.syncEmailReverse(this.person, true);
+		this.person = ServiceUtil.syncEmailReverse(this.person, true);
 
 		if (update) {
 			try {
@@ -245,7 +245,7 @@ public class UpdatePersonAction implements Serializable {
 		personService.addCustomObjectClass(this.person);
 
 		// Update objectClasses
-		String[] allObjectClasses = ArrayHelper.arrayMerge(applicationConfiguration.getPersonObjectClassTypes(), this.person.getCustomObjectClasses());
+		String[] allObjectClasses = ArrayHelper.arrayMerge(appConfiguration.getPersonObjectClassTypes(), this.person.getCustomObjectClasses());
 		String[] resultObjectClasses = new HashSet<String>(Arrays.asList(allObjectClasses)).toArray(new String[0]);
 		
 		this.person.setCustomObjectClasses(resultObjectClasses);
@@ -257,20 +257,19 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	@Restrict("#{s:hasPermission('person', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
 	public String delete() {
-		if (!OrganizationService.instance().isAllowPersonModification()) {
+		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		if (update) {
 			// Remove person
 			try {
-				Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_DELETED, this.person);
 				if (externalUpdateUserService.isEnabled()) {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
                 }
-				personService.removePerson(this.person);
+				memberService.removePerson(this.person);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				log.error("Failed to remove person {0}", ex, this.person.getInum());
@@ -295,8 +294,8 @@ public class UpdatePersonAction implements Serializable {
 			this.person.setCustomAttributes(customAttributes);
 		}
 
-		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, applicationConfiguration
-				.getPersonObjectClassTypes(), applicationConfiguration.getPersonObjectClassDisplayNames());
+		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, appConfiguration
+				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 
 		if (newPerson) {
 			customAttributeAction.addCustomAttributes(personService.getMandatoryAtributes());
@@ -305,7 +304,7 @@ public class UpdatePersonAction implements Serializable {
 	
 	public String getGroupName(String dn){
 		if(dn != null){
-			GluuGroup group = GroupService.instance().getGroupByDn(dn);
+			GluuGroup group = groupService.getGroupByDn(dn);
 			if( group != null ){
 				String groupName = group.getDisplayName();
 				if(groupName != null && ! groupName.isEmpty()){

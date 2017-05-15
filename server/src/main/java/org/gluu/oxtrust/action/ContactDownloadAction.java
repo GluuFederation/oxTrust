@@ -8,46 +8,42 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.ldap.service.DownloadService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
-@Name("contactDownloadAction")
-@Scope(ScopeType.EVENT)
-@Restrict("#{identity.loggedIn}")
+@RequestScoped
+@Named
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ContactDownloadAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(value = "#{facesContext.externalContext}")
-	private ExternalContext extCtx;
+	@Inject
+	private ExternalContext externalContext;
 
-	@SuppressWarnings("seam-unresolved-variable")
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
-	@In(value = "#{facesContext}")
-	FacesContext facesContext;
+	@Inject
+	private FacesContext facesContext;
 
-	@In
+	@Inject
 	private DownloadService downloadService;
 
 	public String download() {
-		HttpServletResponse response = (HttpServletResponse) extCtx.getResponse();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"" + currentPerson.getDisplayName() + "_contacts.csv\"");
 		try {

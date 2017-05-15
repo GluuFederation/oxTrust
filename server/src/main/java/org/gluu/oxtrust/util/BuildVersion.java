@@ -8,14 +8,13 @@ package org.gluu.oxtrust.util;
 
 import java.io.Serializable;
 
-import org.jboss.seam.annotations.Name;
-
+import javax.inject.Named;
 /**
  * Constants with current build info
  * 
  * @author Yuriy Movchan Date: 12.17.2010
  */
-@Name("buildVersion")
+@Named("buildVersion")
 public class BuildVersion implements Serializable {
 
 	private static final long serialVersionUID = 3790281266924133197L;

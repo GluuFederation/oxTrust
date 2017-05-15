@@ -29,7 +29,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.security.auth.x500.X500Principal;
 
 import org.apache.commons.io.FileUtils;
@@ -41,6 +45,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.JCERSAPrivateCrtKey;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.SSLService;
@@ -50,19 +55,10 @@ import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileHelper;
 import org.xdi.util.io.ResponseHelper;
@@ -74,35 +70,38 @@ import org.xdi.util.io.ResponseHelper;
  * @author Yuriy Movchan Date: 03/03/2014
  * 
  */
-@Name("manageCertificateAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ManageCertificateAction implements Serializable {
 	public static final String BEGIN_CERT_REQ = "-----BEGIN CERTIFICATE REQUEST-----";
 	public static final String END_CERT_REQ = "-----END CERTIFICATE REQUEST-----";
 
 	private static final long serialVersionUID = 4012709440384265524L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
+	
+	@Inject
+	private OrganizationService organizationService;
 
-	@In(value = "#{facesContext}")
-	FacesContext facesContext;
+	@Inject
+	private FacesContext facesContext;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private SSLService sslService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 	
 	@SuppressWarnings("seam-unresolved-variable")
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
 	private TrustStoreConfiguration trustStoreConfiguration;
@@ -120,7 +119,7 @@ public class ManageCertificateAction implements Serializable {
 	private boolean initialized;
 	private boolean wereAnyChanges;
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -130,7 +129,7 @@ public class ManageCertificateAction implements Serializable {
 
 		this.certsMmanagePossible = prepareTempWorkspace();
 
-		this.orgInumFN = StringHelper.removePunctuation(OrganizationService.instance().getOrganizationInum());
+		this.orgInumFN = StringHelper.removePunctuation(organizationService.getOrganizationInum());
 		this.tomcatCertFN = orgInumFN + "-java.crt";
 		this.idpCertFN = orgInumFN + "-shib.crt";
 
@@ -165,7 +164,7 @@ public class ManageCertificateAction implements Serializable {
 	 * Fills issuer and subject maps with data about currently selected
 	 * certificate
 	 */
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void getCert(String fileName) {
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
 		loadCert(cert);
@@ -175,7 +174,7 @@ public class ManageCertificateAction implements Serializable {
 	 * Fills issuer and subject maps with data about currently selected
 	 * certificate
 	 */
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void getCert(TrustStoreCertificate trustStoreCertificate) {
 		this.issuer = new HashMap<String, String>();
 		this.subject = new HashMap<String, String>();
@@ -205,7 +204,7 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String generateCSR(String fileName) throws IOException {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
@@ -214,7 +213,7 @@ public class ManageCertificateAction implements Serializable {
 		KeyPair pair = getKeyPair(fileName);
 		boolean result = false;
 		if (pair != null) {
-			String url = applicationConfiguration.getIdpUrl().replaceFirst(".*//", "");
+			String url = appConfiguration.getIdpUrl().replaceFirst(".*//", "");
 			String csrPrincipal = String.format("CN=%s", url);
 			X500Principal principal = new X500Principal(csrPrincipal);
 
@@ -240,7 +239,7 @@ public class ManageCertificateAction implements Serializable {
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public boolean compare(String fileName) {
 		KeyPair pair = getKeyPair(fileName);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
@@ -327,7 +326,7 @@ public class ManageCertificateAction implements Serializable {
 		return pair;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public boolean certPresent(String filename) {
 		KeyPair pair = getKeyPair(filename);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + filename);
@@ -346,7 +345,7 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	public String getTempCertDir() {
-		return applicationConfiguration.getTempCertDir() + File.separator;
+		return appConfiguration.getTempCertDir() + File.separator;
 	}
 
 	public HashMap<String, String> getIssuer() {
@@ -368,8 +367,8 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	private boolean prepareTempWorkspace() {
-		String tempDirFN = applicationConfiguration.getTempCertDir();
-		String dirFN = applicationConfiguration.getCertDir();
+		String tempDirFN = appConfiguration.getTempCertDir();
+		String dirFN = appConfiguration.getCertDir();
 		File certDir = new File(dirFN);
 		if (tempDirFN == null || dirFN == null || !certDir.isDirectory() || StringHelper.isEmpty(tempDirFN)) {
 
@@ -410,11 +409,7 @@ public class ManageCertificateAction implements Serializable {
 		return true;
 	}
 
-	public static ManageCertificateAction instance() {
-		return (ManageCertificateAction) Component.getInstance(ManageCertificateAction.class);
-	}
-
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!isCertsManagePossible()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -457,7 +452,7 @@ public class ManageCertificateAction implements Serializable {
 			applianceService.updateAppliance(tmpAppliance);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update appliance");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
 			return false;
 		}
 
@@ -473,16 +468,16 @@ public class ManageCertificateAction implements Serializable {
 	 */
 	private boolean updateCertificates() {
 		if (!compare(tomcatCertFN) || !compare(idpCertFN)) {
-			facesMessages.add(Severity.ERROR, "Certificates and private keys should match. Certificate update aborted.");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificates and private keys should match. Certificate update aborted.");
 			return false;
 		}
 
-		String tempDirFN = applicationConfiguration.getTempCertDir();
-		String dirFN = applicationConfiguration.getCertDir();
+		String tempDirFN = appConfiguration.getTempCertDir();
+		String dirFN = appConfiguration.getCertDir();
 		File certDir = new File(dirFN);
 		File tempDir = new File(tempDirFN);
 		if (tempDirFN == null || dirFN == null || !certDir.isDirectory() || !tempDir.isDirectory()) {
-			facesMessages.add(Severity.ERROR, "Certificate update aborted due to filesystem error");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificate update aborted due to filesystem error");
 			return false;
 		} else {
 			File[] files = tempDir.listFiles();
@@ -494,9 +489,9 @@ public class ManageCertificateAction implements Serializable {
 					}
 				} catch (IOException e) {
 					facesMessages
-							.add(Severity.FATAL,
+							.add(FacesMessage.SEVERITY_FATAL,
 									"Certificate update failed. Certificates may have been corrupted. Please contact a Gluu administrator for help.");
-					log.fatal("Error occured on certificates update:", e);
+					log.error("Error occured on certificates update:", e);
 				}
 			}
 		}
@@ -505,7 +500,7 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	private void tirggerTrustStoreUpdate() {
-		String certDirFileName = applicationConfiguration.getCertDir();
+		String certDirFileName = appConfiguration.getCertDir();
 		File certDir = new File(certDirFileName);
 
 		if (this.wereAnyChanges) {
@@ -517,20 +512,20 @@ public class ManageCertificateAction implements Serializable {
 			log.info("Deleting %s : %s", orgInumFN + "-java.pem", pem.delete());
 			log.info("Deleting %s : %s", orgInumFN + "-java.jks", jks.delete());
 
-			ApplianceService.instance().restartServices();
+			applianceService.restartServices();
 
-			facesMessages.add(Severity.WARN,
+			facesMessages.add(FacesMessage.SEVERITY_WARN,
 					"Certificates were updated and appliance service will be restarted. Please log in again in 5 minutes.");
 
 			this.wereAnyChanges = false;
 		}
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void certUpload(FileUploadEvent event) {
 		if (this.trustStoreCertificateUploadMarker == null) {
 			updateCert(event.getUploadedFile());
@@ -574,7 +569,7 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void keyUpload(FileUploadEvent event) {
 		updateKey(event.getUploadedFile());
 	}

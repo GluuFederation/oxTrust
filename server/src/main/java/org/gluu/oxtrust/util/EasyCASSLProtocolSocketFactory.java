@@ -9,34 +9,38 @@ package org.gluu.oxtrust.util;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 
+import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.apache.commons.httpclient.HttpClientError;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.annotations.In;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.EasySSLProtocolSocketFactory;
 import org.xdi.util.EasyX509TrustManager;
-import org.xdi.util.security.StringEncrypter;
 
 public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory {
-	private static final Log LOG = LogFactory.getLog(EasyCASSLProtocolSocketFactory.class);
+
+	@Inject
+	private Logger log;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private EncryptionService encryptionService;
 	
-	protected SSLContext createEasySSLContext(ApplicationConfiguration applicationConfiguration) {
+	@Inject
+	private AppConfiguration appConfiguration;
+	
+	protected SSLContext createEasySSLContext(AppConfiguration appConfiguration) {
 		try {
 
-			String password = applicationConfiguration.getCaCertsPassphrase();
+			String password = appConfiguration.getCaCertsPassphrase();
 			char[] passphrase = null;
 			if (password != null) {
-				passphrase = StringEncrypter.defaultInstance().decrypt(password, cryptoConfigurationSalt).toCharArray();
+				passphrase = encryptionService.decrypt(password).toCharArray();
 			}
 			KeyStore cacerts = null;
-			String cacertsFN = applicationConfiguration.getCaCertsLocation();
+			String cacertsFN = appConfiguration.getCaCertsLocation();
 			if (cacertsFN != null) {
 				cacerts = KeyStore.getInstance(KeyStore.getDefaultType());
 				FileInputStream cacertsFile = new FileInputStream(cacertsFN);
@@ -48,7 +52,7 @@ public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory
 			context.init(null, new TrustManager[] { new EasyX509TrustManager(cacerts) }, null);
 			return context;
 		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 			throw new HttpClientError(e.toString());
 		}
 	}

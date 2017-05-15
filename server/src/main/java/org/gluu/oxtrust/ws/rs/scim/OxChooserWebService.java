@@ -6,9 +6,13 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 import java.net.URI;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -26,7 +30,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.oxchooser.ForwardedRequest;
@@ -35,16 +38,10 @@ import org.gluu.oxtrust.model.oxchooser.IdentityResponse;
 import org.gluu.oxtrust.model.oxchooser.InitialID;
 import org.gluu.oxtrust.model.oxchooser.OxChooserError;
 import org.gluu.oxtrust.model.scim.ScimPerson;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.CopyUtils;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.security.Identity;
 import org.openid4java.association.AssociationException;
 import org.openid4java.consumer.ConsumerException;
 import org.openid4java.consumer.ConsumerManager;
@@ -59,25 +56,30 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
+import org.slf4j.Logger;
 import org.xdi.model.GluuUserRole;
 
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
-
-@Name("oxChooserWebService")
+@Named("oxChooserWebService")
 @Path("/scim/v1/Chooser")
 public class OxChooserWebService extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private SecurityService securityService;
 
-	@In
-	Identity identity;
+	@Inject
+	private Identity identity;
+
+	@Inject
+	private CopyUtils copyUtils;
+
+	@Inject
+	private ServiceUtil serviceUtil;
 
 	private static ConsumerManager manager = new ConsumerManager();
 
@@ -238,8 +240,6 @@ public class OxChooserWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response addUser(@HeaderParam("Authorization") String authorization, ScimPerson person) throws Exception {
-		personService = PersonService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -248,7 +248,7 @@ public class OxChooserWebService extends BaseScimWebService {
 		// Return HTTP response with status code 201 Created
 
 		log.debug(" copying gluuperson ");
-		GluuCustomPerson gluuPerson = CopyUtils.copy(person, null, false);
+		GluuCustomPerson gluuPerson = copyUtils.copy(person, null, false);
 		if (gluuPerson == null) {
 			return getErrorResponse("Failed to create user", Response.Status.BAD_REQUEST.getStatusCode());
 		}
@@ -273,13 +273,13 @@ public class OxChooserWebService extends BaseScimWebService {
 				log.info(" jumping to groupMembersAdder ");
 				log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
 
-				Utils.groupMembersAdder(gluuPerson, gluuPerson.getDn());
+				serviceUtil.groupMembersAdder(gluuPerson, gluuPerson.getDn());
 			}
 
 			log.debug("adding new GluuPerson");
 
 			personService.addPerson(gluuPerson);
-			final ScimPerson newPerson = CopyUtils.copy(gluuPerson, null);
+			final ScimPerson newPerson = copyUtils.copy(gluuPerson, null);
 			String uri = "/oxChooser/AddUser/" + newPerson.getId();
 			return Response.created(URI.create(uri)).entity(newPerson).build();
 		} catch (Exception ex) {
@@ -296,8 +296,6 @@ public class OxChooserWebService extends BaseScimWebService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response editUser(@HeaderParam("Authorization") String authorization, @PathParam("email") String email,
 			ScimPerson person_update) throws Exception {
-		personService = PersonService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -308,15 +306,15 @@ public class OxChooserWebService extends BaseScimWebService {
 			if (gluuPerson == null) {
 				return getErrorResponse("Resource " + email + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
-			GluuCustomPerson newGluuPesron = CopyUtils.copy(person_update, gluuPerson, true);
+			GluuCustomPerson newGluuPesron = copyUtils.copy(person_update, gluuPerson, true);
 
 			if (person_update.getGroups().size() > 0) {
-				Utils.groupMembersAdder(newGluuPesron, personService.getDnForPerson(gluuPerson.getUid()));
+				serviceUtil.groupMembersAdder(newGluuPesron, personService.getDnForPerson(gluuPerson.getUid()));
 			}
 
 			personService.updatePerson(newGluuPesron);
 			log.debug(" person updated ");
-			ScimPerson newPerson = CopyUtils.copy(newGluuPesron, null);
+			ScimPerson newPerson = copyUtils.copy(newGluuPesron, null);
 
 			URI location = new URI("/oxChooser/AddUser/" + gluuPerson.getUid());
 			return Response.ok(newPerson).location(location).build();
@@ -333,8 +331,6 @@ public class OxChooserWebService extends BaseScimWebService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getUserByUid(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
-		personService = PersonService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -347,7 +343,7 @@ public class OxChooserWebService extends BaseScimWebService {
 				return getErrorResponse("Resource " + uid + " not found", Response.Status.NOT_FOUND.getStatusCode());
 			}
 
-			ScimPerson person = CopyUtils.copy(gluuPerson, null);
+			ScimPerson person = copyUtils.copy(gluuPerson, null);
 			URI location = new URI("/oxChooser/AddUser/" + uid);
 			return Response.ok(person).location(location).build();
 		} catch (EntryPersistenceException ex) {
@@ -396,7 +392,7 @@ public class OxChooserWebService extends BaseScimWebService {
 
 	public void postLogin(GluuCustomPerson person) throws Exception {
 		log.debug("Configuring application after user '{0}' login", person.getUid());
-		Contexts.getSessionContext().set(OxTrustConstants.CURRENT_PERSON, person);
+		identity.setUser(person);
 
 		// Set user roles
 		GluuUserRole[] userRoles = securityService.getUserRoles(person);

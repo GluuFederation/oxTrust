@@ -15,23 +15,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.model.ScriptLocationType;
@@ -50,39 +47,36 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 12/29/2014
  */
-@Name("manageCustomScriptAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("manageCustomScriptAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ManageCustomScriptAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3823022039248381963L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
-	private StatusMessages statusMessages;
+	@Inject
+	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
-	@In(value = "customScriptService")
+	@Inject
 	private AbstractCustomScriptService customScriptService;
-
-	@In
-	private FacesMessages facesMessages;
 
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 
 	private boolean initialized;
 	
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 	
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -128,7 +122,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String save() {
 		try {
 			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.applianceService.getCustomScriptTypes()), "dn", "inum");
@@ -142,7 +136,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					
 					String configId = customScript.getName();
 					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
-						facesMessages.add(Severity.ERROR, "'{0}' is reserved script name", configId);
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'{0}' is reserved script name", configId);
 						return OxTrustConstants.RESULT_FAILURE;
 					}
 
@@ -152,7 +146,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
 					if (StringHelper.isEmpty(dn)) {
-						String basedInum = OrganizationService.instance().getOrganizationInum();
+						String basedInum = organizationService.getOrganizationInum();
 						customScriptId = basedInum + "!" + INumGenerator.generate(2);
 						dn = customScriptService.buildDn(customScriptId);
 	
@@ -207,7 +201,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	}
 
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 	}
 

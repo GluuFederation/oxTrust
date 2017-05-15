@@ -5,16 +5,39 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2.fido;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
-import org.gluu.oxtrust.ldap.service.FidoDeviceService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseFidoDeviceSerializer;
 import org.gluu.oxtrust.service.scim2.Scim2FidoDeviceService;
@@ -23,37 +46,38 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 /**
  * @author Val Pecaoco
  */
-@Name("scim2FidoDeviceEndpoint")
+@Named("scim2FidoDeviceEndpoint")
 @Path("/scim/v2/FidoDevices")
 public class FidoDeviceWebService extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
+	private AppConfiguration appConfiguration;
+
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
+
+	@Inject
 	private IFidoDeviceService fidoDeviceService;
 
-	@In
+	@Inject
 	private Scim2FidoDeviceService scim2FidoDeviceService;
+
+        @Inject
+        private CopyUtils2 copyUtils2;
 
 	@GET
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
@@ -71,7 +95,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -84,15 +108,11 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		try {
 
 			if (count > getMaxCount()) {
-
 				String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {
-
 				log.info(" Searching devices from LDAP ");
-
-				fidoDeviceService = FidoDeviceService.instance();
 
 				String baseDn = fidoDeviceService.getDnForFidoDevice(userId, null);
 				log.info("##### baseDn = " + baseDn);
@@ -116,7 +136,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 					for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
 
-						FidoDevice fidoDevice = CopyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
+						FidoDevice fidoDevice = copyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
 
 						devicesListResponse.getResources().add(fidoDevice);
 					}
@@ -129,7 +149,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 				// Serialize to JSON
 				String json = serializeToJson(devicesListResponse, attributesArray);
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices");
+				URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices");
 
 				return Response.ok(json).location(location).build();
 			}
@@ -155,7 +175,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -166,9 +186,6 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			fidoDeviceService = FidoDeviceService.instance();
-
 			String baseDn = fidoDeviceService.getDnForFidoDevice(userId, id);
 			log.info("##### baseDn = " + baseDn);
 
@@ -186,7 +203,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 
 			GluuCustomFidoDevice gluuCustomFidoDevice = gluuCustomFidoDevices.get(0);
 
-			FidoDevice fidoDevice = CopyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
+			FidoDevice fidoDevice = copyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
 
 			// Serialize to JSON
 			String json = serializeToJson(fidoDevice, attributesArray);
@@ -232,7 +249,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -292,7 +309,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -350,7 +367,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 				searchRequest.getAttributesArray()
 			);
 
-			URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices/.search");
+			URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices/.search");
 
 			log.info("LEAVING FidoDeviceWebService.searchDevicesPost()...");
 

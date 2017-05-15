@@ -6,11 +6,15 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +28,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -31,28 +42,17 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.service.cdi.event.StatusCheckerTimerEvent;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.annotations.async.Expiration;
-import org.jboss.seam.annotations.async.IntervalDuration;
-import org.jboss.seam.async.QuartzTriggerHandle;
-import org.jboss.seam.async.TimerSchedule;
-import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.util.ArrayHelper;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.cdi.event.Scheduled;
+import org.xdi.service.timer.event.TimerEvent;
+import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.StringHelper;
 import org.xdi.util.process.ProcessHelper;
 
@@ -61,55 +61,58 @@ import org.xdi.util.process.ProcessHelper;
  * 
  * @author Yuriy Movchan Date: 11.22.2010
  */
-@AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("statusCheckerTimer")
+@ApplicationScoped
+@Named
 public class StatusCheckerTimer {
 
-    private final static String EVENT_TYPE = "StatusCheckerTimerEvent";
-    private final static long STATUS_CHECKER_INTERVAL = 60 * 1000L; // 1 minute
+    private final static int DEFAULT_INTERVAL = 60; // 1 minute
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
+	private Event<TimerEvent> timerEvent;
+
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private CentralLdapService centralLdapService;
 
-	@In
-	private OxTrustConfiguration oxTrustConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private NumberFormat numberFormat;
 
     private AtomicBoolean isActive;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
-
-	@Create
+	@PostConstruct
 	public void create() {
 		this.numberFormat = NumberFormat.getNumberInstance(Locale.US);
 	}
 
-    @Observer("org.jboss.seam.postInitialization")
-    public void init() {
-        log.info("Initializing update appliance status timer");
+    public void initTimer() {
+        log.info("Initializing Daily Status Cheker Timer");
         this.isActive = new AtomicBoolean(false);
 
-        Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(60 * 1000L, STATUS_CHECKER_INTERVAL));
+		final int delay = 1 * 60;
+		final int interval = DEFAULT_INTERVAL;
+
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new StatusCheckerTimerEvent(),
+				Scheduled.Literal.INSTANCE));
     }
 
-    @Observer(EVENT_TYPE)
     @Asynchronous
-    public void process() {
+    public void process(@Observes @Scheduled StatusCheckerTimerEvent statusCheckerTimerEvent) {
         if (this.isActive.get()) {
             return;
         }
@@ -135,8 +138,8 @@ public class StatusCheckerTimer {
 	 */
 	private void processInt() {
 		log.debug("Starting update of appliance status");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		if (!applicationConfiguration.isUpdateApplianceStatus()) {
+		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
+		if (!appConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}
 
@@ -197,7 +200,7 @@ public class StatusCheckerTimer {
 
 	private void setCertificateExpiryAttributes(GluuAppliance appliance) {
 		try {
-			URL destinationURL = new URL(applicationConfiguration.getApplianceUrl());
+			URL destinationURL = new URL(appConfiguration.getApplianceUrl());
 			HttpsURLConnection conn = (HttpsURLConnection) destinationURL.openConnection();
 			conn.connect();
 			Certificate[] certs = conn.getServerCertificates();
@@ -217,38 +220,38 @@ public class StatusCheckerTimer {
 
 	private void setHttpdAttributes(GluuAppliance appliance) {
 		log.debug("Setting httpd attributes");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		String page = getHttpdPage(applicationConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
+		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
+		String page = getHttpdPage(appConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
 		appliance.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
 
 	}
 /*
 	private void setVDSAttributes(GluuAppliance appliance) {
 		log.debug("Setting VDS attributes");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
+		appConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		// Run vds check only on if vds.test.filter is set
-		if (applicationConfiguration.getVdsFilter() == null) {
+		if (appConfiguration.getVdsFilter() == null) {
 			return;
 		}
-		String serverURL = applicationConfiguration.getVdsLdapServer().split(":")[0];
-		int serverPort = Integer.parseInt(applicationConfiguration.getVdsLdapServer().split(":")[1]);
-		String bindDN = applicationConfiguration.getVdsBindDn();
+		String serverURL = appConfiguration.getVdsLdapServer().split(":")[0];
+		int serverPort = Integer.parseInt(appConfiguration.getVdsLdapServer().split(":")[1]);
+		String bindDN = appConfiguration.getVdsBindDn();
 
 		String bindPassword = null;
 		try {
-			bindPassword = StringEncrypter.defaultInstance().decrypt(applicationConfiguration.getVdsBindPassword());
+			bindPassword = encryptionService.defaultInstance().decrypt(appConfiguration.getVdsBindPassword());
 		} catch (EncryptionException e1) {
 			log.error("Failed to decrypt VDS bind password: %s", e1.getMessage());
 		}
 
-		String vdsFilter = applicationConfiguration.getVdsFilter();
-		String baseDN = applicationConfiguration.getBaseDN();
+		String vdsFilter = appConfiguration.getVdsFilter();
+		String baseDN = appConfiguration.getBaseDN();
 
 		LDAPConnectionPool connectionPool = null;
 		String[] objectclasses = null;
 		try {
 			ServerSet vdsServerSet;
-			boolean useSSL = "ldaps".equals(applicationConfiguration.getVdsLdapProtocol());
+			boolean useSSL = "ldaps".equals(appConfiguration.getVdsLdapProtocol());
 			if (useSSL) {
 				SSLUtil sslUtil = new SSLUtil(new TrustAllTrustManager());
 				vdsServerSet = new SingleServerSet(serverURL, serverPort, sslUtil.createSSLSocketFactory());

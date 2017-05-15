@@ -6,10 +6,10 @@
 
 package org.gluu.oxtrust.model.scim;
 
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 /**
  * User: Dejan Maric Date: 4.4.12.

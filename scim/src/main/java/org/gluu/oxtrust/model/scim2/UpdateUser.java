@@ -63,7 +63,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param userName
      *        the new user name
-     * @return The builder itself
      */
     public void updateUserName(String userName) {
         this.userName = userName;
@@ -74,7 +73,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param address
      *        the new address
-     * @return The builder itself
      */
     public void addAddress(Address address) {
         addresses.add(address);
@@ -85,7 +83,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param address
      *        address to be deleted
-     * @return The builder itself
      */
     public void deleteAddress(Address address) {
         Address deleteAddress = new Address();
@@ -96,7 +93,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes all existing addresses of the a existing user
      * 
-     * @return The builder itself
      */
     public void deleteAddresses() {
         deleteFields.add("addresses");
@@ -109,7 +105,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        to be replaced
      * @param newAddress
      *        new Address
-     * @return The builder itself
      */
     public void updateAddress(Address oldAddress, Address newAddress) {
         deleteAddress(oldAddress);
@@ -119,7 +114,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes the nickName of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteNickName() {
         deleteFields.add(User_.nickName.getName());
@@ -130,7 +124,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param nickName
      *        the new nickName
-     * @return The builder itself
      */
     public void updateNickName(String nickName) {
         this.nickName = nickName;
@@ -139,7 +132,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * delete the external Id of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteExternalId() {
         deleteFields.add(User_.externalId.getName());
@@ -150,7 +142,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param externalId
      *        new external id
-     * @return The builder itself
      */
     public void updateExternalId(String externalId) {
         this.externalId = externalId;
@@ -159,7 +150,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * delete the local value of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteLocal() {
         deleteFields.add(User_.locale.getName());
@@ -170,7 +160,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param locale
      *        new local
-     * @return The builder itself
      */
     public void updateLocale(String locale) {
         this.locale = locale;
@@ -181,7 +170,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param password
      *        new password
-     * @return The builder itself
      */
     public void updatePassword(String password) {
         this.password = password;
@@ -190,7 +178,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * delete the preferred Language of a existing user
      * 
-     * @return The builder itself
      */
     public void deletePreferredLanguage() {
         deleteFields.add(User_.preferredLanguage.getName());
@@ -201,7 +188,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param preferredLanguage
      *        new preferred language
-     * @return The builder itself
      */
     public void updatePreferredLanguage(String preferredLanguage) {
         this.preferredLanguage = preferredLanguage;
@@ -210,7 +196,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes the profil Url of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteProfileUrl() {
         deleteFields.add(User_.profileUrl.getName());
@@ -221,7 +206,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param profileUrl
      *        new profilUrl
-     * @return The builder itself
      */
     public void updateProfileUrl(String profileUrl) {
         this.profileUrl = profileUrl;
@@ -230,7 +214,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes the timezone of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteTimezone() {
         deleteFields.add(User_.timezone.getName());
@@ -241,7 +224,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param timezone
      *        new timeZone
-     * @return The builder itself
      */
     public void updateTimezone(String timezone) {
         this.timezone = timezone;
@@ -250,7 +232,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes the title of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteTitle() {
         deleteFields.add(User_.title.getName());
@@ -261,7 +242,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param title
      *        new tile
-     * @return The builder itself
      */
     public void updateTitle(String title) {
         this.title = title;
@@ -270,7 +250,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes the name of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteName() {
         deleteFields.add("name");
@@ -281,7 +260,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param name
      *        new Name
-     * @return The builder itself
      */
     public void updateName(Name name) {
         this.name = name;
@@ -290,7 +268,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes the user type of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteUserType() {
         deleteFields.add(User_.userType.getName());
@@ -301,7 +278,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param userType
      *        new user type
-     * @return The builder itself
      */
     public void updateUserType(String userType) {
         this.userType = userType;
@@ -310,7 +286,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes the display name of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteDisplayName() {
         deleteFields.add(User_.displayName.getName());
@@ -321,7 +296,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param displayName
      *        new display name
-     * @return The builder itself
      */
     public void updateDisplayName(String displayName) {
         this.displayName = displayName;
@@ -330,7 +304,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes all emails of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteEmails() {
         deleteFields.add("emails");
@@ -341,7 +314,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param email
      *        to be deleted
-     * @return The builder itself
      */
     public void deleteEmail(Email email) {
         Email deleteEmail = new Email();
@@ -357,7 +329,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param email
      *        new email
-     * @return The builder itself
      */
     public void addEmail(Email email) {
         emails.add(email);
@@ -370,7 +341,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        to be replaced
      * @param newEmail
      *        new Email
-     * @return The builder itself
      */
     public void updateEmail(Email oldEmail, Email newEmail) {
         deleteEmail(oldEmail);
@@ -380,7 +350,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes all X509Certificates of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteX509Certificates() {
         deleteFields.add("x509Certificates");
@@ -391,7 +360,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param certificate
      *        to be deleted
-     * @return The builder itself
      */
     public void deleteX509Certificate(X509Certificate certificate) {
         X509Certificate deleteCertificates = new X509Certificate();
@@ -406,7 +374,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param certificate
      *        new certificate
-     * @return The builder itself
      */
     public void addX509Certificate(X509Certificate certificate) {
         certificates.add(certificate);
@@ -419,7 +386,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        to be replaced
      * @param newCertificate
      *        new X509Certificate
-     * @return The builder itself
      */
     public void updateX509Certificate(X509Certificate oldCertificate, X509Certificate newCertificate) {
         deleteX509Certificate(oldCertificate);
@@ -429,7 +395,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes all roles of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteRoles() {
         deleteFields.add("roles");
@@ -440,7 +405,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param role
      *        to be deleted
-     * @return The builder itself
      */
     public void deleteRole(Role role) {
         Role deleteRole = new Role();
@@ -454,7 +418,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param role
      *        to be deleted
-     * @return The builder itself
      */
     public void deleteRole(String role) {
     	Role deleteRole = new Role();
@@ -469,7 +432,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param role
      *        new role
-     * @return The builder itself
      */
     public void addRole(Role role) {
         roles.add(role);
@@ -482,7 +444,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        to be replaced
      * @param newRole
      *        new Role
-     * @return The builder itself
      */
     public void updateRole(Role oldRole, Role newRole) {
         deleteRole(oldRole);
@@ -492,7 +453,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes all ims of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteIms() {
         deleteFields.add("ims");
@@ -503,7 +463,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param im
      *        to be deleted
-     * @return The builder itself
      */
     public void deleteIm(Im im) {
         Im deleteIms = new Im();
@@ -519,7 +478,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param im
      *        new ims
-     * @return The builder itself
      */
     public void addIm(Im im) {
         this.ims.add(im);
@@ -532,7 +490,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        to be replaced
      * @param newIm
      *        new Ims
-     * @return The builder itself
      */
     public void updateIm(Im oldIm, Im newIm) {
         deleteIm(oldIm);
@@ -545,7 +502,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param phoneNumber
      *        new phoneNumber
-     * @return The builder itself
      */
     public void addPhoneNumber(PhoneNumber phoneNumber) {
         phoneNumbers.add(phoneNumber);
@@ -556,7 +512,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param phoneNumber
      *        to be deleted
-     * @return The builder itself
      */
     public void deletePhoneNumber(PhoneNumber phoneNumber) {
         PhoneNumber deletePhoneNumber = new PhoneNumber();
@@ -569,7 +524,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes all phonenumbers of a existing user
      * 
-     * @return The builder itself
      */
     public void deletePhoneNumbers() {
         deleteFields.add("phoneNumbers");
@@ -582,7 +536,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        to be replaced
      * @param newPhoneNumber
      *        new PhoneNumber
-     * @return The builder itself
      */
     public void updatePhoneNumber(PhoneNumber oldPhoneNumber, PhoneNumber newPhoneNumber) {
         deletePhoneNumber(oldPhoneNumber);
@@ -595,7 +548,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param photo
      *        new photo
-     * @return The builder itself
      */
     public void addPhoto(Photo photo) {
         photos.add(photo);
@@ -606,7 +558,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param photo
      *        to be deleted
-     * @return The builder itself
      */
     public void deletePhoto(Photo photo) {
         Photo deletePhoto = new Photo();
@@ -619,7 +570,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes all photos of a existing user
      * 
-     * @return The builder itself
      */
     public void deletePhotos() {
         deleteFields.add("photos");
@@ -632,7 +582,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        to be replaced
      * @param newPhoto
      *        new Photo
-     * @return The builder itself
      */
     public void updatePhoto(Photo oldPhoto, Photo newPhoto) {
         deletePhoto(oldPhoto);
@@ -642,7 +591,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
     /**
      * deletes all entitlements of a existing user
      * 
-     * @return The builder itself
      */
     public void deleteEntitlements() {
         deleteFields.add("entitlements");
@@ -653,7 +601,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param entitlement
      *        to be deleted
-     * @return The builder itself
      */
     public void deleteEntitlement(Entitlement entitlement) {
         Entitlement deleteEntitlement = new Entitlement();
@@ -669,7 +616,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param entitlement
      *        new entitlement
-     * @return The builder itself
      */
     public void addEntitlement(Entitlement entitlement) {
         entitlements.add(entitlement);
@@ -682,7 +628,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        to be replaced
      * @param newEntitlement
      *        new Entitlement
-     * @return The builder itself
      */
     public void updateEntitlement(Entitlement oldEntitlement, Entitlement newEntitlement) {
         deleteEntitlement(oldEntitlement);
@@ -694,7 +639,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param active
      *        new active status
-     * @return The builder itself
      */
     public void updateActive(boolean active) {
         this.active = active;
@@ -705,7 +649,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param urn
      *        the id of the extension to be deleted
-     * @return The builder itself
      */
     public void deleteExtension(String urn) {
         deleteFields.add(urn);
@@ -718,7 +661,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      *        the id of the extension to be deleted
      * @param fieldName
      *        the fieldName of a the extension to be deleted
-     * @return The builder itself
      */
     public void deleteExtensionField(String urn, String fieldName) {
         deleteFields.add(urn + "." + fieldName);
@@ -730,7 +672,6 @@ public final class UpdateUser {// NOSONAR - Builder constructs instances of this
      * 
      * @param extension
      *        extension with all fields that need to be updated or added
-     * @return The builder itself
      */
     public void updateExtension(Extension extension) {
         extensions.add(extension);

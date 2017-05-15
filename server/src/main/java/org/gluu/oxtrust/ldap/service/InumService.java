@@ -9,6 +9,9 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
@@ -18,15 +21,8 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.sql.InumSqlEntry;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.GluuAttribute;
 import org.xdi.util.INumGenerator;
@@ -53,9 +49,8 @@ https://github.com/GluuFederation/docs/blob/master/sources/reference/api/id-gene
 
  */
 
-@Scope(ScopeType.STATELESS)
-@Name("inumService")
-@AutoCreate
+@Stateless
+@Named
 public class InumService implements Serializable {
 
 	private static final long serialVersionUID = 6685720517520443399L;
@@ -77,17 +72,17 @@ public class InumService implements Serializable {
 
 	private static final int MAX = 100;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	LdapEntryManager ldapEntryManager;
 
-	@In
+	@Inject
 	OrganizationService organizationService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public boolean contains(String inum, String gluuInum, String type) {
 		boolean contains = false;
@@ -174,7 +169,7 @@ public class InumService implements Serializable {
 
 	public String getDnForInum(String baseDn, String inum) {
 		if (baseDn == null || baseDn.trim().equals("")) {
-			baseDn = applicationConfiguration.getBaseDN();
+			baseDn = appConfiguration.getBaseDN();
 		}
 		return String.format("inum=%s,ou=inums,%s", inum, baseDn);
 	}
@@ -208,7 +203,7 @@ public class InumService implements Serializable {
 				counter++;
 			}
 		} catch (Exception ex) {
-			log.error(ex);
+			log.error("Failed to generate inum", ex);
 		}
 		return inum;
 	}
@@ -401,10 +396,6 @@ public class InumService implements Serializable {
 
 		return successs;
 
-	}
-
-	public static InumService instance() {
-		return (InumService) Component.getInstance(InumService.class);
 	}
 
 	/**

@@ -6,44 +6,51 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.model.ScriptLocationType;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.util.StringHelper;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * GluuAppliance service
  * 
  * @author Reda Zerrad Date: 08.10.2012
  */
-@Scope(ScopeType.STATELESS)
-@Name("applianceService")
-@AutoCreate
-public class ApplianceService {
+@Stateless
+@Named("applianceService")
+public class ApplianceService implements Serializable {
 
-	@Logger
-	private Log log;
+	private static final long serialVersionUID = 8842838732456296435L;
 
-	@In
-	private LdapEntryManager ldapEntryManager;
+	@Inject
+	private Logger log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private LdapEntryManager ldapEntryManager;	
+	@Inject
+	private OrganizationService organizationService;
+
+	@Inject
+	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private EncryptionService encryptionService;
 
 	public boolean contains(String applianceDn) {
 		return ldapEntryManager.contains(GluuAppliance.class, applianceDn);
@@ -152,7 +159,7 @@ public class ApplianceService {
 	 * @throws Exception
 	 */
 	public String getDnForAppliance(String inum) {
-		String baseDn = OrganizationService.instance().getBaseDn();
+		String baseDn = organizationService.getBaseDn();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=appliances,%s", baseDn);
 		}
@@ -171,16 +178,7 @@ public class ApplianceService {
 	}
 
 	public String getApplianceInum() {
-		return applicationConfiguration.getApplianceInum();
-	}
-
-	/**
-	 * Get applianceService instance
-	 * 
-	 * @return ApplianceService instance
-	 */
-	public static ApplianceService instance() {
-		return (ApplianceService) Component.getInstance(ApplianceService.class);
+		return appConfiguration.getApplianceInum();
 	}
 
 	/**
@@ -189,7 +187,7 @@ public class ApplianceService {
 	 * @author �Oleksiy Tataryn�
 	 */
 	public void restartServices() {
-		String triggerFileName = applicationConfiguration.getServicesRestartTrigger();
+		String triggerFileName = appConfiguration.getServicesRestartTrigger();
 		if (StringHelper.isNotEmpty(triggerFileName)) {
 			log.info("Removing " + triggerFileName);
 			File triggerFile = new File(triggerFileName);
@@ -219,6 +217,35 @@ public class ApplianceService {
 		return new CustomScriptType[] { CustomScriptType.PERSON_AUTHENTICATION, CustomScriptType.UPDATE_USER,
 				CustomScriptType.USER_REGISTRATION, CustomScriptType.CLIENT_REGISTRATION, CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR,
 				CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_AUTHORIZATION_POLICY, CustomScriptType.APPLICATION_SESSION, CustomScriptType.SCIM };
+	}
+
+	public String getDecryptedSmtpPassword(GluuAppliance appliance) {
+		String password = appliance.getSmtpPassword();
+		if (StringHelper.isEmpty(password)) {
+			return null;
+		}
+
+		try {
+			return encryptionService.decrypt(password);
+		} catch (EncryptionException ex) {
+			log.error("Failed to decrypt SMTP password", ex);
+		}
+		
+		return null;
+	}
+
+	public void setEncryptedSmtpPassword(GluuAppliance appliance, String password) {
+		if (StringHelper.isEmpty(password)) {
+			return;
+		}
+
+		String encryptedPassword;
+		try {
+			encryptedPassword = encryptionService.encrypt(password);
+			appliance.setSmtpPassword(encryptedPassword);
+		} catch (EncryptionException ex) {
+			log.error("Failed to encrypt SMTP password", ex);
+		}
 	}
 
 }

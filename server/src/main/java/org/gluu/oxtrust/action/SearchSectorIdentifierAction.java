@@ -1,22 +1,20 @@
 package org.gluu.oxtrust.action;
 
+import java.io.Serializable;
+import java.util.List;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.Util;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * Action class for search sector identifiers
@@ -24,18 +22,18 @@ import java.util.List;
  * @author Javier Rojas Blum
  * @version January 15, 2016
  */
-@Name("searchSectorIdentifierAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("searchSectorIdentifierAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class SearchSectorIdentifierAction implements Serializable {
 
     private static final long serialVersionUID = -5270460481895022455L;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @In
-    StatusMessages statusMessages;
+    @Inject
+    private FacesMessages facesMessages;
 
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be between 0 and 30")
@@ -45,15 +43,15 @@ public class SearchSectorIdentifierAction implements Serializable {
 
     private List<OxAuthSectorIdentifier> sectorIdentifierList;
 
-    @In
+    @Inject
     private SectorIdentifierService sectorIdentifierService;
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String start() {
         return search();
     }
 
-    @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
     public String search() {
         if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
             return OxTrustConstants.RESULT_SUCCESS;

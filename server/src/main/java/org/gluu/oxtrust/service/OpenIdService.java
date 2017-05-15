@@ -8,14 +8,12 @@ package org.gluu.oxtrust.service;
 
 import java.io.Serializable;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.util.StringHelper;
@@ -27,18 +25,17 @@ import org.xdi.util.init.Initializable;
  *
  * @author Yuriy Movchan Date: 12/28/2016
  */
-@Scope(ScopeType.APPLICATION)
-@Name("openIdService")
-@AutoCreate
+@ApplicationScoped
+@Named("openIdService")
 public class OpenIdService extends Initializable implements Serializable {
 
 	private static final long serialVersionUID = 7875838160379126796L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private OpenIdConfigurationResponse openIdConfiguration;
 
@@ -48,7 +45,7 @@ public class OpenIdService extends Initializable implements Serializable {
 	}
 
 	private void loadOpenIdConfiguration() {
-		String openIdProvider = applicationConfiguration.getOxAuthIssuer();
+		String openIdProvider = appConfiguration.getOxAuthIssuer();
 		if (StringHelper.isEmpty(openIdProvider)) {
 			throw new ConfigurationException("OpenIdProvider Url is invalid");
 		}

@@ -10,6 +10,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -18,13 +21,7 @@ import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
@@ -37,29 +34,29 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 04/24/2013
  */
-@Name("umaInventoryAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UmaInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 2261095046179474395L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private ResourceSetService resourceSetService;
 
-	@In
+	@Inject
 	private ClientService clientService;
 
-	@In
+	@Inject
 	private ScopeDescriptionService scopeDescriptionService;
 
-	@In
+	@Inject
 	protected ImageService imageService;
 
-	@In
+	@Inject
 	private LookupService lookupService;
 
 	@NotNull
@@ -73,7 +70,7 @@ public class UmaInventoryAction implements Serializable {
 	
 	private boolean initialized;
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String start() {
 		try {
 			resourceSetService.prepareResourceSetBranch();
@@ -93,7 +90,7 @@ public class UmaInventoryAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

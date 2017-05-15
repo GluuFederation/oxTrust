@@ -8,31 +8,31 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.util.RecaptchaUtils;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.util.RecaptchaUtil;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 /**
  * @author Dejan Maric
  * @author Yuriy Movchan
  */
-@Scope(ScopeType.STATELESS)
-@Name("recaptchaService")
-@AutoCreate
+@Stateless
+@Named("recaptchaService")
 public class RecaptchaService implements Serializable {
+
+	@Inject
+	private AppConfiguration appConfiguration;
 	
-	@In
-	private static OxTrustConfiguration oxTrustConfiguration;
-	
-	@Logger
-	private static Log log;
+	@Inject
+	private RecaptchaUtil recaptchaUtil;
+
+	@Inject
+	private Logger log;
 
 	private static final long serialVersionUID = 7725720511230443399L;
 
@@ -42,7 +42,7 @@ public class RecaptchaService implements Serializable {
 			return false;
 		}
 
-		return RecaptchaUtils.verifyGoogleRecaptchaFromServletContext(getRecaptchaSecretKey());
+		return recaptchaUtil.verifyGoogleRecaptchaFromServletContext(getRecaptchaSecretKey());
 	}
 
 	public boolean isEnabled() {
@@ -50,11 +50,11 @@ public class RecaptchaService implements Serializable {
 	}
 
 	public String getRecaptchaSecretKey() {
-		return oxTrustConfiguration.getApplicationConfiguration().getRecaptchaSecretKey();
+		return appConfiguration.getRecaptchaSecretKey();
 	}
 
 	public String getRecaptchaSiteKey() {
-		return oxTrustConfiguration.getApplicationConfiguration().getRecaptchaSiteKey();
+		return appConfiguration.getRecaptchaSiteKey();
 	}
 
 }

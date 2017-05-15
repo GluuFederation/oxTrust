@@ -5,46 +5,46 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
-import org.gluu.oxtrust.ldap.service.FidoDeviceService;
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import java.io.Serializable;
-import java.util.Date;
+import org.slf4j.Logger;
 
 /**
  * @author Val Pecaoco
  */
-@Name("scim2FidoDeviceService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
+@Stateless
+@Named("scim2FidoDeviceService")
 public class Scim2FidoDeviceService implements Serializable {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private IFidoDeviceService fidoDeviceService;
 
+	@Inject
+	private CopyUtils2 copyUtils2;
+
 	public FidoDevice updateFidoDevice(String id, FidoDevice fidoDevice) throws Exception {
-
-		fidoDeviceService = FidoDeviceService.instance();
-
 		GluuCustomFidoDevice gluuCustomFidoDevice = fidoDeviceService.getGluuCustomFidoDeviceById(fidoDevice.getUserId(), id);
 		if (gluuCustomFidoDevice == null) {
 			throw new EntryPersistenceException("Scim2FidoDeviceService.updateFidoDevice(): Resource " + id + " not found");
 		}
 
-		GluuCustomFidoDevice updatedGluuCustomFidoDevice = CopyUtils2.updateGluuCustomFidoDevice(fidoDevice, gluuCustomFidoDevice);
+		GluuCustomFidoDevice updatedGluuCustomFidoDevice = copyUtils2.updateGluuCustomFidoDevice(fidoDevice, gluuCustomFidoDevice);
 
 		log.info(" Setting meta: update device ");
 		DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
@@ -57,15 +57,12 @@ public class Scim2FidoDeviceService implements Serializable {
 
 		fidoDeviceService.updateGluuCustomFidoDevice(gluuCustomFidoDevice);
 
-		FidoDevice updatedFidoDevice = CopyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
+		FidoDevice updatedFidoDevice = copyUtils2.copy(gluuCustomFidoDevice, new FidoDevice());
 
 		return updatedFidoDevice;
 	}
 
 	public void deleteFidoDevice(String id) throws Exception {
-
-		fidoDeviceService = FidoDeviceService.instance();
-
 		GluuCustomFidoDevice gluuCustomFidoDevice = fidoDeviceService.getGluuCustomFidoDeviceById(null, id);
 		if (gluuCustomFidoDevice == null) {
 			throw new EntryPersistenceException("Scim2FidoDeviceService.deleteFidoDevice(): Resource " + id + " not found");

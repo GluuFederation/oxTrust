@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.oxtrust.model.User;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.StringHelper;
 
 //import org.gluu.site.model.Entry;
@@ -27,7 +28,7 @@ public class JsfFunctions {
 		}
 
 		try {
-			return LookupService.instance().getDisplayNameEntry(dn);
+			return CdiUtil.bean(LookupService.class).getDisplayNameEntry(dn);
 		} catch (Exception ex) {
 			return null;
 		}

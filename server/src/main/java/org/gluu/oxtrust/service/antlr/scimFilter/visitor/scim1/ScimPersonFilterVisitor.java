@@ -5,6 +5,11 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim1;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.gluu.oxtrust.model.scim.PersonMeta;
 import org.gluu.oxtrust.model.scim.ScimName;
@@ -16,11 +21,6 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Val Pecaoco
@@ -107,7 +107,7 @@ public class ScimPersonFilterVisitor extends MainScimFilterVisitor {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -198,7 +198,7 @@ public class ScimPersonFilterVisitor extends MainScimFilterVisitor {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -229,7 +229,7 @@ public class ScimPersonFilterVisitor extends MainScimFilterVisitor {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -260,7 +260,7 @@ public class ScimPersonFilterVisitor extends MainScimFilterVisitor {
     }
 
     /**
-     * {@inheritDoc}
+     * {@InheritDoc}
      * <p>
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>

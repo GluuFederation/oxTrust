@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim1.ScimGroupFilterVisitor.getGroupLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim1.ScimPersonFilterVisitor.getUserLdapAttributeName;
@@ -16,6 +17,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -27,17 +30,14 @@ import org.gluu.oxtrust.model.scim.Error;
 import org.gluu.oxtrust.model.scim.Errors;
 import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim.ScimPerson;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
@@ -53,29 +53,31 @@ import com.unboundid.ldap.sdk.Filter;
  */
 public class BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	protected ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private Identity identity;
 
-	@In
+	@Inject
+	protected AppConfiguration appConfiguration;
+
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private ScimUmaProtectionService scimUmaProtectionService;
 
-	@In
+	@Inject
 	private UmaPermissionService umaPermissionService;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
-
-	@In
+	@Inject
 	private ScimFilterParserService scimFilterParserService;
 	
 	public int getMaxCount(){
-		return applicationConfiguration.getScimProperties().getMaxCount() ;
+		return appConfiguration.getScimProperties().getMaxCount() ;
 	}
 	
 	protected Response processAuthorization(String authorization) throws Exception {
@@ -100,7 +102,7 @@ public class BaseScimWebService {
 
 	protected boolean getAuthorizedUser() {
 		try {
-			GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
+			GluuCustomPerson authUser = identity.getUser();
 
 			if (authUser == null) {
 				return false;

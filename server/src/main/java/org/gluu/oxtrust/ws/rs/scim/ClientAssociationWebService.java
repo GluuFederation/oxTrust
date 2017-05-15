@@ -6,11 +6,15 @@
 
 package org.gluu.oxtrust.ws.rs.scim;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -24,7 +28,6 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthCustomClient;
@@ -32,36 +35,29 @@ import org.gluu.oxtrust.model.association.ClientAssociation;
 import org.gluu.oxtrust.model.association.PersonAssociation;
 import org.gluu.oxtrust.util.MapperUtil;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
-
-@Name("clientAssociationWebService")
+@Named("clientAssociationWebService")
 @Path("/scim/v1/ClientAssociation")
 public class ClientAssociationWebService extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private ClientService clientService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@Path("/User/{uid}")
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getAssociatedClients(@HeaderParam("Authorization") String authorization, @PathParam("uid") String uid) throws Exception {
-
-		personService = PersonService.instance();
 
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
@@ -94,8 +90,6 @@ public class ClientAssociationWebService extends BaseScimWebService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getAssociatedPersons(@HeaderParam("Authorization") String authorization, @PathParam("cid") String cid) throws Exception {
-		clientService = ClientService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -133,10 +127,6 @@ public class ClientAssociationWebService extends BaseScimWebService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response createAssociation(@HeaderParam("Authorization") String authorization, PersonAssociation personAssociation) throws Exception {
-
-		personService = PersonService.instance();
-		clientService = ClientService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -161,7 +151,7 @@ public class ClientAssociationWebService extends BaseScimWebService {
 			log.info("setting user in clients");
 			for (String clientDn : personAssociation.getEntryAssociations()) {
 				log.info("getting a client");
-				OxAuthCustomClient client = clientService.getClientByAttributeCustom(applicationConfiguration
+				OxAuthCustomClient client = clientService.getClientByAttributeCustom(appConfiguration
 						.getClientAssociationAttribute(), clientDn.replaceAll(" ", ""));
 
 				log.info("the inum of the client ", client.getInum());
@@ -215,10 +205,6 @@ public class ClientAssociationWebService extends BaseScimWebService {
 	@PUT
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response deleteAssociation(@HeaderParam("Authorization") String authorization, PersonAssociation personAssociation) throws Exception {
-
-		personService = PersonService.instance();
-		clientService = ClientService.instance();
-
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
@@ -293,7 +279,7 @@ public class ClientAssociationWebService extends BaseScimWebService {
 			for (String clientDn : EntryAssociations) {
 				log.info("getting a client");
 
-				OxAuthCustomClient client = clientService.getClientByAttributeCustom(applicationConfiguration
+				OxAuthCustomClient client = clientService.getClientByAttributeCustom(appConfiguration
 						.getClientAssociationAttribute(), clientDn.replaceAll(" ", ""));
 				// String[] personDNS =
 				// client.getAttributes("associatedPersonDN");

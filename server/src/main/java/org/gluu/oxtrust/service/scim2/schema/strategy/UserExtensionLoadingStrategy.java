@@ -6,42 +6,44 @@
 
 package org.gluu.oxtrust.service.scim2.schema.strategy;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.schema.AttributeHolder;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
-import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Loading strategy for the User Extension schema.
  *
  * @author Val Pecaoco
  */
-@Name("userExtensionLoadingStrategy")
+@Named
 public class UserExtensionLoadingStrategy implements LoadingStrategy {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
+    
+    @Inject
+    private AttributeService attributeService;
 
     @Override
-    public SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
-
+    public SchemaType load(AppConfiguration appConfiguration, SchemaType schemaType) throws Exception {
         log.info(" load() ");
 
         Meta meta = new Meta();
-        meta.setLocation(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + schemaType.getId());
+        meta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + schemaType.getId());
         meta.setResourceType("Schema");
         schemaType.setMeta(meta);
-
-        AttributeService attributeService = AttributeService.instance();
 
         // List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributesImpl(attributeService.getCustomAttributes());
         List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributes();

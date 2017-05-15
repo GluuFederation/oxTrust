@@ -77,8 +77,6 @@ public class Email extends MultiValuedAttribute {
      * "http://tools.ietf.org/html/draft-ietf-scim-core-schema-02#section-3.2" >SCIM core schema 2.0, section 3.2</a>
      * </p>
      *
-     * @return
-     *
      * @return the actual type
      */
     public Type getType() {
@@ -98,7 +96,6 @@ public class Email extends MultiValuedAttribute {
      *
      * @param value
      *        the email attribute
-     * @return the builder itself
      * @throws SCIMDataValidationException in case the value is not a well-formed email
      */
 
@@ -111,11 +108,10 @@ public class Email extends MultiValuedAttribute {
     }
 
     /**
-     * Sets the label indicating the attribute's function (See {@link MultiValuedAttribute#getType()}).
+     * Sets the label indicating the attribute's function
      *
      * @param type
      *        the type of the attribute
-     * @return the builder itself
      */
     public void setType(Type type) {
         this.type = type;

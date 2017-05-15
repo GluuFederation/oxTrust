@@ -13,18 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.ProgrammingLanguage;
@@ -38,18 +34,17 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@Scope(ScopeType.STATELESS)
-@Name("organizationService")
-@AutoCreate
-public class OrganizationService extends org.xdi.service.OrganizationService{
+@Stateless
+@Named("organizationService")
+public class OrganizationService extends org.xdi.service.OrganizationService {
 
 	private static final long serialVersionUID = -1959146007518514678L;
 
-	@In
+	@Inject
 	private CacheService cacheService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	/**
 	 * Update organization entry
@@ -60,15 +55,6 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	public void updateOrganization(GluuOrganization organization) {
 		ldapEntryManager.merge(organization);
 
-	}
-
-	/**
-	 * Get organizationService instance
-	 * 
-	 * @return OrganizationService instance
-	 */
-	public static OrganizationService instance() {
-		return (OrganizationService) Component.getInstance(OrganizationService.class);
 	}
 	
 	/**
@@ -108,7 +94,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	}
 
 	public String getDnForOrganization(String inum) {
-		return getDnForOrganization(inum, applicationConfiguration.getBaseDN());
+		return getDnForOrganization(inum, appConfiguration.getBaseDN());
 	}
 
 	/**
@@ -166,16 +152,6 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	}
 
 	/**
-	 * Remove organization from cache after receiving event that organization
-	 * were changed
-	 */
-	@Observer(OxTrustConstants.EVENT_CLEAR_ORGANIZATION)
-	public void clearOrganizationCache() throws Exception {
-		log.debug("Removing organization from cache");
-		cacheService.removeAll(OxTrustConstants.CACHE_APPLICATION_NAME);
-	}
-
-	/**
 	 * Build DN string for organization
 	 * 
 	 * @return DN string for organization
@@ -192,7 +168,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	 * @return DN string for organization
 	 */
 	public String getBaseDn() {
-		return applicationConfiguration.getBaseDN();
+		return appConfiguration.getBaseDN();
 	}
 
 	/**
@@ -201,20 +177,20 @@ public class OrganizationService extends org.xdi.service.OrganizationService{
 	 * @return Inum for organization
 	 */
 	public String getInumForOrganization() {
-		return applicationConfiguration.getOrgInum();
+		return appConfiguration.getOrgInum();
 	}
 
 	public boolean isAllowPersonModification() {
-		return applicationConfiguration.isAllowPersonModification(); // todo &&
-																		// ApplianceService.instance().getAppliance().getManageIdentityPermission()
+		return appConfiguration.isAllowPersonModification(); // todo &&
+																		// applianceService.getAppliance().getManageIdentityPermission()
 																		// !=
 																		// null
 																		// &&
-																		// ApplianceService.instance().getAppliance().getProfileManagment().isBooleanValue();
+																		// applianceService.getAppliance().getProfileManagment().isBooleanValue();
 	}
 
 	public String getOrganizationInum() {
-		return applicationConfiguration.getOrgInum();
+		return appConfiguration.getOrgInum();
 	}
 
 

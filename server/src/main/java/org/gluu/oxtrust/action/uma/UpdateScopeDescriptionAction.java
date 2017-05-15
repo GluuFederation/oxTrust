@@ -6,22 +6,29 @@
 
 package org.gluu.oxtrust.action.uma;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SelectableEntity;
@@ -34,51 +41,42 @@ import org.xdi.service.JsonService;
 import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Action class for view and update UMA scope description
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
-@Name("updateScopeDescriptionAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateScopeDescriptionAction implements Serializable {
 
 	private static final long serialVersionUID = 6180729281938167478L;
 
 	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description" };
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
-	@In
+	@Inject
 	protected ScopeDescriptionService scopeDescriptionService;
 
-	@In
+	@Inject
 	private ImageService imageService;
 	
-	@In
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private LookupService lookupService;
 	
-	@In
+	@Inject
 	private CustomScriptService customScriptService;
 
-    @In(required = false)
+    @Inject
    	private UmaConfiguration umaMetadataConfiguration;
 
 	private String scopeInum;
@@ -92,7 +90,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	private boolean update;
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String modify() {
 		if (this.scopeDescription != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -152,11 +150,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String save() {
 		updateAuthorizationPolicies();
 
@@ -203,7 +201,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String delete() {
 		if (update) {
 			// Remove scope description
@@ -218,18 +216,18 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void removeIconImage() {
 		this.curIconImage = null;
 		this.scopeDescription.setFaviconImageAsXml(null);
 	}
 
-	@Destroy
+	@PreDestroy
 	public void destroy() throws Exception {
 		cancel();
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void setIconImage(FileUploadEvent event) {
 		UploadedFile uploadedFile = event.getUploadedFile();
 		try {
@@ -317,7 +315,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.scopeDescription.setAuthorizationPolicies(tmpAuthorizationPolicies);
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void acceptSelectAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies == null) {
 			return;
@@ -337,11 +335,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void cancelSelectAuthorizationPolicies() {
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void addAuthorizationPolicy(CustomScript addAuthorizationPolicy) {
 		if (addAuthorizationPolicy == null) {
 			return;
@@ -350,7 +348,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.authorizationPolicies.add(addAuthorizationPolicy);
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void removeAuthorizationPolicy(CustomScript removeAuthorizationPolicy) {
 		if (removeAuthorizationPolicy == null) {
 			return;
@@ -366,7 +364,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 	}
 	
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void searchAvailableAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies != null) {
 			selectAddedAuthorizationPolicies();

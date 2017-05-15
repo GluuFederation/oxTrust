@@ -6,19 +6,26 @@
 
 package org.gluu.oxtrust.service.scim2.jackson.custom;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
 import java.io.IOException;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.User;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+import org.slf4j.Logger;
 
 /**
  * Custom deserializer for the SCIM 2.0 User class.
@@ -26,11 +33,12 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
  * @author Val Pecaoco
  * @link User
  */
-@Name("userDeserializer")
+@Stateless
+@Named
 public class UserDeserializer extends JsonDeserializer<User> {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     @Override
     public User deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {

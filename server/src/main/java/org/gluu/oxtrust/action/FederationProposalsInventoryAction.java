@@ -6,35 +6,33 @@
 
 package org.gluu.oxtrust.action;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
-
 import java.io.Serializable;
 import java.util.List;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
-@Scope(CONVERSATION)
-@Name("federationProposalsInventoryAction")
+@ConversationScoped
+@Named("federationProposalsInventoryAction")
 public class FederationProposalsInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -1477997697645117954L;
 
-	@In
+	@Inject
 	protected AttributeService attributeService;
 
-	@In
+	@Inject
 	private FederationService federationService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private List<GluuSAMLFederationProposal> proposalsList;
 

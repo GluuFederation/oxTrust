@@ -8,21 +8,19 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
 /**
@@ -30,17 +28,16 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 12/20/2012
  */
-@Scope(ScopeType.EVENT)
-@Name("passwordValidationAction")
-
+@RequestScoped
+@Named
 public class PasswordValidationAction implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1952428504080910113L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
 	private String oldPassword = "";

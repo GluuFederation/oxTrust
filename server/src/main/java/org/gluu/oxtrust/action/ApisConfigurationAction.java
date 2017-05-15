@@ -6,34 +6,33 @@
 
 package org.gluu.oxtrust.action;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
-
 import java.io.Serializable;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.LinktrackService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
 
 /**
  * Configuration action for APIs integration
  * 
  * @author Oleksiy Tataryn Date: 06.04.2014
  */
-@Scope(CONVERSATION)
-@Name("apisConfigurationAction")
+@ConversationScoped
+@Named("apisConfigurationAction")
 public class ApisConfigurationAction implements Serializable {
 
 	
 	static final long serialVersionUID = 3932865544287448544L;
 
-	@In
+	@Inject
 	private LinktrackService linktrackService;
 	
-	@In
+	@Inject
 	private OrganizationService organizationService;
 	
 	private Boolean enableLinktrack;
@@ -61,7 +60,7 @@ public class ApisConfigurationAction implements Serializable {
 	}
 	
 	public String save(){
-		GluuOrganization organization = OrganizationService.instance().getOrganization();
+		GluuOrganization organization = organizationService.getOrganization();
 		organization.setLinktrackEnabled(enableLinktrack);
 		organization.setLinktrackLogin(linktrackLogin);
 		organization.setLinktrackPassword(linktrackPassword);

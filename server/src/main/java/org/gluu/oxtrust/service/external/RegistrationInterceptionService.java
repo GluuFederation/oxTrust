@@ -14,6 +14,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -22,14 +26,9 @@ import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.RegistrationInterceptorScript;
 import org.gluu.oxtrust.service.python.interfaces.RegistrationScript;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
+import org.slf4j.Logger;
 import org.xdi.exception.PythonException;
 import org.xdi.oxauth.model.util.Util;
 import org.xdi.service.PythonService;
@@ -38,17 +37,22 @@ import org.xdi.service.PythonService;
  * @author Oleksiy Tataryn
  *
  */
-@Name("registrationInterceptionService")
-@Scope(ScopeType.STATELESS)
-@AutoCreate
+@Named("registrationInterceptionService")
+@Stateless
 @Deprecated
 public class RegistrationInterceptionService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
+	
+	@Inject
+	private OrganizationService organizationService;
 
+	@Inject
+	private PythonService pythonService;
+	
 	public boolean runPreRegistrationScripts(GluuCustomPerson person, Map<String, String[]> requestParameters) {
-		GluuOrganization org = OrganizationService.instance().getOrganization();
+		GluuOrganization org = organizationService.getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		if(config != null && config.isRegistrationInterceptorsConfigured()){
 			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();
@@ -77,7 +81,6 @@ public class RegistrationInterceptionService {
 
 		RegistrationScript pythonScript = null;
 
-		PythonService pythonService = PythonService.instance();
 		InputStream bis = null;
 		try {
             bis = new ByteArrayInputStream(pythonScriptText.getBytes(Util.UTF8_STRING_ENCODING));
@@ -134,7 +137,7 @@ public class RegistrationInterceptionService {
 	}
 
 	public boolean runPostRegistrationScripts(GluuCustomPerson person, Map<String, String[]> requestParameters) {
-		GluuOrganization org = OrganizationService.instance().getOrganization();
+		GluuOrganization org = organizationService.getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		if(config != null && config.isRegistrationInterceptorsConfigured()){
 			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();
@@ -172,7 +175,7 @@ public class RegistrationInterceptionService {
 
 	public boolean runInitRegistrationScripts(GluuCustomPerson person,
 			Map<String, String[]> requestParameters) {
-		GluuOrganization org = OrganizationService.instance().getOrganization();
+		GluuOrganization org = organizationService.getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		if(config != null && config.isRegistrationInterceptorsConfigured()){
 			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();

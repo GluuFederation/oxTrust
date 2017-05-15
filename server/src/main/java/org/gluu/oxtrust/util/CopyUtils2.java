@@ -11,59 +11,92 @@ import java.io.Serializable;
 // import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-// import org.codehaus.jackson.type.TypeReference;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
-import org.gluu.oxtrust.ldap.service.*;
-import org.gluu.oxtrust.model.*;
+import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.model.GluuCustomAttribute;
+import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.Person;
+import org.gluu.oxtrust.model.PersonAttribute;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.oxtrust.model.scim.ScimEntitlements;
-import org.gluu.oxtrust.model.scim.ScimEntitlementsPatch;
 import org.gluu.oxtrust.model.scim.ScimGroup;
 import org.gluu.oxtrust.model.scim.ScimGroupMembers;
 import org.gluu.oxtrust.model.scim.ScimPerson;
-import org.gluu.oxtrust.model.scim.ScimPersonAddressesPatch;
-import org.gluu.oxtrust.model.scim.ScimPersonEmailsPatch;
-import org.gluu.oxtrust.model.scim.ScimPersonGroups;
-import org.gluu.oxtrust.model.scim.ScimPersonGroupsPatch;
-import org.gluu.oxtrust.model.scim.ScimPersonIms;
-import org.gluu.oxtrust.model.scim.ScimPersonImsPatch;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
-import org.gluu.oxtrust.model.scim.ScimPersonPhones;
-import org.gluu.oxtrust.model.scim.ScimPersonPhonesPatch;
-import org.gluu.oxtrust.model.scim.ScimPersonPhotos;
-import org.gluu.oxtrust.model.scim.ScimPersonPhotosPatch;
-import org.gluu.oxtrust.model.scim.ScimRoles;
-import org.gluu.oxtrust.model.scim.ScimRolesPatch;
-import org.gluu.oxtrust.model.scim.Scimx509Certificates;
-import org.gluu.oxtrust.model.scim.Scimx509CertificatesPatch;
-import org.gluu.oxtrust.model.scim2.*;
-import org.gluu.oxtrust.model.scim2.Extension.Builder;
+import org.gluu.oxtrust.model.scim2.Address;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.Email;
+import org.gluu.oxtrust.model.scim2.Entitlement;
+import org.gluu.oxtrust.model.scim2.Extension;
+import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
+import org.gluu.oxtrust.model.scim2.Group;
+import org.gluu.oxtrust.model.scim2.GroupRef;
+import org.gluu.oxtrust.model.scim2.Im;
+import org.gluu.oxtrust.model.scim2.MemberRef;
+import org.gluu.oxtrust.model.scim2.Meta;
+import org.gluu.oxtrust.model.scim2.MultiValuedAttribute;
+import org.gluu.oxtrust.model.scim2.PhoneNumber;
+import org.gluu.oxtrust.model.scim2.Photo;
+import org.gluu.oxtrust.model.scim2.Role;
+import org.gluu.oxtrust.model.scim2.ScimData;
 import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.hibernate.internal.util.StringHelper;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
-import org.xdi.model.*;
+import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuAttributeDataType;
+import org.xdi.model.GluuUserRole;
+import org.xdi.model.OxMultivalued;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.util.StringHelper;
 
-@Name("copyUtils2")
+@Stateless
+@Named
 public class CopyUtils2 implements Serializable {
 
 	private static final long serialVersionUID = -1715995162448707004L;
 
-	@Logger
-	private static Log log;
+	@Inject
+	private Logger log;
+
+	@Inject
+	private OrganizationService organizationService;
+
+	@Inject
+	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private IPersonService personService;
+	
+	@Inject
+	private IGroupService groupService;
+	
+	@Inject
+	private AttributeService attributeService;
 
 	/**
 	 * Copy data from Person object to GluuCustomPerson object
@@ -73,7 +106,7 @@ public class CopyUtils2 implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static GluuCustomPerson copy(Person source, GluuCustomPerson destination, List<GluuAttribute> attributes, GluuUserRole role,
+	public GluuCustomPerson copy(Person source, GluuCustomPerson destination, List<GluuAttribute> attributes, GluuUserRole role,
 			boolean isUpdate) {
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
@@ -124,13 +157,10 @@ public class CopyUtils2 implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static GluuCustomPerson copy(User source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
-
+	public GluuCustomPerson copy(User source, GluuCustomPerson destination, boolean isUpdate) throws Exception {
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
-
-		IPersonService personService1 = PersonService.instance();
 
 		if (destination == null) {
 			log.trace(" creating a new GluuCustomPerson instant ");
@@ -142,7 +172,7 @@ public class CopyUtils2 implements Serializable {
 
 		if (isUpdate) {
 
-			personService1.addCustomObjectClass(destination);
+			personService.addCustomObjectClass(destination);
 
 			log.trace(" setting userName ");
 			if (source.getUserName() != null && source.getUserName().length() > 0) {
@@ -263,8 +293,6 @@ public class CopyUtils2 implements Serializable {
 			// getting user groups
 			log.trace(" setting groups ");
 			if (source.getGroups() != null && source.getGroups().size() > 0) {
-
-				IGroupService groupService = GroupService.instance();
 				List<GroupRef> listGroups = source.getGroups();
 				List<String> members = new ArrayList<String>();
 				for (GroupRef group : listGroups) {
@@ -391,11 +419,11 @@ public class CopyUtils2 implements Serializable {
 
 			try {
 
-				if (personService1.getPersonByUid(source.getUserName()) != null) {
+				if (personService.getPersonByUid(source.getUserName()) != null) {
 					throw new DuplicateEntryException("Duplicate UID value: " + source.getUserName());
 				}
 
-				personService1.addCustomObjectClass(destination);
+				personService.addCustomObjectClass(destination);
 
 				log.trace(" setting userName ");
 				if (source.getUserName() != null && source.getUserName().length() > 0) {
@@ -514,7 +542,6 @@ public class CopyUtils2 implements Serializable {
 				// getting user groups
 				log.trace(" setting groups ");
 				if (source.getGroups() != null && source.getGroups().size() > 0) {
-					IGroupService groupService = GroupService.instance();
 					List<GroupRef> listGroups = source.getGroups();
 					List<String> members = new ArrayList<String>();
 					for (GroupRef group : listGroups) {
@@ -605,7 +632,7 @@ public class CopyUtils2 implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Person copy(GluuCustomPerson source, Person destination, List<GluuAttribute> attributes) {
+	public Person copy(GluuCustomPerson source, Person destination, List<GluuAttribute> attributes) {
 		if (source == null) {
 			return null;
 		}
@@ -642,7 +669,7 @@ public class CopyUtils2 implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static User copy(GluuCustomPerson source, User destination) throws Exception {
+	public User copy(GluuCustomPerson source, User destination) throws Exception {
 
 		if (source == null) {
 			return null;
@@ -793,8 +820,6 @@ public class CopyUtils2 implements Serializable {
 		// getting user groups
 		log.trace(" setting  groups ");
 		if (source.getMemberOf() != null) {
-			IGroupService groupService = GroupService.instance();
-
 			List<String> listOfGroups = source.getMemberOf();
 			List<GroupRef> groupRefList = new ArrayList<GroupRef>();
 			
@@ -805,7 +830,7 @@ public class CopyUtils2 implements Serializable {
 				GroupRef groupRef = new GroupRef();
 				groupRef.setDisplay(gluuGroup.getDisplayName());
 				groupRef.setValue(gluuGroup.getInum());
-				String reference = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Groups/" + gluuGroup.getInum();
+				String reference = appConfiguration.getBaseEndpoint() + "/scim/v2/Groups/" + gluuGroup.getInum();
 				groupRef.setReference(reference);
 
 				groupRefList.add(groupRef);
@@ -836,7 +861,6 @@ public class CopyUtils2 implements Serializable {
 
 		log.trace(" setting extensions ");
 
-		AttributeService attributeService = AttributeService.instance();
 		// List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributesImpl(attributeService.getCustomAttributes());
 		List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributes();
 
@@ -897,10 +921,10 @@ public class CopyUtils2 implements Serializable {
 		String location = source.getAttribute("oxTrustMetaLocation");
 		if (location != null && !location.isEmpty()) {
 			if (!location.startsWith("https://") && !location.startsWith("http://")) {
-				location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + location;
+				location = appConfiguration.getBaseEndpoint() + location;
 			}
 		} else {
-			location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + source.getInum();
+			location = appConfiguration.getBaseEndpoint() + "/scim/v2/Users/" + source.getInum();
 		}
 		meta.setLocation(location);
 
@@ -977,7 +1001,7 @@ public class CopyUtils2 implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static GluuCustomPerson copyChangePassword(ScimPerson source, GluuCustomPerson destination) {
+	public GluuCustomPerson copyChangePassword(ScimPerson source, GluuCustomPerson destination) {
 		if (source == null) {
 			return null;
 		}
@@ -996,7 +1020,7 @@ public class CopyUtils2 implements Serializable {
 	 * @param password
 	 * @return
 	 */
-	public static GluuCustomPerson updatePassword(GluuCustomPerson person, String password) {
+	public GluuCustomPerson updatePassword(GluuCustomPerson person, String password) {
 		try {
 			person.setUserPassword(password);
 		} catch (Exception ex) {
@@ -1007,7 +1031,7 @@ public class CopyUtils2 implements Serializable {
 
 	// -
 
-	public static GluuAttribute getAttribute(List<GluuAttribute> attributes, String attributeName) {
+	public GluuAttribute getAttribute(List<GluuAttribute> attributes, String attributeName) {
 		GluuAttribute gluuAttribute = null;
 		for (GluuAttribute gluuAttr : attributes) {
 			if (attributeName.equalsIgnoreCase(gluuAttr.getName())) {
@@ -1018,7 +1042,7 @@ public class CopyUtils2 implements Serializable {
 		return gluuAttribute;
 	}
 
-	public static boolean containsRole(GluuUserRole[] roles, GluuUserRole role) {
+	public boolean containsRole(GluuUserRole[] roles, GluuUserRole role) {
 		for (int i = 0; i < roles.length; i++) {
 			if (roles[i] == role)
 				return true;
@@ -1026,7 +1050,7 @@ public class CopyUtils2 implements Serializable {
 		return false;
 	}
 
-	public static boolean isValidData(Person person, boolean isUpdate) {
+	public boolean isValidData(Person person, boolean isUpdate) {
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
 			// isEmpty(person.getDisplayName())
@@ -1042,7 +1066,7 @@ public class CopyUtils2 implements Serializable {
 		return true;
 	}
 
-	public static boolean isValidData(User person, boolean isUpdate) throws Exception {
+	public boolean isValidData(User person, boolean isUpdate) throws Exception {
 
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
@@ -1063,7 +1087,7 @@ public class CopyUtils2 implements Serializable {
 		return true;
 	}
 
-	public static boolean isEmpty(String value) {
+	public boolean isEmpty(String value) {
 		if (value == null || value.trim().equals(""))
 			return true;
 		return false;
@@ -1078,16 +1102,13 @@ public class CopyUtils2 implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static Group copy(GluuGroup source, Group destination) throws Exception {
-
+	public Group copy(GluuGroup source, Group destination) throws Exception {
 		if (source == null) {
 			return null;
 		}
 		if (destination == null) {
 			destination = new Group();
 		}
-
-		IPersonService personService = PersonService.instance();
 
 		destination.setDisplayName(source.getDisplayName());
 		destination.setId(source.getInum());
@@ -1108,7 +1129,7 @@ public class CopyUtils2 implements Serializable {
 						MemberRef memberRef = new MemberRef();
 						memberRef.setValue(gluuCustomPerson.getInum());
 						memberRef.setDisplay(gluuCustomPerson.getDisplayName());
-						String reference = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Users/" + gluuCustomPerson.getInum();
+						String reference = appConfiguration.getBaseEndpoint() + "/scim/v2/Users/" + gluuCustomPerson.getInum();
 						memberRef.setReference(reference);
 
 						memberRefSet.add(memberRef);
@@ -1130,10 +1151,10 @@ public class CopyUtils2 implements Serializable {
 		String location = source.getAttribute("oxTrustMetaLocation");
 		if (location != null && !location.isEmpty()) {
 			if (!location.startsWith("https://") && !location.startsWith("http://")) {
-				location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + location;
+				location = appConfiguration.getBaseEndpoint() + location;
 			}
 		} else {
-			location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/Groups/" + source.getInum();
+			location = appConfiguration.getBaseEndpoint() + "/scim/v2/Groups/" + source.getInum();
 		}
 		meta.setLocation(location);
 
@@ -1174,7 +1195,7 @@ public class CopyUtils2 implements Serializable {
 		return destination;
 	}
 
-	public static GluuGroup copy(ScimGroup source, GluuGroup destination, List<GluuGroup> attributes) throws Exception {
+	public GluuGroup copy(ScimGroup source, GluuGroup destination, List<GluuGroup> attributes) throws Exception {
 		if (source == null) {
 			return null;
 		}
@@ -1187,9 +1208,8 @@ public class CopyUtils2 implements Serializable {
 		List<String> listMembers = new ArrayList<String>();
 		// mapMembers.
 
-		IPersonService personservice = PersonService.instance();
 		for (String dn : listMembers) {
-			GluuCustomPerson gluuPerson = personservice.getPersonByDn(dn);
+			GluuCustomPerson gluuPerson = personService.getPersonByDn(dn);
 			ScimGroupMembers member = new ScimGroupMembers();
 			member.setDisplay(gluuPerson.getDisplayName());
 			member.setValue(gluuPerson.getInum());
@@ -1199,7 +1219,7 @@ public class CopyUtils2 implements Serializable {
 		return destination;
 	}
 
-	private static boolean isValidData(ScimPersonPatch person, boolean isUpdate) {
+	private boolean isValidData(ScimPersonPatch person, boolean isUpdate) {
 		if (isUpdate) {
 			// if (isEmpty(person.getFirstName()) ||
 			// isEmpty(person.getDisplayName())
@@ -1230,7 +1250,7 @@ public class CopyUtils2 implements Serializable {
 	 * @throws Exception
 	 */
 
-	public static GluuGroup copy(Group source, GluuGroup destination, boolean isUpdate) throws Exception {
+	public GluuGroup copy(Group source, GluuGroup destination, boolean isUpdate) throws Exception {
 		if (source == null || !isValidData(source, isUpdate)) {
 			return null;
 		}
@@ -1245,7 +1265,6 @@ public class CopyUtils2 implements Serializable {
 				destination.setDisplayName(source.getDisplayName());
 			}
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
-				IPersonService personService = PersonService.instance();
 				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (MemberRef member : members) {
@@ -1259,10 +1278,9 @@ public class CopyUtils2 implements Serializable {
 
 			log.trace(" creating a new GroupService instant ");
 
-			IGroupService groupService1 = GroupService.instance();
 			log.trace(" source.getDisplayName() : ", source.getDisplayName());
 
-			if (groupService1.getGroupByDisplayName(source.getDisplayName()) != null) {
+			if (groupService.getGroupByDisplayName(source.getDisplayName()) != null) {
 				log.trace(" groupService1.getGroupByDisplayName(source.getDisplayName() != null : ");
 
 				return null;
@@ -1275,9 +1293,6 @@ public class CopyUtils2 implements Serializable {
 			log.trace(" source.getMembers().size() : ", source.getMembers().size());
 
 			if (source.getMembers() != null && source.getMembers().size() > 0) {
-
-				IPersonService personService = PersonService.instance();
-
 				Set<MemberRef> members = source.getMembers();
 				List<String> listMembers = new ArrayList<String>();
 				for (MemberRef member : members) {
@@ -1287,18 +1302,17 @@ public class CopyUtils2 implements Serializable {
 				destination.setMembers(listMembers);
 			}
 
-			/*GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
+			/*GluuCustomPerson authUser = (GluuCustomPerson) identity.getSessionMap().get(OxTrustConstants.CURRENT_PERSON);
 			destination.setOwner(authUser.getDn());
 			log.trace(" authUser.getDn() : ", authUser.getDn());*/
 			destination.setStatus(GluuStatus.ACTIVE);
-			OrganizationService orgService = OrganizationService.instance();
-			destination.setOrganization(orgService.getDnForOrganization());
+			destination.setOrganization(organizationService.getDnForOrganization());
 		}
 
 		return destination;
 	}
 
-	public static boolean isValidData(Group group, boolean isUpdate) {
+	public boolean isValidData(Group group, boolean isUpdate) {
 		if (isUpdate) {
 
 		} else if (isEmpty(group.getDisplayName())) {
@@ -1315,7 +1329,7 @@ public class CopyUtils2 implements Serializable {
 	 * @return ScimGroup
 	 * @throws Exception
 	 */
-	public static Group copy(ScimData source, Group destination) {
+	public Group copy(ScimData source, Group destination) {
 		if (source == null) {
 			return null;
 		}
@@ -1340,7 +1354,7 @@ public class CopyUtils2 implements Serializable {
 
 	}
 
-	public static FidoDevice copy(GluuCustomFidoDevice source, FidoDevice destination) {
+	public FidoDevice copy(GluuCustomFidoDevice source, FidoDevice destination) {
 
 		if (source == null) {
 			return null;
@@ -1384,10 +1398,10 @@ public class CopyUtils2 implements Serializable {
 		String location = source.getMetaLocation();
 		if (location != null && !location.isEmpty()) {
 			if (!location.startsWith("https://") && !location.startsWith("http://")) {
-				location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + location;
+				location = appConfiguration.getBaseEndpoint() + location;
 			}
 		} else {
-			location = OxTrustConfiguration.instance().getApplicationConfiguration().getBaseEndpoint() + "/scim/v2/FidoDevices/" + source.getId();
+			location = appConfiguration.getBaseEndpoint() + "/scim/v2/FidoDevices/" + source.getId();
 		}
 		meta.setLocation(location);
 
@@ -1420,7 +1434,7 @@ public class CopyUtils2 implements Serializable {
 		return destination;
 	}
 
-	public static GluuCustomFidoDevice updateGluuCustomFidoDevice(FidoDevice source, GluuCustomFidoDevice destination) {
+	public GluuCustomFidoDevice updateGluuCustomFidoDevice(FidoDevice source, GluuCustomFidoDevice destination) {
 
 		if (source == null) {
 			return null;
@@ -1438,7 +1452,7 @@ public class CopyUtils2 implements Serializable {
 		return destination;
 	}
 
-	protected static void setGluuStatus(User source, GluuCustomPerson destination) {
+	protected void setGluuStatus(User source, GluuCustomPerson destination) {
 		Boolean active = source.isActive();
 		if (active != null) {
 			if (active.equals(Boolean.TRUE)) {
@@ -1449,12 +1463,12 @@ public class CopyUtils2 implements Serializable {
 		}
 	}
 
-	private static void setGluuStatus(ScimPersonPatch source, GluuCustomPerson destination) {
+	private void setGluuStatus(ScimPersonPatch source, GluuCustomPerson destination) {
 		String active = source.getActive();
 		setGluuStatus(destination, active);
 	}
 
-	private static void setGluuStatus(GluuCustomPerson destination, String active) {
+	private void setGluuStatus(GluuCustomPerson destination, String active) {
 		// if (StringHelper.isNotEmpty(active) && (destination.getAttribute("gluuStatus") == null)) {
 		if (StringHelper.isNotEmpty(active)) {
 			GluuBoolean gluuStatus = GluuBoolean.getByValue(org.xdi.util.StringHelper.toLowerCase(active));
@@ -1464,9 +1478,9 @@ public class CopyUtils2 implements Serializable {
 		}
 	}
 
-	protected static <T extends MultiValuedAttribute> void setAttributeListValue(GluuCustomPerson destination, List<T> items, String attributeName) throws Exception {
+	protected <T extends MultiValuedAttribute> void setAttributeListValue(GluuCustomPerson destination, List<T> items, String attributeName) throws Exception {
 
-		ObjectMapper mapper = Utils.getObjectMapper();
+		ObjectMapper mapper = ServiceUtil.getObjectMapper();
 
 		List<String> itemList = new ArrayList<String>();
 		for (T item : items) {
@@ -1476,9 +1490,9 @@ public class CopyUtils2 implements Serializable {
 		destination.setAttribute(attributeName, itemList.toArray(new String[]{}));
 	}
 
-	protected static <T extends MultiValuedAttribute> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attributeName) throws Exception {
+	protected <T extends MultiValuedAttribute> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attributeName) throws Exception {
 
-		ObjectMapper mapper = Utils.getObjectMapper();
+		ObjectMapper mapper = ServiceUtil.getObjectMapper();
 
 		String[] attributeArray = source.getAttributeArray(attributeName);
 		List<T> items = new ArrayList<T>();

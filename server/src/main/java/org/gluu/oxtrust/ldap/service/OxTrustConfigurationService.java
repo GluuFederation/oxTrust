@@ -6,13 +6,13 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.web.ServletContexts;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import javax.ejb.Stateless;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.ServletContext;
+
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 /**
@@ -20,29 +20,36 @@ import org.xdi.util.StringHelper;
  * 
  * @author Oleksiy Tataryn Date: 08.07.2014
  */
-@Scope(ScopeType.STATELESS)
-@Name("oxTrustConfigurationService")
-@AutoCreate
+@Stateless
+@Named
+@Deprecated //TODO: We don't need this class
 public class OxTrustConfigurationService {
 	
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
+
+	@Inject
+	private ServletContext context;
 
 	public String getCssLocation() {
-		if (StringHelper.isEmpty(applicationConfiguration.getCssLocation())){
-			String contextPath = ServletContexts.instance().getRequest().getContextPath();
+		if (StringHelper.isEmpty(appConfiguration.getCssLocation())) {
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			if (ctx == null) {
+				return "";
+			}
+			String contextPath = ctx.getExternalContext().getRequestContextPath();
 			return contextPath + "/stylesheet";
-		}else{
-			return applicationConfiguration.getCssLocation();
+		} else {
+			return appConfiguration.getCssLocation();
 		}
 	}
-	
+
 	public String getJsLocation() {
-		if (StringHelper.isEmpty(applicationConfiguration.getJsLocation())){
-			String contextPath = ServletContexts.instance().getRequest().getContextPath();
+		if (StringHelper.isEmpty(appConfiguration.getJsLocation())) {
+			String contextPath = context.getContextPath();
 			return contextPath + "/js";
-		}else{
-			return applicationConfiguration.getJsLocation();
+		} else {
+			return appConfiguration.getJsLocation();
 		}
 	}
 

@@ -19,9 +19,9 @@
             <var>msg</var>
         </resource-bundle>
     </application>
-
+<!--
     <lifecycle>
         <phase-listener>org.gluu.oxtrust.util.jsf.MultiPageMessagesSupport</phase-listener>
     </lifecycle>
-
+ -->
 </faces-config>

@@ -11,27 +11,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.ImportPerson;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
-@Scope(ScopeType.APPLICATION)
-@AutoCreate
-@Name("importPersonConfiguration")
+@ApplicationScoped
+@Named
 public class ImportPersonConfiguration {
 
 	private static final String GLUU_IMPORT_PERSON_PROPERTIES_FILE = "gluuImportPerson.properties";
@@ -41,21 +37,21 @@ public class ImportPersonConfiguration {
 	private static final String ATTRIBUTE_DATA_TYPE_SUFFIX = ".dataType";
 	private static final String ATTRIBUTE_DATA_REQUIRED_SUFFIX = ".required";
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
-	private OxTrustConfiguration oxTrustConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
 	private FileConfiguration importConfiguration;
 	private List<GluuAttribute> attributes;
 
-	@Create
+	@PostConstruct
 	public void create() {
-		this.importConfiguration = new FileConfiguration(oxTrustConfiguration.confDir() + File.separator + GLUU_IMPORT_PERSON_PROPERTIES_FILE, true);
+		this.importConfiguration = new FileConfiguration(configurationFactory.confDir() + File.separator + GLUU_IMPORT_PERSON_PROPERTIES_FILE, true);
 		try {
 			this.attributes = prepareAttributes();
 		} catch (Exception ex) {
@@ -65,7 +61,7 @@ public class ImportPersonConfiguration {
 
 	private List<GluuAttribute> prepareAttributes() throws Exception {
 		List<GluuAttribute> result = new ArrayList<GluuAttribute>();
-		List<ImportPerson>  mappings = oxTrustConfiguration.getImportPersonConfig().getMappings();
+		List<ImportPerson>  mappings = configurationFactory.getImportPersonConfig().getMappings();
 		Iterator<ImportPerson> it = mappings.iterator();
 
 		while (it.hasNext()) {

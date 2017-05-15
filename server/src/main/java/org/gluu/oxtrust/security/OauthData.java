@@ -8,14 +8,13 @@ package org.gluu.oxtrust.security;
 
 import java.io.Serializable;
 
-import org.jboss.seam.annotations.Name;
-
+import javax.inject.Named;
 /**
  * @author Dejan Maric
  * @author Yuriy Movchan
  * @version 0.1, 12/10/2012
  */
-@Name("oauthData")
+@Named
 public class OauthData implements Serializable {
 
 	private static final long serialVersionUID = 3768651940107346004L;

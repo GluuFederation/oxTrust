@@ -5,18 +5,17 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.Serializable;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.xdi.util.INumGenerator;
@@ -27,25 +26,26 @@ import org.xdi.util.StringHelper;
  * 
  * @author Dmitry Ognyannikov, 2017
  */
-@Name("casService")
-@AutoCreate
-@Scope(ScopeType.STATELESS)
-public class CASService {
+@Stateless
+@Named("casService")
+public class CASService implements Serializable {
     
-    @Logger
-    private Log log;
+	private static final long serialVersionUID = -6130872937911013810L;
+
+	@Inject
+    private Logger log;
     
-    @In
+    @Inject
     private LdapEntryManager ldapEntryManager;
     
-    @In
+    @Inject
     OrganizationService organizationService;
      
-    @Create
+    @PostConstruct
     public void init() {
     }
     
-    @Destroy
+    @PreDestroy
     public void destroy() {
     }
     
@@ -98,10 +98,6 @@ public class CASService {
     */
     private static String generateInum() {
         return INumGenerator.generate(1);
-    }
-    
-    public static CASService instance() {
-        return (CASService) Component.getInstance(CASService.class);
     }
     
 }

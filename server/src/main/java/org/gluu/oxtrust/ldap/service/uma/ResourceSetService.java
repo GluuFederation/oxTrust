@@ -6,24 +6,23 @@
 
 package org.gluu.oxtrust.ldap.service.uma;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
 import org.xdi.util.INumGenerator;
+import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
 
@@ -32,18 +31,19 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 12/06/2012
  */
-@Scope(ScopeType.STATELESS)
-@Name("resourceSetService")
-@AutoCreate
+@Stateless
+@Named("resourceSetService")
 public class ResourceSetService implements Serializable {
 
 	private static final long serialVersionUID = -1537567020929600777L;
 
-	@In
-	private LdapEntryManager ldapEntryManager;
+	@Inject
+	private LdapEntryManager ldapEntryManager;	
+	@Inject
+	private OrganizationService organizationService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();
@@ -204,7 +204,7 @@ public class ResourceSetService implements Serializable {
 	 * @return New inum for resource set
 	 */
 	private String generateInumForNewResourceSetImpl() {
-		String orgInum = OrganizationService.instance().getInumForOrganization();
+		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
 	}
 
@@ -212,21 +212,12 @@ public class ResourceSetService implements Serializable {
 	 * Build DN string for resource set
 	 */
 	public String getDnForResourceSet(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=resource_sets,ou=uma,%s", orgDn);
 		}
 
 		return String.format("inum=%s,ou=resource_sets,ou=uma,%s", inum, orgDn);
-	}
-
-	/**
-	 * Get ResourceSetService instance
-	 * 
-	 * @return ResourceSetService instance
-	 */
-	public static ResourceSetService instance() {
-		return (ResourceSetService) Component.getInstance(ResourceSetService.class);
 	}
 
 }

@@ -15,11 +15,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -29,21 +36,10 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.MailUtils;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.core.Events;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.util.StringHelper;
@@ -53,39 +49,39 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 11.16.2010
  */
-@Name("updateOrganizationAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("updateOrganizationAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateOrganizationAction implements Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
-	private StatusMessages statusMessages;
-
-	@In
-	private GluuCustomPerson currentPerson;
-
-	@In
-	private ImageService imageService;
-
-	@In
-	private OrganizationService organizationService;
-
-	@In
-	private ApplianceService applianceService;
-
-	@In
-	private OxTrustConfiguration oxTrustConfiguration;
-
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private GluuCustomPerson currentPerson;
+
+	@Inject
+	private ImageService imageService;
+
+	@Inject
+	private OrganizationService organizationService;
+
+	@Inject
+	private ApplianceService applianceService;
+
+	@Inject
+	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private AppConfiguration appConfiguration;
+
+	@Inject
+	private AppInitializer appInitializer;
 
 	private GluuOrganization organization;
 
@@ -103,7 +99,7 @@ public class UpdateOrganizationAction implements Serializable {
 	
 	private List<GluuAppliance> appliances;
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify()  {
 		String resultOrganization = modifyOrganization();
 		String resultApplliance = modifyApplliance();
@@ -149,7 +145,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 		appliances = new ArrayList<GluuAppliance>();
 		try {
-			appliances.addAll(ApplianceService.instance().getAppliances());
+			appliances.addAll(applianceService.getAppliances());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -172,7 +168,7 @@ public class UpdateOrganizationAction implements Serializable {
 		this.curFaviconImage = this.oldFaviconImage;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String save() {
 		// Update organization
 		try {
@@ -186,18 +182,24 @@ public class UpdateOrganizationAction implements Serializable {
 			
 			applianceService.updateAppliance(this.appliance);
 
-			Events.instance().raiseEvent(OxTrustConstants.EVENT_CLEAR_ORGANIZATION);
-
 			/* Resolv.conf update */
 			// saveDnsInformation(); // This will be handled by puppet.
 			/* Resolv.conf update */
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update organization", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update organization");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update organization");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		return modify();
+	}
+
+	public String getSmtpPassword() {
+		return applianceService.getDecryptedSmtpPassword(appliance);		
+	}
+
+	public void setSmtpPassword(String smptPassword) {
+		applianceService.setEncryptedSmtpPassword(appliance, smptPassword);		
 	}
 
 	private void updateSmptConfiguration(GluuAppliance appliance) {
@@ -214,15 +216,15 @@ public class UpdateOrganizationAction implements Serializable {
 		appliance.setSmtpConfiguration(smtpConfiguration);
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String verifySmtpConfiguration() {
 		log.info("HostName: " + appliance.getSmtpHost() + " Port: " + appliance.getSmtpPort() + " RequireSSL: " + appliance.isRequiresSsl()
 				+ " RequireSSL: " + appliance.isRequiresAuthentication());
-		log.info("UserName: " + appliance.getSmtpUserName() + " Password: " + appliance.getSmtpPasswordStr());
+		log.info("UserName: " + appliance.getSmtpUserName() + " Password: " + applianceService.getDecryptedSmtpPassword(appliance));
 
 		try {
 			MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-					appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), appliance.getSmtpPasswordStr());
+					appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
 			mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">",
 					appliance.getSmtpFromEmailAddress(), "SMTP Server Configuration Verification",
 					"SMTP Server Configuration Verification Successful.");
@@ -267,7 +269,7 @@ public class UpdateOrganizationAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String getBuildDate() {
 		if (this.buildDate != null) {
 			return this.buildDate;
@@ -275,7 +277,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 		try {
-			String buildDate = OxTrustConstants.getGluuBuildDate();
+			String buildDate = appInitializer.getGluuBuildDate();
 			final Date date = formatter.parse(buildDate);
 			this.buildDate = new SimpleDateFormat("hh:mm MMM dd yyyy").format(date) + " UTC";
 		} catch (ParseException e) {
@@ -285,17 +287,17 @@ public class UpdateOrganizationAction implements Serializable {
 		return this.buildDate;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String getBuildNumber() {
 		if (this.buildNumber != null) {
 			return this.buildNumber;
 		}
 
-		this.buildNumber = OxTrustConstants.getGluuBuildNumber();
+		this.buildNumber = appInitializer.getGluuBuildNumber();
 		return this.buildNumber;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();
@@ -490,7 +492,7 @@ public class UpdateOrganizationAction implements Serializable {
 		return organization;
 	}
 
-	@Destroy
+	@PreDestroy
 	public void destroy() throws Exception {
 		// When user decided to leave form without saving we must remove added
 		// logo image from disk

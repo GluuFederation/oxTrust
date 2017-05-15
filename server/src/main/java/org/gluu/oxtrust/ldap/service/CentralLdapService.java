@@ -6,25 +6,24 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
 
 /**
  * Provides operations with central LDAP server
  * 
  * @author Yuriy Movchan Date: 11.23.2010
  */
-@Scope(ScopeType.STATELESS)
-@Name("centralLdapService")
-@AutoCreate
+@Stateless
+@Named
 public class CentralLdapService {
 
-	@In(required = false)
+	@Inject @CentralLdap
 	private LdapEntryManager centralLdapEntryManager;
 
 	/**

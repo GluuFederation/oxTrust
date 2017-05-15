@@ -43,7 +43,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public boolean supports(final Credential credential) {
@@ -51,7 +51,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {

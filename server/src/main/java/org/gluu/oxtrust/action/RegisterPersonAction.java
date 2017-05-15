@@ -16,14 +16,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -34,19 +38,8 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.hibernate.validator.constraints.Email;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.core.Events;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.faces.Redirect;
-import org.jboss.seam.international.StatusMessage;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -56,40 +49,36 @@ import org.xdi.util.StringHelper;
  * @author Dejan Maric
  * @author Yuriy Movchan Date: 08.14.2015
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("registerPersonAction")
+@ConversationScoped
+@Named("registerPersonAction")
 public class RegisterPersonAction implements Serializable {
 
 	private static final long serialVersionUID = 6002737004324917338L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(value = "#{facesContext.externalContext}")
+	@Inject
 	private ExternalContext externalContext;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
-	
-	@In
-	Redirect redirect;
 
-	@In(create = true)
-	@Out(scope = ScopeType.CONVERSATION)
+	@Inject
 	private CustomAttributeAction customAttributeAction;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private ExternalUserRegistrationService externalUserRegistrationService;
 
 	private GluuCustomPerson person;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
 	@NotNull
@@ -110,10 +99,10 @@ public class RegisterPersonAction implements Serializable {
 		this.email = email;
 	}
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-	@In
+	@Inject
 	private RecaptchaService recaptchaService;
 
 	private List<String> hiddenAttributes;
@@ -249,14 +238,13 @@ public class RegisterPersonAction implements Serializable {
 				
 				result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person, requestParameters);
 
-				Events.instance().raiseEvent(OxTrustConstants.EVENT_PERSON_SAVED, this.person, null, null, null, null, true);
 				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 			} catch (Exception ex) {
 				log.error("Failed to add new person {0}", ex, this.person.getInum());
-				facesMessages.add(StatusMessage.Severity.ERROR, "Failed to add new person");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person");
 				this.person = archivedPerson;
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -285,8 +273,8 @@ public class RegisterPersonAction implements Serializable {
 			this.person.setCustomAttributes(customAttributes);
 		}
 
-		String[] personOCs = applicationConfiguration.getPersonObjectClassTypes();
-		String[] personOCDisplayNames = applicationConfiguration.getPersonObjectClassDisplayNames();
+		String[] personOCs = appConfiguration.getPersonObjectClassTypes();
+		String[] personOCDisplayNames = appConfiguration.getPersonObjectClassDisplayNames();
 		customAttributeAction.initCustomAttributes(allPersonAttributes, customAttributes, allAttributOrigins, personOCs, personOCDisplayNames);
 
 		List<GluuCustomAttribute> mandatoryAttributes = new ArrayList<GluuCustomAttribute>();

@@ -14,21 +14,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SelectableEntity;
@@ -43,9 +41,9 @@ import org.xdi.util.Util;
  * 
  * @author Reda Zerrad Date: 06.18.2012
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updateScopeAction")
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named("updateScopeAction")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateScopeAction implements Serializable {
 
 	/**
@@ -54,8 +52,8 @@ public class UpdateScopeAction implements Serializable {
 	private static final long serialVersionUID = 8198574569820157032L;
 	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description", "gluuStatus" };
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private String inum;
 
@@ -71,26 +69,26 @@ public class UpdateScopeAction implements Serializable {
 
 	private List<GluuAttribute> availableClaims;
 
-	@In
+	@Inject
 	private ScopeService scopeService;
 
-	@In
+	@Inject
 	private LookupService lookupService;
 
-	@In
+	@Inject
 	private transient AttributeService attributeService;
 
-	@In
+	@Inject
 	private CustomScriptService customScriptService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
 	private List<CustomScript> dynamicScripts;
 	private List<SelectableEntity<CustomScript>> availableDynamicScripts;
 
 	
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String add() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -118,7 +116,7 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String update() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -157,11 +155,11 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String save() throws Exception {
 		// List<DisplayNameEntry> oldClaims = null;
 		// try {
@@ -170,7 +168,7 @@ public class UpdateScopeAction implements Serializable {
 		// } catch (LdapMappingException ex) {
 		// log.error("error getting oldClaims",ex);
 		//
-		// facesMessages.add(Severity.ERROR, "Failed to update scope");
+		// facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope");
 		// return Configuration.RESULT_FAILURE;
 		// }
 
@@ -185,7 +183,7 @@ public class UpdateScopeAction implements Serializable {
 				log.info("error updating scope ", ex);
 				log.error("Failed to update scope {0}", ex, this.inum);
 
-				facesMessages.add(Severity.ERROR, "Failed to update scope");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -201,7 +199,7 @@ public class UpdateScopeAction implements Serializable {
 				log.info("error saving scope ");
 				log.error("Failed to add new scope {0}", ex, this.scope.getInum());
 
-				facesMessages.add(Severity.ERROR, "Failed to add new scope");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
 				return OxTrustConstants.RESULT_FAILURE;
 
 			}
@@ -228,7 +226,7 @@ public class UpdateScopeAction implements Serializable {
 		this.scope.setOxAuthClaims(resultClaims);
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String delete() throws Exception {
 		if (update) {
 			// Remove scope

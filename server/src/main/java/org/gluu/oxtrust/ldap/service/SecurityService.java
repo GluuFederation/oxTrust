@@ -10,16 +10,13 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.User;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuUserRole;
 
 /**
@@ -27,23 +24,22 @@ import org.xdi.model.GluuUserRole;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@Scope(ScopeType.STATELESS)
-@Name("securityService")
-@AutoCreate
+@Stateless
+@Named("securityService")
 public class SecurityService implements Serializable {
 
 	private static final long serialVersionUID = 1395327358942223005L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private OrganizationService organizationService;
 
 	/**
@@ -97,10 +93,6 @@ public class SecurityService implements Serializable {
 		}
 			
 		return false;
-	}
-
-	public static SecurityService instance() {
-		return (SecurityService) Component.getInstance(SecurityService.class);
 	}
 
 }

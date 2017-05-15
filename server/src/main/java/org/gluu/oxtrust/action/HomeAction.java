@@ -8,16 +8,14 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.AuthenticationChartDto;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.MetricService;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.security.Identity;
+import org.slf4j.Logger;
 import org.xdi.service.JsonService;
 
 /**
@@ -25,23 +23,23 @@ import org.xdi.service.JsonService;
  * 
  * @author Yuriy Movchan Date: 08/28/2015
  */
-@Name("homeAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("homeAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class HomeAction implements Serializable {
 
 	private static final long serialVersionUID = 5130372165991117114L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private MetricService metricService;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private Identity identity;
 
 	private AuthenticationChartDto authenticationChartDto;

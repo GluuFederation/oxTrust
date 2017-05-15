@@ -8,6 +8,7 @@ package org.gluu.oxtrust.model;
 
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.StringHelper;
 
 public class GluuSAMLFederationProposal extends GluuSAMLTrustRelationship {
@@ -45,7 +46,8 @@ public class GluuSAMLFederationProposal extends GluuSAMLTrustRelationship {
 	}
 
 	public GluuSAMLFederationProposal getContainerFederation() {
-		return FederationService.instance().getProposalByDn(super.gluuContainerFederation);
+		FederationService federationService = CdiUtil.bean(FederationService.class);
+		return federationService.getProposalByDn(super.gluuContainerFederation);
 	}
 
 	public void setContainerFederation(GluuSAMLFederationProposal gluuContainerFederation) {

@@ -9,25 +9,22 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.beanutils.BeanUtils;
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -40,34 +37,31 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * @author Rahat Ali Date: 12/04/2015
  * @author Yuriy Movchan Date: 10/23/2015
  */
-@Name("jsonConfigAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("jsonConfigAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class JsonConfigurationAction implements Serializable {
 
 	private static final String HIDDEN_PASSWORD_TEXT = "hidden";
 
 	private static final long serialVersionUID = -4470460481895022468L;
 
-	@In
-	private StatusMessages statusMessages;
-
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private EncryptionService encryptionService;
 
-	private ApplicationConfiguration oxTrustApplicationConfiguration;
+	private AppConfiguration oxTrustappConfiguration;
 	private ImportPersonConfig oxTrustImportPersonConfiguration;
 
 	private String oxTrustConfigJson;
@@ -79,16 +73,16 @@ public class JsonConfigurationAction implements Serializable {
 
 	private String cacheConfigurationJson;
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		try {
 			log.debug("Loading oxauth-config.json and oxtrust-config.json");
-			this.oxTrustApplicationConfiguration = jsonConfigurationService.getOxTrustApplicationConfiguration();
+			this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 			this.oxTrustImportPersonConfiguration = jsonConfigurationService.getOxTrustImportPersonConfiguration();
 			this.cacheConfiguration = jsonConfigurationService.getOxMemCacheConfiguration();
 			
 
-			this.oxTrustConfigJson = getProtectedOxTrustApplicationConfiguration(this.oxTrustApplicationConfiguration);
+			this.oxTrustConfigJson = getProtectedOxTrustappConfiguration(this.oxTrustappConfiguration);
 			this.oxTrustImportPersonConfigJson = getOxTrustImportPersonConfiguration(this.oxTrustImportPersonConfiguration);
 			this.oxAuthDynamicConfigJson = jsonConfigurationService.getOxAuthDynamicConfigJson();
 			this.cacheConfigurationJson = getCacheConfiguration(cacheConfiguration);
@@ -100,53 +94,53 @@ public class JsonConfigurationAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to load configuration from LDAP", ex);
-			facesMessages.add(Severity.ERROR, "Failed to load configuration from LDAP");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load configuration from LDAP");
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String saveOxAuthDynamicConfigJson() {
 		// Update JSON configurations
 		try {
 			log.debug("Saving oxauth-config.json:" + oxAuthDynamicConfigJson);
 			jsonConfigurationService.saveOxAuthDynamicConfigJson(oxAuthDynamicConfigJson);
 
-			facesMessages.add(Severity.INFO, "oxAuthDynamic Configuration is updated.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxauth-config.json", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update oxAuth configuration in LDAP");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in LDAP");
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String saveOxTrustConfigJson() {
 		// Update JSON configurations
 		try {
 			log.debug("Saving oxtrust-config.json:" + this.oxTrustConfigJson);
-			this.oxTrustApplicationConfiguration = convertToOxTrustApplicationConfiguration(this.oxTrustConfigJson);
+			this.oxTrustappConfiguration = convertToOxTrustappConfiguration(this.oxTrustConfigJson);
 			
 			// Trim all URI properties
 			trimUriProperties();
 			
-			jsonConfigurationService.saveOxTrustApplicationConfiguration(this.oxTrustApplicationConfiguration);
-			facesMessages.add(Severity.INFO, "oxTrust Configuration is updated.");
+			jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxtrust-config.json", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update oxTrust configuration in LDAP");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust configuration in LDAP");
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 	
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String saveOxMemCacheConfigJson() {
 		// Update JSON configurations
 		try {
@@ -154,55 +148,55 @@ public class JsonConfigurationAction implements Serializable {
 			this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
 			
 			jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
-			facesMessages.add(Severity.INFO, "OxMemcache  Configuration is updated.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "OxMemcache  Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxMemcache-config.json", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update oxTrust configuration in LDAP");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust configuration in LDAP");
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
 	private void trimUriProperties() {
-		this.oxTrustApplicationConfiguration.setLogoutRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLogoutRedirectUrl()));
-		this.oxTrustApplicationConfiguration.setLoginRedirectUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getLoginRedirectUrl()));
-		this.oxTrustApplicationConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustApplicationConfiguration.getOxAuthSectorIdentifierUrl()));
+		this.oxTrustappConfiguration.setLogoutRedirectUrl(StringHelper.trimAll(this.oxTrustappConfiguration.getLogoutRedirectUrl()));
+		this.oxTrustappConfiguration.setLoginRedirectUrl(StringHelper.trimAll(this.oxTrustappConfiguration.getLoginRedirectUrl()));
+		this.oxTrustappConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustappConfiguration.getOxAuthSectorIdentifierUrl()));
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String saveOxTrustImportPersonConfigJson() {
 		// Update JSON configurations
 		try {
 			log.debug("Saving oxtrust-import-person.json:" + this.oxTrustImportPersonConfigJson);
 			this.oxTrustImportPersonConfiguration = convertToOxTrustImportPersonConfiguration(this.oxTrustImportPersonConfigJson);
 			jsonConfigurationService.saveOxTrustImportPersonConfiguration(this.oxTrustImportPersonConfiguration);
-			facesMessages.add(Severity.INFO, "oxTrust Import Person Configuration is updated.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust Import Person Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to oxtrust-import-person.json", ex);
-			facesMessages.add(Severity.ERROR, "Failed to update oxTrust Import Person configuration in LDAP");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust Import Person configuration in LDAP");
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	private String getProtectedOxTrustApplicationConfiguration(ApplicationConfiguration oxTrustApplicationConfiguration) {
+	private String getProtectedOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
 		try {
-			ApplicationConfiguration resultOxTrustApplicationConfiguration = (ApplicationConfiguration) BeanUtils.cloneBean(oxTrustApplicationConfiguration);
+			AppConfiguration resultOxTrustappConfiguration = (AppConfiguration) BeanUtils.cloneBean(oxTrustappConfiguration);
 
-			resultOxTrustApplicationConfiguration.setSvnConfigurationStorePassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustApplicationConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setSvnConfigurationStorePassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
+			resultOxTrustappConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
 
-			return jsonService.objectToJson(resultOxTrustApplicationConfiguration);
+			return jsonService.objectToJson(resultOxTrustappConfiguration);
 		} catch (Exception ex) {
-			log.error("Failed to prepare JSON from ApplicationConfiguration: '{0}'", ex, oxTrustApplicationConfiguration);
+			log.error("Failed to prepare JSON from appConfiguration: '{0}'", ex, oxTrustappConfiguration);
 		}
 
 		return null;
@@ -228,22 +222,22 @@ public class JsonConfigurationAction implements Serializable {
 		return null;
 	}
 	
-	private ApplicationConfiguration convertToOxTrustApplicationConfiguration(String oxTrustApplicationConfigurationJson) {
+	private AppConfiguration convertToOxTrustappConfiguration(String oxTrustappConfigurationJson) {
 		try {
-			ApplicationConfiguration resultOxTrustApplicationConfiguration = jsonService.jsonToObject(oxTrustApplicationConfigurationJson, ApplicationConfiguration.class);
+			AppConfiguration resultOxTrustappConfiguration = jsonService.jsonToObject(oxTrustappConfigurationJson, AppConfiguration.class);
 
-			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "svnConfigurationStorePassword");
-			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "keystorePassword");
-			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "idpSecurityKeyPassword");
-			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "idpBindPassword");
-			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "caCertsPassphrase");
-			processPasswordProperty(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration, "oxAuthClientPassword");
+			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "svnConfigurationStorePassword");
+			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "keystorePassword");
+			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "idpSecurityKeyPassword");
+			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "idpBindPassword");
+			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "caCertsPassphrase");
+			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "oxAuthClientPassword");
 
-			jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustApplicationConfiguration, resultOxTrustApplicationConfiguration);
+			jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustappConfiguration, resultOxTrustappConfiguration);
 
-			return resultOxTrustApplicationConfiguration;
+			return resultOxTrustappConfiguration;
 		} catch (Exception ex) {
-			log.error("Failed to prepare ApplicationConfiguration from JSON: '{0}'", ex, oxTrustApplicationConfigurationJson);
+			log.error("Failed to prepare appConfiguration from JSON: '{0}'", ex, oxTrustappConfigurationJson);
 		}
 
 		return null;
@@ -273,13 +267,13 @@ public class JsonConfigurationAction implements Serializable {
 		return null;
 	}
 
-	private void processPasswordProperty(ApplicationConfiguration source, ApplicationConfiguration current, String property) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, EncryptionException {
+	private void processPasswordProperty(AppConfiguration source, AppConfiguration current, String property) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, EncryptionException {
 		String currentValue = BeanUtils.getProperty(current, property);
 		if (StringHelper.equals(currentValue, HIDDEN_PASSWORD_TEXT)) {
 			String sourceValue = BeanUtils.getSimpleProperty(source, property);
 			BeanUtils.setProperty(current, property, sourceValue);
 		} else {
-			String currentValueEncrypted = StringEncrypter.defaultInstance().encrypt(currentValue, cryptoConfigurationSalt);
+			String currentValueEncrypted = encryptionService.encrypt(currentValue);
 			BeanUtils.setProperty(current, property, currentValueEncrypted);
 		}
 	}

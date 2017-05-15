@@ -10,8 +10,12 @@ import org.gluu.oxtrust.model.scim2.schema.core.GroupCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.core.UserCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.core.fido.FidoDeviceCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
-import org.gluu.oxtrust.service.scim2.schema.strategy.*;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.gluu.oxtrust.service.scim2.schema.strategy.FidoDeviceCoreLoadingStrategy;
+import org.gluu.oxtrust.service.scim2.schema.strategy.GroupCoreLoadingStrategy;
+import org.gluu.oxtrust.service.scim2.schema.strategy.LoadingStrategy;
+import org.gluu.oxtrust.service.scim2.schema.strategy.UserCoreLoadingStrategy;
+import org.gluu.oxtrust.service.scim2.schema.strategy.UserExtensionLoadingStrategy;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Factory for loading a SchemaType.
@@ -21,7 +25,7 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  */
 public class SchemaTypeLoadingFactory {
 
-    public SchemaType load(ApplicationConfiguration applicationConfiguration, String id) throws Exception {
+    public SchemaType load(AppConfiguration appConfiguration, String id) throws Exception {
 
         SchemaType schemaType = SchemaTypeMapping.getSchemaTypeInstance(id);
 
@@ -29,10 +33,10 @@ public class SchemaTypeLoadingFactory {
             return null;
         }
 
-        return load(applicationConfiguration, schemaType);
+        return load(appConfiguration, schemaType);
     }
 
-    public SchemaType load(ApplicationConfiguration applicationConfiguration, SchemaType schemaType) throws Exception {
+    public SchemaType load(AppConfiguration appConfiguration, SchemaType schemaType) throws Exception {
 
         LoadingStrategy loadingStrategy = null;
 
@@ -50,6 +54,6 @@ public class SchemaTypeLoadingFactory {
             return null;
         }
 
-        return loadingStrategy.load(applicationConfiguration, schemaType);
+        return loadingStrategy.load(appConfiguration, schemaType);
     }
 }

@@ -5,54 +5,81 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import java.net.URI;
-import java.util.*;
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
-import javax.ws.rs.*;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.wordnik.swagger.annotations.*;
 
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
-import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.Group;
+import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerializer;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.Authorization;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
  */
-@Name("scim2GroupEndpoint")
+@Named("scim2GroupEndpoint")
 @Path("/scim/v2/Groups")
 @Api(value = "/v2/Groups", description = "SCIM 2.0 Group Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = {@Authorization(value = "Authorization", type = "uma")})
 public class GroupWebService extends BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
+	private AppConfiguration appConfiguration;
+
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
+
+	@Inject
 	private IGroupService groupService;
 
-    @In
+    @Inject
     private Scim2GroupService scim2GroupService;
+    
+    @Inject
+    private CopyUtils2 copyUtils2;
 
 	@GET
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
@@ -69,7 +96,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -87,10 +114,7 @@ public class GroupWebService extends BaseScimWebService {
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {
-
 				log.info(" Searching groups from LDAP ");
-
-				groupService = GroupService.instance();
 
 				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
@@ -114,7 +138,7 @@ public class GroupWebService extends BaseScimWebService {
 
 					for (GluuGroup gluuGroup : groupList) {
 
-						Group group = CopyUtils2.copy(gluuGroup, null);
+						Group group = copyUtils2.copy(gluuGroup, null);
 
 						log.info(" group to be added displayName : " + group.getDisplayName());
 
@@ -131,7 +155,7 @@ public class GroupWebService extends BaseScimWebService {
 				// Serialize to JSON
 				String json = serializeToJson(groupsListResponse, attributesArray);
 
-				URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Groups");
+				URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Groups");
 
 				return Response.ok(json).location(location).build();
 			}
@@ -156,7 +180,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -167,9 +191,6 @@ public class GroupWebService extends BaseScimWebService {
 		}
 
 		try {
-
-			groupService = GroupService.instance();
-
 			String filterString = "id eq \"" + id + "\"";
 			VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
@@ -185,7 +206,7 @@ public class GroupWebService extends BaseScimWebService {
 
 			GluuGroup gluuGroup = groupList.get(0);
 
-			Group group = CopyUtils2.copy(gluuGroup, null);
+			Group group = copyUtils2.copy(gluuGroup, null);
 
 			// Serialize to JSON
 			String json = serializeToJson(group, attributesArray);
@@ -220,7 +241,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -270,7 +291,7 @@ public class GroupWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -322,7 +343,7 @@ public class GroupWebService extends BaseScimWebService {
 		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustApplicationConfiguration().isScimTestMode()) {
+		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
 			authorizationResponse = processTestModeAuthorization(token);
 		} else {
@@ -378,7 +399,7 @@ public class GroupWebService extends BaseScimWebService {
                 searchRequest.getAttributesArray()
             );
 
-            URI location = new URI(applicationConfiguration.getBaseEndpoint() + "/scim/v2/Groups/.search");
+            URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Groups/.search");
 
             log.info("LEAVING GroupWebService.searchGroupsPost()...");
 
