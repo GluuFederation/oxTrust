@@ -16,14 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
