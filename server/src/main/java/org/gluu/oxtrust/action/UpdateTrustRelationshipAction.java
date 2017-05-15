@@ -342,7 +342,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			}
 
 			trustService.updateReleasedAttributes(this.trustRelationship);
-			boolean federation = trustService.isFederation(this.trustRelationship);
+			boolean federation = shibboleth3ConfService.isFederation(this.trustRelationship);
 			this.trustRelationship.setFederation(federation);
 
 			trustContactsAction.saveContacts();

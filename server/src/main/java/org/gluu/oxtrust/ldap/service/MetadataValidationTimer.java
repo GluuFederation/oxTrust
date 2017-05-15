@@ -205,7 +205,7 @@ public class MetadataValidationTimer {
 					} else {
 						tr.setSpMetaDataFN(metadataFN.replaceAll(".{4}\\..{4}$", ""));
 					}
-					boolean federation = trustService.isFederation(tr);
+					boolean federation = shibboleth3ConfService.isFederation(tr);
 					tr.setFederation(federation);
 					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
@@ -249,7 +249,7 @@ public class MetadataValidationTimer {
 					}else{
 						tr.setSpMetaDataFN(metadataFN.replaceAll("....$", ""));
 					}
-					boolean federation = trustService.isFederation(tr);
+					boolean federation = shibboleth3ConfService.isFederation(tr);
 					tr.setFederation(federation);
 					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());

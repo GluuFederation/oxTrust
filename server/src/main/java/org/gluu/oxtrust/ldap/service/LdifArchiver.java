@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -29,8 +31,7 @@ public class LdifArchiver implements DeleteNotifier {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
-	
+	private LdapEntryManager ldapEntryManager;	
 	@Inject
 	private AppConfiguration appConfiguration;
 
@@ -38,7 +39,6 @@ public class LdifArchiver implements DeleteNotifier {
 
 	private boolean disable;
 
-	@PostConstruct
 	public void init() {
 		storeDir = appConfiguration.getLdifStore();
 		if (storeDir != null) {

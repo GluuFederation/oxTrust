@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 
 /**
@@ -22,7 +23,7 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 @Named
 public class CentralLdapService {
 
-	@Inject
+	@Inject @CentralLdap
 	private LdapEntryManager centralLdapEntryManager;
 
 	/**

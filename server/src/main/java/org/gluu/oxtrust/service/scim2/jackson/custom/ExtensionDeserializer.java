@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -38,6 +39,7 @@ import org.xdi.model.ScimCustomAtribute;
 /**
  * Custom deserializer for the SCIM 2.0 User Extension class.
  */
+@Stateless
 @Named
 public class ExtensionDeserializer extends JsonDeserializer<Extension> {
 
@@ -47,7 +49,7 @@ public class ExtensionDeserializer extends JsonDeserializer<Extension> {
     @Inject
     private AttributeService attributeService;
 
-    private String id;
+    private String id;	
 
     @Override
     public Extension deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {

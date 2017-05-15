@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.Serializable;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,7 +31,9 @@ import org.slf4j.Logger;
  */
 @Stateless
 @Named("linktrackService")
-public class LinktrackService {
+public class LinktrackService implements Serializable {
+
+	private static final long serialVersionUID = -8345266501234892594L;
 
 	private static final String CREATE_LINK_URL_PATTERN = 
 			"https://linktrack.info/api/v1_0/makeLink?login=%s&pass=%s&external_url=%s";

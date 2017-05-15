@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import javax.ejb.Stateless;
@@ -24,9 +25,11 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  */
 @Stateless
 @Named
-public class EncryptionService {
+public class EncryptionService implements Serializable {
 
-    @Inject
+	private static final long serialVersionUID = -5813201875981117513L;
+
+	@Inject
     private Logger log;
 
     @Inject

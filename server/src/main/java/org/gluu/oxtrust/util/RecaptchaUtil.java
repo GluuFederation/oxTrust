@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.faces.context.ExternalContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -31,10 +32,11 @@ public class RecaptchaUtil {
 	@Inject
 	private Logger log;
 	
-	@Inject
-	private HttpServletRequest httpServletRequest;
+    @Inject
+    private ExternalContext externalContext;
 
 	public boolean verifyGoogleRecaptchaFromServletContext(String secretKey) {
+		HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
 		String gRecaptchaResponse = httpServletRequest.getParameter("g-recaptcha-response");
 		if (StringHelper.isNotEmpty(gRecaptchaResponse)) {
 			return verifyGoogleRecaptcha(gRecaptchaResponse, secretKey);

@@ -33,6 +33,7 @@ import org.gluu.oxtrust.service.scim2.schema.SchemaTypeLoadingFactory;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeAbstractSerializer;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 import com.wordnik.swagger.annotations.Api;
 
@@ -48,6 +49,9 @@ public class SchemaWebService extends BaseScimWebService {
 
     @Inject
     private Logger log;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
     /**
      * Retrieves the complete schema.
@@ -115,7 +119,7 @@ public class SchemaWebService extends BaseScimWebService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        URI location = new URI(super.appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + id);
+        URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + id);
 
         // Serialize to JSON
         String json = serialize(schemaType);

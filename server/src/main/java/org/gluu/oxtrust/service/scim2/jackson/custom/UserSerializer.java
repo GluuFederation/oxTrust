@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -47,7 +48,8 @@ import org.xdi.model.OxMultivalued;
  * @author Val Pecaoco
  * @link User
  */
-@Named("userSerializer")
+@Stateless
+@Named
 public class UserSerializer extends JsonSerializer<User> {
 
     @Inject

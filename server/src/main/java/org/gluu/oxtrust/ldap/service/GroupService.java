@@ -23,6 +23,7 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -46,8 +47,8 @@ public class GroupService implements Serializable, IGroupService {
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
-	
+	private LdapEntryManager ldapEntryManager;	
+
 	@Inject
 	private OrganizationService organizationService;
 	
@@ -303,4 +304,29 @@ public class GroupService implements Serializable, IGroupService {
 		group.setBaseDn(getDnForGroup(null));
 		return ldapEntryManager.findEntries(group, 0, sizeLimit);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.gluu.oxtrust.ldap.service.IPersonService#isMemberOrOwner(java.lang.String[], java.lang.String)
+	 */
+	@Override
+	public boolean isMemberOrOwner(String[] groupDNs, String personDN) throws Exception {
+		boolean result = false;
+		if (ArrayHelper.isEmpty(groupDNs)) {
+			return result;
+		}
+
+		for (String groupDN : groupDNs) {
+			if (StringHelper.isEmpty(groupDN)) {
+				continue;
+			}
+
+			result = isMemberOrOwner(groupDN, personDN);
+			if (result) {
+				break;
+			}
+		}
+
+		return result;
+	}
+
 }

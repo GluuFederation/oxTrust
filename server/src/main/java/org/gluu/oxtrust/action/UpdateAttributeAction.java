@@ -16,6 +16,7 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -46,6 +47,9 @@ public class UpdateAttributeAction implements Serializable {
 
 	@Inject
 	private AttributeService attributeService;
+
+	@Inject
+	private TrustService trustService;
 
 	@Inject
 	private SchemaService schemaService;
@@ -308,7 +312,7 @@ public class UpdateAttributeAction implements Serializable {
 		if (update && showAttributeDeleteConfirmation && this.attribute.isCustom()) {
 			showAttributeDeleteConfirmation = false;
 
-			if (attributeService.removeAttribute(this.attribute)) {
+			if (trustService.removeAttribute(this.attribute)) {
 				return OxTrustConstants.RESULT_SUCCESS;
 			} else {
 				log.error("Failed to remove attribute {0}", this.attribute.getInum());

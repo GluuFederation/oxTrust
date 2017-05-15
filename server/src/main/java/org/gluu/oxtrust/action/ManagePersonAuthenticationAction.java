@@ -88,6 +88,9 @@ public class ManagePersonAuthenticationAction
 	private PassportService passportService;
 	
 	@Inject
+	private ConfigurationFactory configurationFactory;
+	
+	@Inject
 	private EncryptionService encryptionService;
 
 	private GluuLdapConfiguration ldapConfig;
@@ -119,9 +122,6 @@ public class ManagePersonAuthenticationAction
 
 	@Inject
 	private AppConfiguration appConfiguration;
-
-	@Inject
-	private String cryptoConfigurationSalt;
 
 	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String modify() {
@@ -309,7 +309,7 @@ public class ManagePersonAuthenticationAction
 			properties.setProperty("servers", buildServersString(this.ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(this.ldapConfig.isUseSSL()));
 			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(
-					PropertiesDecrypter.decryptProperties(properties, cryptoConfigurationSalt));
+					PropertiesDecrypter.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 				return OxTrustConstants.RESULT_SUCCESS;

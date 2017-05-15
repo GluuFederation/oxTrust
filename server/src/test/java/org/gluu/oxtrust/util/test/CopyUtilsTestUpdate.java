@@ -4,7 +4,7 @@ import static org.testng.AssertJUnit.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
 import org.gluu.oxtrust.action.test.ConfigurableTest;
 import org.gluu.oxtrust.model.GluuCustomAttribute;

@@ -71,7 +71,7 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.OxMultivalued;
-import org.xdi.oxauth.model.configuration.AppConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 @Stateless

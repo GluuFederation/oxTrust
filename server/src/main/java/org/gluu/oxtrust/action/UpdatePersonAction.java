@@ -23,6 +23,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -85,6 +86,9 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
+
+	@Inject
+	private MemberService memberService;
 	
 	private GluuStatus gluuStatus ;
 
@@ -265,7 +269,7 @@ public class UpdatePersonAction implements Serializable {
 				if (externalUpdateUserService.isEnabled()) {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
                 }
-				personService.removePerson(this.person);
+				memberService.removePerson(this.person);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				log.error("Failed to remove person {0}", ex, this.person.getInum());

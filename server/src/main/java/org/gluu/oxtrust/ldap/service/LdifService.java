@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,8 +46,7 @@ public class LdifService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
-	
+	private LdapEntryManager ldapEntryManager;	
 	@Inject
 	private AttributeService attributeService;
 

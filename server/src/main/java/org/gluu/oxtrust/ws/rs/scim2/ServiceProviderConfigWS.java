@@ -23,6 +23,7 @@ import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
@@ -34,6 +35,9 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 	@Inject
 	private Logger log;
 
+	@Inject
+	private AppConfiguration appConfiguration;
+
 	@GET
 	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
@@ -42,7 +46,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 		ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
 
 		Meta meta = new Meta();
-		meta.setLocation(super.appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
+		meta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
 		meta.setResourceType("ServiceProviderConfig");
 		serviceProviderConfig.setMeta(meta);
 
@@ -55,7 +59,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 		}
 		serviceProviderConfig.setAuthenticationSchemes(authenticationSchemes);
 
-		URI location = new URI(super.appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
+		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
 
 		return Response.ok(serviceProviderConfig).location(location).build();
 	}

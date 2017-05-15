@@ -59,9 +59,6 @@ public class SsoLoginAction implements Serializable {
 	@Inject
 	private FacesContext facesContext;
 
-	@Inject
-	private Renderer renderer;
-
 	private String userName;
 	private String password;
 
@@ -231,21 +228,6 @@ public class SsoLoginAction implements Serializable {
 
 	public boolean isInitialized() {
 		return initialized;
-	}
-
-	/**
-	 * @param renderer
-	 *            the renderer to set
-	 */
-	public void setRenderer(Renderer renderer) {
-		this.renderer = renderer;
-	}
-
-	/**
-	 * @return the renderer
-	 */
-	public Renderer getRenderer() {
-		return renderer;
 	}
 
 	/**

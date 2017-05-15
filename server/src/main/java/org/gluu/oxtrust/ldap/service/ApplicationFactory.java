@@ -11,9 +11,13 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.model.GluuAppliance;
 import org.slf4j.Logger;
+import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
+import org.xdi.util.StringHelper;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Holds factory methods to create services
@@ -29,6 +33,9 @@ public class ApplicationFactory {
 
     @Inject
     private Logger log;
+    
+    @Inject
+    private EncryptionService encryptionService;
 
     @Produces @ApplicationScoped
    	public CacheConfiguration getCacheConfiguration() {
@@ -46,5 +53,26 @@ public class ApplicationFactory {
    		log.info("Cache configuration: " + cacheConfiguration);
    		return cacheConfiguration;
    	}
+
+	@Produces @ApplicationScoped
+	public SmtpConfiguration getSmtpConfiguration() {
+		GluuAppliance appliance = applianceService.getAppliance();
+		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
+		
+		if (smtpConfiguration == null) {
+			return null;
+		}
+
+		String password = smtpConfiguration.getPassword();
+		if (StringHelper.isNotEmpty(password)) {
+			try {
+				smtpConfiguration.setPasswordDecrypted(encryptionService.decrypt(password));
+			} catch (EncryptionException ex) {
+				log.error("Failed to decript SMTP user password", ex);
+			}
+		}
+		
+		return smtpConfiguration;
+	}
 
 }

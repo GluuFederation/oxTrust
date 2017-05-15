@@ -10,7 +10,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
 
-import javax.inject.Inject;
+import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
 import org.gluu.oxtrust.action.ApplianceStatusAction;
 import org.gluu.oxtrust.action.test.BaseTest;

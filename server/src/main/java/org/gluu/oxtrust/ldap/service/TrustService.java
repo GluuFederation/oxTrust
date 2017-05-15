@@ -6,10 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -18,7 +16,6 @@ import javax.inject.Named;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -33,7 +30,6 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
 import org.xdi.model.TrustContact;
 import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
@@ -50,16 +46,15 @@ import com.unboundid.ldap.sdk.Filter;
  */
 @Stateless
 @Named("trustService")
-public class TrustService {
+public class TrustService implements Serializable {
+
+	private static final long serialVersionUID = -8128546040230316737L;
 
 	@Inject
 	private Logger log;
 
 	@Inject
-	LdapEntryManager ldapEntryManager;
-
-	@Inject
-	private Shibboleth3ConfService shibboleth3ConfService;
+	private LdapEntryManager ldapEntryManager;
 
 	@Inject
 	private AttributeService attributeService;
@@ -273,76 +268,6 @@ public class TrustService {
 		return String.format("inum=%s,ou=trustRelationships,%s", inum, applianceDN);
 	}
 
-	/**
-	 * Adds Trust relationship for own shibboleth SP and restarts services after
-	 * done.
-	 * 
-	 * @author �Oleksiy Tataryn�
-	 */
-	public void addGluuSP() {
-	    String gluuSPInum = generateInumForNewTrustRelationship();
-	    String metadataFN = shibboleth3ConfService.getSpNewMetadataFileName(gluuSPInum);
-	    GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
-		gluuSP.setInum(gluuSPInum);
-		gluuSP.setDisplayName("gluu SP on appliance");
-		gluuSP.setDescription("Trust Relationship for the SP");
-		gluuSP.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
-		gluuSP.setSpMetaDataFN(metadataFN);
-		//TODO: 
-		gluuSP.setEntityId(StringHelper.removePunctuation(gluuSP.getInum()));
-		gluuSP.setUrl(appConfiguration.getApplianceUrl());
-
-		String certificate = "";
-		boolean result = false;
-		try {
-			certificate = FileUtils.readFileToString(new File(appConfiguration.getGluuSpCert())).replaceAll("-{5}.*?-{5}", "");
-			shibboleth3ConfService.generateSpMetadataFile(gluuSP, certificate);
-			result = shibboleth3ConfService.isCorrectSpMetadataFile(gluuSP.getSpMetaDataFN());
-
-		} catch (IOException e) {
-			log.error("Failed to gluu SP read certificate file.", e);
-		}
-
-		GluuAppliance appliance = null;
-		if (result) {
-			gluuSP.setStatus(GluuStatus.ACTIVE);
-			String inum = gluuSP.getInum();
-			String dn = getDnForTrustRelationShip(inum);
-
-			gluuSP.setDn(dn);
-			List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
-			List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
-			HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
-			List<String> customAttributeDNs = new ArrayList<String>();
-			List<String> attributeNames = new ArrayList<String>();
-
-			for (String attributeName : appConfiguration.getGluuSpAttributes()) {
-				GluuAttribute attribute = attributeService.getAttributeByName(attributeName, attributes);
-				if (attribute != null) {
-					customAttributeDNs.add(attribute.getDn());
-				}
-			}
-
-			customAttributes.addAll(attributeService.getCustomAttributesByAttributeDNs(customAttributeDNs, attributesByDNs));
-			gluuSP.setReleasedCustomAttributes(customAttributes);
-			gluuSP.setReleasedAttributes(attributeNames);
-			updateReleasedAttributes(gluuSP);
-			addTrustRelationship(gluuSP);
-
-			appliance = applianceService.getAppliance();
-			appliance.setGluuSPTR(gluuSP.getInum());
-		}
-
-		if (result) {
-			applianceService.updateAppliance(appliance);
-			log.warn("gluuSP EntityID set to " + StringHelper.removePunctuation(gluuSP.getInum())
-					+ ". Shibboleth3 configuration should be updated.");
-			// applianceService.restartServices();
-		} else {
-			log.error("IDP configuration update failed. GluuSP was not generated.");
-		}
-	}
-
 	public void updateReleasedAttributes(GluuSAMLTrustRelationship trustRelationship) {
 		List<String> releasedAttributes = new ArrayList<String>();
 
@@ -379,18 +304,6 @@ public class TrustService {
 		} else {
 			trustRelationship.setReleasedAttributes(null);
 		}
-	}
-
-	/**
-	 * Analyzes trustRelationship metadata to find out if it is federation.
-	 * 
-	 * @author �Oleksiy Tataryn�
-	 * @param trustRelationship
-	 * @return
-	 */
-	public boolean isFederation(GluuSAMLTrustRelationship trustRelationship) {
-	    //TODO: optimize this method. should not take so long
-		return shibboleth3ConfService.isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	}
 
 	public List<TrustContact> getContacts(GluuSAMLTrustRelationship trustRelationship) {
@@ -473,4 +386,46 @@ public class TrustService {
 	public List<GluuSAMLTrustRelationship> getAllSAMLTrustRelationships(int sizeLimit) {		
 			return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null, 0, sizeLimit);
 	}
+
+	/**
+	 * Remove attribute
+	 * 
+	 * @param attribute
+	 *            Attribute
+	 */
+	public boolean removeAttribute(GluuAttribute attribute) {
+		log.info("Attribute removal started");
+
+		log.trace("Removing attribute from trustRelationships");
+		List<GluuSAMLTrustRelationship> trustRelationships = getAllTrustRelationships();
+		log.trace(String.format("Iterating '%d' trustRelationships", trustRelationships.size()));
+		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
+			log.trace(String.format("Analyzing '%s'.", trustRelationship.getDisplayName()));
+			List<String> customAttrs = trustRelationship.getReleasedAttributes();
+			if (customAttrs != null) {
+				for (String attrDN : customAttrs) {
+					log.trace(String.format("'%s' has custom attribute '%s'", trustRelationship.getDisplayName(), attrDN));
+					if (attrDN.equals(attribute.getDn())) {
+						log.trace(String.format("'%s' matches '%s'.  deleting it.", attrDN, attribute.getDn()));
+						List<String> updatedAttrs = new ArrayList<String>();
+						updatedAttrs.addAll(customAttrs);
+						updatedAttrs.remove(attrDN);
+						if (updatedAttrs.size() == 0) {
+							trustRelationship.setReleasedAttributes(null);
+						} else {
+							trustRelationship.setReleasedAttributes(updatedAttrs);
+						}
+
+						updateTrustRelationship(trustRelationship);
+						break;
+					}
+				}
+			}
+		}
+		
+		attributeService.removeAttribute(attribute);
+
+		return true;
+	}
+
 }

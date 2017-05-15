@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.service.push;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +38,6 @@ public class PushDeviceService implements Serializable {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
-
 	@Inject
 	private OrganizationService organizationService;
 

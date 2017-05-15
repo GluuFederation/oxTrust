@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.cache.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -108,7 +110,6 @@ public class CacheRefreshTimer {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
-
 	@Inject
 	private ApplianceService applianceService;
 

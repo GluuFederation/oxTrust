@@ -67,7 +67,7 @@ public class ShibbolethInitializer {
 //				GluuAppliance appliance = applianceService.getAppliance();
 //				appliance.setGluuSPTR(null);
 //				applianceService.updateAppliance(appliance);
-				trustService.addGluuSP();
+				shibboleth3ConfService.addGluuSP();
 				servicesNeedRestarting = true;
 			}
 

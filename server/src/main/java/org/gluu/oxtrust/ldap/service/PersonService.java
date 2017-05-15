@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -51,9 +53,6 @@ public class PersonService implements Serializable, IPersonService {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
-
-	@Inject
-	private IGroupService groupService;
 
 	@Inject
 	private AttributeService attributeService;
@@ -121,14 +120,6 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public void removePerson(GluuCustomPerson person) {
-		// TODO: Do we realy need to remove group if owner is removed?
-		List<GluuGroup> groups = groupService.getAllGroups();
-		for (GluuGroup group : groups) {
-			if (StringHelper.equalsIgnoreCase(group.getOwner(), person.getDn())) {
-				groupService.removeGroup(group);
-			}
-		}
-
 		// Remove person
 		ldapEntryManager.removeWithSubtree(person.getDn());
 	}
@@ -442,30 +433,6 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> createEntities(Map<String, List<AttributeData>> entriesAttributes) throws Exception {
 		List<GluuCustomPerson> result = ldapEntryManager.createEntities(GluuCustomPerson.class, entriesAttributes);
-
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.gluu.oxtrust.ldap.service.IPersonService#isMemberOrOwner(java.lang.String[], java.lang.String)
-	 */
-	@Override
-	public boolean isMemberOrOwner(String[] groupDNs, String personDN) throws Exception {
-		boolean result = false;
-		if (ArrayHelper.isEmpty(groupDNs)) {
-			return result;
-		}
-
-		for (String groupDN : groupDNs) {
-			if (StringHelper.isEmpty(groupDN)) {
-				continue;
-			}
-
-			result = groupService.isMemberOrOwner(groupDN, personDN);
-			if (result) {
-				break;
-			}
-		}
 
 		return result;
 	}

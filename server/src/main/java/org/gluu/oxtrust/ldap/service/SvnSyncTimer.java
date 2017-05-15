@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -33,7 +34,9 @@ import org.xdi.util.StringHelper;
 
 @ApplicationScoped
 @Named
-public class SvnSyncTimer {
+public class SvnSyncTimer implements Serializable {
+
+	private static final long serialVersionUID = -6875538084008069405L;
 
 	private final static int DEFAULT_INTERVAL = 5 * 60; // 5 minutes
 

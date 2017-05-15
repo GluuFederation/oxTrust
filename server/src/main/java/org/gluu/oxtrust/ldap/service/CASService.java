@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -27,9 +28,11 @@ import org.xdi.util.StringHelper;
  */
 @Stateless
 @Named("casService")
-public class CASService {
+public class CASService implements Serializable {
     
-    @Inject
+	private static final long serialVersionUID = -6130872937911013810L;
+
+	@Inject
     private Logger log;
     
     @Inject

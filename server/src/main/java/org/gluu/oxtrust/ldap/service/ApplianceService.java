@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
@@ -40,8 +42,7 @@ public class ApplianceService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
-	
+	private LdapEntryManager ldapEntryManager;	
 	@Inject
 	private OrganizationService organizationService;
 

@@ -36,7 +36,7 @@ import org.xdi.util.StringHelper;
  */
 @Stateless
 @Named("organizationService")
-public class OrganizationService extends org.xdi.service.OrganizationService{
+public class OrganizationService extends org.xdi.service.OrganizationService {
 
 	private static final long serialVersionUID = -1959146007518514678L;
 

@@ -33,6 +33,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim2.Constants;
@@ -49,6 +50,7 @@ import org.gluu.oxtrust.ws.rs.scim.PATCH;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
@@ -69,6 +71,12 @@ public class UserWebService extends BaseScimWebService {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@Inject
 	private IPersonService personService;

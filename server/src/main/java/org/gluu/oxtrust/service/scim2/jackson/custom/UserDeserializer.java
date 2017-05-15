@@ -10,6 +10,7 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 
 import java.io.IOException;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,7 +33,8 @@ import org.slf4j.Logger;
  * @author Val Pecaoco
  * @link User
  */
-@Named("userDeserializer")
+@Stateless
+@Named
 public class UserDeserializer extends JsonDeserializer<User> {
 
     @Inject

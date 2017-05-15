@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service.uma;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -36,8 +38,7 @@ public class ResourceSetService implements Serializable {
 	private static final long serialVersionUID = -1537567020929600777L;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
-	
+	private LdapEntryManager ldapEntryManager;	
 	@Inject
 	private OrganizationService organizationService;
 

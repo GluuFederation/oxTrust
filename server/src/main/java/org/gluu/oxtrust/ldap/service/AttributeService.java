@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuCustomAttribute;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.service.cdi.event.EventType;
 import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
 import org.gluu.oxtrust.service.cdi.event.Events;
@@ -57,9 +56,6 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 
 	@Inject
 	private SchemaService schemaService;
-
-	@Inject
-	private TrustService trustService;
 	
 	@Inject
 	private OrganizationService organizationService;
@@ -342,52 +338,21 @@ public class AttributeService  extends org.xdi.service.AttributeService {
 	public void removeAttribute(String inum) {
 		GluuAttribute attribute = new GluuAttribute();
 		attribute.setDn(getDnForAttribute(inum));
-
+		
 		removeAttribute(attribute);
 	}
 
 	/**
-	 * Remove attribute
+	 * Remove attribute with specified Inum
 	 * 
-	 * @param attribute
-	 *            Attribute
+	 * @param inum
+	 *            Inum
 	 */
-	public boolean removeAttribute(GluuAttribute attribute) {
-		log.info("Attribute removal started");
-
-		log.trace("Removing attribute from trustRelationships");
-		List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllTrustRelationships();
-		log.trace(String.format("Iterating '%d' trustRelationships", trustRelationships.size()));
-		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			log.trace(String.format("Analyzing '%s'.", trustRelationship.getDisplayName()));
-			List<String> customAttrs = trustRelationship.getReleasedAttributes();
-			if (customAttrs != null) {
-				for (String attrDN : customAttrs) {
-					log.trace(String.format("'%s' has custom attribute '%s'", trustRelationship.getDisplayName(), attrDN));
-					if (attrDN.equals(attribute.getDn())) {
-						log.trace(String.format("'%s' matches '%s'.  deleting it.", attrDN, attribute.getDn()));
-						List<String> updatedAttrs = new ArrayList<String>();
-						updatedAttrs.addAll(customAttrs);
-						updatedAttrs.remove(attrDN);
-						if (updatedAttrs.size() == 0) {
-							trustRelationship.setReleasedAttributes(null);
-						} else {
-							trustRelationship.setReleasedAttributes(updatedAttrs);
-						}
-
-						trustService.updateTrustRelationship(trustRelationship);
-						break;
-					}
-				}
-			}
-		}
-
-		log.trace("Removing attribute for good.");
+	public void removeAttribute(GluuAttribute attribute) {
+		log.trace("Removing attribute {}", attribute.getDisplayName());
 		ldapEntryManager.remove(attribute);
 
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
-
-		return true;
 	}
 
 	/**

@@ -10,7 +10,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import javax.enterprise.context.Conversation;
-import javax.inject.Inject;
+import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
 import org.gluu.oxtrust.security.Identity;
 import org.xdi.model.security.Credentials;

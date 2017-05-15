@@ -411,7 +411,7 @@ public class UpdateGroupAction implements Serializable {
 	}
 
 	private GluuBoolean isSLAManager(String[] organizationGroups, GluuCustomPerson person) throws Exception {
-		return GluuBoolean.getByValue(String.valueOf(personService.isMemberOrOwner(organizationGroups, person.getDn())));
+		return GluuBoolean.getByValue(String.valueOf(groupService.isMemberOrOwner(organizationGroups, person.getDn())));
 	}
 
 	private String[] convertToDNsArray(List<DisplayNameEntry> members) {

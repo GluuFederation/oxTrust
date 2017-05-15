@@ -34,6 +34,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuCustomPersonList;
 import org.gluu.oxtrust.model.scim.ScimPerson;
@@ -61,6 +62,9 @@ public class UserWebService extends BaseScimWebService {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private MemberService memberService;
 
 	@Inject
 	private IPersonService personService;
@@ -386,7 +390,7 @@ public class UserWebService extends BaseScimWebService {
 					}
 				}
 
-				personService.removePerson(gluuPerson);
+				memberService.removePerson(gluuPerson);
 			}
 
 			return Response.ok().build();

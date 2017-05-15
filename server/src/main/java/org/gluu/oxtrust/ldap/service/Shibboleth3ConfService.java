@@ -36,6 +36,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
@@ -959,34 +960,6 @@ public class Shibboleth3ConfService implements Serializable {
 		return Integer.parseInt(federationTag) > 0;
 	}
 
-	public String saveFilterCert(String filterCertFileName, InputStream input) {
-
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			IOUtils.closeQuietly(input);
-			throw new InvalidConfigurationException("Failed to save filter certificate file due to undefined IDP root folder");
-		}
-
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator
-				+ "credentials" + File.separator;
-		File filterCertFile = new File(idpMetadataFolder + filterCertFileName);
-
-		FileOutputStream os = null;
-		try {
-			os = FileUtils.openOutputStream(filterCertFile);
-			IOUtils.copy(input, os);
-			os.flush();
-		} catch (IOException ex) {
-			log.error("Failed to write  filter certificate file '{0}'", ex, filterCertFile);
-			ex.printStackTrace();
-			return null;
-		} finally {
-			IOUtils.closeQuietly(os);
-			IOUtils.closeQuietly(input);
-		}
-
-		return filterCertFile.getAbsolutePath();
-	}
-
 	public boolean generateIdpConfigurationFiles() {
 
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
@@ -1163,34 +1136,6 @@ public class Shibboleth3ConfService implements Serializable {
 			}
 		}
 		return false;
-	}
-
-	public String saveProfileConfigurationCert(String profileConfigurationCertFileName, InputStream stream) {
-
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			IOUtils.closeQuietly(stream);
-			throw new InvalidConfigurationException("Failed to save Profile Configuration file due to undefined IDP root folder");
-		}
-
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator;
-		File filterCertFile = new File(idpMetadataFolder + profileConfigurationCertFileName);
-
-		FileOutputStream os = null;
-		try {
-			os = FileUtils.openOutputStream(filterCertFile);
-			IOUtils.copy(stream, os);
-			os.flush();
-		} catch (IOException ex) {
-			log.error("Failed to write  Profile Configuration  certificate file '{0}'", ex, filterCertFile);
-			ex.printStackTrace();
-			return null;
-		} finally {
-			IOUtils.closeQuietly(os);
-			IOUtils.closeQuietly(stream);
-		}
-
-		return filterCertFile.getAbsolutePath();
-
 	}
 
 	public boolean isCorrectMetadataFile(String spMetaDataFN) {
@@ -1417,4 +1362,87 @@ public class Shibboleth3ConfService implements Serializable {
 			return false;
 		}
 	}
+
+	/**
+	 * Adds Trust relationship for own shibboleth SP and restarts services after
+	 * done.
+	 * 
+	 * @author �Oleksiy Tataryn�
+	 */
+	public void addGluuSP() {
+	    String gluuSPInum = trustService.generateInumForNewTrustRelationship();
+	    String metadataFN = getSpNewMetadataFileName(gluuSPInum);
+	    GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
+		gluuSP.setInum(gluuSPInum);
+		gluuSP.setDisplayName("gluu SP on appliance");
+		gluuSP.setDescription("Trust Relationship for the SP");
+		gluuSP.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
+		gluuSP.setSpMetaDataFN(metadataFN);
+		//TODO: 
+		gluuSP.setEntityId(StringHelper.removePunctuation(gluuSP.getInum()));
+		gluuSP.setUrl(appConfiguration.getApplianceUrl());
+
+		String certificate = "";
+		boolean result = false;
+		try {
+			certificate = FileUtils.readFileToString(new File(appConfiguration.getGluuSpCert())).replaceAll("-{5}.*?-{5}", "");
+			generateSpMetadataFile(gluuSP, certificate);
+			result = isCorrectSpMetadataFile(gluuSP.getSpMetaDataFN());
+
+		} catch (IOException e) {
+			log.error("Failed to gluu SP read certificate file.", e);
+		}
+
+		GluuAppliance appliance = null;
+		if (result) {
+			gluuSP.setStatus(GluuStatus.ACTIVE);
+			String inum = gluuSP.getInum();
+			String dn = trustService.getDnForTrustRelationShip(inum);
+
+			gluuSP.setDn(dn);
+			List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
+			List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+			HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
+			List<String> customAttributeDNs = new ArrayList<String>();
+			List<String> attributeNames = new ArrayList<String>();
+
+			for (String attributeName : appConfiguration.getGluuSpAttributes()) {
+				GluuAttribute attribute = attributeService.getAttributeByName(attributeName, attributes);
+				if (attribute != null) {
+					customAttributeDNs.add(attribute.getDn());
+				}
+			}
+
+			customAttributes.addAll(attributeService.getCustomAttributesByAttributeDNs(customAttributeDNs, attributesByDNs));
+			gluuSP.setReleasedCustomAttributes(customAttributes);
+			gluuSP.setReleasedAttributes(attributeNames);
+			trustService.updateReleasedAttributes(gluuSP);
+			trustService.addTrustRelationship(gluuSP);
+
+			appliance = applianceService.getAppliance();
+			appliance.setGluuSPTR(gluuSP.getInum());
+		}
+
+		if (result) {
+			applianceService.updateAppliance(appliance);
+			log.warn("gluuSP EntityID set to " + StringHelper.removePunctuation(gluuSP.getInum())
+					+ ". Shibboleth3 configuration should be updated.");
+			// applianceService.restartServices();
+		} else {
+			log.error("IDP configuration update failed. GluuSP was not generated.");
+		}
+	}
+
+	/**
+	 * Analyzes trustRelationship metadata to find out if it is federation.
+	 * 
+	 * @author �Oleksiy Tataryn�
+	 * @param trustRelationship
+	 * @return
+	 */
+	public boolean isFederation(GluuSAMLTrustRelationship trustRelationship) {
+	    //TODO: optimize this method. should not take so long
+		return isFederationMetadata(trustRelationship.getSpMetaDataFN());
+	}
+
 }

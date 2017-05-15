@@ -151,4 +151,6 @@ public interface IGroupService {
 	public abstract List<GluuGroup> findGroups(GluuGroup group, int sizeLimit);
 
 	List<GluuGroup> getAllGroups(int sizeLimit);
+
+	public abstract boolean isMemberOrOwner(String[] groupDNs, String personDN) throws Exception;
 }

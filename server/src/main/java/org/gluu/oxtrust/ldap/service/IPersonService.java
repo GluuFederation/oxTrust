@@ -175,8 +175,6 @@ public interface IPersonService {
 
 	public abstract List<GluuCustomPerson> createEntities(Map<String, List<AttributeData>> entriesAttributes) throws Exception;
 
-	public abstract boolean isMemberOrOwner(String[] groupDNs, String personDN) throws Exception;
-
 	/**
 	 * Get person by email
 	 * 

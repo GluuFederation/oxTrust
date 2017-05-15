@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -23,6 +23,7 @@ import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Email;
@@ -59,6 +60,9 @@ public class UserExtensionsTest extends BaseTest {
 
 	@Inject
 	private SchemaService schemaService;
+
+	@Inject
+	private MemberService memberService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -171,7 +175,7 @@ public class UserExtensionsTest extends BaseTest {
 		System.out.println("##### (Persistence) customThirdField.getValue() = " + customThirdField.getValue());
 
 		// Remove Person
-		personService.removePerson(retrievedPerson);
+		memberService.removePerson(retrievedPerson);
 
 		// Remove custom attributes
 		// schemaService.removeAttributeTypeFromObjectClass(scimCustomFirst.getOrigin(),
@@ -262,7 +266,7 @@ public class UserExtensionsTest extends BaseTest {
 		System.out.println("##### (Persistence) customThirdField.getValue() = " + customThirdField.getValue());
 
 		// Remove Person
-		personService.removePerson(retrievedPerson);
+		memberService.removePerson(retrievedPerson);
 
 		// Remove custom attributes
 		// schemaService.removeAttributeTypeFromObjectClass(scimCustomFirst.getOrigin(),

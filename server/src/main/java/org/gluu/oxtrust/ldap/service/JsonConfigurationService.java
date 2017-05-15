@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -46,7 +48,6 @@ public class JsonConfigurationService implements Serializable {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
-
 	@Inject
 	private JsonService jsonService;
 

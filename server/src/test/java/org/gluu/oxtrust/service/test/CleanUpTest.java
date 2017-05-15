@@ -11,11 +11,12 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
@@ -36,6 +37,8 @@ public class CleanUpTest extends BaseTest {
 	@Inject
 	private IPersonService personService;
 
+	@Inject
+	private MemberService memberService;
 	/**
 	 * Test search
 	 * 
@@ -68,7 +71,7 @@ public class CleanUpTest extends BaseTest {
 				// String clientId = person.getClientId();
 				if (!usedPersonsList.contains(person.getInum())) {
 					try {
-						personService.removePerson(person);
+						memberService.removePerson(person);
 					} catch (EntryPersistenceException ex) {
 						System.out.println("Failed to remove person: " + ex.getMessage());
 					}

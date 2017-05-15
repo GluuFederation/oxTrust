@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim.BulkRequests;
@@ -55,6 +56,9 @@ public class BulkWebService extends BaseScimWebService {
 
 	@Inject
 	private IPersonService personService;
+
+	@Inject
+	private MemberService memberService;
 
 	@Inject
 	private IGroupService groupService;
@@ -435,7 +439,7 @@ public class BulkWebService extends BaseScimWebService {
 					}
 				}
 
-				personService.removePerson(gluuPerson);
+				memberService.removePerson(gluuPerson);
 			}
 
 			return true;

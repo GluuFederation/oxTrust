@@ -39,9 +39,6 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	private final ReentrantLock lock = new ReentrantLock();
 
-	@Inject @Named("configurationFactory.cryptoConfigurationSalt")
-	private String cryptoConfigurationSalt;
-
 	public Token getPatToken() throws UmaProtectionException {
 		if (isValidPatToken(this.umaPat, this.umaPatAccessTokenExpiration)) {
 			return this.umaPat;

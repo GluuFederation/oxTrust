@@ -31,6 +31,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
 import org.gluu.oxtrust.service.MetricService;
+import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.oxtrust.service.status.ldap.LdapStatusTimer;
 import org.gluu.oxtrust.util.BuildVersion;
@@ -91,7 +92,7 @@ public class AppInitializer {
 	@Inject @Named(LDAP_ENTRY_MANAGER_NAME)
 	private Instance<LdapEntryManager> ldapEntryManagerInstance;
 
-	@Inject @Named(LDAP_CENTRAL_ENTRY_MANAGER_NAME)
+	@Inject @Named(LDAP_CENTRAL_ENTRY_MANAGER_NAME) @CentralLdap
 	private Instance<LdapEntryManager> ldapCentralEntryManagerInstance;
 
 	@Inject
@@ -288,13 +289,13 @@ public class AppInitializer {
         return ldapEntryManager;
 	}
 
-    @Produces @ApplicationScoped @Named(LDAP_CENTRAL_ENTRY_MANAGER_NAME)
+    @Produces @ApplicationScoped @Named(LDAP_CENTRAL_ENTRY_MANAGER_NAME) @CentralLdap
 	public LdapEntryManager createCentralLdapEntryManager() {
 		if (this.centralConnectionProvider == null) {
 			return null;
 		}
 
-        LdapEntryManager centralLdapEntryManager = new LdapEntryManager(new OperationsFacade(this.centralConnectionProvider));
+		LdapEntryManager centralLdapEntryManager = new LdapEntryManager(new OperationsFacade(this.centralConnectionProvider));
         log.info("Created {}: {}", new Object[] { LDAP_CENTRAL_ENTRY_MANAGER_NAME, centralLdapEntryManager.getLdapOperationService() });
 
 		return centralLdapEntryManager;
@@ -342,6 +343,7 @@ public class AppInitializer {
 	}
 
 	private void initializeLdifArchiver(LdapEntryManager ldapEntryManager) {
+		ldifArchiver.init();
 		ldapEntryManager.addDeleteSubscriber(ldifArchiver);
 	}
 

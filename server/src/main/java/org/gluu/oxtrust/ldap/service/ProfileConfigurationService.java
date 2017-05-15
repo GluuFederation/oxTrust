@@ -7,8 +7,11 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,24 +23,32 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.XmlService;
 import org.xdi.util.StringHelper;
+import org.xdi.util.exception.InvalidConfigurationException;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xml.sax.SAXException;
+import static org.gluu.oxtrust.ldap.service.Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER;
 
 /**
  * Provides operations with metadata filters
  * 
  */
 @Stateless
-@Named("profileConfigurationService")
-public class ProfileConfigurationService {
+@Named
+public class ProfileConfigurationService implements Serializable {
+
+	private static final long serialVersionUID = -4691360522345319673L;
 
 	private static final String SHIBBOLETH_SSO = "ShibbolethSSO";
 	private static final String SAML1_ARTIFACT_RESOLUTION = "SAML1ArtifactResolution";
@@ -47,7 +58,7 @@ public class ProfileConfigurationService {
 	private static final String SAML2_ATTRIBUTE_QUERY = "SAML2AttributeQuery";
 
 	@Inject
-	private Shibboleth3ConfService shibboleth3ConfService;
+	private Logger log;
 
 	@Inject
 	private TemplateService templateService;
@@ -57,6 +68,9 @@ public class ProfileConfigurationService {
 	
 	@Inject
 	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
 		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
@@ -416,10 +430,38 @@ public class ProfileConfigurationService {
 	private void saveCertificate(GluuSAMLTrustRelationship trustRelationship, Map<String, FileUploadWrapper> fileWrappers, String name) {
 		if (fileWrappers.get(name) != null && fileWrappers.get(name).getStream() != null) {
 			String profileConfigurationCertFileName = StringHelper.removePunctuation(name + trustRelationship.getInum());
-			shibboleth3ConfService.saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
+			saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
 			trustRelationship.getProfileConfigurations().get(name)
 					.setProfileConfigurationCertFileName(StringHelper.removePunctuation(profileConfigurationCertFileName));
 		}
+
+	}
+
+	public String saveProfileConfigurationCert(String profileConfigurationCertFileName, InputStream stream) {
+
+		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
+			IOUtils.closeQuietly(stream);
+			throw new InvalidConfigurationException("Failed to save Profile Configuration file due to undefined IDP root folder");
+		}
+
+		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator;
+		File filterCertFile = new File(idpMetadataFolder + profileConfigurationCertFileName);
+
+		FileOutputStream os = null;
+		try {
+			os = FileUtils.openOutputStream(filterCertFile);
+			IOUtils.copy(stream, os);
+			os.flush();
+		} catch (IOException ex) {
+			log.error("Failed to write  Profile Configuration  certificate file '{0}'", ex, filterCertFile);
+			ex.printStackTrace();
+			return null;
+		} finally {
+			IOUtils.closeQuietly(os);
+			IOUtils.closeQuietly(stream);
+		}
+
+		return filterCertFile.getAbsolutePath();
 
 	}
 

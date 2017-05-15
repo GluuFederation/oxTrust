@@ -12,7 +12,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.IPersonService;

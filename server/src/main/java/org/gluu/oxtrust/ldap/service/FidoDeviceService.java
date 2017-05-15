@@ -5,6 +5,8 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -35,7 +37,6 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
-
 	@Override
 	public String getDnForFidoDevice(String userId, String id) {
 		String baseDn;

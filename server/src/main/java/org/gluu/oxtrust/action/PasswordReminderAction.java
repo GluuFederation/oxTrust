@@ -6,12 +6,15 @@
 
 package org.gluu.oxtrust.action;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +48,15 @@ public class PasswordReminderAction implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
+	private Logger log;
+
+	@Inject
+	private LdapEntryManager ldapEntryManager;	
+
+	@Inject
+	private RecaptchaService recaptchaService;
+	
+	@Inject
 	private ApplianceService applianceService;
 	
 	@Inject
@@ -60,7 +72,7 @@ public class PasswordReminderAction implements Serializable {
     private FacesMessages facesMessages;
 
     @Inject
-    private HttpServletRequest httpServletRequest;
+    private ExternalContext externalContext;
 
     /**
      * @return the MESSAGE_NOT_FOUND
@@ -94,12 +106,6 @@ public class PasswordReminderAction implements Serializable {
 	@NotEmpty
 	@NotBlank
 	private String email;
-
-	@Inject
-	private LdapEntryManager ldapEntryManager;
-	
-	@Inject
-	private RecaptchaService recaptchaService;
 	
 	private static String MESSAGE_NOT_FOUND = "You (or someone else) entered this email when trying to change the password of %1$s identity server account.\n\n" 
 											+ "However this email address is not on our database of registered users and therefore the attempted password change has failed.\n\n"
@@ -113,14 +119,11 @@ public class PasswordReminderAction implements Serializable {
 			+ "If you did not make this request, you can safely ignore this message. \n\n"
 			+ "<a href='%3$s'> <button>Reset Password</button></a>";
 			
-	
-	@Inject
-	private Logger log;
-
 
 	public String requestReminder() throws Exception {
-
 		if (enabled()) {
+			HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
+		
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
 			List<GluuCustomPerson> matchedPersons = personService.findPersons(person, 0);

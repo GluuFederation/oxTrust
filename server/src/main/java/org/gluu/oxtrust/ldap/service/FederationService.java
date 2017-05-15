@@ -6,6 +6,9 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,11 +29,12 @@ import org.xdi.util.StringHelper;
 
 @Stateless
 @Named
-public class FederationService {
+public class FederationService implements Serializable {
+
+	private static final long serialVersionUID = 3701922947171190714L;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
-
 	@Inject
 	private ApplianceService applianceService;
 

@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 
 import javax.ejb.Stateless;
@@ -40,7 +42,6 @@ public class PassportService implements Serializable {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
-
 	@Inject
 	private ConfigurationFactory configurationFactory;
 

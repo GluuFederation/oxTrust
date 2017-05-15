@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim2.Operation;
 import org.gluu.oxtrust.model.scim2.ScimPatchUser;
@@ -40,6 +41,9 @@ public class Scim2UserService implements Serializable {
 
     @Inject
     private Logger log;
+
+	@Inject
+	private MemberService memberService;
 
     @Inject
     private IPersonService personService;
@@ -198,7 +202,7 @@ public class Scim2UserService implements Serializable {
                 }
             }
 
-            personService.removePerson(gluuPerson);
+            memberService.removePerson(gluuPerson);
         }
     }
     
