@@ -139,7 +139,7 @@ public class PasswordReminderAction implements Serializable {
 				
 				PasswordResetRequest request = new PasswordResetRequest();
 				do{
-					request.setCreationDate(Calendar.getInstance().getTime().toString());
+					request.setCreationDate(Calendar.getInstance().getTime());
 					request.setPersonInum(matchedPersons.get(0).getInum());
 					request.setOxGuid(StringHelper.getRandomString(16));
 					request.setBaseDn("oxGuid=" + request.getOxGuid()+ ", ou=resetPasswordRequests," + appliance.getDn());

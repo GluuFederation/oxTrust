@@ -48,7 +48,7 @@
                 </h:selectOneMenu>
             </ox:decorate>
 			<h:panelGroup id="selectedClaims">
-				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'openid')}">
+				<a4j:region rendered="#{(not empty _scope.scopeType) and ((_scope.scopeType.value eq 'openid') or (_scope.scopeType.value eq 'dynamic'))}">
 		            <ox:decorate id="claims" label="#{msg['scope.claims']}">
 		                <h:panelGroup id="selectedClaimsId">
 		                    <h:panelGroup>

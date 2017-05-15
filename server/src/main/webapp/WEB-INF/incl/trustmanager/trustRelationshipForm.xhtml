@@ -292,8 +292,8 @@
 								<ox:decorate
 									id="fileWrapper"
 									rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'file'}" label="
-										#{msg['trustmanager.spMetadataFile']}
-                                    </ui:define>
+										#{msg['trustmanager.spMetadataFile']}:">
+                                    
 
 									<s:fileUpload id="fileWrapperId"
 										required="#{(_trustRelationship.spMetaDataSourceType.value eq 'file') and (empty param['sv'])}"
@@ -324,8 +324,8 @@
 								rendered="#{((not empty _trustRelationship.spMetaDataFN) and (_trustRelationship.spMetaDataSourceType.value eq 'file')) or (_trustRelationship.spMetaDataSourceType.value eq 'generate')}">
 								<ox:decorate
 									id="certUpdate" label="
-                                        #{_trustRelationship.spMetaDataSourceType.value eq 'file' ? 'Update public certificate' : 'Public certificate'}
-                                    </ui:define>
+                                        #{_trustRelationship.spMetaDataSourceType.value eq 'file' ? 'Update public certificate' : 'Public certificate'}">
+                                    
 									<s:fileUpload id="certWrapperId"
 										fileName="#{_trustRelationshipAction.certWrapper.fileName}"
 										data="#{_trustRelationshipAction.certWrapper.stream}"

@@ -16,6 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
+
+import org.gluu.oxtrust.config.OxTrustConfiguration;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
@@ -173,6 +179,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String update() {
+		checkDuplicateKetattribute();
+		
 		if (!vdsCacheRefreshPollingInterval()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -517,7 +525,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	@Override
 	public void addItemToSimpleProperties(List<SimpleProperty> simpleProperties) {
-		if (simpleProperties != null) {
+		if (checkDuplicateKetattribute() && simpleProperties != null) {
 			simpleProperties.add(new SimpleProperty(""));
 		}
 	}
@@ -531,6 +539,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	@Override
 	public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
+		
 		if (simpleCustomProperties != null) {
 			simpleCustomProperties.add(new SimpleCustomProperty("", ""));
 		}
@@ -631,5 +640,57 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	public List<SimpleCustomProperty> getAttributeMapping() {
 		return attributeMapping;
 	}
+	
+	public void validateProperty(FacesContext context, UIComponent comp,
+			Object value) {
+
+		System.out.println("inside validate method");
+		String newkeyAttr = (String) value;
+		int size= keyAttributes.size();
+		
+		for(SimpleProperty keyAttribute :  keyAttributes){
+			int i = 0;
+			if(newkeyAttr.equalsIgnoreCase(keyAttribute.getValue())){
+				i=i+1;
+				if(i==2){
+				((UIInput) comp).setValid(false);
+				FacesMessage message = new FacesMessage(
+						"key attribute already Exist! ");
+				//message.setSeverity(Severity.ERROR);
+				context.addMessage(comp.getClientId(context), message);
+				}
+			}
+			
+		}		
+	}
+	
+	
+	
+	public boolean checkDuplicateKetattribute() {
+
+		System.out.println("inside validate method");
+
+		
+		for(SimpleProperty keyAttribute1 :  keyAttributes){
+			String checkValue = keyAttribute1.getValue();
+			int i =0;
+			
+			for(SimpleProperty keyAttribute :  keyAttributes){
+				String value = keyAttribute.getValue();
+
+				if(checkValue.equals(value)){
+					i=i+1;
+					if(i==2){
+					FacesContext context = FacesContext.getCurrentInstance();
+					context.addMessage( null, new FacesMessage( FacesMessage.SEVERITY_ERROR,"Key Attribute already Exist!" ,"Key Attribute already Exist!" ));
+					return false;
+					}
+				}
+			}
+		}
+		return true;
+			
+	}		
+	
 
 }
