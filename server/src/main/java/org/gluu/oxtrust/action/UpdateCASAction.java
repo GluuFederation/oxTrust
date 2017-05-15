@@ -28,7 +28,6 @@ import org.jboss.seam.core.ResourceLoader;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.log.Log;
 import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 
 /**
@@ -36,7 +35,7 @@ import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
+@Scope(ScopeType.CONVERSATION)
 @Name("updateCASAction")
 @Restrict("#{identity.loggedIn}")
 public class UpdateCASAction implements Serializable {
