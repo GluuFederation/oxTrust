@@ -19,13 +19,13 @@ import javax.inject.Named;
  * @author Yuriy Movchan Date: 12/18/2012
  */
 @Stateless
-@Named("menuAction")
+@Named
 public class MenuAction implements Serializable {
+
+	private static final long serialVersionUID = -172441515451149801L;
 	
 	@Inject
 	private Conversation conversation;
-
-	private static final long serialVersionUID = -172441515451149801L;
 
 	public String endConversation(final String viewId) {
 		// TODO: CDI Review

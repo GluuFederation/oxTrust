@@ -5,13 +5,14 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:gluufn="http://www.gluu.org/jsf/functions"
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
         <section class="content-header">
             <ui:param name="welcomeTitle" value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}"/>
 
-            <ui:fragment rendered="#{not empty welcomeTitle and not s:hasPermission('configuration', 'access')}">
+            <ui:fragment rendered="#{not empty welcomeTitle and not permissionService.hasPermission('configuration', 'access')}">
                 <h:panelGroup layout="block">
                     <h:outputText value="#{welcomeTitle}" escape="false"/>
                     <h:outputText value="#{organizationService.getVersion()}" escape="false"/>
@@ -28,7 +29,7 @@
         </section>
 
         <section class="content">
-            <ui:fragment rendered="#{s:hasPermission('configuration', 'access')}">
+            <ui:fragment rendered="#{permissionService.hasPermission('configuration', 'access')}">
                 <div class="row">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                         <div class="info-box">
