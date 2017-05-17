@@ -8,6 +8,7 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:gluufn="http://www.gluu.org/jsf/functions"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
@@ -32,14 +33,13 @@
 
         <h:form>
             <h:panelGrid id="memberPanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft" style="float:left !important;width:100% !important;">
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern">
-                    <ui:param name="_hideLabel" value="true" />
+                <ox:decorate id="searchPattern" hideLabel="true">
                     <div style="float: left;">
                     <h:inputText style="float: left;width: 70%;" value="#{cc.attrs.searchPattern}" size="30" maxlength="30" id="searchMemberPatternId" styleClass="searchParameters form-control" alt="Search parameters like iNum, Display Name" />
 
                     <a4j:commandButton style="float: left;margin-left: 5px;" value="Search" action="#{cc.attrs.searchMethod}" render="memberPanelId" styleClass="btn btn-primary" />
                         </div>
-                </s:decorate>
+                </ox:decorate>
     
                 <h:panelGroup id="memberNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
                     <h:outputText value="No Search Result Found" />

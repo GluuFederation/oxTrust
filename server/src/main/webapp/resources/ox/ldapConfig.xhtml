@@ -54,13 +54,12 @@
 					</a4j:commandLink>
 					<h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
 						cellspacing="0">
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="name">
-							<ui:define name="label">#{msg['ldapConfig.name']}</ui:define>
+						<ox:decorate id="name" label="#{msg['ldapConfig.name']}">
 							<h:inputText styleClass="form-control"
 								value="#{cc.attrs.ldapConfig.configId}"
 								size="#{cc.attrs.inputWidth}" required="true" />
-						</s:decorate>
-
+						</ox:decorate>
+            
 						<h:panelGroup id="bindDnGroup">
 							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
 								id="bindDn">
@@ -70,34 +69,30 @@
 							</s:decorate>
 						</h:panelGroup>
 
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="useSSL">
-							<ui:define name="label">#{msg['ldapConfig.maxConnections']}</ui:define>
+						<ox:decorate id="useSSL" label="#{msg['ldapConfig.maxConnections']}">
 							<h:inputText styleClass="form-control"
 								value="#{cc.attrs.ldapConfig.maxConnections}" size="5"
 								required="true" />
-						</s:decorate>
+						</ox:decorate>
 
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-							rendered="#{cc.attrs.displayPrimaryKey}">
-							<ui:define name="label">#{msg['ldapConfig.primaryKey']}</ui:define>
+						<ox:decorate
+							rendered="#{cc.attrs.displayPrimaryKey}" label="#{msg['ldapConfig.primaryKey']}">
 							<h:inputText styleClass="form-control"
 								value="#{cc.attrs.ldapConfig.primaryKey}" required="true"
 								size="46" />
-						</s:decorate>
+						</ox:decorate>
 
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-							rendered="#{cc.attrs.displayLocalPrimaryKey}">
-							<ui:define name="label">#{msg['ldapConfig.localPrimaryKey']}</ui:define>
+						<ox:decorate
+							rendered="#{cc.attrs.displayLocalPrimaryKey}" label="#{msg['ldapConfig.localPrimaryKey']}">
 							<h:inputText styleClass="form-control"
 								value="#{cc.attrs.ldapConfig.localPrimaryKey}" required="true"
 								size="46" />
-						</s:decorate>
+						</ox:decorate>
 
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-							<ui:define name="label">#{msg['ldapConfig.level']}</ui:define>
+						<ox:decorate label="#{msg['ldapConfig.level']}">
 							<rich:inputNumberSpinner value="#{cc.attrs.ldapConfig.level}"
 								inputSize="2" minValue="0" maxValue="100" />
-						</s:decorate>
+						</ox:decorate>
 
 			<ox:simplePropertiesList label="#{msg['ldapConfig.server']}" labelAdd="server"
 							properties="#{cc.attrs.ldapConfig.servers}"
@@ -111,7 +106,7 @@
 							propertiesAction="#{cc.attrs.propertiesAction}" required="true"
 							rendered="#{cc.attrs.displayBaseDn}" />
 						
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+						<ox:decorate>
 						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link"
 							value="#{msg['ldapConfig.changeBindPassword']}"
 							oncomplete="#{rich:component(cc.attrs.changePasswordDialogId)}.show();"
@@ -120,19 +115,17 @@
 							limitRender="true"
 							action="#{cc.attrs.ldapConfigAction.setActiveLdapConfig(cc.attrs.ldapConfig)}"
 							execute="@this" />
-							</s:decorate>
+							</ox:decorate>
 							
-							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-							id="maxConnection">
-							<ui:define name="label">#{msg['ldapConfig.useSSL']}</ui:define>
+							<ox:decorate
+							id="maxConnection" label="#{msg['ldapConfig.useSSL']}">
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.useSSL}"
 								required="true" />
-						</s:decorate>
+						</ox:decorate>
 
-						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml" rendered="#{cc.attrs.displayEnable}">
-							<ui:define name="label">#{msg['ldapConfig.enabled']}</ui:define>
+						<ox:decorate rendered="#{cc.attrs.displayEnable}" label="#{msg['ldapConfig.enabled']}">
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}" />
-						</s:decorate>
+						</ox:decorate>
 					</h:panelGroup>
 					
 					

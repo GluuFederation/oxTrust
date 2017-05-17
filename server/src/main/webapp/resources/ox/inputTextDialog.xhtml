@@ -8,6 +8,7 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:gluufn="http://www.gluu.org/jsf/functions"
     xmlns:richext="http://java.sun.com/jsf/composite/richext"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
@@ -35,11 +36,10 @@
 
         <h:form>
             <h:panelGroup>
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="text">
-                    <ui:define name="label">#{cc.attrs.inputLabel}</ui:define>
+                <ox:decorate id="text" label="#{cc.attrs.inputLabel}">
                     <div class="row" style="float:left;margin-left:3px;">
                     <h:inputText value="#{cc.attrs.text}" size="40" maxlength="#{cc.attrs.maxLength}" styleClass="searchParameters form-control" id="#{cc.attrs.textId}" /></div>
-                </s:decorate>
+                </ox:decorate>
 
                 <richext:spacer height="16" />
 <div class="box-footer">

@@ -1,7 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:gluufn="http://www.gluu.org/jsf/functions"
-        xmlns:richext="http://java.sun.com/jsf/composite/richext" xmlns:cc="http://java.sun.com/jsf/composite">
+        xmlns:richext="http://java.sun.com/jsf/composite/richext"
+	xmlns:ox="http://java.sun.com/jsf/composite/ox"
+	xmlns:cc="http://java.sun.com/jsf/composite">
 
         <cc:interface>
             <cc:attribute name="label" default="Add" required="false" type="java.lang.String" />
@@ -28,14 +30,13 @@
 
                 <h:form>
                     <h:panelGrid id="selectEntityPanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="searchPattern" rendered="#{cc.attrs.displaySearchForm}">
-                            <ui:param name="_hideLabel" value="true" />
+                        <ox:decorate id="searchPattern" rendered="#{cc.attrs.displaySearchForm}" hideLabel="true">
                              <div class="row" style="float:left;margin-left:3px;">
                             <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" id="searchScopePatternId" styleClass="searchParameters form-control"
                                 alt="Search parameters like Name, Display Name" /></div>
                                  <div class="row" style="float:left; margin-left: 20px;">
                             <a4j:commandButton value="Search" styleClass="btn btn-primary" style="margin-left:7px;" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" /></div>
-                        </s:decorate>
+                        </ox:decorate>
 
                         <s:fragment rendered="#{not cc.attrs.displaySearchForm}">
                             <a4j:jsFunction name="executeSearch#{cc.attrs.id}" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />

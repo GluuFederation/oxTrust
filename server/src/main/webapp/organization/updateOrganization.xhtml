@@ -24,7 +24,7 @@
 		</ol>
 		</section>
 		<section class="content"> <!-- Small boxes (Stat box) -->
-		<s:div id="formArea">
+		<h:panelGroup layout="block" id="formArea">
 			<ui:decorate
 				template="/WEB-INF/incl/organization/organizationForm.xhtml">
 				<ui:param name="_organization"
@@ -38,16 +38,16 @@
 
 				<ui:define name="controlButttons">
 				<div class = "box-footer" style="margin-top:-16px !important;">
-					<s:div id="updateButtons">
+					<h:panelGroup layout="block" id="updateButtons">
 						<h:commandButton value="#{msg['updateorganization.update']}" styleClass="btn btn-primary" style="margin-left:5px"
 							action="#{updateOrganizationAction.save}" />
 						<h:commandButton value="#{msg['updateorganization.cancel']}" styleClass="btn btn-primary" style="margin-left:5px"
 							action="#{updateOrganizationAction.cancel}" immediate="true" />
-					</s:div>
+					</h:panelGroup>
 					</div>
 				</ui:define>
 			</ui:decorate>
-		</s:div>
+		</h:panelGroup>
 		</section>
 	</ui:define>
 

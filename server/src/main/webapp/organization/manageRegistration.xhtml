@@ -11,7 +11,6 @@
 	xmlns:ox="http://java.sun.com/jsf/composite/ox"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
-
 	<ui:define name="body">
 		<h:outputStylesheet>
 		*.rf-pick-lst-dcrtn {
@@ -167,26 +166,23 @@ var changeTooltipPosition = function(event) {
 							<div style="display: inline-block; width: 75% !important;">
 								<h:panelGroup>
 									<a4j:region>
-										<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
-											<ui:define name="label">#{msg['organization.disableCaptcha']}</ui:define>
+										<ox:decorate label="#{msg['organization.disableCaptcha']}">
 											<h:selectBooleanCheckbox 
 												value="#{registrationManagementAction.captchaDisabled}">
 											</h:selectBooleanCheckbox>
-										</s:decorate>
-										<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml">
-											<ui:define name="label">#{msg['organization.configureRegistrationAttributes']}</ui:define>
+										</ox:decorate>
+										<ox:decorate label="#{msg['organization.configureRegistrationAttributes']}">
 											<h:selectBooleanCheckbox styleClass="checkbox checkbox2"
 												value="#{registrationManagementAction.configureRegistrationForm}">
 												<a4j:ajax event="click" render="attributes" />
 											</h:selectBooleanCheckbox>
-										</s:decorate>
+										</ox:decorate>
 										<h:panelGroup id="attributes" styleClass="checkbox2Div" style="display:none;">
 											<h:panelGroup
 												>
 												<a4j:region>
-													<s:decorate template="/WEB-INF/incl/layout/newEdit.xhtml"
-														id="searchPattern">
-														<ui:define name="label">#{msg['organization.attributesFilter']}</ui:define>
+													<ox:decorate
+														id="searchPattern" label="#{msg['organization.attributesFilter']}">
 														<h:inputText styleClass="form-control"
 															value="#{registrationManagementAction.searchPattern}"
 															size="30" maxlength="30" id="searchPatternId"
@@ -198,11 +194,10 @@ var changeTooltipPosition = function(event) {
 																limitRender="true" execute="@region"
 																oncomplete="addTooltip();" />
 														</h:inputText>
-													</s:decorate>
+													</ox:decorate>
 
 													<h:panelGroup id="foundAttributes">
-														<s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-															<ui:define name="label">#{msg['organization.attributes']}</ui:define>
+														<ox:decorate label="#{msg['organization.attributes']}">
 															<rich:pickList
 																value="#{registrationManagementAction.selectedAttributes}"
 																orderable="true"
@@ -214,7 +209,7 @@ var changeTooltipPosition = function(event) {
 																<f:converter converterId="AttributeNameConverter" />
 															</rich:pickList>
 
-														</s:decorate>
+														</ox:decorate>
 													</h:panelGroup>
 												</a4j:region>
 											</h:panelGroup>
@@ -244,11 +239,9 @@ var changeTooltipPosition = function(event) {
 
 
 
-
 			</h:form> </section>
 		</div>
 		<h:form>
-
 
 			<a4j:jsFunction name="getText"
 				data="#{registrationManagementAction.attributeData}"

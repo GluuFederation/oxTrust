@@ -44,19 +44,17 @@
 
         <rich:collapsiblePanel switchType="client" opened="false" header="#{msg['manageAuthentication.defaultAuthentication']}">
             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['manageAuthentication.authenticationMode']}</ui:define>
+                <ox:decorate label="#{msg['manageAuthentication.authenticationMode']}">
                     <h:selectOneMenu value="#{_action.authenticationMode}">
                         <s:selectItems value="#{_action.personAuthenticationConfigurationNames}" var="_name" label="#{_name}" noSelectionLabel="Default"/>
                     </h:selectOneMenu>
-                </s:decorate>
+                </ox:decorate>
 
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['manageAuthentication.authenticationLevel']}</ui:define>
+                <ox:decorate label="#{msg['manageAuthentication.authenticationLevel']}">
                     <h:selectOneMenu value="#{_action.authenticationLevel}">
                         <s:selectItems value="#{_action.personAuthenticationConfigurationLevels}" var="_level" label="#{_level}" noSelectionLabel="Default"/>
                     </h:selectOneMenu>
-                </s:decorate>
+                </ox:decorate>
         	</h:panelGrid>
         </rich:collapsiblePanel>
 

@@ -31,11 +31,10 @@
 
         <rich:collapsiblePanel switchType="client" opened="false" header="#{msg['cert.certificateManagement']}">
             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['cert.useJrePublicCerts']}</ui:define>
+                <ox:decorate label="#{msg['cert.useJrePublicCerts']}">
 
 	                <h:selectBooleanCheckbox value="#{_action.trustStoreConfiguration.useJreCertificates}"/>
-                </s:decorate>
+                </ox:decorate>
         	</h:panelGrid>
         </rich:collapsiblePanel>
 
@@ -54,9 +53,9 @@
 				</ui:decorate>
 			</h:panelGrid>
 
-			<s:div rendered="#{not _action.certsManagePossible}">
+			<h:panelGroup layout="block" rendered="#{not _action.certsManagePossible}">
 				<h:outputText value="#{msg['cert.applicationDontHavePermission']}" />
-			</s:div>
+			</h:panelGroup>
 		</rich:collapsiblePanel>
 
         <rich:collapsiblePanel switchType="client" opened="false" width="100%" bodyClass="paddning4" header="Manage Public Certificates" id="trustCertManagement">
@@ -65,24 +64,21 @@
                     <rich:dataGrid id="managePublicCertificateId" columns="1" value="#{_action.trustStoreCertificates}" var="_cert" style="width: 100%;">            
                         <h:panelGrid columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
                             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop">
-                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                                    <ui:define name="label">#{msg['cert.name']}</ui:define>
+                                <ox:decorate label="#{msg['cert.name']}">
                                     <h:inputText value="#{_cert.name}" size="100" />
-                                </s:decorate>
+                                </ox:decorate>
             
-                                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                                    <ui:define name="label">#{msg['cert.operations']}</ui:define>
+                                <ox:decorate label="#{msg['cert.operations']}">
 							        <h:panelGrid columns="2" width="100%" border="0" cellpadding="0" cellspacing="0">
 								        <a4j:commandButton value="#{msg['cert.certInfo']}" action="#{_action.getCert(_cert)}" render="certInfoSubject, certInfoIssuer" oncomplete="#{rich:component('certInfoViewer')}.show();" execute="@this"
 								        		disabled="#{_cert.certificate == null}" />
 							            <a4j:commandButton value="#{msg['cert.uploadCert']}" action="#{_action.setUploadMarker(_cert)}" oncomplete="#{rich:component('certUpload')}.show();" execute="@this"/>
 							        </h:panelGrid>
-                                </s:decorate>
+                                </ox:decorate>
                 
-                                <s:decorate template="/WEB-INF/incl/layout/view.xhtml">
-                                    <ui:define name="label">#{msg['cert.enabled']}</ui:define>
+                                <ox:decorate template="/WEB-INF/incl/layout/view.xhtml" label="#{msg['cert.enabled']}">
                                     <h:selectBooleanCheckbox value="#{_cert.enabled}" />
-                                </s:decorate>
+                                </ox:decorate>
                             </h:panelGrid>
     
                             <a4j:commandLink action="#{_action.removePublicCertificate(_cert)}" render="managePublicCertificateId" execute="@region">
@@ -92,10 +88,10 @@
                         </h:panelGrid>
                     </rich:dataGrid>
     
-                    <s:div styleClass="addConfig">
+                    <h:panelGroup layout="block" styleClass="addConfig">
                         <a4j:commandLink value="#{msg['cert.addPublicCertificates']}" action="#{_action.addPublicCertificate()}" render="managePublicCertificateId" execute="@region" />
                         <f:param name="sv" value="1" />
-                    </s:div>
+                    </h:panelGroup>
                 </a4j:region>
             </h:panelGrid>
         </rich:collapsiblePanel>

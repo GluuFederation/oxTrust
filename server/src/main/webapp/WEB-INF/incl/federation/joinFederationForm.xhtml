@@ -40,13 +40,12 @@
             <rich:panel id="attributeTabPanelGroupId">
                 <h:panelGrid columns="1" width="100%">
                     <h:panelGroup id="FederationWizard" rendered="#{not _isFederation}">
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="spMetaDataSourceTypeFederation">
-                            <ui:define name="label">#{msg['federation.federationName']}</ui:define>
+                        <ox:decorate id="spMetaDataSourceTypeFederation" label="#{msg['federation.federationName']}">
                             <h:selectOneMenu value="#{_federationProposal.containerFederation}" id="spMetaDataSourceTypeFederationId" converter="federationProposalConverter" required="true">
                                 <s:selectItems value="#{federationService.allFederations}" noSelectionLabel="#{msg['federation.federationName']}" var="_type" label="#{_type.displayName}" />
                                 <a4j:ajax event="change" render="popPanelRules, FederationRules" limitRender="true" execute="@this" />
                             </h:selectOneMenu>
-                        </s:decorate>
+                        </ox:decorate>
                     </h:panelGroup>
 
                     <h:panelGroup id="FederationRules">
@@ -72,24 +71,20 @@
             <rich:tabPanel switchType="client">
                 <rich:tab header="#{msg['federation.trustAgreement']}">
                     <h:panelGrid columns="1" width="100%">
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName" rendered="#{not _isFederation}">
-                            <ui:define name="label">#{msg['federation.organizationName']}</ui:define>
+                        <ox:decorate id="displayName" rendered="#{not _isFederation}" label="#{msg['federation.organizationName']}">
                             <h:inputText value="#{_federationProposal.displayName}" size="40" maxlength="60" required="#{empty param['sv']}" />
-                        </s:decorate>
+                        </ox:decorate>
 
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayNameFedeation" rendered="#{_isFederation}">
-                            <ui:define name="label">#{msg['federation.federationName']}</ui:define>
+                        <ox:decorate id="displayNameFedeation" rendered="#{_isFederation}" label="#{msg['federation.federationName']}">
                             <h:inputText value="#{_federationProposal.displayName}" size="40" maxlength="60" required="#{empty param['sv']}" />
-                        </s:decorate>
+                        </ox:decorate>
 
-                        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="description">
-                            <ui:define name="label">#{msg['federation.description']}</ui:define>
+                        <ox:decorate id="description" label="#{msg['federation.description']}">
                             <h:inputTextarea value="#{_federationProposal.description}" rows="3" size="40" maxlength="4000" required="#{empty param['sv']}" id="descriptionId" />
-                        </s:decorate>
+                        </ox:decorate>
 
                         <h:panelGroup rendered="#{not _isFederation}">
-                            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="spMetaDataSourceType">
-                                <ui:define name="label">#{msg['federation.metadataType']}</ui:define>
+                            <ox:decorate id="spMetaDataSourceType" label="#{msg['federation.metadataType']}">
                                 <h:selectOneMenu value="#{_federationProposal.spMetaDataSourceType}" required="#{empty param['sv']}" id="spMetaDataSourceTypeId">
                                     <s:selectItems value="#{federationService.metadataSourceTypes}" noSelectionLabel="#{msg['federation.metadataType']}" var="_type" label="#{_type.displayName}" />
                                     <!-- <s:convertEnum/> -->
@@ -99,13 +94,12 @@
                                                     FederationWizardEntitySelection" limitRender="true" execute="@this">
                                     </a4j:ajax>
                                 </h:selectOneMenu>
-                            </s:decorate>
+                            </ox:decorate>
                         </h:panelGroup>
 
                         <h:panelGroup id="fileWrapperGroupId">
-                            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="fileWrapper"
-                                rendered="#{_federationProposal.spMetaDataSourceType.value eq 'file' or _federationProposal.spMetaDataSourceType.value eq 'generate'}">
-                                <ui:define name="label">
+                            <ox:decorate id="fileWrapper"
+                                rendered="#{_federationProposal.spMetaDataSourceType.value eq 'file' or _federationProposal.spMetaDataSourceType.value eq 'generate'}" label="
                                     #{_federationProposal.spMetaDataSourceType.value eq 'file' ? 'Sp Metadata File' : 'Public certificate'}
                                 </ui:define>
                                 <s:fileUpload id="fileWrapperId" required="#{(_federationProposal.spMetaDataSourceType.value eq 'file') 
@@ -119,14 +113,13 @@
                                     <h:graphicImage value="/img/remove.gif" />
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink>
-                            </s:decorate>
+                            </ox:decorate>
                         </h:panelGroup>
 
                         <h:panelGroup id="spMetaDataUrlGroupId">
-                            <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="spMetaDataUrlId" rendered="#{_federationProposal.spMetaDataSourceType.value eq 'uri'}">
-                                <ui:define name="label">#{msg['federation.spMetadataURL']}</ui:define>
+                            <ox:decorate id="spMetaDataUrlId" rendered="#{_federationProposal.spMetaDataSourceType.value eq 'uri'}" label="#{msg['federation.spMetadataURL']}">
                                 <h:inputText value="#{_federationProposal.spMetaDataURL}" size="40" required="#{empty param['sv']}" id="spMetaDataURLId" />
-                            </s:decorate>
+                            </ox:decorate>
                         </h:panelGroup>
                     </h:panelGrid>
                 </rich:tab>

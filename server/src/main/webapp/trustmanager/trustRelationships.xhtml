@@ -49,9 +49,8 @@
 				
 					<div class="row">
 				<h:form>
-										<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
-											id="searchPattern">
-											<ui:param name="_hideLabel" value="true" />
+										<ox:decorate
+											id="searchPattern" hideLabel="true">
 											<div style="width: 100%; float: left;margin-left:17px;">
 												<h:inputText style="width:60%; float:left;"
 													styleClass="form-control"
@@ -62,7 +61,7 @@
 													styleClass="btn btn-primary" value="#{msg['trustmanager.search']}"
 													action="#{trustRelationshipInventoryAction.search}" />
 											</div>
-										</s:decorate>
+										</ox:decorate>
 									</h:form>
 									</div>
 				<div class="row">

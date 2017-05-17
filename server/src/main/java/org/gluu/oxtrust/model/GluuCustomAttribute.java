@@ -57,7 +57,12 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.newAttribute = newAttribute;
 		this.mandatory = mandatory;
 	}
-
+	public GluuCustomAttribute(String name, String[] values, boolean newAttribute, boolean mandatory) {
+		this.name = name;
+		this.values = values;
+		this.newAttribute = newAttribute;
+		this.mandatory = mandatory;
+	}
 	public GluuCustomAttribute(String name, String[] values) {
 		this.name = name;
 		this.values = values;

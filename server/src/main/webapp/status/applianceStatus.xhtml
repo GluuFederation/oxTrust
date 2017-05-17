@@ -7,6 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
+    xmlns:ox="http://java.sun.com/jsf/composite/ox"
     template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
     <ui:define name="body">
@@ -21,7 +22,7 @@
 		</ol>
 		</section>
 		<section class="content">
-        <s:div id="formArea">
+        <h:panelGroup layout="block" id="formArea">
         <div class="row">
             <div class="col-xs-12">
               <div class="box box-primary">
@@ -30,59 +31,50 @@
                       <div style="display: inline-block;width: 75% !important;">
             <ui:param name="_appliance" value="#{applianceService.appliance}" />
             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" id="statusTable">
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.hostName']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.hostName']}">
                     <h:outputText value="#{_appliance.hostname}" />
-                </s:decorate>
+                </ox:decorate>
     
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.ipAddress']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.ipAddress']}">
                     <h:outputText value="#{_appliance.ipAddress}" />
-                </s:decorate>
+                </ox:decorate>
     
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.systemUptime']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.systemUptime']}">
                     <h:outputText value="#{_appliance.systemUptime}" converter="uptimeConverter"/>
-                </s:decorate>
+                </ox:decorate>
     
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.lastUpdate']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.lastUpdate']}">
                     <h:outputText value="#{_appliance.lastUpdate}">
                         <s:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
                     </h:outputText>
-                </s:decorate>
+                </ox:decorate>
     
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.pollingInterval']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.pollingInterval']}">
                     <h:outputText value="60 seconds" />
-                </s:decorate>
+                </ox:decorate>
     
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.personCount']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.personCount']}">
                     <h:outputText value="#{_appliance.personCount}" />
-                </s:decorate>
+                </ox:decorate>
     
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.groupCount']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.groupCount']}">
                     <h:outputText value="#{_appliance.groupCount}" />
-                </s:decorate>
+                </ox:decorate>
     
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.freeMemory']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.freeMemory']}">
                     <h:outputText value="#{_appliance.freeMemory}" />
                     <h:outputText value="%" />
-                </s:decorate>
+                </ox:decorate>
     
-                <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                    <ui:define name="label">#{msg['applianceStatus.freeDiskSpace']}</ui:define>
+                <ox:decorate label="#{msg['applianceStatus.freeDiskSpace']}">
                     <h:outputText value="#{_appliance.freeDiskSpace}" />
                     <h:outputText value="%" />
-                </s:decorate>
+                </ox:decorate>
             </h:panelGrid><div class="box-footer">
 							<ui:insert name="controlButttons" />
 					</div></div></div></div>
              </div>
-        </s:div>
+        </h:panelGroup>
         </section>
     </ui:define>
 

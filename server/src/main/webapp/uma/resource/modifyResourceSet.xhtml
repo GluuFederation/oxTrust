@@ -29,7 +29,7 @@
 						<div class="box-header">
 						</div>
                             <div style="display: inline-block; width: 100% !important;">
-        <s:div id="formArea">
+        <h:panelGroup layout="block" id="formArea">
             <h:outputStylesheet>
                 .uploadFile {
                      width: 300px;        
@@ -40,27 +40,23 @@
 
             <h:form>
                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="resourceSet" rendered="#{updateResourceSetAction.update}">
-                        <ui:define name="label">#{msg['uma.resourceSet']}</ui:define>
+                    <ox:decorate id="resourceSet" rendered="#{updateResourceSetAction.update}" label="#{msg['uma.resourceSet']}">
                         <h:outputText value="#{_resourceSet.inum}" />
-                    </s:decorate>
+                    </ox:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="displayName">
-                        <ui:define name="label">#{msg['uma.displayName']}</ui:define>
+                    <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
                        <div class = "col-sm-9">
                         <rich:inplaceInput style="margin-left:-16px;"  value="#{_resourceSet.name}" defaultLabel="Click to enter Display Name" maxlength="60"  required="true" id="displayNameId" />
                         </div>
-                    </s:decorate>
+                    </ox:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
-                        <ui:define name="label">#{msg['uma.iconURI']}</ui:define>
+                    <ox:decorate label="#{msg['uma.iconURI']}">
                         <div class = "col-sm-9">
                         <rich:inplaceInput style="margin-left:-16px;" value="#{_resourceSet.iconUri}" defaultLabel="Click to enter Icon Url" maxlength="60"  required="true" id="iconUrlId" />
                         </div>
-                    </s:decorate>
+                    </ox:decorate>
 
-                    <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="scopes">
-                        <ui:define name="label">#{msg['uma.scopes']}</ui:define>
+                    <ox:decorate id="scopes" label="#{msg['uma.scopes']}">
                         <h:panelGroup id="selectedScopesId">
                             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                                 <a4j:repeat value="#{updateResourceSetAction.scopes}" rowKeyVar="_scopeIdx" var="_scope">
@@ -79,10 +75,9 @@
                                 <richext:spacer height="8" />
                             </h:panelGrid>
                         </h:panelGroup>
-                    </s:decorate>
+                    </ox:decorate>
 
-<!--                     <s:decorate template="/WEB-INF/incl/layout/edit.xhtml" id="clients">
-                        <ui:define name="label">Clients</ui:define>
+<!--                     <ox:decorate id="clients" label="Clients">
                         <h:panelGroup id="selectedClientsId">
                         
                             <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -104,7 +99,7 @@
                             </h:panelGrid>
                            
                         </h:panelGroup>
-                    </s:decorate> -->
+                    </ox:decorate> -->
 
                     <h:panelGroup>
                             <a4j:commandButton value="#{msg['uma.addScope']}" style = "margin-left:3px;" onclick="#{rich:component('scope:selectEntityModalPanel')}.show();" styleClass="btn btn-primary"/>
@@ -113,16 +108,16 @@
                 </h:panelGrid>
                 <h:panelGroup>
 <div class = "box-footer" style = "margin-top:10px !important;">
-                <s:div id="updateButtons" style="margin-top:10px;margin-bottom: 10px;">
+                <h:panelGroup layout="block" id="updateButtons" style="margin-top:10px;margin-bottom: 10px;">
                     <h:commandButton value="#{updateResourceSetAction.update ? 'Update' : 'Add'}" action="#{updateResourceSetAction.save}" styleClass="btn btn-primary" style = "margin-left:3px;"/>
                     <a4j:commandButton styleClass="btn btn-primary" style = "margin-left:3px;" value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" rendered="#{updateResourceSetAction.update}" />
                     <s:button value="Cancel" action="#{updateResourceSetAction.cancel}" immediate="true" propagation="end" styleClass="btn btn-primary" style = "margin-left:3px;"/>
-                </s:div>
+                </h:panelGroup>
                         </div>
                         </h:panelGroup>
                 
             </h:form>
-        </s:div>
+        </h:panelGroup>
 
         <ox:inputTextDialog id="resource" label="#{msg['uma.addResource']}" inputLabel="#{msg['uma.resource']}" text="#{updateResourceSetAction.newResource}" acceptMethod="#{updateResourceSetAction.acceptResource}"
             cancelMethod="#{updateResourceSetAction.cancelResource}" maxLength="256" inputWidth="80" dialogWidth="600" render="selectedResourcesId" queue="resourceSetQueue" />

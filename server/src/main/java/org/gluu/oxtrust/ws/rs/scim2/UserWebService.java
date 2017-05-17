@@ -38,7 +38,6 @@ import org.jboss.seam.log.Log;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
 
 /**
@@ -69,7 +68,7 @@ public class UserWebService extends BaseScimWebService {
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
+		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT)  Integer count,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
@@ -86,10 +85,12 @@ public class UserWebService extends BaseScimWebService {
 		}
 
 		try {
+			
+			count = (count == null) ? getMaxCount() : count;
 
-			if (count > MAX_COUNT) {
+			if (count > getMaxCount()) {
 
-				String detail = "Too many results (=" + count + ") would be returned; max is " + MAX_COUNT + " only.";
+				String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
 
 			} else {
@@ -261,8 +262,7 @@ public class UserWebService extends BaseScimWebService {
 
 		} catch (Exception ex) {
 
-			log.error("Failed to create user", ex);
-			ex.printStackTrace();
+			log.error("Failed to create user", ex.getMessage());
 			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
