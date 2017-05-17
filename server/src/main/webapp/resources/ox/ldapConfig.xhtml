@@ -59,6 +59,15 @@
 								value="#{cc.attrs.ldapConfig.configId}"
 								size="#{cc.attrs.inputWidth}" required="true" />
 						</ox:decorate>
+						
+						<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+							id="useAnonymousBind" rendered="#{cc.attrs.displayAnonymousBind}" style="display: none;">
+							<ui:define name="label">#{msg['ldapConfig.useAnonymousBind']}</ui:define>
+							<h:selectBooleanCheckbox
+								value="#{cc.attrs.ldapConfig.useAnonymousBind}">
+								<a4j:ajax event="click" render="bindDnGroup" execute="@this" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
             
 						<h:panelGroup id="bindDnGroup">
 							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
