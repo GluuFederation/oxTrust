@@ -32,11 +32,25 @@ public class PermissionService {
 	@Inject
 	private ApplianceService applianceService;
 
-	private String[][] managerActions = new String[][] { { "attribute", "access" }, { "person", "access" },
-			{ "group", "access" }, { "sectorIdentifier", "access" }, { "trust", "access" },
-			{ "configuration", "access" }, { "log", "access" }, { "import", "access" }, { "profile", "access" },
-			{ "registrationLinks", "access" }, { "scim", "access" }, { "scim_test", "access" }, { "client", "access" },
-			{ "scope", "access" }, { "oxauth", "access" }, { "uma", "access" }, { "oxpush", "access" }, };
+	private String[][] managerActions = new String[][] {
+			{ "attribute", "access" },
+			{ "person", "access" },
+			{ "group", "access" },
+			{ "sectorIdentifier", "access" },
+			{ "trust", "access" },
+			{ "configuration", "access" },
+			{ "log", "access" },
+			{ "import", "access" },
+			{ "profile", "access" },
+			{ "registrationLinks", "access" },
+			{ "scim", "access" },
+			{ "scim_test", "access" },
+			{ "client", "access" },
+			{ "scope", "access" },
+			{ "oxauth", "access" },
+			{ "uma", "access" },
+			{ "oxpush", "access" },
+		};
 
 	public boolean hasPermission(Object target, String action) {
 		log.trace("Checking permissions for target '{}' an 'action'. Identity: {}", target, action, identity);

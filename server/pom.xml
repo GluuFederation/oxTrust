@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.xdi</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>3.1.0-SNAPSHOT</version>
+		<version>3.1.0.weld-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -451,6 +451,16 @@
 		<dependency>
 			<groupId>org.asimba</groupId>
 			<artifactId>asimba-utility-ldap</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.xdi</groupId>
+					<artifactId>oxLdap</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.xdi</groupId>
+					<artifactId>oxLdap-annotations</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Other -->

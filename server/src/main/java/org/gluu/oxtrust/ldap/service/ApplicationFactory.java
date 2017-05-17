@@ -27,7 +27,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @ApplicationScoped
 @Named
 public class ApplicationFactory {
-    
+
     @Inject
     private ApplianceService applianceService;
 
