@@ -45,8 +45,8 @@ import com.unboundid.ldap.sdk.LDAPException;
  * @author Yuriy Movchan Date: 10.13.2010
  */
 @Stateless
-@Named("attributeService")
-public class AttributeService  extends org.xdi.service.AttributeService {
+@Named
+public class AttributeService extends org.xdi.service.AttributeService {
 
 	@Inject
 	private AppConfiguration appConfiguration;
