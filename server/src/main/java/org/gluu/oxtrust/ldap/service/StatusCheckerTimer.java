@@ -361,7 +361,7 @@ public class StatusCheckerTimer {
 		try {
 			resultOutput = new String(bos.toByteArray(), "UTF-8");
 		} catch (UnsupportedEncodingException ex) {
-			log.error("Failed to parse program {0} output", ex, programPath);
+			log.error("Failed to parse program {} output", ex, programPath);
 			return;
 		}
 
@@ -431,7 +431,7 @@ public class StatusCheckerTimer {
 		try {
 			resultOutput = new String(bos.toByteArray(), "UTF-8");
 		} catch (UnsupportedEncodingException ex) {
-			log.error("Failed to parse program {0} output", ex, programPath);
+			log.error("Failed to parse program {} output", ex, programPath);
 			return;
 		}
 

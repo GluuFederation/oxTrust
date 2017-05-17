@@ -95,7 +95,7 @@ public class ScimConfigurationWS {
 
             // Convert manually to avoid possible conflicts between resteasy providers, e.g. jettison, jackson
             final String entity = jsonService.objectToPerttyJson(cl);
-            log.trace("SCIM configuration: {0}", entity);
+            log.trace("SCIM configuration: {}", entity);
 
             return Response.ok(entity).build();
         } catch (Throwable ex) {

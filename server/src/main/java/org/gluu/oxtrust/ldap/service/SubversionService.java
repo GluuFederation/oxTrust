@@ -121,7 +121,7 @@ public class SubversionService {
 			try {
 				FileUtils.forceDelete(f);
 			} catch (IOException ex) {
-				log.error("Failed to delete file {0} from local repository folder", subversionFile.getLocalFile());
+				log.error("Failed to delete file {} from local repository folder", subversionFile.getLocalFile());
 				throw ex;
 			}
 		}
@@ -151,7 +151,7 @@ public class SubversionService {
 			try {
 				FileUtils.copyFile(new File(subversionFile.getLocalFile()), f);
 			} catch (IOException ex) {
-				log.error("Failed to copy file {0} into local repository folder", subversionFile.getLocalFile());
+				log.error("Failed to copy file {} into local repository folder", subversionFile.getLocalFile());
 				throw ex;
 			}
 		}

@@ -112,7 +112,7 @@ public class UpdateAttributeAction implements Serializable {
 		try {
 			this.attribute = attributeService.getAttributeByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find attribute {0}", ex, inum);
+			log.error("Failed to find attribute {}", ex, inum);
 		}
 
 		if (this.attribute == null) {
@@ -187,7 +187,7 @@ public class UpdateAttributeAction implements Serializable {
 
 				attributeService.updateAttribute(this.attribute);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update attribute {0}", ex, inum);
+				log.error("Failed to update attribute {}", ex, inum);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update attribute");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -240,7 +240,7 @@ public class UpdateAttributeAction implements Serializable {
 		try {
 			attributeService.addAttribute(this.attribute);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to add new attribute {0}", ex, this.attribute.getInum());
+			log.error("Failed to add new attribute {}", ex, this.attribute.getInum());
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new attribute");
 			return false;
@@ -252,14 +252,14 @@ public class UpdateAttributeAction implements Serializable {
 	private boolean validateAttributeDefinition(String attributeName) {
 		boolean containsAttribute = schemaService.containsAttributeTypeInSchema(attributeName);
 		if (!containsAttribute) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The attribute type '{0}' not defined in LDAP schema", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The attribute type '{}' not defined in LDAP schema", attributeName);
 			return false;
 		}
 
 		// Check if attribute defined in gluuPerson or in custom object class
 		boolean containsAttributeInGluuObjectClasses = containsAttributeInGluuObjectClasses(attributeName);
 		if (!containsAttributeInGluuObjectClasses) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Attribute type '{0}' definition not belong to list of allowed object classes", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Attribute type '{}' definition not belong to list of allowed object classes", attributeName);
 			return false;
 		}
 		
@@ -280,7 +280,7 @@ public class UpdateAttributeAction implements Serializable {
 			}
 		}
 
-		log.error("Failed to determine object class by attribute name '{0}'", attributeName);
+		log.error("Failed to determine object class by attribute name '{}'", attributeName);
 		return null;
 	}
 
@@ -315,7 +315,7 @@ public class UpdateAttributeAction implements Serializable {
 			if (trustService.removeAttribute(this.attribute)) {
 				return OxTrustConstants.RESULT_SUCCESS;
 			} else {
-				log.error("Failed to remove attribute {0}", this.attribute.getInum());
+				log.error("Failed to remove attribute {}", this.attribute.getInum());
 			}
 		}
 

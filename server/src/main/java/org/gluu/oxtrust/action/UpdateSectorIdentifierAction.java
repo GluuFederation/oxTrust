@@ -115,7 +115,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
             log.info("inum : " + inum);
             this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierByInum(inum);
         } catch (LdapMappingException ex) {
-            log.error("Failed to find sector identifier {0}", ex, inum);
+            log.error("Failed to find sector identifier {}", ex, inum);
         }
 
         if (this.sectorIdentifier == null) {
@@ -161,7 +161,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (LdapMappingException ex) {
                 log.info("error updating sector identifier ", ex);
-                log.error("Failed to update sector identifier {0}", ex, this.inum);
+                log.error("Failed to update sector identifier {}", ex, this.inum);
 
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier");
                 return OxTrustConstants.RESULT_FAILURE;
@@ -180,7 +180,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (LdapMappingException ex) {
                 log.info("error saving sector identifier ");
-                log.error("Failed to add new sector identifier {0}", ex, this.sectorIdentifier.getInum());
+                log.error("Failed to add new sector identifier {}", ex, this.sectorIdentifier.getInum());
 
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
                 return OxTrustConstants.RESULT_FAILURE;
@@ -200,7 +200,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 sectorIdentifierService.removeSectorIdentifier(this.sectorIdentifier);
                 return OxTrustConstants.RESULT_SUCCESS;
             } catch (LdapMappingException ex) {
-                log.error("Failed to remove sector identifier {0}", ex, this.sectorIdentifier.getInum());
+                log.error("Failed to remove sector identifier {}", ex, this.sectorIdentifier.getInum());
             }
         }
 
@@ -319,8 +319,8 @@ public class UpdateSectorIdentifierAction implements Serializable {
     }
 
     private void updateClients(List<DisplayNameEntry> oldClientDisplayNameEntries, List<DisplayNameEntry> newClientDisplayNameEntries) throws Exception {
-        log.debug("Old clients: {0}", oldClientDisplayNameEntries);
-        log.debug("New clients: {0}", newClientDisplayNameEntries);
+        log.debug("Old clients: {}", oldClientDisplayNameEntries);
+        log.debug("New clients: {}", newClientDisplayNameEntries);
 
         String sectorIdentifierDn = this.sectorIdentifier.getDn();
 
@@ -361,7 +361,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
         for (String dn : addedMembers) {
             OxAuthClient client = clientService.getClientByDn(dn);
-            log.debug("Adding sector identifier {0} to client {1}", sectorIdentifierDn, client.getDisplayName());
+            log.debug("Adding sector identifier {} to client {}", sectorIdentifierDn, client.getDisplayName());
 
             client.setSectorIdentifierUri(getSectorIdentifierUrl());
 
@@ -370,7 +370,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
         for (String dn : removedMembers) {
             OxAuthClient client = clientService.getClientByDn(dn);
-            log.debug("Removing sector identifier {0} from client {1}", sectorIdentifierDn, client.getDisplayName());
+            log.debug("Removing sector identifier {} from client {}", sectorIdentifierDn, client.getDisplayName());
 
             client.setSectorIdentifierUri(null);
 

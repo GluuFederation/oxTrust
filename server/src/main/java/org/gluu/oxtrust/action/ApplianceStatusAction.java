@@ -47,14 +47,14 @@ public class ApplianceStatusAction implements Serializable {
 
 		long currentTime = System.currentTimeMillis();
 		
-		log.debug("lastUpdate: '{0}', currentTime: '{1}'", lastUpdate, currentTime);
+		log.debug("lastUpdate: '{}', currentTime: '{}'", lastUpdate, currentTime);
 		long timeSinceLastUpdate = (currentTime - lastUpdate) / 1000;
 		if (timeSinceLastUpdate >= 0 && timeSinceLastUpdate < 100) {
 			this.setHealth("OK");
 		} else {
 			this.setHealth("FAIL");
 		}
-		log.debug("Set status '{0}'", this.getHealth());
+		log.debug("Set status '{}'", this.getHealth());
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}

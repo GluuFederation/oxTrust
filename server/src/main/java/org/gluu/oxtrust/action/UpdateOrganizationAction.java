@@ -329,7 +329,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 			this.organization.setLogoImage(imageService.getXMLFromGluuImage(newLogoImage));
 		} catch (Exception ex) {
-			log.error("Failed to store icon image: '{0}'", ex, newLogoImage);
+			log.error("Failed to store icon image: '{}'", ex, newLogoImage);
 		}
 	}
 
@@ -349,7 +349,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.deleteImage(this.curLogoImage);
 			} catch (Exception ex) {
-				log.error("Failed to delete temporary icon image: '{0}'", ex, this.curLogoImage);
+				log.error("Failed to delete temporary icon image: '{}'", ex, this.curLogoImage);
 			}
 		}
 	}
@@ -377,7 +377,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.deleteImage(this.oldLogoImage);
 			} catch (Exception ex) {
-				log.error("Failed to remove old icon image: '{0}'", ex, this.oldLogoImage);
+				log.error("Failed to remove old icon image: '{}'", ex, this.oldLogoImage);
 			}
 		}
 
@@ -387,7 +387,7 @@ public class UpdateOrganizationAction implements Serializable {
 				imageService.moveLogoImageToPersistentStore(this.curLogoImage);
 				this.organization.setLogoImage(imageService.getXMLFromGluuImage(curLogoImage));
 			} catch (Exception ex) {
-				log.error("Failed to move new icon image to persistence store: '{0}'", ex, this.curLogoImage);
+				log.error("Failed to move new icon image to persistence store: '{}'", ex, this.curLogoImage);
 			}
 		}
 
@@ -420,7 +420,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 			this.organization.setFaviconImage(imageService.getXMLFromGluuImage(newFaviconImage));
 		} catch (Exception ex) {
-			log.error("Failed to store favicon image: '{0}'", ex, newFaviconImage);
+			log.error("Failed to store favicon image: '{}'", ex, newFaviconImage);
 		}
 	}
 
@@ -440,7 +440,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.deleteImage(this.curFaviconImage);
 			} catch (Exception ex) {
-				log.error("Failed to delete temporary favicon image: '{0}'", ex, this.curFaviconImage);
+				log.error("Failed to delete temporary favicon image: '{}'", ex, this.curFaviconImage);
 			}
 		}
 	}
@@ -468,7 +468,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.deleteImage(this.oldFaviconImage);
 			} catch (Exception ex) {
-				log.error("Failed to remove old favicon image: '{0}'", ex, this.oldFaviconImage);
+				log.error("Failed to remove old favicon image: '{}'", ex, this.oldFaviconImage);
 			}
 		}
 
@@ -477,7 +477,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.moveImageToPersistentStore(this.curFaviconImage);
 			} catch (Exception ex) {
-				log.error("Failed to move new favicon image to persistence store: '{0}'", ex, this.curFaviconImage);
+				log.error("Failed to move new favicon image to persistence store: '{}'", ex, this.curFaviconImage);
 			}
 		}
 

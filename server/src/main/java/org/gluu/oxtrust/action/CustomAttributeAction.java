@@ -102,7 +102,7 @@ public class CustomAttributeAction implements Serializable {
 
 		int componentId = 1;
 		for (GluuAttribute attribute : attributes) {
-			log.debug("attribute: {0}", attribute.getName());
+			log.debug("attribute: {}", attribute.getName());
 			String id = "a" + String.valueOf(componentId++) + "Id";
 			this.availableAttributeIds.add(id);
 			this.attributeInums.put(attribute.getInum(), attribute);

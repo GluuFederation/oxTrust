@@ -453,7 +453,7 @@ public class ProfileConfigurationService implements Serializable {
 			IOUtils.copy(stream, os);
 			os.flush();
 		} catch (IOException ex) {
-			log.error("Failed to write  Profile Configuration  certificate file '{0}'", ex, filterCertFile);
+			log.error("Failed to write  Profile Configuration  certificate file '{}'", ex, filterCertFile);
 			ex.printStackTrace();
 			return null;
 		} finally {

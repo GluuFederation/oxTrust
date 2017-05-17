@@ -116,7 +116,7 @@ public class MetadataValidationTimer {
 		boolean result = validateMetadata(appConfiguration.getShibboleth3IdpRootDir() + File.separator
 				+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator, appConfiguration
 				.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator);
-		log.debug("Metadata validation finished with result: '{0}'", result);
+		log.debug("Metadata validation finished with result: '{}'", result);
 		
 		if (result) {
 			regenerateConfigurationFiles();
@@ -148,7 +148,7 @@ public class MetadataValidationTimer {
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 
-			log.info("IDP config generation files finished. TR count: '{0}'", trustRelationships.size());
+			log.info("IDP config generation files finished. TR count: '{}'", trustRelationships.size());
 		}
 
 	}

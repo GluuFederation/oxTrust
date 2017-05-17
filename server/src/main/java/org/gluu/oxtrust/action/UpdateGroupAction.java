@@ -124,7 +124,7 @@ public class UpdateGroupAction implements Serializable {
 			log.info("inum : " + inum);
 			this.group = groupService.getGroupByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find group {0}", ex, inum);
+			log.error("Failed to find group {}", ex, inum);
 
 		}
 
@@ -170,7 +170,7 @@ public class UpdateGroupAction implements Serializable {
 			} catch (LdapMappingException ex) {
 
 				log.info("error updating group ", ex);
-				log.error("Failed to update group {0}", ex, this.inum);
+				log.error("Failed to update group {}", ex, this.inum);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -187,7 +187,7 @@ public class UpdateGroupAction implements Serializable {
 				updatePersons(oldMembers, this.members);
 			} catch (LdapMappingException ex) {
 				log.info("error saving group ");
-				log.error("Failed to add new group {0}", ex, this.group.getInum());
+				log.error("Failed to add new group {}", ex, this.group.getInum());
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -208,7 +208,7 @@ public class UpdateGroupAction implements Serializable {
 				groupService.removeGroup(this.group);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove group {0}", ex, this.group.getInum());
+				log.error("Failed to remove group {}", ex, this.group.getInum());
 
 			}
 		}
@@ -318,8 +318,8 @@ public class UpdateGroupAction implements Serializable {
 	}
 
 	private void updatePersons(List<DisplayNameEntry> oldMembers, List<DisplayNameEntry> newMembers) throws Exception {
-		log.debug("Old members: {0}", oldMembers);
-		log.debug("New members: {0}", newMembers);
+		log.debug("Old members: {}", oldMembers);
+		log.debug("New members: {}", newMembers);
 
 		String groupDn = this.group.getDn();
 
@@ -363,7 +363,7 @@ public class UpdateGroupAction implements Serializable {
 
 		for (String dn : addedMembers) {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
-			log.debug("Adding group {0} to person {1} memberOf", groupDn, person.getDisplayName());
+			log.debug("Adding group {} to person {} memberOf", groupDn, person.getDisplayName());
 
 			if (appConfiguration.isUpdateApplianceStatus()) {
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
@@ -379,7 +379,7 @@ public class UpdateGroupAction implements Serializable {
 
 		for (String dn : removedMembers) {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
-			log.debug("Removing group {0} from person {1} memberOf", groupDn, person.getDisplayName());
+			log.debug("Removing group {} from person {} memberOf", groupDn, person.getDisplayName());
 
 			if (appConfiguration.isUpdateApplianceStatus()) {
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
@@ -397,7 +397,7 @@ public class UpdateGroupAction implements Serializable {
 			// Update existing members if needed
 			for (String dn : existingMembers) {
 				GluuCustomPerson person = personService.getPersonByDn(dn);
-				log.debug("Updating group {0} to person {1} memberOf", groupDn, person.getDisplayName());
+				log.debug("Updating group {} to person {} memberOf", groupDn, person.getDisplayName());
 
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 				if (slaManager.equals(person.getSLAManager())) {

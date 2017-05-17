@@ -456,7 +456,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 			AttributeTypeDefinition attributeTypeDefinition = shemaService.getAttributeTypeDefinition(attributeTypes, attributeName);
 			if (attributeTypeDefinition == null) {
-				log.error("Failed to get OID for attribute name {0}", attributeName);
+				log.error("Failed to get OID for attribute name {}", attributeName);
 				return null;
 			}
 
@@ -586,7 +586,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 		File relyingPartyFile = new File(idpConfFolder + SHIB3_IDP_RELYING_PARTY_FILE);
 		if (!relyingPartyFile.exists()) {
-			log.error("Failed to find IDP metadata file name because relaying party file '{0}' doesn't exist", relyingPartyFile.getAbsolutePath());
+			log.error("Failed to find IDP metadata file name because relaying party file '{}' doesn't exist", relyingPartyFile.getAbsolutePath());
 			return null;
 		}
 
@@ -599,11 +599,11 @@ public class Shibboleth3ConfService implements Serializable {
 			try {
 				xmlDocument = xmlService.getXmlDocument(new InputSource(isr));
 			} catch (Exception ex) {
-				log.error("Failed to parse relying party file '{0}'", ex, relyingPartyFile.getAbsolutePath());
+				log.error("Failed to parse relying party file '{}'", ex, relyingPartyFile.getAbsolutePath());
 				ex.printStackTrace();
 			}
 		} catch (IOException ex) {
-			log.error("Failed to read relying party file '{0}'", ex, relyingPartyFile.getAbsolutePath());
+			log.error("Failed to read relying party file '{}'", ex, relyingPartyFile.getAbsolutePath());
 			ex.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(isr);
@@ -621,12 +621,12 @@ public class Shibboleth3ConfService implements Serializable {
 		try {
 			filePath = xPath.compile("/RelyingPartyGroup/MetadataProvider[@id='ShibbolethMetadata']/MetadataProvider[@id='IdPMD']/MetadataResource/@file").evaluate(xmlDocument);
 		} catch (XPathExpressionException ex) {
-			log.error("Failed to find IDP metadata file in relaying party file '{0}'", ex, relyingPartyFile.getAbsolutePath());
+			log.error("Failed to find IDP metadata file in relaying party file '{}'", ex, relyingPartyFile.getAbsolutePath());
 			ex.printStackTrace();
 		}
 
 		if (filePath == null) {
-			log.error("Failed to find IDP metadata file in relaying party file '{0}'", relyingPartyFile.getAbsolutePath());
+			log.error("Failed to find IDP metadata file in relaying party file '{}'", relyingPartyFile.getAbsolutePath());
 		}
 
 		return filePath;
@@ -682,7 +682,7 @@ public class Shibboleth3ConfService implements Serializable {
 			IOUtils.copy(input, os);
 			os.flush();
 		} catch (IOException ex) {
-			log.error("Failed to write SP meta-data file '{0}'", ex, spMetadataFile);
+			log.error("Failed to write SP meta-data file '{}'", ex, spMetadataFile);
 			ex.printStackTrace();
 			return null;
 		} finally {
@@ -836,7 +836,7 @@ public class Shibboleth3ConfService implements Serializable {
 		try {
 			lines = IOUtils.readLines(new InputStreamReader(fileWrapper.getStream(), "US-ASCII"));
 		} catch (IOException ex) {
-			log.error("Failed to read public key file '{0}'", ex, fileWrapper.getFileName());
+			log.error("Failed to read public key file '{}'", ex, fileWrapper.getFileName());
 			ex.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(fileWrapper.getStream());
@@ -931,11 +931,11 @@ public class Shibboleth3ConfService implements Serializable {
 			try {
 				xmlDocument = xmlService.getXmlDocument(new InputSource(isr));
 			} catch (Exception ex) {
-				log.error("Failed to parse metadata file '{0}'", ex, spMetaDataFile.getAbsolutePath());
+				log.error("Failed to parse metadata file '{}'", ex, spMetaDataFile.getAbsolutePath());
 				ex.printStackTrace();
 			}
 		} catch (IOException ex) {
-			log.error("Failed to read metadata file '{0}'", ex, spMetaDataFile.getAbsolutePath());
+			log.error("Failed to read metadata file '{}'", ex, spMetaDataFile.getAbsolutePath());
 			ex.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(isr);
@@ -953,7 +953,7 @@ public class Shibboleth3ConfService implements Serializable {
 		try {
 			federationTag = xPath.compile("count(/EntitiesDescriptor)").evaluate(xmlDocument);
 		} catch (XPathExpressionException ex) {
-			log.error("Failed to find IDP metadata file in relaying party file '{0}'", ex, spMetaDataFile.getAbsolutePath());
+			log.error("Failed to find IDP metadata file in relaying party file '{}'", ex, spMetaDataFile.getAbsolutePath());
 			ex.printStackTrace();
 		}
 
@@ -1205,7 +1205,7 @@ public class Shibboleth3ConfService implements Serializable {
 			IOUtils.copy(stream, os);
 			os.flush();
 		} catch (IOException ex) {
-			log.error("Failed to write meta-data file '{0}'", ex, spMetadataFile);
+			log.error("Failed to write meta-data file '{}'", ex, spMetadataFile);
 			ex.printStackTrace();
 			return false;
 		} finally {

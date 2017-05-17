@@ -136,7 +136,7 @@ public class ManagePersonAuthenticationAction
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			passportEnable = appliance.getPassportEnabled();
-			log.info("passport enabled value  : '{0}'", passportEnable);
+			log.info("passport enabled value  : '{}'", passportEnable);
 			this.customScripts = customScriptService.findCustomScripts(
 					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 

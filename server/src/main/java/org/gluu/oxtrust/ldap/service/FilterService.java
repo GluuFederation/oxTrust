@@ -263,7 +263,7 @@ public class FilterService implements Serializable {
 			IOUtils.copy(input, os);
 			os.flush();
 		} catch (IOException ex) {
-			log.error("Failed to write  filter certificate file '{0}'", ex, filterCertFile);
+			log.error("Failed to write  filter certificate file '{}'", ex, filterCertFile);
 			ex.printStackTrace();
 			return null;
 		} finally {

@@ -75,13 +75,13 @@ public class ImportPersonConfiguration {
 					try {
 						attr = attributeService.getAttributeByName(attributeName);
 					} catch (EntryPersistenceException ex) {
-						log.error("Failed to load attribute '{0}' definition from LDAP", ex, attributeName);
+						log.error("Failed to load attribute '{}' definition from LDAP", ex, attributeName);
 					}
 					if (attr == null) {
-						log.warn("Failed to find attribute '{0}' definition in LDAP", attributeName);
+						log.warn("Failed to find attribute '{}' definition in LDAP", attributeName);
 						attr = createAttributeFromConfig(importPerson);
 						if (attr == null) {
-							log.error("Failed to find attribute '{0}' definition in '{1}'", attributeName,
+							log.error("Failed to find attribute '{}' definition in '{}'", attributeName,
 									GLUU_IMPORT_PERSON_PROPERTIES_FILE);
 							continue;
 						}

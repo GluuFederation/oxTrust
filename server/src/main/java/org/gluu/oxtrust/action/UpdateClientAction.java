@@ -152,11 +152,11 @@ public class UpdateClientAction implements Serializable {
             log.info("inum : " + inum);
             this.client = clientService.getClientByInum(inum);
         } catch (LdapMappingException ex) {
-            log.error("Failed to find client {0}", ex, inum);
+            log.error("Failed to find client {}", ex, inum);
         }
 
         if (this.client == null) {
-            log.error("Failed to load client {0}", inum);
+            log.error("Failed to load client {}", inum);
             return OxTrustConstants.RESULT_FAILURE;
         }
 
@@ -219,7 +219,7 @@ public class UpdateClientAction implements Serializable {
                 clientService.updateClient(this.client);
             } catch (LdapMappingException ex) {
 
-                log.error("Failed to update client {0}", ex, this.inum);
+                log.error("Failed to update client {}", ex, this.inum);
 
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client");
                 return OxTrustConstants.RESULT_FAILURE;
@@ -235,7 +235,7 @@ public class UpdateClientAction implements Serializable {
                 clientService.addClient(this.client);
             } catch (LdapMappingException ex) {
                 log.info("error saving client ");
-                log.error("Failed to add new client {0}", ex, this.inum);
+                log.error("Failed to add new client {}", ex, this.inum);
 
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
                 return OxTrustConstants.RESULT_FAILURE;
@@ -265,7 +265,7 @@ public class UpdateClientAction implements Serializable {
                 clientService.removeClient(this.client);
                 return OxTrustConstants.RESULT_SUCCESS;
             } catch (LdapMappingException ex) {
-                log.error("Failed to remove client {0}", ex, this.inum);
+                log.error("Failed to remove client {}", ex, this.inum);
             }
         }
 

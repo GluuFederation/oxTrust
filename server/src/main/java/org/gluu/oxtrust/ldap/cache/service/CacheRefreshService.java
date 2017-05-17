@@ -58,7 +58,7 @@ public class CacheRefreshService implements Serializable {
 		try {
 			return Filter.create(customLdapFilter);
 		} catch (LDAPException e) {
-			log.error("Failed to create filter: {0}", customLdapFilter);
+			log.error("Failed to create filter: {}", customLdapFilter);
 
 			return null;
 		}
@@ -91,7 +91,7 @@ public class CacheRefreshService implements Serializable {
 					filters.add(Filter.create(filterString));
 				}
 			} catch (LDAPException ex) {
-				log.error("Failed to create filter: {0}", keyAttributes[i]);
+				log.error("Failed to create filter: {}", keyAttributes[i]);
 				return null;
 			}
 		}

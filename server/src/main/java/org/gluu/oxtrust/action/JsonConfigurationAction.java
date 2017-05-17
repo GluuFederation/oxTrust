@@ -196,7 +196,7 @@ public class JsonConfigurationAction implements Serializable {
 
 			return jsonService.objectToJson(resultOxTrustappConfiguration);
 		} catch (Exception ex) {
-			log.error("Failed to prepare JSON from appConfiguration: '{0}'", ex, oxTrustappConfiguration);
+			log.error("Failed to prepare JSON from appConfiguration: '{}'", ex, oxTrustappConfiguration);
 		}
 
 		return null;
@@ -206,7 +206,7 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			return jsonService.objectToJson(oxTrustImportPersonConfiguration);
 		} catch (Exception ex) {
-			log.error("Failed to prepare JSON from ImportPersonConfig: '{0}'", ex, oxTrustImportPersonConfiguration);
+			log.error("Failed to prepare JSON from ImportPersonConfig: '{}'", ex, oxTrustImportPersonConfiguration);
 		}
 
 		return null;
@@ -216,7 +216,7 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			return jsonService.objectToJson(cachedConfig);
 		} catch (Exception ex) {
-			log.error("Failed to prepare JSON from ImportPersonConfig: '{0}'", ex, oxTrustImportPersonConfiguration);
+			log.error("Failed to prepare JSON from ImportPersonConfig: '{}'", ex, oxTrustImportPersonConfiguration);
 		}
 
 		return null;
@@ -237,7 +237,7 @@ public class JsonConfigurationAction implements Serializable {
 
 			return resultOxTrustappConfiguration;
 		} catch (Exception ex) {
-			log.error("Failed to prepare appConfiguration from JSON: '{0}'", ex, oxTrustappConfigurationJson);
+			log.error("Failed to prepare appConfiguration from JSON: '{}'", ex, oxTrustappConfigurationJson);
 		}
 
 		return null;
@@ -249,7 +249,7 @@ public class JsonConfigurationAction implements Serializable {
 
 			return resultOxTrustImportPersonConfiguration;
 		} catch (Exception ex) {
-			log.error("Failed to prepare ImportPersonConfig from JSON: '{0}'", ex, oxTrustImportPersonConfigJson);
+			log.error("Failed to prepare ImportPersonConfig from JSON: '{}'", ex, oxTrustImportPersonConfigJson);
 		}
 
 		return null;
@@ -261,7 +261,7 @@ public class JsonConfigurationAction implements Serializable {
 
 			return cachedConfiguration;
 		} catch (Exception ex) {
-			log.error("Failed to prepare ImportPersonConfig from JSON: '{0}'", ex, oxTrustImportPersonConfigJson);
+			log.error("Failed to prepare ImportPersonConfig from JSON: '{}'", ex, oxTrustImportPersonConfigJson);
 		}
 
 		return null;

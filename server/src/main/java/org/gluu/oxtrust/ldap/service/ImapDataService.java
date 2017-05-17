@@ -32,7 +32,7 @@ public class ImapDataService {
 		try {
 			return jsonService.objectToJson(imapData);
 		} catch (Exception e) {
-			log.error("Failed to convert GluuIMAPData {0} to JSON", e, imapData);
+			log.error("Failed to convert GluuIMAPData {} to JSON", e, imapData);
 		} 
 		return null;
 		
@@ -44,7 +44,7 @@ public class ImapDataService {
 			return jsonService.jsonToObject(json, GluuIMAPData.class);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			log.error("Failed to convert GluuIMAPData {0} to JSON", e, json);
+			log.error("Failed to convert GluuIMAPData {} to JSON", e, json);
 		}
 		return null;
 	}

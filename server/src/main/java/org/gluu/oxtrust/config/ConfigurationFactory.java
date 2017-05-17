@@ -294,7 +294,7 @@ public class ConfigurationFactory {
 
 			return appConfiguration;
 		} catch (Exception ex) {
-			log.error("Failed to load configuration from {0}", ex, configFilePath);
+			log.error("Failed to load configuration from {}", ex, configFilePath);
 		}
 
 		return null;
@@ -315,7 +315,7 @@ public class ConfigurationFactory {
 
 			this.cryptoConfigurationSalt = cryptoConfiguration.getString("encodeSalt");
         } catch (Exception ex) {
-			log.error("Failed to load configuration from {0}", ex, this.saltFilePath);
+			log.error("Failed to load configuration from {}", ex, this.saltFilePath);
 			throw new ConfigurationException("Failed to load configuration from " + this.saltFilePath, ex);
         }
     }
@@ -330,7 +330,7 @@ public class ConfigurationFactory {
 			}
 		} catch (Exception ex) {
 			if (isMandatory) {
-				log.error("Failed to load configuration from {0}", ex, fileName);
+				log.error("Failed to load configuration from {}", ex, fileName);
 				throw new ConfigurationException("Failed to load configuration from " + fileName, ex);
 			}
 		}

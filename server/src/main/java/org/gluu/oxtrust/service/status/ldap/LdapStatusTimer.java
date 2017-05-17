@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.gluu.oxtrust.ldap.service.CentralLdapService;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
@@ -36,6 +37,9 @@ public class LdapStatusTimer {
 
     @Inject
     private Logger log;
+    
+    @Inject
+    private CentralLdapService centralLdapService;
 
 	@Inject
 	private Event<TimerEvent> timerEvent;
@@ -75,7 +79,10 @@ public class LdapStatusTimer {
 
     private void processInt() {
     	logConnectionProviderStatistic(ldapEntryManager, "connectionProvider", "bindConnectionProvider");
-    	logConnectionProviderStatistic(ldapCentralEntryManager, "centralConnectionProvider", "centralBindConnectionProvider");
+    	
+    	if (centralLdapService.isUseCentralServer()) {
+    		logConnectionProviderStatistic(ldapCentralEntryManager, "centralConnectionProvider", "centralBindConnectionProvider");
+    	}
     }
 
 	public void logConnectionProviderStatistic(LdapEntryManager ldapEntryManager, String connectionProviderName, String bindConnectionProviderName) {

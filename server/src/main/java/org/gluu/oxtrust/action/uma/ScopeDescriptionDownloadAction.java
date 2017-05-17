@@ -124,18 +124,18 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 			return null;
 		}
 
-		log.debug("Loading UMA scope description '{0}'", this.scopeId);
+		log.debug("Loading UMA scope description '{}'", this.scopeId);
 		ScopeDescription scopeDescription;
 		try {
 			List<ScopeDescription> scopeDescriptions = scopeDescriptionService.findScopeDescriptionsById(this.scopeId);
 			if (scopeDescriptions.size() != 1) {
-				log.error("Failed to find scope description '{0}'. Found: '{1}'", this.scopeId, scopeDescriptions.size());
+				log.error("Failed to find scope description '{}'. Found: '{}'", this.scopeId, scopeDescriptions.size());
 				return null;
 			}
 
 			scopeDescription = scopeDescriptions.get(0);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find scope description '{0}'", ex, this.scopeId);
+			log.error("Failed to find scope description '{}'", ex, this.scopeId);
 			return null;
 		}
 

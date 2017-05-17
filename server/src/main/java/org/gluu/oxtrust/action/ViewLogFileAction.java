@@ -101,7 +101,7 @@ public class ViewLogFileAction implements Serializable {
 			try {
 				logViewerConfig = jsonService.jsonToObject(appliance.getOxLogViewerConfig(), LogViewerConfig.class);
 			} catch (Exception ex) {
-				log.error("Failed to load log viewer configuration '{0}'", ex, oxLogViewerConfig);
+				log.error("Failed to load log viewer configuration '{}'", ex, oxLogViewerConfig);
 			}
 		}
 
@@ -171,7 +171,7 @@ public class ViewLogFileAction implements Serializable {
 			
 			return sb.toString();
 		} catch (IOException ex) {
-			log.error("Failed to read log file '{0}'", ex, this.logFiles.get(activeLogFileIndex));
+			log.error("Failed to read log file '{}'", ex, this.logFiles.get(activeLogFileIndex));
 			String result = String.format("Failed to read log file '%s'", this.logFiles.get(activeLogFileIndex));
 			
 			return result;

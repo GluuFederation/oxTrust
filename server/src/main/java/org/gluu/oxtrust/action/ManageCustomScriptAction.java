@@ -136,7 +136,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					
 					String configId = customScript.getName();
 					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'{0}' is reserved script name", configId);
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'{}' is reserved script name", configId);
 						return OxTrustConstants.RESULT_FAILURE;
 					}
 

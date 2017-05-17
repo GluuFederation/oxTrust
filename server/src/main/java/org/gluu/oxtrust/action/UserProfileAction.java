@@ -109,7 +109,7 @@ public class UserProfileAction implements Serializable {
 		try {
 			this.person = personService.getPersonByInum(currentPerson.getInum());
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find person {0}", ex, currentPerson.getInum());
+			log.error("Failed to find person {}", ex, currentPerson.getInum());
 		}
 
 		if (this.person == null) {
@@ -146,7 +146,7 @@ public class UserProfileAction implements Serializable {
 			person.setGluuOptOuts(optOuts.size() == 0 ? null : optOuts);
 			personService.updatePerson(person);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to update profile {0}", ex, person.getInum());
+			log.error("Failed to update profile {}", ex, person.getInum());
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

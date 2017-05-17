@@ -95,7 +95,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
 		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
-		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
+		log.debug("objectClassTypes={}", Arrays.toString(objectClassTypes));
 		for (GluuAttribute attribute : attributes) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
 					&& (GluuUserRole.ADMIN == gluuUserRole)) {
@@ -555,7 +555,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		for (GluuCustomAttribute personAttribute : customAttributes) {
 			GluuAttribute tmpAttribute = getAttributeByName(personAttribute.getName(), attributes);
 			if (tmpAttribute == null) {
-				log.error("Failed to find attribute '{0}' metadata", personAttribute.getName());
+				log.error("Failed to find attribute '{}' metadata", personAttribute.getName());
 			}
 
 			personAttribute.setMetadata(tmpAttribute);
@@ -644,7 +644,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter);
 		String customOrigin = getCustomOrigin();
 		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
-		log.debug("objectClassTypes={0}", Arrays.toString(objectClassTypes));
+		log.debug("objectClassTypes={}", Arrays.toString(objectClassTypes));
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 		for (GluuAttribute attribute : attributeList) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass()) &&

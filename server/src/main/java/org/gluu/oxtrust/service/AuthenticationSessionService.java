@@ -49,7 +49,7 @@ public class AuthenticationSessionService implements Serializable {
     	}
 
     	String userUid = oauthData.getUserUid();
-    	log.debug("Calling oxAuth logout method at the end of HTTP session. User: '{0}'", userUid);
+    	log.debug("Calling oxAuth logout method at the end of HTTP session. User: '{}'", userUid);
     	try {
             String endSessionState = UUID.randomUUID().toString();
 
@@ -61,10 +61,10 @@ public class AuthenticationSessionService implements Serializable {
             EndSessionResponse endSessionResponse = endSessionClient.exec();
  
             if ((endSessionResponse == null) || (endSessionResponse.getStatus() != 302)) {
-    	    	log.error("Invalid response code at oxAuth logout. User: '{0}'", userUid);
+    	    	log.error("Invalid response code at oxAuth logout. User: '{}'", userUid);
             }
 		} catch (Exception ex) {
-	    	log.error("Exception happened at oxAuth logout. User: '{0}'", ex, userUid);
+	    	log.error("Exception happened at oxAuth logout. User: '{}'", ex, userUid);
 		}
     }
 

@@ -430,7 +430,7 @@ public class AppInitializer {
 			return;
 		}
 
-		log.info("Setting loggers level to: '{0}'", loggingLevel);
+		log.info("Setting loggers level to: '{}'", loggingLevel);
 		
 		LoggerContext loggerContext = LoggerContext.getContext(false);
 

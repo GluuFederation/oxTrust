@@ -129,7 +129,7 @@ public class PersonImportAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		log.info("Attempting to add {0} persons", fileDataToImport.getPersons().size());
+		log.info("Attempting to add {} persons", fileDataToImport.getPersons().size());
 		try {
 			for (GluuCustomPerson person : fileDataToImport.getPersons()) {
 				
@@ -139,10 +139,10 @@ public class PersonImportAction implements Serializable {
 					result = save();
 				}
 				if(result.equals(OxTrustConstants.RESULT_SUCCESS)){
-					log.debug("Added new person: {0}", person.getUid());
+					log.debug("Added new person: {}", person.getUid());
 				}
 				else{
-					log.debug("Failed to Add new person: {0}", person.getUid());
+					log.debug("Failed to Add new person: {}", person.getUid());
 				}
 			}
 		} catch (EntryPersistenceException ex) {
@@ -150,7 +150,7 @@ public class PersonImportAction implements Serializable {
 
 		}
 
-		log.info("All {0} persons added successfully", fileDataToImport.getPersons().size());
+		log.info("All {} persons added successfully", fileDataToImport.getPersons().size());
 
 		removeFileToImport();
 
@@ -239,14 +239,14 @@ public class PersonImportAction implements Serializable {
 	private boolean prepareAndValidateImportData(Table table, List<ImportAttribute> importAttributes) throws Exception {
 		String attributesString = getAttributesString(this.attributes);
 		if ((table == null) || (importAttributes == null)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Missing columns: {0}", attributesString);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Missing columns: {}", attributesString);
 			return false;
 		}
 
 		List<GluuAttribute> mandatoryAttributes = getMandatoryAttributes(this.attributes);
 		List<ImportAttribute> mandatoryImportAttributes = getMandatoryImportAttributes(importAttributes);
 		if (mandatoryAttributes.size() != mandatoryImportAttributes.size()) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Required columns: {0}", attributesString);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Required columns: {}", attributesString);
 			return false;
 		}
 
@@ -272,7 +272,7 @@ public class PersonImportAction implements Serializable {
 		}
 
 		// Store persons
-		log.info("Prepared {0} persons for creation", persons.size());
+		log.info("Prepared {} persons for creation", persons.size());
 		this.fileDataToImport.setPersons(persons);
 
 		return true;
@@ -344,7 +344,7 @@ public class PersonImportAction implements Serializable {
 		List<GluuCustomPerson> existPersons = personService.findPersonsByUids(new ArrayList<String>(uids),
 				PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES);
 		if (existPersons.size() > 0) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. There are persons with existing uid(s): {0}",
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. There are persons with existing uid(s): {}",
 					personService.getPersonString(existPersons));
 			return false;
 		}
@@ -369,7 +369,7 @@ public class PersonImportAction implements Serializable {
 				String cellValue = table.getCellValue(importAttribute.getCol(), i);
 				if (StringHelper.isEmpty(cellValue)) {
 					if (attribute.isRequred()) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Empty '{0}' not allowed", attribute.getDisplayName());
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Empty '{}' not allowed", attribute.getDisplayName());
 						validTable = false;
 					}
 					continue;
@@ -377,7 +377,7 @@ public class PersonImportAction implements Serializable {
 
 				String ldapValue = getTypedValue(attribute, cellValue);
 				if (StringHelper.isEmpty(ldapValue)) {
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Invalid value '{0}' in column '{1}' at row {2} were specified", cellValue,
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Invalid value '{}' in column '{}' at row {} were specified", cellValue,
 							attribute.getDisplayName(), i + 1);
 					validTable = false;
 					continue;
@@ -395,7 +395,7 @@ public class PersonImportAction implements Serializable {
 
 		// Convert to GluuCustomPerson and set right DN
 		List<GluuCustomPerson> persons = personService.createEntities(entriesAttributes);
-		log.info("Found {0} persons in input Excel file", persons.size());
+		log.info("Found {} persons in input Excel file", persons.size());
 		
 		for(GluuCustomPerson person  : persons){
 			for (String key : entriesAttributes.keySet()){
@@ -547,7 +547,7 @@ public class PersonImportAction implements Serializable {
                 }
 				personService.addPerson(this.person);
 			} catch (Exception ex) {
-				log.error("Failed to add new person {0}", ex, this.person.getInum());
+				log.error("Failed to add new person {}", ex, this.person.getInum());
 
 				return OxTrustConstants.RESULT_FAILURE;
 			}

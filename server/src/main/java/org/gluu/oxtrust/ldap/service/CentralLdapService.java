@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -25,6 +26,9 @@ public class CentralLdapService {
 
 	@Inject @CentralLdap
 	private LdapEntryManager centralLdapEntryManager;
+	
+	@Inject
+	private ConfigurationFactory configurationFactory;
 
 	/**
 	 * Add appliance entry
@@ -56,7 +60,7 @@ public class CentralLdapService {
 	}
 	
 	public boolean isUseCentralServer() {
-		return centralLdapEntryManager != null;
+		return (configurationFactory.getLdapCentralConfiguration() != null) && configurationFactory.getAppConfiguration().isUpdateApplianceStatus();
 	}
 
 }

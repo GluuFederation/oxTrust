@@ -111,7 +111,7 @@ public class UmaPermissionService implements Serializable {
 
         RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
 		if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
-			log.error("Status response for RPT token: '{0}' is invalid", rptToken);
+			log.error("Status response for RPT token: '{}' is invalid", rptToken);
 			return authenticationFailure;
 		}
 		
@@ -124,7 +124,7 @@ public class UmaPermissionService implements Serializable {
 				}
 			}
 
-			log.error("Status response for RPT token: '{0}' not contains right permission", rptToken);
+			log.error("Status response for RPT token: '{}' not contains right permission", rptToken);
 			return authenticationFailure;
 		}
 
@@ -190,7 +190,7 @@ public class UmaPermissionService implements Serializable {
 		} catch (MalformedURLException ex) {
         	log.error("Failed to determine host by URI", ex);
         } catch (ClientResponseFailure ex) {
-        	log.error("Failed to register permissions for resource set: '{0}'", ex, resourceSetId);
+        	log.error("Failed to register permissions for resource set: '{}'", ex, resourceSetId);
         }
 
         if ((resourceSetPermissionTicket == null) || StringHelper.isEmpty(resourceSetPermissionTicket.getTicket())) {
@@ -218,7 +218,7 @@ public class UmaPermissionService implements Serializable {
 			return null;
 		}
 
-    	log.debug("Construct response: HTTP 403 (Forbidden), entity: '{0}'",  entity);
+    	log.debug("Construct response: HTTP 403 (Forbidden), entity: '{}'",  entity);
         Response response = null;
 		try {
 			response = Response.status(Response.Status.FORBIDDEN).

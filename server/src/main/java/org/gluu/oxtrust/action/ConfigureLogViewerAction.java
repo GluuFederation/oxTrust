@@ -90,7 +90,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			updateAppliance.setOxLogViewerConfig(jsonService.objectToJson(logViewerConfiguration));
 			applianceService.updateAppliance(updateAppliance);
 		} catch (Exception ex) {
-			log.error("Failed to save log viewer configuration '{0}'", ex);
+			log.error("Failed to save log viewer configuration '{}'", ex);
 		}
 	}
 
@@ -112,7 +112,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			try {
 				logViewerConfig = jsonService.jsonToObject(appliance.getOxLogViewerConfig(), LogViewerConfig.class);
 			} catch (Exception ex) {
-				log.error("Failed to load log viewer configuration '{0}'", ex, oxLogViewerConfig);
+				log.error("Failed to load log viewer configuration '{}'", ex, oxLogViewerConfig);
 			}
 		}
 		

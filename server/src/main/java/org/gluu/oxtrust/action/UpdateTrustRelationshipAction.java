@@ -244,7 +244,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		try {
 			this.trustRelationship = trustService.getRelationshipByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find trust relationship {0}", ex, inum);
+			log.error("Failed to find trust relationship {}", ex, inum);
 		}
 
 		if (this.trustRelationship == null) {
@@ -301,7 +301,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
 					 }
 				} else {
-					log.error("Failed to save SP meta-data file {0}", fileWrapper);
+					log.error("Failed to save SP meta-data file {}", fileWrapper);
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 
@@ -314,13 +314,13 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					if(result){
 						newThreadSaveSpMetaDataFileSourceTypeURI();
 					}else{
-						log.info("There is no resource found Uri : {0}", trustRelationship.getSpMetaDataURL());
+						log.info("There is no resource found Uri : {}", trustRelationship.getSpMetaDataURL());
 					}
 					if(!update){
 						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
 					}
 					/*} else {
-						log.error("Failed to save SP meta-data file {0}", fileWrapper);
+						log.error("Failed to save SP meta-data file {}", fileWrapper);
 						return OxTrustConstants.RESULT_FAILURE;
 					}*/
 				} catch (Exception e) {
@@ -351,7 +351,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				try {
 					saveTR(update);
 				} catch (LdapMappingException ex) {
-					log.error("Failed to update trust relationship {0}", ex, inum);
+					log.error("Failed to update trust relationship {}", ex, inum);
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 			} else {
@@ -361,7 +361,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				try {
 					saveTR(update);
 				} catch (LdapMappingException ex) {
-					log.error("Failed to add new trust relationship {0}", ex, this.trustRelationship.getInum());
+					log.error("Failed to add new trust relationship {}", ex, this.trustRelationship.getInum());
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 
@@ -743,7 +743,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				tmpTrustRelationship.setStatus(GluuStatus.INACTIVE);
 				saveTR(update);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update trust relationship {0}", ex, inum);
+				log.error("Failed to update trust relationship {}", ex, inum);
 			}
 		} else {
 			// Remove file name to generate new one during new save attempt.
@@ -869,7 +869,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				synchronized (svnSyncTimer) {
 					for (GluuSAMLTrustRelationship trust : trustService.getDeconstructedTrustRelationships(this.trustRelationship)) {
 						if(GluuStatus.ACTIVE.equals(trust.getStatus())){
-							log.error("Failed to remove federation trust relationship {0}, there are still active federated Trust Relationships left.", this.trustRelationship.getInum());
+							log.error("Failed to remove federation trust relationship {}, there are still active federated Trust Relationships left.", this.trustRelationship.getInum());
 							return result;
 						}
 					}
@@ -884,7 +884,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				result = OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				result = OxTrustConstants.RESULT_FAILURE;
-				log.error("Failed to remove trust relationship {0}", ex, this.trustRelationship.getInum());
+				log.error("Failed to remove trust relationship {}", ex, this.trustRelationship.getInum());
 			} catch (InterruptedException e) {
 				log.error("Failed to add trust relationship to remove queue. It will be removed during next application restart", e);
 			} finally {
@@ -1266,7 +1266,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		AttributeTypeDefinition attributeTypeDefinition = shemaService.getAttributeTypeDefinition(attributeTypes, attributeName);
 		if (attributeTypeDefinition == null) {
-			log.error("Failed to get OID for attribute name {0}", attributeName);
+			log.error("Failed to get OID for attribute name {}", attributeName);
 			return null;
 		}
 

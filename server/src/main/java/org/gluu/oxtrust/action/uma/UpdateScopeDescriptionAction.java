@@ -130,13 +130,13 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		log.debug("Loading UMA scope description '{0}'", this.scopeInum);
+		log.debug("Loading UMA scope description '{}'", this.scopeInum);
 		try {
 			String scopeDn = scopeDescriptionService.getDnForScopeDescription(this.scopeInum);
 			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find scope description '{0}'", ex, this.scopeInum);
+			log.error("Failed to find scope description '{}'", ex, this.scopeInum);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -166,7 +166,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update scope description '{0}'", ex, this.scopeDescription.getId());
+				log.error("Failed to update scope description '{}'", ex, this.scopeDescription.getId());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -190,14 +190,14 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				scopeDescriptionService.addScopeDescription(this.scopeDescription);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to add new scope description '{0}'", ex, this.scopeDescription.getId());
+				log.error("Failed to add new scope description '{}'", ex, this.scopeDescription.getId());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
 			this.update = true;
 		}
 
-		log.debug("Scope description were {0} successfully", (this.update ? "added" : "updated"));
+		log.debug("Scope description were {} successfully", (this.update ? "added" : "updated"));
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -209,7 +209,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				scopeDescriptionService.removeScopeDescription(this.scopeDescription);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove scope description {0}", ex, this.scopeDescription.getId());
+				log.error("Failed to remove scope description {}", ex, this.scopeDescription.getId());
 			}
 		}
 
@@ -249,7 +249,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		try {
 			this.scopeDescription.setFaviconImageAsXml(jsonService.objectToJson(this.curIconImage));
 		} catch (Exception ex) {
-			log.error("Failed to store icon image: '{0}'", ex, newIcon);
+			log.error("Failed to store icon image: '{}'", ex, newIcon);
 		}
 	}
 
@@ -259,7 +259,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				this.curIconImage = jsonService.jsonToObject(faviconImageAsXml, GluuImage.class);
 			} catch (Exception ex) {
-				log.error("Faield to deserialize image: '{0}'", ex, faviconImageAsXml);
+				log.error("Faield to deserialize image: '{}'", ex, faviconImageAsXml);
 			}
 		}
 	}

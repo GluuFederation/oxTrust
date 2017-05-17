@@ -33,7 +33,7 @@ public class FileViewerAction implements Serializable {
 			try {
 				return FileUtils.readFileToString(new File(fileName));
 			} catch (IOException ex) {
-				log.error("Failed to read file: '{0}'", ex, fileName);
+				log.error("Failed to read file: '{}'", ex, fileName);
 			}
 		}
 

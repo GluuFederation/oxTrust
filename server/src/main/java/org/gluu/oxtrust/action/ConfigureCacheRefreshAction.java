@@ -234,7 +234,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		}
 
 		if ((interval == null) || (interval < 0)) {
-			log.error("Invalid cache refresh pooling interval specified: {0}", intervalString);
+			log.error("Invalid cache refresh pooling interval specified: {}", intervalString);
 			facesMessages.add("vdsCacheRefreshPollingIntervalId", FacesMessage.SEVERITY_ERROR, "Invalid cache refresh pooling interval specified");
 			return false;
 		}
@@ -264,15 +264,15 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean validateList(GluuLdapConfiguration ldapConfig, String configType, boolean validateBaseDNs) {
 		boolean result = true;
 		if (ldapConfig.getServers().size() == 0) {
-			log.error("{0} LDAP configuration '{1}' should contains at least one server", configType, ldapConfig.getConfigId());
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{0} LDAP configuration '{1}' should contains at least one server", configType,
+			log.error("{} LDAP configuration '{}' should contains at least one server", configType, ldapConfig.getConfigId());
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} LDAP configuration '{}' should contains at least one server", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
 
 		if (validateBaseDNs && (ldapConfig.getBaseDNs().size() == 0)) {
-			log.error("{0} LDAP configuration '{1}' should contains at least one Base DN", configType, ldapConfig.getConfigId());
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{0} LDAP configuration '{1}' should contains at least one Base DN", configType,
+			log.error("{} LDAP configuration '{}' should contains at least one Base DN", configType, ldapConfig.getConfigId());
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} LDAP configuration '{}' should contains at least one Base DN", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
@@ -282,8 +282,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private boolean validateList(List<String> values, String attributeName) {
 		if (values.size() == 0) {
-			log.error("{0} should contains at least one {0}", attributeName);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{0} should contains at least one {0}", attributeName);
+			log.error("{} should contains at least one {}", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} should contains at least one {}", attributeName);
 			return false;
 		}
 
@@ -454,7 +454,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 			return;
 		}
 
-		log.info("Script has been executed successfully.\n\nSample source entry is:\n'{0}'.\n\nSample result entry is:\n'{1}'",
+		log.info("Script has been executed successfully.\n\nSample source entry is:\n'{}'.\n\nSample result entry is:\n'{}'",
 				getGluuSimplePersonAttributesWithValues(sourcePerson), getGluuCustomPersonAttributesWithValues(targetPerson));
 		this.interceptorValidationMessage = String.format(
 				"Script has been executed successfully.\n\nSample source entry is:\n%s.\n\nSample result entry is:\n%s",

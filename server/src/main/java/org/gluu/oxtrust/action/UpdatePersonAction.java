@@ -143,7 +143,7 @@ public class UpdatePersonAction implements Serializable {
 		try {
 			this.person = personService.getPersonByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find person {0}", ex, inum);
+			log.error("Failed to find person {}", ex, inum);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -196,7 +196,7 @@ public class UpdatePersonAction implements Serializable {
                 }
 				personService.updatePerson(this.person);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update person {0}", ex, inum);
+				log.error("Failed to update person {}", ex, inum);
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -230,7 +230,7 @@ public class UpdatePersonAction implements Serializable {
                 }
 				personService.addPerson(this.person);
 			} catch (Exception ex) {
-				log.error("Failed to add new person {0}", ex, this.person.getInum());
+				log.error("Failed to add new person {}", ex, this.person.getInum());
 
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -272,7 +272,7 @@ public class UpdatePersonAction implements Serializable {
 				memberService.removePerson(this.person);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove person {0}", ex, this.person.getInum());
+				log.error("Failed to remove person {}", ex, this.person.getInum());
 			}
 		}
 

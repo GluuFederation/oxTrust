@@ -123,11 +123,11 @@ public class Authenticator implements Serializable {
 		try {
 			userName = identity.getOauthData().getUserUid();
 			identity.getCredentials().setUsername(userName);
-			log.info("Authenticating user '{0}'", userName);
+			log.info("Authenticating user '{}'", userName);
 
 			User user = findUserByUserName(userName);
 			if (user == null) {
-				log.error("Person '{0}' not found in LDAP", userName);
+				log.error("Person '{}' not found in LDAP", userName);
 				return false;
 			} else if (GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus"))
 					|| GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))) {
@@ -138,9 +138,9 @@ public class Authenticator implements Serializable {
 			}
 
 			postLogin(user);
-			log.info("User '{0}' authenticated successfully", userName);
+			log.info("User '{}' authenticated successfully", userName);
 		} catch (Exception ex) {
-			log.error("Failed to authenticate user '{0}'", ex, userName);
+			log.error("Failed to authenticate user '{}'", ex, userName);
 			return false;
 		}
 
@@ -153,14 +153,14 @@ public class Authenticator implements Serializable {
 	 * @throws Exception
 	 */
 	private void postLogin(User user) {
-		log.debug("Configuring application after user '{0}' login", user.getUid());
+		log.debug("Configuring application after user '{}' login", user.getUid());
 		GluuCustomPerson person = findPersonByDn(user.getDn());
 		identity.setUser(person);
 
 		// Set user roles
 		GluuUserRole[] userRoles = securityService.getUserRoles(user);
 		if (ArrayHelper.isNotEmpty(userRoles)) {
-			log.debug("Get '{0}' user roles", Arrays.toString(userRoles));
+			log.debug("Get '{}' user roles", Arrays.toString(userRoles));
 		} else {
 			log.debug("Get 0 user roles");
 		}
@@ -174,7 +174,7 @@ public class Authenticator implements Serializable {
 		try {
 			user = personService.getUserByUid(userName);
 		} catch (Exception ex) {
-			log.error("Failed to find user '{0}' in ldap", ex, userName);
+			log.error("Failed to find user '{}' in ldap", ex, userName);
 		}
 
 		return user;
@@ -185,7 +185,7 @@ public class Authenticator implements Serializable {
 		try {
 			person = personService.getPersonByDn(userDn);
 		} catch (Exception ex) {
-			log.error("Failed to find person '{0}' in ldap", ex, userDn);
+			log.error("Failed to find person '{}' in ldap", ex, userDn);
 		}
 
 		return person;
@@ -287,7 +287,7 @@ public class Authenticator implements Serializable {
 
 			identity.acceptExternallyAuthenticatedPrincipal(principal);
 
-			log.info("User '{0}' authenticated with shibboleth already", userUid);
+			log.info("User '{}' authenticated with shibboleth already", userUid);
 			identity.quietLogin();
 			postLogin(user);
 
@@ -350,7 +350,7 @@ public class Authenticator implements Serializable {
 		String oxAuthAuthorizeUrl = openIdService.getOpenIdConfiguration().getAuthorizationEndpoint();
 		String oxAuthHost = getOxAuthHost(oxAuthAuthorizeUrl);
 		if (StringHelper.isEmpty(oxAuthHost)) {
-			log.info("Failed to determine oxAuth host using oxAuthAuthorizeUrl: '{0}'", oxAuthAuthorizeUrl);
+			log.info("Failed to determine oxAuth host using oxAuthAuthorizeUrl: '{}'", oxAuthAuthorizeUrl);
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
 
@@ -472,7 +472,7 @@ public class Authenticator implements Serializable {
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
 			if (!acrValues.contains(requestAcrValues)) {
-				log.error("User info response contains acr='{0}' claim but expected acr='{1}'", acrValues,
+				log.error("User info response contains acr='{}' claim but expected acr='{}'", acrValues,
 						requestAcrValues);
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
@@ -503,7 +503,7 @@ public class Authenticator implements Serializable {
 			URL url = new URL(oxAuthAuthorizeUrl);
 			return String.format("%s://%s:%s", url.getProtocol(), url.getHost(), url.getPort());
 		} catch (MalformedURLException ex) {
-			log.error("Invalid oxAuth authorization URI: '{0}'", ex, oxAuthAuthorizeUrl);
+			log.error("Invalid oxAuth authorization URI: '{}'", ex, oxAuthAuthorizeUrl);
 		}
 
 		return null;

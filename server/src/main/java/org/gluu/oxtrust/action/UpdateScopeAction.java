@@ -129,7 +129,7 @@ public class UpdateScopeAction implements Serializable {
 			log.info("inum : " + this.inum);
 			this.scope = scopeService.getScopeByInum(this.inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find scope {0}", ex, inum);
+			log.error("Failed to find scope {}", ex, inum);
 
 		}
 
@@ -181,7 +181,7 @@ public class UpdateScopeAction implements Serializable {
 			} catch (LdapMappingException ex) {
 
 				log.info("error updating scope ", ex);
-				log.error("Failed to update scope {0}", ex, this.inum);
+				log.error("Failed to update scope {}", ex, this.inum);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -197,7 +197,7 @@ public class UpdateScopeAction implements Serializable {
 				scopeService.addScope(this.scope);
 			} catch (Exception ex) {
 				log.info("error saving scope ");
-				log.error("Failed to add new scope {0}", ex, this.scope.getInum());
+				log.error("Failed to add new scope {}", ex, this.scope.getInum());
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -234,7 +234,7 @@ public class UpdateScopeAction implements Serializable {
 				scopeService.removeScope(this.scope);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove scope {0}", ex, this.scope.getInum());
+				log.error("Failed to remove scope {}", ex, this.scope.getInum());
 
 			}
 		}

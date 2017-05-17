@@ -115,12 +115,12 @@ public class UpdateResourceSetAction implements Serializable {
 	}
 
 	private String update() {
-		log.debug("Loading UMA resource set '{0}'", this.resourceInum);
+		log.debug("Loading UMA resource set '{}'", this.resourceInum);
 		try {
 			String resourceDn = resourceSetService.getDnForResourceSet(this.resourceInum);
 			this.resourceSet = resourceSetService.getResourceSetByDn(resourceDn);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find resource set '{0}'", ex, this.resourceInum);
+			log.error("Failed to find resource set '{}'", ex, this.resourceInum);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -157,7 +157,7 @@ public class UpdateResourceSetAction implements Serializable {
 			try {
 				resourceSetService.updateResourceSet(this.resourceSet);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update resource set '{0}'", ex, this.resourceSet.getInum());
+				log.error("Failed to update resource set '{}'", ex, this.resourceSet.getInum());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -176,14 +176,14 @@ public class UpdateResourceSetAction implements Serializable {
 			try {
 				resourceSetService.addResourceSet(this.resourceSet);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to add new resource set '{0}'", ex, this.resourceSet.getInum());
+				log.error("Failed to add new resource set '{}'", ex, this.resourceSet.getInum());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
 			this.update = true;
 		}
 
-		log.debug("Resource set were {0} successfully", (this.update ? "added" : "updated"));
+		log.debug("Resource set were {} successfully", (this.update ? "added" : "updated"));
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -195,7 +195,7 @@ public class UpdateResourceSetAction implements Serializable {
 				resourceSetService.removeResourceSet(this.resourceSet);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove resource set {0}", ex, this.resourceSet.getInum());
+				log.error("Failed to remove resource set {}", ex, this.resourceSet.getInum());
 			}
 		}
 
