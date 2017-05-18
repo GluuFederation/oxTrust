@@ -6,24 +6,23 @@
 
 package org.gluu.oxtrust.service.push;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushApplication;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
+import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
 
@@ -32,18 +31,19 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 01/22/2014
  */
-@Scope(ScopeType.STATELESS)
-@Name("pushApplicationService")
-@AutoCreate
+@Stateless
+@Named("pushApplicationService")
 public class PushApplicationService implements Serializable {
 
 	private static final long serialVersionUID = -1537567020929607771L;
 
-	@In
-	private LdapEntryManager ldapEntryManager;
+	@Inject
+	private OrganizationService organizationService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private LdapEntryManager ldapEntryManager;
+	@Inject
+	private Logger log;
 
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();
@@ -180,21 +180,12 @@ public class PushApplicationService implements Serializable {
 	 * Build DN string for oxPush Application
 	 */
 	public String getDnForPushApplication(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=application,ou=push,%s", orgDn);
 		}
 
 		return String.format("inum=%s,ou=application,ou=push,%s", inum, orgDn);
-	}
-
-	/**
-	 * Get PushApplicationService instance
-	 * 
-	 * @return PushApplicationService instance
-	 */
-	public static PushApplicationService instance() {
-		return (PushApplicationService) Component.getInstance(PushApplicationService.class);
 	}
 
 }

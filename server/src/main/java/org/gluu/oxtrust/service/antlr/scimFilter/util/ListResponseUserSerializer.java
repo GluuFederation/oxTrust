@@ -5,6 +5,17 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.util;
 
+import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -19,33 +30,24 @@ import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserSerializer;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import java.io.IOException;
-import java.util.*;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+import org.slf4j.Logger;
 
 /**
  * @author Val Pecaoco
  */
-@Name("listResponseUserSerializer")
+@Named("listResponseUserSerializer")
 public class ListResponseUserSerializer extends UserSerializer {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     @Override
     public void serialize(User user, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-
         log.info(" serialize() ");
 
         try {
-
             jsonGenerator.writeStartObject();
 
             ObjectMapper mapper = new ObjectMapper();

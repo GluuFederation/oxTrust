@@ -6,21 +6,13 @@
 
 package org.gluu.oxtrust.util.jsf;
 
-import java.io.Serializable;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.FacesConverter;
 
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.faces.Converter;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
-
-@Converter()
-@Name("profileConfigurationConverter")
-@BypassInterceptors
-public class ProfileConfigurationConverter implements javax.faces.convert.Converter, Serializable {
-
-	private static final long serialVersionUID = 3376046924407678310L;
+@FacesConverter("profileConfigurationConverter")
+public class ProfileConfigurationConverter implements Converter {
 
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String profileConfigurationName) {
 		return profileConfigurationName;

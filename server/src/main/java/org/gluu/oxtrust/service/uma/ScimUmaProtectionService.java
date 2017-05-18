@@ -8,14 +8,13 @@ package org.gluu.oxtrust.service.uma;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 
 /**
@@ -23,41 +22,40 @@ import org.xdi.ldap.model.GluuBoolean;
  * 
  * @author Yuriy Movchan Date: 12/06/2016
  */
-@Scope(ScopeType.APPLICATION)
-@Name("scimUmaProtectionService")
-@AutoCreate
+@ApplicationScoped
+@Named("scimUmaProtectionService")
 public class ScimUmaProtectionService extends BaseUmaProtectionService implements Serializable {
 
 	private static final long serialVersionUID = -5447131971095468865L;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
 	protected String getClientId() {
-		return applicationConfiguration.getScimUmaClientId();
+		return appConfiguration.getScimUmaClientId();
 	}
 
 	protected String getClientKeyStorePassword() {
-		return applicationConfiguration.getScimUmaClientKeyStorePassword();
+		return appConfiguration.getScimUmaClientKeyStorePassword();
 	}
 
 	protected String getClientKeyStoreFile() {
-		return applicationConfiguration.getScimUmaClientKeyStoreFile();
+		return appConfiguration.getScimUmaClientKeyStoreFile();
 	}
 
 	protected String getClientKeyId() {
-		return applicationConfiguration.getScimUmaClientKeyId();
+		return appConfiguration.getScimUmaClientKeyId();
 	}
 
 	public String getUmaResourceId() {
-		return applicationConfiguration.getScimUmaResourceId();
+		return appConfiguration.getScimUmaResourceId();
 	}
 
 	public String getUmaScope() {
-		return applicationConfiguration.getScimUmaScope();
+		return appConfiguration.getScimUmaScope();
 	}
 
 	public boolean isEnabled() {

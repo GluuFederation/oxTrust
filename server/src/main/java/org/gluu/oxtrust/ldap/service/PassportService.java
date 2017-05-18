@@ -6,16 +6,18 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
+import java.io.Serializable;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.MappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
@@ -26,22 +28,22 @@ import org.xdi.util.properties.FileConfiguration;
  * 
  * @author Shekhar L
  */
-@Scope(ScopeType.STATELESS)
-@Name("passportService")
-@AutoCreate
-public class PassportService {
+@Stateless
+@Named("passportService")
+public class PassportService implements Serializable {
 
-	@Logger
-	private Log log;
+	private static final long serialVersionUID = -4787990021407949332L;
 
-	@In
+	@Inject
+	private Logger log;
+
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
-
-	@In
-	private OxTrustConfiguration oxTrustConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
 
 	public boolean containsPassportConfiguration() {
 		String configurationDn = getConfigurationDn();
@@ -67,7 +69,7 @@ public class PassportService {
 	}
 
 	private String getConfigurationDn() {
-		FileConfiguration fc = oxTrustConfiguration.getLdapConfiguration();
+		FileConfiguration fc = configurationFactory.getLdapConfiguration();
 		String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
 		return configurationDn;
 	}

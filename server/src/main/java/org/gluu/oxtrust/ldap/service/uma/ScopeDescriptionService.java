@@ -6,25 +6,23 @@
 
 package org.gluu.oxtrust.ldap.service.uma;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.util.INumGenerator;
+import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
 
@@ -33,18 +31,19 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 12/07/2012
  */
-@Scope(ScopeType.STATELESS)
-@Name("scopeDescriptionService")
-@AutoCreate
+@Stateless
+@Named("scopeDescriptionService")
 public class ScopeDescriptionService implements Serializable {
 
 	private static final long serialVersionUID = -3537567020929600777L;
 
-	@In
-	private LdapEntryManager ldapEntryManager;
+	@Inject
+	private LdapEntryManager ldapEntryManager;	
+	@Inject
+	private OrganizationService organizationService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();
@@ -189,7 +188,7 @@ public class ScopeDescriptionService implements Serializable {
 	 * @return New inum for scope description
 	 */
 	private String generateInumForNewScopeDescriptionImpl() {
-		String orgInum = OrganizationService.instance().getInumForOrganization();
+		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
 	}
 
@@ -197,21 +196,12 @@ public class ScopeDescriptionService implements Serializable {
 	 * Build DN string for scope description
 	 */
 	public String getDnForScopeDescription(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=scopes,ou=uma,%s", orgDn);
 		}
 
 		return String.format("inum=%s,ou=scopes,ou=uma,%s", inum, orgDn);
-	}
-
-	/**
-	 * Get ScopeDescriptionService instance
-	 * 
-	 * @return ScopeDescriptionService instance
-	 */
-	public static ScopeDescriptionService instance() {
-		return (ScopeDescriptionService) Component.getInstance(ScopeDescriptionService.class);
 	}
 
 }

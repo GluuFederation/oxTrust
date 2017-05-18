@@ -6,16 +6,17 @@
 
 package org.gluu.oxtrust.action;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,55 +24,45 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-
-import com.unboundid.ldap.sdk.Entry;
-import com.unboundid.ldap.sdk.SearchResultEntry;
 
 /**
  * Action class for displaying attributes
  * 
  * @author Yuriy Movchan Date: 10.17.2010
  */
-@Scope(CONVERSATION)
-@Name("attributeInventoryAction")
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class AttributeInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
 
 	private boolean showInactive = false;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private List<GluuAttribute> attributeList;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 	
-	@In(value = "#{facesContext.externalContext}")
-	private ExternalContext extCtx;	
+	@Inject
+	private ExternalContext externalContext;	
 
-	@In(value = "#{facesContext}")
-	FacesContext facesContext;
+	@Inject
+	private FacesContext facesContext;
 
 	private List<GluuAttribute> activeAttributeList;
 	
-	@In
+	@Inject
 	private LdifService ldifService;
-	
-	
+
 	private Map<String, Boolean> checked = new HashMap<String, Boolean>();
-	
 
 	public Map<String, Boolean> getChecked() {
 		return checked;
@@ -81,7 +72,7 @@ public class AttributeInventoryAction implements Serializable {
 		this.checked = checked;
 	}
 
-	@Restrict("#{s:hasPermission('attribute', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
 	public String start() {
 		if (attributeList == null) {
 			try {
@@ -154,8 +145,8 @@ public class AttributeInventoryAction implements Serializable {
                 checkedItems.add(item.getInum());
             }
         }
-        log.info("the selections are : {0}", checkedItems.size());
-        HttpServletResponse response = (HttpServletResponse) extCtx.getResponse();
+        log.info("the selections are : {}", checkedItems.size());
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"attributes.ldif\"");
 		try {

@@ -25,32 +25,29 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
-import org.gluu.oxtrust.util.Utils;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.gluu.oxtrust.util.ServiceUtil;
+import org.slf4j.Logger;
 
 /**
  * Provides common ssl certificates management
  * 
  * @author �Oleksiy Tataryn�
  */
-@Scope(ScopeType.STATELESS)
-@Name("sslService")
-@AutoCreate
+@Stateless
+@Named("sslService")
 public class SSLService implements Serializable {
 
     private static final long serialVersionUID = -874807269234589084L;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
     /** Bouncy Castle SecurityProvider */
     private static final String SECURITY_PROVIDER_BOUNCY_CASTLE = "BC";
@@ -123,24 +120,13 @@ public class SSLService implements Serializable {
     }
 
     /**
-     * Get SSLService instance
-     * 
-     * @return SSLService instance
-     */
-    public static SSLService instance() {
-        return (SSLService) Component.getInstance(SSLService.class);
-    }
-
-
-
-    /**
      * Load one or more certificates from the specified stream.
      *
      * @param is Stream to load certificates from
      * @return The array of certificates
      */
     public static X509Certificate[] loadCertificates(InputStream is) throws Exception {
-        byte[] certsBytes =  Utils.readFully(is);
+        byte[] certsBytes =  ServiceUtil.readFully(is);
 
         return loadCertificates(certsBytes);
     }

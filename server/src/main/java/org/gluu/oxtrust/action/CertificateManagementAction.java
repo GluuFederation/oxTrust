@@ -5,16 +5,19 @@
  */
 package org.gluu.oxtrust.action;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.validation.constraints.NotNull;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.Size;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -24,23 +27,16 @@ import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Action class for security certificate management.
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
-@Name("certificateManagementAction")
-@Restrict("#{identity.loggedIn}")
+@SessionScoped
+@Named
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class CertificateManagementAction implements Serializable {
 
     private static final long serialVersionUID = -1938167091985945238L;
@@ -49,16 +45,16 @@ public class CertificateManagementAction implements Serializable {
     private static final String HTTPD_CERTIFICATE_FILE = "/etc/certs/httpd.crt";
     private static final String SHIB_IDP_CERTIFICATE_FILE = "/etc/certs/shibIDP.crt";
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @In
+    @Inject
     private SvnSyncTimer svnSyncTimer;
     
-    @In
+    @Inject
     private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
 
-    @In
+    @Inject
     private ApplianceService applianceService;
     
     private KeystoreWrapper asimbaKeystore;
@@ -74,7 +70,7 @@ public class CertificateManagementAction implements Serializable {
     
     private boolean searchObsoleteWarning = false;
     
-    @Create
+    @PostConstruct
     public void init() {
         log.info("init() CertificateManagement call");
         
@@ -97,7 +93,7 @@ public class CertificateManagementAction implements Serializable {
         updateTableView();
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add");
         // save
@@ -108,14 +104,14 @@ public class CertificateManagementAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel CertificateManagement");
         
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('person', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         log.info("search() CertificateManagement searchPattern:", searchPattern);
         

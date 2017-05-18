@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.util;
 
 
-import org.jboss.seam.Component;
 import org.xdi.util.OxConstants;
 
 /**
@@ -75,11 +74,6 @@ public final class OxTrustConstants extends OxConstants {
 
     public static final String EVENT_CLEAR_ATTRIBUTES = "eventClearAttributes";
     public static final String EVENT_CLEAR_ORGANIZATION = "eventClearOrganization";
-    public static final String EVENT_PERSON_SAVED = "eventPersonSaved";
-    public static final String EVENT_PERSON_UPDATED = "eventPersonUpdated";
-    public static final String EVENT_PERSON_DELETED = "eventPersonDeleted";
-    public static final String EVENT_PERSON_ADDED_TO_GROUP = "eventPersonAddedToGroup";
-    public static final String EVENT_PERSON_REMOVED_FROM_GROUP = "eventPersonRemovedFromGroup";
     public static final String RESULT_LOGOUT_SSO = "logout_sso";
     public static final String RESULT_CAPTCHA_VALIDATION_FAILED = "captcha_validation_failed";
 
@@ -208,19 +202,4 @@ public final class OxTrustConstants extends OxConstants {
     
     public static final String CONFIRM_REGISTRATION_SCRIPT = "ConfirmRegistrationScript";
 
-    public static String getGluuRevisionVersion() {
-        return ((BuildVersion) Component.getInstance(BuildVersion.class)).getRevisionVersion();
-    }
-
-    public static String getGluuRevisionDate() {
-        return ((BuildVersion) Component.getInstance(BuildVersion.class)).getRevisionDate();
-    }
-
-    public static String getGluuBuildDate() {
-        return ((BuildVersion) Component.getInstance(BuildVersion.class)).getBuildDate();
-    }
-
-    public static String getGluuBuildNumber() {
-        return ((BuildVersion) Component.getInstance(BuildVersion.class)).getBuildNumber();
-    }
 }

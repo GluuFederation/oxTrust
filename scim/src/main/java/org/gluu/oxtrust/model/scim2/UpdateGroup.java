@@ -40,8 +40,6 @@ public final class UpdateGroup {// NOSONAR - Builder constructs instances of thi
     
     /**
      * delete the external Id of a existing group
-     * 
-     * @return The builder itself
      */
     public void deleteExternalId() {
         deleteFields.add(Group_.externalId.getName());
@@ -52,7 +50,6 @@ public final class UpdateGroup {// NOSONAR - Builder constructs instances of thi
      * 
      * @param externalID
      *        new external id
-     * @return The builder itself
      */
     public void updateExternalId(String externalID) {
         this.externalId = externalID;
@@ -63,7 +60,6 @@ public final class UpdateGroup {// NOSONAR - Builder constructs instances of thi
      * 
      * @param displayName
      *        new display name
-     * @return The builder itself
      */
     public void updateDisplayName(String displayName) {
         this.displayName = displayName;
@@ -71,8 +67,6 @@ public final class UpdateGroup {// NOSONAR - Builder constructs instances of thi
 
     /**
      * deletes all group members of a existing group
-     * 
-     * @return The builder itself
      */
     public void deleteMembers() {
         deleteFields.add("members");
@@ -83,7 +77,6 @@ public final class UpdateGroup {// NOSONAR - Builder constructs instances of thi
      * 
      * @param memberId
      *        group or user id to be removed
-     * @return The builder itself
      */
     public void deleteMember(String memberId) {
         MemberRef deleteGroup = new MemberRef();
@@ -97,7 +90,6 @@ public final class UpdateGroup {// NOSONAR - Builder constructs instances of thi
      * 
      * @param memberId
      *        user or group id to be added
-     * @return The builder itself
      */
     public void addMember(String memberId) {
     	MemberRef newGroup = new MemberRef();

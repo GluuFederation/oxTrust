@@ -10,31 +10,30 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
-@Name("fileViewerAction")
-@Scope(ScopeType.STATELESS)
-@Restrict("#{identity.loggedIn}")
+@Named("fileViewerAction")
+@Stateless
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class FileViewerAction implements Serializable {
 
 	private static final long serialVersionUID = 3968626531612060143L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public String getString(String fileName) {
 		if (StringHelper.isNotEmpty(fileName)) {
 			try {
 				return FileUtils.readFileToString(new File(fileName));
 			} catch (IOException ex) {
-				log.error("Failed to read file: '{0}'", ex, fileName);
+				log.error("Failed to read file: '{}'", ex, fileName);
 			}
 		}
 

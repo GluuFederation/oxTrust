@@ -6,35 +6,39 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.log.Log;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.model.GluuAppliance;
+import org.slf4j.Logger;
+import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
+import org.xdi.util.StringHelper;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Holds factory methods to create services
  *
  * @author Yuriy Movchan Date: 02/14/2017
  */
-@Scope(ScopeType.APPLICATION)
-@Name("applicationFactory")
-@Startup
+@ApplicationScoped
+@Named
 public class ApplicationFactory {
-    
-    @In
+
+    @Inject
     private ApplianceService applianceService;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
+    
+    @Inject
+    private EncryptionService encryptionService;
 
-    @Factory(value = "cacheConfiguration", scope = ScopeType.APPLICATION, autoCreate = true)
-   	public CacheConfiguration createCacheConfiguration() {
+    @Produces @ApplicationScoped
+   	public CacheConfiguration getCacheConfiguration() {
    		CacheConfiguration cacheConfiguration = applianceService.getAppliance().getCacheConfiguration();
    		if (cacheConfiguration == null || cacheConfiguration.getCacheProviderType() == null) {
    			log.error("Failed to read cache configuration from LDAP. Please check appliance oxCacheConfiguration attribute " +
@@ -49,5 +53,26 @@ public class ApplicationFactory {
    		log.info("Cache configuration: " + cacheConfiguration);
    		return cacheConfiguration;
    	}
+
+	@Produces @ApplicationScoped
+	public SmtpConfiguration getSmtpConfiguration() {
+		GluuAppliance appliance = applianceService.getAppliance();
+		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
+		
+		if (smtpConfiguration == null) {
+			return null;
+		}
+
+		String password = smtpConfiguration.getPassword();
+		if (StringHelper.isNotEmpty(password)) {
+			try {
+				smtpConfiguration.setPasswordDecrypted(encryptionService.decrypt(password));
+			} catch (EncryptionException ex) {
+				log.error("Failed to decript SMTP user password", ex);
+			}
+		}
+		
+		return smtpConfiguration;
+	}
 
 }

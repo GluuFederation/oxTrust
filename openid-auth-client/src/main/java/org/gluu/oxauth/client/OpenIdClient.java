@@ -32,8 +32,6 @@ import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
 import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
-import org.xdi.oxauth.client.ValidateTokenClient;
-import org.xdi.oxauth.client.ValidateTokenResponse;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
@@ -173,7 +171,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public String getName() {
@@ -181,7 +179,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	public String getRedirectionUrl(final WebContext context) {
 		init();
@@ -204,7 +202,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public boolean isAuthorizationResponse(final WebContext context) {
@@ -218,7 +216,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public boolean isValidRequestState(final WebContext context) {
@@ -240,7 +238,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public final OpenIdCredentials getCredentials(final WebContext context) {
@@ -254,7 +252,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public UserProfile getUserProfile(final OpenIdCredentials credential, final WebContext context) {
@@ -285,14 +283,6 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 		final String accessToken = tokenResponse.getAccessToken();
 		logger.trace("accessToken : " + accessToken);
-
-		// Validate the access token
-		logger.debug("Validating access token");
-		ValidateTokenClient validateTokenClient = new ValidateTokenClient(this.openIdConfiguration.getValidateTokenEndpoint());
-
-		final ValidateTokenResponse tokenValidationResponse = validateTokenClient.execValidateToken(accessToken);
-		logger.trace("tokenValidationResponse.getStatus(): '{}'", tokenValidationResponse.getStatus());
-		logger.trace("tokenValidationResponse.getErrorType(): '{}'", tokenValidationResponse.getErrorType());
 
 		return accessToken;
 	}

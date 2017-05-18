@@ -6,33 +6,28 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.LdifDataUtility;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
-import org.xdi.model.GluuAttribute;
+import org.slf4j.Logger;
 
-import com.unboundid.ldap.sdk.Entry;
 import com.unboundid.ldap.sdk.LDAPConnection;
-import com.unboundid.ldap.sdk.LDAPConnectionPool;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
-import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldif.LDIFReader;
-import com.unboundid.ldif.LDIFRecord;
 import com.unboundid.ldif.LDIFWriter;
 
 /**
@@ -41,20 +36,18 @@ import com.unboundid.ldif.LDIFWriter;
  * @author Shekhar L Date: 02.28.2017
  * @author Yuriy Movchan Date: 03/06/2017
  */
-@Scope(ScopeType.STATELESS)
-@Name("ldifService")
-@AutoCreate
+@Stateless
+@Named("ldifService")
 public class LdifService implements Serializable {
 
 	private static final long serialVersionUID = 6690460114767359078L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
-	private LdapEntryManager ldapEntryManager;
-	
-	@In
+	@Inject
+	private LdapEntryManager ldapEntryManager;	
+	@Inject
 	private AttributeService attributeService;
 
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {

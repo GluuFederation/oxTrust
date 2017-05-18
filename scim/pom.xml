@@ -6,11 +6,10 @@
     <parent>
         <groupId>org.xdi</groupId>
         <artifactId>oxtrust</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.1.0.weld-SNAPSHOT</version>
     </parent>
 
     <artifactId>oxtrust-scim</artifactId>
-    <!--<version>1.5-SNAPSHOT</version>-->
     <name>oxtrust-scim</name>
     <description>SCIM 2.0  data types http://tools.ietf.org/html/draft-ietf-scim-core-schema-02</description>
     <url>https://github.com/GluuFederation/oxTrust/scim</url>
@@ -21,16 +20,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
-    <developers>
-        <developer>
-            <name>Rahat Ali</name>
-            <email>rahat@gluu.org</email>
-            <timezone>+5</timezone>
-            <organization>Gluu Inc</organization>
-            <organizationUrl>http://www.gluu.org</organizationUrl>
-        </developer>
-    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -64,73 +53,6 @@
             <version>1.8</version>
         </dependency>
 
-        <!--
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxauth-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxauth-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxLdap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxLdap-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxUtil</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>el-api</artifactId>
-                    <groupId>javax.el</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsf-api</artifactId>
-                    <groupId>javax.faces</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsf-facelets</artifactId>
-                    <groupId>com.sun.facelets</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>servlet-api</artifactId>
-                    <groupId>javax.servlet</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxService</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>antlr</groupId>
-            <artifactId>antlr</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>stringtemplate</artifactId>
-                    <groupId>org.antlr</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-        </dependency>
-        -->
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -140,150 +62,6 @@
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
 
-        <!-- JBoss -->
-        <!--
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>jaxrs-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jboss-common-core</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>apache-slide</groupId>
-                    <artifactId>webdavlib</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>apache-httpclient</groupId>
-                    <artifactId>commons-httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>apache-xerces</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jboss-common-logging-spi</artifactId>
-                    <groupId>jboss</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.el</groupId>
-            <artifactId>jboss-el</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>el-api</artifactId>
-                    <groupId>javax.el</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.seam</groupId>
-            <artifactId>jboss-seam</artifactId>
-
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.el</groupId>
-                    <artifactId>el-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>xpp3_min</artifactId>
-                    <groupId>xpp3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>xstream</artifactId>
-                    <groupId>com.thoughtworks.xstream</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>testng</artifactId>
-                    <groupId>org.testng</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.seam</groupId>
-            <artifactId>jboss-seam-resteasy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.seam</groupId>
-            <artifactId>jboss-seam-ui</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jboss-seam-jul</artifactId>
-                    <groupId>org.jboss.seam</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        -->
-
-        <!-- RestEasy -->
-        <!--
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-atom-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxb-provider</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-api</artifactId>
-                    <groupId>javax.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-impl</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>sjsxp</artifactId>
-                    <groupId>com.sun.xml.stream</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jcip-annotations</artifactId>
-                    <groupId>net.jcip</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsr250-api</artifactId>
-                    <groupId>javax.annotation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>scannotation</artifactId>
-                    <groupId>org.scannotation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>slf4j-simple</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jettison-provider</artifactId>
-        </dependency>
-        -->
 
         <!-- Jackson -->
         <dependency>
@@ -309,11 +87,10 @@
             <version>18.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxLdap-annotations</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-ldap-annotations</artifactId>
+		</dependency>
 
         <!-- Test -->
         <dependency>

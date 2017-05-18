@@ -18,21 +18,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.gluu.oxtrust.security.Identity;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuImage;
@@ -43,19 +41,22 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 12/24/2012
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("customAttributeAction")
+@ConversationScoped
+@Named
 public class CustomAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -719594782175672946L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
+	private Identity identity;
+
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private ImageService imageService;
 
 	private GluuImage uploadedImage;
@@ -75,7 +76,7 @@ public class CustomAttributeAction implements Serializable {
 	private List<GluuCustomAttribute> customAttributes;
 	private ArrayList<GluuCustomAttribute> origCustomAttributes;
 
-	@Create
+	@PostConstruct
 	public void init() {
 		this.addedPhotos = new ArrayList<GluuImage>();
 		this.removedPhotos = new ArrayList<GluuImage>();
@@ -101,7 +102,7 @@ public class CustomAttributeAction implements Serializable {
 
 		int componentId = 1;
 		for (GluuAttribute attribute : attributes) {
-			log.debug("attribute: {0}", attribute.getName());
+			log.debug("attribute: {}", attribute.getName());
 			String id = "a" + String.valueOf(componentId++) + "Id";
 			this.availableAttributeIds.add(id);
 			this.attributeInums.put(attribute.getInum(), attribute);
@@ -405,7 +406,7 @@ public class CustomAttributeAction implements Serializable {
 		UploadedFile uploadedFile = event.getUploadedFile();
 		this.uploadedImage = null;
 		try {
-			GluuImage image = imageService.constructImage((GluuCustomPerson) Component.getInstance("currentPerson"), uploadedFile);
+			GluuImage image = imageService.constructImage(identity.getUser(), uploadedFile);
 			image.setStoreTemporary(true);
 			if (imageService.createImageFiles(image)) {
 				this.uploadedImage = image;
@@ -526,7 +527,7 @@ public class CustomAttributeAction implements Serializable {
 		removeRemovedPhotos();
 	}
 
-	@Destroy
+	@PreDestroy
 	public void destroy() {
 		// When user decided to leave form without saving we must remove added
 		// images from disk

@@ -10,6 +10,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
 
+import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
+import org.gluu.oxtrust.action.ApplianceStatusAction;
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -21,66 +24,48 @@ import org.testng.annotations.Test;
  */
 public class ApplianceStatusTest extends BaseTest {
 
-	 @Test
-	public void testIsApplianceStatus() throws Exception {
-		new FacesRequest() {
-            @Override
-            public void invokeApplication() throws Exception {
-            	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
-            	GluuAppliance appliance = applianceService.getAppliance();
+	@Inject
+	private ApplianceService applianceService;
 
-            	Date currentDateTime = new Date();
-        		appliance.setLastUpdate(currentDateTime);
+	@Inject
+	private ApplianceStatusAction applianceStatusAction;
 
-        		applianceService.updateAppliance(appliance);
-                assertEquals(invokeMethod("#{applianceStatusAction.checkHealth}"), OxTrustConstants.RESULT_SUCCESS);
-            }
-            
-            @Override
-            protected void renderResponse() {
-            	assert getValue("#{applianceStatusAction.health}").equals("OK");
-            }
-        }.run();
-    
-		new FacesRequest() {
-            @Override
-            public void invokeApplication() throws Exception {
-            	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
-            	GluuAppliance appliance = applianceService.getAppliance();
+	@Test
+	public void testIsApplianceStatus1() throws Exception {
+		GluuAppliance appliance = applianceService.getAppliance();
 
-            	long currentTime = System.currentTimeMillis() - 50*1000;
-        		Date currentDateTime = new Date(currentTime);
-        		appliance.setLastUpdate(currentDateTime);
+		Date currentDateTime = new Date();
+		appliance.setLastUpdate(currentDateTime);
 
-        		applianceService.updateAppliance(appliance);
-                assertEquals(invokeMethod("#{applianceStatusAction.checkHealth}"), OxTrustConstants.RESULT_SUCCESS);
-            }
-            
-            @Override
-            protected void renderResponse() {
-            	assert getValue("#{applianceStatusAction.health}").equals("OK");
-            }
-        }.run();
-        
-		new FacesRequest() {
-            @Override
-            public void invokeApplication() throws Exception {
-            	ApplianceService applianceService = (ApplianceService) getInstance("applianceService");
-            	GluuAppliance appliance = applianceService.getAppliance();
+		applianceService.updateAppliance(appliance);
+		assertEquals(applianceStatusAction.checkHealth(), OxTrustConstants.RESULT_SUCCESS);
+		assertEquals(applianceStatusAction.getHealth(), "OK");
+	}
 
-            	long currentTime = System.currentTimeMillis() - 101*1000;
-        		Date currentDateTime = new Date(currentTime);
-        		appliance.setLastUpdate(currentDateTime);
+	@Test(dependsOnMethods = { "testIsApplianceStatus1" })
+	public void testIsApplianceStatus2() throws Exception {
+		GluuAppliance appliance = applianceService.getAppliance();
 
-        		applianceService.updateAppliance(appliance);
-                assertEquals(invokeMethod("#{applianceStatusAction.checkHealth}"), OxTrustConstants.RESULT_SUCCESS);
-            }
-            
-            @Override
-            protected void renderResponse() {
-            	assert getValue("#{applianceStatusAction.health}").equals("FAIL");
-            }
-        }.run();
-    }
+		long currentTime = System.currentTimeMillis() - 50 * 1000;
+		Date currentDateTime = new Date(currentTime);
+		appliance.setLastUpdate(currentDateTime);
+
+		applianceService.updateAppliance(appliance);
+		assertEquals(applianceStatusAction.checkHealth(), OxTrustConstants.RESULT_SUCCESS);
+		assertEquals(applianceStatusAction.getHealth(), "OK");
+	}
+
+	@Test(dependsOnMethods = { "testIsApplianceStatus2" })
+	public void testIsApplianceStatus3() throws Exception {
+		GluuAppliance appliance = applianceService.getAppliance();
+
+		long currentTime = System.currentTimeMillis() - 101 * 1000;
+		Date currentDateTime = new Date(currentTime);
+		appliance.setLastUpdate(currentDateTime);
+
+		applianceService.updateAppliance(appliance);
+		assertEquals(applianceStatusAction.checkHealth(), OxTrustConstants.RESULT_SUCCESS);
+		assertEquals(applianceStatusAction.getHealth(), "OK");
+	}
 
 }

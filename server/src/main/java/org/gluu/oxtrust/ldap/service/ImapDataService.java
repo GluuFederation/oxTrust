@@ -2,20 +2,13 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.slf4j.Logger;
 import org.xdi.model.GluuIMAPData;
-import org.xdi.model.GluuImage;
 import org.xdi.service.JsonService;
-import org.xdi.service.XmlService;
 
 
 /**
@@ -23,16 +16,15 @@ import org.xdi.service.XmlService;
  * 
  * @author Yuriy Movchan Date: 11.04.2010
  */
-@Name("imapDataService")
-@Scope(ScopeType.APPLICATION)
-@AutoCreate
+@Named("imapDataService")
+@ApplicationScoped
 public class ImapDataService {
 
 	
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
 	
@@ -40,7 +32,7 @@ public class ImapDataService {
 		try {
 			return jsonService.objectToJson(imapData);
 		} catch (Exception e) {
-			log.error("Failed to convert GluuIMAPData {0} to JSON", e, imapData);
+			log.error("Failed to convert GluuIMAPData {} to JSON", e, imapData);
 		} 
 		return null;
 		
@@ -52,7 +44,7 @@ public class ImapDataService {
 			return jsonService.jsonToObject(json, GluuIMAPData.class);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			log.error("Failed to convert GluuIMAPData {0} to JSON", e, json);
+			log.error("Failed to convert GluuIMAPData {} to JSON", e, json);
 		}
 		return null;
 	}

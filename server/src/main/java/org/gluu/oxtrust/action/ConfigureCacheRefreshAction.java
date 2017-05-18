@@ -16,17 +16,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
@@ -39,17 +44,8 @@ import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.jsf.ValidationUtil;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -58,7 +54,6 @@ import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -66,52 +61,56 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * 
  * @author Yuriy Movchan Date: 07.26.2011
  */
-@Name("configureCacheRefreshAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("configureCacheRefreshAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -5210460481895022468L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
-	private OxTrustConfiguration oxTrustConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
 
-	@In
+	@Inject
+	private ApplianceService applianceService;
+
+	@Inject
 	private TemplateService templateService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private ExternalCacheRefreshService externalCacheRefreshService;
 
-	@In
+	@Inject
 	private InumService inumService;
 
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In
+	@Inject
 	private CacheRefreshService cacheRefreshService;
 
-	@In
+	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private EncryptionService encryptionService;
 
+	@Inject
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 
 	private boolean cacheRefreshEnabled;
@@ -133,7 +132,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private CacheRefreshUpdateMethod updateMethod;
 	
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.cacheRefreshConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -141,7 +140,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		this.showInterceptorValidationDialog = false;
 
-		this.appliance = ApplianceService.instance().getAppliance();
+		this.appliance = applianceService.getAppliance();
 
 		this.cacheRefreshConfiguration = getOxTrustCacheRefreshConfig();
 
@@ -175,7 +174,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return cacheRefreshConfiguration;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String update() {
 		checkDuplicateKetattribute();
 		
@@ -214,11 +213,11 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 
 	private void updateAppliance() {
-		GluuAppliance updateAppliance = ApplianceService.instance().getAppliance();
+		GluuAppliance updateAppliance = applianceService.getAppliance();
 		updateAppliance.setVdsCacheRefreshEnabled(this.appliance.getVdsCacheRefreshEnabled());
 		updateAppliance.setVdsCacheRefreshPollingInterval(this.appliance.getVdsCacheRefreshPollingInterval());
 		updateAppliance.setCacheRefreshServerIpAddress(this.appliance.getCacheRefreshServerIpAddress());
-		ApplianceService.instance().updateAppliance(updateAppliance);
+		applianceService.updateAppliance(updateAppliance);
 	}
 
 	// TODO: Yuriy Movchan: Use @Min property annotation + convert type from String to Integer 
@@ -235,8 +234,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		}
 
 		if ((interval == null) || (interval < 0)) {
-			log.error("Invalid cache refresh pooling interval specified: {0}", intervalString);
-			ValidationUtil.addErrorMessageToInput("vdsCacheRefreshPollingIntervalId", "Invalid cache refresh pooling interval specified");
+			log.error("Invalid cache refresh pooling interval specified: {}", intervalString);
+			facesMessages.add("vdsCacheRefreshPollingIntervalId", FacesMessage.SEVERITY_ERROR, "Invalid cache refresh pooling interval specified");
 			return false;
 		}
 
@@ -265,15 +264,15 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean validateList(GluuLdapConfiguration ldapConfig, String configType, boolean validateBaseDNs) {
 		boolean result = true;
 		if (ldapConfig.getServers().size() == 0) {
-			log.error("{0} LDAP configuration '{1}' should contains at least one server", configType, ldapConfig.getConfigId());
-			facesMessages.add(Severity.ERROR, "{0} LDAP configuration '{1}' should contains at least one server", configType,
+			log.error("{} LDAP configuration '{}' should contains at least one server", configType, ldapConfig.getConfigId());
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} LDAP configuration '{}' should contains at least one server", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
 
 		if (validateBaseDNs && (ldapConfig.getBaseDNs().size() == 0)) {
-			log.error("{0} LDAP configuration '{1}' should contains at least one Base DN", configType, ldapConfig.getConfigId());
-			facesMessages.add(Severity.ERROR, "{0} LDAP configuration '{1}' should contains at least one Base DN", configType,
+			log.error("{} LDAP configuration '{}' should contains at least one Base DN", configType, ldapConfig.getConfigId());
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} LDAP configuration '{}' should contains at least one Base DN", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
@@ -283,15 +282,15 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private boolean validateList(List<String> values, String attributeName) {
 		if (values.size() == 0) {
-			log.error("{0} should contains at least one {0}", attributeName);
-			facesMessages.add(Severity.ERROR, "{0} should contains at least one {0}", attributeName);
+			log.error("{} should contains at least one {}", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} should contains at least one {}", attributeName);
 			return false;
 		}
 
 		return true;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 
@@ -411,7 +410,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		// Prepare data for dummy entry
 		String targetInum = inumService.generateInums(OxTrustConstants.INUM_TYPE_PEOPLE_SLUG, false);
 		String targetPersonDn = personService.getDnForPerson(targetInum);
-		String[] targetCustomObjectClasses = applicationConfiguration.getPersonObjectClassTypes();
+		String[] targetCustomObjectClasses = appConfiguration.getPersonObjectClassTypes();
 
 		// Collect all attributes
 		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);
@@ -455,7 +454,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 			return;
 		}
 
-		log.info("Script has been executed successfully.\n\nSample source entry is:\n'{0}'.\n\nSample result entry is:\n'{1}'",
+		log.info("Script has been executed successfully.\n\nSample source entry is:\n'{}'.\n\nSample result entry is:\n'{}'",
 				getGluuSimplePersonAttributesWithValues(sourcePerson), getGluuCustomPersonAttributesWithValues(targetPerson));
 		this.interceptorValidationMessage = String.format(
 				"Script has been executed successfully.\n\nSample source entry is:\n%s.\n\nSample result entry is:\n%s",
@@ -561,7 +560,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		}
 
 		try {
-        	this.activeLdapConfig.setBindPassword(StringEncrypter.defaultInstance().encrypt(this.activeLdapConfig.getBindPassword(), cryptoConfigurationSalt));
+        	this.activeLdapConfig.setBindPassword(encryptionService.encrypt(this.activeLdapConfig.getBindPassword()));
         } catch (EncryptionException ex) {
             log.error("Failed to encrypt password", ex);
         }

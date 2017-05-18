@@ -5,9 +5,21 @@
  */
 package org.gluu.oxtrust.service.scim2.schema.strategy.serializers;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.gluu.oxtrust.model.scim2.User;
@@ -16,24 +28,16 @@ import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.core.UserCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.slf4j.Logger;
 
 /**
  * @author Val Pecaoco
  */
-@Name("schemaTypeUserSerializer")
+@Named("schemaTypeUserSerializer")
 public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
-    @Logger
-    private static Log log;
+    @Inject
+    private Logger log;
 
     private SchemaType schemaType;
 
@@ -41,11 +45,9 @@ public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
     @Override
     public void serialize(User user, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-
         log.info(" serialize() ");
 
         try {
-
             ObjectMapper mapper = new ObjectMapper();
             mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 

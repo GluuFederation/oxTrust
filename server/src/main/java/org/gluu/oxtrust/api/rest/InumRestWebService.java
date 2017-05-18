@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.api.rest;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,17 +14,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.gluu.oxtrust.ldap.service.InumService;
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.In;
 
 //Sets the path to base URL + /inum
 @Path("/inum")
 public class InumRestWebService {
 
-	// private static final Logger log =
-	// Logger.getLogger(InumRestWebService.class);
-
-	@In
+	@Inject
 	private InumService inumService;
 
 	@GET
@@ -31,7 +27,6 @@ public class InumRestWebService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String generateTextInum(@PathParam("type") String type) {
 		String inum = "";
-		init();
 		inum = inumService.generateInums(type);
 		return inum;
 	}
@@ -41,7 +36,6 @@ public class InumRestWebService {
 	@Produces(MediaType.TEXT_XML)
 	public String generateXmlInum(@PathParam("type") String type) {
 		String inum = "";
-		init();
 		inum = inumService.generateInums(type);
 		return xmlText(type, inum);
 	}
@@ -71,7 +65,6 @@ public class InumRestWebService {
 	@Produces(MediaType.TEXT_HTML)
 	public String generateHtmlInum(@PathParam("type") String type) {
 		String inum = "";
-		init();
 		inum = inumService.generateInums(type);
 		return htmlText(type, inum);
 	}
@@ -101,12 +94,8 @@ public class InumRestWebService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String generateJsonInum(@PathParam("type") String type) {
 		String inum = "";
-		init();
 		inum = inumService.generateInums(type);
 		return "{\"inum\":\"" + inum + "\"}";
 	}
 
-	private void init() {
-		inumService = (InumService) Component.getInstance(InumService.class);
-	}
 }

@@ -13,38 +13,37 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Provides operations with velocity templates
  * 
  * @author Yuriy Movchan Date: 12.15.2010
  */
-@Scope(ScopeType.APPLICATION)
-@Name("templateService")
-@AutoCreate
+@ApplicationScoped
+@Named("templateService")
 public class TemplateService implements Serializable {
 
 	private static final long serialVersionUID = 4898430090669045605L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	/*
 	 * Generate relying-party.xml using relying-party.xml.vm template
@@ -54,7 +53,7 @@ public class TemplateService implements Serializable {
 		try {
 			Velocity.mergeTemplate(template + ".vm", "UTF-8", context, sw);
 		} catch (Exception ex) {
-			log.error("Failed to load velocity template '{0}'", ex, template);
+			log.error("Failed to load velocity template '{}'", ex, template);
 			return null;
 		}
 
@@ -65,7 +64,7 @@ public class TemplateService implements Serializable {
 		try {
 			FileUtils.writeStringToFile(new File(confFile), conf, "UTF-8");
 		} catch (IOException ex) {
-			log.error("Failed to write IDP configuration file '{0}'", ex, confFile);
+			log.error("Failed to write IDP configuration file '{}'", ex, confFile);
 			ex.printStackTrace();
 			return false;
 		}
@@ -82,11 +81,11 @@ public class TemplateService implements Serializable {
 		try {
 			properties.load(is);
 			String loaderType = properties.getProperty("resource.loader").trim();
-			properties.setProperty("runtime.log", applicationConfiguration.getVelocityLog());
+			properties.setProperty("runtime.log", appConfiguration.getVelocityLog());
 
 			// Set right folder for file loader
 			if (loaderType.indexOf("file") == 0) {
-				String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
+				String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
 				String folder1 = idpTemplatesLocation + "shibboleth3"
 						+ File.separator + "idp";
 				String folder2 = idpTemplatesLocation + "shibboleth3"
@@ -123,15 +122,6 @@ public class TemplateService implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to initialize Velocity", ex);
 		}
-	}
-
-	/**
-	 * Get TemplateService instance
-	 * 
-	 * @return TemplateService instance
-	 */
-	public static TemplateService instance() {
-		return (TemplateService) Component.getInstance(TemplateService.class);
 	}
 
 }

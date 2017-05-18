@@ -12,35 +12,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushApplication;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
+import org.xdi.util.StringHelper;
 
 /**
  * Allows to prepare oxPush platform specifis configurations
  * 
  * @author Yuriy Movchan Date: 02/03/2014
  */
-@Scope(ScopeType.APPLICATION)
-@Name("pushApplicationConfigurationService")
-@AutoCreate
+@ApplicationScoped
+@Named("PushApplicationConfigurationService")
 public class PushApplicationConfigurationService implements Serializable {
 
 	private static final long serialVersionUID = -3486468321593831158L;
 
 	Map<String, String> supportedPlatforms;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@Create
+	@Inject
+	private OrganizationService organizationService;
+
+	@PostConstruct
 	public void init() {
 		this.supportedPlatforms = new HashMap<String, String>();
 		
@@ -51,7 +52,7 @@ public class PushApplicationConfigurationService implements Serializable {
 	public List<String> getPlatformDescriptionList(PushApplication pushApplication) {
 		List<String> result = new ArrayList<String>();
 		
-		List<HashMap<String, String>> platformConfigurations = pushApplication.getApplicationConfiguration().getPlatforms();
+		List<HashMap<String, String>> platformConfigurations = pushApplication.getappConfiguration().getPlatforms();
 		for (HashMap<String, String> platformConfiguration : platformConfigurations) {
 			String platformId = platformConfiguration.get("name");
 			String platform = this.supportedPlatforms.get(platformId);
@@ -62,15 +63,6 @@ public class PushApplicationConfigurationService implements Serializable {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Get PushApplicationConfigurationService instance
-	 * 
-	 * @return PushApplicationConfigurationService instance
-	 */
-	public static PushApplicationConfigurationService instance() {
-		return (PushApplicationConfigurationService) Component.getInstance(PushApplicationConfigurationService.class);
 	}
 
 }

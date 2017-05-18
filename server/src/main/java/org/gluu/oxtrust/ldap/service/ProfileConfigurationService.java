@@ -7,42 +7,48 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.XmlService;
 import org.xdi.util.StringHelper;
+import org.xdi.util.exception.InvalidConfigurationException;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xml.sax.SAXException;
+import static org.gluu.oxtrust.ldap.service.Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER;
 
 /**
  * Provides operations with metadata filters
  * 
  */
-@Scope(ScopeType.STATELESS)
-@Name("profileConfigurationService")
-@AutoCreate
-public class ProfileConfigurationService {
+@Stateless
+@Named
+public class ProfileConfigurationService implements Serializable {
+
+	private static final long serialVersionUID = -4691360522345319673L;
 
 	private static final String SHIBBOLETH_SSO = "ShibbolethSSO";
 	private static final String SAML1_ARTIFACT_RESOLUTION = "SAML1ArtifactResolution";
@@ -51,19 +57,24 @@ public class ProfileConfigurationService {
 	private static final String SAML2_ARTIFACT_RESOLUTION = "SAML2ArtifactResolution";
 	private static final String SAML2_ATTRIBUTE_QUERY = "SAML2AttributeQuery";
 
-	@In
-	private Shibboleth3ConfService shibboleth3ConfService;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private TemplateService templateService;
 
-	@In
+	@Inject
 	private XmlService xmlService;
+	
+	@Inject
+	private ConfigurationFactory configurationFactory;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
-
-		String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
-		// File profileConfigurationFolder = new File(OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
+		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		// File profileConfigurationFolder = new File(configurationFactory.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 		File profileConfigurationFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 
 		File[] profileConfigurationTemplates = null;
@@ -311,10 +322,6 @@ public class ProfileConfigurationService {
 
 	}
 
-	public static ProfileConfigurationService instance() {
-		return (ProfileConfigurationService) Component.getInstance(ProfileConfigurationService.class);
-	}
-
 	public void saveProfileConfigurations(GluuSAMLTrustRelationship trustRelationship, Map<String, FileUploadWrapper> fileWrappers) {
 		VelocityContext context = new VelocityContext();
 
@@ -423,10 +430,38 @@ public class ProfileConfigurationService {
 	private void saveCertificate(GluuSAMLTrustRelationship trustRelationship, Map<String, FileUploadWrapper> fileWrappers, String name) {
 		if (fileWrappers.get(name) != null && fileWrappers.get(name).getStream() != null) {
 			String profileConfigurationCertFileName = StringHelper.removePunctuation(name + trustRelationship.getInum());
-			shibboleth3ConfService.saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
+			saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
 			trustRelationship.getProfileConfigurations().get(name)
 					.setProfileConfigurationCertFileName(StringHelper.removePunctuation(profileConfigurationCertFileName));
 		}
+
+	}
+
+	public String saveProfileConfigurationCert(String profileConfigurationCertFileName, InputStream stream) {
+
+		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
+			IOUtils.closeQuietly(stream);
+			throw new InvalidConfigurationException("Failed to save Profile Configuration file due to undefined IDP root folder");
+		}
+
+		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator;
+		File filterCertFile = new File(idpMetadataFolder + profileConfigurationCertFileName);
+
+		FileOutputStream os = null;
+		try {
+			os = FileUtils.openOutputStream(filterCertFile);
+			IOUtils.copy(stream, os);
+			os.flush();
+		} catch (IOException ex) {
+			log.error("Failed to write  Profile Configuration  certificate file '{}'", ex, filterCertFile);
+			ex.printStackTrace();
+			return null;
+		} finally {
+			IOUtils.closeQuietly(os);
+			IOUtils.closeQuietly(stream);
+		}
+
+		return filterCertFile.getAbsolutePath();
 
 	}
 

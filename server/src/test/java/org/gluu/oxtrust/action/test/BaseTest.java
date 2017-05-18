@@ -6,11 +6,15 @@
 
 package org.gluu.oxtrust.action.test;
 
-import org.jboss.seam.mock.EnhancedMockHttpServletResponse;
+import java.util.List;
+import java.util.Map.Entry;
+
+import javax.ws.rs.core.Response;
+
 import org.testng.Assert;
 
 /**
- * @author Javier Rojas Date: 10.10.2011
+ * @author Yuriy Movchan Date: 10.10.2011
  */
 public abstract class BaseTest extends ConfigurableTest {
 
@@ -22,16 +26,24 @@ public abstract class BaseTest extends ConfigurableTest {
 		System.out.println("#######################################################");
 	}
 
-	public static void showResponse(String title, EnhancedMockHttpServletResponse response) {
+	public void showResponse(String title, Response response) {
+		showResponse(title, response, null);
+	}
+
+	public static void showResponse(String title, Response response, Object entity) {
 		System.out.println(" ");
 		System.out.println("RESPONSE FOR: " + title);
 		System.out.println(response.getStatus());
-		for (Object headerName : response.getHeaderNames()) {
-			System.out.println(headerName + ": " + response.getHeader(headerName.toString()));
+		for (Entry<String, List<Object>> headers : response.getHeaders().entrySet()) {
+			String headerName = headers.getKey();
+			System.out.println(headerName + ": " + headers.getValue());
 		}
-		System.out.println(response.getContentAsString().replace("\\n", "\n"));
+
+		if (entity != null) {
+			System.out.println(entity.toString().replace("\\n", "\n"));
+		}
 		System.out.println(" ");
-		System.out.println("Status message: " + response.getStatusMessage());
+		System.out.println("Status message: " + response.getStatus());
 	}
 
 	public static void fails(Throwable e) {

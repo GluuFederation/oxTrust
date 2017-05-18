@@ -8,13 +8,10 @@ package org.gluu.oxtrust.service.external;
 
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.conf.CustomScriptConfiguration;
@@ -26,10 +23,8 @@ import org.xdi.service.custom.script.ExternalScriptService;
  * 
  * @author Yuriy Movchan Date: 01/16/2015
  */
-@Scope(ScopeType.APPLICATION)
-@Name("externalUserRegistrationService")
-@AutoCreate
-@Startup
+@ApplicationScoped
+@Named
 public class ExternalUserRegistrationService extends ExternalScriptService {
 
 	private static final long serialVersionUID = 1767751544454591273L;
@@ -136,10 +131,6 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 		}
 
 		return false;
-	}
-
-	public static ExternalUserRegistrationService instance() {
-		return (ExternalUserRegistrationService) Component.getInstance(ExternalUserRegistrationService.class);
 	}
 
 }

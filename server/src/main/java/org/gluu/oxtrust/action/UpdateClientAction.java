@@ -6,8 +6,22 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -15,15 +29,8 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
 import org.xdi.oxauth.model.common.GrantType;
@@ -33,9 +40,6 @@ import org.xdi.service.LookupService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
-import java.io.Serializable;
-import java.util.*;
-
 /**
  * Action class for viewing and updating clients.
  *
@@ -44,30 +48,33 @@ import java.util.*;
  * @author Javier Rojas Blum
  * @version December 10, 2015
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("updateClientAction")
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named("updateClientAction")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateClientAction implements Serializable {
 
     private static final long serialVersionUID = -5756470620039988876L;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @In
+    @Inject
     private ClientService clientService;
 
-    @In
+    @Inject
     private ScopeService scopeService;
 
-    @In
+    @Inject
     private LookupService lookupService;
 
-    @In
+    @Inject
     private FacesMessages facesMessages;
     
-    @In
-	private OxTrustConfiguration oxTrustConfiguration;
+    @Inject
+	private ConfigurationFactory configurationFactory;
+    
+    @Inject
+    private AppConfiguration appConfiguration;
 
     private String inum;
 
@@ -105,7 +112,7 @@ public class UpdateClientAction implements Serializable {
     private List<SelectableEntity<ResponseType>> availableResponseTypes;
     private List<SelectableEntity<GrantType>> availableGrantTypes;
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public String add() throws Exception {
         if (this.client != null) {
             return OxTrustConstants.RESULT_SUCCESS;
@@ -133,7 +140,7 @@ public class UpdateClientAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public String update() throws Exception {
         if (this.client != null) {
             return OxTrustConstants.RESULT_SUCCESS;
@@ -145,11 +152,11 @@ public class UpdateClientAction implements Serializable {
             log.info("inum : " + inum);
             this.client = clientService.getClientByInum(inum);
         } catch (LdapMappingException ex) {
-            log.error("Failed to find client {0}", ex, inum);
+            log.error("Failed to find client {}", ex, inum);
         }
 
         if (this.client == null) {
-            log.error("Failed to load client {0}", inum);
+            log.error("Failed to load client {}", inum);
             return OxTrustConstants.RESULT_FAILURE;
         }
 
@@ -187,11 +194,11 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void cancel() {
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public String save() throws Exception {
         updateLoginURIs();
         updateLogoutURIs();
@@ -212,9 +219,9 @@ public class UpdateClientAction implements Serializable {
                 clientService.updateClient(this.client);
             } catch (LdapMappingException ex) {
 
-                log.error("Failed to update client {0}", ex, this.inum);
+                log.error("Failed to update client {}", ex, this.inum);
 
-                facesMessages.add(Severity.ERROR, "Failed to update client");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client");
                 return OxTrustConstants.RESULT_FAILURE;
             }
         } else {
@@ -228,9 +235,9 @@ public class UpdateClientAction implements Serializable {
                 clientService.addClient(this.client);
             } catch (LdapMappingException ex) {
                 log.info("error saving client ");
-                log.error("Failed to add new client {0}", ex, this.inum);
+                log.error("Failed to add new client {}", ex, this.inum);
 
-                facesMessages.add(Severity.ERROR, "Failed to add new client");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
                 return OxTrustConstants.RESULT_FAILURE;
             }
 
@@ -250,7 +257,7 @@ public class UpdateClientAction implements Serializable {
     	this.client.setInitiateLoginUri(StringHelper.trimAll(this.client.getInitiateLoginUri()));
 	}
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public String delete() throws Exception {
         if (update) {
             // Remove client
@@ -258,29 +265,29 @@ public class UpdateClientAction implements Serializable {
                 clientService.removeClient(this.client);
                 return OxTrustConstants.RESULT_SUCCESS;
             } catch (LdapMappingException ex) {
-                log.error("Failed to remove client {0}", ex, this.inum);
+                log.error("Failed to remove client {}", ex, this.inum);
             }
         }
 
         return OxTrustConstants.RESULT_FAILURE;
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeLoginURI(String uri) {
         removeFromList(this.loginUris, uri);
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeLogoutURI(String uri) {
         removeFromList(this.logoutUris, uri);
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeClientLogoutURI(String uri) {
         removeFromList(this.clientlogoutUris, uri);
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeContact(String contact) {
         if (StringUtils.isEmpty(contact)) {
             return;
@@ -295,7 +302,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeDefaultAcrValue(String defaultAcrValue) {
         if (StringUtils.isEmpty(defaultAcrValue)) {
             return;
@@ -310,7 +317,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeRequestUri(String requestUri) {
         if (StringUtils.isEmpty(requestUri)) {
             return;
@@ -369,7 +376,7 @@ public class UpdateClientAction implements Serializable {
         	
             this.loginUris.add(this.availableLoginUri);
         }else{
-        	facesMessages.add(Severity.ERROR, "The URL is not valid or may be Blacklisted.");
+        	facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.");
         }
 
         this.availableLoginUri = "https://";
@@ -383,7 +390,7 @@ public class UpdateClientAction implements Serializable {
         if (!this.logoutUris.contains(this.availableLogoutUri)   &&  checkWhiteListRedirectUris(availableLogoutUri) && checkBlackListRedirectUris(availableLogoutUri)) {
             this.logoutUris.add(this.availableLogoutUri);
         }else{
-        	facesMessages.add(Severity.ERROR, "The URL is not valid or may be Blacklisted.");
+        	facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.");
         }
 
         this.availableLogoutUri = "https://";
@@ -673,7 +680,7 @@ public class UpdateClientAction implements Serializable {
         return result;
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void acceptSelectResponseTypes() {
         List<ResponseType> addedResponseTypes = getResponseTypes();
 
@@ -689,7 +696,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void acceptSelectGrantTypes() {
         List<GrantType> addedGrantTypes = getGrantTypes();
 
@@ -705,15 +712,15 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void cancelSelectResponseTypes() {
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void cancelSelectGrantTypes() {
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void addResponseType(String value) {
         if (StringHelper.isEmpty(value)) {
             return;
@@ -725,7 +732,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void addGrantType(String value) {
         if (StringHelper.isEmpty(value)) {
             return;
@@ -737,7 +744,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeResponseType(String value) {
         if (StringHelper.isEmpty(value)) {
             return;
@@ -749,7 +756,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void removeGrantType(String value) {
         if (StringHelper.isEmpty(value)) {
             return;
@@ -761,7 +768,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void searchAvailableResponseTypes() {
         if (this.availableResponseTypes != null) {
             selectAddedResponseTypes();
@@ -778,7 +785,7 @@ public class UpdateClientAction implements Serializable {
         selectAddedResponseTypes();
     }
 
-    @Restrict("#{s:hasPermission('client', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
     public void searchAvailableGrantTypes() {
         if (this.availableGrantTypes != null) {
             selectAddedGrantTypes();
@@ -959,7 +966,7 @@ public class UpdateClientAction implements Serializable {
 	private boolean checkWhiteListRedirectUris(String redirectUri) {
 		try {
 			boolean valid = true;
-			List<String> whiteList = oxTrustConfiguration.getApplicationConfiguration().getClientWhiteList();
+			List<String> whiteList = appConfiguration.getClientWhiteList();
 			URLPatternList urlPatternList = new URLPatternList(whiteList);
 
 			// for (String redirectUri : redirectUris) {
@@ -978,7 +985,7 @@ public class UpdateClientAction implements Serializable {
 	private boolean checkBlackListRedirectUris(String redirectUri) {
 		try {
 			boolean valid = true;
-			List<String> blackList = oxTrustConfiguration.getApplicationConfiguration().getClientBlackList();
+			List<String> blackList = appConfiguration.getClientBlackList();
 			URLPatternList urlPatternList = new URLPatternList(blackList);
 
 			// for (String redirectUri : redirectUris) {

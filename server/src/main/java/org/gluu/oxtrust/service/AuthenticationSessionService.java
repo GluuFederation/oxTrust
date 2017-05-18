@@ -6,51 +6,54 @@
 
 package org.gluu.oxtrust.service;
 
+import java.io.Serializable;
 import java.util.UUID;
 
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.security.OauthData;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.EndSessionClient;
 import org.xdi.oxauth.client.EndSessionRequest;
 import org.xdi.oxauth.client.EndSessionResponse;
 import org.xdi.util.StringHelper;
 
-@Scope(ScopeType.SESSION)
-@Name("authenticationSessionService")
-@AutoCreate()
-public class AuthenticationSessionService {
+@SessionScoped
+@Named
+public class AuthenticationSessionService implements Serializable {
 
-	@Logger
-	private Log log;
+	private static final long serialVersionUID = 8569580900768794363L;
 
-	@In
+	@Inject
+	private Logger log;
+
+	@Inject
+	private Identity identity;
+
+	@Inject
 	private OpenIdService openIdService;
 	
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-    @Destroy
+    @PreDestroy
     public void sessionDestroyed() {
-    	OauthData oauthData = (OauthData) Component.getInstance(OauthData.class, false);
+    	OauthData oauthData = identity.getOauthData();
     	if ((oauthData == null) || StringHelper.isEmpty(oauthData.getSessionState())) {
     		return;
     	}
 
     	String userUid = oauthData.getUserUid();
-    	log.debug("Calling oxAuth logout method at the end of HTTP session. User: '{0}'", userUid);
+    	log.debug("Calling oxAuth logout method at the end of HTTP session. User: '{}'", userUid);
     	try {
             String endSessionState = UUID.randomUUID().toString();
 
-            EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), applicationConfiguration.getLogoutRedirectUrl(), endSessionState);
+            EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), appConfiguration.getLogoutRedirectUrl(), endSessionState);
             endSessionRequest.setSessionState(oauthData.getSessionState());
 
             EndSessionClient endSessionClient = new EndSessionClient(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
@@ -58,10 +61,10 @@ public class AuthenticationSessionService {
             EndSessionResponse endSessionResponse = endSessionClient.exec();
  
             if ((endSessionResponse == null) || (endSessionResponse.getStatus() != 302)) {
-    	    	log.error("Invalid response code at oxAuth logout. User: '{0}'", userUid);
+    	    	log.error("Invalid response code at oxAuth logout. User: '{}'", userUid);
             }
 		} catch (Exception ex) {
-	    	log.error("Exception happened at oxAuth logout. User: '{0}'", ex, userUid);
+	    	log.error("Exception happened at oxAuth logout. User: '{}'", ex, userUid);
 		}
     }
 

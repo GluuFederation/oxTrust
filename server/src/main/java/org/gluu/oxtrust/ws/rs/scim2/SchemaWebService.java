@@ -6,7 +6,21 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import com.wordnik.swagger.annotations.Api;
+import java.io.Serializable;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -15,32 +29,29 @@ import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.Resource;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
-import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeLoadingFactory;
+import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeAbstractSerializer;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import java.io.Serializable;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import com.wordnik.swagger.annotations.Api;
 
 /**
  * Web service for the /Schemas endpoint.
  *
  * @author Val Pecaoco
  */
-@Name("scim2SchemaEndpoint")
+@Named("scim2SchemaEndpoint")
 @Path("/scim/v2/Schemas")
 @Api(value = "/v2/Schemas", description = "SCIM 2.0 Schema Endpoint (https://tools.ietf.org/html/rfc7643#section-4)")
 public class SchemaWebService extends BaseScimWebService {
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
     /**
      * Retrieves the complete schema.
@@ -67,7 +78,7 @@ public class SchemaWebService extends BaseScimWebService {
 
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
         for (SchemaType schemaType : schemaTypes) {
-            factory.load(super.applicationConfiguration, schemaType);
+            factory.load(appConfiguration, schemaType);
             resources.add(schemaType);
         }
 
@@ -76,7 +87,7 @@ public class SchemaWebService extends BaseScimWebService {
         listResponse.setItemsPerPage(10);
         listResponse.setStartIndex(1);
 
-        URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas");
+        URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas");
 
         // Serialize to JSON
         String json = serialize(listResponse);
@@ -101,14 +112,14 @@ public class SchemaWebService extends BaseScimWebService {
         log.info(" getSchemaById(), id = '" + id + "'");
 
         SchemaTypeLoadingFactory factory = new SchemaTypeLoadingFactory();
-        SchemaType schemaType = factory.load(super.applicationConfiguration, id);
+        SchemaType schemaType = factory.load(appConfiguration, id);
 
         if (schemaType == null) {
             log.info(" NOT FOUND: schema with id = '" + id + "'");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        URI location = new URI(super.applicationConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + id);
+        URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Schemas/" + id);
 
         // Serialize to JSON
         String json = serialize(schemaType);

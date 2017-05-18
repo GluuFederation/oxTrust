@@ -7,45 +7,44 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Action class for adding the SAML IDP to Asimba.
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
-@Name("asimbaAddIDPAction")
-@Restrict("#{identity.loggedIn}")
+@SessionScoped
+@Named
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class AsimbaAddIDPAction implements Serializable {
 
     private static final long serialVersionUID = -1024167091985943689L;
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @In
+    @Inject
     private SvnSyncTimer svnSyncTimer;
     
-    @In
+    @Inject
     private AsimbaService asimbaService;
     
     private IDPEntry idp;
     
     private String idpURL;
     
-    @Create
+    @PostConstruct
     public void init() {        
         log.info("init() IDP call");
     }
@@ -56,7 +55,7 @@ public class AsimbaAddIDPAction implements Serializable {
         idp = new IDPEntry();
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new IDP", idp);
         // save
@@ -67,7 +66,7 @@ public class AsimbaAddIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel IDP", idp);
         

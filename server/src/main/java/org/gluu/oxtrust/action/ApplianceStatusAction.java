@@ -6,35 +6,33 @@
 
 package org.gluu.oxtrust.action;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
-
 import java.io.Serializable;
 import java.util.Date;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Action class for health check display
  * 
  * @author Oleksiy Tataryn Date: 11.14.2013
  */
-@Scope(CONVERSATION)
-@Name("applianceStatusAction")
+@ConversationScoped
+@Named("applianceStatusAction")
 public class ApplianceStatusAction implements Serializable {
 
 	private static final long serialVersionUID = -7470520478553992898L;
 
-	@Logger
-    private Log log;
+	@Inject
+    private Logger log;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
 	private String health;
@@ -49,14 +47,14 @@ public class ApplianceStatusAction implements Serializable {
 
 		long currentTime = System.currentTimeMillis();
 		
-		log.debug("lastUpdate: '{0}', currentTime: '{1}'", lastUpdate, currentTime);
+		log.debug("lastUpdate: '{}', currentTime: '{}'", lastUpdate, currentTime);
 		long timeSinceLastUpdate = (currentTime - lastUpdate) / 1000;
 		if (timeSinceLastUpdate >= 0 && timeSinceLastUpdate < 100) {
 			this.setHealth("OK");
 		} else {
 			this.setHealth("FAIL");
 		}
-		log.debug("Set status '{0}'", this.getHealth());
+		log.debug("Set status '{}'", this.getHealth());
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}

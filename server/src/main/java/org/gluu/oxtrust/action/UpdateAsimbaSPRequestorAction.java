@@ -13,33 +13,31 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Produces;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.Utils;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.core.ResourceLoader;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.security.Identity;
+import org.gluu.oxtrust.util.ServiceUtil;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 
 /**
@@ -47,41 +45,38 @@ import org.xdi.config.oxtrust.ApplicationConfiguration;
  * 
  * @author Dmitry Ognyannikov
  */
-@Scope(ScopeType.SESSION)
-@Name("updateAsimbaSPRequestorAction")
-@Restrict("#{identity.loggedIn}")
+@SessionScoped
+@Named("updateAsimbaSPRequestorAction")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateAsimbaSPRequestorAction implements Serializable {
 
     private static final long serialVersionUID = -1342167044333943680L;
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-    private ApplicationConfiguration applicationConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
 
-    @In
+    @Inject
     private Identity identity;
 
-    @In
+    @Inject
     private SvnSyncTimer svnSyncTimer;
     
-    @In
+    @Inject
     private FacesMessages facesMessages;
 
-    @In(value = "#{facesContext}")
+    @Inject
     private FacesContext facesContext;
     
-    @In
-    private ResourceLoader resourceLoader;
-    
-    @In
+    @Inject
     private AsimbaService asimbaService;
     
-    @In
+    @Inject
     private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
     
-    @Out
+    @Produces
     private RequestorEntry spRequestor;
     
     private boolean newEntry = true;
@@ -105,7 +100,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         
     }
     
-    @Create
+    @PostConstruct
     public void init() {
         log.info("init() SPRequestor call");
         
@@ -142,7 +137,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         uploadedCertBytes = null;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public void edit() {
         log.info("edit() SPRequestor call, inum: "+editEntryInum);
         if (editEntryInum == null || "".equals(editEntryInum)) {
@@ -158,7 +153,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         }
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new Requestor", spRequestor);
         spRequestor.setProperties(getProperties());
@@ -178,7 +173,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Requestor", spRequestor);
         spRequestor.setId(spRequestor.getId().trim());
@@ -200,14 +195,14 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel() Requestor", spRequestor);
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('person', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
     public String delete() {
         log.info("delete() Requestor", spRequestor);
         synchronized (svnSyncTimer) {
@@ -217,7 +212,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadFile(FileUploadEvent event) {
         log.info("uploadFile() Requestor", spRequestor);
         try {
@@ -225,21 +220,21 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
             String filepath = asimbaService.saveSPRequestorMetadataFile(uploadedFile);
             spRequestor.setMetadataFile(filepath);
             spRequestor.setMetadataUrl("");
-            facesMessages.add(StatusMessage.Severity.INFO, "File uploaded");
+            facesMessages.add(FacesMessage.SEVERITY_INFO, "File uploaded");
         } catch (Exception e) {
             log.error("Requestor metadata - uploadFile() exception", e);
-            facesMessages.add(StatusMessage.Severity.ERROR, "Requestor metadata - uploadFile exception", e);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Requestor metadata - uploadFile exception", e);
             return OxTrustConstants.RESULT_FAILURE;
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('trust', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
     public String uploadCertificateFile(FileUploadEvent event) {
         log.info("uploadCertificateFile() Requestor", spRequestor);
         try {
             UploadedFile uploadedFile = event.getUploadedFile();
-            uploadedCertBytes = Utils.readFully(uploadedFile.getInputStream());
+            uploadedCertBytes = ServiceUtil.readFully(uploadedFile.getInputStream());
             
             // check alias for valid url
             String id = spRequestor.getId();
@@ -251,22 +246,22 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
                 String message = asimbaXMLConfigurationService.addCertificateFile(uploadedFile, spRequestor.getId());
                 // display message
                 if (!OxTrustConstants.RESULT_SUCCESS.equals(message)) {
-                    facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", message);
+                    facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add Certificate ERROR: ", message);
                 } else {
-                    facesMessages.add(StatusMessage.Severity.INFO, "Certificate uploaded");
+                    facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate uploaded");
                 }
             } else {
-                facesMessages.add(StatusMessage.Severity.INFO, "Add valid URL to ID");
+                facesMessages.add(FacesMessage.SEVERITY_INFO, "Add valid URL to ID");
             }
         } catch (Exception e) {
             log.info("Requestor certificate - uploadCertificateFile() exception", e);
-            facesMessages.add(StatusMessage.Severity.ERROR, "Add Certificate ERROR: ", e.getMessage());
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add Certificate ERROR: ", e.getMessage());
             return OxTrustConstants.RESULT_VALIDATION_ERROR;
         }
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Restrict("#{s:hasPermission('person', 'access')}")
+    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
     public String search() {
         log.info("search() Requestor searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {

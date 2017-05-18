@@ -10,19 +10,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FilenameUtils;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 import org.richfaces.model.UploadedFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuImage;
 import org.xdi.service.XmlService;
@@ -34,22 +31,21 @@ import org.xdi.util.repository.RepositoryUtility;
  * 
  * @author Yuriy Movchan Date: 11.04.2010
  */
-@Name("imageService")
-@Scope(ScopeType.APPLICATION)
-@AutoCreate
+@Named("imageService")
+@ApplicationScoped
 public class ImageService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private ImageRepository imageRepository;
 
-	@In
+	@Inject
 	private XmlService xmlService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public String getXMLFromGluuImage(GluuImage photo) {
 		return xmlService.getXMLFromGluuImage(photo);
@@ -87,7 +83,7 @@ public class ImageService {
 		try {
 			imageRepository.addThumbnail(image, thumbWidth, thumbHeight);
 		} catch (Exception ex) {
-			log.error("Failed to generate thumbnail for photo {0}", ex, image);
+			log.error("Failed to generate thumbnail for photo {}", ex, image);
 		}
 
 		return image;
@@ -105,7 +101,7 @@ public class ImageService {
 		try {
 			return imageRepository.createRepositoryImageFiles(image, thumbWidth, thumbHeight);
 		} catch (Exception ex) {
-			log.error("Failed to save photo {0}", ex, image);
+			log.error("Failed to save photo {}", ex, image);
 		}
 		return false;
 	}
@@ -119,7 +115,7 @@ public class ImageService {
 	 * @throws Exception
 	 */
 	public boolean createImageFiles(GluuImage image) {
-		return createImageFiles(image, applicationConfiguration.getPhotoRepositoryThumbWidth(), applicationConfiguration.getPhotoRepositoryThumbHeight());
+		return createImageFiles(image, appConfiguration.getPhotoRepositoryThumbWidth(), appConfiguration.getPhotoRepositoryThumbHeight());
 	}
 
 	/**
@@ -176,7 +172,7 @@ public class ImageService {
 			try {
 				return imageRepository.getThumbImageData(image);
 			} catch (Exception ex) {
-				log.error("Failed to load GluuImage {0}", ex, image);
+				log.error("Failed to load GluuImage {}", ex, image);
 			}
 		}
 
@@ -188,7 +184,7 @@ public class ImageService {
 			try {
 				return imageRepository.getThumbImageData(image);
 			} catch (Exception ex) {
-				log.error("Failed to load GluuImage {0}", ex, image);
+				log.error("Failed to load GluuImage {}", ex, image);
 			}
 		}
 
@@ -199,7 +195,7 @@ public class ImageService {
 		try {
 			imageRepository.moveImageToPersistentStore(image);
 		} catch (Exception ex) {
-			log.error("Failed to load GluuImage {0}", ex, image);
+			log.error("Failed to load GluuImage {}", ex, image);
 		}
 	}
 
@@ -207,7 +203,7 @@ public class ImageService {
 		try {
 			imageRepository.moveLogoImageToPersistentStore(image);
 		} catch (IOException ex) {
-			log.error("Failed to load GluuImage {0}", ex, image);
+			log.error("Failed to load GluuImage {}", ex, image);
 		}
 	}
 
@@ -223,7 +219,7 @@ public class ImageService {
 		try {
 			return imageRepository.createRepositoryFaviconImageFiles(image);
 		} catch (IOException ex) {
-			log.error("Failed to save photo {0}", ex, image);
+			log.error("Failed to save photo {}", ex, image);
 		}
 
 		return false;
@@ -231,15 +227,6 @@ public class ImageService {
 
 	public boolean isIconImage(GluuImage image) {
 		return imageRepository.isIconImage(image);
-	}
-
-	/**
-	 * Get imageService instance
-	 * 
-	 * @return ImageService instance
-	 */
-	public static ImageService instance() {
-		return (ImageService) Component.getInstance(ImageService.class);
 	}
 
 	public byte[] getImageDate(UploadedFile uploadedFile) {

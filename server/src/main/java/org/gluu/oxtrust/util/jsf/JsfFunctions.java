@@ -6,10 +6,17 @@
 
 package org.gluu.oxtrust.util.jsf;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.oxtrust.model.User;
+import org.gluu.oxtrust.service.PermissionService;
+import org.xdi.ldap.model.Entry;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.StringHelper;
 
 //import org.gluu.site.model.Entry;
@@ -27,37 +34,35 @@ public class JsfFunctions {
 		}
 
 		try {
-			return LookupService.instance().getDisplayNameEntry(dn);
+			return CdiUtil.bean(LookupService.class).getDisplayNameEntry(dn);
 		} catch (Exception ex) {
 			return null;
 		}
 	}
 
-	// public static List<DisplayNameEntry> getDisplayNameEntries(String baseDn,
-	// List<? extends Entry> entries) {
-	// if ((baseDn == null) || (entries == null)) {
-	// return null;
-	// }
-	//
-	// try {
-	// return LookupService.instance().getDisplayNameEntriesByEntries(baseDn,
-	// entries);
-	// } catch (Exception ex) {
-	// return null;
-	// }
-	// }
-	//
-	// public static String encodeString(String str) {
-	// if ((str == null) || (str.length() == 0)) {
-	// return str;
-	// }
-	// try {
-	// return (new URI(null, str, null)).toString();
-	// } catch (URISyntaxException ex) {
-	// return null;
-	// }
-	// }
-	//
+	public static List<DisplayNameEntry> getDisplayNameEntries(String baseDn, List<? extends Entry> entries) {
+		if ((baseDn == null) || (entries == null)) {
+			return null;
+		}
+
+		try {
+			return CdiUtil.bean(LookupService.class).getDisplayNameEntriesByEntries(baseDn, entries);
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
+	public static String encodeString(String str) {
+		if ((str == null) || (str.length() == 0)) {
+			return str;
+		}
+		try {
+			return (new URI(null, str, null)).toString();
+		} catch (URISyntaxException ex) {
+			return null;
+		}
+	}
+
 	public static String splitByLines(String str, int maxLength) {
 		if ((str == null) || (str.length() == 0) || (maxLength == 0)) {
 			return str;
@@ -109,11 +114,19 @@ public class JsfFunctions {
 	}
 
 	public static String getPersonDisplayName(User person) {
+		if (person == null) {
+			return null;
+		}
+
 		if (StringHelper.isEmpty(person.getDisplayName())) {
 			return person.getUid();
 		}
 
 		return person.getDisplayName();
+	}
+
+	public static boolean hasPermission(Object target, String action) {
+		return CdiUtil.bean(PermissionService.class).hasPermission(target, action);
 	}
 
 }

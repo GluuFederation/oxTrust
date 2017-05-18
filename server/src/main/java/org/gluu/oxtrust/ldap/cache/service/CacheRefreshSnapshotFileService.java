@@ -24,16 +24,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.util.ArrayHelper;
 
@@ -42,14 +40,12 @@ import org.xdi.util.ArrayHelper;
  * 
  * @author Yuriy Movchan Date: 06.09.2011
  */
-@Name("cacheRefreshSnapshotFileService")
-@Scope(ScopeType.APPLICATION)
-@AutoCreate
-@Startup(depends = "appInitializer")
+@ApplicationScoped
+@Named("cacheRefreshSnapshotFileService")
 public class CacheRefreshSnapshotFileService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private static final String SNAPSHOT_FILE_NAME_PATTERN = "inum-snapshot-%s.txt";
 	private static final String PROBLEM_LIST_FILE_NAME = "problem-inum-list.txt";
@@ -64,7 +60,7 @@ public class CacheRefreshSnapshotFileService {
 				FileUtils.forceMkdir(dir);
 			}
 		} catch (IOException ex) {
-			log.error("Failed to create snapshot folder '{0}'", ex, snapshotFolder);
+			log.error("Failed to create snapshot folder '{}'", ex, snapshotFolder);
 			return false;
 		}
 
@@ -84,7 +80,7 @@ public class CacheRefreshSnapshotFileService {
 		try {
 			bos = new BufferedWriter(new FileWriter(file));
 		} catch (IOException ex) {
-			log.error("Failed to create snapshot file '{0}'", ex, file.getAbsolutePath());
+			log.error("Failed to create snapshot file '{}'", ex, file.getAbsolutePath());
 			return false;
 		}
 
@@ -94,7 +90,7 @@ public class CacheRefreshSnapshotFileService {
 			}
 			bos.flush();
 		} catch (IOException ex) {
-			log.error("Failed to create snapshot file '{0}'", ex, file.getAbsolutePath());
+			log.error("Failed to create snapshot file '{}'", ex, file.getAbsolutePath());
 			return false;
 		} finally {
 			IOUtils.closeQuietly(bos);
@@ -117,7 +113,7 @@ public class CacheRefreshSnapshotFileService {
 		try {
 			bis = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException ex) {
-			log.error("Failed to load snapshot file '{0}'", ex, file.getAbsolutePath());
+			log.error("Failed to load snapshot file '{}'", ex, file.getAbsolutePath());
 			return null;
 		}
 
@@ -127,7 +123,7 @@ public class CacheRefreshSnapshotFileService {
 			while ((line = bis.readLine()) != null) {
 				String[] lineValues = line.split(":");
 				if (lineValues.length != 2) {
-					log.error("Failed to parse line: {0}", line);
+					log.error("Failed to parse line: {}", line);
 					return null;
 				}
 
@@ -139,7 +135,7 @@ public class CacheRefreshSnapshotFileService {
 				}
 			}
 		} catch (IOException ex) {
-			log.error("Failed to load snapshot file '{0}'", ex, file.getAbsolutePath());
+			log.error("Failed to load snapshot file '{}'", ex, file.getAbsolutePath());
 			return null;
 		} finally {
 			IOUtils.closeQuietly(bis);
@@ -182,7 +178,7 @@ public class CacheRefreshSnapshotFileService {
 		for (int i = 0; i < snapshots.length - count; i++) {
 			File file = new File(cacheRefreshConfiguration.getSnapshotFolder() + File.separator + snapshots[i]);
 			if (!file.delete()) {
-				log.error("Failed to remove snaphost file '{0}'", file.getAbsolutePath());
+				log.error("Failed to remove snaphost file '{}'", file.getAbsolutePath());
 			}
 		}
 
@@ -203,7 +199,7 @@ public class CacheRefreshSnapshotFileService {
 		try {
 			bis = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException ex) {
-			log.error("Failed to load problem list from file '{0}'", ex, file.getAbsolutePath());
+			log.error("Failed to load problem list from file '{}'", ex, file.getAbsolutePath());
 			return null;
 		}
 
@@ -214,7 +210,7 @@ public class CacheRefreshSnapshotFileService {
 				result.add(line);
 			}
 		} catch (IOException ex) {
-			log.error("Failed to load problem list from file '{0}'", ex, file.getAbsolutePath());
+			log.error("Failed to load problem list from file '{}'", ex, file.getAbsolutePath());
 			return null;
 		} finally {
 			IOUtils.closeQuietly(bis);
@@ -233,7 +229,7 @@ public class CacheRefreshSnapshotFileService {
 		try {
 			bos = new BufferedWriter(new FileWriter(file));
 		} catch (IOException ex) {
-			log.error("Failed to write problem list to file '{0}'", ex, file.getAbsolutePath());
+			log.error("Failed to write problem list to file '{}'", ex, file.getAbsolutePath());
 			return false;
 		}
 
@@ -243,7 +239,7 @@ public class CacheRefreshSnapshotFileService {
 			}
 			bos.flush();
 		} catch (IOException ex) {
-			log.error("Failed to write problem list to file '{0}'", ex, file.getAbsolutePath());
+			log.error("Failed to write problem list to file '{}'", ex, file.getAbsolutePath());
 			return false;
 		} finally {
 			IOUtils.closeQuietly(bos);

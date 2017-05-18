@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -15,6 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -23,17 +29,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.AttributeData;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
-import org.xdi.ldap.model.CustomAttribute;
-import org.xdi.ldap.model.SimpleUser;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -45,27 +42,26 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 10.13.2010
  */
-@Scope(ScopeType.STATELESS)
-@Name("personService")
-@AutoCreate
+@Stateless
+@Named
 public class PersonService implements Serializable, IPersonService {
 
 	private static final long serialVersionUID = 6685720517520443399L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
-	@In
-	private IGroupService groupService;
-
-	@In
+	@Inject
 	private AttributeService attributeService;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	private List<GluuCustomAttribute> mandatoryAttributes;
 
@@ -124,14 +120,6 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public void removePerson(GluuCustomPerson person) {
-		// TODO: Do we realy need to remove group if owner is removed?
-		List<GluuGroup> groups = groupService.getAllGroups();
-		for (GluuGroup group : groups) {
-			if (StringHelper.equalsIgnoreCase(group.getOwner(), person.getDn())) {
-				groupService.removeGroup(group);
-			}
-		}
-
 		// Remove person
 		ldapEntryManager.removeWithSubtree(person.getDn());
 	}
@@ -351,7 +339,7 @@ public class PersonService implements Serializable, IPersonService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewPersonImpl() {
-		String orgInum = OrganizationService.instance().getInumForOrganization();
+		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_PERSON_OBJECTTYPE + OxTrustConstants.inumDelimiter + generateInum();
 	}
 
@@ -360,7 +348,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public String generateInameForNewPerson(String uid) {
-		return String.format("%s*person*%s", applicationConfiguration.getOrgIname(), uid);
+		return String.format("%s*person*%s", appConfiguration.getOrgIname(), uid);
 	}
 
 	private String generateInum() {
@@ -385,7 +373,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public String getDnForPerson(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=people,%s", orgDn);
 		}
@@ -398,18 +386,9 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public boolean authenticate(String userName, String password) {
-		boolean result = ldapEntryManager.authenticate(userName, password, applicationConfiguration.getBaseDN());
+		boolean result = ldapEntryManager.authenticate(userName, password, appConfiguration.getBaseDN());
 
 		return result;
-	}
-
-	/**
-	 * Get personService instance
-	 * 
-	 * @return PersonService instance
-	 */
-	public static IPersonService instance() {
-		return (IPersonService) Component.getInstance(PersonService.class);
 	}
 
 	/* (non-Javadoc)
@@ -454,30 +433,6 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> createEntities(Map<String, List<AttributeData>> entriesAttributes) throws Exception {
 		List<GluuCustomPerson> result = ldapEntryManager.createEntities(GluuCustomPerson.class, entriesAttributes);
-
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.gluu.oxtrust.ldap.service.IPersonService#isMemberOrOwner(java.lang.String[], java.lang.String)
-	 */
-	@Override
-	public boolean isMemberOrOwner(String[] groupDNs, String personDN) throws Exception {
-		boolean result = false;
-		if (ArrayHelper.isEmpty(groupDNs)) {
-			return result;
-		}
-
-		for (String groupDN : groupDNs) {
-			if (StringHelper.isEmpty(groupDN)) {
-				continue;
-			}
-
-			result = groupService.isMemberOrOwner(groupDN, personDN);
-			if (result) {
-				break;
-			}
-		}
 
 		return result;
 	}

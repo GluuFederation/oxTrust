@@ -24,7 +24,7 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
 	public static final String CLIENT_NAME = "clientName";
 
 	/**
-	 * {@inheritDoc}
+	 * {@InheritDoc}
 	 */
 	@Override
 	public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {

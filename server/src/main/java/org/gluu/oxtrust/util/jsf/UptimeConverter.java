@@ -6,28 +6,22 @@
 
 package org.gluu.oxtrust.util.jsf;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.faces.Converter;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
 
 /**
  * @author: Yuriy Movchan Date: 11.24.2010
  */
-@Converter()
-@Name("uptimeConverter")
-@BypassInterceptors
-public class UptimeConverter implements javax.faces.convert.Converter, Serializable {
-
-	private static final long serialVersionUID = -4292643644104278424L;
+@FacesConverter("uptimeConverter")
+public class UptimeConverter implements Converter {
 
 	private static final String[] dateFormats = { "D 'days' HH 'hours' mm 'mins' ss 'seconds'" };
 

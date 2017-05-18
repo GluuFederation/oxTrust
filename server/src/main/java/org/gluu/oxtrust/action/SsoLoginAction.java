@@ -14,8 +14,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.render.Renderer;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,19 +29,11 @@ import org.drools.CheckedDroolsException;
 import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.drools.compiler.RuleBaseLoader;
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.faces.Renderer;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.security.Identity;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 /**
@@ -44,26 +41,23 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 11.26.2010
  */
-@Scope(ScopeType.CONVERSATION)
-@Name("ssoLoginAction")
+@ConversationScoped
+@Named("ssoLoginAction")
 public class SsoLoginAction implements Serializable {
 
 	private static final long serialVersionUID = 7409229786722653317L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private Identity identity;
 
-	@In(value = "#{facesContext}")
+	@Inject
 	private FacesContext facesContext;
-
-	@In
-	private Renderer renderer;
 
 	private String userName;
 	private String password;
@@ -76,23 +70,23 @@ public class SsoLoginAction implements Serializable {
 
 	private boolean initialized = false;
 
-	@In(value = "#{facesContext.externalContext}")
-	private ExternalContext extCtx;
+	@Inject
+	private ExternalContext externalContext;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	public String start() {
 		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-		HttpServletRequest request = (HttpServletRequest) extCtx.getRequest();
+		HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
 		relyingPartyId = request.getHeader("relyingPartyId");
 		setActionUrl(request.getHeader("actionUrl"));
 		log.debug("relyingPartyId is" + relyingPartyId);
 		log.debug("actionUrl is" + actionUrl);
 		if (StringHelper.isEmpty(relyingPartyId)) {
-			facesMessages.add(Severity.ERROR, "Direct access to this page is not supported");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Direct access to this page is not supported");
 			// return Configuration.RESULT_FAILURE;
 		}
 
@@ -107,7 +101,7 @@ public class SsoLoginAction implements Serializable {
 
 		} catch (Exception ex) {
 			log.error("Failed to initialize HTTP Client", ex);
-			facesMessages.add(Severity.ERROR, "Failed to prepare login form");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare login form");
 
 			// return Configuration.RESULT_FAILURE;
 		}
@@ -137,7 +131,7 @@ public class SsoLoginAction implements Serializable {
 					workingMemory.fireAllRules();
 					if (viewId.size() > 0) {
 						log.info("Login page customization rules fired: " + viewId.get(0));
-						extCtx.redirect(viewId.get(0));
+						externalContext.redirect(viewId.get(0));
 					}
 				} finally {
 					IOUtils.closeQuietly(reader);
@@ -153,7 +147,7 @@ public class SsoLoginAction implements Serializable {
 	}
 
 	public String logout() {
-		boolean isShib3Authentication = OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3.equals(Contexts.getSessionContext().get(
+		boolean isShib3Authentication = OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3.equals(identity.getSessionMap().get(
 				OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE));
 
 		if (isShib3Authentication) {
@@ -162,7 +156,7 @@ public class SsoLoginAction implements Serializable {
 				HttpServletResponse userResponse = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 				HttpServletRequest userRequest = (HttpServletRequest) facesContext.getExternalContext().getRequest();
 
-				String redirectUrl = String.format("%s%s", applicationConfiguration.getIdpUrl(), "/idp/logout.jsp");
+				String redirectUrl = String.format("%s%s", appConfiguration.getIdpUrl(), "/idp/logout.jsp");
 				String url = String.format("%s://%s/Shibboleth.sso/Logout?return=%s", userRequest.getScheme(), userRequest.getServerName(),
 						redirectUrl);
 
@@ -234,21 +228,6 @@ public class SsoLoginAction implements Serializable {
 
 	public boolean isInitialized() {
 		return initialized;
-	}
-
-	/**
-	 * @param renderer
-	 *            the renderer to set
-	 */
-	public void setRenderer(Renderer renderer) {
-		this.renderer = renderer;
-	}
-
-	/**
-	 * @return the renderer
-	 */
-	public Renderer getRenderer() {
-		return renderer;
 	}
 
 	/**

@@ -1,11 +1,12 @@
 package org.gluu.oxtrust.api.rest;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -16,13 +17,9 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
-import org.gluu.oxtrust.model.passport.PassportStrategy;
 import org.gluu.oxtrust.service.uma.PassportUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.model.passport.FieldSet;
 import org.xdi.oxauth.model.uma.wrapper.Token;
@@ -36,23 +33,23 @@ import org.xdi.util.Pair;
  * @author Yuriy Movchan Date: 12/06/2016
  */
 
-@Name("PassportConfigurationEndPoint")
+@Named("PassportConfigurationEndPoint")
 @Path("/passport/config")
 public class PassportRestWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	private PassportService passportService;
 
-	@In
+	@Inject
 	private PassportUmaProtectionService pasportUmaProtectionService;
 
-	@In
+	@Inject
 	private UmaPermissionService umaPermissionService;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
 	@GET

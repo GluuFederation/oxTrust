@@ -9,71 +9,66 @@ package org.gluu.oxtrust.ldap.service;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.gluu.oxtrust.config.OxTrustConfiguration;
-import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.annotations.async.Expiration;
-import org.jboss.seam.annotations.async.IntervalDuration;
-import org.jboss.seam.async.QuartzTriggerHandle;
-import org.jboss.seam.async.TimerSchedule;
-import org.jboss.seam.core.Events;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import javax.ejb.Asynchronous;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-@AutoCreate
-@Scope(ScopeType.APPLICATION)
-@Name("statusCheckerDaily")
+import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.service.cdi.event.StatusCheckerDailyEvent;
+import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.cdi.event.Scheduled;
+import org.xdi.service.timer.event.TimerEvent;
+import org.xdi.service.timer.schedule.TimerSchedule;
+
+@ApplicationScoped
+@Named("statusCheckerDaily")
 public class StatusCheckerDaily {
 
-    private final static String EVENT_TYPE = "StatusCheckerDailyTimerEvent";
 	// Group count and person count will now be checked daily
-	public static final long STATUS_CHECKER_DAILY = (long) (1000L * 60 * 60 * 24);
+	public static final int DEFAULT_INTERVAL = 60 * 60 * 24;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
+	private Event<TimerEvent> timerEvent;
+
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private IGroupService groupService;
 
-	@In
+	@Inject
 	private IPersonService personService;
 
-	@In
+	@Inject
 	private CentralLdapService centralLdapService;
 
-	@In
-	private OxTrustConfiguration oxTrustConfiguration;
+	@Inject
+	private ConfigurationFactory configurationFactory;
 
     private AtomicBoolean isActive;
 
-	@Create
-	public void create() {
-		// Initialization Code
-	}
-
-    @Observer("org.jboss.seam.postInitialization")
-    public void init() {
-        log.info("Initializing daily status checker timer");
+    public void initTimer() {
+        log.info("Initializing Daily Status Cheker Timer");
         this.isActive = new AtomicBoolean(false);
 
-        Events.instance().raiseTimedEvent(EVENT_TYPE, new TimerSchedule(60 * 1000L, STATUS_CHECKER_DAILY));
+		final int delay = 1 * 60;
+		final int interval = DEFAULT_INTERVAL;
+
+		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new StatusCheckerDailyEvent(),
+				Scheduled.Literal.INSTANCE));
     }
 
-    @Observer(EVENT_TYPE)
     @Asynchronous
-    public void process() {
+    public void process(@Observes @Scheduled StatusCheckerDailyEvent statusCheckerDailyEvent) {
         if (this.isActive.get()) {
             return;
         }
@@ -99,8 +94,8 @@ public class StatusCheckerDaily {
 	 */
 	private void processInt() {
 		log.debug("Starting daily status checker");
-		ApplicationConfiguration applicationConfiguration = oxTrustConfiguration.getApplicationConfiguration();
-		if (!applicationConfiguration.isUpdateApplianceStatus()) {
+		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
+		if (!appConfiguration.isUpdateApplianceStatus()) {
 			return;
 		}
 
@@ -158,4 +153,5 @@ public class StatusCheckerDaily {
 	private String toIntString(Number number) {
 		return (number == null) ? null : String.valueOf(number.intValue());
 	}
+
 }

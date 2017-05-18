@@ -8,14 +8,13 @@ package org.gluu.oxtrust.service.uma;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 
 /**
@@ -23,41 +22,40 @@ import org.xdi.ldap.model.GluuBoolean;
  * 
  * @author Yuriy Movchan Date: 012/06/2016
  */
-@Scope(ScopeType.APPLICATION)
-@Name("pasportUmaProtectionService")
-@AutoCreate
+@ApplicationScoped
+@Named("pasportUmaProtectionService")
 public class PassportUmaProtectionService extends BaseUmaProtectionService implements Serializable {
 
 	private static final long serialVersionUID = -5547131971095468865L;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-	@In
+	@Inject
 	private ApplianceService applianceService;
 
 	protected String getClientId() {
-		return applicationConfiguration.getPassportUmaClientId();
+		return appConfiguration.getPassportUmaClientId();
 	}
 
 	protected String getClientKeyStorePassword() {
-		return applicationConfiguration.getPassportUmaClientKeyStorePassword();
+		return appConfiguration.getPassportUmaClientKeyStorePassword();
 	}
 
 	protected String getClientKeyStoreFile() {
-		return applicationConfiguration.getPassportUmaClientKeyStoreFile();
+		return appConfiguration.getPassportUmaClientKeyStoreFile();
 	}
 
 	protected String getClientKeyId() {
-		return applicationConfiguration.getPassportUmaClientKeyId();
+		return appConfiguration.getPassportUmaClientKeyId();
 	}
 
 	public String getUmaResourceId() {
-		return applicationConfiguration.getPassportUmaResourceId();
+		return appConfiguration.getPassportUmaResourceId();
 	}
 
 	public String getUmaScope() {
-		return applicationConfiguration.getPassportUmaScope();
+		return appConfiguration.getPassportUmaScope();
 	}
 
 	public boolean isEnabled() {

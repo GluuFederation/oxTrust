@@ -7,52 +7,46 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.imageio.ImageIO;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.core.ResourceLoader;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.ui.graphicImage.Image.Type;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.util.StringHelper;
 import org.xdi.util.image.ImageTransformationUtility;
 import org.xdi.util.repository.RepositoryUtility;
+
+import com.google.common.net.MediaType;
 
 /**
  * Manage images in photo repository
  * 
  * @author Yuriy Movchan Date: 11.03.2010
  */
-@Name("imageRepository")
-@Scope(ScopeType.APPLICATION)
-@AutoCreate
-@Startup
+@Named("imageRepository")
+@ApplicationScoped
 public class ImageRepository {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(required = false)
-	private ResourceLoader resourceLoader;
-
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private static final String TEMP_FOLDER = "tmp";
 	private static final String REMOVED_FOLDER = "removed";
@@ -71,12 +65,12 @@ public class ImageRepository {
 
 	private FileTypeMap fileTypeMap;
 
-	@Create
+	@PostConstruct
 	public void init() throws Exception {
-		countLevels = applicationConfiguration.getPhotoRepositoryCountLeveles();
-		countFoldersPerLevel = applicationConfiguration.getPhotoRepositoryCountFoldersPerLevel();
+		countLevels = appConfiguration.getPhotoRepositoryCountLeveles();
+		countFoldersPerLevel = appConfiguration.getPhotoRepositoryCountFoldersPerLevel();
 
-		String photoRepositoryRootDir = applicationConfiguration.getPhotoRepositoryRootDir();
+		String photoRepositoryRootDir = appConfiguration.getPhotoRepositoryRootDir();
 		photoRepositoryRootDirFile = new File(photoRepositoryRootDir);
 
 		// Create folders for persistent images
@@ -142,7 +136,7 @@ public class ImageRepository {
 		}
 
 		// Generate paths
-		setGeneratedImagePathes(image, Type.IMAGE_JPEG.getExtension());
+		setGeneratedImagePathes(image, ".jpg");
 
 		// Create folders tree
 		createImagePathes(image);
@@ -162,31 +156,31 @@ public class ImageRepository {
 		}
 
 		// Load source image
-		org.jboss.seam.ui.graphicImage.Image graphicsImage = new org.jboss.seam.ui.graphicImage.Image();
-
-		graphicsImage.setInput(image.getData());
-		graphicsImage.setContentType(Type.IMAGE_PNG);
-
-		if (graphicsImage.getBufferedImage() == null) {
+		BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(image.getData()));
+		if (bufferedImage == null) {
 			throw new IOException("The image data is empty");
 		}
 
 		// Set source image size
-		image.setWidth(graphicsImage.getWidth());
-		image.setHeight(graphicsImage.getHeight());
+		image.setWidth(bufferedImage.getWidth());
+		image.setHeight(bufferedImage.getHeight());
 
-		BufferedImage bi = ImageTransformationUtility.scaleImage(graphicsImage.getBufferedImage(), thumbWidth, thumbHeight);
-		graphicsImage.setBufferedImage(bi);
+		BufferedImage bi = ImageTransformationUtility.scaleImage(bufferedImage, thumbWidth, thumbHeight);
 
 		// Set thumb properties
-		image.setThumbWidth(graphicsImage.getWidth());
-		image.setThumbHeight(graphicsImage.getHeight());
-		image.setThumbContentType(graphicsImage.getContentType().getMimeType());
+		image.setThumbWidth(bi.getWidth());
+		image.setThumbHeight(bi.getHeight());
 		
-		// Store thumb image
-		image.setThumbData(graphicsImage.getImage());
-
-		graphicsImage = null;
+		image.setThumbContentType(MediaType.PNG.toString());
+		
+		// Store thumb image 
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(bufferedImage, "png", bos);
+			image.setThumbData(bos.toByteArray());
+		} finally {
+			bos.close();
+		}
 
 		return true;
 	}
@@ -249,7 +243,7 @@ public class ImageRepository {
 
 	public File getThumbFile(GluuImage image) {
 		if (image.isLogo() && !image.isStoreTemporary()) {
-			return new File(applicationConfiguration.getLogoLocation() + File.separator + image.getThumbFilePath());
+			return new File(appConfiguration.getLogoLocation() + File.separator + image.getThumbFilePath());
 		}
 
 		String parentFolder = image.isStoreTemporary() ? tmpThumbHome : thumbHome;
@@ -258,7 +252,7 @@ public class ImageRepository {
 
 	public File getSourceFile(GluuImage image) {
 		if (image.isLogo() && !image.isStoreTemporary()) {
-			return new File(applicationConfiguration.getLogoLocation() + File.separator + image.getSourceFilePath());
+			return new File(appConfiguration.getLogoLocation() + File.separator + image.getSourceFilePath());
 		}
 
 		String parentFolder = image.isStoreTemporary() ? tmpSourceHome : sourceHome;
@@ -285,7 +279,7 @@ public class ImageRepository {
 				FileUtils.copyFile(thumbFile, reovedThumbFile);
 				FileUtils.copyFile(sourceFile, removedSourceFile);
 			} catch (IOException ex) {
-				log.error("Failed to create backup for photo {0} before removal", ex, image);
+				log.error("Failed to create backup for photo {} before removal", ex, image);
 			}
 		}
 
@@ -350,7 +344,7 @@ public class ImageRepository {
 	}
 
 	private void prepareBlankImage() {
-		InputStream is = resourceLoader.getResourceAsStream("/WEB-INF/static/images/blank_image.gif");
+		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/blank_image.gif");
 		if(is != null){
 			try {
 				this.blankImage = IOUtils.toByteArray(is);
@@ -365,7 +359,7 @@ public class ImageRepository {
 	}
 
 	private void prepareBlankPhoto() {
-		InputStream is = resourceLoader.getResourceAsStream("/WEB-INF/static/images/anonymous.png");
+		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/anonymous.png");
 		if(is != null){
 			try {
 				this.blankPhoto = IOUtils.toByteArray(is);
@@ -381,7 +375,7 @@ public class ImageRepository {
 
 	private void prepareBlankIcon() {
 		
-		InputStream is = resourceLoader.getResourceAsStream("/WEB-INF/static/images/blank_icon.gif");
+		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/blank_icon.gif");
 		if(is != null){
 			try {
 				this.blankIcon = IOUtils.toByteArray(is);

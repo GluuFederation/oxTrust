@@ -6,23 +6,22 @@
 
 package org.gluu.oxtrust.service.push;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
+import org.xdi.util.StringHelper;
 
 import com.unboundid.ldap.sdk.Filter;
 
@@ -31,18 +30,19 @@ import com.unboundid.ldap.sdk.Filter;
  * 
  * @author Yuriy Movchan Date: 01/22/2014
  */
-@Scope(ScopeType.STATELESS)
-@Name("pushDeviceService")
-@AutoCreate
+@Stateless
+@Named("pushDeviceService")
 public class PushDeviceService implements Serializable {
 
 	private static final long serialVersionUID = -920736838757282684L;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
+	@Inject
+	private OrganizationService organizationService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();
@@ -179,21 +179,12 @@ public class PushDeviceService implements Serializable {
 	 * Build DN string for oxPush Device
 	 */
 	public String getDnForPushDevice(String inum) {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=device,ou=push,%s", orgDn);
 		}
 
 		return String.format("inum=%s,ou=device,ou=push,%s", inum, orgDn);
-	}
-
-	/**
-	 * Get PushDeviceService instance
-	 * 
-	 * @return PushDeviceService instance
-	 */
-	public static PushDeviceService instance() {
-		return (PushDeviceService) Component.getInstance(PushDeviceService.class);
 	}
 
 }

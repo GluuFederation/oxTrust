@@ -9,19 +9,17 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
@@ -31,20 +29,23 @@ import org.xdi.util.StringHelper;
  * 
  * @author Yuriy Movchan Date: 07/08/2013
  */
-@Name("configureLogViewerAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("configureLogViewerAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3310460481895022468L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
+	
+	@Inject
+	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private FacesMessages facesMessages;
 
-	@In
+	@Inject
 	private JsonService jsonService;
 
 	private GluuAppliance appliance;
@@ -53,13 +54,13 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	private boolean initialized;
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.logViewerConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		this.appliance = ApplianceService.instance().getAppliance();
+		this.appliance = applianceService.getAppliance();
 
 		initConfigurations();
 
@@ -72,7 +73,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		this.logViewerConfiguration = prepareLogViewerConfig();
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!validateLists()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -84,12 +85,12 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	}
 
 	private void updateAppliance() {
-		GluuAppliance updateAppliance = ApplianceService.instance().getAppliance();
+		GluuAppliance updateAppliance = applianceService.getAppliance();
 		try {
 			updateAppliance.setOxLogViewerConfig(jsonService.objectToJson(logViewerConfiguration));
-			ApplianceService.instance().updateAppliance(updateAppliance);
+			applianceService.updateAppliance(updateAppliance);
 		} catch (Exception ex) {
-			log.error("Failed to save log viewer configuration '{0}'", ex);
+			log.error("Failed to save log viewer configuration '{}'", ex);
 		}
 	}
 
@@ -99,7 +100,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		return result;
 	}
 
-	@Restrict("#{s:hasPermission('configuration', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 
@@ -111,7 +112,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			try {
 				logViewerConfig = jsonService.jsonToObject(appliance.getOxLogViewerConfig(), LogViewerConfig.class);
 			} catch (Exception ex) {
-				log.error("Failed to load log viewer configuration '{0}'", ex, oxLogViewerConfig);
+				log.error("Failed to load log viewer configuration '{}'", ex, oxLogViewerConfig);
 			}
 		}
 		

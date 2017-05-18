@@ -8,28 +8,35 @@ package org.gluu.oxtrust.util;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
-import java.util.Properties;
 
+import javax.ejb.Stateless;
+import javax.faces.context.ExternalContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.log.Logging;
-import org.jboss.seam.web.ServletContexts;
+import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
 /**
  * User: Dejan Maric
  */
-public class RecaptchaUtils {
-	private final static Log log = Logging.getLog(RecaptchaUtils.class);
+@Stateless
+@Named
+public class RecaptchaUtil {
+	
+	@Inject
+	private Logger log;
+	
+    @Inject
+    private ExternalContext externalContext;
 
-	public static boolean verifyGoogleRecaptchaFromServletContext(String secretKey) {
-		HttpServletRequest httpServletRequest = ServletContexts.instance().getRequest();
-
+	public boolean verifyGoogleRecaptchaFromServletContext(String secretKey) {
+		HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
 		String gRecaptchaResponse = httpServletRequest.getParameter("g-recaptcha-response");
 		if (StringHelper.isNotEmpty(gRecaptchaResponse)) {
 			return verifyGoogleRecaptcha(gRecaptchaResponse, secretKey);
@@ -38,7 +45,7 @@ public class RecaptchaUtils {
 		return false;
 	}
 
-	public static boolean verifyGoogleRecaptcha(String gRecaptchaResponse, String secretKey) {
+	public boolean verifyGoogleRecaptcha(String gRecaptchaResponse, String secretKey) {
 		boolean result = false;
 		try {
 			ClientRequest request = new ClientRequest("https://www.google.com/recaptcha/api/siteverify");

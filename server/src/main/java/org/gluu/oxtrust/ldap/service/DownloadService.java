@@ -8,15 +8,13 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
 
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
+import javax.ejb.Stateless;
+import javax.inject.Named;
 
-@Scope(ScopeType.STATELESS)
-@Name("downloadService")
-@AutoCreate
+import org.gluu.oxtrust.model.GluuCustomPerson;
+
+@Stateless
+@Named("downloadService")
 public class DownloadService implements Serializable {
 
 	private static final long serialVersionUID = -6847131971095468865L;

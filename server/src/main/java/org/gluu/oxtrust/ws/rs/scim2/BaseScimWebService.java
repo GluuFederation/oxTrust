@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 //import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
@@ -18,10 +19,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.config.OxTrustConfiguration;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -34,6 +36,7 @@ import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
@@ -41,16 +44,11 @@ import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.contexts.Contexts;
-import org.jboss.seam.log.Log;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
-import org.xdi.oxauth.client.ValidateTokenClient;
-import org.xdi.oxauth.client.ValidateTokenResponse;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 
@@ -63,39 +61,43 @@ import com.unboundid.ldap.sdk.Filter;
  */
 public class BaseScimWebService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	protected ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private Identity identity;
 
-	@In
-	protected JsonConfigurationService jsonConfigurationService;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-	@In
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
+
+	@Inject
 	private ApplianceService applianceService;
 
-	@In
+	@Inject
 	private ScimUmaProtectionService scimUmaProtectionService;
 	
-	@In
+	@Inject
 	private UmaPermissionService umaPermissionService;
 
-	@In
+	@Inject
 	private OpenIdService openIdService;
 
-	@In
+	@Inject
 	private LdapEntryManager ldapEntryManager;
 
-	@In
+	@Inject
 	private ScimFilterParserService scimFilterParserService;
 	
 	public int getMaxCount(){
-		return applicationConfiguration.getScimProperties().getMaxCount() ;
+		return appConfiguration.getScimProperties().getMaxCount() ;
 	}
 
 	protected Response processTestModeAuthorization(String token) throws Exception {
 		try {
+/*
 			String validateTokenEndpoint = openIdService.getOpenIdConfiguration().getValidateTokenEndpoint();
 
 			ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);
@@ -112,13 +114,14 @@ public class BaseScimWebService {
 				(validateTokenResponse.getStatus() != Response.Status.OK.getStatusCode())) {
 				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
-
+*/
+			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 		}
 
-		return null;
+//		return null;
 	}
 
 	protected Response processAuthorization(String authorization) throws Exception {
@@ -144,7 +147,7 @@ public class BaseScimWebService {
 
 	protected boolean getAuthorizedUser() {
 		try {
-			GluuCustomPerson authUser = (GluuCustomPerson) Contexts.getSessionContext().get(OxTrustConstants.CURRENT_PERSON);
+			GluuCustomPerson authUser = (GluuCustomPerson) identity.getSessionMap().get(OxTrustConstants.CURRENT_PERSON);
 
 			if (authUser == null) {
 				return false;

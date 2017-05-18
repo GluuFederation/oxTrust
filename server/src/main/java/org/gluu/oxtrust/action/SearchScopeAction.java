@@ -9,19 +9,16 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.util.Util;
 
 /**
@@ -29,15 +26,15 @@ import org.xdi.util.Util;
  * 
  * @author Reda Zerrad Date: 06.18.2012
  */
-@Name("searchScopeAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@Named("searchScopeAction")
+@ConversationScoped
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class SearchScopeAction implements Serializable {
 
 	private static final long serialVersionUID = -6633178742652918098L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -47,15 +44,15 @@ public class SearchScopeAction implements Serializable {
 
 	private List<OxAuthScope> scopeList;
 
-	@In
+	@Inject
 	private ScopeService scopeService;
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	@Restrict("#{s:hasPermission('scope', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

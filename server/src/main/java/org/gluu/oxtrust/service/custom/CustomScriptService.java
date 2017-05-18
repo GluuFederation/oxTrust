@@ -6,11 +6,11 @@
 
 package org.gluu.oxtrust.service.custom;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 
 /**
@@ -18,15 +18,17 @@ import org.xdi.service.custom.script.AbstractCustomScriptService;
  *
  * @author Yuriy Movchan Date: 12/03/2014
  */
-@Scope(ScopeType.STATELESS)
-@Name("customScriptService")
-@AutoCreate
+@Stateless
+@Named
 public class CustomScriptService extends AbstractCustomScriptService{
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	private static final long serialVersionUID = -5283102477313448031L;
 
     public String baseDn() {
-		String orgDn = OrganizationService.instance().getDnForOrganization();
+		String orgDn = organizationService.getDnForOrganization();
 		return String.format("ou=scripts,%s", orgDn);
     }
 

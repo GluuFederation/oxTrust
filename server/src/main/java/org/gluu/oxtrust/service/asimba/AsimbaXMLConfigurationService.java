@@ -8,22 +8,15 @@ package org.gluu.oxtrust.service.asimba;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
-import org.richfaces.model.UploadedFile;
-import javax.xml.parsers.DocumentBuilderFactory;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
@@ -31,8 +24,10 @@ import org.apache.commons.io.FileUtils;
 import org.gluu.asimba.util.ldap.LDAPUtility;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
-import org.gluu.oxtrust.util.Utils;
-import org.jboss.seam.annotations.In;
+import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.ServiceUtil;
+import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.xdi.service.XmlService;
 
@@ -41,9 +36,8 @@ import org.xdi.service.XmlService;
  * 
  * @author Dmitry Ognyannikov, 2016
  */
-@Name("asimbaXMLConfigurationService")
-@AutoCreate
-@Scope(ScopeType.APPLICATION)
+@Named("asimbaXMLConfigurationService")
+@ApplicationScoped
 public class AsimbaXMLConfigurationService implements Serializable {
     
     /** Name of the file that contains property-list for configuring server */
@@ -54,13 +48,13 @@ public class AsimbaXMLConfigurationService implements Serializable {
     
     private static final String ASIMBA_XML_CONFIGURATION_PATH = "webapps/asimba/WEB-INF/conf/asimba.xml";
     
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
     
-    @In
+    @Inject
     private SSLService sslService;
 
-    @In
+    @Inject
     private XmlService xmlService;
     
     private String keystoreFilePath = null;
@@ -69,7 +63,7 @@ public class AsimbaXMLConfigurationService implements Serializable {
     private String asimbaAias;
     private String asimbaAiasPassword;
     
-    @Create
+    @PostConstruct
     public void init() {
         parse();
     }
@@ -127,7 +121,7 @@ public class AsimbaXMLConfigurationService implements Serializable {
      * @throws IOException 
      */
     public synchronized String addCertificateFile(UploadedFile uploadedFile, String alias) throws IOException {
-        byte[] certsBytes = Utils.readFully(uploadedFile.getInputStream());
+        byte[] certsBytes = ServiceUtil.readFully(uploadedFile.getInputStream());
         return addCertificateFile(certsBytes, alias);
     }
     

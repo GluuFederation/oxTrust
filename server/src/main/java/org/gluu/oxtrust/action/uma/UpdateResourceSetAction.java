@@ -13,6 +13,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
@@ -20,14 +25,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
@@ -42,29 +40,29 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
-@Name("updateResourceSetAction")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class UpdateResourceSetAction implements Serializable {
 
 	private static final long serialVersionUID = 9180729281938167478L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In
+	@Inject
 	protected GluuCustomPerson currentPerson;
 
-	@In
+	@Inject
 	private ResourceSetService resourceSetService;
 
-	@In
+	@Inject
 	private ScopeDescriptionService scopeDescriptionService;
 
-	@In
+	@Inject
 	private ClientService clientService;
 
-	@In
+	@Inject
 	private LookupService lookupService;
 
 	private String resourceInum;
@@ -84,7 +82,7 @@ public class UpdateResourceSetAction implements Serializable {
 
 	private boolean update;
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String modify() {
 		if (this.resourceSet != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -117,12 +115,12 @@ public class UpdateResourceSetAction implements Serializable {
 	}
 
 	private String update() {
-		log.debug("Loading UMA resource set '{0}'", this.resourceInum);
+		log.debug("Loading UMA resource set '{}'", this.resourceInum);
 		try {
 			String resourceDn = resourceSetService.getDnForResourceSet(this.resourceInum);
 			this.resourceSet = resourceSetService.getResourceSetByDn(resourceDn);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find resource set '{0}'", ex, this.resourceInum);
+			log.error("Failed to find resource set '{}'", ex, this.resourceInum);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -143,11 +141,11 @@ public class UpdateResourceSetAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void cancel() {
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String save() {
 		updateScopes();
 		updateClients();
@@ -159,7 +157,7 @@ public class UpdateResourceSetAction implements Serializable {
 			try {
 				resourceSetService.updateResourceSet(this.resourceSet);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update resource set '{0}'", ex, this.resourceSet.getInum());
+				log.error("Failed to update resource set '{}'", ex, this.resourceSet.getInum());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -178,18 +176,18 @@ public class UpdateResourceSetAction implements Serializable {
 			try {
 				resourceSetService.addResourceSet(this.resourceSet);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to add new resource set '{0}'", ex, this.resourceSet.getInum());
+				log.error("Failed to add new resource set '{}'", ex, this.resourceSet.getInum());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
 			this.update = true;
 		}
 
-		log.debug("Resource set were {0} successfully", (this.update ? "added" : "updated"));
+		log.debug("Resource set were {} successfully", (this.update ? "added" : "updated"));
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public String delete() {
 		if (update) {
 			// Remove resource set
@@ -197,19 +195,19 @@ public class UpdateResourceSetAction implements Serializable {
 				resourceSetService.removeResourceSet(this.resourceSet);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove resource set {0}", ex, this.resourceSet.getInum());
+				log.error("Failed to remove resource set {}", ex, this.resourceSet.getInum());
 			}
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Destroy 
+	@PreDestroy 
 	public void destroy() throws Exception {
 		cancel();
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void searchAvailableScopes() {
 		if (Util.equals(this.oldSearchAvailableScopePattern, this.searchAvailableScopePattern)) {
 			return;
@@ -232,7 +230,7 @@ public class UpdateResourceSetAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void selectAddedScopes() {
 		Set<String> addedScopeInums = getAddedScopesInums();
 
@@ -241,7 +239,7 @@ public class UpdateResourceSetAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void acceptSelectScopes() {
 		Set<String> addedScopeInums = getAddedScopesInums();
 
@@ -273,17 +271,17 @@ public class UpdateResourceSetAction implements Serializable {
 		return addedScopeInums;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void cancelSelectScopes() {
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void addScope(ScopeDescription scope) {
 		DisplayNameEntry oneScope = new DisplayNameEntry(scope.getDn(), scope.getId(), scope.getDisplayName());
 		this.scopes.add(oneScope);
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void removeScope(String inum) {
 		if (StringHelper.isEmpty(inum)) {
 			return;
@@ -325,7 +323,7 @@ public class UpdateResourceSetAction implements Serializable {
 		return result;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void searchAvailableClients() {
 		if (Util.equals(this.oldSearchAvailableClientPattern, this.searchAvailableClientPattern)) {
 			return;
@@ -342,7 +340,7 @@ public class UpdateResourceSetAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void selectAddedClients() {
 		Set<String> addedClientInums = getAddedClientsInums();
 
@@ -351,7 +349,7 @@ public class UpdateResourceSetAction implements Serializable {
 		}
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void acceptSelectClients() {
 		Set<String> addedClientInums = getAddedClientsInums();
 
@@ -382,17 +380,17 @@ public class UpdateResourceSetAction implements Serializable {
 		return addedClientInums;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void cancelSelectClients() {
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void addClient(OxAuthClient clietn) {
 		DisplayNameEntry oneClient = new DisplayNameEntry(clietn.getDn(), clietn.getInum(), clietn.getDisplayName());
 		this.clients.add(oneClient);
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void removeClient(String inum) {
 		if (StringHelper.isEmpty(inum)) {
 			return;
@@ -442,7 +440,7 @@ public class UpdateResourceSetAction implements Serializable {
 		this.resourceSet.setResources(this.resources);
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void acceptResource() {
 		if (!this.resources.contains(this.newResource)) {
 			this.resources.add(this.newResource);
@@ -451,12 +449,12 @@ public class UpdateResourceSetAction implements Serializable {
 		cancelResource();
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void cancelResource() {
 		this.newResource = null;
 	}
 
-	@Restrict("#{s:hasPermission('uma', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
 	public void removeResource(String resource) {
 		if (StringHelper.isNotEmpty(resource)) {
 			this.resources.remove(resource);

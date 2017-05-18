@@ -6,12 +6,14 @@
 
 package org.gluu.oxtrust.action;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
-
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -21,12 +23,7 @@ import org.gluu.oxtrust.model.RegistrationInterceptorScript;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.Tuple;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.util.Util;
@@ -36,9 +33,9 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 10.17.2010
  */
-@Scope(CONVERSATION)
-@Name("registrationManagementAction")
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named("registrationManagementAction")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 
 //TODO: Remove configureInterceptors, registrationInterceptors, removeCustomAuthenticationConfiguration, addRegistrationInterceptor
 //TODO: Clean up LDAP OC
@@ -54,7 +51,7 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 	
 	private boolean configureRegistrationForm;
 	
-	@In
+	@Inject
 	private AttributeService attributeService;
 	
 	private List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
@@ -64,11 +61,11 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 	
 	private String oldSearchPattern;
 	
-	@In 
+	@Inject 
 	private OrganizationService organizationService;
 	
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	private List<String> customScriptTypes;
 

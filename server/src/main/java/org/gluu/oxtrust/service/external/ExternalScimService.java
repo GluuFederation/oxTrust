@@ -5,26 +5,24 @@
  */
 package org.gluu.oxtrust.service.external;
 
+import java.util.Map;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.*;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.conf.CustomScriptConfiguration;
 import org.xdi.model.custom.script.type.scim.ScimType;
 import org.xdi.service.custom.script.ExternalScriptService;
 
-import java.util.Map;
-
 /**
  * @author Val Pecaoco
  */
-@Scope(ScopeType.APPLICATION)
-@Name("externalScimService")
-@AutoCreate
-@Startup
+@ApplicationScoped
+@Named
 public class ExternalScimService extends ExternalScriptService {
 
     public ExternalScimService() {
@@ -266,7 +264,4 @@ public class ExternalScimService extends ExternalScriptService {
         return result;
     }
 
-    public static ExternalScimService instance() {
-        return (ExternalScimService) Component.getInstance(ExternalScimService.class);
-    }
 }

@@ -6,12 +6,13 @@
 
 package org.gluu.oxtrust.action;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -19,15 +20,9 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-import org.xdi.util.Util;
 
 /**
  * Action class for displaying trust relationships
@@ -36,21 +31,21 @@ import org.xdi.util.Util;
  * @author Yuriy Movchan Date: 11.05.2010
  * 
  */
-@Scope(CONVERSATION)
-@Name("trustRelationshipInventoryAction")
-@Restrict("#{identity.loggedIn}")
+@ConversationScoped
+@Named("trustRelationshipInventoryAction")
+//TODO CDI @Restrict("#{identity.loggedIn}")
 public class TrustRelationshipInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 8388485274418394665L;
 
-	@In
+	@Inject
 	protected AttributeService attributeService;
 
-	@In
+	@Inject
 	private TrustService trustService;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -68,7 +63,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		this.trustedSpList = trustedSpList;
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String start() {
 		if (trustedSpList != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -77,7 +72,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		return search();
 	}
 
-	@Restrict("#{s:hasPermission('trust', 'access')}")
+	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
 	public String search() {
 		try {
 			if(searchPattern == null || searchPattern.isEmpty()){

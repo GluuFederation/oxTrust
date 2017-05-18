@@ -4,15 +4,16 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.exception.UmaProtectionException;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.log.Log;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.slf4j.Logger;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
 import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -24,19 +25,19 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	private static final long serialVersionUID = -1147131971095468865L;
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(required = false)
+	@Inject
+	private EncryptionService encryptionService;
+
+	@Inject
 	private UmaConfiguration umaMetadataConfiguration;
 
 	private Token umaPat;
 	private long umaPatAccessTokenExpiration = 0l; // When the "accessToken" will expire;
 
 	private final ReentrantLock lock = new ReentrantLock();
-
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
 
 	public Token getPatToken() throws UmaProtectionException {
 		if (isValidPatToken(this.umaPat, this.umaPatAccessTokenExpiration)) {
@@ -86,7 +87,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 		if (umaClientKeyStorePassword != null) {
 			try {
-				umaClientKeyStorePassword = StringEncrypter.defaultInstance().decrypt(umaClientKeyStorePassword, cryptoConfigurationSalt);
+				umaClientKeyStorePassword = encryptionService.decrypt(umaClientKeyStorePassword);
 			} catch (EncryptionException ex) {
 				log.error("Failed to decrypt UmaClientKeyStorePassword password", ex);
 			}

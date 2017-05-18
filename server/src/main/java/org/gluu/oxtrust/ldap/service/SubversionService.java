@@ -14,19 +14,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.svn.SvnHelper;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
+import org.slf4j.Logger;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
@@ -34,38 +31,35 @@ import org.tmatesoft.svn.core.internal.wc.admin.ISVNAdminAreaFactorySelector;
 import org.tmatesoft.svn.core.internal.wc.admin.SVNAdminAreaFactory;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.xdi.config.CryptoConfigurationFile;
-import org.xdi.config.oxtrust.ApplicationConfiguration;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
 
 /**
  * Provides operations with SVN
  * 
  * @author Yuriy Movchan Date: 11.25.2010
  */
-@Scope(ScopeType.STATELESS)
-@Name("subversionService")
-@AutoCreate
+@Stateless
+@Named("subversionService")
 public class SubversionService {
 
-	@Logger
-	private Log log;
+	@Inject
+	private Logger log;
 
-	@In(value = "#{oxTrustConfiguration.applicationConfiguration}")
-	private ApplicationConfiguration applicationConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 	
-	@In(value = "#{oxTrustConfiguration.cryptoConfigurationSalt}")
-	private String cryptoConfigurationSalt;
+	@Inject
+	private EncryptionService encryptionService;
 
 	final private static String baseSvnDir = "/var/gluu/svn";
 
 	public boolean commitShibboleth3ConfigurationFiles(GluuOrganization organization, List<SubversionFile> newSubversionFiles,
 													   List<SubversionFile> removeSubversionFiles, String svnComment) {
 		// Retrieve properties and derive applianceSvnHome
-		String svnUrl = applicationConfiguration.getSvnConfigurationStoreRoot();
-		String inumFN = StringHelper.removePunctuation(applicationConfiguration.getApplianceInum());
-		String svnPassword = applicationConfiguration.getSvnConfigurationStorePassword();
+		String svnUrl = appConfiguration.getSvnConfigurationStoreRoot();
+		String inumFN = StringHelper.removePunctuation(appConfiguration.getApplianceInum());
+		String svnPassword = appConfiguration.getSvnConfigurationStorePassword();
 		String applianceSvnHomePath = String.format("%s/%s", baseSvnDir, inumFN);
 
 		if (StringHelper.isEmpty(svnUrl) || StringHelper.isEmpty(inumFN) || StringHelper.isEmpty(svnPassword)) {
@@ -76,7 +70,7 @@ public class SubversionService {
 		SVNClientManager clientManager = null;
 		try {
 			// Decrypt password
-			svnPassword = StringEncrypter.defaultInstance().decrypt(svnPassword, cryptoConfigurationSalt);
+			svnPassword = encryptionService.decrypt(svnPassword);
 
 			// Create an instance of SVNClientManager
 			log.debug("Creating an instance of SVNClientManager");
@@ -127,7 +121,7 @@ public class SubversionService {
 			try {
 				FileUtils.forceDelete(f);
 			} catch (IOException ex) {
-				log.error("Failed to delete file {0} from local repository folder", subversionFile.getLocalFile());
+				log.error("Failed to delete file {} from local repository folder", subversionFile.getLocalFile());
 				throw ex;
 			}
 		}
@@ -157,7 +151,7 @@ public class SubversionService {
 			try {
 				FileUtils.copyFile(new File(subversionFile.getLocalFile()), f);
 			} catch (IOException ex) {
-				log.error("Failed to copy file {0} into local repository folder", subversionFile.getLocalFile());
+				log.error("Failed to copy file {} into local repository folder", subversionFile.getLocalFile());
 				throw ex;
 			}
 		}
@@ -173,8 +167,8 @@ public class SubversionService {
 	
 	public void initSubversionService() {
 		String svnConfigurationStoreRoot = null;
-		if (applicationConfiguration.isPersistSVN()) { 
-			svnConfigurationStoreRoot  = applicationConfiguration.getSvnConfigurationStoreRoot();
+		if (appConfiguration.isPersistSVN()) { 
+			svnConfigurationStoreRoot  = appConfiguration.getSvnConfigurationStoreRoot();
 		}
 
 		SVNAdminAreaFactory.setSelector(new ISVNAdminAreaFactorySelector() {
@@ -201,17 +195,8 @@ public class SubversionService {
 		SvnHelper.setupLibrary(svnConfigurationStoreRoot);
 	}
 
-	/**
-	 * Get subversionService instance
-	 * 
-	 * @return SubversionService instance
-	 */
-	public static SubversionService instance() {
-		return (SubversionService) Component.getInstance(SubversionService.class);
-	}
-
 	public List<SubversionFile> getDifferentFiles(List<SubversionFile> files) throws IOException {
-		String inumFN = StringHelper.removePunctuation(applicationConfiguration.getApplianceInum());
+		String inumFN = StringHelper.removePunctuation(appConfiguration.getApplianceInum());
 		String applianceSvnHomePath = String.format("%s/%s", baseSvnDir, inumFN);
 		File dir = new File(applianceSvnHomePath);
 
