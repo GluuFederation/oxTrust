@@ -198,24 +198,23 @@ public class AppInitializer {
 		// Initialize python interpreter
 		pythonService.initPythonInterpreter(configurationFactory.getLdapConfiguration().getString("pythonModulesDir", null));
 
-		// Initialize script manager
-		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR, CustomScriptType.SCIM );
-        customScriptManager.init(supportedCustomScriptTypes);
-
-        metricService.init();
-
         // Initialize Shibboleth
         shibbolethInitializer.createShibbolethConfiguration();
+
+		// Initialize script manager
+		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR, CustomScriptType.SCIM );
 
         // Start timer
         quartzSchedulerManager.start();
 
         // Schedule timer tasks
+        metricService.initTimer();
         configurationFactory.initTimer();
+        ldapStatusTimer.initTimer();
 		metadataValidationTimer.initTimer();
 		entityIDMonitoringService.initTimer();
 		cacheRefreshTimer.initTimer();
-        ldapStatusTimer.initTimer();
+        customScriptManager.initTimer(supportedCustomScriptTypes);
         statusCheckerDaily.initTimer();
         statusCheckerTimer.initTimer();
         svnSyncTimer.initTimer();
