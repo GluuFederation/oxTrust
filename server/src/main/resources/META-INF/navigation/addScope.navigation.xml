@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+  <rewrite pattern="/scope/manage/add" xmlns="http://jboss.org/schema/seam/pages"/>
+  <navigation-rule>
+    <from-view-id>/scope/addScope.xhtml</from-view-id>
+    <navigation-case>
+      <from-action>#{updateScopeAction.add}</from-action>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/scope/addScope.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+    <navigation-case>
+      <from-action>#{updateScopeAction.add}</from-action>
+      <from-outcome>no_permissions</from-outcome>
+      <to-view-id>/home.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+    <navigation-case>
+      <from-action>#{updateScopeAction.add}</from-action>
+      <from-outcome>failure</from-outcome>
+      <to-view-id>/scope/scopeInventory.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+    <navigation-case>
+      <from-action>#{updateScopeAction.save}</from-action>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/scope/updateScope.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+    <navigation-case>
+      <from-action>#{updateScopeAction.save}</from-action>
+      <from-outcome>failure</from-outcome>
+      <to-view-id>/scope/scopeInventory.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+    <navigation-case>
+      <from-action>#{updateScopeAction.cancel}</from-action>
+      <to-view-id>/scope/scopeInventory.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+</faces-config>
