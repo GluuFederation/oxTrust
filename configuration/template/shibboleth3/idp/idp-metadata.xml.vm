@@ -5,7 +5,7 @@
                   xmlns:xml="http://www.w3.org/XML/1998/namespace"
                   entityID="$idpHost/idp/shibboleth">
 
-    <IDPSSODescriptor errorURL="$idpHost/identity/feedback.htm" protocolSupportEnumeration="urn:mace:shibboleth:1.0 urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+    <IDPSSODescriptor errorURL="$idpHost/identity/feedback.htm" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
 
         <Extensions>
             <shibmd:Scope regexp="false">$domain</shibmd:Scope>
@@ -52,7 +52,7 @@ $idpEncryptionCertificate
     </IDPSSODescriptor>
     
     
-    <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:mace:shibboleth:1.0 urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+    <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
 
         <Extensions>
             <shibmd:Scope regexp="false">$domain</shibmd:Scope>
