@@ -100,7 +100,7 @@
 									id="passwordReset" label="#{msg['organizationForm.selfServicePasswordReset']}">
 									<h:selectOneMenu value="#{_appliance.passwordResetAllowed}" styleClass="form-control"
 										id="passwordResetId">
-										<s:selectItems
+										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
 											var="_type" label="#{_type.displayName}" />
 										<s:convertEnum />
@@ -111,7 +111,7 @@
 									id="scimEnabledState" label="#{msg['organizationForm.scimSupport']}">
 									<h:selectOneMenu value="#{_appliance.scimEnabled}" styleClass="form-control"
 										id="scimEnabledStateId">
-										<s:selectItems
+										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
 											var="_type" label="#{_type.displayName}" />
 										<s:convertEnum />
@@ -122,7 +122,7 @@
 									id="passportEnabledState" label="#{msg['organizationForm.passportSupport']}">
 									<h:selectOneMenu value="#{_appliance.passportEnabled}" styleClass="form-control"
 										id="passportEnabledStateId">
-										<s:selectItems
+										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
 											var="_type" label="#{_type.displayName}" />
 										<s:convertEnum />
@@ -146,7 +146,7 @@
 									id="profileManagment" label="#{msg['organizationForm.userCanEditProfile']}">
 									<h:selectOneMenu value="#{_appliance.profileManagment}" styleClass="form-control"
 										id="profileManagmentStateId">
-										<s:selectItems
+										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
 											var="_type" label="#{_type.displayName}" />
 										<s:convertEnum />

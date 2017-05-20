@@ -72,7 +72,7 @@
 										id="auntheticationMode" label="#{msg['manageAuthentication.authenticationMode']}">
 										<h:selectOneMenu value="#{_action.authenticationMode}"
 											styleClass="form-control">
-											<s:selectItems
+											<f:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
 												var="_name" label="#{_name}" />
 										</h:selectOneMenu>
@@ -82,7 +82,7 @@
 										id="oxTrustAuntheticationMode" label="#{msg['manageAuthentication.oxTrustAuthenticationMode']}">
 										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
 											styleClass="form-control">
-											<s:selectItems
+											<f:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
 												var="_name" label="#{_name}" noSelectionLabel="Default" />
 										</h:selectOneMenu>
@@ -102,7 +102,7 @@
 									id="PassportEnabledState" label="#{msg['manageAuthentication.passportSupport']}">
 									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control"  
 										id="scimEnabledStateId">
-										<s:selectItems
+										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
 											var="_type" label="#{_type.displayName}"/>
 										<s:convertEnum />
@@ -141,7 +141,7 @@
                                                                         <h:selectOneMenu value="#{updateCASAction.configuration.sessionStorageType}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="1">
-                                                                                <s:selectItems
+                                                                                <f:selectItems
                                                                                         value="#{updateCASAction.sessionStorageTypes}"
                                                                                         var="_name" label="#{_name}" noSelectionLabel="Default" />
                                                                         </h:selectOneMenu>

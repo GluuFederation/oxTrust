@@ -41,7 +41,7 @@
 
              <ox:decorate id="dataType" label="#{msg['attribute.type']}">
                 <h:selectOneMenu styleClass="form-control" value="#{_attribute.dataType}" required="true" id="dataTypeId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{attributeService.dataTypes}" noSelectionLabel="Data type"
+                    <f:selectItems value="#{attributeService.dataTypes}" noSelectionLabel="Data type"
                               var="_type" label="#{_type.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectOneMenu>
@@ -51,7 +51,7 @@
              <ox:decorate id="editType" label="#{msg['attribute.editType']}">
 <!-- Remove noSelectionLabel="Not available for edit" due to issue in JSF -->
                 <h:selectManyListbox styleClass="form-control" value="#{_attribute.editType}" id="editTypeId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{attributeService.attributeUserRoles}"
+                    <f:selectItems value="#{attributeService.attributeUserRoles}"
                               var="_type" label="#{_type.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectManyListbox>
@@ -67,7 +67,7 @@
              <ox:decorate id="viewType" label="#{msg['attribute.viewType']}">
 <!-- Remove noSelectionLabel="Not available for view" due to issue in JSF -->
                 <h:selectManyListbox styleClass="form-control" value="#{_attribute.viewType}" id="viewTypeId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{attributeService.viewTypes}"
+                    <f:selectItems value="#{attributeService.viewTypes}"
                               var="_type" label="#{_type.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectManyListbox>
@@ -82,7 +82,7 @@
 
              <ox:decorate id="usageType" label="#{msg['attribute.usageType']}">
                 <h:selectManyListbox styleClass="form-control" value="#{_attribute.usageType}" required="false" id="usageTypeId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{attributeService.attributeUsageTypes}"
+                    <f:selectItems value="#{attributeService.attributeUsageTypes}"
                               var="_type" label="#{_type.displayName}" noSelectionLabel="Not defined"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectManyListbox>
@@ -97,7 +97,7 @@
 
              <ox:decorate id="multivalued" label="#{msg['attribute.multivalued']}">
                 <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxMultivaluedAttribute}" required="true" id="multivaluedId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{attributeService.oxMultivalued}" noSelectionLabel="Multivalued"
+                    <f:selectItems value="#{attributeService.oxMultivalued}" noSelectionLabel="Multivalued"
                               var="_custom" label="#{_custom.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectOneMenu>
@@ -111,7 +111,7 @@
              
                 <ox:decorate id="scimattr" label="#{msg['attribute.scimAttribute']}">
                 <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxSCIMCustomAttribute}" id="scimAttrId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{attributeService.scimCustomAttribute}" noSelectionLabel="SCIM Attribute"
+                    <f:selectItems value="#{attributeService.scimCustomAttribute}" noSelectionLabel="SCIM Attribute"
                               var="_custom" label="#{_custom.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectOneMenu>
@@ -172,7 +172,7 @@
              
              <ox:decorate id="status" label="#{msg['attribute.status']}">
                 <h:selectOneMenu styleClass="form-control" value="#{_attribute.status}" required="true" id="statusId" rendered="#{_attributeAction.canEdit()}">
-                    <s:selectItems value="#{organizationService.activeInactiveStatuses}"
+                    <f:selectItems value="#{organizationService.activeInactiveStatuses}"
                               var="_type" label="#{_type.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectOneMenu>

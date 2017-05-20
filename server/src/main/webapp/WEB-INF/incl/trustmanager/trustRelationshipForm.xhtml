@@ -201,7 +201,7 @@
 								<h:selectOneMenu styleClass="form-control"
 									value="#{_trustRelationship.entityType}"
 									required="#{empty param['sv']}" id="entityTypeId">
-									<s:selectItems value="#{_trustRelationshipAction.entityTypeList}"
+									<f:selectItems value="#{_trustRelationshipAction.entityTypeList}"
 										noSelectionLabel="Entity type" var="_type"
 										label="#{_type.displayName}" />
 									<f:converter
@@ -219,7 +219,7 @@
 								<h:selectOneMenu styleClass="form-control"
 									value="#{_trustRelationship.spMetaDataSourceType}" onchange="changeEvent(this)"
 									required="#{empty param['sv']}" id="spMetaDataSourceTypeId">
-									<s:selectItems value="#{_trustRelationshipAction.metadataSourceTypesList}"
+									<f:selectItems value="#{_trustRelationshipAction.metadataSourceTypesList}"
 										noSelectionLabel="Metadata type" var="_type"
 										label="#{_type.displayName}" />
 									<f:converter
@@ -250,7 +250,7 @@
 											value="#{_trustRelationship.containerFederation}"
 											id="spMetaDataSourceTypeFederationId"
 											converter="federationConverter" required="true">
-											<s:selectItems
+											<f:selectItems
 												value="#{trustService.getAllOtherFederations(_trustRelationship.inum)}"
 												noSelectionLabel="Select Federation" var="_type"
 												label="#{_type.displayName}" />
