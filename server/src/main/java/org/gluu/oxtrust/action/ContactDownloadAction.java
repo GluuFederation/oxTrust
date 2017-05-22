@@ -19,10 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.gluu.oxtrust.ldap.service.DownloadService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 
 @RequestScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ContactDownloadAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;

@@ -23,6 +23,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for displaying trust relationships
@@ -33,7 +34,7 @@ import org.xdi.model.GluuUserRole;
  */
 @ConversationScoped
 @Named("trustRelationshipInventoryAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class TrustRelationshipInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 8388485274418394665L;
@@ -63,7 +64,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		this.trustedSpList = trustedSpList;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String start() {
 		if (trustedSpList != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -72,7 +73,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		return search();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String search() {
 		try {
 			if(searchPattern == null || searchPattern.isEmpty()){

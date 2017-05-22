@@ -35,6 +35,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
@@ -45,7 +46,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("updateGroupAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateGroupAction implements Serializable {
 
 	private static final long serialVersionUID = 572441515451149801L;
@@ -90,7 +91,7 @@ public class UpdateGroupAction implements Serializable {
 	@Inject
 	private AppConfiguration appConfiguration;
 
-	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
+	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String add() throws Exception {
 		if (this.group != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -112,7 +113,7 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
+	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String update() throws Exception {
 		if (this.group != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -144,11 +145,11 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
+	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public void cancel() {
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
+	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String save() throws Exception {
 		List<DisplayNameEntry> oldMembers = null;
 		try {
@@ -200,7 +201,7 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
+	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String delete() throws Exception {
 		if (update) {
 			// Remove group

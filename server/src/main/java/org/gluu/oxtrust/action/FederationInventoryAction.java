@@ -18,9 +18,11 @@ import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 
 @ConversationScoped
 @Named("federationInventoryAction")
+@Secure("#{identity.loggedIn}")
 public class FederationInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -1477997697645117954L;

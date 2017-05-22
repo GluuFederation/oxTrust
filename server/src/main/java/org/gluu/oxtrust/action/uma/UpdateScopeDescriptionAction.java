@@ -39,6 +39,7 @@ import org.xdi.oxauth.model.uma.persistence.InternalExternal;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.service.JsonService;
 import org.xdi.service.LookupService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -48,7 +49,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateScopeDescriptionAction implements Serializable {
 
 	private static final long serialVersionUID = 6180729281938167478L;
@@ -90,7 +91,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	private boolean update;
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String modify() {
 		if (this.scopeDescription != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -150,11 +151,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void cancel() {
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String save() {
 		updateAuthorizationPolicies();
 
@@ -201,7 +202,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String delete() {
 		if (update) {
 			// Remove scope description
@@ -216,7 +217,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void removeIconImage() {
 		this.curIconImage = null;
 		this.scopeDescription.setFaviconImageAsXml(null);
@@ -227,7 +228,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		cancel();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void setIconImage(FileUploadEvent event) {
 		UploadedFile uploadedFile = event.getUploadedFile();
 		try {
@@ -315,7 +316,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.scopeDescription.setAuthorizationPolicies(tmpAuthorizationPolicies);
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void acceptSelectAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies == null) {
 			return;
@@ -335,11 +336,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void cancelSelectAuthorizationPolicies() {
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void addAuthorizationPolicy(CustomScript addAuthorizationPolicy) {
 		if (addAuthorizationPolicy == null) {
 			return;
@@ -348,7 +349,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.authorizationPolicies.add(addAuthorizationPolicy);
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void removeAuthorizationPolicy(CustomScript removeAuthorizationPolicy) {
 		if (removeAuthorizationPolicy == null) {
 			return;
@@ -364,7 +365,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 	}
 	
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void searchAvailableAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies != null) {
 			selectAddedAuthorizationPolicies();

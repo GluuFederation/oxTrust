@@ -14,6 +14,7 @@ import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
 
 /**
@@ -24,7 +25,7 @@ import org.xdi.util.Util;
  */
 @Named("searchSectorIdentifierAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class SearchSectorIdentifierAction implements Serializable {
 
     private static final long serialVersionUID = -5270460481895022455L;
@@ -46,12 +47,12 @@ public class SearchSectorIdentifierAction implements Serializable {
     @Inject
     private SectorIdentifierService sectorIdentifierService;
 
-    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public String start() {
         return search();
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public String search() {
         if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
             return OxTrustConstants.RESULT_SUCCESS;

@@ -16,11 +16,12 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @RequestScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ClientPasswordAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;
@@ -51,7 +52,7 @@ public class ClientPasswordAction implements Serializable {
 		return result;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+	@Secure("#{permissionService.hasPermission('client', 'access')}")
 	public String update() {
 		OxAuthClient client = clientService.getClientByDn(updateClientAction.getClient().getDn());
 		try {

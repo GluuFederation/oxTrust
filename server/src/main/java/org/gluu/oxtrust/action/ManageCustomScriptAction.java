@@ -38,6 +38,7 @@ import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.custom.script.model.auth.AuthenticationCustomScript;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
@@ -49,7 +50,7 @@ import org.xdi.util.StringHelper;
  */
 @Named("manageCustomScriptAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ManageCustomScriptAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3823022039248381963L;
@@ -76,7 +77,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	@Inject
 	private AppConfiguration appConfiguration;
 	
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -122,7 +123,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String save() {
 		try {
 			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.applianceService.getCustomScriptTypes()), "dn", "inum");
@@ -201,7 +202,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	}
 
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 	}
 

@@ -27,6 +27,7 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for updating CAS protocol Shibboleth IDP properties.
@@ -35,7 +36,7 @@ import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
  */
 @SessionScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateCASAction implements Serializable {
 
     private static final long serialVersionUID = 1061838191485356624L;
@@ -136,7 +137,7 @@ public class UpdateCASAction implements Serializable {
         return newConfiguration;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public void save() {
         log.info("save() CAS call");
         

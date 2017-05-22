@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
@@ -38,7 +39,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("updateSectorIdentifierAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateSectorIdentifierAction implements Serializable {
 
     private static final long serialVersionUID = 572441515451149802L;
@@ -80,7 +81,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
     @Inject
     private AppConfiguration appConfiguration;
 
-    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public String add() throws Exception {
         if (this.sectorIdentifier != null) {
             return OxTrustConstants.RESULT_SUCCESS;
@@ -103,7 +104,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public String update() throws Exception {
         if (this.sectorIdentifier != null) {
             return OxTrustConstants.RESULT_SUCCESS;
@@ -135,11 +136,11 @@ public class UpdateSectorIdentifierAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public void cancel() {
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public String save() throws Exception {
         List<DisplayNameEntry> oldClientDisplayNameEntries = null;
         try {
@@ -192,7 +193,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public String delete() throws Exception {
         if (update) {
             // Remove sectorIdentifier
@@ -418,7 +419,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         this.sectorIdentifier.setRedirectUris(tmpUris);
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('sectorIdentifier', 'access')}")
+    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public void removeLoginURI(String uri) {
         removeFromList(this.loginUris, uri);
     }

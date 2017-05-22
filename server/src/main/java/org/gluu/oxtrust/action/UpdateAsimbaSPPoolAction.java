@@ -31,6 +31,7 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.security.Secure;
 
 
 /**
@@ -40,7 +41,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
  */
 @SessionScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateAsimbaSPPoolAction implements Serializable {
 
     private static final long serialVersionUID = -1242167022433943680L;
@@ -117,7 +118,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         newEntry = true;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public void edit() {
         log.info("edit() SPPool call, inum: "+editEntryInum);
         if (editEntryInum == null || "".equals(editEntryInum)) {
@@ -133,7 +134,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         }
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new RequestorPool", spPool);
         spPool.setProperties(getProperties());
@@ -144,7 +145,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() RequestorPool", spPool);
         spPool.setProperties(getProperties());
@@ -155,14 +156,14 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel() RequestorPool", spPool);
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String delete() {
         log.info("delete() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
@@ -172,7 +173,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String search() {
         log.info("search() RequestorPool searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {

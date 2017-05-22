@@ -19,6 +19,7 @@ import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
 
 /**
@@ -28,7 +29,7 @@ import org.xdi.util.Util;
  */
 @Named("searchGroupAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class SearchGroupAction implements Serializable {
 
 	private static final long serialVersionUID = -5270460481895022468L;
@@ -47,12 +48,12 @@ public class SearchGroupAction implements Serializable {
 	@Inject
 	private IGroupService groupService;
 
-	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
+	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('group', 'access')}")
+	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String search() {
 		if ((this.searchPattern != null) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

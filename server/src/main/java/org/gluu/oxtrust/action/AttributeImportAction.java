@@ -25,6 +25,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
@@ -37,7 +38,7 @@ import com.unboundid.ldap.sdk.ResultCode;
  */
 @Named("attributeImportAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class AttributeImportAction implements Serializable {
 
 	private static final long serialVersionUID = 8755036208872218664L;

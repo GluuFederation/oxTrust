@@ -26,6 +26,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SimpleCustomProperty;
+import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
 
 /**
@@ -35,8 +36,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("registrationManagementAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
-
+@Secure("#{identity.loggedIn}")
 //TODO: Remove configureInterceptors, registrationInterceptors, removeCustomAuthenticationConfiguration, addRegistrationInterceptor
 //TODO: Clean up LDAP OC
 public class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {

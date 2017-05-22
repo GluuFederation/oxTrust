@@ -17,6 +17,7 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for health check display
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
  */
 @ConversationScoped
 @Named("applianceStatusAction")
+@Secure("#{identity.loggedIn}")
 public class ApplianceStatusAction implements Serializable {
 
 	private static final long serialVersionUID = -7470520478553992898L;

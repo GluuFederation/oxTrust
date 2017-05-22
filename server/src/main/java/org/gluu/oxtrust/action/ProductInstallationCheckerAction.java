@@ -15,6 +15,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for updating and adding the SAML IDP to Asimba.
@@ -23,7 +24,7 @@ import org.slf4j.Logger;
  */
 @ApplicationScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ProductInstallationCheckerAction implements Serializable {
 
     private static final long serialVersionUID = 1125167091541923404L;

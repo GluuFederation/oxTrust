@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -51,7 +52,7 @@ import org.xdi.util.StringHelper;
  */
 @Named("updateOrganizationAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateOrganizationAction implements Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
@@ -99,7 +100,7 @@ public class UpdateOrganizationAction implements Serializable {
 	
 	private List<GluuAppliance> appliances;
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String modify()  {
 		String resultOrganization = modifyOrganization();
 		String resultApplliance = modifyApplliance();
@@ -168,7 +169,7 @@ public class UpdateOrganizationAction implements Serializable {
 		this.curFaviconImage = this.oldFaviconImage;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String save() {
 		// Update organization
 		try {
@@ -216,7 +217,7 @@ public class UpdateOrganizationAction implements Serializable {
 		appliance.setSmtpConfiguration(smtpConfiguration);
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String verifySmtpConfiguration() {
 		log.info("HostName: " + appliance.getSmtpHost() + " Port: " + appliance.getSmtpPort() + " RequireSSL: " + appliance.isRequiresSsl()
 				+ " RequireSSL: " + appliance.isRequiresAuthentication());
@@ -269,7 +270,7 @@ public class UpdateOrganizationAction implements Serializable {
 		}
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String getBuildDate() {
 		if (this.buildDate != null) {
 			return this.buildDate;
@@ -287,7 +288,7 @@ public class UpdateOrganizationAction implements Serializable {
 		return this.buildDate;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String getBuildNumber() {
 		if (this.buildNumber != null) {
 			return this.buildNumber;
@@ -297,7 +298,7 @@ public class UpdateOrganizationAction implements Serializable {
 		return this.buildNumber;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();

@@ -20,6 +20,7 @@ import org.gluu.oxtrust.service.push.PushApplicationConfigurationService;
 import org.gluu.oxtrust.service.push.PushApplicationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
 
 /**
@@ -29,7 +30,7 @@ import org.xdi.util.Util;
  */
 @Named("pushApplicationInventoryAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class PushApplicationInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -2233178742652918022L;
@@ -51,12 +52,12 @@ public class PushApplicationInventoryAction implements Serializable {
 	@Inject
 	private PushApplicationConfigurationService PushApplicationConfigurationService;
 
-	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
+	@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
+	@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -74,7 +75,7 @@ public class PushApplicationInventoryAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
+	@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
 	public List<String> getPlatforms(PushApplication pushApplication) {
 		List<String> platforms = PushApplicationConfigurationService.getPlatformDescriptionList(pushApplication);
 		

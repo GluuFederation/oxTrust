@@ -19,6 +19,7 @@ import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.oxtrust.service.push.PushDeviceService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
 
 /**
@@ -28,7 +29,7 @@ import org.xdi.util.Util;
  */
 @Named("pushDeviceInventoryAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class PushDeviceInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 6613070802638642079L;
@@ -47,12 +48,12 @@ public class PushDeviceInventoryAction implements Serializable {
 	@Inject
 	private PushDeviceService pushDeviceService;
 	
-	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
+	@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('oxpush', 'access')}")
+	@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

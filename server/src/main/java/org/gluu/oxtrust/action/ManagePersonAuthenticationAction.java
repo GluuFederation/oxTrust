@@ -47,6 +47,7 @@ import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.model.passport.FieldSet;
 import org.xdi.model.passport.PassportConfiguration;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
@@ -60,7 +61,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  */
 @Named("managePersonAuthenticationAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ManagePersonAuthenticationAction
 		implements SimplePropertiesListModel, LdapConfigurationModel, Serializable {
 
@@ -123,7 +124,7 @@ public class ManagePersonAuthenticationAction
 	@Inject
 	private AppConfiguration appConfiguration;
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -171,7 +172,7 @@ public class ManagePersonAuthenticationAction
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String save() {
 		try {
 			// Reload entry to include latest changes
@@ -227,7 +228,7 @@ public class ManagePersonAuthenticationAction
 		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 	}
 
@@ -295,7 +296,7 @@ public class ManagePersonAuthenticationAction
 		return this.customAuthenticationConfigNames;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String testLdapConnection() {
 
 		try {

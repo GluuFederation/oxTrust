@@ -36,6 +36,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -43,6 +44,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("passwordReminderAction")
+@Secure("#{identity.loggedIn}")
 public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;

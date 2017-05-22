@@ -37,6 +37,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
+import org.xdi.service.security.Secure;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 
@@ -47,7 +48,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("updatePersonAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdatePersonAction implements Serializable {
 
 	private static final long serialVersionUID = -3242167044333943689L;
@@ -109,7 +110,7 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String add() {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -133,7 +134,7 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String update() {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -155,7 +156,7 @@ public class UpdatePersonAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public void cancel() {
 	}
 
@@ -164,7 +165,7 @@ public class UpdatePersonAction implements Serializable {
 	 * 
 	 * @return String describing success of the operation
 	 */
-	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String save() throws Exception {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -257,7 +258,7 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String delete() {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;

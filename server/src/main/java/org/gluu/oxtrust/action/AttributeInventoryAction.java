@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for displaying attributes
@@ -36,7 +37,7 @@ import org.xdi.model.GluuUserRole;
  */
 @ConversationScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class AttributeInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
@@ -72,7 +73,7 @@ public class AttributeInventoryAction implements Serializable {
 		this.checked = checked;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
+	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String start() {
 		if (attributeList == null) {
 			try {

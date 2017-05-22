@@ -22,6 +22,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.service.JsonService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -31,7 +32,7 @@ import org.xdi.util.StringHelper;
  */
 @Named("configureLogViewerAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3310460481895022468L;
@@ -54,7 +55,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	private boolean initialized;
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.logViewerConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -73,7 +74,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		this.logViewerConfiguration = prepareLogViewerConfig();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!validateLists()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -100,7 +101,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		return result;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 

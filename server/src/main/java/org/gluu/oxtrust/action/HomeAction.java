@@ -17,6 +17,7 @@ import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.PermissionService;
 import org.slf4j.Logger;
 import org.xdi.service.JsonService;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for home page
@@ -25,7 +26,7 @@ import org.xdi.service.JsonService;
  */
 @Named("homeAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class HomeAction implements Serializable {
 
 	private static final long serialVersionUID = 5130372165991117114L;
@@ -46,6 +47,7 @@ public class HomeAction implements Serializable {
 
 	private String authenticationChartJson;
 
+	@Secure("#{identity.loggedIn}")
 	public void init() {
 		boolean hasConfigurationAccess = permissionService.hasPermission("configuration", "access");
 		if (hasConfigurationAccess) {

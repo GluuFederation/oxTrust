@@ -37,6 +37,7 @@ import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.oxauth.model.util.URLPatternList;
 import org.xdi.service.LookupService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
@@ -50,7 +51,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("updateClientAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateClientAction implements Serializable {
 
     private static final long serialVersionUID = -5756470620039988876L;
@@ -112,7 +113,7 @@ public class UpdateClientAction implements Serializable {
     private List<SelectableEntity<ResponseType>> availableResponseTypes;
     private List<SelectableEntity<GrantType>> availableGrantTypes;
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public String add() throws Exception {
         if (this.client != null) {
             return OxTrustConstants.RESULT_SUCCESS;
@@ -140,7 +141,7 @@ public class UpdateClientAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public String update() throws Exception {
         if (this.client != null) {
             return OxTrustConstants.RESULT_SUCCESS;
@@ -194,11 +195,11 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void cancel() {
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public String save() throws Exception {
         updateLoginURIs();
         updateLogoutURIs();
@@ -257,7 +258,7 @@ public class UpdateClientAction implements Serializable {
     	this.client.setInitiateLoginUri(StringHelper.trimAll(this.client.getInitiateLoginUri()));
 	}
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public String delete() throws Exception {
         if (update) {
             // Remove client
@@ -272,22 +273,22 @@ public class UpdateClientAction implements Serializable {
         return OxTrustConstants.RESULT_FAILURE;
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void removeLoginURI(String uri) {
         removeFromList(this.loginUris, uri);
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void removeLogoutURI(String uri) {
         removeFromList(this.logoutUris, uri);
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void removeClientLogoutURI(String uri) {
         removeFromList(this.clientlogoutUris, uri);
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void removeContact(String contact) {
         if (StringUtils.isEmpty(contact)) {
             return;
@@ -302,7 +303,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void removeDefaultAcrValue(String defaultAcrValue) {
         if (StringUtils.isEmpty(defaultAcrValue)) {
             return;
@@ -317,7 +318,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void removeRequestUri(String requestUri) {
         if (StringUtils.isEmpty(requestUri)) {
             return;
@@ -680,7 +681,7 @@ public class UpdateClientAction implements Serializable {
         return result;
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void acceptSelectResponseTypes() {
         List<ResponseType> addedResponseTypes = getResponseTypes();
 
@@ -696,7 +697,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void acceptSelectGrantTypes() {
         List<GrantType> addedGrantTypes = getGrantTypes();
 
@@ -712,15 +713,15 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void cancelSelectResponseTypes() {
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void cancelSelectGrantTypes() {
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void addResponseType(String value) {
         if (StringHelper.isEmpty(value)) {
             return;
@@ -732,7 +733,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void addGrantType(String value) {
         if (StringHelper.isEmpty(value)) {
             return;
@@ -744,7 +745,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void removeResponseType(String value) {
         if (StringHelper.isEmpty(value)) {
             return;
@@ -756,7 +757,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void removeGrantType(String value) {
         if (StringHelper.isEmpty(value)) {
             return;
@@ -768,7 +769,7 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void searchAvailableResponseTypes() {
         if (this.availableResponseTypes != null) {
             selectAddedResponseTypes();
@@ -785,7 +786,7 @@ public class UpdateClientAction implements Serializable {
         selectAddedResponseTypes();
     }
 
-    //TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+    @Secure("#{permissionService.hasPermission('client', 'access')}")
     public void searchAvailableGrantTypes() {
         if (this.availableGrantTypes != null) {
             selectAddedGrantTypes();

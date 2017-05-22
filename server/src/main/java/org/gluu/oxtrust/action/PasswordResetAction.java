@@ -29,12 +29,14 @@ import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 
 /**
  * User: Dejan Maric
  */
 @ConversationScoped
 @Named("passwordResetAction")
+@Secure("#{identity.loggedIn}")
 public class PasswordResetAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;

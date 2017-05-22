@@ -26,6 +26,7 @@ import org.xdi.model.DisplayNameEntry;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.service.LookupService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
@@ -36,7 +37,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UmaInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 2261095046179474395L;
@@ -70,7 +71,7 @@ public class UmaInventoryAction implements Serializable {
 	
 	private boolean initialized;
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String start() {
 		try {
 			resourceSetService.prepareResourceSetBranch();
@@ -90,7 +91,7 @@ public class UmaInventoryAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('uma', 'access')}")
+	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

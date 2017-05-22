@@ -30,6 +30,7 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.security.Secure;
 
 
 /**
@@ -39,7 +40,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
  */
 @SessionScoped
 @Named("updateAsimbaSelectorAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateAsimbaSelectorAction implements Serializable {
 
     private static final long serialVersionUID = -1242167044333943680L;
@@ -126,7 +127,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         newEntry = true;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public void edit() {
         log.info("edit() Selector call, inum: "+editEntryInum);
         if (editEntryInum == null || "".equals(editEntryInum)) {
@@ -139,7 +140,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         }
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String add() {
         log.info("add() Selector call", selector);
         synchronized (svnSyncTimer) {
@@ -149,7 +150,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Selector", selector);
         synchronized (svnSyncTimer) {
@@ -159,14 +160,14 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel() Selector", selector);
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String delete() {
         log.info("delete() Selector", selector);
         synchronized (svnSyncTimer) {
@@ -176,7 +177,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String search() {
         log.info("search() Selector searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {

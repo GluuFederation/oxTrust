@@ -29,6 +29,7 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.ExcludeFilterInputStream;
 import org.xdi.util.io.FileUploadWrapper;
@@ -36,6 +37,7 @@ import org.xdi.util.io.ResponseHelper;
 
 @ConversationScoped
 @Named("joinFederationAction")
+@Secure("#{identity.loggedIn}")
 public class JoinFederationAction implements Serializable {
 
 	private static final long serialVersionUID = -1032167044333943680L;

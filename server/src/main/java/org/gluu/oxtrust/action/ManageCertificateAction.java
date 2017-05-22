@@ -59,6 +59,7 @@ import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileHelper;
 import org.xdi.util.io.ResponseHelper;
@@ -72,7 +73,7 @@ import org.xdi.util.io.ResponseHelper;
  */
 @ConversationScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ManageCertificateAction implements Serializable {
 	public static final String BEGIN_CERT_REQ = "-----BEGIN CERTIFICATE REQUEST-----";
 	public static final String END_CERT_REQ = "-----END CERTIFICATE REQUEST-----";
@@ -119,7 +120,7 @@ public class ManageCertificateAction implements Serializable {
 	private boolean initialized;
 	private boolean wereAnyChanges;
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -164,7 +165,7 @@ public class ManageCertificateAction implements Serializable {
 	 * Fills issuer and subject maps with data about currently selected
 	 * certificate
 	 */
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void getCert(String fileName) {
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
 		loadCert(cert);
@@ -174,7 +175,7 @@ public class ManageCertificateAction implements Serializable {
 	 * Fills issuer and subject maps with data about currently selected
 	 * certificate
 	 */
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void getCert(TrustStoreCertificate trustStoreCertificate) {
 		this.issuer = new HashMap<String, String>();
 		this.subject = new HashMap<String, String>();
@@ -204,7 +205,7 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String generateCSR(String fileName) throws IOException {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
@@ -239,7 +240,7 @@ public class ManageCertificateAction implements Serializable {
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public boolean compare(String fileName) {
 		KeyPair pair = getKeyPair(fileName);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
@@ -326,7 +327,7 @@ public class ManageCertificateAction implements Serializable {
 		return pair;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public boolean certPresent(String filename) {
 		KeyPair pair = getKeyPair(filename);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + filename);
@@ -409,7 +410,7 @@ public class ManageCertificateAction implements Serializable {
 		return true;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!isCertsManagePossible()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -521,11 +522,11 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void certUpload(FileUploadEvent event) {
 		if (this.trustStoreCertificateUploadMarker == null) {
 			updateCert(event.getUploadedFile());
@@ -569,7 +570,7 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void keyUpload(FileUploadEvent event) {
 		updateKey(event.getUploadedFile());
 	}

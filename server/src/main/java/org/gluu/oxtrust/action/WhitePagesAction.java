@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuImage;
 import org.xdi.model.GluuUserRole;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for view white pages
@@ -36,7 +37,7 @@ import org.xdi.model.GluuUserRole;
  */
 @Named("whitePagesAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class WhitePagesAction implements Serializable {
 
 	private static final long serialVersionUID = 6730313815008211305L;

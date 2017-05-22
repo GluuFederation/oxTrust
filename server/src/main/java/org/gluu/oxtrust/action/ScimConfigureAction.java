@@ -16,6 +16,7 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for configuring SCIM
@@ -24,7 +25,7 @@ import org.slf4j.Logger;
  */
 @ConversationScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ScimConfigureAction implements Serializable {
 
 	private static final long serialVersionUID = -1290460481895022469L;
@@ -37,7 +38,7 @@ public class ScimConfigureAction implements Serializable {
 
 	private boolean isInitialized = false;
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		if (isInitialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -53,12 +54,12 @@ public class ScimConfigureAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String update() {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 

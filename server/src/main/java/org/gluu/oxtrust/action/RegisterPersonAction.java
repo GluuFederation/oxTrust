@@ -43,6 +43,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -51,6 +52,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("registerPersonAction")
+@Secure("#{identity.loggedIn}")
 public class RegisterPersonAction implements Serializable {
 
 	private static final long serialVersionUID = 6002737004324917338L;

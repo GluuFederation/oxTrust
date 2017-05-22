@@ -34,6 +34,7 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -43,6 +44,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("ssoLoginAction")
+@Secure("#{identity.loggedIn}")
 public class SsoLoginAction implements Serializable {
 
 	private static final long serialVersionUID = 7409229786722653317L;

@@ -27,6 +27,7 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
 import org.xdi.service.SchemaService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 
@@ -37,7 +38,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("updateAttributeAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -2932167044333943687L;
@@ -70,7 +71,7 @@ public class UpdateAttributeAction implements Serializable {
 
 	private boolean canEdit;
 	
-	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
+	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String add() {
 		if (this.attribute != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -91,7 +92,7 @@ public class UpdateAttributeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
+	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String update() {
 		if (this.attribute != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -157,12 +158,12 @@ public class UpdateAttributeAction implements Serializable {
 		return this.attribute.isAdminCanEdit();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
+	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public void cancel() {
 	}
 
 
-	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
+	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String save() {
 		if (!tooltipToggle) {
 			attribute.setGluuTooltip(null);
@@ -296,18 +297,18 @@ public class UpdateAttributeAction implements Serializable {
 		return result;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
+	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String delete() {
 		showAttributeDeleteConfirmation = true;
 		return deleteAndAcceptUpdate();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
+	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public void cancelDeleteAndAcceptUpdate() {
 		showAttributeDeleteConfirmation = false;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('attribute', 'access')}")
+	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String deleteAndAcceptUpdate() {
 		if (update && showAttributeDeleteConfirmation && this.attribute.isCustom()) {
 			showAttributeDeleteConfirmation = false;

@@ -31,6 +31,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.service.JsonService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.ReverseLineReader;
 
@@ -41,7 +42,7 @@ import org.xdi.util.io.ReverseLineReader;
  */
 @ConversationScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ViewLogFileAction implements Serializable {
 
 	private static final long serialVersionUID = -3310340481895022468L;
@@ -69,7 +70,7 @@ public class ViewLogFileAction implements Serializable {
 
 	private int displayLastLinesCount;
 
-	//TODO CDI @Restrict("#{s:hasPermission('log', 'access')}")
+	@Secure("#{permissionService.hasPermission('log', 'access')}")
 	public String init() {
 		if (this.logViewerConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;

@@ -16,11 +16,12 @@ import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 @Named("fileViewerAction")
 @Stateless
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class FileViewerAction implements Serializable {
 
 	private static final long serialVersionUID = 3968626531612060143L;

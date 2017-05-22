@@ -53,6 +53,7 @@ import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.JsonService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
@@ -63,7 +64,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  */
 @Named("configureCacheRefreshAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -5210460481895022468L;
@@ -132,7 +133,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private CacheRefreshUpdateMethod updateMethod;
 	
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.cacheRefreshConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -174,7 +175,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return cacheRefreshConfiguration;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String update() {
 		checkDuplicateKetattribute();
 		
@@ -290,7 +291,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return true;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('configuration', 'access')}")
+	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 

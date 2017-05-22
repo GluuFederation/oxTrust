@@ -31,6 +31,7 @@ import org.xdi.model.GluuIMAPData;
 import org.xdi.model.GluuImage;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.ImapPassword;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for view and update profile actions.
@@ -39,7 +40,7 @@ import org.xdi.model.ImapPassword;
  */
 @Named("userProfileAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UserProfileAction implements Serializable {
 
 	private static final long serialVersionUID = -8238855019631152823L;
@@ -100,7 +101,7 @@ public class UserProfileAction implements Serializable {
 
 	private static final String photoAttributes[][] = new String[][] { { "gluuPerson", "photo1" }, };
 
-	//TODO CDI @Restrict("#{s:hasPermission('profile', 'access')}")
+	@Secure("#{permissionService.hasPermission('profile', 'access')}")
 	public String show() {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -127,7 +128,7 @@ public class UserProfileAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('profile', 'access')}")
+	@Secure("#{permissionService.hasPermission('profile', 'access')}")
 	public String update() {
 		try {
 			if (this.imapData != null) {
@@ -160,7 +161,7 @@ public class UserProfileAction implements Serializable {
 		customAttributeAction.removeCustomAttribute(inum);
 	}
 
-//	//TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+//	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public void cancel() {
 	}
 

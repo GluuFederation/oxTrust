@@ -26,6 +26,7 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.model.GluuImage;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
+import org.xdi.service.security.Secure;
 import org.xdi.util.io.FileDownloader;
 import org.xdi.util.io.FileDownloader.ContentDisposition;
 import org.xdi.util.io.ResponseHelper;
@@ -37,6 +38,7 @@ import org.xdi.util.io.ResponseHelper;
  */
 @RequestScoped
 @Named
+@Secure("#{identity.loggedIn}")
 public class ScopeDescriptionDownloadAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;

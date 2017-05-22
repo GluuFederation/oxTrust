@@ -22,12 +22,13 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
 
 @ConversationScoped
 @Named("metadataFiltersAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class MetadataFiltersAction implements Serializable {
 
 	private static final long serialVersionUID = -5304171897858890801L;
@@ -123,7 +124,7 @@ public class MetadataFiltersAction implements Serializable {
 		return selectedList;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String saveFilters() {
 		updateMetadataFilters();
 		filterService.saveFilters(trustRelationship, filterCertWrapper);

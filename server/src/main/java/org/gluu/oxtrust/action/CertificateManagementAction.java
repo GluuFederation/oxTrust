@@ -28,6 +28,7 @@ import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 
 /**
  * Action class for security certificate management.
@@ -36,7 +37,7 @@ import org.slf4j.Logger;
  */
 @SessionScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class CertificateManagementAction implements Serializable {
 
     private static final long serialVersionUID = -1938167091985945238L;
@@ -93,7 +94,7 @@ public class CertificateManagementAction implements Serializable {
         updateTableView();
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String add() {
         log.info("add");
         // save
@@ -104,14 +105,14 @@ public class CertificateManagementAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('trust', 'access')}")
+    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel CertificateManagement");
         
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    //TODO CDI @Restrict("#{s:hasPermission('person', 'access')}")
+    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String search() {
         log.info("search() CertificateManagement searchPattern:", searchPattern);
         

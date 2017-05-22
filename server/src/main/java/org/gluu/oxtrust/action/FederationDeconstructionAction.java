@@ -27,11 +27,12 @@ import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 @ConversationScoped
 @Named
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class FederationDeconstructionAction implements Serializable {
 	private static final long serialVersionUID = 1216276324815043884L;
 

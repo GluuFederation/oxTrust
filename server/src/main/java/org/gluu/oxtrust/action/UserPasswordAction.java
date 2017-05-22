@@ -16,6 +16,7 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
+import org.xdi.service.security.Secure;
 
 /**
  * Serves for password updates on UI.
@@ -23,7 +24,7 @@ import org.gluu.site.ldap.persistence.exception.AuthenticationException;
  */
 @Named("userPasswordAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 @Deprecated
 public class UserPasswordAction implements Serializable {
 
@@ -52,7 +53,7 @@ public class UserPasswordAction implements Serializable {
 		return result;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('profile', 'access')}")
+	@Secure("#{permissionService.hasPermission('profile', 'access')}")
 	public String update(boolean verifyPassword) throws Exception {
 		String result;
 		boolean verifyOldPass;

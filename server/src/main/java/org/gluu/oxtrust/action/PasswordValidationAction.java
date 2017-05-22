@@ -21,6 +21,7 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -30,6 +31,7 @@ import org.xdi.util.StringHelper;
  */
 @RequestScoped
 @Named
+@Secure("#{identity.loggedIn}")
 public class PasswordValidationAction implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1952428504080910113L;

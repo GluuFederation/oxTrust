@@ -33,6 +33,7 @@ import org.xdi.model.SelectableEntity;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.service.LookupService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
@@ -43,13 +44,11 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("updateScopeAction")
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class UpdateScopeAction implements Serializable {
 
-	/**
-     *
-     */
 	private static final long serialVersionUID = 8198574569820157032L;
+
 	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description", "gluuStatus" };
 
 	@Inject
@@ -88,7 +87,7 @@ public class UpdateScopeAction implements Serializable {
 	private List<SelectableEntity<CustomScript>> availableDynamicScripts;
 
 	
-	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
+	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String add() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -116,7 +115,7 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
+	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String update() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -155,11 +154,11 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
+	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public void cancel() {
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
+	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String save() throws Exception {
 		// List<DisplayNameEntry> oldClaims = null;
 		// try {
@@ -226,7 +225,7 @@ public class UpdateScopeAction implements Serializable {
 		this.scope.setOxAuthClaims(resultClaims);
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('scope', 'access')}")
+	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String delete() throws Exception {
 		if (update) {
 			// Remove scope

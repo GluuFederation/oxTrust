@@ -19,6 +19,7 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
 
 /**
@@ -28,7 +29,7 @@ import org.xdi.util.Util;
  */
 @Named("searchClientAction")
 @ConversationScoped
-//TODO CDI @Restrict("#{identity.loggedIn}")
+@Secure("#{identity.loggedIn}")
 public class SearchClientAction implements Serializable {
 
 	private static final long serialVersionUID = 8361095046179474395L;
@@ -47,12 +48,12 @@ public class SearchClientAction implements Serializable {
 	@Inject
 	private ClientService clientService;
 
-	//TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+	@Secure("#{permissionService.hasPermission('client', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	//TODO CDI @Restrict("#{s:hasPermission('client', 'access')}")
+	@Secure("#{permissionService.hasPermission('client', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

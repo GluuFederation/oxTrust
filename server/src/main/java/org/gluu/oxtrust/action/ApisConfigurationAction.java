@@ -16,6 +16,7 @@ import org.gluu.oxtrust.ldap.service.LinktrackService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.xdi.service.security.Secure;
 
 /**
  * Configuration action for APIs integration
@@ -24,6 +25,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
  */
 @ConversationScoped
 @Named("apisConfigurationAction")
+@Secure("#{identity.loggedIn}")
 public class ApisConfigurationAction implements Serializable {
 
 	

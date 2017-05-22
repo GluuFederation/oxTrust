@@ -19,10 +19,12 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.xdi.model.TrustContact;
 import org.xdi.service.XmlService;
+import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
 
 @ConversationScoped
 @Named("trustContactsAction")
+@Secure("#{identity.loggedIn}")
 public class TrustContactsAction implements Serializable {
 
 	private static final long serialVersionUID = -1032167044333943680L;
