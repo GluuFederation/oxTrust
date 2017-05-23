@@ -15,6 +15,7 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -72,9 +73,6 @@ public class PasswordReminderAction implements Serializable {
     @Inject
     private FacesMessages facesMessages;
 
-    @Inject
-    private ExternalContext externalContext;
-
     /**
      * @return the MESSAGE_NOT_FOUND
      */
@@ -123,6 +121,16 @@ public class PasswordReminderAction implements Serializable {
 
 	public String requestReminder() throws Exception {
 		if (enabled()) {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			if (facesContext == null) {
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+
+			ExternalContext externalContext = facesContext.getExternalContext();
+			if (externalContext == null) {
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+
 			HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
 		
 			GluuCustomPerson person = new GluuCustomPerson();
