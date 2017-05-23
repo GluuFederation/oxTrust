@@ -1382,7 +1382,7 @@ public class Shibboleth3ConfService implements Serializable {
          * @return GluuErrorHandler
 	 */
 	public static GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
-                Schema schema;
+                Schema schema=null;
                 try {
                     String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
                     // String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
@@ -1391,10 +1391,10 @@ public class Shibboleth3ConfService implements Serializable {
                 } catch (Exception e) {
                     // Schema build error 
                     final List<String> validationLog = new ArrayList<String>();
-                    validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
+                    //validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
                     validationLog.add(e.getMessage());
                     // return internal error
-                    return new GluuErrorHandler(false, true, validationLog);
+                    //return new GluuErrorHandler(false, true, validationLog);
                 }
 		return XMLValidator.validateMetadata(stream, schema);
 	}

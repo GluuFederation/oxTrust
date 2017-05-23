@@ -195,7 +195,7 @@ public class MetadataValidationTimer {
 
 					TrustService.instance().updateTrustRelationship(tr);
 					result = true;
-				} else if(applicationConfiguration.isIgnoreValidation() || errorHandler.isInternalError()){
+				} else if(applicationConfiguration.isIgnoreValidation()){
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
 					if( (( ! target.exists() ) ||  target.delete()) && ( ! metadata.renameTo(target) )){
@@ -225,18 +225,8 @@ public class MetadataValidationTimer {
 					if(! duplicatesSet.isEmpty()){
 						validationLog.add("This metadata contains multiple instances of entityId: " + Arrays.toString(duplicatesSet.toArray()));
 					}
-					
-                                        if (errorHandler.isInternalError()) {
-                                            validationLog = tr.getValidationLog();
-                                            
-                                            validationLog.add("Warning: cannot validate metadata. Check internet connetion ans www.w3.org availability.");
-                                            
-                                            // update log with warning
-                                            for (String warningLogMessage : errorHandler.getLog()) 
-                                                validationLog.add("Warning: " + warningLogMessage);
-                                        }
-                                        
-                                        TrustService.instance().updateTrustRelationship(tr);
+                                      
+                     TrustService.instance().updateTrustRelationship(tr);
 					result = true;
 				} else {
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
