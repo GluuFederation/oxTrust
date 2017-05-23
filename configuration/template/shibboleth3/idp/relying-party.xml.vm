@@ -69,7 +69,7 @@
 
 #foreach( $trustRelationship in $trustParams.trusts )
     
-
+    <!-- TrustRelationship -->
         #set ($profileConfigMap = $trustRelationship.profileConfigurations)
         #if(!$profileConfigMap.isEmpty())
 
