@@ -44,7 +44,6 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("passwordReminderAction")
-@Secure("#{identity.loggedIn}")
 public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
