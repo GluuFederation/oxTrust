@@ -1,50 +1,65 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateScopeAction.update}"
+                      if="#{permissionService.throwOnLackOfPermissions('scope', ' access') and updateScopeAction.scope == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
-    <section class="content-header">
-		<h1 style="color: #333;">
-            #{msg['scope.openIDConnect']}<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> #{msg['scope.updateScope']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/scope/manage/update"> #{msg['scope.updateScope']}</a></li>
-		</ol>
-		</section>
-		<section class="content">
-        <h:panelGroup layout="block" id="formArea">
-            <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
-                <ui:param name="_scope" value="#{updateScopeAction.scope}" />
-                <ui:param name="_scopeAction" value="#{updateScopeAction}" />
-                <ui:param name="_new" value="false" />
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['scope.openIDConnect']}
+                <small>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['scope.updateScope']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/scope/manage/update"> #{msg['scope.updateScope']}</a>
+                </li>
+            </ol>
+        </section>
+        <section class="content">
+            <h:panelGroup id="formArea" layout="block">
+                <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
+                    <ui:param name="_scope" value="#{updateScopeAction.scope}"/>
+                    <ui:param name="_scopeAction" value="#{updateScopeAction}"/>
+                    <ui:param name="_new" value="false"/>
 
-                <ui:define name="controlButttons">
-                    <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="#{msg['scope.update']}" action="#{updateScopeAction.save}" />
-                        <a4j:commandButton styleClass="btn btn-primary" value="#{msg['scope.delete']}" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" eventsQueue="scopeQueue" rendered="#{not _new}" style="margin-left:3px;"/>
-                        <h:commandButton styleClass="btn btn-primary" value="#{msg['scope.cancel']}" action="#{updateScopeAction.cancel}" immediate="true" style="margin-left:3px;" />
-                    </div>
-                </ui:define>
-            </ui:decorate>
+                    <ui:define name="controlButttons">
+                        <div id="updateButtons">
+                            <h:commandButton action="#{updateScopeAction.save}" styleClass="btn btn-primary"
+                                             value="#{msg['scope.update']}"/>
+                            <a4j:commandButton ajaxSingle="true" eventsQueue="scopeQueue"
+                                               onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                               rendered="#{not _new}" style="margin-left:3px;"
+                                               styleClass="btn btn-primary" value="#{msg['scope.delete']}"/>
+                            <h:commandButton action="#{updateScopeAction.cancel}" immediate="true"
+                                             style="margin-left:3px;" styleClass="btn btn-primary"
+                                             value="#{msg['scope.cancel']}"/>
+                        </div>
+                    </ui:define>
+                </ui:decorate>
 
-            <ox:selectAttributeDialog id="claim" label="#{msg['scope.addClaim']}" searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
-                searchMethod="#{updateScopeAction.searchAvailableClaims}" searchResult="#{updateScopeAction.availableClaims}"
-                acceptMethod="#{updateScopeAction.acceptSelectClaims}" cancelMethod="#{updateScopeAction.cancelSelectClaims}"
-                render="selectedClaimsId" queue="scopeQueue"/>
+                <ox:selectAttributeDialog acceptMethod="#{updateScopeAction.acceptSelectClaims}"
+                                          cancelMethod="#{updateScopeAction.cancelSelectClaims}" id="claim"
+                                          label="#{msg['scope.addClaim']}" queue="scopeQueue" render="selectedClaimsId"
+                                          searchMethod="#{updateScopeAction.searchAvailableClaims}"
+                                          searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
+                                          searchResult="#{updateScopeAction.availableClaims}"/>
 
-            <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeAction.scope.displayName}" deleteMethod="#{updateScopeAction.delete}" queue="scopeQueue" />
-        </h:panelGroup>
+                <ox:acceptRemovalDialog deleteMethod="#{updateScopeAction.delete}" id="deleteConfirmation"
+                                        queue="scopeQueue" subject="scope"
+                                        value="#{updateScopeAction.scope.displayName}"/>
+            </h:panelGroup>
         </section>
     </ui:define>
 </ui:composition>

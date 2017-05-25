@@ -1,76 +1,86 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{authenticator.preAuthenticate}" onPostback="false"/>
+    </f:metadata>
 
-<ui:param name="isLogin" value="#{true}" />
-<ui:define name="body">
-    <h:form id="loginForm">
-        <rich:panel>
-              <div class="login-box">
-		      <div class="login-logo">
-		        <a href="#" style="font-size: 35px;"><img src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png" ></img></a>
-		      </div><!-- /.login-logo -->
-		      <div class="login-box-body">
-		        <p class="login-box-msg" style="font-size: 21px;  font-weight: 300;  font-family: 'Source Sans Pro',sans-serif;">Login</p>
-		        
-		          <div class="form-group has-feedback">
-		            <h:inputText id="username" style="width: 100%;" styleClass="form-control"
-                              value="#{credentials.username}" autocomplete="off"/>
-		            <span class="glyphicon glyphicon-user form-control-feedback"></span>
-		          </div>
-		          <div class="form-group has-feedback">
-		            <h:inputSecret id="password" style="width: 100%;" styleClass="form-control"
-                                value="#{credentials.password}" autocomplete="off"/>
-		            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-		          </div>
-		          <div class="row">
-		            <div class="col-xs-4" style="margin-top: 8px !important;">    
-		                    		              <h:selectBooleanCheckbox id="rememberMe"
-                                          value="#{rememberMe.enabled}"/><span style="font-size: 13px;margin-left: 4px;">#{msg['login.rememberMe']}</span>
-                                        
-		            </div><!-- /.col -->
-		            
-		             <div class="col-xs-4">
-			             <h:link includeViewParams="false" outcome="/person/passwordReminder" styleClass="btn btn-link" style="font-size: 13px;" value="#{msg['login.forgotPassword']}" rendered="#{passwordReminderAction.enabled()}"/>
-		            </div><!-- /.col -->
-		            
-		            <div class="col-xs-4">
-		              <h:commandButton id="submit" value="#{msg['login.login']}" action="#{identity.login}" styleClass="btn btn-primary btn-block btn-flat" />
-		            </div><!-- /.col -->
-		            
-		            
-		          </div>
-		          <div class="form-group has-feedback ">
-		          <h:messages id="messages" globalOnly="true" styleClass="message"
-                            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
-                            rendered="#{showGlobalMessages != 'false'}"/>
-		          </div>
-                  
-		      </div><!-- /.login-box-body -->
-		    </div><!-- /.login-box -->
-            <script type="text/javascript">
-                 
-            $( document ).ready(function() {
-                $('input').iCheck({
-          checkboxClass: 'icheckbox_square-blue',
-          radioClass: 'iradio_square-blue',
-          increaseArea: '20%' // optional
-        });
-            });
+    <ui:param name="isLogin" value="#{true}"/>
+    <ui:define name="body">
+        <h:form id="loginForm">
+            <rich:panel>
+                <div class="login-box">
+                    <div class="login-logo">
+                        <a href="#" style="font-size: 35px;">
+                            <img src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png"/>
+                        </a>
+                    </div>
+                    <!-- /.login-logo -->
+                    <div class="login-box-body">
+                        <p class="login-box-msg"
+                           style="font-size: 21px;  font-weight: 300;  font-family: 'Source Sans Pro',sans-serif;">Login</p>
 
-            </script>
+                        <div class="form-group has-feedback">
+                            <h:inputText autocomplete="off" id="username" style="width: 100%;" styleClass="form-control"
+                                         value="#{credentials.username}"/>
+                            <span class="glyphicon glyphicon-user form-control-feedback"/>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <h:inputSecret autocomplete="off" id="password" style="width: 100%;"
+                                           styleClass="form-control" value="#{credentials.password}"/>
+                            <span class="glyphicon glyphicon-lock form-control-feedback"/>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4" style="margin-top: 8px !important;">
+                                <h:selectBooleanCheckbox id="rememberMe" value="#{rememberMe.enabled}"/>
+                                <span style="font-size: 13px;margin-left: 4px;">#{msg['login.rememberMe']}</span>
 
-           
+                            </div>
+                            <!-- /.col -->
 
-        </rich:panel>
+                            <div class="col-xs-4">
+                                <h:link includeViewParams="false" outcome="/person/passwordReminder"
+                                        rendered="#{passwordReminderAction.enabled()}" style="font-size: 13px;"
+                                        styleClass="btn btn-link" value="#{msg['login.forgotPassword']}"/>
+                            </div>
+                            <!-- /.col -->
 
-    </h:form>
+                            <div class="col-xs-4">
+                                <h:commandButton action="#{identity.login}" id="submit"
+                                                 styleClass="btn btn-primary btn-block btn-flat"
+                                                 value="#{msg['login.login']}"/>
+                            </div>
+                            <!-- /.col -->
 
- </ui:define>
+
+                        </div>
+                        <div class="form-group has-feedback ">
+                            <h:messages errorClass="errormsg" globalOnly="true" id="messages" infoClass="infomsg"
+                                        rendered="#{showGlobalMessages != 'false'}" styleClass="message"
+                                        warnClass="warnmsg"/>
+                        </div>
+
+                    </div>
+                    <!-- /.login-box-body -->
+                </div>
+                <!-- /.login-box -->
+                <script type="text/javascript">
+
+                    $(document).ready(function () {
+                        $('input').iCheck({
+                            checkboxClass: 'icheckbox_square-blue',
+                            radioClass: 'iradio_square-blue',
+                            increaseArea: '20%' // optional
+                        });
+                    });
+
+                </script>
+
+
+            </rich:panel>
+
+        </h:form>
+
+    </ui:define>
 </ui:composition>

@@ -1,54 +1,59 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/schema/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateOrganizationAction.modify}"
+                      if="#{permissionService.throwOnLackOfPermissions('configuration', ' access') and updateOrganizationAction.organization == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
-	<ui:define name="head">
+    <ui:define name="head">
 
-	</ui:define>
+    </ui:define>
 
-	<ui:define name="body">
-		<section class="content-header">
-		<h1 style="color: #333;">
-			#{msg['updateorganization.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['updateorganization.organizationConfiguration']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a href="#{request.contextPath}/organization/configuration">#{msg['updateorganization.organizationConfiguration']}</a></li>
-		</ol>
-		</section>
-		<section class="content"> <!-- Small boxes (Stat box) -->
-		<h:panelGroup layout="block" id="formArea">
-			<ui:decorate
-				template="/WEB-INF/incl/organization/organizationForm.xhtml">
-				<ui:param name="_organization"
-					value="#{updateOrganizationAction.organization}" />
-				<ui:param name="_appliance"
-					value="#{updateOrganizationAction.appliance}" />
-				<ui:param name="_organizationAction"
-					value="#{updateOrganizationAction}" />
-				<ui:param name="_certificateAction"
-					value="#{manageCertificateAction}" />
+    <ui:define name="body">
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['updateorganization.configuration']}
+                <small>
+                    <i class="fa fa-caret-right"
+                       style="color: #333 !important;"/> #{msg['updateorganization.organizationConfiguration']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/organization/configuration">#{msg['updateorganization.organizationConfiguration']}</a>
+                </li>
+            </ol>
+        </section>
+        <section class="content"> <!-- Small boxes (Stat box) -->
+            <h:panelGroup id="formArea" layout="block">
+                <ui:decorate template="/WEB-INF/incl/organization/organizationForm.xhtml">
+                    <ui:param name="_organization" value="#{updateOrganizationAction.organization}"/>
+                    <ui:param name="_appliance" value="#{updateOrganizationAction.appliance}"/>
+                    <ui:param name="_organizationAction" value="#{updateOrganizationAction}"/>
+                    <ui:param name="_certificateAction" value="#{manageCertificateAction}"/>
 
-				<ui:define name="controlButttons">
-				<div class = "box-footer" style="margin-top:-16px !important;">
-					<h:panelGroup layout="block" id="updateButtons">
-						<h:commandButton value="#{msg['updateorganization.update']}" styleClass="btn btn-primary" style="margin-left:5px"
-							action="#{updateOrganizationAction.save}" />
-						<h:commandButton value="#{msg['updateorganization.cancel']}" styleClass="btn btn-primary" style="margin-left:5px"
-							action="#{updateOrganizationAction.cancel}" immediate="true" />
-					</h:panelGroup>
-					</div>
-				</ui:define>
-			</ui:decorate>
-		</h:panelGroup>
-		</section>
-	</ui:define>
+                    <ui:define name="controlButttons">
+                        <div class="box-footer" style="margin-top:-16px !important;">
+                            <h:panelGroup id="updateButtons" layout="block">
+                                <h:commandButton action="#{updateOrganizationAction.save}" style="margin-left:5px"
+                                                 styleClass="btn btn-primary"
+                                                 value="#{msg['updateorganization.update']}"/>
+                                <h:commandButton action="#{updateOrganizationAction.cancel}" immediate="true"
+                                                 style="margin-left:5px" styleClass="btn btn-primary"
+                                                 value="#{msg['updateorganization.cancel']}"/>
+                            </h:panelGroup>
+                        </div>
+                    </ui:define>
+                </ui:decorate>
+            </h:panelGroup>
+        </section>
+    </ui:define>
 
 </ui:composition>

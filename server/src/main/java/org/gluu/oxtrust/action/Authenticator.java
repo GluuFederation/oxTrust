@@ -6,27 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.jsf2.message.FacesMessages;
@@ -49,17 +28,28 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.security.Credentials;
 import org.xdi.model.security.SimplePrincipal;
-import org.xdi.oxauth.client.OpenIdConfigurationResponse;
-import org.xdi.oxauth.client.TokenClient;
-import org.xdi.oxauth.client.TokenResponse;
-import org.xdi.oxauth.client.UserInfoClient;
-import org.xdi.oxauth.client.UserInfoResponse;
+import org.xdi.oxauth.client.*;
 import org.xdi.oxauth.model.exception.InvalidJwtException;
 import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.Principal;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Provides authentication using oAuth
@@ -333,7 +323,7 @@ public class Authenticator implements Serializable {
 			identity.getSessionMap().put(OxTrustConstants.OXAUTH_NONCE, nonce);
 		}
 
-		facesService.redirect(clientRequest.getUri().replaceAll("%2B", "+"));
+		facesService.redirectToExternalURL(clientRequest.getUri().replaceAll("%2B", "+"));
 
 		return true;
 	}

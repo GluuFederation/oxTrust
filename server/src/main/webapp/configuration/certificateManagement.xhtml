@@ -1,228 +1,239 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/schema/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:richext="http://java.sun.com/jsf/composite/richext"
-	xmlns:ox="http://java.sun.com/jsf/composite/ox"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:richext="http://java.sun.com/jsf/composite/richext"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox"
+                template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
+    <f:metadata>
+        <f:viewAction action="#{certificateManagementAction.refresh}"
+                      if="#{permissionService.throwOnLackOfPermissions('trust', ' access') and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
     <ui:define name="body">
         <section class="content-header">
-            <h1 style="color: #333;">#{msg['configuration.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['configuration.certificates']}</small></h1>
-            
+            <h1 style="color: #333;">#{msg['configuration.configuration']}
+                <small><i class="fa fa-caret-right"
+                          style="color: #333 !important;"/> #{msg['configuration.certificates']}</small>
+            </h1>
+
             <ol class="breadcrumb">
-                    <li><a href="#{request.contextPath}/configuration/certificateManagement"><i
-                            class="fa fa-home"></i> #{msg['configuration.certificates']}</a></li>
-                    <!--<li class="organization/configuration"><a
-                            href="#{request.contextPath}/configuration/addCertificate">Add Certificate</a></li>-->
+                <li><a href="#{request.contextPath}/configuration/certificateManagement"><i
+                        class="fa fa-home"></i> #{msg['configuration.certificates']}</a></li>
+                <!--<li class="organization/configuration"><a
+                        href="#{request.contextPath}/configuration/addCertificate">Add Certificate</a></li>-->
             </ol>
         </section>
 
-        <section class="content"> 
+        <section class="content">
             <!--<div style="margin-left: 16px;">
                 <h:link includeViewParams="false" outcome="/trustmanager/addCertificate" value="Add Certificate" styleClass="addPerson btn btn-primary" />
             </div>-->
 
-        <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
-        <richext:spacer height="16" />
+            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <richext:spacer height="16"/>
 
-        <h:form>
-            <ox:decorate id="searchPattern" hideLabel="true">
-                <h:inputText value="#{certificateManagementAction.searchPattern}" size="30" maxlength="30" required="false" id="searchPatternId" styleClass="searchParameters form-control" style="width: 50%; float: left;"
-                    alt="search parameters for certificate like email,CN,C,O" />
-                <h:outputText value=" " />
-                <h:selectBooleanCheckbox value="#{certificateManagementAction.searchObsoleteWarning}" styleClass="form-control" />
-                <h:outputText value="#{msg['configuration.withObsoleteWarningOnly']}" />
-                <h:commandButton value="#{msg['configuration.search']}" action="#{certificateManagementAction.search}" styleClass="btn btn-primary" />
-            </ox:decorate>
-        </h:form>
-        
-        <richext:spacer height="16" />
-        
-        <h:form id="internalCertificatesFormId">
-            <H3>#{msg['configuration.internalGluuCertificates']}</H3>
-            
-            <ui:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
-                <richext:spacer height="30" />
-                <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
-            </ui:fragment>
+                <h:form>
+                    <ox:decorate id="searchPattern" hideLabel="true">
+                        <h:inputText value="#{certificateManagementAction.searchPattern}" size="30" maxlength="30"
+                                     required="false" id="searchPatternId" styleClass="searchParameters form-control"
+                                     style="width: 50%; float: left;"
+                                     alt="search parameters for certificate like email,CN,C,O"/>
+                        <h:outputText value=" "/>
+                        <h:selectBooleanCheckbox value="#{certificateManagementAction.searchObsoleteWarning}"
+                                                 styleClass="form-control"/>
+                        <h:outputText value="#{msg['configuration.withObsoleteWarningOnly']}"/>
+                        <h:commandButton value="#{msg['configuration.search']}"
+                                         action="#{certificateManagementAction.search}" styleClass="btn btn-primary"/>
+                    </ox:decorate>
+                </h:form>
 
-            <h:dataTable 
-                styleClass="table table-hover rt"
-                value="#{certificateManagementAction.internalCertificates}"
-                var="cert" id="asimbaCertificatesListId" width="100%"
-                rendered="#{certificateManagementAction.internalCertificates.size gt 0}">
+                <richext:spacer height="16"/>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.alias']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.alias}" class="col-xs-12" />
-                </h:column>
+                <h:form id="internalCertificatesFormId">
+                    <H3>#{msg['configuration.internalGluuCertificates']}</H3>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.issuer}" class="col-xs-12" />
-                </h:column>
+                    <ui:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
+                        <richext:spacer height="30"/>
+                        <h:outputText value="#{msg['configuration.noSearchResultFound']}"/>
+                    </ui:fragment>
 
-                <!--<h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> Subject</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.subject}" class="col-xs-12" />
-                </h:column>-->
+                    <h:dataTable
+                            styleClass="table table-hover rt"
+                            value="#{certificateManagementAction.internalCertificates}"
+                            var="cert" id="asimbaCertificatesListId" width="100%"
+                            rendered="#{certificateManagementAction.internalCertificates.size gt 0}">
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.algorithm}" class="col-xs-12" />
-                </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.alias']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.alias}" class="col-xs-12"/>
+                        </h:column>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
-                </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.issuer}" class="col-xs-12"/>
+                        </h:column>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
-                    </f:facet>
-                    <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12" />
-                </h:column>
-            </h:dataTable>
-        </h:form>
-        
-        <richext:spacer height="16" />
-        
-        <h:form id="trustStoreCertificatesFormId" rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
-            <H3>#{msg['configuration.trustStoreCertificates']}</H3>
-            
-            <ui:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size eq 0}">
-                <richext:spacer height="30" />
-                <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
-            </ui:fragment>
+                        <!--<h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> Subject</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.subject}" class="col-xs-12" />
+                        </h:column>-->
 
-            <h:dataTable 
-                styleClass="table table-hover rt"
-                value="#{certificateManagementAction.trustStoreCertificates}"
-                var="cert" id="asimbaCertificatesListId" width="100%"
-                rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.algorithm}" class="col-xs-12"/>
+                        </h:column>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.alias']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.alias}" class="col-xs-12" />
-                </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12"/>
+                        </h:column>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.issuer}" class="col-xs-12" />
-                </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
+                            </f:facet>
+                            <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:form>
 
-                <!--<h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> Subject</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.subject}" class="col-xs-12" />
-                </h:column>-->
+                <richext:spacer height="16"/>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.algorithm}" class="col-xs-12" />
-                </h:column>
+                <h:form id="trustStoreCertificatesFormId"
+                        rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
+                    <H3>#{msg['configuration.trustStoreCertificates']}</H3>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
-                </h:column>
+                    <ui:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size eq 0}">
+                        <richext:spacer height="30"/>
+                        <h:outputText value="#{msg['configuration.noSearchResultFound']}"/>
+                    </ui:fragment>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
-                    </f:facet>
-                    <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12" />
-                </h:column>
-            </h:dataTable>
-        </h:form>
-        
-        <richext:spacer height="16" />
-        
-        <h:form id="asimbaCertificatesFormId" rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
-            <H3>Asimba Certificates</H3>
-            
-            <ui:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
-                <richext:spacer height="30" />
-                <h:outputText value="#{msg['configuration.noSearchResultFound']}" />
-            </ui:fragment>
+                    <h:dataTable
+                            styleClass="table table-hover rt"
+                            value="#{certificateManagementAction.trustStoreCertificates}"
+                            var="cert" id="asimbaCertificatesListId" width="100%"
+                            rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
 
-            <h:dataTable 
-                styleClass="table table-hover rt"
-                value="#{certificateManagementAction.asimbaCertificates}"
-                var="cert" id="asimbaCertificatesListId" width="100%"
-                rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.alias']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.alias}" class="col-xs-12"/>
+                        </h:column>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.alias']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.alias}" class="col-xs-12" />
-                </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.issuer}" class="col-xs-12"/>
+                        </h:column>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.issuer}" class="col-xs-12" />
-                </h:column>
+                        <!--<h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> Subject</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.subject}" class="col-xs-12" />
+                        </h:column>-->
 
-                <!--<h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> Subject</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.subject}" class="col-xs-12" />
-                </h:column>-->
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.algorithm}" class="col-xs-12"/>
+                        </h:column>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.algorithm}" class="col-xs-12" />
-                </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12"/>
+                        </h:column>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
-                    </f:facet>
-                    <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
-                </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
+                            </f:facet>
+                            <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:form>
 
-                <h:column>
-                    <f:facet name="header">  
-                        <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
-                    </f:facet>
-                    <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12" />
-                </h:column>
-            </h:dataTable>
-        </h:form>
+                <richext:spacer height="16"/>
 
-        </h:panelGrid>
+                <h:form id="asimbaCertificatesFormId"
+                        rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
+                    <H3>Asimba Certificates</H3>
+
+                    <ui:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
+                        <richext:spacer height="30"/>
+                        <h:outputText value="#{msg['configuration.noSearchResultFound']}"/>
+                    </ui:fragment>
+
+                    <h:dataTable
+                            styleClass="table table-hover rt"
+                            value="#{certificateManagementAction.asimbaCertificates}"
+                            var="cert" id="asimbaCertificatesListId" width="100%"
+                            rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
+
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.alias']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.alias}" class="col-xs-12"/>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.issuer']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.issuer}" class="col-xs-12"/>
+                        </h:column>
+
+                        <!--<h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> Subject</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.subject}" class="col-xs-12" />
+                        </h:column>-->
+
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.algorithm}" class="col-xs-12"/>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.notBefore']}</div>
+                            </f:facet>
+                            <h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12"/>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <div style="text-align: center;"> #{msg['configuration.notAfter']}</div>
+                            </f:facet>
+                            <h:outputText style="#{cert.viewStyle}" value="#{cert.notAfterDatetime}" class="col-xs-12"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:form>
+
+            </h:panelGrid>
 
         </section>
     </ui:define>

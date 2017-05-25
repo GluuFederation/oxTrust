@@ -1,127 +1,121 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/schema/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:rich="http://richfaces.org/rich" xmlns:s="http://jboss.org/schema/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{whitePagesAction.start}"
+                      if="#{permissionService.throwOnLackOfPermissions(applianceService.appliance, ' whitePagesEnabled') and whitePagesAction.persons == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
-	<ui:define name="body">
-		<section class="content-header">
-		<h1 style="color: #333;">
-			#{msg['whitePages.whitePages']}<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i>#{msg['whitePages.view']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i
-					class="fa fa-home"></i>#{msg['whitePages.whitePages']}</a></li>
-			<li class="organization/configuration">#{msg['whitePages.view']}</li>
-		</ol>
-		</section>
-		<section class="content">
-		<div id="formArea">
-			<a4j:queue size="1" />
-			<h:outputText value="#{msg['whitePages.whitePages']}" />
+    <ui:define name="body">
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['whitePages.whitePages']}
+                <small>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['whitePages.view']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>#{msg['whitePages.whitePages']}</a>
+                </li>
+                <li class="organization/configuration">#{msg['whitePages.view']}</li>
+            </ol>
+        </section>
+        <section class="content">
+            <div id="formArea">
+                <a4j:queue size="1"/>
+                <h:outputText value="#{msg['whitePages.whitePages']}"/>
 
-			<h:form id="form">
-				<h:panelGrid columns="2" columnClasses="alignTop, alignTop">
+                <h:form id="form">
+                    <h:panelGrid columnClasses="alignTop, alignTop" columns="2">
 
-					<rich:extendedDataTable value="#{whitePagesAction.persons}"
-						var="entry" id="table" width="563px" sortMode="multi"
-						style="width:100%;" styleClass="rf-dt data sortable"
-						selectionMode="single" tableState="#{whitePagesAction.tableState}"
-						selection="#{whitePagesAction.selectedPersons}">
-						<rich:column sortable="false" label="Photo" id="col_1"
-							width="53px">
-							<f:facet name="header">
-								<h:outputText value="#{msg['whitePages.photo']}" />
-							</f:facet>
-							<s:graphicImage
-								value="#{whitePagesAction.getPhotoThumbData(entry)}"
-								width="45px" />
-						</rich:column>
-						<rich:column sortable="true" sortBy="#{entry.getAttribute('cn')}"
-							id="col_2" filterBy="#{entry.getAttribute('cn')}"
-							filterEvent="onkeyup" width="170px" label="#{msg['whitePages.name']}">
-							<f:facet name="header">
-								<h:outputText value="#{msg['whitePages.name']}" />
-							</f:facet>
-							<h:outputText value="#{entry.getAttribute('cn')}" id="entry_name" />
-						</rich:column>
-						<rich:column sortable="true"
-							sortBy="#{entry.getAttribute('mail')}" id="col_3"
-							filterBy="#{entry.getAttribute('mail')}" filterEvent="onkeyup"
-							width="170px" label="E-Mail">
-							<f:facet name="header">
-								<h:outputText value="#{msg['whitePages.email']}" />
-							</f:facet>
-							<h:outputText value="#{entry.getAttribute('mail')}"
-								id="entry_email"
-								rendered="#{whitePagesAction.released(entry, 'mail')}" />
-						</rich:column>
-						<rich:column sortable="true" label="#{msg['whitePages.phoneNumber']}" id="col_4"
-							sortBy="#{entry.getAttribute('telephoneNumber')}"
-							filterBy="#{entry.getAttribute('telephoneNumber')}"
-							filterEvent="onkeyup" width="170px">
-							<f:facet name="header">
-								<h:outputText value="#{msg['whitePages.phoneNumber']}" />
-							</f:facet>
-							<h:outputText value="#{entry.getAttribute('telephoneNumber')}"
-								id="entry_phone"
-								rendered="#{whitePagesAction.released(entry, 'telephoneNumber')}" />
-						</rich:column>
-						<a4j:ajax render="selectiontable" event="selectionchange"
-							execute="@this" limitRender="true" />
-					</rich:extendedDataTable>
+                        <rich:extendedDataTable id="table" selection="#{whitePagesAction.selectedPersons}"
+                                                selectionMode="single" sortMode="multi" style="width:100%;"
+                                                styleClass="rf-dt data sortable"
+                                                tableState="#{whitePagesAction.tableState}"
+                                                value="#{whitePagesAction.persons}" var="entry" width="563px">
+                            <rich:column id="col_1" label="Photo" sortable="false" width="53px">
+                                <f:facet name="header">
+                                    <h:outputText value="#{msg['whitePages.photo']}"/>
+                                </f:facet>
+                                <s:graphicImage value="#{whitePagesAction.getPhotoThumbData(entry)}" width="45px"/>
+                            </rich:column>
+                            <rich:column filterBy="#{entry.getAttribute('cn')}" filterEvent="onkeyup" id="col_2"
+                                         label="#{msg['whitePages.name']}" sortBy="#{entry.getAttribute('cn')}"
+                                         sortable="true" width="170px">
+                                <f:facet name="header">
+                                    <h:outputText value="#{msg['whitePages.name']}"/>
+                                </f:facet>
+                                <h:outputText id="entry_name" value="#{entry.getAttribute('cn')}"/>
+                            </rich:column>
+                            <rich:column filterBy="#{entry.getAttribute('mail')}" filterEvent="onkeyup" id="col_3"
+                                         label="E-Mail" sortBy="#{entry.getAttribute('mail')}" sortable="true"
+                                         width="170px">
+                                <f:facet name="header">
+                                    <h:outputText value="#{msg['whitePages.email']}"/>
+                                </f:facet>
+                                <h:outputText id="entry_email" rendered="#{whitePagesAction.released(entry, 'mail')}"
+                                              value="#{entry.getAttribute('mail')}"/>
+                            </rich:column>
+                            <rich:column filterBy="#{entry.getAttribute('telephoneNumber')}" filterEvent="onkeyup"
+                                         id="col_4" label="#{msg['whitePages.phoneNumber']}"
+                                         sortBy="#{entry.getAttribute('telephoneNumber')}" sortable="true"
+                                         width="170px">
+                                <f:facet name="header">
+                                    <h:outputText value="#{msg['whitePages.phoneNumber']}"/>
+                                </f:facet>
+                                <h:outputText id="entry_phone"
+                                              rendered="#{whitePagesAction.released(entry, 'telephoneNumber')}"
+                                              value="#{entry.getAttribute('telephoneNumber')}"/>
+                            </rich:column>
+                            <a4j:ajax event="selectionchange" execute="@this" limitRender="true"
+                                      render="selectiontable"/>
+                        </rich:extendedDataTable>
 
-					<h:panelGrid id="selectiontable">
-						<ui:param name="sel" value="#{whitePagesAction.selectedPerson}" />
-						<h:panelGroup layout="block" style="width:300px"
-							rendered="#{sel ne null}">
-							<rich:panel>
-								<f:facet name="header">
-									<h:outputText value="#{sel.getAttribute('cn')}" />
-								</f:facet>
+                        <h:panelGrid id="selectiontable">
+                            <ui:param name="sel" value="#{whitePagesAction.selectedPerson}"/>
+                            <h:panelGroup layout="block" rendered="#{sel ne null}" style="width:300px">
+                                <rich:panel>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{sel.getAttribute('cn')}"/>
+                                    </f:facet>
 
-								<s:graphicImage
-									value="#{whitePagesAction.getPhotoThumbData(sel)}"
-									width="275px" />
-								<h:panelGrid columns="1">
-									<h:panelGroup>
-										<h:outputText value="#{msg['whitePages.name']} " styleClass="name" />
-										<h:outputText value="#{sel.getAttribute('cn')}" />
-									</h:panelGroup>
-									<h:panelGroup
-										rendered="#{(sel.getAttribute('mail') ne null) and whitePagesAction.released(sel, 'mail')}">
-										<h:outputText value="#{msg['whitePages.email']} " styleClass="name" />
-										<h:outputText value="#{sel.getAttribute('mail')}" />
-									</h:panelGroup>
-									<h:panelGroup
-										rendered="#{(sel.getAttribute('telephoneNumber') ne null) and whitePagesAction.released(sel, 'telephoneNumber')}">
-										<h:outputText value="#{msg['whitePages.phone']} " styleClass="name" />
-										<h:outputText value="#{sel.getAttribute('telephoneNumber')}" />
-									</h:panelGroup>
+                                    <s:graphicImage value="#{whitePagesAction.getPhotoThumbData(sel)}" width="275px"/>
+                                    <h:panelGrid columns="1">
+                                        <h:panelGroup>
+                                            <h:outputText styleClass="name" value="#{msg['whitePages.name']} "/>
+                                            <h:outputText value="#{sel.getAttribute('cn')}"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup
+                                                rendered="#{(sel.getAttribute('mail') ne null) and whitePagesAction.released(sel, 'mail')}">
+                                            <h:outputText styleClass="name" value="#{msg['whitePages.email']} "/>
+                                            <h:outputText value="#{sel.getAttribute('mail')}"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup
+                                                rendered="#{(sel.getAttribute('telephoneNumber') ne null) and whitePagesAction.released(sel, 'telephoneNumber')}">
+                                            <h:outputText styleClass="name" value="#{msg['whitePages.phone']} "/>
+                                            <h:outputText value="#{sel.getAttribute('telephoneNumber')}"/>
+                                        </h:panelGroup>
 
-									<a4j:repeat
-										value="#{whitePagesAction.getReleasedAttributes(sel)}"
-										var="_custAttr">
-										<h:panelGroup
-											rendered="#{(_custAttr ne null) and whitePagesAction.released(sel, _custAttr.metadata.name)}">
-											<h:outputText value="#{_custAttr.metadata.displayName} "
-												styleClass="name" />
-											<h:outputText value="#{_custAttr.value}" />
-										</h:panelGroup>
-									</a4j:repeat>
-								</h:panelGrid>
-							</rich:panel>
-						</h:panelGroup>
-					</h:panelGrid>
-				</h:panelGrid>
-			</h:form>
-		</div>
-		</section>
-	</ui:define>
+                                        <a4j:repeat value="#{whitePagesAction.getReleasedAttributes(sel)}"
+                                                    var="_custAttr">
+                                            <h:panelGroup
+                                                    rendered="#{(_custAttr ne null) and whitePagesAction.released(sel, _custAttr.metadata.name)}">
+                                                <h:outputText styleClass="name"
+                                                              value="#{_custAttr.metadata.displayName} "/>
+                                                <h:outputText value="#{_custAttr.value}"/>
+                                            </h:panelGroup>
+                                        </a4j:repeat>
+                                    </h:panelGrid>
+                                </rich:panel>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </h:form>
+            </div>
+        </section>
+    </ui:define>
 </ui:composition>

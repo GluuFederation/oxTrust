@@ -1,15 +1,13 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:s="http://jboss.org/schema/seam/taglib"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://java.sun.com/jsf/composite/richext"
-                xmlns:ox="http://java.sun.com/jsf/composite/ox"
-                template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateSectorIdentifierAction.update}"
+                      if="#{permissionService.throwOnLackOfPermissions('sectorIdentifier', ' access') and updateSectorIdentifierAction.sectorIdentifier == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
         <div id="formArea">
@@ -20,40 +18,36 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="#{msg['sectorIdentifier.update']}"
-                                         action="#{updateSectorIdentifierAction.save}"/>
-                        <a4j:commandButton styleClass="btn btn-primary" value="#{msg['sectorIdentifier.delete']}"
+                        <h:commandButton action="#{updateSectorIdentifierAction.save}" styleClass="btn btn-primary"
+                                         value="#{msg['sectorIdentifier.update']}"/>
+                        <a4j:commandButton ajaxSingle="true" eventsQueue="sectorIdentifierQueue"
                                            onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-                                           ajaxSingle="true" eventsQueue="sectorIdentifierQueue" rendered="#{not _new}"
-                                           style="margin-left:3px;"/>
-                        <h:commandButton styleClass="btn btn-primary" value="#{msg['sectorIdentifier.cancel']}"
-                                         action="#{updateSectorIdentifierAction.cancel}" immediate="true"
-                                         style="margin-left:3px;"/>
+                                           rendered="#{not _new}" style="margin-left:3px;" styleClass="btn btn-primary"
+                                           value="#{msg['sectorIdentifier.delete']}"/>
+                        <h:commandButton action="#{updateSectorIdentifierAction.cancel}" immediate="true"
+                                         style="margin-left:3px;" styleClass="btn btn-primary"
+                                         value="#{msg['sectorIdentifier.cancel']}"/>
                     </div>
                 </ui:define>
             </ui:decorate>
 
-            <ox:inputTextDialog id="loginRedirect"
-                                label="#{msg['sectorIdentifier.selectLoginRedirectURI']}"
-                                inputLabel="#{msg['sectorIdentifier.loginRedirectURI']}"
-                                text="#{updateSectorIdentifierAction.availableLoginUri}"
-                                textId="loginTextId"
-                                acceptMethod="#{updateSectorIdentifierAction.acceptSelectLoginUri}"
-                                cancelMethod="#{updateSectorIdentifierAction.cancelSelectLoginUri}"
-                                maxLength="256" inputWidth="80" dialogWidth="600"
-                                render="selectedLoginURIsId" queue="sectorIdentifierQueue"/>
+            <ox:inputTextDialog acceptMethod="#{updateSectorIdentifierAction.acceptSelectLoginUri}"
+                                cancelMethod="#{updateSectorIdentifierAction.cancelSelectLoginUri}" dialogWidth="600"
+                                id="loginRedirect" inputLabel="#{msg['sectorIdentifier.loginRedirectURI']}"
+                                inputWidth="80" label="#{msg['sectorIdentifier.selectLoginRedirectURI']}"
+                                maxLength="256" queue="sectorIdentifierQueue" render="selectedLoginURIsId"
+                                text="#{updateSectorIdentifierAction.availableLoginUri}" textId="loginTextId"/>
 
-            <ox:selectClientDialog id="client"
-                                   searchPattern="#{updateSectorIdentifierAction.searchAvailableClientPattern}"
+            <ox:selectClientDialog acceptMethod="#{updateSectorIdentifierAction.acceptSelectClients}"
+                                   cancelMethod="#{updateSectorIdentifierAction.cancelSelectClients()}" id="client"
+                                   render="selectedClientsId"
                                    searchMethod="#{updateSectorIdentifierAction.searchAvailableClients}"
-                                   searchResult="#{updateSectorIdentifierAction.availableClients}"
-                                   acceptMethod="#{updateSectorIdentifierAction.acceptSelectClients}"
-                                   cancelMethod="#{updateSectorIdentifierAction.cancelSelectClients()}"
-                                   render="selectedClientsId"/>
+                                   searchPattern="#{updateSectorIdentifierAction.searchAvailableClientPattern}"
+                                   searchResult="#{updateSectorIdentifierAction.availableClients}"/>
 
-            <ox:acceptRemovalDialog id="deleteConfirmation" subject="sectorIdentifier"
-                                    value="#{updateSectorIdentifierAction.sectorIdentifier.inum}"
-                                    deleteMethod="#{updateSectorIdentifierAction.delete}" queue="sectorIdentifierQueue"/>
+            <ox:acceptRemovalDialog deleteMethod="#{updateSectorIdentifierAction.delete}" id="deleteConfirmation"
+                                    queue="sectorIdentifierQueue" subject="sectorIdentifier"
+                                    value="#{updateSectorIdentifierAction.sectorIdentifier.inum}"/>
         </div>
     </ui:define>
 

@@ -1,52 +1,60 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateAsimbaIDPAction.edit}"
+                      if="#{permissionService.throwOnLackOfPermissions('trust', ' access') and updateAsimbaIDPAction.editEntryInum != null and updateAsimbaIDPAction.editEntryInum != updateAsimbaIDPAction.idp.inum and identity.checkLoggedIn()}"
+                      onPostback="true"/>
+    </f:metadata>
 
     <ui:define name="body">
         <section class="content-header">
-            <h1 style="color: #333;">#{msg['asimba.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;" />#{msg['asimba.asimba']}
-                    <i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['asimba.idp']}</small></h1>
+            <h1 style="color: #333;">#{msg['asimba.saml']}
+                <small>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['asimba.asimba']}
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['asimba.idp']}</small>
+            </h1>
             <ol class="breadcrumb">
 
-                    <li><a href="#{request.contextPath}/asimba/idps"><i class="fa fa-home"></i> #{msg['asimba.idps']}</a></li>
-                    <li class="organization/configuration"><a href="#{request.contextPath}/asimba/editIDP/">#{msg['asimba.addIdp']}</a></li>
+                <li>
+                    <a href="#{request.contextPath}/asimba/idps">
+                        <i class="fa fa-home"/> #{msg['asimba.idps']}</a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/asimba/editIDP/">#{msg['asimba.addIdp']}</a>
+                </li>
             </ol>
         </section>
 
-        <section class="content"> 
-        <ui:decorate template="/WEB-INF/incl/asimba/idpForm.xhtml">
-            <ui:param name="_idp"
-                    value="#{updateAsimbaIDPAction.idp}" />
-            <ui:param name="_updateAsimbaIDPAction"
-                    value="#{updateAsimbaIDPAction}" />
+        <section class="content">
+            <ui:decorate template="/WEB-INF/incl/asimba/idpForm.xhtml">
+                <ui:param name="_idp" value="#{updateAsimbaIDPAction.idp}"/>
+                <ui:param name="_updateAsimbaIDPAction" value="#{updateAsimbaIDPAction}"/>
 
-            <ui:define name="controlButttons">
-                <div class = "box-footer">
-                    <div  style="width: 100%;height: 30px;">
-                        <div id="updateButtons" style="float: left;width: 250px;">
-                            <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.add']}   "
-                                             action="#{updateAsimbaIDPAction.add}" rendered="#{updateAsimbaIDPAction.newEntry}" />
-                            <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.update']}   "
-                                             style="margin-left:5px;"
-                                    action="#{updateAsimbaIDPAction.update}" rendered="#{not updateAsimbaIDPAction.newEntry}" />
-                            <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.delete']}   "
-                                             style="margin-left:5px;"
-                                    action="#{updateAsimbaIDPAction.delete}" rendered="#{not updateAsimbaIDPAction.newEntry}" />
-                            <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.cancel']}  "
-                                             style="margin-left:5px;"
-                                    action="#{updateAsimbaIDPAction.cancel}" immediate="true" />
+                <ui:define name="controlButttons">
+                    <div class="box-footer">
+                        <div style="width: 100%;height: 30px;">
+                            <div id="updateButtons" style="float: left;width: 250px;">
+                                <h:commandButton action="#{updateAsimbaIDPAction.add}"
+                                                 rendered="#{updateAsimbaIDPAction.newEntry}"
+                                                 styleClass="btn btn-primary" value="   #{msg['asimba.add']}   "/>
+                                <h:commandButton action="#{updateAsimbaIDPAction.update}"
+                                                 rendered="#{not updateAsimbaIDPAction.newEntry}"
+                                                 style="margin-left:5px;" styleClass="btn btn-primary"
+                                                 value="   #{msg['asimba.update']}   "/>
+                                <h:commandButton action="#{updateAsimbaIDPAction.delete}"
+                                                 rendered="#{not updateAsimbaIDPAction.newEntry}"
+                                                 style="margin-left:5px;" styleClass="btn btn-primary"
+                                                 value="   #{msg['asimba.delete']}   "/>
+                                <h:commandButton action="#{updateAsimbaIDPAction.cancel}" immediate="true"
+                                                 style="margin-left:5px;" styleClass="btn btn-primary"
+                                                 value="   #{msg['asimba.cancel']}  "/>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </ui:define>
-        </ui:decorate>
+                </ui:define>
+            </ui:decorate>
         </section>
     </ui:define>
 </ui:composition>

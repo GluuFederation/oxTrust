@@ -1,145 +1,211 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
+                xmlns:richext="http://java.sun.com/jsf/composite/richext" xmlns:s="http://jboss.org/schema/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateScopeDescriptionAction.modify}"
+                      if="#{permissionService.throwOnLackOfPermissions('uma', ' access') and updateScopeDescriptionAction.scopeDescription == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
-<h:form>
-           <section class="content-header">
-		<h1 style="color: #333;">
-            #{msg['uma.uma']}
-			<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> #{msg['uma.scopes']}</small>
-			<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> #{msg['uma.updateScope']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/uma/scopehome">#{msg['uma.scopes']}
-					</a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/uma/scope/add">#{msg['uma.updateScope']}</a></li>
-		</ol>
-		</section>
+        <h:form>
+            <section class="content-header">
+                <h1 style="color: #333;">
+                    #{msg['uma.uma']}
+                    <small>
+                        <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['uma.scopes']}</small>
+                    <small>
+                        <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['uma.updateScope']}</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="#{request.contextPath}/home">
+                            <i class="fa fa-home"/>
+                        </a>
+                    </li>
+                    <li class="organization/configuration">
+                        <a href="#{request.contextPath}/uma/scopehome">#{msg['uma.scopes']}
+                        </a>
+                    </li>
+                    <li class="organization/configuration">
+                        <a href="#{request.contextPath}/uma/scope/add">#{msg['uma.updateScope']}</a>
+                    </li>
+                </ol>
+            </section>
 
-		<section class="content">
-      
-        <h:panelGroup layout="block" id="formArea">
-            <h:outputStylesheet>
-                .uploadFile {
-                     width: 300px;        
-                }
-            </h:outputStylesheet>
- 
- <div class="row">
-            <div class="col-xs-12">
-              <div class="box box-primary">
-                    <div class="box-header">
-                    </div>
-                      <div style="display: inline-block;width: 75% !important;">
-            <ui:param name="_scopeDescription" value="#{updateScopeDescriptionAction.scopeDescription}" />
+            <section class="content">
 
-           
-                <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                <h:panelGroup id="formArea" layout="block">
+                    <h:outputStylesheet>
+                        .uploadFile {
+                            width: 300px;
+                        }
+                    </h:outputStylesheet>
 
-                    <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
-                        <rich:inplaceInput style="width:100% !important" value="#{_scopeDescription.displayName}" defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="180"  required="true" id="displayNameId" />
-                    </ox:decorate>
-                    <h:panelGroup id="internalTypeGroupId">
-                        <ox:decorate id="scope" rendered="#{_scopeDescription.type.value eq 'internal'}" label="#{msg['uma.id']}">
-                            <rich:inplaceInput value="#{_scopeDescription.id}" defaultLabel="Click to enter Scope Name" maxlength="300" inputWidth="180" required="true" id="scope" />
-                        </ox:decorate>
-    
-                        <ox:decorate rendered="#{_scopeDescription.type.value eq 'internal'}" label="#{msg['uma.icon']}">
-    						
-                                 
-                            <h:panelGrid id="iconPanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                <rich:fileUpload style="width:829px !important;" id="upload" fileUploadListener="#{updateScopeDescriptionAction.setIconImage}" acceptedTypes="jpg, jpeg, gif, png, bmp"
-                                    ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px" styleClass="uploadFile"
-                                    rendered="#{not updateScopeDescriptionAction.iconExist}">
-                                    <a4j:ajax event="uploadcomplete" execute="@none" render="iconPanelId" />
-                                </rich:fileUpload>
-                                
-                                <h:panelGrid columns="1" width="100%" cellspacing="0" cellpadding="0" border="0" columnClasses="alignCenter" rendered="#{updateScopeDescriptionAction.iconExist}">
-                                    <h:panelGroup layout="block">
-                                        <s:graphicImage value="#{updateScopeDescriptionAction.iconImageThumbData}" fileName="#{updateScopeDescriptionAction.iconImageSourceName}" />
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box box-primary">
+                                <div class="box-header">
+                                </div>
+                                <div style="display: inline-block;width: 75% !important;">
+                                    <ui:param name="_scopeDescription"
+                                              value="#{updateScopeDescriptionAction.scopeDescription}"/>
+
+
+                                    <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
+
+                                        <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
+                                            <rich:inplaceInput defaultLabel="Click to enter Display Name"
+                                                               id="displayNameId" inputWidth="180" maxlength="60"
+                                                               required="true" style="width:100% !important"
+                                                               value="#{_scopeDescription.displayName}"/>
+                                        </ox:decorate>
+                                        <h:panelGroup id="internalTypeGroupId">
+                                            <ox:decorate id="scope" label="#{msg['uma.id']}"
+                                                         rendered="#{_scopeDescription.type.value eq 'internal'}">
+                                                <rich:inplaceInput defaultLabel="Click to enter Scope Name" id="scope"
+                                                                   inputWidth="180" maxlength="300" required="true"
+                                                                   value="#{_scopeDescription.id}"/>
+                                            </ox:decorate>
+
+                                            <ox:decorate label="#{msg['uma.icon']}"
+                                                         rendered="#{_scopeDescription.type.value eq 'internal'}">
+
+
+                                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
+                                                             id="iconPanelId" width="100%">
+                                                    <rich:fileUpload acceptedTypes="jpg, jpeg, gif, png, bmp"
+                                                                     fileUploadListener="#{updateScopeDescriptionAction.setIconImage}"
+                                                                     id="upload" immediateUpload="true"
+                                                                     listHeight="60px" maxFilesQuantity="1"
+                                                                     ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+                                                                     rendered="#{not updateScopeDescriptionAction.iconExist}"
+                                                                     style="width:829px !important;"
+                                                                     styleClass="uploadFile">
+                                                        <a4j:ajax event="uploadcomplete" execute="@none"
+                                                                  render="iconPanelId"/>
+                                                    </rich:fileUpload>
+
+                                                    <h:panelGrid border="0" cellpadding="0" cellspacing="0"
+                                                                 columnClasses="alignCenter" columns="1"
+                                                                 rendered="#{updateScopeDescriptionAction.iconExist}"
+                                                                 width="100%">
+                                                        <h:panelGroup layout="block">
+                                                            <s:graphicImage
+                                                                    fileName="#{updateScopeDescriptionAction.iconImageSourceName}"
+                                                                    value="#{updateScopeDescriptionAction.iconImageThumbData}"/>
+                                                        </h:panelGroup>
+
+                                                        <richext:spacer height="8"/>
+
+                                                        <a4j:commandLink
+                                                                action="#{updateScopeDescriptionAction.removeIconImage()}"
+                                                                eventsQueue="scopeDescriptionQueue" execute="@this"
+                                                                render="iconPanelId" value="#{msg['uma.remove']}"/>
+                                                    </h:panelGrid>
+                                                </h:panelGrid>
+
+
+                                            </ox:decorate>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup id="externalTypeGroupId">
+                                            <ox:decorate label="#{msg['uma.iconURI']}"
+                                                         rendered="#{_scopeDescription.type.value eq 'external'}">
+                                                <rich:inplaceInput defaultLabel="Click to enter Icon Url" id="iconUrlId"
+                                                                   inputWidth="180" maxlength="60" required="true"
+                                                                   value="#{_scopeDescription.iconUrl}"/>
+                                            </ox:decorate>
+
+                                            <ox:decorate label="#{msg['uma.url']}"
+                                                         rendered="#{_scopeDescription.type.value eq 'external'}">
+                                                <rich:inplaceInput defaultLabel="Click to enter Url" id="urlId"
+                                                                   inputWidth="180" maxlength="60" required="true"
+                                                                   value="#{_scopeDescription.url}"/>
+                                            </ox:decorate>
+                                        </h:panelGroup>
+
+                                        <ox:decorate id="responseTypes" label="#{msg['uma.authorizationPolicy']}">
+                                            <h:panelGroup id="selectedAuthorizationPolicyId">
+                                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
+                                                             width="100%">
+                                                    <a4j:repeat rowKeyVar="_authorizationPolicyIdx"
+                                                                value="#{updateScopeDescriptionAction.authorizationPolicies}"
+                                                                var="_authorizationPolicy">
+                                                        <div class="col-sm-12">
+                                                            <div class="col-sm-6">
+                                                                <h:outputText style="margin-left:-29px;"
+                                                                              value="#{_authorizationPolicy.name}"/>
+                                                                <h:outputText value=" "/>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <a4j:commandLink
+                                                                        action="#{updateScopeDescriptionAction.removeAuthorizationPolicy(_authorizationPolicy)}"
+                                                                        execute="@this"
+                                                                        render="selectedAuthorizationPolicyId"
+                                                                        styleClass="glyphicon glyphicon-remove ">
+                                                                    <!--  <h:graphicImage value="/img/remove.gif" /> -->
+                                                                </a4j:commandLink>
+                                                            </div>
+                                                        </div>
+
+                                                    </a4j:repeat>
+                                                    <richext:spacer height="16"/>
+                                                </h:panelGrid>
+                                            </h:panelGroup>
+                                        </ox:decorate>
+
+                                        <ox:decorate id="command">
+                                            <h:panelGroup>
+                                                <a4j:commandButton execute="@this"
+                                                                   oncomplete="#{rich:component('authorizationPolicy:selectEntityModalPanel')}.show();"
+                                                                   style="margin-left:-95px;"
+                                                                   styleClass="btn btn-primary"
+                                                                   value="#{msg['uma.addAuthorizationPolicy']}"/>
+                                            </h:panelGroup>
+                                        </ox:decorate>
+                                    </h:panelGrid>
+
+
+                                </div>
+                                <div class="box-footer">
+                                    <h:panelGroup id="updateButtons" layout="block">
+                                        <h:commandButton action="#{updateScopeDescriptionAction.save}"
+                                                         styleClass="btn btn-primary"
+                                                         value="#{updateScopeDescriptionAction.update ? 'Update' : 'Add Scope'}"/>
+                                        <a4j:commandButton ajaxSingle="true"
+                                                           onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                                           rendered="#{updateScopeDescriptionAction.update}"
+                                                           style="margin-left:3px;" styleClass="btn btn-primary"
+                                                           value="Delete"/>
+                                        <s:button action="#{updateScopeDescriptionAction.cancel}" immediate="true"
+                                                  propagation="end" style="margin-left:3px;"
+                                                  styleClass="btn btn-primary" value="#{msg['uma.cancel']}"/>
                                     </h:panelGroup>
-    
-                                    <richext:spacer height="8" />
-    
-                                    <a4j:commandLink value="#{msg['uma.remove']}" action="#{updateScopeDescriptionAction.removeIconImage()}" execute="@this" render="iconPanelId" eventsQueue="scopeDescriptionQueue" />
-                                </h:panelGrid>
-                            </h:panelGrid>
-                            
-                            
-                        </ox:decorate>
-                    </h:panelGroup>
-
-                    <h:panelGroup id="externalTypeGroupId">
-                        <ox:decorate rendered="#{_scopeDescription.type.value eq 'external'}" label="#{msg['uma.iconURI']}">
-                            <rich:inplaceInput value="#{_scopeDescription.iconUrl}" defaultLabel="Click to enter Icon Url" maxlength="60" inputWidth="180" required="true" id="iconUrlId" />
-                        </ox:decorate>
-
-                        <ox:decorate rendered="#{_scopeDescription.type.value eq 'external'}" label="#{msg['uma.url']}">
-                            <rich:inplaceInput value="#{_scopeDescription.url}" defaultLabel="Click to enter Url" maxlength="60" inputWidth="180" required="true" id="urlId" />
-                        </ox:decorate>
-                    </h:panelGroup>
-
-		            <ox:decorate id="responseTypes" label="#{msg['uma.authorizationPolicy']}">
-		                <h:panelGroup id="selectedAuthorizationPolicyId">
-		                    <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-		                        <a4j:repeat value="#{updateScopeDescriptionAction.authorizationPolicies}" rowKeyVar="_authorizationPolicyIdx" var="_authorizationPolicy">
-		                             <div class = "col-sm-12">
-                                 <div class = "col-sm-6" >
-                                 <h:outputText value="#{_authorizationPolicy.name}" style="margin-left:-29px;"/>
-		                            <h:outputText value="&#160;" />
-		                            </div>
-		                            <div class = "col-sm-6" >
-		                            <a4j:commandLink styleClass="glyphicon glyphicon-remove " action="#{updateScopeDescriptionAction.removeAuthorizationPolicy(_authorizationPolicy)}" execute="@this" render="selectedAuthorizationPolicyId">
-		                              <!--  <h:graphicImage value="/img/remove.gif" /> -->
-		                            </a4j:commandLink>
-		                            </div></div>
-		                            
-		                        </a4j:repeat>
-		                        <richext:spacer height="16" />
-		                    </h:panelGrid>
-		                </h:panelGroup>
-		            </ox:decorate>
-
-		            <ox:decorate id="command">
-		                <h:panelGroup>
-		                    <a4j:commandButton value="#{msg['uma.addAuthorizationPolicy']}" oncomplete="#{rich:component('authorizationPolicy:selectEntityModalPanel')}.show();" execute="@this" styleClass="btn btn-primary" style="margin-left:-95px;"/>
-		                </h:panelGroup>
-		            </ox:decorate>
-                </h:panelGrid>
-
-               
-                
-            </div>
-            <div class="box-footer">
-             <h:panelGroup layout="block" id="updateButtons">
-                    <h:commandButton value="#{updateScopeDescriptionAction.update ? 'Update' : 'Add Scope'}" action="#{updateScopeDescriptionAction.save}" styleClass="btn btn-primary" />
-                    <a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" styleClass="btn btn-primary" style="margin-left:3px;"
-                        rendered="#{updateScopeDescriptionAction.update}" />
-                    <s:button value="#{msg['uma.cancel']}" action="#{updateScopeDescriptionAction.cancel}" immediate="true" propagation="end" styleClass="btn btn-primary" style="margin-left:3px;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </h:panelGroup>
-            </div>
-            </div></div></div>
-        </h:panelGroup>
-        
-        </section>
-        </h:form>
-        
-            <ox:selectSelectableEntityDialog id="authorizationPolicy" searchMethod="#{updateScopeDescriptionAction.searchAvailableAuthorizationPolicies}"
-                searchResult="#{updateScopeDescriptionAction.availableAuthorizationPolicies}" displaySearchForm="false"
-                acceptMethod="#{updateScopeDescriptionAction.acceptSelectAuthorizationPolicies}" cancelMethod="#{updateScopeDescriptionAction.cancelSelectAuthorizationPolicies}"
-                render="selectedAuthorizationPolicyId" nameProperty="entity.name" displayNameProperty="entity.description"
-                label="#{msg['uma.addAuthorizationPolicy']}"/>
 
-            <ox:acceptRemovalDialog id="deleteConfirmation" subject="scope" value="#{updateScopeDescriptionAction.scopeDescription.id}" deleteMethod="#{updateScopeDescriptionAction.delete}" />
-        
+            </section>
+        </h:form>
+
+        <ox:selectSelectableEntityDialog
+                acceptMethod="#{updateScopeDescriptionAction.acceptSelectAuthorizationPolicies}"
+                cancelMethod="#{updateScopeDescriptionAction.cancelSelectAuthorizationPolicies}"
+                displayNameProperty="entity.description" displaySearchForm="false" id="authorizationPolicy"
+                label="#{msg['uma.addAuthorizationPolicy']}" nameProperty="entity.name"
+                render="selectedAuthorizationPolicyId"
+                searchMethod="#{updateScopeDescriptionAction.searchAvailableAuthorizationPolicies}"
+                searchResult="#{updateScopeDescriptionAction.availableAuthorizationPolicies}"/>
+
+        <ox:acceptRemovalDialog deleteMethod="#{updateScopeDescriptionAction.delete}" id="deleteConfirmation"
+                                subject="scope" value="#{updateScopeDescriptionAction.scopeDescription.id}"/>
+
     </ui:define>
 
 </ui:composition>

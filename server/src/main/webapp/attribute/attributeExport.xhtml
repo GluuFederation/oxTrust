@@ -1,140 +1,156 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/schema/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:richext="http://java.sun.com/jsf/composite/richext"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{attributeInventoryAction.start}"
+                      if="#{permissionService.throwOnLackOfPermissions('attribute', ' access') and attributeInventoryAction.attributeList == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
-	<ui:define name="body">
-	
-	<section class="content-header">
-	
-		<h1 style="color: #333;">
-			Import/Export Attributes<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> Export Attribute</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a href="#{request.contextPath}/attribute/export">
-					 Export Attribute</a></li>
-		</ol>
-		</section>
-		<section class= "content">
-		<div id="formArea">
-			<h:panelGroup columns="1" border="0" cellpadding="0" cellspacing="0"
-				width="100%">
-				<h:form id="attributesFormId">
-					
-				<h:link includeViewParams="false" outcome="/attribute/attributeImport"
-					styleClass="label label-success" value="Import Attribute LDIF" style="margin-left:5px;padding:6px;"/>
-				
-					<div class="row" style="padding-top:20px">
-						<div class="col-xs-12">
-							<div class="nav-tabs-custom" style="margin-bottom: 0px;">
-								<ul class="nav nav-tabs">
+    <ui:define name="body">
 
-									<li class="active"><a href="#attribuiteInventory"
-										data-toggle="tab">Export Attribute </a></li>
-								</ul>
-								<div class="tab-content">
-									<!-- System Configuration -->
-									<div class="tab-pane active" id="attributeInventory">
+        <section class="content-header">
 
-										<div style="display: inline-block; width: 75% !important;">
-											<h:panelGroup>
+            <h1 style="color: #333;">
+                Import/Export Attributes
+                <small>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/> Export Attribute
+                </small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/attribute/export">
+                        Export Attribute</a>
+                </li>
+            </ol>
+        </section>
+        <section class="content">
+            <div id="formArea">
+                <h:panelGroup border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
+                    <h:form id="attributesFormId">
 
-												<div class="row">
-													<div id="update" runat="server" visible="false">
-														<!-- general form elements -->
-														<div class="box box-primary" style="width:132%;">
-															
-															<!-- /.box-header -->
-															<!-- form start -->
-															<div class="box-body">
-																<div class="table-responsive" style="overflow: auto">
+                        <h:link includeViewParams="false" outcome="/attribute/attributeImport"
+                                style="margin-left:5px;padding:6px;" styleClass="label label-success"
+                                value="Import Attribute LDIF"/>
+
+                        <div class="row" style="padding-top:20px">
+                            <div class="col-xs-12">
+                                <div class="nav-tabs-custom" style="margin-bottom: 0px;">
+                                    <ul class="nav nav-tabs">
+
+                                        <li class="active">
+                                            <a data-toggle="tab" href="#attribuiteInventory">Export Attribute </a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <!-- System Configuration -->
+                                        <div class="tab-pane active" id="attributeInventory">
+
+                                            <div style="display: inline-block; width: 75% !important;">
+                                                <h:panelGroup>
+
+                                                    <div class="row">
+                                                        <div id="update" runat="server" visible="false">
+                                                            <!-- general form elements -->
+                                                            <div class="box box-primary" style="width:132%;">
+
+                                                                <!-- /.box-header -->
+                                                                <!-- form start -->
+                                                                <div class="box-body">
+                                                                    <div class="table-responsive"
+                                                                         style="overflow: auto">
 
 
-																	<ui:fragment
-																		rendered="#{attributeInventoryAction.attributeList.size eq 0}">
-																		<h:outputText value="No Attributes Found" />
-																	</ui:fragment>
-																	<h:dataTable sortMode="single" 
-																		styleClass="table table-hover rt"
-																		value="#{attributeInventoryAction.attributeList}"
-																		var="attr" id="attributesListId" width="100%"
-																		rendered="#{attributeInventoryAction.attributeList.size gt 0}">
-																		<h:column sortBy="#{attr.displayName}" 
-																			class="col-xs-12">
-																			<f:facet name="header" >  
-              <div style="text-align: center;">Export</div>  
-            </f:facet>
-																			<h:selectBooleanCheckbox value="#{attributeInventoryAction.checked[attr.inum]}" />
-																		</h:column>
-																		
-																		<h:column sortBy="#{attr.displayName}" 
-																			class="col-xs-12">
-																			<f:facet name="header" >  
-              <div style="text-align: center;"> Display Name</div>  
-            </f:facet>
-																			<h:link includeViewParams="false" outcome="/attribute/updateAttribute"
-																				value="#{attr.displayName}">
-																				<f:param name="inum" value="#{attr.inum}" />
-																			</h:link>
-																		</h:column>
-																		
-																		<h:column sortBy="#{attr.name}" >
-																		<f:facet name="header">  
-              <div style="text-align: center;"> Name</div>
-            </f:facet>
-																			<h:outputText value="#{attr.name}" class="col-xs-12" />
-																		</h:column>
-																		
-																		<h:column sortBy="#{attr.origin}" class="col-xs-12">
-																		<f:facet name="header">  
-               <div style="text-align: center;">   Origin</div>
-            </f:facet>
+                                                                        <ui:fragment
+                                                                                rendered="#{attributeInventoryAction.attributeList.size eq 0}">
+                                                                            <h:outputText value="No Attributes Found"/>
+                                                                        </ui:fragment>
+                                                                        <h:dataTable id="attributesListId"
+                                                                                     rendered="#{attributeInventoryAction.attributeList.size gt 0}"
+                                                                                     sortMode="single"
+                                                                                     styleClass="table table-hover rt"
+                                                                                     value="#{attributeInventoryAction.attributeList}"
+                                                                                     var="attr" width="100%">
+                                                                            <h:column class="col-xs-12"
+                                                                                      sortBy="#{attr.displayName}">
+                                                                                <f:facet name="header">
+                                                                                    <div style="text-align: center;">Export</div>
+                                                                                </f:facet>
+                                                                                <h:selectBooleanCheckbox
+                                                                                        value="#{attributeInventoryAction.checked[attr.inum]}"/>
+                                                                            </h:column>
 
-																			<h:outputText value="#{attr.origin}"
-																				class="col-xs-12" />
-																		</h:column>
-																		
-																		<h:column>
-																		<f:facet name="header">  
-            <div style="text-align: center;">      Description </div>
-            </f:facet>
-																			<h:outputText class="col-xs-12"
-																				value="#{attr.description}" />
-																		</h:column>
-																		
-																		<h:column>
-<f:facet name="header">  
-           <div style="text-align: center;">      Status</div>
-            </f:facet>
-																			<h:outputText class="col-xs-1" value="#{attr.status}" />
-																		</h:column>
-																	</h:dataTable>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</h:panelGroup>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<h:commandButton  styleClass="btn btn-primary" value="Export" action="#{attributeInventoryAction.submit}"/>
-				</h:form>
+                                                                            <h:column class="col-xs-12"
+                                                                                      sortBy="#{attr.displayName}">
+                                                                                <f:facet name="header">
+                                                                                    <div style="text-align: center;"> Display Name</div>
+                                                                                </f:facet>
+                                                                                <h:link includeViewParams="false"
+                                                                                        outcome="/attribute/updateAttribute"
+                                                                                        value="#{attr.displayName}">
+                                                                                    <f:param name="inum"
+                                                                                             value="#{attr.inum}"/>
+                                                                                </h:link>
+                                                                            </h:column>
 
-			</h:panelGroup>
-		</div>
-		</section>
-	</ui:define>
+                                                                            <h:column sortBy="#{attr.name}">
+                                                                                <f:facet name="header">
+                                                                                    <div style="text-align: center;"> Name</div>
+                                                                                </f:facet>
+                                                                                <h:outputText class="col-xs-12"
+                                                                                              value="#{attr.name}"/>
+                                                                            </h:column>
+
+                                                                            <h:column class="col-xs-12"
+                                                                                      sortBy="#{attr.origin}">
+                                                                                <f:facet name="header">
+                                                                                    <div style="text-align: center;"> Origin</div>
+                                                                                </f:facet>
+
+                                                                                <h:outputText class="col-xs-12"
+                                                                                              value="#{attr.origin}"/>
+                                                                            </h:column>
+
+                                                                            <h:column>
+                                                                                <f:facet name="header">
+                                                                                    <div style="text-align: center;"> Description</div>
+                                                                                </f:facet>
+                                                                                <h:outputText class="col-xs-12"
+                                                                                              value="#{attr.description}"/>
+                                                                            </h:column>
+
+                                                                            <h:column>
+                                                                                <f:facet name="header">
+                                                                                    <div style="text-align: center;"> Status</div>
+                                                                                </f:facet>
+                                                                                <h:outputText class="col-xs-1"
+                                                                                              value="#{attr.status}"/>
+                                                                            </h:column>
+                                                                        </h:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </h:panelGroup>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h:commandButton action="#{attributeInventoryAction.submit}" styleClass="btn btn-primary"
+                                         value="Export"/>
+                    </h:form>
+
+                </h:panelGroup>
+            </div>
+        </section>
+    </ui:define>
 </ui:composition>

@@ -1,65 +1,78 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/schema/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:richext="http://java.sun.com/jsf/composite/richext"
-	xmlns:ox="http://java.sun.com/jsf/composite/ox"
-	xmlns:gluufn="http://www.gluu.org/jsf/functions"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
+                xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{configureLogViewerAction.init}"
+                      if="#{permissionService.throwOnLackOfPermissions('configuration', ' access') and not configureLogViewerAction.initialized and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
-	<ui:define name="body">
-		<section class="content-header">
-		<h1 style="color: #333;">
-			#{msg['logViewer.configuration']}<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> #{msg['logViewer.configureLogViewer']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/logviewer/configure">#{msg['logViewer.configureLogViewer']}</a></li>
-		</ol>
-		</section>
-		<section class="content">
+    <ui:define name="body">
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['logViewer.configuration']}
+                <small>
+                    <i class="fa fa-caret-right"
+                       style="color: #333 !important;"/> #{msg['logViewer.configureLogViewer']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/logviewer/configure">#{msg['logViewer.configureLogViewer']}</a>
+                </li>
+            </ol>
+        </section>
+        <section class="content">
 
-		<div id="formArea">
-			<h:form id="logViewerForm">
-				<!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-				<input type='hidden' name='cid' value='#{conversation.id}' />
+            <div id="formArea">
+                <h:form id="logViewerForm">
+                    <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
+                    <input name="cid" type="hidden" value="#{conversation.id}"/>
 
-				<s:validateAll />
+                    <s:validateAll/>
 
-				<div class="row">
+                    <div class="row">
 
-					<div class="col-xs-12">
-						<div class="box box-primary">
-						<div class="box-header">
-						</div>
+                        <div class="col-xs-12">
+                            <div class="box box-primary">
+                                <div class="box-header">
+                                </div>
 
-							<div style="display: inline-block; width: 75% !important;">
+                                <div style="display: inline-block; width: 75% !important;">
 
-								<h:panelGroup>
-									<ox:simpleCustomPropertiesList label="#{msg['logViewer.allowedLogTemplates']}"
-										labelAdd="#{msg['logViewer.logTemplate']}"
-										properties="#{configureLogViewerAction.logViewerConfiguration.logTemplates}"
-										propertiesAction="#{configureLogViewerAction}" />
-								</h:panelGroup>
+                                    <h:panelGroup>
+                                        <ox:simpleCustomPropertiesList label="#{msg['logViewer.allowedLogTemplates']}"
+                                                                       labelAdd="#{msg['logViewer.logTemplate']}"
+                                                                       properties="#{configureLogViewerAction.logViewerConfiguration.logTemplates}"
+                                                                       propertiesAction="#{configureLogViewerAction}"/>
+                                    </h:panelGroup>
 
 
-								</div><div class="box-footer">
+                                </div>
+                                <div class="box-footer">
 
-									<div id="updateButtons">
-										<h:commandButton styleClass="btn btn-primary" value="#{msg['logViewer.update']}"
-											action="#{configureLogViewerAction.update}" />
-										<h:commandButton styleClass="btn btn-primary" value="#{msg['logViewer.cancel']}"
-											action="#{configureLogViewerAction.cancel}"
-											style="margin-left:5px" immediate="true" />
+                                    <div id="updateButtons">
+                                        <h:commandButton action="#{configureLogViewerAction.update}"
+                                                         styleClass="btn btn-primary"
+                                                         value="#{msg['logViewer.update']}"/>
+                                        <h:commandButton action="#{configureLogViewerAction.cancel}" immediate="true"
+                                                         style="margin-left:5px" styleClass="btn btn-primary"
+                                                         value="#{msg['logViewer.cancel']}"/>
 
-									</div></div></div></div></div></h:form></div></section>
-	</ui:define>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </section>
+    </ui:define>
 
 </ui:composition>

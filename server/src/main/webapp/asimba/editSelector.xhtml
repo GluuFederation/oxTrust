@@ -1,56 +1,62 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/schema/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateAsimbaSelectorAction.edit}"
+                      if="#{permissionService.throwOnLackOfPermissions('trust', ' access') and updateAsimbaSelectorAction.editEntryInum != null and identity.checkLoggedIn()}"
+                      onPostback="true"/>
+    </f:metadata>
 
-	<ui:define name="body">
-		<section class="content-header">
-                    <h1 style="color: #333;">#{msg['asimba.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;" />#{msg['asimba.asimba']}
-                            <i class="fa fa-caret-right" style="color: #333 !important;" /> #{msg['asimba.selector']}</small></h1>
-                    <ol class="breadcrumb">
+    <ui:define name="body">
+        <section class="content-header">
+            <h1 style="color: #333;">#{msg['asimba.saml']}
+                <small>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['asimba.asimba']}
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['asimba.selector']}</small>
+            </h1>
+            <ol class="breadcrumb">
 
-                            <li><a href="#{request.contextPath}/asimba/selectors"><i
-                                            class="fa fa-home"></i> #{msg['asimba.selectors']}</a></li>
-                            <li class="organization/configuration"><a
-                                    href="#{request.contextPath}/asimba/editSelector/">#{msg['asimba.addSelector']}</a></li>
-                    </ol>
-		</section>
+                <li>
+                    <a href="#{request.contextPath}/asimba/selectors">
+                        <i class="fa fa-home"/> #{msg['asimba.selectors']}</a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/asimba/editSelector/">#{msg['asimba.addSelector']}</a>
+                </li>
+            </ol>
+        </section>
 
-		<section class="content">
-		<ui:decorate template="/WEB-INF/incl/asimba/selectorForm.xhtml">
-                    <ui:param name="_selector"
-                            value="#{updateAsimbaSelectorAction.selector}" />
-                    <ui:param name="_updateAsimbaSelectorAction"
-                            value="#{updateAsimbaSelectorAction}" />
+        <section class="content">
+            <ui:decorate template="/WEB-INF/incl/asimba/selectorForm.xhtml">
+                <ui:param name="_selector" value="#{updateAsimbaSelectorAction.selector}"/>
+                <ui:param name="_updateAsimbaSelectorAction" value="#{updateAsimbaSelectorAction}"/>
 
-                    <ui:define name="controlButttons">
-                    <div class = "box-footer">
-                        <div  style="width: 100%;height: 30px;">
-                            <div id="updateButtons" style="float: left;width: 250px;"> 
-                        <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.add']}   "
-                                action="#{updateAsimbaSelectorAction.add}" rendered="#{updateAsimbaSelectorAction.newEntry}" />
-                        <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.update']}   "
-                                         style="margin-left:5px;"
-                                action="#{updateAsimbaSelectorAction.update}" rendered="#{not updateAsimbaSelectorAction.newEntry}" />
-                        <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.delete']}   "
-                                         style="margin-left:5px;"
-                                action="#{updateAsimbaSelectorAction.delete}" rendered="#{not updateAsimbaSelectorAction.newEntry}" />
-                        <h:commandButton styleClass="btn btn-primary" value="   #{msg['asimba.cancel']}  "
-                                         style="margin-left:5px;"
-                                action="#{updateAsimbaSelectorAction.cancel}" immediate="true" />
+                <ui:define name="controlButttons">
+                    <div class="box-footer">
+                        <div style="width: 100%;height: 30px;">
+                            <div id="updateButtons" style="float: left;width: 250px;">
+                                <h:commandButton action="#{updateAsimbaSelectorAction.add}"
+                                                 rendered="#{updateAsimbaSelectorAction.newEntry}"
+                                                 styleClass="btn btn-primary" value="   #{msg['asimba.add']}   "/>
+                                <h:commandButton action="#{updateAsimbaSelectorAction.update}"
+                                                 rendered="#{not updateAsimbaSelectorAction.newEntry}"
+                                                 style="margin-left:5px;" styleClass="btn btn-primary"
+                                                 value="   #{msg['asimba.update']}   "/>
+                                <h:commandButton action="#{updateAsimbaSelectorAction.delete}"
+                                                 rendered="#{not updateAsimbaSelectorAction.newEntry}"
+                                                 style="margin-left:5px;" styleClass="btn btn-primary"
+                                                 value="   #{msg['asimba.delete']}   "/>
+                                <h:commandButton action="#{updateAsimbaSelectorAction.cancel}" immediate="true"
+                                                 style="margin-left:5px;" styleClass="btn btn-primary"
+                                                 value="   #{msg['asimba.cancel']}  "/>
                             </div>
                         </div>
                     </div>
-                    </ui:define>
-			
+                </ui:define>
 
-		</ui:decorate> 
-                </section>
-	</ui:define>
+
+            </ui:decorate>
+        </section>
+    </ui:define>
 </ui:composition>

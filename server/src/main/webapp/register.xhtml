@@ -1,15 +1,13 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:s="http://jboss.org/schema/seam/taglib"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://java.sun.com/jsf/composite/richext"
- 		xmlns:ox="http://java.sun.com/jsf/composite/ox"
-                template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
+                xmlns:richext="http://java.sun.com/jsf/composite/richext" xmlns:s="http://jboss.org/schema/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{registerPersonAction.initPerson}" if="#{registerPersonAction.person == null}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="head">
         <style>
@@ -21,9 +19,9 @@
                 margin-bottom: 0px;
             }
         </style>
-        
+
         <ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
-	        <script src="https://www.google.com/recaptcha/api.js" async="async" defer="defer"></script>
+            <script async="async" defer="defer" src="https://www.google.com/recaptcha/api.js"/>
         </ui:fragment>
     </ui:define>
 
@@ -37,7 +35,7 @@
                         <div class="login-box">
                             <div class="login-logo">
                                 <a href="#" style="font-size: 35px;">
-                                    <img src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png"></img>
+                                    <img src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png"/>
                                 </a>
                             </div>
                             <!-- /.login-logo -->
@@ -47,9 +45,9 @@
                                         <h1>#{msg['register.signUp']}</h1>
                                         #{msg['register.toCreateAnAccount']}
                                         <richext:spacer width="4"/>
-                                        <h:link includeViewParams="false" outcome="/login" value="#{msg['register.login']}" style="color:white;font-weight:bold;"
+                                        <h:link includeViewParams="false" outcome="/login"
                                                 rendered="#{not identity.loggedIn and not isLogin}"
-                                               />
+                                                style="color:white;font-weight:bold;" value="#{msg['register.login']}"/>
                                     </div>
                                 </div>
                             </div>
@@ -64,57 +62,60 @@
                                                   value="#{registerPersonAction.mandatoryAttributes}"/>
 
                                         <div id="registrationFormHolder">
-                                            <a4j:repeat
-                                                    value="#{registerPersonAction.person.customAttributes}"
-                                                    var="_custAttr" rowKeyVar="_custAttrIdx">
+                                            <a4j:repeat rowKeyVar="_custAttrIdx"
+                                                        value="#{registerPersonAction.person.customAttributes}"
+                                                        var="_custAttr">
 
                                                 <!-- Attributes found on person -->
                                                 <a4j:outputPanel>
                                                     <ui:param name="_mandatory" value="#{_custAttr.mandatory}"/>
                                                     <!-- Ordinary Attribute -->
-                                                    <ox:decorate id="_custAttrIdx" style="margin-left: -15px;" label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
-                                                                rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')  and (_custAttr.metadata.displayName ne 'Email')}">
-                                        
+                                                    <ox:decorate id="_custAttrIdx"
+                                                                 label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
+                                                                 rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')  and (_custAttr.metadata.displayName ne 'Email')}"
+                                                                 style="margin-left: -15px;">
+
                                                         <!-- String Attribute -->
-                                                        <h:inputText
-                                                                label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
-                                                                value="#{_custAttr.value}" maxlength="60"
-                                                                size="40" required="#{_mandatory}" id="custId"
-                                                                class="form-control"
-                                                                tabindex="#{_custAttrIdx + 1}"
-                                                                rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE')}">
+                                                        <h:inputText class="form-control" id="custId"
+                                                                     label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
+                                                                     maxlength="60"
+                                                                     rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE')}"
+                                                                     required="#{_mandatory}" size="40"
+                                                                     tabindex="#{_custAttrIdx + 1}"
+                                                                     value="#{_custAttr.value}">
 
                                                             <f:validator validatorId="extendedRegexValidator">
-                                                             <f:attribute name="pattern"
-                                                                         value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.attributeValidation) or (empty _custAttr.metadata.attributeValidation.regexp)) ? '.*' : _custAttr.metadata.attributeValidation.regexp}"/>
-                                                            
+                                                                <f:attribute name="pattern"
+                                                                             value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.attributeValidation) or (empty _custAttr.metadata.attributeValidation.regexp)) ? '.*' : _custAttr.metadata.attributeValidation.regexp}"/>
+
                                                             </f:validator>
 
-                                                           
+
                                                             <rich:validator event="keyup"/>
 
                                                         </h:inputText>
                                                         <rich:message for="custId"/>
                                                         <!-- Read-only Attribute -->
-                                                        <h:outputText value="#{_custAttr.value}" size="40"
-                                                                      id="custIdText" rendered="#{_custAttr.readonly}">
+                                                        <h:outputText id="custIdText" rendered="#{_custAttr.readonly}"
+                                                                      size="40" value="#{_custAttr.value}">
 
                                                         </h:outputText>
-                                                        <h:outputText value="&#160;"/>
+                                                        <h:outputText value=" "/>
                                                         <!-- Date Attribute -->
-                                                        <rich:calendar value="#{_custAttr.value}"
+                                                        <rich:calendar datePattern="EEE MMM dd HH:mm:ss Z yyyy"
+                                                                       readonly="#{_custAttr.readonly}"
                                                                        rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType eq 'DATE')}"
-                                                                       datePattern="EEE MMM dd HH:mm:ss Z yyyy"
-                                                                       readonly="#{_custAttr.readonly}"/>
+                                                                       value="#{_custAttr.value}"/>
 
                                                     </ox:decorate>
                                                     <!-- Special Attribute. Is this intended to be a combobox-based attribute? -->
-                                                    <ox:decorate id="_custAttrIdx2" label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
-                                                                rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and _custAttr.name.equals('exampleSpecialAttribute')}">
-                                                        
-                                                        <h:selectOneMenu value="#{_custAttr.value}"
-                                                                         required="#{_mandatory}" id="custId"
-                                                                         tabindex="#{_custAttrIdx + 1}">
+                                                    <ox:decorate id="_custAttrIdx2"
+                                                                 label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
+                                                                 rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and _custAttr.name.equals('exampleSpecialAttribute')}">
+
+                                                        <h:selectOneMenu id="custId" required="#{_mandatory}"
+                                                                         tabindex="#{_custAttrIdx + 1}"
+                                                                         value="#{_custAttr.value}">
                                                             <f:selectItem id="item1" itemLabel="News" itemValue="1"/>
                                                             <f:selectItem id="item2" itemLabel="Sports" itemValue="2"/>
                                                             <f:selectItem id="item3" itemLabel="Music" itemValue="3"/>
@@ -122,68 +123,73 @@
                                                             <f:selectItem id="item5" itemLabel="Web" itemValue="5"/>
                                                             <s:validate/>
                                                         </h:selectOneMenu>
-                                                        <h:outputText value="&#160;"/>
+                                                        <h:outputText value=" "/>
 
                                                     </ox:decorate>
                                                     <!-- Attribute Tooltip -->
-                                                    <rich:tooltip value="#{_custAttr.metadata.gluuTooltip}"
-                                                                  rendered="#{((not empty _custAttr) and (not empty _custAttr.metadata) and ( not empty _custAttr.metadata.gluuTooltip))}"/>
+                                                    <rich:tooltip
+                                                            rendered="#{((not empty _custAttr) and (not empty _custAttr.metadata) and ( not empty _custAttr.metadata.gluuTooltip))}"
+                                                            value="#{_custAttr.metadata.gluuTooltip}"/>
                                                 </a4j:outputPanel>
                                                 <!-- End Attributes found on person -->
                                             </a4j:repeat>
 
                                             <!-- Passwords -->
-                                            <ox:decorate id="passwordField" style="margin-left: -15px;"
-                                                        template="/WEB-INF/incl/layout/edit.xhtml" label="#{msg['register.password']}">
-                                                <h:inputSecret id="password" class="form-control"
-                                                               value="#{registerPersonAction.password}" maxlength="60"
-                                                               size="40" tabindex="6" required="true" redisplay="true"
-                                                               autocomplete="off"/>
-                                                <h:outputText value="&#160;"/>
+                                            <ox:decorate id="passwordField" label="#{msg['register.password']}"
+                                                         style="margin-left: -15px;"
+                                                         template="/WEB-INF/incl/layout/edit.xhtml">
+                                                <h:inputSecret autocomplete="off" class="form-control" id="password"
+                                                               maxlength="60" redisplay="true" required="true" size="40"
+                                                               tabindex="6" value="#{registerPersonAction.password}"/>
+                                                <h:outputText value=" "/>
                                             </ox:decorate>
-                                            <ox:decorate id="repeatPasswordField" style="margin-left: -15px;"
-                                                        template="/WEB-INF/incl/layout/edit.xhtml" label="#{msg['register.repeatPassword']}">
-                                                <h:inputSecret id="passwordValidation" class="form-control"
-                                                               value="#{registerPersonAction.repeatPassword}"
-                                                               maxlength="60"
-                                                               size="40" tabindex="7" required="true" redisplay="true"
-                                                               autocomplete="off">
+                                            <ox:decorate id="repeatPasswordField"
+                                                         label="#{msg['register.repeatPassword']}"
+                                                         style="margin-left: -15px;"
+                                                         template="/WEB-INF/incl/layout/edit.xhtml">
+                                                <h:inputSecret autocomplete="off" class="form-control"
+                                                               id="passwordValidation" maxlength="60" redisplay="true"
+                                                               required="true" size="40" tabindex="7"
+                                                               value="#{registerPersonAction.repeatPassword}">
                                                     <s:validateEquality for="#{'password'}"
                                                                         message="#{msg['register.passwordsDontMatch']}"/>
                                                 </h:inputSecret>
-                                                <h:outputText value="&#160;"/>
+                                                <h:outputText value=" "/>
                                             </ox:decorate>
                                             <!-- End Passwords -->
-                                            
-                                            
-                                            <ox:decorate id="email" style="margin-left: -15px;"
-                                                        template="/WEB-INF/incl/layout/edit.xhtml" label="#{msg['register.email']} ">
-                                                <h:inputText id="emailValidation" class="form-control" validator="#{registerPersonAction.validateEmail}" 
-                                                               value="#{registerPersonAction.email}"
-                                                               maxlength="60"
-                                                               size="40" tabindex="7" required="true" redisplay="true"
-                                                               autocomplete="off" 
-                                                               requiredMessage="#{msg['register.pleaseEnterYourEmailAddress']}">
-                                                	                                           		 
-                                                <rich:validator event="keyup" />                                                                                                  
-                                                </h:inputText>                                               
-                                                <h:outputText value="&#160;"/>
+
+
+                                            <ox:decorate id="email" label="#{msg['register.email']} "
+                                                         style="margin-left: -15px;"
+                                                         template="/WEB-INF/incl/layout/edit.xhtml">
+                                                <h:inputText autocomplete="off" class="form-control"
+                                                             id="emailValidation" maxlength="60" redisplay="true"
+                                                             required="true"
+                                                             requiredMessage="#{msg['register.pleaseEnterYourEmailAddress']}"
+                                                             size="40" tabindex="7"
+                                                             validator="#{registerPersonAction.validateEmail}"
+                                                             value="#{registerPersonAction.email}">
+
+                                                    <rich:validator event="keyup"/>
+                                                </h:inputText>
+                                                <h:outputText value=" "/>
                                             </ox:decorate>
                                         </div>
                                         <!-- Captcha -->
                                         <ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
-	                                        <s class="g-recaptcha" data-sitekey="#{recaptchaService.recaptchaSiteKey}"/>
+                                            <s class="g-recaptcha" data-sitekey="#{recaptchaService.recaptchaSiteKey}"/>
                                         </ui:fragment>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div id="updateButtons" style="margin-top: 20px;">
-                                                    <h:commandButton value="#{msg['register.register']}" class="btn btn-primary btn-flat"
+                                                    <h:commandButton action="#{registerPersonAction.register}"
+                                                                     class="btn btn-primary btn-flat"
                                                                      style="width:90px;"
-                                                                     action="#{registerPersonAction.register}"/>
-                                                    <h:commandButton value="#{msg['register.cancel']}" class="btn btn-primary btn-flat"
+                                                                     value="#{msg['register.register']}"/>
+                                                    <h:commandButton action="#{registerPersonAction.cancel}"
+                                                                     class="btn btn-primary btn-flat" immediate="true"
                                                                      style="margin-left:3px; width:90px;"
-                                                                     action="#{registerPersonAction.cancel}"
-                                                                     immediate="true"/>
+                                                                     value="#{msg['register.cancel']}"/>
                                                 </div>
                                             </div>
                                         </div>
