@@ -80,7 +80,7 @@
                 <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshProblemCount}" />
             </ox:decorate> <ox:decorate id="editType" label="#{msg['organization.refreshMethod']}">
                 <h:selectOneMenu styleClass="form-control"  value="#{_configureCacheRefreshAction.updateMethod}" required="true" id="refreshMethodId">
-                    <f:selectItems value="#{_configureCacheRefreshAction.allCacheRefreshUpdateMethods}" var="_type" label="#{_type.displayName}" />
+                    <f:selectItems value="#{_configureCacheRefreshAction.allCacheRefreshUpdateMethods}" var="_type" itemLabel="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
                     <a4j:ajax event="change" render="vdsTogglePanelGroup, copyTogglePanelGroup" execute="@this" limitRender="true" />
                 </h:selectOneMenu>
@@ -136,7 +136,7 @@
 										id="vdsCacheRefreshStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" label="#{_type.displayName}" />
+											var="_type" itemLabel="#{_type.displayName}" />
 										<s:convertEnum />
 									</h:selectOneMenu>
 			</ox:decorate>

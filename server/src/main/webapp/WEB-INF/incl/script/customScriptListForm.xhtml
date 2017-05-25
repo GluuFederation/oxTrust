@@ -63,7 +63,7 @@
 
 		                                <ox:decorate label="#{msg['customScript.programmingLanguage']}">
 		                                    <h:selectOneMenu value="#{_customScript.programmingLanguage}" required="true" disabled="true" styleClass="form-control">
-		                                        <f:selectItems value="#{applianceService.programmingLanguages}" var="_type" label="#{_type.displayName}"/>
+		                                        <f:selectItems value="#{applianceService.programmingLanguages}" var="_type" itemLabel="#{_type.displayName}"/>
 		                                    </h:selectOneMenu>
 		                                </ox:decorate>
 		            
@@ -73,7 +73,7 @@
 
 		                                <ox:decorate label="#{msg['customScript.locationType']}">
 		                                    <h:selectOneMenu value="#{_customScript.locationType}" required="false" styleClass="form-control">
-		                                        <f:selectItems value="#{applianceService.locationTypes}" var="_type" label="#{_type.displayName}"/>
+		                                        <f:selectItems value="#{applianceService.locationTypes}" var="_type" itemLabel="#{_type.displayName}"/>
 		                                        <a4j:ajax event="change" render="scriptAreaId, scriptPathId" limitRender="true" execute="@this">
 		                                        </a4j:ajax>
 		                                    </h:selectOneMenu>
@@ -83,7 +83,7 @@
 		                                <ui:fragment rendered="#{_scriptType.value eq 'person_authentication'}">
 			                                <ox:decorate label="#{msg['customScript.usageType']}">
 			                                    <h:selectOneMenu value="#{_customScript.usageType}" required="true" styleClass="form-control">
-			                                        <f:selectItems value="#{applianceService.scriptUsageTypes}" var="_usageType" label="#{_usageType.displayName}"/>
+			                                        <f:selectItems value="#{applianceService.scriptUsageTypes}" var="_usageType" itemLabel="#{_usageType.displayName}"/>
 			                                    </h:selectOneMenu>
 			                                </ox:decorate>
 		                                </ui:fragment>

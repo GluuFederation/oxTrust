@@ -106,7 +106,7 @@
                                         <h:selectOneMenu value="#{_appliance.passwordResetAllowed}" id="passwordResetId"
                                                          styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
-                                                           var="_type" label="#{_type.displayName}"/>
+                                                           var="_type" itemLabel="#{_type.displayName}"/>
                                             <s:convertEnum/>
                                         </h:selectOneMenu>
                                     </ox:decorate>
@@ -115,7 +115,7 @@
                                         <h:selectOneMenu value="#{_appliance.vdsCacheRefreshEnabled}"
                                                          id="vdsCacheRefreshStateId" styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
-                                                           var="_type" label="#{_type.displayName}"/>
+                                                           var="_type" itemLabel="#{_type.displayName}"/>
                                             <s:convertEnum/>
                                         </h:selectOneMenu>
                                     </ox:decorate>
@@ -124,7 +124,7 @@
                                         <h:selectOneMenu value="#{_appliance.scimEnabled}" id="scimEnabledStateId"
                                                          styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
-                                                           var="_type" label="#{_type.displayName}"/>
+                                                           var="_type" itemLabel="#{_type.displayName}"/>
                                             <s:convertEnum/>
                                         </h:selectOneMenu>
                                     </ox:decorate>
@@ -146,7 +146,7 @@
                                         <h:selectOneMenu value="#{_appliance.profileManagment}"
                                                          id="profileManagmentStateId" styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
-                                                           var="_type" label="#{_type.displayName}"/>
+                                                           var="_type" itemLabel="#{_type.displayName}"/>
                                             <s:convertEnum/>
                                         </h:selectOneMenu>
                                     </ox:decorate>

@@ -74,7 +74,7 @@
 											styleClass="form-control">
 											<f:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
-												var="_name" label="#{_name}" />
+												var="_name" itemLabel="#{_name}" />
 										</h:selectOneMenu>
 									</ox:decorate>
 
@@ -82,9 +82,10 @@
 										id="oxTrustAuntheticationMode" label="#{msg['manageAuthentication.oxTrustAuthenticationMode']}">
 										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
 											styleClass="form-control">
+											<f:selectItem noSelectionOption="true"  itemLabel="Default"/>
 											<f:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
-												var="_name" label="#{_name}" noSelectionLabel="Default" />
+												var="_name" itemLabel="#{_name}" />
 										</h:selectOneMenu>
 									</ox:decorate>
 								</h:panelGroup>
@@ -104,7 +105,7 @@
 										id="scimEnabledStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" label="#{_type.displayName}"/>
+											var="_type" itemLabel="#{_type.displayName}"/>
 										<s:convertEnum />
 									</h:selectOneMenu>
 						</ox:decorate>	
@@ -141,9 +142,10 @@
                                                                         <h:selectOneMenu value="#{updateCASAction.configuration.sessionStorageType}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="1">
+                                                                                <f:selectItem noSelectionOption="true"  itemLabel="Default"/>
                                                                                 <f:selectItems
                                                                                         value="#{updateCASAction.sessionStorageTypes}"
-                                                                                        var="_name" label="#{_name}" noSelectionLabel="Default" />
+                                                                                        var="_name" itemLabel="#{_name}" />
                                                                         </h:selectOneMenu>
                                                                 </ox:decorate>
 

@@ -33,7 +33,8 @@
   
             <ox:decorate label="#{msg['scope.scopeType']}">
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
-                    <f:selectItems value="#{scopeService.scopeTypes}" noSelectionLabel="Default" var="_type" label="#{_type.displayName}" />
+                	<f:selectItem noSelectionOption="true"  itemLabel="Default"/>
+                    <f:selectItems value="#{scopeService.scopeTypes}" var="_type" itemLabel="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
                     <a4j:ajax event="change"
 						render="dynamicScripts, selectedClaims"
@@ -43,7 +44,8 @@
   
             <ox:decorate label="#{msg['scope.defaultScope']}">
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
-                    <f:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" label="#{_type.displayName}" noSelectionLabel="Select"/>
+                	<f:selectItem noSelectionOption="true"  itemLabel="Select"/>
+                    <f:selectItems value="#{organizationService.javaBooleanSelectionTypes}" var="_type" itemLabel="#{_type.displayName}"/>
 
                 </h:selectOneMenu>
             </ox:decorate>

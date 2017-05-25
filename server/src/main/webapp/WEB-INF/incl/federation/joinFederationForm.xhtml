@@ -43,7 +43,8 @@
                     <h:panelGroup id="FederationWizard" rendered="#{not _isFederation}">
                         <ox:decorate id="spMetaDataSourceTypeFederation" label="#{msg['federation.federationName']}">
                             <h:selectOneMenu value="#{_federationProposal.containerFederation}" id="spMetaDataSourceTypeFederationId" converter="federationProposalConverter" required="true">
-                                <f:selectItems value="#{federationService.allFederations}" noSelectionLabel="#{msg['federation.federationName']}" var="_type" label="#{_type.displayName}" />
+                                <f:selectItem noSelectionOption="true"  itemLabel="#{msg['federation.federationName']}"/>
+                                <f:selectItems value="#{federationService.allFederations}" var="_type" itemLabel="#{_type.displayName}" />
                                 <a4j:ajax event="change" render="popPanelRules, FederationRules" limitRender="true" execute="@this" />
                             </h:selectOneMenu>
                         </ox:decorate>
@@ -87,7 +88,8 @@
                         <h:panelGroup rendered="#{not _isFederation}">
                             <ox:decorate id="spMetaDataSourceType" label="#{msg['federation.metadataType']}">
                                 <h:selectOneMenu value="#{_federationProposal.spMetaDataSourceType}" required="#{empty param['sv']}" id="spMetaDataSourceTypeId">
-                                    <f:selectItems value="#{federationService.metadataSourceTypes}" noSelectionLabel="#{msg['federation.metadataType']}" var="_type" label="#{_type.displayName}" />
+                                    <f:selectItem noSelectionOption="true"  itemLabel="#{msg['federation.metadataType']}"/>
+                                    <f:selectItems value="#{federationService.metadataSourceTypes}" var="_type" itemLabel="#{_type.displayName}" />
                                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
                                     <a4j:ajax event="change"
                                         render="fileWrapperGroupId, FederationWizard, spMetaDataUrlGroupId, 
