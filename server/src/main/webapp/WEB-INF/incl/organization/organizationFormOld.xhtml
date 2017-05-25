@@ -107,7 +107,7 @@
                                                          styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
                                                            var="_type" itemLabel="#{_type.displayName}"/>
-                                            <s:convertEnum/>
+                                            <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                                         </h:selectOneMenu>
                                     </ox:decorate>
 
@@ -116,7 +116,7 @@
                                                          id="vdsCacheRefreshStateId" styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
                                                            var="_type" itemLabel="#{_type.displayName}"/>
-                                            <s:convertEnum/>
+                                            <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                                         </h:selectOneMenu>
                                     </ox:decorate>
 
@@ -125,7 +125,7 @@
                                                          styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
                                                            var="_type" itemLabel="#{_type.displayName}"/>
-                                            <s:convertEnum/>
+                                            <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                                         </h:selectOneMenu>
                                     </ox:decorate>
 
@@ -147,7 +147,7 @@
                                                          id="profileManagmentStateId" styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
                                                            var="_type" itemLabel="#{_type.displayName}"/>
-                                            <s:convertEnum/>
+                                            <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                                         </h:selectOneMenu>
                                     </ox:decorate>
                                 </h:panelGroup>

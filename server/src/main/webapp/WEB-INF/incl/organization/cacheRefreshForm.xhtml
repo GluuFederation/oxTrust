@@ -137,7 +137,7 @@
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
 											var="_type" itemLabel="#{_type.displayName}" />
-										<s:convertEnum />
+										<f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
 									</h:selectOneMenu>
 			</ox:decorate>
 
