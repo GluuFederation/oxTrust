@@ -51,12 +51,6 @@ public class AttributeInventoryAction implements Serializable {
 
 	@Inject
 	private AttributeService attributeService;
-	
-	@Inject
-	private ExternalContext externalContext;	
-
-	@Inject
-	private FacesContext facesContext;
 
 	private List<GluuAttribute> activeAttributeList;
 	
@@ -139,7 +133,9 @@ public class AttributeInventoryAction implements Serializable {
 	
 
     public void submit() {
-        List<String> checkedItems = new ArrayList<String>();
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+    	
+    	List<String> checkedItems = new ArrayList<String>();
 
         for (GluuAttribute item : activeAttributeList) {
             if (checked.get(item.getInum())) {
@@ -147,7 +143,7 @@ public class AttributeInventoryAction implements Serializable {
             }
         }
         log.info("the selections are : {}", checkedItems.size());
-        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"attributes.ldif\"");
 		try {
