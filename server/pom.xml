@@ -36,6 +36,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
+					<include>META-INF/navigation/*.navigation.xml</include>
 					<include>**/*.xml</include>
 					<include>**/*.properties</include>
 					<include>**/*.drl</include>
@@ -128,6 +129,7 @@
 							<directory>src/main/webapp</directory>
 							<filtering>false</filtering>
 							<includes>
+								<include>META-INF/navigation/*.navigation.xml</include>
 								<include>**/*.xhtml</include>
 								<include>**/*.jsp</include>
 								<include>**/*.html</include>
@@ -716,6 +718,7 @@
 									<directory>src/main/webapp</directory>
 									<filtering>false</filtering>
 									<includes>
+										<include>META-INF/navigation/*.navigation.xml</include>
 										<include>**/*.xhtml</include>
 										<include>**/*.jsp</include>
 										<include>**/*.html</include>
