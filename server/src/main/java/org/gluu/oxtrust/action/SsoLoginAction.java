@@ -30,6 +30,7 @@ import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.drools.compiler.RuleBaseLoader;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
@@ -61,6 +62,9 @@ public class SsoLoginAction implements Serializable {
 	@Inject
 	private FacesContext facesContext;
 
+	@Inject
+	private FacesService facesService;
+
 	private String userName;
 	private String password;
 
@@ -73,16 +77,13 @@ public class SsoLoginAction implements Serializable {
 	private boolean initialized = false;
 
 	@Inject
-	private ExternalContext externalContext;
-
-	@Inject
 	private AppConfiguration appConfiguration;
 
 	public String start() {
 		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-		HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
+		HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
 		relyingPartyId = request.getHeader("relyingPartyId");
 		setActionUrl(request.getHeader("actionUrl"));
 		log.debug("relyingPartyId is" + relyingPartyId);
@@ -133,7 +134,7 @@ public class SsoLoginAction implements Serializable {
 					workingMemory.fireAllRules();
 					if (viewId.size() > 0) {
 						log.info("Login page customization rules fired: " + viewId.get(0));
-						externalContext.redirect(viewId.get(0));
+						facesService.redirect(viewId.get(0));
 					}
 				} finally {
 					IOUtils.closeQuietly(reader);

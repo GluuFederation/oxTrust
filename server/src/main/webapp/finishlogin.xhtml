@@ -2,6 +2,6 @@
 <f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" contentType="text/html"
         locale="#{language.localeCode}">
     <f:metadata>
-        <f:viewAction action="#{identity.login}" onPostback="false"/>
+        <f:viewAction action="#{authenticator.authenticate}" onPostback="false"/>
     </f:metadata>
 </f:view>

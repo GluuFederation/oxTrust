@@ -4,7 +4,7 @@
   <navigation-rule>
     <from-view-id>/finishlogin.xhtml</from-view-id>
     <navigation-case>
-      <from-action>#{identity.login}</from-action>
+      <from-action>#{authenticator.authenticate}</from-action>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>

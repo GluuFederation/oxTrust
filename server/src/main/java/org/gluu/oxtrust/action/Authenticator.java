@@ -143,6 +143,7 @@ public class Authenticator implements Serializable {
 	 * @throws Exception
 	 */
 	private void postLogin(User user) {
+		identity.login();
 		log.debug("Configuring application after user '{}' login", user.getUid());
 		GluuCustomPerson person = findPersonByDn(user.getDn());
 		identity.setUser(person);
