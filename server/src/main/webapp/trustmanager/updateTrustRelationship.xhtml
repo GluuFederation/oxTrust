@@ -1,72 +1,87 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateTrustRelationshipAction.update}"
+                      if="#{permissionService.throwOnLackOfPermissions('trust', ' access') and updateTrustRelationshipAction.trustRelationship == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
-    <section class="content-header">
-		<h1 style="color: #333;">
-			#{msg['trustmanager.saml']}<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> #{msg['trustmanager.updateTrustRelationship']}</small>
-		</h1>
-		<ol class="breadcrumb">
-		
-			<li><a href="#{request.contextPath}/trustmanager/relationships"><i
-					class="fa fa-home"></i> #{msg['trustmanager.trustRelationships']}</a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/trustmanager/add">#{msg['trustmanager.updateTrustRelationship']}</a></li>
-		</ol>
-		</section>
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['trustmanager.saml']}
+                <small>
+                    <i class="fa fa-caret-right"
+                       style="color: #333 !important;"/> #{msg['trustmanager.updateTrustRelationship']}</small>
+            </h1>
+            <ol class="breadcrumb">
 
-		<section class="content"> 
-        <div id="formArea">
-            <ui:decorate template="/WEB-INF/incl/trustmanager/trustRelationshipForm.xhtml">
-                <ui:param name="_trustRelationship" value="#{updateTrustRelationshipAction.trustRelationship}" />
-                <ui:param name="_customAttributes" value="#{updateTrustRelationshipAction.trustRelationship.releasedCustomAttributes}" />
-                <ui:param name="_customAttributeAction" value="#{customAttributeAction}" />
-                <ui:param name="_trustRelationshipAction" value="#{updateTrustRelationshipAction}" />
-                <ui:param name="_new" value="false" />
-    
-    <ui:define name="controlButttons">
-			<div class = "box-footer">
-				<div  style="width: 100%;height: 30px;">
-					<div id="updateButtons" style="float: right;width: 320px;">
-						<h:commandButton styleClass="btn btn-primary" value="   #{msg['trustmanager.update']}   "
-							action="#{updateTrustRelationshipAction.save}" />
-							<h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="#{updateTrustRelationshipAction.isActive()?'Deactivate':'Activate'}" action="#{updateTrustRelationshipAction.activationToggle}"/>
-							<a4j:commandButton value="Delete" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" ajaxSingle="true" styleClass="btn btn-primary" style="margin-left:3px;"
-                        rendered="#{updateTrustRelationshipAction.update}" />
-						<h:commandButton value="   Cancel  " styleClass="btn btn-primary" 
-							style="margin-left:5px;" 
-							action="#{updateTrustRelationshipAction.cancel}" immediate="true" />
-					</div>
-				</div>
-				</div>
-			</ui:define>
-              
-                <ui:define name="configurationLink">
-                    <h:link includeViewParams="false" value="Download Shibboleth3 configuration files" target="_blank"
-                        outcome="/trustmanager/trustRelationshipConfigurationFile"    immediate="true" 
-                        rendered="#{(not _trustRelationship.isFederation()) and
-                            (_trustRelationship.containerFederation eq null) and (_trustRelationship.spMetaDataSourceType eq 'GENERATE' or _trustRelationship.spMetaDataSourceType eq 'FILE')}"/>
-                </ui:define>
-                
-            </ui:decorate>
-            <ox:acceptRemovalDialog id="deleteConfirmation" subject="Trust Relationship" value="#{updateTrustRelationshipAction.trustRelationship.displayName}" deleteMethod="#{updateTrustRelationshipAction.delete}" queue="trustQueue" />
-            
-        </div>
-        
-       	<ox:createSPMetadataDialog  id="createSPMetadata" generateMethod="#{updateTrustRelationshipAction.generateSp()}" 
-		  label="#{msg['trustmanager.generateSPMetadata']}" metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
-		  logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}" uri="#{updateTrustRelationshipAction.trustRelationship.url}"/>
-        
+                <li>
+                    <a href="#{request.contextPath}/trustmanager/relationships">
+                        <i class="fa fa-home"/> #{msg['trustmanager.trustRelationships']}</a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/trustmanager/add">#{msg['trustmanager.updateTrustRelationship']}</a>
+                </li>
+            </ol>
+        </section>
+
+        <section class="content">
+            <div id="formArea">
+                <ui:decorate template="/WEB-INF/incl/trustmanager/trustRelationshipForm.xhtml">
+                    <ui:param name="_trustRelationship" value="#{updateTrustRelationshipAction.trustRelationship}"/>
+                    <ui:param name="_customAttributes"
+                              value="#{updateTrustRelationshipAction.trustRelationship.releasedCustomAttributes}"/>
+                    <ui:param name="_customAttributeAction" value="#{customAttributeAction}"/>
+                    <ui:param name="_trustRelationshipAction" value="#{updateTrustRelationshipAction}"/>
+                    <ui:param name="_new" value="false"/>
+
+                    <ui:define name="controlButttons">
+                        <div class="box-footer">
+                            <div style="width: 100%;height: 30px;">
+                                <div id="updateButtons" style="float: right;width: 320px;">
+                                    <h:commandButton action="#{updateTrustRelationshipAction.save}"
+                                                     styleClass="btn btn-primary"
+                                                     value="   #{msg['trustmanager.update']}   "/>
+                                    <h:commandButton action="#{updateTrustRelationshipAction.activationToggle}"
+                                                     style="margin-left:3px;" styleClass="btn btn-primary"
+                                                     value="#{updateTrustRelationshipAction.isActive()?'Deactivate':'Activate'}"/>
+                                    <a4j:commandButton ajaxSingle="true"
+                                                       onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                                       rendered="#{updateTrustRelationshipAction.update}"
+                                                       style="margin-left:3px;" styleClass="btn btn-primary"
+                                                       value="Delete"/>
+                                    <h:commandButton action="#{updateTrustRelationshipAction.cancel}" immediate="true"
+                                                     style="margin-left:5px;" styleClass="btn btn-primary"
+                                                     value="   Cancel  "/>
+                                </div>
+                            </div>
+                        </div>
+                    </ui:define>
+
+                    <ui:define name="configurationLink">
+                        <h:link immediate="true" includeViewParams="false"
+                                outcome="/trustmanager/trustRelationshipConfigurationFile"
+                                rendered="#{(not _trustRelationship.isFederation()) and                             (_trustRelationship.containerFederation eq null) and (_trustRelationship.spMetaDataSourceType eq 'GENERATE' or _trustRelationship.spMetaDataSourceType eq 'FILE')}"
+                                target="_blank" value="Download Shibboleth3 configuration files"/>
+                    </ui:define>
+
+                </ui:decorate>
+                <ox:acceptRemovalDialog deleteMethod="#{updateTrustRelationshipAction.delete}" id="deleteConfirmation"
+                                        queue="trustQueue" subject="Trust Relationship"
+                                        value="#{updateTrustRelationshipAction.trustRelationship.displayName}"/>
+
+            </div>
+
+            <ox:createSPMetadataDialog generateMethod="#{updateTrustRelationshipAction.generateSp()}"
+                                       id="createSPMetadata" label="#{msg['trustmanager.generateSPMetadata']}"
+                                       logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}"
+                                       metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
+                                       uri="#{updateTrustRelationshipAction.trustRelationship.url}"/>
+
         </section>
     </ui:define>
 </ui:composition>

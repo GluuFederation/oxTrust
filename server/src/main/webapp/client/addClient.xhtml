@@ -1,106 +1,116 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateClientAction.add}"
+                      if="#{permissionService.throwOnLackOfPermissions('client', ' access') and updateClientAction.client == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
-    <section class="content-header">
-		<h1 style="color: #333;">
-            #{msg['client.openIDConnect']}<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> #{msg['client.addClient']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/client/manage/add"> #{msg['client.addClient']}</a></li>
-		</ol>
-		</section>
-		<section class="content">
-        <div id="formArea">
-            <ui:decorate template="/WEB-INF/incl/client/clientForm.xhtml">
-                <ui:param name="_client" value="#{updateClientAction.client}" />
-                <ui:param name="_clientAction" value="#{updateClientAction}" />
-                <ui:param name="_new" value="true" />
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['client.openIDConnect']}
+                <small>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['client.addClient']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/client/manage/add"> #{msg['client.addClient']}</a>
+                </li>
+            </ol>
+        </section>
+        <section class="content">
+            <div id="formArea">
+                <ui:decorate template="/WEB-INF/incl/client/clientForm.xhtml">
+                    <ui:param name="_client" value="#{updateClientAction.client}"/>
+                    <ui:param name="_clientAction" value="#{updateClientAction}"/>
+                    <ui:param name="_new" value="true"/>
 
-                <ui:define name="controlButttons">
-                    <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="#{msg['client.add']}" action="#{updateClientAction.save}" />
-                        <h:commandButton styleClass="btn btn-primary" style="margin-left:3px;" value="#{msg['client.cancel']}" action="#{updateClientAction.cancel}" immediate="true" />
-                    </div>
-                </ui:define>
-            </ui:decorate>
+                    <ui:define name="controlButttons">
+                        <div id="updateButtons">
+                            <h:commandButton action="#{updateClientAction.save}" styleClass="btn btn-primary"
+                                             value="#{msg['client.add']}"/>
+                            <h:commandButton action="#{updateClientAction.cancel}" immediate="true"
+                                             style="margin-left:3px;" styleClass="btn btn-primary"
+                                             value="#{msg['client.cancel']}"/>
+                        </div>
+                    </ui:define>
+                </ui:decorate>
 
-            <ox:inputTextDialog id="loginRedirect" label="Select Login Redirect URI" inputLabel="#{msg['client.loginRedirectURI']}"
-            	text="#{updateClientAction.availableLoginUri}" textId="loginTextId"
-                acceptMethod="#{updateClientAction.acceptSelectLoginUri}" cancelMethod="#{updateClientAction.cancelSelectLoginUri}"
-                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedLoginURIsId" queue="clientQueue"/>
+                <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectLoginUri}"
+                                    cancelMethod="#{updateClientAction.cancelSelectLoginUri}" dialogWidth="600"
+                                    id="loginRedirect" inputLabel="#{msg['client.loginRedirectURI']}" inputWidth="80"
+                                    label="Select Login Redirect URI" maxLength="256" queue="clientQueue"
+                                    render="selectedLoginURIsId" text="#{updateClientAction.availableLoginUri}"
+                                    textId="loginTextId"/>
 
-            <ox:inputTextDialog id="logoutRedirect" label="#{msg['client.selectLogoutRedirectURI']}" inputLabel="#{msg['client.logoutRedirectURI']}"
-            	text="#{updateClientAction.availableLogoutUri}" textId="logoutTextId"
-                acceptMethod="#{updateClientAction.acceptSelectLogoutUri}" cancelMethod="#{updateClientAction.cancelSelectLogoutUri}"
-                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedLogoutURIsId" queue="clientQueue"/>
+                <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectLogoutUri}"
+                                    cancelMethod="#{updateClientAction.cancelSelectLogoutUri}" dialogWidth="600"
+                                    id="logoutRedirect" inputLabel="#{msg['client.logoutRedirectURI']}" inputWidth="80"
+                                    label="#{msg['client.selectLogoutRedirectURI']}" maxLength="256" queue="clientQueue"
+                                    render="selectedLogoutURIsId" text="#{updateClientAction.availableLogoutUri}"
+                                    textId="logoutTextId"/>
 
-            <ox:selectScopeDialog id="scope" searchPattern="#{updateClientAction.searchAvailableScopePattern}"
-                searchMethod="#{updateClientAction.searchAvailableScopes}" searchResult="#{updateClientAction.availableScopes}"
-                updateSelectionMethod="#{updateClientAction.selectAddedScopes}"
-                acceptMethod="#{updateClientAction.acceptSelectScopes}" cancelMethod="#{updateClientAction.cancelSelectScopes}"
-                render="selectedScopesId" queue="clientQueue"/>
+                <ox:selectScopeDialog acceptMethod="#{updateClientAction.acceptSelectScopes}"
+                                      cancelMethod="#{updateClientAction.cancelSelectScopes}" id="scope"
+                                      queue="clientQueue" render="selectedScopesId"
+                                      searchMethod="#{updateClientAction.searchAvailableScopes}"
+                                      searchPattern="#{updateClientAction.searchAvailableScopePattern}"
+                                      searchResult="#{updateClientAction.availableScopes}"
+                                      updateSelectionMethod="#{updateClientAction.selectAddedScopes}"/>
 
-            <ox:selectSelectableEntityDialog id="responseType"
-                                             searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
-                                             searchResult="#{updateClientAction.availableResponseTypes}"
-                                             displaySearchForm="false"
-                                             acceptMethod="#{updateClientAction.acceptSelectResponseTypes}"
-                                             cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
-                                             render="selectedResponseTypesId" nameProperty="entity.value"
-                                             displayNameProperty="entity.displayName"
-                                             label="#{msg['client.addResponseType']}" />
+                <ox:selectSelectableEntityDialog acceptMethod="#{updateClientAction.acceptSelectResponseTypes}"
+                                                 cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
+                                                 displayNameProperty="entity.displayName" displaySearchForm="false"
+                                                 id="responseType" label="#{msg['client.addResponseType']}"
+                                                 nameProperty="entity.value" render="selectedResponseTypesId"
+                                                 searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
+                                                 searchResult="#{updateClientAction.availableResponseTypes}"/>
 
-            <ox:selectSelectableEntityDialog id="grantType"
-                                             searchMethod="#{updateClientAction.searchAvailableGrantTypes}"
-                                             searchResult="#{updateClientAction.availableGrantTypes}"
-                                             displaySearchForm="false"
-                                             acceptMethod="#{updateClientAction.acceptSelectGrantTypes}"
-                                             cancelMethod="#{updateClientAction.cancelSelectGrantTypes}"
-                                             render="selectedGrantTypesId" nameProperty="entity.value"
-                                             displayNameProperty="entity.value"
-                                             label="#{msg['client.addGrantType']}" />
+                <ox:selectSelectableEntityDialog acceptMethod="#{updateClientAction.acceptSelectGrantTypes}"
+                                                 cancelMethod="#{updateClientAction.cancelSelectGrantTypes}"
+                                                 displayNameProperty="entity.value" displaySearchForm="false"
+                                                 id="grantType" label="#{msg['client.addGrantType']}"
+                                                 nameProperty="entity.value" render="selectedGrantTypesId"
+                                                 searchMethod="#{updateClientAction.searchAvailableGrantTypes}"
+                                                 searchResult="#{updateClientAction.availableGrantTypes}"/>
 
-            <ox:inputTextDialog id="contact" label="#{msg['client.selectContact']}" inputLabel="#{msg['client.contactEmailAddress']}"
-                                text="#{updateClientAction.availableContact}" textId="contactTextId"
-                                acceptMethod="#{updateClientAction.acceptSelectContact()}"
-                                cancelMethod="#{updateClientAction.cancelSelectContact()}"
-                                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedContactsId"
-                                queue="clientQueue"/>
+                <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectContact()}"
+                                    cancelMethod="#{updateClientAction.cancelSelectContact()}" dialogWidth="600"
+                                    id="contact" inputLabel="#{msg['client.contactEmailAddress']}" inputWidth="80"
+                                    label="#{msg['client.selectContact']}" maxLength="256" queue="clientQueue"
+                                    render="selectedContactsId" text="#{updateClientAction.availableContact}"
+                                    textId="contactTextId"/>
 
-            <ox:inputTextDialog id="defaultAcrValue" label="#{msg['client.selectDefaultAcrValue']}" inputLabel="#{msg['client.defaultAcrValue']}"
-                                text="#{updateClientAction.availableDefaultAcrValue}" textId="contactTextId"
-                                acceptMethod="#{updateClientAction.acceptSelectDefaultAcrValue()}"
-                                cancelMethod="#{updateClientAction.cancelSelectDefaultAcrValue()}"
-                                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedDefaultAcrValuesId"
-                                queue="clientQueue"/>
+                <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectDefaultAcrValue()}"
+                                    cancelMethod="#{updateClientAction.cancelSelectDefaultAcrValue()}" dialogWidth="600"
+                                    id="defaultAcrValue" inputLabel="#{msg['client.defaultAcrValue']}" inputWidth="80"
+                                    label="#{msg['client.selectDefaultAcrValue']}" maxLength="256" queue="clientQueue"
+                                    render="selectedDefaultAcrValuesId"
+                                    text="#{updateClientAction.availableDefaultAcrValue}" textId="contactTextId"/>
 
-            <ox:inputTextDialog id="requestUri" label="#{msg['client.selectRequestURI']}" inputLabel="#{msg['client.requestURI']}"
-                                text="#{updateClientAction.availableRequestUri}" textId="requestUriTextId"
-                                acceptMethod="#{updateClientAction.acceptSelectRequestUri()}"
-                                cancelMethod="#{updateClientAction.cancelSelectRequestUri()}"
-                                maxLength="256" inputWidth="80" dialogWidth="600" render="selectedRequestUrisId"
-                                queue="clientQueue"/>
-                                
-            <ox:inputTextDialog id="clientLogoutUri" label="#{msg['client.logoutURI']}" inputLabel="#{msg['client.logoutURI']}"
-            					text="#{updateClientAction.availableClientlogoutUri}" textId="clientLogoutTextId"
-                				acceptMethod="#{updateClientAction.acceptSelectClientLogoutUri()}" 
-                				cancelMethod="#{updateClientAction.cancelClientLogoutUri()}"
-                				maxLength="256" inputWidth="80" dialogWidth="600" render="selectedClientUrisId" 
-                				queue="clientQueue"/>
-                
-        </div></section>
+                <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectRequestUri()}"
+                                    cancelMethod="#{updateClientAction.cancelSelectRequestUri()}" dialogWidth="600"
+                                    id="requestUri" inputLabel="#{msg['client.requestURI']}" inputWidth="80"
+                                    label="#{msg['client.selectRequestURI']}" maxLength="256" queue="clientQueue"
+                                    render="selectedRequestUrisId" text="#{updateClientAction.availableRequestUri}"
+                                    textId="requestUriTextId"/>
+
+                <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectClientLogoutUri()}"
+                                    cancelMethod="#{updateClientAction.cancelClientLogoutUri()}" dialogWidth="600"
+                                    id="clientLogoutUri" inputLabel="#{msg['client.logoutURI']}" inputWidth="80"
+                                    label="#{msg['client.logoutURI']}" maxLength="256" queue="clientQueue"
+                                    render="selectedClientUrisId" text="#{updateClientAction.availableClientlogoutUri}"
+                                    textId="clientLogoutTextId"/>
+
+            </div>
+        </section>
     </ui:define>
 </ui:composition>

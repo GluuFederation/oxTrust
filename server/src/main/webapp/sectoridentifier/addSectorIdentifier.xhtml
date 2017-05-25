@@ -1,15 +1,12 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:s="http://jboss.org/schema/seam/taglib"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://java.sun.com/jsf/composite/richext"
-                xmlns:ox="http://java.sun.com/jsf/composite/ox"
-                template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateSectorIdentifierAction.add}"
+                      if="#{permissionService.throwOnLackOfPermissions('sectorIdentifier', ' access') and updateSectorIdentifierAction.sectorIdentifier == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
         <div id="formArea">
@@ -20,32 +17,28 @@
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton value="#{msg['sectoridentifier.add']}" action="#{updateSectorIdentifierAction.save}"
-                                         styleClass="btn btn-primary"/>
-                        <h:commandButton value="#{msg['sectorIdentifier.cancel']}" action="#{updateSectorIdentifierAction.cancel}" immediate="true"
-                                         styleClass="btn btn-primary" style="margin-left: 5px;"/>
+                        <h:commandButton action="#{updateSectorIdentifierAction.save}" styleClass="btn btn-primary"
+                                         value="#{msg['sectoridentifier.add']}"/>
+                        <h:commandButton action="#{updateSectorIdentifierAction.cancel}" immediate="true"
+                                         style="margin-left: 5px;" styleClass="btn btn-primary"
+                                         value="#{msg['sectorIdentifier.cancel']}"/>
                     </div>
                 </ui:define>
             </ui:decorate>
 
-            <ox:inputTextDialog id="loginRedirect"
-                                label="#{msg['sectorIdentifier.selectLoginRedirectURI']}"
-                                inputLabel="#{msg['sectorIdentifier.loginRedirectURI']}"
-                                text="#{updateSectorIdentifierAction.availableLoginUri}"
-                                textId="loginTextId"
-                                acceptMethod="#{updateSectorIdentifierAction.acceptSelectLoginUri}"
-                                cancelMethod="#{updateSectorIdentifierAction.cancelSelectLoginUri}"
-                                maxLength="256" inputWidth="80" dialogWidth="600"
-                                render="selectedLoginURIsId" queue="sectorIdentifierQueue"/>
+            <ox:inputTextDialog acceptMethod="#{updateSectorIdentifierAction.acceptSelectLoginUri}"
+                                cancelMethod="#{updateSectorIdentifierAction.cancelSelectLoginUri}" dialogWidth="600"
+                                id="loginRedirect" inputLabel="#{msg['sectorIdentifier.loginRedirectURI']}"
+                                inputWidth="80" label="#{msg['sectorIdentifier.selectLoginRedirectURI']}"
+                                maxLength="256" queue="sectorIdentifierQueue" render="selectedLoginURIsId"
+                                text="#{updateSectorIdentifierAction.availableLoginUri}" textId="loginTextId"/>
 
-            <ox:selectClientDialog id="client"
-                                   searchPattern="#{updateSectorIdentifierAction.searchAvailableClientPattern}"
+            <ox:selectClientDialog acceptMethod="#{updateSectorIdentifierAction.acceptSelectClients}"
+                                   cancelMethod="#{updateSectorIdentifierAction.cancelSelectClients}" id="client"
+                                   render="selectedClientsId" renderuri="selectedLoginURIsId"
                                    searchMethod="#{updateSectorIdentifierAction.searchAvailableClients}"
-                                   searchResult="#{updateSectorIdentifierAction.availableClients}"
-                                   acceptMethod="#{updateSectorIdentifierAction.acceptSelectClients}"
-                                   cancelMethod="#{updateSectorIdentifierAction.cancelSelectClients}"
-                                   render="selectedClientsId" 
-                                   renderuri="selectedLoginURIsId"/>
+                                   searchPattern="#{updateSectorIdentifierAction.searchAvailableClientPattern}"
+                                   searchResult="#{updateSectorIdentifierAction.availableClients}"/>
         </div>
     </ui:define>
 </ui:composition>

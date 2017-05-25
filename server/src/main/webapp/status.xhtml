@@ -1,6 +1,7 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition
-    xmlns:ui="http://java.sun.com/jsf/facelets">
-#{applianceStatusAction.health}
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <f:metadata>
+        <f:viewAction action="#{applianceStatusAction.checkHealth}" onPostback="false"/>
+    </f:metadata>
+    #{applianceStatusAction.health}
 </ui:composition>

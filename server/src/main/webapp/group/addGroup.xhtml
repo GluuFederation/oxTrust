@@ -1,37 +1,36 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{updateGroupAction.add}"
+                      if="#{permissionService.throwOnLackOfPermissions('group', ' access') and updateGroupAction.group == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
         <div id="formArea">
-            
+
 
             <ui:decorate template="/WEB-INF/incl/group/groupForm.xhtml">
-                <ui:param name="_group" value="#{updateGroupAction.group}" />
-                <ui:param name="_groupAction" value="#{updateGroupAction}" />
-                <ui:param name="_new" value="true" />
+                <ui:param name="_group" value="#{updateGroupAction.group}"/>
+                <ui:param name="_groupAction" value="#{updateGroupAction}"/>
+                <ui:param name="_new" value="true"/>
 
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
-                        <h:commandButton value="Add" action="#{updateGroupAction.save}" styleClass="btn btn-primary" />
-                        <h:commandButton value="Cancel" action="#{updateGroupAction.cancel}" immediate="true" styleClass="btn btn-primary" style="margin-left: 5px;" />
+                        <h:commandButton action="#{updateGroupAction.save}" styleClass="btn btn-primary" value="Add"/>
+                        <h:commandButton action="#{updateGroupAction.cancel}" immediate="true" style="margin-left: 5px;"
+                                         styleClass="btn btn-primary" value="Cancel"/>
                     </div>
                 </ui:define>
             </ui:decorate>
 
-            <ox:selectMemberDialog id="member" searchPattern="#{updateGroupAction.searchAvailableMemberPattern}"
-                searchMethod="#{updateGroupAction.searchAvailableMembers}" searchResult="#{updateGroupAction.availableMembers}"
-                acceptMethod="#{updateGroupAction.acceptSelectMembers}" cancelMethod="#{updateGroupAction.cancelSelectMembers}"
-                render="selectedMembersId" />
+            <ox:selectMemberDialog acceptMethod="#{updateGroupAction.acceptSelectMembers}"
+                                   cancelMethod="#{updateGroupAction.cancelSelectMembers}" id="member"
+                                   render="selectedMembersId" searchMethod="#{updateGroupAction.searchAvailableMembers}"
+                                   searchPattern="#{updateGroupAction.searchAvailableMemberPattern}"
+                                   searchResult="#{updateGroupAction.availableMembers}"/>
         </div>
     </ui:define>
 

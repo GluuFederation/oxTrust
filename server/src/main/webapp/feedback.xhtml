@@ -1,12 +1,5 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:s="http://jboss.org/schema/seam/taglib"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
     <ui:param name="showGlobalMessages" value="false"/>
 
     <ui:define name="body">
@@ -17,8 +10,7 @@
                 </b>
             </div>
 
-            <div class="lockscreen-name"
-                 style="text-align: justify;font-size: 1.2em !important;">
+            <div class="lockscreen-name" style="text-align: justify;font-size: 1.2em !important;">
 
                 <p class="info">
                     #{msg['feedback.youWereRedirectedToThisPage']}
@@ -37,21 +29,18 @@
                 <ui:param name="support_email" value="#{oxTrustConfiguration.applicationConfiguration.orgSupportEmail}"/>
                 <ul>
                     <li>
-                        <h:outputLink value="mailto:#{support_email}"
-                                      style="color: darkred;">
+                        <h:outputLink style="color: darkred;" value="mailto:#{support_email}">
                             #{support_email}
                         </h:outputLink>
                     </li>
                 </ul>
 
-                <br></br>
+                <br/>
 
                 <span style="font-size: 14px;">#{msg['feedback.returnToTheApplication']}</span>
             </div>
 
-            <a href="#{request.contextPath}/home"
-               class="btn btn-block btn-primary btn-lg"
-               style="width: 60%;">#{msg['feedback.return']}</a>
+            <a class="btn btn-block btn-primary btn-lg" href="#{request.contextPath}/home" style="width: 60%;">#{msg['feedback.return']}</a>
         </div>
     </ui:define>
 </ui:composition>

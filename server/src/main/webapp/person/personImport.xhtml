@@ -1,33 +1,41 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{personImportAction.init}"
+                      if="#{permissionService.throwOnLackOfPermissions('import', ' person') and updatePersonAction.person == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
-    <section class="content-header">
-		<h1 style="color: #333;">
-            #{msg['person.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['person.importPeople']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a href="#{request.contextPath}/person/import">#{msg['person.importPeople']}</a></li>
-		</ol>
-		</section>	<section class="content"> <!-- Small boxes (Stat box) -->
-		
-        <div id="formArea">
-        
-            <ui:decorate template="/WEB-INF/incl/person/personImportForm.xhtml">
-                <ui:param name="_importAction" value="#{personImportAction}" />
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['person.configuration']}
+                <small>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['person.importPeople']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/person/import">#{msg['person.importPeople']}</a>
+                </li>
+            </ol>
+        </section>
+        <section class="content"> <!-- Small boxes (Stat box) -->
 
-                
-            </ui:decorate>
-        </div></section>
+            <div id="formArea">
+
+                <ui:decorate template="/WEB-INF/incl/person/personImportForm.xhtml">
+                    <ui:param name="_importAction" value="#{personImportAction}"/>
+
+
+                </ui:decorate>
+            </div>
+        </section>
     </ui:define>
 
 </ui:composition>

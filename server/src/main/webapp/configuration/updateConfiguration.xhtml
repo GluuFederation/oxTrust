@@ -1,155 +1,169 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/schema/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
- 	xmlns:ox="http://java.sun.com/jsf/composite/ox"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{jsonConfigAction.init}"
+                      if="#{permissionService.throwOnLackOfPermissions('configuration', ' access') and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
-	<ui:define name="head">
-		<script type="text/javascript"
-			src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.min.js"></script>
-	    <script>
-		    // Set the default CSS theme and icon library globally
-		    JSONEditor.defaults.theme = 'bootstrap3';
-		    JSONEditor.defaults.iconlib = 'bootstrap3';
-	    </script>
-    	</ui:define>
+    <ui:define name="head">
+        <script src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.min.js" type="text/javascript"/>
+        <script>
+            // Set the default CSS theme and icon library globally
+            JSONEditor.defaults.theme = 'bootstrap3';
+            JSONEditor.defaults.iconlib = 'bootstrap3';
+        </script>
+    </ui:define>
 
-	<ui:define name="body">
-	
-		<section class="content-header">
-		<h1 style="color: #333;">
-			#{msg['updateConfiguration.configuration']}<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i>#{msg['updateConfiguration.jsonConfiguration']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/configuration/jsonConfig">#{msg['updateConfiguration.jsonConfiguration']}</a></li>
-		</ol>
-		</section>
+    <ui:define name="body">
 
-		<section class="content"> <!-- BODY TAB PANEL STARTS FROM HERE -->
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
-					<ul class="nav nav-tabs">
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['updateConfiguration.configuration']}
+                <small>
+                    <i class="fa fa-caret-right"
+                       style="color: #333 !important;"/>#{msg['updateConfiguration.jsonConfiguration']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/configuration/jsonConfig">#{msg['updateConfiguration.jsonConfiguration']}</a>
+                </li>
+            </ol>
+        </section>
 
-						<li class="active"><a href="#oxtrust-config" data-toggle="tab">#{msg['updateConfiguration.oxTrustConfiguration']}</a></li>
-						<li><a href="#oxauth-config" data-toggle="tab">#{msg['updateConfiguration.oxAuthConfiguration']}</a></li>
-						<li><a href="#memcached-config" data-toggle="tab">#{msg['updateConfiguration.memcachedConfiguration']}</a></li>
-						<li><a href="#oxtrust-import-person-config" data-toggle="tab">#{msg['updateConfiguration.oxTrustImportConfiguration']}</a></li>
+        <section class="content"> <!-- BODY TAB PANEL STARTS FROM HERE -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom" style="margin-bottom: 0px;">
+                        <ul class="nav nav-tabs">
 
-					</ul>
-					<div class="tab-content">
-						<!-- System Configuration -->
-						<div class="tab-pane active" id="oxtrust-config">
-							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
-								cellspacing="0" columnClasses="alignTop">
-								<h:form id="oxTrustConfigForm" prependId="false">
-									<ox:decorate template="/WEB-INF/incl/layout/jsoneditor.xhtml"
-										id="oxTrust" prependId="false">
-										<ui:param name="id" value="oxTrustConfig" />
-										<ui:param name="parentId" value="oxTrust" />
-										<ui:param name="json"
-											value="#{jsonConfigAction.oxTrustConfigJson}" />
-										<ui:param name="jsonSchema"
-											value="#{request.contextPath}/schema/oxtrust.properties.json" />
-										<ui:param name="saveBtnId" value="saveOxTrustConfigBtn" />
-										<ui:param name="saveBtnLabel" value="#{msg['updateConfiguration.saveConfiguration']}" />
-									</ox:decorate>
-									<h:commandButton value="#{msg['updateConfiguration.saveOxTrustConfiguration']}"
-										action="#{jsonConfigAction.saveOxTrustConfigJson}"
-										prependId="false" id="saveOxTrustConfigBtn"
-										style="display:none"/>
-								</h:form>
-							</h:panelGrid>
+                            <li class="active">
+                                <a data-toggle="tab"
+                                   href="#oxtrust-config">#{msg['updateConfiguration.oxTrustConfiguration']}</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab"
+                                   href="#oxauth-config">#{msg['updateConfiguration.oxAuthConfiguration']}</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab"
+                                   href="#memcached-config">#{msg['updateConfiguration.memcachedConfiguration']}</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab"
+                                   href="#oxtrust-import-person-config">#{msg['updateConfiguration.oxTrustImportConfiguration']}</a>
+                            </li>
 
-						</div>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- System Configuration -->
+                            <div class="tab-pane active" id="oxtrust-config">
+                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
+                                             columns="1" width="100%">
+                                    <h:form id="oxTrustConfigForm" prependId="false">
+                                        <ox:decorate id="oxTrust" prependId="false"
+                                                     template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                            <ui:param name="id" value="oxTrustConfig"/>
+                                            <ui:param name="parentId" value="oxTrust"/>
+                                            <ui:param name="json" value="#{jsonConfigAction.oxTrustConfigJson}"/>
+                                            <ui:param name="jsonSchema"
+                                                      value="#{request.contextPath}/schema/oxtrust.properties.json"/>
+                                            <ui:param name="saveBtnId" value="saveOxTrustConfigBtn"/>
+                                            <ui:param name="saveBtnLabel"
+                                                      value="#{msg['updateConfiguration.saveConfiguration']}"/>
+                                        </ox:decorate>
+                                        <h:commandButton action="#{jsonConfigAction.saveOxTrustConfigJson}"
+                                                         id="saveOxTrustConfigBtn" prependId="false"
+                                                         style="display:none"
+                                                         value="#{msg['updateConfiguration.saveOxTrustConfiguration']}"/>
+                                    </h:form>
+                                </h:panelGrid>
 
-						<div class="tab-pane" id="oxauth-config">
-							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
-								cellspacing="0" columnClasses="alignTop">
-								<h:form id="oxAuthConfigForm" prependId="false">
-									<ox:decorate template="/WEB-INF/incl/layout/jsoneditor.xhtml"
-										id="oxAuth">
-										<ui:param name="id" value="oxAuthConfig" />
-										<ui:param name="parentId" value="oxAuth" />
-										<ui:param name="json"
-											value="#{jsonConfigAction.oxAuthDynamicConfigJson}" />
-										<ui:param name="jsonSchema"
-											value="#{request.contextPath}/schema/oxauth-config.xml.json" />
-										<ui:param name="saveBtnId" value="saveOxAuthConfigBtn" />
-										<ui:param name="saveBtnLabel" value="#{msg['updateConfiguration.saveConfiguration']}" />
-									</ox:decorate>
-									<h:commandButton value="#{msg['updateConfiguration.saveOxAuthConfiguration']}"
-										action="#{jsonConfigAction.saveOxAuthDynamicConfigJson}"
-										prependId="false" id="saveOxAuthConfigBtn"
-										style="display:none" />
-								</h:form>
-							</h:panelGrid>
-						</div>
+                            </div>
 
-						<div class="tab-pane" id="oxtrust-import-person-config">
-							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
-								cellspacing="0" columnClasses="alignTop">
-								<h:form id="oxTrustImportPersonConfigForm" prependId="false">
-									<ox:decorate template="/WEB-INF/incl/layout/jsoneditor.xhtml"
-										id="oxTrustImportPerson" prependId="false">
-										<ui:param name="id" value="oxTrustImportPersonConfig" />
-										<ui:param name="parentId" value="oxTrustImportPerson" />
-										<ui:param name="json"
-											value="#{jsonConfigAction.oxTrustImportPersonConfigJson}" />
-										<ui:param name="jsonSchema"
-											value="#{request.contextPath}/schema/oxtrust-import-person.json" />
-										<ui:param name="saveBtnId" value="saveOxTrustImportPersonConfigBtn" />
-										<ui:param name="saveBtnLabel" value="#{msg['updateConfiguration.saveConfiguration']}" />
-									</ox:decorate>
-									<h:commandButton value="#{msg['updateConfiguration.saveOxTrustImportPersonConfiguration']}"
-										action="#{jsonConfigAction.saveOxTrustImportPersonConfigJson}"
-										prependId="false" id="saveOxTrustImportPersonConfigBtn"
-										style="display:none"/>
-								</h:form>
-							</h:panelGrid>
-						</div>
-						
-						<div class="tab-pane" id="memcached-config">
-							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
-								cellspacing="0" columnClasses="alignTop">
-								<h:form id="oxMemCacheConfigForm" prependId="false">
-									<ox:decorate template="/WEB-INF/incl/layout/jsoneditor.xhtml"
-										id="oxMemcache">
-										<ui:param name="id" value="oxMemcacheConfig" />
-										<ui:param name="parentId" value="oxMemcache" />
-										<ui:param name="json"
-											value="#{jsonConfigAction.cacheConfigurationJson}" />
-										<ui:param name="jsonSchema"
-											value="#{request.contextPath}/schema/oxmemcache-config.json" />
-										<ui:param name="saveBtnId" value="saveOxMemcacheConfigBtn" />
-										<ui:param name="saveBtnLabel" value="#{msg['updateConfiguration.saveConfiguration']}" />
-									</ox:decorate>
-									<h:commandButton value="#{msg['updateConfiguration.saveMemCacheConfiguration']}"
-										action="#{jsonConfigAction.saveOxMemCacheConfigJson}"
-										prependId="false" id="saveOxMemcacheConfigBtn"
-										style="display:none" />
-								</h:form>
-							</h:panelGrid>
-						</div>
- 					</div>
-				</div>
-				
-				
-			</div>
-		</div>
-		<!-- TAB PANEL END HERE --> 
-		
-		</section>
+                            <div class="tab-pane" id="oxauth-config">
+                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
+                                             columns="1" width="100%">
+                                    <h:form id="oxAuthConfigForm" prependId="false">
+                                        <ox:decorate id="oxAuth" template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                            <ui:param name="id" value="oxAuthConfig"/>
+                                            <ui:param name="parentId" value="oxAuth"/>
+                                            <ui:param name="json" value="#{jsonConfigAction.oxAuthDynamicConfigJson}"/>
+                                            <ui:param name="jsonSchema"
+                                                      value="#{request.contextPath}/schema/oxauth-config.xml.json"/>
+                                            <ui:param name="saveBtnId" value="saveOxAuthConfigBtn"/>
+                                            <ui:param name="saveBtnLabel"
+                                                      value="#{msg['updateConfiguration.saveConfiguration']}"/>
+                                        </ox:decorate>
+                                        <h:commandButton action="#{jsonConfigAction.saveOxAuthDynamicConfigJson}"
+                                                         id="saveOxAuthConfigBtn" prependId="false" style="display:none"
+                                                         value="#{msg['updateConfiguration.saveOxAuthConfiguration']}"/>
+                                    </h:form>
+                                </h:panelGrid>
+                            </div>
 
-	</ui:define>
+                            <div class="tab-pane" id="oxtrust-import-person-config">
+                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
+                                             columns="1" width="100%">
+                                    <h:form id="oxTrustImportPersonConfigForm" prependId="false">
+                                        <ox:decorate id="oxTrustImportPerson" prependId="false"
+                                                     template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                            <ui:param name="id" value="oxTrustImportPersonConfig"/>
+                                            <ui:param name="parentId" value="oxTrustImportPerson"/>
+                                            <ui:param name="json"
+                                                      value="#{jsonConfigAction.oxTrustImportPersonConfigJson}"/>
+                                            <ui:param name="jsonSchema"
+                                                      value="#{request.contextPath}/schema/oxtrust-import-person.json"/>
+                                            <ui:param name="saveBtnId" value="saveOxTrustImportPersonConfigBtn"/>
+                                            <ui:param name="saveBtnLabel"
+                                                      value="#{msg['updateConfiguration.saveConfiguration']}"/>
+                                        </ox:decorate>
+                                        <h:commandButton action="#{jsonConfigAction.saveOxTrustImportPersonConfigJson}"
+                                                         id="saveOxTrustImportPersonConfigBtn" prependId="false"
+                                                         style="display:none"
+                                                         value="#{msg['updateConfiguration.saveOxTrustImportPersonConfiguration']}"/>
+                                    </h:form>
+                                </h:panelGrid>
+                            </div>
+
+                            <div class="tab-pane" id="memcached-config">
+                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
+                                             columns="1" width="100%">
+                                    <h:form id="oxMemCacheConfigForm" prependId="false">
+                                        <ox:decorate id="oxMemcache" template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                            <ui:param name="id" value="oxMemcacheConfig"/>
+                                            <ui:param name="parentId" value="oxMemcache"/>
+                                            <ui:param name="json" value="#{jsonConfigAction.cacheConfigurationJson}"/>
+                                            <ui:param name="jsonSchema"
+                                                      value="#{request.contextPath}/schema/oxmemcache-config.json"/>
+                                            <ui:param name="saveBtnId" value="saveOxMemcacheConfigBtn"/>
+                                            <ui:param name="saveBtnLabel"
+                                                      value="#{msg['updateConfiguration.saveConfiguration']}"/>
+                                        </ox:decorate>
+                                        <h:commandButton action="#{jsonConfigAction.saveOxMemCacheConfigJson}"
+                                                         id="saveOxMemcacheConfigBtn" prependId="false"
+                                                         style="display:none"
+                                                         value="#{msg['updateConfiguration.saveMemCacheConfiguration']}"/>
+                                    </h:form>
+                                </h:panelGrid>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <!-- TAB PANEL END HERE -->
+
+        </section>
+
+    </ui:define>
 
 </ui:composition>

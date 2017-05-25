@@ -1,256 +1,255 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/schema/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:richext="http://java.sun.com/jsf/composite/richext"
-	xmlns:ox="http://java.sun.com/jsf/composite/ox"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{registrationManagementAction.init}"
+                      if="#{permissionService.throwOnLackOfPermissions('configuration', ' access') and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
-	<ui:define name="body">
-		<h:outputStylesheet>
-		*.rf-pick-lst-dcrtn {
-			border-width: 0px !important;
-		
-		}
-		
-		.tooltip{
-			margin:8px;
-			padding:8px;
-			border:1px solid blue;
-			background: white;
-			position: absolute;
-			z-index: 2;
-		}
+    <ui:define name="body">
+        <h:outputStylesheet>
+            *.rf-pick-lst-dcrtn {
+                border-width: 0px !important;
 
-		.rf-pick-btn {
-		    width: 100%;
-		    white-space: nowrap;
-		    background-image: url(../org.richfaces.images/autocompleteButtonGradient.png);
-		    background-repeat: repeat-x;
-		    background-position: top left;
-		    background-color: #337AB7;
-		    border-left-width: 1px;
-		    border-left-style: solid;
-		    border-left-color: #337AB7;
-		    display: inline-block;
-		    vertical-align: top;
-		    cursor: pointer;
-		    text-align: left;
-		}
-		
-		.rf-pick-sel {
-		    width: 100%;
-		    background-color: #337AB7;
-		    border-width: 1px;
-		    border-style: dotted;
-		    border-color: #000000;
-		}
-		
-		button[disabled], input[type="reset"][disabled], input[type="submit"][disabled], input[type="button"][disabled] {
-		    color: #337AB7;
-		    border-color: #cccccc;
-		    background-color: #cccccc;
-		    background-image: url(org.richfaces.images/buttonDisabledBackgroundImage.png);
-		    background-position: top left;
-		}
-		
-		button:hover, input[type="reset"]:hover, input[type="submit"]:hover, input[type="button"]:hover {
-		    background-position: bottom left !important;;
-		    background-repeat: repeat-x !important;
-		   	background-image:none ;
-		}
-		
-		
-		button, input[type="reset"], input[type="submit"], input[type="button"] {
-		    border-width: 1px;
-		    border-color: #C0C0C0;
-		    font-size: 11px;
-		    font-family: Arial, Verdana, sans-serif;
-		    color: #FFFFFF;
-		    background-repeat: repeat-x;
-		    background-position: top left;
-		    background-color: #337AB7;
-		    background-image:none ;
-		}
-		
-	    .rf-pp-cntr {
-    		width: 95% !important;
-		}
+            }
 
-</h:outputStylesheet>
+            .tooltip {
+                margin: 8px;
+                padding: 8px;
+                border: 1px solid blue;
+                background: white;
+                position: absolute;
+                z-index: 2;
+            }
 
-		<h:outputScript>
- 	function addTooltip() {
-	    jQuery(document).ready(function(){
-	    	
-	    	jQuery(".rf-pick-opt").bind({
-					mousemove : changeTooltipPosition,
-					mouseover : showTooltip,
-					mouseout: hideTooltip
-				});
+            .rf-pick-btn {
+                width: 100%;
+                white-space: nowrap;
+                background-image: url(../org.richfaces.images/autocompleteButtonGradient.png);
+                background-repeat: repeat-x;
+                background-position: top left;
+                background-color: #337AB7;
+                border-left-width: 1px;
+                border-left-style: solid;
+                border-left-color: #337AB7;
+                display: inline-block;
+                vertical-align: top;
+                cursor: pointer;
+                text-align: left;
+            }
 
-	    });
-	};
-	var hideTooltip = function() {
-	$('div.tooltip').remove();
-};
+            .rf-pick-sel {
+                width: 100%;
+                background-color: #337AB7;
+                border-width: 1px;
+                border-style: dotted;
+                border-color: #000000;
+            }
 
-var showTooltip = function(event) {
-	getText(jQuery(this).text())
-   changeTooltipPosition(event);
-};
+            button[disabled], input[type="reset"][disabled], input[type="submit"][disabled], input[type="button"][disabled] {
+                color: #337AB7;
+                border-color: #cccccc;
+                background-color: #cccccc;
+                background-image: url(org.richfaces.images/buttonDisabledBackgroundImage.png);
+                background-position: top left;
+            }
 
-var updateTooltip = function(personData){
-   $('div.tooltip').remove();
-   $('<div class="tooltip">' + personData + '</div>')
-     .appendTo('body');
-   $('.tooltip').css({top: tooltipY, left: tooltipX});
-}
+            button:hover, input[type="reset"]:hover, input[type="submit"]:hover, input[type="button"]:hover {
+                background-position: bottom left !important;;
+                background-repeat: repeat-x !important;
+                background-image: none;
+            }
 
-var changeTooltipPosition = function(event) {
-	tooltipX = event.pageX - 8;
-	tooltipY = event.pageY + 8;
-	$('.tooltip').css({top: tooltipY, left: tooltipX});
-};
+            button, input[type="reset"], input[type="submit"], input[type="button"] {
+                border-width: 1px;
+                border-color: #C0C0C0;
+                font-size: 11px;
+                font-family: Arial, Verdana, sans-serif;
+                color: #FFFFFF;
+                background-repeat: repeat-x;
+                background-position: top left;
+                background-color: #337AB7;
+                background-image: none;
+            }
 
-        $( document ).ready(function() {
-               
-        
-        $('.checkbox1').on('ifChecked', function(event){
-		  $('.checkbox1Div').show();
-		});
-		
-		$('.checkbox1').on('ifUnchecked', function(event){
-		  $('.checkbox1Div').hide();
-		});
-		
-		$('.checkbox2').on('ifChecked', function(event){
-		  $('.checkbox2Div').show();
-		});
-		
-		$('.checkbox2').on('ifUnchecked', function(event){
-		  $('.checkbox2Div').hide();
-		});
-        
-            });          
-         
-           
+            .rf-pp-cntr {
+                width: 95% !important;
+            }
 
-    </h:outputScript>
+        </h:outputStylesheet>
 
-		<section class="content-header">
-		<h1 style="color: #333;">
-			#{msg['organization.configuration']}<small><i class="fa fa-caret-right"
-				style="color: #333 !important;"></i> #{msg['organization.manageRegistration']}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration"><a
-				href="#{request.contextPath}/configuration/registration">#{msg['organization.manageRegistration']}</a></li>
-		</ol>
-		</section>
+        <h:outputScript>
+            function addTooltip() {
+            jQuery(document).ready(function(){
 
-		<div id="formArea">
-			<section class="content"> <h:form
-				id="customRegistrationForm">
-				<div class="row">
-					<div class="col-xs-12">
-						<div class="box box-primary">
-						<div class="box-header">
-						</div>
-							<div style="display: inline-block; width: 75% !important;">
-								<h:panelGroup>
-									<a4j:region>
-										<ox:decorate label="#{msg['organization.disableCaptcha']}">
-											<h:selectBooleanCheckbox 
-												value="#{registrationManagementAction.captchaDisabled}">
-											</h:selectBooleanCheckbox>
-										</ox:decorate>
-										<ox:decorate label="#{msg['organization.configureRegistrationAttributes']}">
-											<h:selectBooleanCheckbox styleClass="checkbox checkbox2"
-												value="#{registrationManagementAction.configureRegistrationForm}">
-												<a4j:ajax event="click" render="attributes" />
-											</h:selectBooleanCheckbox>
-										</ox:decorate>
-										<h:panelGroup id="attributes" styleClass="checkbox2Div" style="display:none;">
-											<h:panelGroup
-												>
-												<a4j:region>
-													<ox:decorate
-														id="searchPattern" label="#{msg['organization.attributesFilter']}">
-														<h:inputText styleClass="form-control"
-															value="#{registrationManagementAction.searchPattern}"
-															size="30" maxlength="30" id="searchPatternId"
-															title="#{msg['organization.enterAtLeastTwoCharacters']}"
-															alt="search parameters for attribute like name,iname,description">
+            jQuery(".rf-pick-opt").bind({
+            mousemove : changeTooltipPosition,
+            mouseover : showTooltip,
+            mouseout: hideTooltip
+            });
 
-															<a4j:ajax event="keyup" render="foundAttributes"
-																listener="#{registrationManagementAction.search}"
-																limitRender="true" execute="@region"
-																oncomplete="addTooltip();" />
-														</h:inputText>
-													</ox:decorate>
+            });
+            };
+            var hideTooltip = function() {
+            $('div.tooltip').remove();
+            };
 
-													<h:panelGroup id="foundAttributes">
-														<ox:decorate label="#{msg['organization.attributes']}">
-															<rich:pickList
-																value="#{registrationManagementAction.selectedAttributes}"
-																orderable="true"
-																rendered="#{not empty registrationManagementAction.selectedAttributes or not empty registrationManagementAction.attributes}">
-																<f:selectItems
-																	value="#{registrationManagementAction.attributes}"
-																	var="attribute" itemValue="#{attribute}"
-																	itemLabel="#{attribute.name}" />
-																<f:converter converterId="org.gluu.jsf2.converter.AttributeNameConverter" />
-															</rich:pickList>
+            var showTooltip = function(event) {
+            getText(jQuery(this).text())
+            changeTooltipPosition(event);
+            };
 
-														</ox:decorate>
-													</h:panelGroup>
-												</a4j:region>
-											</h:panelGroup>
-										</h:panelGroup>
-									</a4j:region>
-								</h:panelGroup>
-							</div>
-							<div class="box-footer">
+            var updateTooltip = function(personData){
+            $('div.tooltip').remove();
+            $('
+            <div class="tooltip">' + personData + '</div>
+            ')
+            .appendTo('body');
+            $('.tooltip').css({top: tooltipY, left: tooltipX});
+            }
 
-						<div id="updateButtons">
-							<h:commandButton value="Update"
-								action="#{registrationManagementAction.save}"
-								styleClass="btn btn-success" />
-							<h:commandButton value="Cancel"
-								action="#{registrationManagementAction.cancel}"
-								styleClass="btn btn-success" immediate="true"
-								style="margin-left:4px" />
+            var changeTooltipPosition = function(event) {
+            tooltipX = event.pageX - 8;
+            tooltipY = event.pageY + 8;
+            $('.tooltip').css({top: tooltipY, left: tooltipX});
+            };
 
-						</div>
-					</div>
-						</div>
-						
-						
-					</div>
-					
-				</div>
+            $( document ).ready(function() {
 
 
+            $('.checkbox1').on('ifChecked', function(event){
+            $('.checkbox1Div').show();
+            });
 
-			</h:form> </section>
-		</div>
-		<h:form>
+            $('.checkbox1').on('ifUnchecked', function(event){
+            $('.checkbox1Div').hide();
+            });
 
-			<a4j:jsFunction name="getText"
-				data="#{registrationManagementAction.attributeData}"
-				action="#{registrationManagementAction.lookupAttributeData()}"
-				oncomplete="updateTooltip(event.data);">
-				<a4j:param name="name"
-					assignTo="#{registrationManagementAction.attributeName}" />
-			</a4j:jsFunction>
-		</h:form>
-	</ui:define>
+            $('.checkbox2').on('ifChecked', function(event){
+            $('.checkbox2Div').show();
+            });
+
+            $('.checkbox2').on('ifUnchecked', function(event){
+            $('.checkbox2Div').hide();
+            });
+
+            });
+
+
+        </h:outputScript>
+
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['organization.configuration']}
+                <small>
+                    <i class="fa fa-caret-right"
+                       style="color: #333 !important;"/> #{msg['organization.manageRegistration']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">
+                    <a href="#{request.contextPath}/configuration/registration">#{msg['organization.manageRegistration']}</a>
+                </li>
+            </ol>
+        </section>
+
+        <div id="formArea">
+            <section class="content"><h:form id="customRegistrationForm">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="box box-primary">
+                            <div class="box-header">
+                            </div>
+                            <div style="display: inline-block; width: 75% !important;">
+                                <h:panelGroup>
+                                    <a4j:region>
+                                        <ox:decorate label="#{msg['organization.disableCaptcha']}">
+                                            <h:selectBooleanCheckbox
+                                                    value="#{registrationManagementAction.captchaDisabled}">
+                                            </h:selectBooleanCheckbox>
+                                        </ox:decorate>
+                                        <ox:decorate label="#{msg['organization.configureRegistrationAttributes']}">
+                                            <h:selectBooleanCheckbox styleClass="checkbox checkbox2"
+                                                                     value="#{registrationManagementAction.configureRegistrationForm}">
+                                                <a4j:ajax event="click" render="attributes"/>
+                                            </h:selectBooleanCheckbox>
+                                        </ox:decorate>
+                                        <h:panelGroup id="attributes" style="display:none;" styleClass="checkbox2Div">
+                                            <h:panelGroup>
+                                                <a4j:region>
+                                                    <ox:decorate id="searchPattern"
+                                                                 label="#{msg['organization.attributesFilter']}">
+                                                        <h:inputText
+                                                                alt="search parameters for attribute like name,iname,description"
+                                                                id="searchPatternId" maxlength="30" size="30"
+                                                                styleClass="form-control"
+                                                                title="#{msg['organization.enterAtLeastTwoCharacters']}"
+                                                                value="#{registrationManagementAction.searchPattern}">
+
+                                                            <a4j:ajax event="keyup" execute="@region" limitRender="true"
+                                                                      listener="#{registrationManagementAction.search}"
+                                                                      oncomplete="addTooltip();"
+                                                                      render="foundAttributes"/>
+                                                        </h:inputText>
+                                                    </ox:decorate>
+
+                                                    <h:panelGroup id="foundAttributes">
+                                                        <ox:decorate label="#{msg['organization.attributes']}">
+                                                            <rich:pickList orderable="true"
+                                                                           rendered="#{not empty registrationManagementAction.selectedAttributes or not empty registrationManagementAction.attributes}"
+                                                                           value="#{registrationManagementAction.selectedAttributes}">
+                                                                <f:selectItems itemLabel="#{attribute.name}"
+                                                                               itemValue="#{attribute}"
+                                                                               value="#{registrationManagementAction.attributes}"
+                                                                               var="attribute"/>
+                                                                <f:converter
+                                                                        converterId="org.gluu.jsf2.converter.AttributeNameConverter"/>
+                                                            </rich:pickList>
+
+                                                        </ox:decorate>
+                                                    </h:panelGroup>
+                                                </a4j:region>
+                                            </h:panelGroup>
+                                        </h:panelGroup>
+                                    </a4j:region>
+                                </h:panelGroup>
+                            </div>
+                            <div class="box-footer">
+
+                                <div id="updateButtons">
+                                    <h:commandButton action="#{registrationManagementAction.save}"
+                                                     styleClass="btn btn-success" value="Update"/>
+                                    <h:commandButton action="#{registrationManagementAction.cancel}" immediate="true"
+                                                     style="margin-left:4px" styleClass="btn btn-success"
+                                                     value="Cancel"/>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </h:form></section>
+        </div>
+        <h:form>
+
+            <a4j:jsFunction action="#{registrationManagementAction.lookupAttributeData()}"
+                            data="#{registrationManagementAction.attributeData}" name="getText"
+                            oncomplete="updateTooltip(event.data);">
+                <a4j:param assignTo="#{registrationManagementAction.attributeName}" name="name"/>
+            </a4j:jsFunction>
+        </h:form>
+    </ui:define>
 
 </ui:composition>

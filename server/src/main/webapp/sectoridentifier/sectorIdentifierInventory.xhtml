@@ -1,28 +1,28 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:s="http://jboss.org/schema/seam/taglib"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://java.sun.com/jsf/composite/richext"
- 		xmlns:ox="http://java.sun.com/jsf/composite/ox"
-                template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
+                xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
+                xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{searchSectorIdentifierAction.start}"
+                      if="#{permissionService.throwOnLackOfPermissions('sectorIdentifier', ' access') and searchSectorIdentifierAction.sectorIdentifierList == null and identity.checkLoggedIn()}"
+                      onPostback="false"/>
+    </f:metadata>
 
     <ui:define name="body">
         <section class="content-header">
             <h1 style="color: #333;">
                 #{msg['sectorIdentifier.openIDConnect']}
                 <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"></i>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/>
                     #{msg['sectorIdentifier.manageSectorIdentifiers']}
                 </small>
             </h1>
             <ol class="breadcrumb">
                 <li>
-                    <a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
                 </li>
                 <li class="organization/configuration">
                     <a href="#{request.contextPath}/sectoridentifier/inventory">#{msg['sectorIdentifier.manageSectorIdentifiers']}</a>
@@ -37,25 +37,26 @@
                         </div>
                         <div style="display: inline-block; width: 100% !important;">
                             <div id="formArea">
-                                <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
 
                                     <h:link includeViewParams="false" outcome="/sectoridentifier/addSectorIdentifier"
-                                            value="#{msg['sectorIdentifier.addSectorIdentifiers']}"
+                                            style="margin-left:20px !important;"
                                             styleClass="addSectorIdentifier btn btn-primary"
-                                            style="margin-left:20px !important;"/>
+                                            value="#{msg['sectorIdentifier.addSectorIdentifiers']}"/>
 
                                     <richext:spacer height="16"/>
 
                                     <h:form>
-                                        <ox:decorate id="searchPattern" hideLabel="true">
-                                            <h:inputText value="#{searchSectorIdentifierAction.searchPattern}" size="30"
-                                                         maxlength="30" id="searchPatternId"
-                                                         styleClass="searchParameters form-control"
-                                                         alt="search parameters for sector identifier like inum, redirect_uri"
-                                                         style="float: left;width: 50%;"/>
-                                            <h:commandButton value="#{msg['sectorIdentifier.search']}"
-                                                             action="#{searchSectorIdentifierAction.search}"
-                                                             style="float:left;" class="btn btn-primary"/>
+                                        <ox:decorate hideLabel="true" id="searchPattern">
+                                            <h:inputText
+                                                    alt="search parameters for sector identifier like inum, redirect_uri"
+                                                    id="searchPatternId" maxlength="30" size="30"
+                                                    style="float: left;width: 50%;"
+                                                    styleClass="searchParameters form-control"
+                                                    value="#{searchSectorIdentifierAction.searchPattern}"/>
+                                            <h:commandButton action="#{searchSectorIdentifierAction.search}"
+                                                             class="btn btn-primary" style="float:left;"
+                                                             value="#{msg['sectorIdentifier.search']}"/>
                                         </ox:decorate>
                                     </h:form>
 
@@ -68,25 +69,24 @@
                                             <h:outputText value="#{msg['sectorIdentifier.noSearchResultFound']}"/>
                                         </ui:fragment>
 
-                                        <rich:dataTable sortMode="single" id="sectorIdentifierListId"
+                                        <rich:dataTable id="sectorIdentifierListId"
+                                                        rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size gt 0}"
+                                                        rows="20" sortMode="single" styleClass="data sortable"
                                                         value="#{searchSectorIdentifierAction.sectorIdentifierList}"
-                                                        rows="20"
-                                                        styleClass="data sortable" var="si"
-                                                        rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size gt 0}">
+                                                        var="si">
                                             <rich:column sortBy="#{si.inum}">
                                                 <f:facet name="header">inum</f:facet>
-                                                <h:link includeViewParams="false" outcome="/sectoridentifier/updateSectorIdentifier"
-                                                        value="#{si.inum}"
-                                                       >
+                                                <h:link includeViewParams="false"
+                                                        outcome="/sectoridentifier/updateSectorIdentifier"
+                                                        value="#{si.inum}">
                                                     <f:param name="inum" value="#{si.inum}"/>
                                                 </h:link>
                                             </rich:column>
                                             <f:facet name="footer">
-                                                <rich:dataScroller renderIfSinglePage="false"
-                                                                   rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size > 0}"
-                                                                   for="sectorIdentifierListId" maxPages="10"
-                                                                   stepControls="auto"
-                                                                   align="left"/>
+                                                <rich:dataScroller align="left" for="sectorIdentifierListId"
+                                                                   maxPages="10" renderIfSinglePage="false"
+                                                                   rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size &gt; 0}"
+                                                                   stepControls="auto"/>
                                             </f:facet>
                                         </rich:dataTable>
                                     </h:form>
