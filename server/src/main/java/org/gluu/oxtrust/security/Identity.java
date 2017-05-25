@@ -23,6 +23,7 @@ public class Identity extends org.xdi.model.security.Identity {
 	public void create() {
 		super.create();
 		this.sessionMap = new HashMap<String, Object>();
+		this.oauthData = new OauthData();
 	}
 
 	public OauthData getOauthData() {
