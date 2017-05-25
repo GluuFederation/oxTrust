@@ -29,7 +29,9 @@ public class MenuAction implements Serializable {
 
 	public String endConversation(final String viewId) {
 		// TODO: CDI Review
-		conversation.end();
+		if (!conversation.isTransient()) {
+			conversation.end();
+		}
 		return viewId;
 	}
 }
