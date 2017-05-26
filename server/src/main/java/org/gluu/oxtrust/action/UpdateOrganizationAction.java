@@ -279,6 +279,10 @@ public class UpdateOrganizationAction implements Serializable {
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 		try {
 			String buildDate = appInitializer.getGluuBuildDate();
+			if (StringHelper.isEmpty(buildDate)) {
+				return buildDate;
+			}
+
 			final Date date = formatter.parse(buildDate);
 			this.buildDate = new SimpleDateFormat("hh:mm MMM dd yyyy").format(date) + " UTC";
 		} catch (ParseException e) {

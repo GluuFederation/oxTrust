@@ -47,7 +47,6 @@ public class HomeAction implements Serializable {
 
 	private String authenticationChartJson;
 
-	@Secure("#{identity.loggedIn}")
 	public void init() {
 		boolean hasConfigurationAccess = permissionService.hasPermission("configuration", "access");
 		if (hasConfigurationAccess) {

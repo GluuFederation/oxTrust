@@ -3,7 +3,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{homeAction.init}" if="#{identity.checkLoggedIn()}" onPostback="false"/>
+        <f:viewAction action="#{homeAction.init}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">

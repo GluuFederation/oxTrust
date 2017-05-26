@@ -50,7 +50,7 @@ import org.xdi.util.StringHelper;
  */
 @Named("manageCustomScriptAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ManageCustomScriptAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3823022039248381963L;
@@ -69,15 +69,14 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
+	
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 
 	private boolean initialized;
 	
-	@Inject
-	private AppConfiguration appConfiguration;
-	
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -123,7 +122,6 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String save() {
 		try {
 			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.applianceService.getCustomScriptTypes()), "dn", "inum");
@@ -202,7 +200,6 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	}
 
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 	}
 
