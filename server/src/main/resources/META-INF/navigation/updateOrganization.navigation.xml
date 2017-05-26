@@ -7,7 +7,6 @@
       <from-action>#{updateOrganizationAction.modify}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/organization/updateOrganization.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{updateOrganizationAction.modify}</from-action>
@@ -25,7 +24,6 @@
       <from-action>#{updateOrganizationAction.verifySmtpConfiguration}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/organization/updateOrganization.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{updateOrganizationAction.verifySmtpConfiguration}</from-action>
@@ -37,13 +35,11 @@
       <from-action>#{updateOrganizationAction.verifySmtpConfiguration}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/organization/updateOrganization.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{updateOrganizationAction.save}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/organization/updateOrganization.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{updateOrganizationAction.cancel}</from-action>

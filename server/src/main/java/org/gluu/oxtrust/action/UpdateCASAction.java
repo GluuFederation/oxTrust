@@ -65,9 +65,6 @@ public class UpdateCASAction implements Serializable {
     
     @Inject
     private FacesMessages facesMessages;
-
-    @Inject
-    private FacesContext facesContext;
     
     @Inject
     private TrustService trustService;

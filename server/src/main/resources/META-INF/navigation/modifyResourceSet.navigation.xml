@@ -7,7 +7,6 @@
       <from-action>#{updateResourceSetAction.modify}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/uma/resource/modifyResourceSet.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{updateResourceSetAction.modify}</from-action>
@@ -25,13 +24,11 @@
       <from-action>#{updateResourceSetAction.save}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/uma/resource/modifyResourceSet.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{updateResourceSetAction.save}</from-action>
       <from-outcome>duplicate</from-outcome>
       <to-view-id>/uma/resource/modifyResourceSet.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{updateResourceSetAction.save}</from-action>

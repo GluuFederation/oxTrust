@@ -61,7 +61,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  */
 @Named("managePersonAuthenticationAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ManagePersonAuthenticationAction
 		implements SimplePropertiesListModel, LdapConfigurationModel, Serializable {
 
@@ -124,7 +124,6 @@ public class ManagePersonAuthenticationAction
 	@Inject
 	private AppConfiguration appConfiguration;
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -172,7 +171,6 @@ public class ManagePersonAuthenticationAction
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String save() {
 		try {
 			// Reload entry to include latest changes
@@ -228,7 +226,6 @@ public class ManagePersonAuthenticationAction
 		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 	}
 
@@ -286,7 +283,7 @@ public class ManagePersonAuthenticationAction
 				}
 			}
 
-			if (ldapConfig != null) {
+			if ((ldapConfig != null) && StringHelper.isNotEmpty(ldapConfig.getConfigId())) {
 				this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
 			} else {
 				this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
@@ -296,7 +293,6 @@ public class ManagePersonAuthenticationAction
 		return this.customAuthenticationConfigNames;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String testLdapConnection() {
 
 		try {

@@ -7,7 +7,6 @@
       <from-action>#{managePersonAuthenticationAction.modify}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/authentication/manageCustomAuthentication.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{managePersonAuthenticationAction.modify}</from-action>
@@ -25,7 +24,6 @@
       <from-action>#{managePersonAuthenticationAction.save}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/authentication/manageCustomAuthentication.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{managePersonAuthenticationAction.cancel}</from-action>
@@ -36,7 +34,6 @@
       <from-action>#{_action.testLdapConnection}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/authentication/manageCustomAuthentication.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{_action.testLdapConnection}</from-action>
@@ -48,7 +45,6 @@
       <from-action>#{_action.testLdapConnection}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/authentication/manageCustomAuthentication.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
   </navigation-rule>
 </faces-config>

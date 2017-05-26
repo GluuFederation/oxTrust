@@ -40,7 +40,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  */
 @Named("jsonConfigAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class JsonConfigurationAction implements Serializable {
 
 	private static final String HIDDEN_PASSWORD_TEXT = "hidden";
@@ -74,7 +74,6 @@ public class JsonConfigurationAction implements Serializable {
 
 	private String cacheConfigurationJson;
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		try {
 			log.debug("Loading oxauth-config.json and oxtrust-config.json");
@@ -101,7 +100,6 @@ public class JsonConfigurationAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String saveOxAuthDynamicConfigJson() {
 		// Update JSON configurations
 		try {
@@ -119,7 +117,6 @@ public class JsonConfigurationAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String saveOxTrustConfigJson() {
 		// Update JSON configurations
 		try {
@@ -141,7 +138,6 @@ public class JsonConfigurationAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 	
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String saveOxMemCacheConfigJson() {
 		// Update JSON configurations
 		try {
@@ -166,7 +162,6 @@ public class JsonConfigurationAction implements Serializable {
 		this.oxTrustappConfiguration.setOxAuthSectorIdentifierUrl(StringHelper.trimAll(this.oxTrustappConfiguration.getOxAuthSectorIdentifierUrl()));
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String saveOxTrustImportPersonConfigJson() {
 		// Update JSON configurations
 		try {

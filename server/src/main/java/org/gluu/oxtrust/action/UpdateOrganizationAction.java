@@ -52,7 +52,7 @@ import org.xdi.util.StringHelper;
  */
 @Named("updateOrganizationAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class UpdateOrganizationAction implements Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
@@ -100,17 +100,24 @@ public class UpdateOrganizationAction implements Serializable {
 	
 	private List<GluuAppliance> appliances;
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
+	private boolean initialized;
+
 	public String modify()  {
+		if (this.initialized) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
+
 		String resultOrganization = modifyOrganization();
 		String resultApplliance = modifyApplliance();
 
-		if (StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultOrganization)
-				&& StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultApplliance)) {
-			return OxTrustConstants.RESULT_SUCCESS;
-		} else {
+		if (!StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultOrganization)
+				|| !StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultApplliance)) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+
+		this.initialized = true;
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private String modifyOrganization()  {
@@ -169,7 +176,6 @@ public class UpdateOrganizationAction implements Serializable {
 		this.curFaviconImage = this.oldFaviconImage;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String save() {
 		// Update organization
 		try {
@@ -217,7 +223,6 @@ public class UpdateOrganizationAction implements Serializable {
 		appliance.setSmtpConfiguration(smtpConfiguration);
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String verifySmtpConfiguration() {
 		log.info("HostName: " + appliance.getSmtpHost() + " Port: " + appliance.getSmtpPort() + " RequireSSL: " + appliance.isRequiresSsl()
 				+ " RequireSSL: " + appliance.isRequiresAuthentication());
@@ -270,7 +275,6 @@ public class UpdateOrganizationAction implements Serializable {
 		}
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String getBuildDate() {
 		if (this.buildDate != null) {
 			return this.buildDate;
@@ -292,7 +296,6 @@ public class UpdateOrganizationAction implements Serializable {
 		return this.buildDate;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String getBuildNumber() {
 		if (this.buildNumber != null) {
 			return this.buildNumber;
@@ -302,7 +305,6 @@ public class UpdateOrganizationAction implements Serializable {
 		return this.buildNumber;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();

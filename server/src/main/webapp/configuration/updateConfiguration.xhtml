@@ -3,9 +3,7 @@
                 xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{jsonConfigAction.init}"
-                      if="#{permissionService.throwOnLackOfPermissions('configuration', ' access') and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{jsonConfigAction.init}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="head">
@@ -68,8 +66,7 @@
                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
                                              columns="1" width="100%">
                                     <h:form id="oxTrustConfigForm" prependId="false">
-                                        <ox:decorate id="oxTrust" prependId="false"
-                                                     template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                    	<ui:decorate id="oxTrust" prependId="false" template="/WEB-INF/incl/layout/jsoneditor.xhtml">
                                             <ui:param name="id" value="oxTrustConfig"/>
                                             <ui:param name="parentId" value="oxTrust"/>
                                             <ui:param name="json" value="#{jsonConfigAction.oxTrustConfigJson}"/>
@@ -78,14 +75,13 @@
                                             <ui:param name="saveBtnId" value="saveOxTrustConfigBtn"/>
                                             <ui:param name="saveBtnLabel"
                                                       value="#{msg['updateConfiguration.saveConfiguration']}"/>
-                                        </ox:decorate>
+                                        </ui:decorate>
                                         <h:commandButton action="#{jsonConfigAction.saveOxTrustConfigJson}"
                                                          id="saveOxTrustConfigBtn" prependId="false"
                                                          style="display:none"
                                                          value="#{msg['updateConfiguration.saveOxTrustConfiguration']}"/>
                                     </h:form>
                                 </h:panelGrid>
-
                             </div>
 
                             <div class="tab-pane" id="oxauth-config">

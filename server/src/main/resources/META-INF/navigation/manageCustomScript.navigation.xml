@@ -7,7 +7,6 @@
       <from-action>#{manageCustomScriptAction.modify}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/script/manageCustomScript.xhtml</to-view-id>
-      <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{manageCustomScriptAction.modify}</from-action>

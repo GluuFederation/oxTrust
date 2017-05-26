@@ -3,9 +3,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateOrganizationAction.modify}"
-                      if="#{permissionService.throwOnLackOfPermissions('configuration', ' access') and updateOrganizationAction.organization == null and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateOrganizationAction.modify}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="head">
