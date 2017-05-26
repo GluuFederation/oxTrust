@@ -13,6 +13,8 @@ import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.jsf2.service.FacesService;
+
 /**
  * Action class for helping with menu
  * 
@@ -27,11 +29,17 @@ public class MenuAction implements Serializable {
 	@Inject
 	private Conversation conversation;
 
+	@Inject
+	private FacesService facesService;
+
 	public String endConversation(final String viewId) {
 		// TODO: CDI Review
 		if (!conversation.isTransient()) {
 			conversation.end();
 		}
+		
+		facesService.redirect(viewId);
+		
 		return viewId;
 	}
 }
