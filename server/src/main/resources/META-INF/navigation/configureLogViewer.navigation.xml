@@ -5,12 +5,6 @@
     <from-view-id>/logviewer/configureLogViewer.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{configureLogViewerAction.init}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/logviewer/configureLogViewer.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{configureLogViewerAction.init}</from-action>
       <from-outcome>no_permissions</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
@@ -25,18 +19,6 @@
       <from-action>#{configureLogViewerAction.init}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{configureLogViewerAction.update}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/logviewer/configureLogViewer.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{configureLogViewerAction.update}</from-action>
-      <from-outcome>failure</from-outcome>
-      <to-view-id>/logviewer/configureLogViewer.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
     <navigation-case>

@@ -5,12 +5,6 @@
     <from-view-id>/client/addClient.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{updateClientAction.add}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/client/addClient.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateClientAction.add}</from-action>
       <from-outcome>no_permissions</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>

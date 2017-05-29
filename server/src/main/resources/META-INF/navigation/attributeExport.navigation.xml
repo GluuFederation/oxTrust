@@ -5,12 +5,6 @@
     <from-view-id>/attribute/attributeExport.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{attributeInventoryAction.start}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/attribute/attributeExport.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{attributeInventoryAction.start}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>

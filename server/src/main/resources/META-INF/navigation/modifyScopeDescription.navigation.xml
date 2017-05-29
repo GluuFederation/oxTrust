@@ -5,11 +5,6 @@
     <from-view-id>/uma/scope/modifyScopeDescription.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{updateScopeDescriptionAction.modify}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/uma/scope/modifyScopeDescription.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateScopeDescriptionAction.modify}</from-action>
       <from-outcome>no_permissions</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
@@ -19,16 +14,6 @@
       <from-outcome>failure</from-outcome>
       <to-view-id>/uma/scope.xhtml</to-view-id>
       <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateScopeDescriptionAction.save}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/uma/scope/modifyScopeDescription.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateScopeDescriptionAction.save}</from-action>
-      <from-outcome>duplicate</from-outcome>
-      <to-view-id>/uma/scope/modifyScopeDescription.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-action>#{updateScopeDescriptionAction.save}</from-action>

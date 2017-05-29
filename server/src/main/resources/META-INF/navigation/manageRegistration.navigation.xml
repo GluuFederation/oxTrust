@@ -5,19 +5,9 @@
     <from-view-id>/organization/manageRegistration.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{registrationManagementAction.init}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/organization/manageRegistration.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{registrationManagementAction.init}</from-action>
       <from-outcome>no_permissions</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{registrationManagementAction.save}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/organization/manageRegistration.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-action>#{registrationManagementAction.save}</from-action>
