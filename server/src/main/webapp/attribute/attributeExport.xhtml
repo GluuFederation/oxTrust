@@ -3,6 +3,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{attributeInventoryAction.start}"
                       if="#{permissionService.throwOnLackOfPermissions('attribute', 'access') and attributeInventoryAction.attributeList == null and identity.checkLoggedIn()}"
                       onPostback="false"/>

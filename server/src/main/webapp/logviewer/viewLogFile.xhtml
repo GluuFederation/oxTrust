@@ -6,6 +6,7 @@
                 xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{viewLogFileAction.init}"
                       if="#{permissionService.throwOnLackOfPermissions('log', 'access') and not viewLogFileAction.initialized and identity.checkLoggedIn()}"
                       onPostback="false"/>
