@@ -4,6 +4,7 @@
                 xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://java.sun.com/jsf/composite/richext"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{searchScopeAction.start}"
                       if="#{permissionService.throwOnLackOfPermissions('scope', 'access') and searchScopeAction.scopeList == null and identity.checkLoggedIn()}"
                       onPostback="false"/>

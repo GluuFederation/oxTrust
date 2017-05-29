@@ -3,6 +3,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/template.xhtml">
     <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{manageCertificateAction.init}"
                       if="#{permissionService.throwOnLackOfPermissions('configuration', 'access') and not manageCertificateAction.initialized and identity.checkLoggedIn()}"
                       onPostback="false"/>

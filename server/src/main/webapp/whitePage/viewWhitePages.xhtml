@@ -4,6 +4,7 @@
                 xmlns:rich="http://richfaces.org/rich" xmlns:s="http://jboss.org/schema/seam/taglib"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}"/>
         <f:viewAction action="#{whitePagesAction.start}"
                       if="#{permissionService.throwOnLackOfPermissions(applianceService.appliance, ' whitePagesEnabled') and whitePagesAction.persons == null and identity.checkLoggedIn()}"
                       onPostback="false"/>

@@ -3,6 +3,7 @@
                 xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}"/>
         <f:viewAction action="#{jsonConfigAction.init}" onPostback="false"/>
     </f:metadata>
 
@@ -66,7 +67,8 @@
                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
                                              columns="1" width="100%">
                                     <h:form id="oxTrustConfigForm" prependId="false">
-                                    	<ui:decorate id="oxTrust" prependId="false" template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                        <ui:decorate id="oxTrust" prependId="false"
+                                                     template="/WEB-INF/incl/layout/jsoneditor.xhtml">
                                             <ui:param name="id" value="oxTrustConfig"/>
                                             <ui:param name="parentId" value="oxTrust"/>
                                             <ui:param name="json" value="#{jsonConfigAction.oxTrustConfigJson}"/>

@@ -3,6 +3,7 @@
                 xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateScopeAction.add}"
                       if="#{permissionService.throwOnLackOfPermissions('scope', 'access') and updateScopeAction.scope == null and identity.checkLoggedIn()}"
                       onPostback="false"/>

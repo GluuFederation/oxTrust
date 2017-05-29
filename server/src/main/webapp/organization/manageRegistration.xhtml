@@ -4,6 +4,7 @@
                 xmlns:ox="http://java.sun.com/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{registrationManagementAction.init}"
                       if="#{permissionService.throwOnLackOfPermissions('configuration', 'access') and identity.checkLoggedIn()}"
                       onPostback="false"/>
