@@ -50,6 +50,7 @@ public class PermissionService {
             {"oxauth", "access"},
             {"uma", "access"},
             {"oxpush", "access"},
+            {"linktrack", "access"},
     };
 
     public boolean hasPermission(Object target, String action) {
