@@ -58,16 +58,6 @@ public class PermissionService {
             return false;
         }
 
-
-        if (identity.hasRole(GluuUserRole.MANAGER.getValue())) {
-            for (String[] managerAction : managerActions) {
-                String targetString = (String) target;
-                if (StringHelper.equals(managerAction[0], targetString) && StringHelper.equals(managerAction[1], action)) {
-                    return true;
-                }
-            }
-        }
-
         if (identity.hasRole(GluuUserRole.MANAGER.getValue()) || identity.hasRole(GluuUserRole.USER.getValue())) {
             if (StringHelper.equals("profile_management", action)) {
                 GluuAppliance appliance = applianceService.getAppliance();
@@ -83,6 +73,15 @@ public class PermissionService {
                 GluuAppliance targetAppliance = (GluuAppliance) target;
                 if (((appliance.getWhitePagesEnabled() != null) && appliance.getWhitePagesEnabled().isBooleanValue())
                         && StringHelper.equals(applianceService.getAppliance().getInum(), targetAppliance.getInum())) {
+                    return true;
+                }
+            }
+        }
+
+        if (identity.hasRole(GluuUserRole.MANAGER.getValue())) {
+            for (String[] managerAction : managerActions) {
+                String targetString = (String) target;
+                if (StringHelper.equals(managerAction[0], targetString) && StringHelper.equals(managerAction[1], action)) {
                     return true;
                 }
             }
