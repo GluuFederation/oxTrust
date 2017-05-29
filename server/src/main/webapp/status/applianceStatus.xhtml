@@ -3,7 +3,7 @@
                 xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction if="#{permissionService.throwOnLackOfPermissions('configuration', ' access')}"/>
+        <f:viewAction if="#{permissionService.throwOnLackOfPermissions('configuration', 'access')}"/>
     </f:metadata>
 
     <ui:define name="body">

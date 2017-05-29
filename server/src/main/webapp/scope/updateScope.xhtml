@@ -5,7 +5,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{updateScopeAction.update}"
-                      if="#{permissionService.throwOnLackOfPermissions('scope', ' access') and updateScopeAction.scope == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.throwOnLackOfPermissions('scope', 'access') and updateScopeAction.scope == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

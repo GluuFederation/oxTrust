@@ -4,7 +4,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{updateAsimbaSPPoolAction.edit}"
-                      if="#{permissionService.throwOnLackOfPermissions('trust', ' access') and updateAsimbaSPPoolAction.editEntryInum != null and identity.checkLoggedIn()}"
+                      if="#{permissionService.throwOnLackOfPermissions('trust', 'access') and updateAsimbaSPPoolAction.editEntryInum != null and identity.checkLoggedIn()}"
                       onPostback="true"/>
     </f:metadata>
 

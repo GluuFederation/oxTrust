@@ -7,7 +7,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{viewLogFileAction.init}"
-                      if="#{permissionService.throwOnLackOfPermissions('log', ' access') and not viewLogFileAction.initialized and identity.checkLoggedIn()}"
+                      if="#{permissionService.throwOnLackOfPermissions('log', 'access') and not viewLogFileAction.initialized and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

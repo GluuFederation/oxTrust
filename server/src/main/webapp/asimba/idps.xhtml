@@ -5,7 +5,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{updateAsimbaIDPAction.refresh}"
-                      if="#{permissionService.throwOnLackOfPermissions('trust', ' access') and identity.checkLoggedIn()}"
+                      if="#{permissionService.throwOnLackOfPermissions('trust', 'access') and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

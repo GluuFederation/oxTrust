@@ -4,7 +4,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{attributeInventoryAction.start}"
-                      if="#{permissionService.throwOnLackOfPermissions('attribute', ' access') and attributeInventoryAction.attributeList == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.throwOnLackOfPermissions('attribute', 'access') and attributeInventoryAction.attributeList == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

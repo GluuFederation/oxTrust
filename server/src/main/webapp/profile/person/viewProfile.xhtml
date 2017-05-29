@@ -7,7 +7,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{userProfileAction.show}"
-                      if="#{permissionService.throwOnLackOfPermissions('profile', ' access') and userProfileAction.person== null and identity.checkLoggedIn()}"
+                      if="#{permissionService.throwOnLackOfPermissions('profile', 'access') and userProfileAction.person== null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

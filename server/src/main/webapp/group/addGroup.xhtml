@@ -4,7 +4,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{updateGroupAction.add}"
-                      if="#{permissionService.throwOnLackOfPermissions('group', ' access') and updateGroupAction.group == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.throwOnLackOfPermissions('group', 'access') and updateGroupAction.group == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 
