@@ -42,7 +42,7 @@ import org.xdi.util.io.ReverseLineReader;
  */
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('log', 'access')}")
 public class ViewLogFileAction implements Serializable {
 
 	private static final long serialVersionUID = -3310340481895022468L;
@@ -70,7 +70,6 @@ public class ViewLogFileAction implements Serializable {
 
 	private int displayLastLinesCount;
 
-	@Secure("#{permissionService.hasPermission('log', 'access')}")
 	public String init() {
 		if (this.logViewerConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;

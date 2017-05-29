@@ -29,7 +29,7 @@ import org.xdi.util.Util;
  */
 @Named("pushDeviceInventoryAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
 public class PushDeviceInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 6613070802638642079L;
@@ -48,12 +48,10 @@ public class PushDeviceInventoryAction implements Serializable {
 	@Inject
 	private PushDeviceService pushDeviceService;
 	
-	@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

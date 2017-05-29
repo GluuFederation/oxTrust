@@ -27,9 +27,9 @@ import org.xdi.util.Util;
  * 
  * @author Reda Zerrad Date: 06.18.2012
  */
-@Named("searchScopeAction")
+@Named
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('scope', 'access')}")
 public class SearchScopeAction implements Serializable {
 
 	private static final long serialVersionUID = -6633178742652918098L;
@@ -48,12 +48,10 @@ public class SearchScopeAction implements Serializable {
 	@Inject
 	private ScopeService scopeService;
 
-	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

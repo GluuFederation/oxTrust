@@ -32,7 +32,7 @@ import org.xdi.util.StringHelper;
  */
 @Named("configureLogViewerAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3310460481895022468L;
@@ -55,7 +55,6 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	private boolean initialized;
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.logViewerConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -74,7 +73,6 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		this.logViewerConfiguration = prepareLogViewerConfig();
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!validateLists()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -101,7 +99,6 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		return result;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 

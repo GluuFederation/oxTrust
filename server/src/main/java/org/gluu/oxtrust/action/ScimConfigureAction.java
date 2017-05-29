@@ -25,7 +25,7 @@ import org.xdi.service.security.Secure;
  */
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ScimConfigureAction implements Serializable {
 
 	private static final long serialVersionUID = -1290460481895022469L;
@@ -38,7 +38,6 @@ public class ScimConfigureAction implements Serializable {
 
 	private boolean isInitialized = false;
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		if (isInitialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -54,12 +53,10 @@ public class ScimConfigureAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String update() {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 

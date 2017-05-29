@@ -37,7 +37,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('uma', 'access')}")
 public class UmaInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 2261095046179474395L;
@@ -71,7 +71,6 @@ public class UmaInventoryAction implements Serializable {
 	
 	private boolean initialized;
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String start() {
 		try {
 			resourceSetService.prepareResourceSetBranch();
@@ -91,7 +90,6 @@ public class UmaInventoryAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

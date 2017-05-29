@@ -41,7 +41,7 @@ import org.xdi.service.security.Secure;
  */
 @SessionScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class UpdateAsimbaSPPoolAction implements Serializable {
 
     private static final long serialVersionUID = -1242167022433943680L;
@@ -118,7 +118,6 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         newEntry = true;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public void edit() {
         log.info("edit() SPPool call, inum: "+editEntryInum);
         if (editEntryInum == null || "".equals(editEntryInum)) {
@@ -134,7 +133,6 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         }
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new RequestorPool", spPool);
         spPool.setProperties(getProperties());
@@ -145,7 +143,6 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() RequestorPool", spPool);
         spPool.setProperties(getProperties());
@@ -156,14 +153,12 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel() RequestorPool", spPool);
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String delete() {
         log.info("delete() RequestorPool", spPool);
         synchronized (svnSyncTimer) {
@@ -173,7 +168,6 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String search() {
         log.info("search() RequestorPool searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {

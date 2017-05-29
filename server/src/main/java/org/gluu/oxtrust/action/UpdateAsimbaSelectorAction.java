@@ -40,7 +40,7 @@ import org.xdi.service.security.Secure;
  */
 @SessionScoped
 @Named("updateAsimbaSelectorAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class UpdateAsimbaSelectorAction implements Serializable {
 
     private static final long serialVersionUID = -1242167044333943680L;
@@ -127,7 +127,6 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         newEntry = true;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public void edit() {
         log.info("edit() Selector call, inum: "+editEntryInum);
         if (editEntryInum == null || "".equals(editEntryInum)) {
@@ -140,7 +139,6 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         }
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String add() {
         log.info("add() Selector call", selector);
         synchronized (svnSyncTimer) {
@@ -150,7 +148,6 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String update() {
         log.info("update() Selector", selector);
         synchronized (svnSyncTimer) {
@@ -160,14 +157,12 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel() Selector", selector);
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String delete() {
         log.info("delete() Selector", selector);
         synchronized (svnSyncTimer) {
@@ -177,7 +172,6 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String search() {
         log.info("search() Selector searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {

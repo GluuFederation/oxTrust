@@ -95,7 +95,7 @@ import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
  */
 @ConversationScoped
 @Named("updateTrustRelationshipAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class UpdateTrustRelationshipAction implements Serializable {
 
 	private static final long serialVersionUID = -1032167044333943680L;
@@ -215,7 +215,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 	}
 
-	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String add() {
 		if (this.trustRelationship != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -235,7 +234,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String update() {
 		if (this.trustRelationship != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -263,11 +261,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public void cancel() {
 	}
 
-	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String save() {
 		synchronized (svnSyncTimer) {
 			if (StringHelper.isEmpty(this.trustRelationship.getInum())) {
@@ -861,7 +857,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return StringHelper.isNotEmpty(result);
 	}
 
-	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String delete() {
 		String result = OxTrustConstants.RESULT_FAILURE;
 		if (update) {
@@ -897,7 +892,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return result;
 	}
 
-	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String downloadConfiguration() {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
 		ZipOutputStream zos = ResponseHelper.createZipStream(bos, "Shibboleth v3 configuration files");

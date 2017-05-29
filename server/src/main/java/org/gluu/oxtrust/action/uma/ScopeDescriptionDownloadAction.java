@@ -38,7 +38,7 @@ import org.xdi.util.io.ResponseHelper;
  */
 @RequestScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('uma', 'access')}")
 public class ScopeDescriptionDownloadAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;

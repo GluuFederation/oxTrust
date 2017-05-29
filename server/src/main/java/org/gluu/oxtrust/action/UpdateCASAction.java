@@ -36,7 +36,7 @@ import org.xdi.service.security.Secure;
  */
 @SessionScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class UpdateCASAction implements Serializable {
 
     private static final long serialVersionUID = 1061838191485356624L;
@@ -134,7 +134,6 @@ public class UpdateCASAction implements Serializable {
         return newConfiguration;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public void save() {
         log.info("save() CAS call");
         

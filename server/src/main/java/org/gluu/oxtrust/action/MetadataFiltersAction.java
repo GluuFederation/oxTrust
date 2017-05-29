@@ -28,7 +28,7 @@ import org.xdi.util.io.FileUploadWrapper;
 
 @ConversationScoped
 @Named("metadataFiltersAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class MetadataFiltersAction implements Serializable {
 
 	private static final long serialVersionUID = -5304171897858890801L;
@@ -124,7 +124,6 @@ public class MetadataFiltersAction implements Serializable {
 		return selectedList;
 	}
 
-	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String saveFilters() {
 		updateMetadataFilters();
 		filterService.saveFilters(trustRelationship, filterCertWrapper);

@@ -35,9 +35,9 @@ import org.xdi.service.security.Secure;
  * 
  * @author Dmitry Ognyannikov
  */
-@SessionScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@SessionScoped
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class CertificateManagementAction implements Serializable {
 
     private static final long serialVersionUID = -1938167091985945238L;
@@ -94,7 +94,6 @@ public class CertificateManagementAction implements Serializable {
         updateTableView();
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String add() {
         log.info("add");
         // save
@@ -105,14 +104,12 @@ public class CertificateManagementAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel CertificateManagement");
         
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String search() {
         log.info("search() CertificateManagement searchPattern:", searchPattern);
         

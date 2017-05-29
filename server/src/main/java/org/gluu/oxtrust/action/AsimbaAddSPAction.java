@@ -27,7 +27,7 @@ import org.xdi.service.security.Secure;
  */
 @SessionScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class AsimbaAddSPAction implements Serializable {
 
     private static final long serialVersionUID = -1024167091985943689L;
@@ -58,7 +58,6 @@ public class AsimbaAddSPAction implements Serializable {
         spRequestor = new RequestorEntry();
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String add() {
         log.info("add new SP", spRequestor);
         // save
@@ -69,7 +68,6 @@ public class AsimbaAddSPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
     public String cancel() {
         log.info("cancel SP", spRequestor);
         

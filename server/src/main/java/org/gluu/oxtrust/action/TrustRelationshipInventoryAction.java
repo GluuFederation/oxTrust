@@ -34,7 +34,7 @@ import org.xdi.service.security.Secure;
  */
 @ConversationScoped
 @Named("trustRelationshipInventoryAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class TrustRelationshipInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 8388485274418394665L;
@@ -64,7 +64,6 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		this.trustedSpList = trustedSpList;
 	}
 
-	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String start() {
 		if (trustedSpList != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -73,7 +72,6 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		return search();
 	}
 
-	@Secure("#{permissionService.hasPermission('trust', 'access')}")
 	public String search() {
 		try {
 			if(searchPattern == null || searchPattern.isEmpty()){

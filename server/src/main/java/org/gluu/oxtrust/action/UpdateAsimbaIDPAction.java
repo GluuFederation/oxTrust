@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.security.Secure;
 
-
 /**
  * Action class for updating and adding the SAML IDP to Asimba.
  * 
@@ -43,7 +42,7 @@ import org.xdi.service.security.Secure;
  */
 @SessionScoped
 @Named("updateAsimbaIDPAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class UpdateAsimbaIDPAction implements Serializable {
 
     private static final long serialVersionUID = -1032167091333943680L;
@@ -133,7 +132,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         uploadedCertBytes = null;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
+
     public void edit() {
         log.info("edit() IDP call, inum: "+editEntryInum);
         if (editEntryInum == null || "".equals(editEntryInum)) {
@@ -146,7 +145,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         }
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
+
     public String add() {
         log.info("add new IDP", idp);
         // save
@@ -165,7 +164,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
+
     public String update() {
         log.info("update IDP", idp);
         idp.setId(idp.getId().trim());
@@ -185,14 +184,14 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
+
     public String cancel() {
         log.info("cancel IDP", idp);
         clearEdit();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
+
     public String uploadFile(FileUploadEvent event) {
         log.info("uploadFile() call for IDP");
         try {
@@ -209,7 +208,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
+
     public String uploadCertificateFile(FileUploadEvent event) {
         log.info("uploadCertificateFile() call for IDP");
          try {
@@ -241,7 +240,6 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String delete() {
         synchronized (svnSyncTimer) {
             asimbaService.removeIDPEntry(idp);
@@ -250,7 +248,6 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('person', 'access')}")
     public String search() {
         log.info("search() IDP searchPattern:", searchPattern);
         synchronized (svnSyncTimer) {
@@ -268,7 +265,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    @Secure("#{permissionService.hasPermission('trust', 'access')}")
+
     public void moveIdpUp() {
         log.info("moveIdpUp()");
         log.info("selectedIdpId: " + selectedIdpId);

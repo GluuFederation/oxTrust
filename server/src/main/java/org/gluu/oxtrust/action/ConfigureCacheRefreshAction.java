@@ -64,7 +64,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  */
 @Named("configureCacheRefreshAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -5210460481895022468L;
@@ -133,7 +133,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private CacheRefreshUpdateMethod updateMethod;
 	
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.cacheRefreshConfiguration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -175,7 +174,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return cacheRefreshConfiguration;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String update() {
 		checkDuplicateKetattribute();
 		
@@ -291,7 +289,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return true;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 

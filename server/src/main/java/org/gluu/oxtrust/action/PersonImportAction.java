@@ -58,7 +58,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('import', 'person')}")
 public class PersonImportAction implements Serializable {
 
 	private static final long serialVersionUID = -1270460481895022468L;
@@ -108,7 +108,6 @@ public class PersonImportAction implements Serializable {
 
 	private String inum;
 
-	@Secure("#{permissionService.hasPermission('import', 'person')}")
 	public String init() {
 		if (this.isInitialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -124,7 +123,6 @@ public class PersonImportAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('import', 'person')}")
 	public String importPersons() throws Exception {
 		if (!fileDataToImport.isReady()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -158,7 +156,6 @@ public class PersonImportAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('import', 'person')}")
 	public void validateFileToImport() throws Exception {
 		removeFileDataToImport();
 
@@ -192,7 +189,6 @@ public class PersonImportAction implements Serializable {
 		}
 	}
 
-	@Secure("#{permissionService.hasPermission('import', 'person')}")
 	public void cancel() {
 		destroy();
 	}
@@ -215,7 +211,6 @@ public class PersonImportAction implements Serializable {
 		this.fileDataToImport.reset();
 	}
 
-	@Secure("#{permissionService.hasPermission('import', 'person')}")
 	public void uploadFile(FileUploadEvent event) {
 		removeFileToImport();
 
@@ -223,7 +218,6 @@ public class PersonImportAction implements Serializable {
 		this.fileData = this.uploadedFile.getData();
 	}
 
-	@Secure("#{permissionService.hasPermission('import', 'person')}")
 	public void removeFileToImport() {
 		if (uploadedFile != null) {
 			try {

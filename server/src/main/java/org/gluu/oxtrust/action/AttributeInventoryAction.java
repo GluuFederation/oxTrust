@@ -37,7 +37,7 @@ import org.xdi.service.security.Secure;
  */
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 public class AttributeInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
@@ -67,7 +67,6 @@ public class AttributeInventoryAction implements Serializable {
 		this.checked = checked;
 	}
 
-	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String start() {
 		if (attributeList == null) {
 			try {

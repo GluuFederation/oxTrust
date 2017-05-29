@@ -46,7 +46,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("updateGroupAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('group', 'access')}")
 public class UpdateGroupAction implements Serializable {
 
 	private static final long serialVersionUID = 572441515451149801L;
@@ -91,7 +91,6 @@ public class UpdateGroupAction implements Serializable {
 	@Inject
 	private AppConfiguration appConfiguration;
 
-	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String add() throws Exception {
 		if (this.group != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -113,7 +112,6 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String update() throws Exception {
 		if (this.group != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -145,11 +143,9 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public void cancel() {
 	}
 
-	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String save() throws Exception {
 		List<DisplayNameEntry> oldMembers = null;
 		try {
@@ -201,7 +197,6 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String delete() throws Exception {
 		if (update) {
 			// Remove group

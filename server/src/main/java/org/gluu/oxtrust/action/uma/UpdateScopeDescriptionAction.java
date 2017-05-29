@@ -49,7 +49,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('uma', 'access')}")
 public class UpdateScopeDescriptionAction implements Serializable {
 
 	private static final long serialVersionUID = 6180729281938167478L;
@@ -91,7 +91,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	private boolean update;
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String modify() {
 		if (this.scopeDescription != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -151,11 +150,9 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void cancel() {
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String save() {
 		updateAuthorizationPolicies();
 
@@ -202,7 +199,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public String delete() {
 		if (update) {
 			// Remove scope description
@@ -217,7 +213,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void removeIconImage() {
 		this.curIconImage = null;
 		this.scopeDescription.setFaviconImageAsXml(null);
@@ -228,7 +223,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		cancel();
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void setIconImage(FileUploadEvent event) {
 		UploadedFile uploadedFile = event.getUploadedFile();
 		try {
@@ -316,7 +310,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.scopeDescription.setAuthorizationPolicies(tmpAuthorizationPolicies);
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void acceptSelectAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies == null) {
 			return;
@@ -336,11 +329,9 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void cancelSelectAuthorizationPolicies() {
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void addAuthorizationPolicy(CustomScript addAuthorizationPolicy) {
 		if (addAuthorizationPolicy == null) {
 			return;
@@ -349,7 +340,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.authorizationPolicies.add(addAuthorizationPolicy);
 	}
 
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void removeAuthorizationPolicy(CustomScript removeAuthorizationPolicy) {
 		if (removeAuthorizationPolicy == null) {
 			return;
@@ -365,7 +355,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 	}
 	
-	@Secure("#{permissionService.hasPermission('uma', 'access')}")
 	public void searchAvailableAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies != null) {
 			selectAddedAuthorizationPolicies();

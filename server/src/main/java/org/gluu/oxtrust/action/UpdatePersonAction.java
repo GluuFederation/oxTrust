@@ -48,7 +48,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("updatePersonAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('person', 'access')}")
 public class UpdatePersonAction implements Serializable {
 
 	private static final long serialVersionUID = -3242167044333943689L;
@@ -60,10 +60,10 @@ public class UpdatePersonAction implements Serializable {
 	private boolean update;
 
 	private GluuCustomPerson person;
-	
+
 	@Inject
 	private OrganizationService organizationService;
-	
+
 	@Inject
 	private GroupService groupService;
 
@@ -90,8 +90,8 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private MemberService memberService;
-	
-	private GluuStatus gluuStatus ;
+
+	private GluuStatus gluuStatus;
 
 	private String password;
 	private String confirmPassword;
@@ -110,7 +110,6 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String add() {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -134,7 +133,6 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String update() {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -149,14 +147,13 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		initAttributes();
-		this.gluuStatus=this.person.getStatus();
+		this.gluuStatus = this.person.getStatus();
 
 		userPasswordAction.setPerson(this.person);
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public void cancel() {
 	}
 
@@ -165,7 +162,6 @@ public class UpdatePersonAction implements Serializable {
 	 * 
 	 * @return String describing success of the operation
 	 */
-	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String save() throws Exception {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -175,13 +171,13 @@ public class UpdatePersonAction implements Serializable {
 
 		List<GluuCustomAttribute> removedAttributes = customAttributeAction.detectRemovedAttributes();
 		customAttributeAction.updateOriginCustomAttributes();
-		
-		List<GluuCustomAttribute>  customAttributes = customAttributeAction.getCustomAttributes();
-		for(GluuCustomAttribute customAttribute: customAttributes){
-			if(customAttribute.getName().equalsIgnoreCase("gluuStatus")){
+
+		List<GluuCustomAttribute> customAttributes = customAttributeAction.getCustomAttributes();
+		for (GluuCustomAttribute customAttribute : customAttributes) {
+			if (customAttribute.getName().equalsIgnoreCase("gluuStatus")) {
 				customAttribute.setValue(gluuStatus.getValue());
 			}
-			
+
 		}
 
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
@@ -194,7 +190,7 @@ public class UpdatePersonAction implements Serializable {
 			try {
 				if (externalUpdateUserService.isEnabled()) {
 					externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
-                }
+				}
 				personService.updatePerson(this.person);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update person {}", ex, inum);
@@ -228,7 +224,7 @@ public class UpdatePersonAction implements Serializable {
 			try {
 				if (externalUpdateUserService.isEnabled()) {
 					externalUpdateUserService.executeExternalAddUserMethods(this.person);
-                }
+				}
 				personService.addPerson(this.person);
 			} catch (Exception ex) {
 				log.error("Failed to add new person {}", ex, this.person.getInum());
@@ -246,9 +242,10 @@ public class UpdatePersonAction implements Serializable {
 		personService.addCustomObjectClass(this.person);
 
 		// Update objectClasses
-		String[] allObjectClasses = ArrayHelper.arrayMerge(appConfiguration.getPersonObjectClassTypes(), this.person.getCustomObjectClasses());
+		String[] allObjectClasses = ArrayHelper.arrayMerge(appConfiguration.getPersonObjectClassTypes(),
+				this.person.getCustomObjectClasses());
 		String[] resultObjectClasses = new HashSet<String>(Arrays.asList(allObjectClasses)).toArray(new String[0]);
-		
+
 		this.person.setCustomObjectClasses(resultObjectClasses);
 	}
 
@@ -258,7 +255,6 @@ public class UpdatePersonAction implements Serializable {
 	 * @return String describing success of the operation
 	 * @throws Exception
 	 */
-	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public String delete() {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -269,7 +265,7 @@ public class UpdatePersonAction implements Serializable {
 			try {
 				if (externalUpdateUserService.isEnabled()) {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
-                }
+				}
 				memberService.removePerson(this.person);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
@@ -283,8 +279,8 @@ public class UpdatePersonAction implements Serializable {
 	private void initAttributes() {
 		if (externalUpdateUserService.isEnabled()) {
 			externalUpdateUserService.executeExternalNewUserMethods(this.person);
-        }
-		
+		}
+
 		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
 
@@ -295,26 +291,26 @@ public class UpdatePersonAction implements Serializable {
 			this.person.setCustomAttributes(customAttributes);
 		}
 
-		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, appConfiguration
-				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
+		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, appConfiguration.getPersonObjectClassTypes(),
+				appConfiguration.getPersonObjectClassDisplayNames());
 
 		if (newPerson) {
 			customAttributeAction.addCustomAttributes(personService.getMandatoryAtributes());
 		}
 	}
-	
-	public String getGroupName(String dn){
-		if(dn != null){
+
+	public String getGroupName(String dn) {
+		if (dn != null) {
 			GluuGroup group = groupService.getGroupByDn(dn);
-			if( group != null ){
+			if (group != null) {
 				String groupName = group.getDisplayName();
-				if(groupName != null && ! groupName.isEmpty()){
+				if (groupName != null && !groupName.isEmpty()) {
 					return groupName;
 				}
 			}
 		}
-		return "invalid group name"; 
-		
+		return "invalid group name";
+
 	}
 
 	/**
@@ -352,24 +348,24 @@ public class UpdatePersonAction implements Serializable {
 	public boolean isUpdate() {
 		return update;
 	}
-	
+
 	public GluuStatus[] getActiveInactiveStatuses() {
 		return new GluuStatus[] { GluuStatus.ACTIVE, GluuStatus.INACTIVE };
 	}
-	
-	public void validateConfirmPassword(FacesContext context, UIComponent comp,
-			Object value){
+
+	public void validateConfirmPassword(FacesContext context, UIComponent comp, Object value) {
 		if (comp.getClientId().endsWith("custpasswordId")) {
 			this.password = (String) value;
 		} else if (comp.getClientId().endsWith("custconfirmpasswordId")) {
 			this.confirmPassword = (String) value;
 		}
 
-		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {	
+		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {
 			((UIInput) comp).setValid(false);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Password and Confirm Password should be same!", "Password and Confirm Password should be same!");
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Password and Confirm Password should be same!",
+					"Password and Confirm Password should be same!");
 			context.addMessage(comp.getClientId(context), message);
-}		
+		}
 	}
 
 }

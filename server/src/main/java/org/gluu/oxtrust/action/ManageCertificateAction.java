@@ -73,7 +73,7 @@ import org.xdi.util.io.ResponseHelper;
  */
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ManageCertificateAction implements Serializable {
 	public static final String BEGIN_CERT_REQ = "-----BEGIN CERTIFICATE REQUEST-----";
 	public static final String END_CERT_REQ = "-----END CERTIFICATE REQUEST-----";
@@ -82,7 +82,7 @@ public class ManageCertificateAction implements Serializable {
 
 	@Inject
 	private Logger log;
-	
+
 	@Inject
 	private OrganizationService organizationService;
 
@@ -100,7 +100,7 @@ public class ManageCertificateAction implements Serializable {
 
 	@Inject
 	private ApplianceService applianceService;
-	
+
 	@SuppressWarnings("seam-unresolved-variable")
 	@Inject
 	protected GluuCustomPerson currentPerson;
@@ -120,7 +120,6 @@ public class ManageCertificateAction implements Serializable {
 	private boolean initialized;
 	private boolean wereAnyChanges;
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String init() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -165,7 +164,7 @@ public class ManageCertificateAction implements Serializable {
 	 * Fills issuer and subject maps with data about currently selected
 	 * certificate
 	 */
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
+
 	public void getCert(String fileName) {
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
 		loadCert(cert);
@@ -175,13 +174,14 @@ public class ManageCertificateAction implements Serializable {
 	 * Fills issuer and subject maps with data about currently selected
 	 * certificate
 	 */
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
+
 	public void getCert(TrustStoreCertificate trustStoreCertificate) {
 		this.issuer = new HashMap<String, String>();
 		this.subject = new HashMap<String, String>();
 
 		if (trustStoreCertificate != null) {
-			X509Certificate cert = sslService.getPEMCertificate(new ByteArrayInputStream(trustStoreCertificate.getCertificate().getBytes()));
+			X509Certificate cert = sslService
+					.getPEMCertificate(new ByteArrayInputStream(trustStoreCertificate.getCertificate().getBytes()));
 			loadCert(cert);
 		}
 	}
@@ -205,7 +205,6 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String generateCSR(String fileName) throws IOException {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
@@ -240,7 +239,6 @@ public class ManageCertificateAction implements Serializable {
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public boolean compare(String fileName) {
 		KeyPair pair = getKeyPair(fileName);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
@@ -268,13 +266,13 @@ public class ManageCertificateAction implements Serializable {
 		if (keyFile.isFile()) {
 			try {
 				fileReader = new FileReader(keyFile);
-				r = new PEMParser(fileReader /*, new PasswordFinder() {
-					public char[] getPassword() {
-						// Since keys are stored without a password this
-						// function should not be called.
-						return null;
-					}
-				}*/);
+				r = new PEMParser(
+						fileReader /*
+									 * , new PasswordFinder() { public char[]
+									 * getPassword() { // Since keys are stored
+									 * without a password this // function
+									 * should not be called. return null; } }
+									 */);
 
 				Object keys = r.readObject();
 				if (keys == null) {
@@ -327,7 +325,6 @@ public class ManageCertificateAction implements Serializable {
 		return pair;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public boolean certPresent(String filename) {
 		KeyPair pair = getKeyPair(filename);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + filename);
@@ -410,7 +407,6 @@ public class ManageCertificateAction implements Serializable {
 		return true;
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public String update() {
 		if (!isCertsManagePossible()) {
 			return OxTrustConstants.RESULT_FAILURE;
@@ -438,7 +434,8 @@ public class ManageCertificateAction implements Serializable {
 				currTrustStoreCertificates = new ArrayList<TrustStoreCertificate>(0);
 			}
 
-			if (!trustStoreConfiguration.equals(currTrustStoreConfiguration) || !trustStoreCertificates.equals(currTrustStoreCertificates)) {
+			if (!trustStoreConfiguration.equals(currTrustStoreConfiguration)
+					|| !trustStoreCertificates.equals(currTrustStoreCertificates)) {
 				this.wereAnyChanges = true;
 			}
 
@@ -489,9 +486,8 @@ public class ManageCertificateAction implements Serializable {
 						this.wereAnyChanges = true;
 					}
 				} catch (IOException e) {
-					facesMessages
-							.add(FacesMessage.SEVERITY_FATAL,
-									"Certificate update failed. Certificates may have been corrupted. Please contact a Gluu administrator for help.");
+					facesMessages.add(FacesMessage.SEVERITY_FATAL,
+							"Certificate update failed. Certificates may have been corrupted. Please contact a Gluu administrator for help.");
 					log.error("Error occured on certificates update:", e);
 				}
 			}
@@ -522,11 +518,9 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void cancel() {
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void certUpload(FileUploadEvent event) {
 		if (this.trustStoreCertificateUploadMarker == null) {
 			updateCert(event.getUploadedFile());
@@ -570,7 +564,6 @@ public class ManageCertificateAction implements Serializable {
 		}
 	}
 
-	@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 	public void keyUpload(FileUploadEvent event) {
 		updateKey(event.getUploadedFile());
 	}

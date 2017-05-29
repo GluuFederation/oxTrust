@@ -27,9 +27,9 @@ import org.xdi.util.Util;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@Named("searchGroupAction")
+@Named
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('group', 'access')}")
 public class SearchGroupAction implements Serializable {
 
 	private static final long serialVersionUID = -5270460481895022468L;
@@ -48,12 +48,10 @@ public class SearchGroupAction implements Serializable {
 	@Inject
 	private IGroupService groupService;
 
-	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String start() {
 		return search();
 	}
 
-	@Secure("#{permissionService.hasPermission('group', 'access')}")
 	public String search() {
 		if ((this.searchPattern != null) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;

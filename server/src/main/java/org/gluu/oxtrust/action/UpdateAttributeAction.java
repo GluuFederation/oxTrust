@@ -38,7 +38,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("updateAttributeAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 public class UpdateAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -2932167044333943687L;
@@ -57,7 +57,7 @@ public class UpdateAttributeAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
-	
+
 	@Inject
 	private AppConfiguration appConfiguration;
 
@@ -65,13 +65,12 @@ public class UpdateAttributeAction implements Serializable {
 	private GluuAttribute attribute;
 	private boolean update;
 	private boolean showAttributeDeleteConfirmation;
-	
+
 	private boolean validationToggle;
 	private boolean tooltipToggle;
 
 	private boolean canEdit;
-	
-	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
+
 	public String add() {
 		if (this.attribute != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -83,7 +82,7 @@ public class UpdateAttributeAction implements Serializable {
 
 		this.attribute = new GluuAttribute();
 		attribute.setAttributeValidation(new AttributeValidation());
-		
+
 		this.attribute.setStatus(GluuStatus.ACTIVE);
 		this.attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
 
@@ -92,7 +91,6 @@ public class UpdateAttributeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String update() {
 		if (this.attribute != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -130,8 +128,8 @@ public class UpdateAttributeAction implements Serializable {
 	private void initAttribute() {
 		if (StringHelper.isEmpty(this.attribute.getSaml1Uri())) {
 			String namespace;
-			if (attribute.isCustom() || StringHelper.isEmpty(attribute.getUrn())
-					&& attribute.getUrn().startsWith("urn:gluu:dir:attribute-def:")) {
+			if (attribute.isCustom()
+					|| StringHelper.isEmpty(attribute.getUrn()) && attribute.getUrn().startsWith("urn:gluu:dir:attribute-def:")) {
 				namespace = "gluu";
 			} else {
 				namespace = "mace";
@@ -148,8 +146,8 @@ public class UpdateAttributeAction implements Serializable {
 		} else {
 			this.validationToggle = true;
 		}
-		
-		if(attribute.getGluuTooltip() != null){
+
+		if (attribute.getGluuTooltip() != null) {
 			this.tooltipToggle = true;
 		}
 	}
@@ -158,12 +156,9 @@ public class UpdateAttributeAction implements Serializable {
 		return this.attribute.isAdminCanEdit();
 	}
 
-	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public void cancel() {
 	}
 
-
-	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String save() {
 		if (!tooltipToggle) {
 			attribute.setGluuTooltip(null);
@@ -176,7 +171,7 @@ public class UpdateAttributeAction implements Serializable {
 		if ((attribute.getViewType() != null) && (attribute.getViewType().length == 0)) {
 			attribute.setViewType(null);
 		}
-		
+
 		String attributeName = this.attribute.getName();
 		if (this.update) {
 			try {
@@ -260,10 +255,11 @@ public class UpdateAttributeAction implements Serializable {
 		// Check if attribute defined in gluuPerson or in custom object class
 		boolean containsAttributeInGluuObjectClasses = containsAttributeInGluuObjectClasses(attributeName);
 		if (!containsAttributeInGluuObjectClasses) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Attribute type '{}' definition not belong to list of allowed object classes", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Attribute type '{}' definition not belong to list of allowed object classes",
+					attributeName);
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -271,8 +267,8 @@ public class UpdateAttributeAction implements Serializable {
 		String[] objectClasses = ArrayHelper.arrayMerge(new String[] { "gluuPerson" }, appConfiguration.getPersonObjectClassTypes());
 
 		SchemaEntry schemaEntry = schemaService.getSchema();
-		
-		for (String objectClass : objectClasses) { 
+
+		for (String objectClass : objectClasses) {
 			Set<String> attributeNames = schemaService.getObjectClassesAttributes(schemaEntry, new String[] { objectClass });
 			String atributeNameToSearch = StringHelper.toLowerCase(attributeName);
 			boolean contains = attributeNames.contains(atributeNameToSearch);
@@ -297,18 +293,15 @@ public class UpdateAttributeAction implements Serializable {
 		return result;
 	}
 
-	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String delete() {
 		showAttributeDeleteConfirmation = true;
 		return deleteAndAcceptUpdate();
 	}
 
-	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public void cancelDeleteAndAcceptUpdate() {
 		showAttributeDeleteConfirmation = false;
 	}
 
-	@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 	public String deleteAndAcceptUpdate() {
 		if (update && showAttributeDeleteConfirmation && this.attribute.isCustom()) {
 			showAttributeDeleteConfirmation = false;
@@ -350,6 +343,7 @@ public class UpdateAttributeAction implements Serializable {
 	public String getInum() {
 		return inum;
 	}
+
 	public void setInum(String inum) {
 		this.inum = inum;
 	}
@@ -386,32 +380,35 @@ public class UpdateAttributeAction implements Serializable {
 		this.tooltipToggle = tooltipToggle;
 	}
 
-    /**
-     * @param update the update to set
-     */
-    public void setUpdate(boolean update) {
-        this.update = update;
-    }
+	/**
+	 * @param update
+	 *            the update to set
+	 */
+	public void setUpdate(boolean update) {
+		this.update = update;
+	}
 
-    /**
-     * @param showAttributeDeleteConfirmation the showAttributeDeleteConfirmation to set
-     */
-    public void setShowAttributeDeleteConfirmation(boolean showAttributeDeleteConfirmation) {
-        this.showAttributeDeleteConfirmation = showAttributeDeleteConfirmation;
-    }
+	/**
+	 * @param showAttributeDeleteConfirmation
+	 *            the showAttributeDeleteConfirmation to set
+	 */
+	public void setShowAttributeDeleteConfirmation(boolean showAttributeDeleteConfirmation) {
+		this.showAttributeDeleteConfirmation = showAttributeDeleteConfirmation;
+	}
 
-    /**
-     * @return the canEdit
-     */
-    public boolean isCanEdit() {
-        return canEdit;
-    }
+	/**
+	 * @return the canEdit
+	 */
+	public boolean isCanEdit() {
+		return canEdit;
+	}
 
-    /**
-     * @param canEdit the canEdit to set
-     */
-    public void setCanEdit(boolean canEdit) {
-        this.canEdit = canEdit;
-    }
+	/**
+	 * @param canEdit
+	 *            the canEdit to set
+	 */
+	public void setCanEdit(boolean canEdit) {
+		this.canEdit = canEdit;
+	}
 
 }

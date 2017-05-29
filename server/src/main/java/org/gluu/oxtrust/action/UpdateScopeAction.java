@@ -87,7 +87,6 @@ public class UpdateScopeAction implements Serializable {
 	private List<SelectableEntity<CustomScript>> availableDynamicScripts;
 
 	
-	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String add() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -115,7 +114,6 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String update() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -154,11 +152,9 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public void cancel() {
 	}
 
-	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String save() throws Exception {
 		// List<DisplayNameEntry> oldClaims = null;
 		// try {
@@ -225,7 +221,6 @@ public class UpdateScopeAction implements Serializable {
 		this.scope.setOxAuthClaims(resultClaims);
 	}
 
-	@Secure("#{permissionService.hasPermission('scope', 'access')}")
 	public String delete() throws Exception {
 		if (update) {
 			// Remove scope

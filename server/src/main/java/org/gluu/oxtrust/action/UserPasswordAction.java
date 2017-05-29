@@ -24,7 +24,7 @@ import org.xdi.service.security.Secure;
  */
 @Named("userPasswordAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('profile', 'access')}")
 @Deprecated
 public class UserPasswordAction implements Serializable {
 
@@ -53,7 +53,6 @@ public class UserPasswordAction implements Serializable {
 		return result;
 	}
 
-	@Secure("#{permissionService.hasPermission('profile', 'access')}")
 	public String update(boolean verifyPassword) throws Exception {
 		String result;
 		boolean verifyOldPass;

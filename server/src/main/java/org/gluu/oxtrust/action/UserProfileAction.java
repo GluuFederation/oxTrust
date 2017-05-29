@@ -40,7 +40,7 @@ import org.xdi.service.security.Secure;
  */
 @Named("userProfileAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('profile', 'access')}")
 public class UserProfileAction implements Serializable {
 
 	private static final long serialVersionUID = -8238855019631152823L;
@@ -101,7 +101,6 @@ public class UserProfileAction implements Serializable {
 
 	private static final String photoAttributes[][] = new String[][] { { "gluuPerson", "photo1" }, };
 
-	@Secure("#{permissionService.hasPermission('profile', 'access')}")
 	public String show() {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -128,7 +127,6 @@ public class UserProfileAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	@Secure("#{permissionService.hasPermission('profile', 'access')}")
 	public String update() {
 		try {
 			if (this.imapData != null) {
@@ -161,7 +159,6 @@ public class UserProfileAction implements Serializable {
 		customAttributeAction.removeCustomAttribute(inum);
 	}
 
-//	@Secure("#{permissionService.hasPermission('person', 'access')}")
 	public void cancel() {
 	}
 

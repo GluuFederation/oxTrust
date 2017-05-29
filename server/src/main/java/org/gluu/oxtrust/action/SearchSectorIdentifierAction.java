@@ -23,9 +23,9 @@ import org.xdi.util.Util;
  * @author Javier Rojas Blum
  * @version January 15, 2016
  */
-@Named("searchSectorIdentifierAction")
+@Named
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
 public class SearchSectorIdentifierAction implements Serializable {
 
     private static final long serialVersionUID = -5270460481895022455L;
@@ -47,12 +47,10 @@ public class SearchSectorIdentifierAction implements Serializable {
     @Inject
     private SectorIdentifierService sectorIdentifierService;
 
-    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public String start() {
         return search();
     }
 
-    @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
     public String search() {
         if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
             return OxTrustConstants.RESULT_SUCCESS;

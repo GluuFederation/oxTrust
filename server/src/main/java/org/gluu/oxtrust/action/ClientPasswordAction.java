@@ -21,7 +21,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @RequestScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('client', 'access')}")
 public class ClientPasswordAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;
@@ -52,7 +52,6 @@ public class ClientPasswordAction implements Serializable {
 		return result;
 	}
 
-	@Secure("#{permissionService.hasPermission('client', 'access')}")
 	public String update() {
 		OxAuthClient client = clientService.getClientByDn(updateClientAction.getClient().getDn());
 		try {
