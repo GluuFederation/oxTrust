@@ -35,7 +35,7 @@ public class MenuAction implements Serializable {
 	public String endConversation(final String viewId) {
 		conversationService.endConversation();
 		
-		facesService.redirect(viewId);
+		facesService.redirect(viewId + "?faces-redirect=true");
 		
 		return viewId;
 	}

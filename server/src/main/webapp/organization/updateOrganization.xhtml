@@ -2,8 +2,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
     <f:metadata>
-        <f:viewAction action="#{updateOrganizationAction.modify}" onPostback="false"/>
+        <f:viewAction action="#{conversationService.initConversation}" />
+        <f:viewAction action="#{updateOrganizationAction.modify}" onPostback="false" />
     </f:metadata>
 
     <ui:define name="head">
