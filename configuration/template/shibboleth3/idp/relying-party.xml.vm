@@ -66,12 +66,12 @@
     </bean>
 
     <util:list id="shibboleth.RelyingPartyOverrides">
-
+<!-- TrustRelationships -->
 #foreach( $trustRelationship in $trustParams.trusts )
     
     <!-- TrustRelationship -->
         #set ($profileConfigMap = $trustRelationship.profileConfigurations)
-        #if(!$profileConfigMap.isEmpty())
+        <!--#if(!$profileConfigMap.isEmpty())-->
 
         #set($entityId = $trustParams.trustEntityIds.get($trustRelationship.inum).get(0))
         #set($relyingPartyId = $StringHelper.removePunctuation($trustRelationship.inum))
@@ -289,7 +289,7 @@
                 </list>
             </property>
         </bean>
-        #end
+        <!-- #end -->
 #end
 
     </util:list>
