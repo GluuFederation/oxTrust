@@ -3,15 +3,5 @@
   <rewrite pattern="/authentication/finishlogout" xmlns="http://jboss.org/schema/seam/pages"/>
   <navigation-rule>
     <from-view-id>/finishlogout.xhtml</from-view-id>
-    <navigation-case>
-      <from-action>#{authenticator.postLogout}</from-action>
-      <from-outcome>success</from-outcome>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{authenticator.postLogout}</from-action>
-      <from-outcome>failure</from-outcome>
-      <redirect/>
-    </navigation-case>
   </navigation-rule>
 </faces-config>

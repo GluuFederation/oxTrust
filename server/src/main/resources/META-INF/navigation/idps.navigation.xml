@@ -5,20 +5,8 @@
     <from-view-id>/asimba/idps.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{updateAsimbaIDPAction.add}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/asimba/idps.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateAsimbaIDPAction.add}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateAsimbaIDPAction.search}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/asimba/idps.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
     <navigation-case>

@@ -5,12 +5,6 @@
     <from-view-id>/trustmanager/addTrustRelationship.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{updateTrustRelationshipAction.add}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/trustmanager/addTrustRelationship.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateTrustRelationshipAction.add}</from-action>
       <from-outcome>no_permissions</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
@@ -29,18 +23,6 @@
     </navigation-case>
     <navigation-case>
       <from-action>#{updateTrustRelationshipAction.save}</from-action>
-      <from-outcome>unable_download_metadata</from-outcome>
-      <to-view-id>/trustmanager/addTrustRelationship.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateTrustRelationshipAction.save}</from-action>
-      <from-outcome>invalid_entity_id</from-outcome>
-      <to-view-id>/trustmanager/addTrustRelationship.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateTrustRelationshipAction.save}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/trustmanager/trustRelationships.xhtml</to-view-id>
       <redirect/>
@@ -48,16 +30,6 @@
     <navigation-case>
       <from-action>#{updateTrustRelationshipAction.cancel}</from-action>
       <to-view-id>/trustmanager/trustRelationships.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{metadataFiltersAction.saveFilters}</from-action>
-      <from-outcome>success</from-outcome>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{relyingPartyAction.saveFilters}</from-action>
-      <from-outcome>success</from-outcome>
       <redirect/>
     </navigation-case>
   </navigation-rule>

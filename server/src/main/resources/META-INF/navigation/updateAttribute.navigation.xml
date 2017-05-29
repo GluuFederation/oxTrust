@@ -5,12 +5,6 @@
     <from-view-id>/attribute/updateAttribute.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{updateAttributeAction.update}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/attribute/updateAttribute.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateAttributeAction.update}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/attribute/attributeInventory.xhtml</to-view-id>
       <redirect/>
@@ -25,12 +19,6 @@
       <from-action>#{updateAttributeAction.save}</from-action>
       <from-outcome>no_permissions</from-outcome>
       <to-view-id>/attribute/attributeInventory.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateAttributeAction.save}</from-action>
-      <from-outcome>validation_error</from-outcome>
-      <to-view-id>/attribute/updateAttribute.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
     <navigation-case>

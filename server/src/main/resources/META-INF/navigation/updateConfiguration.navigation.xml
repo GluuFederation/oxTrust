@@ -5,30 +5,15 @@
     <from-view-id>/configuration/updateConfiguration.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{jsonConfigAction.init}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/configuration/updateConfiguration.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{jsonConfigAction.init}</from-action>
       <from-outcome>no_permissions</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
     <navigation-case>
       <from-action>#{jsonConfigAction.saveOxTrustConfigJson}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/configuration/updateConfiguration.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{jsonConfigAction.saveOxTrustConfigJson}</from-action>
       <from-outcome>no_permissions</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{jsonConfigAction.saveOxAuthDynamicConfigJson}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/configuration/updateConfiguration.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-action>#{jsonConfigAction.saveOxAuthDynamicConfigJson}</from-action>
