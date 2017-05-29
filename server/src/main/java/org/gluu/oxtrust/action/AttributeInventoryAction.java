@@ -130,7 +130,6 @@ public class AttributeInventoryAction implements Serializable {
 	public void setActiveAttributeList(List<GluuAttribute> activeAttributeList) {
 		this.activeAttributeList = activeAttributeList;
 	}
-	
 
     public void submit() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();

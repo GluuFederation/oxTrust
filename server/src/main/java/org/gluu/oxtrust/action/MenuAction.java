@@ -9,10 +9,10 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 
 import javax.ejb.Stateless;
-import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.jsf2.service.FacesService;
 
 /**
@@ -27,16 +27,13 @@ public class MenuAction implements Serializable {
 	private static final long serialVersionUID = -172441515451149801L;
 	
 	@Inject
-	private Conversation conversation;
+	private ConversationService conversationService;
 
 	@Inject
 	private FacesService facesService;
 
 	public String endConversation(final String viewId) {
-		// TODO: CDI Review
-		if (!conversation.isTransient()) {
-			conversation.end();
-		}
+		conversationService.endConversation();
 		
 		facesService.redirect(viewId);
 		
