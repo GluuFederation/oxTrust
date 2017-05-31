@@ -1,13 +1,10 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions">
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+>
 
     <style type="text/css">
         .paddning4 {
@@ -31,10 +28,11 @@
     </style>
 
     <h:form id="cacheRefreshForm">
-        <s:validateAll/>
+        <f:validateBean>
         <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
         </h:panelGrid>
 
         <ui:insert name="controlButttons"/>
+        </f:validateBean>
     </h:form>
 </ui:composition>

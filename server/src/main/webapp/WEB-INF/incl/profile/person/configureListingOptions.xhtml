@@ -2,7 +2,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:f="http://java.sun.com/jsf/core">
@@ -20,7 +19,8 @@
                 <h:panelGrid columns="2">
                     <a4j:ajax event="click" listener="#{userProfileAction.toggle('photo1')}" render="configureListingOptionsForm" execute="@this" limitRender="true" />
                     <h:outputText value="#{msg['profile.photo']}" styleClass="#{userProfileAction.released('photo1')? 'name' : 'striked name'}" />
-                    <s:graphicImage value="#{userProfileAction.getPhotoThumbData()}" width="50px" rendered="#{userProfileAction.released('photo1')}" />
+                    <h:graphicImage value="#{userProfileAction.getPhotoThumbData()}" width="50px"
+                                    rendered="#{userProfileAction.released('photo1')}"/>
                 </h:panelGrid>
                 <h:panelGrid columns="2">
                     <h:outputText value="#{msg['profile.name']} " styleClass="name" />

@@ -42,7 +42,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{msg['whitePages.photo']}"/>
                                 </f:facet>
-                                <s:graphicImage value="#{whitePagesAction.getPhotoThumbData(entry)}" width="45px"/>
+                                <h:graphicImage value="#{whitePagesAction.getPhotoThumbData(entry)}" width="45px"/>
                             </rich:column>
                             <rich:column filterBy="#{entry.getAttribute('cn')}" filterEvent="onkeyup" id="col_2"
                                          label="#{msg['whitePages.name']}" sortBy="#{entry.getAttribute('cn')}"
@@ -84,7 +84,7 @@
                                         <h:outputText value="#{sel.getAttribute('cn')}"/>
                                     </f:facet>
 
-                                    <s:graphicImage value="#{whitePagesAction.getPhotoThumbData(sel)}" width="275px"/>
+                                    <h:graphicImage value="#{whitePagesAction.getPhotoThumbData(sel)}" width="275px"/>
                                     <h:panelGrid columns="1">
                                         <h:panelGroup>
                                             <h:outputText styleClass="name" value="#{msg['whitePages.name']} "/>

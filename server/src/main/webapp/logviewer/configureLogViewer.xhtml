@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html" xmlns:ox="http://java.sun.com/jsf/composite/ox"
-                xmlns:s="http://jboss.org/schema/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
@@ -33,10 +33,10 @@
 
             <div id="formArea">
                 <h:form id="logViewerForm">
+                    <f:validateBean>
                     <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
                     <input name="cid" type="hidden" value="#{conversation.id}"/>
 
-                    <s:validateAll/>
 
                     <div class="row">
 
@@ -71,6 +71,7 @@
                             </div>
                         </div>
                     </div>
+                    </f:validateBean>
                 </h:form>
             </div>
         </section>

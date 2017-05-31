@@ -15,9 +15,11 @@
             <a4j:repeat value="#{_properties}" var="_property">
                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                     <h:panelGroup>
-                        <h:inputText value="#{_property.value1}" size="23" required="#{_required and empty param['sv']}"/>
+                        <h:inputText id="fInput" value="#{_property.value1}" size="23" required="#{_required and empty param['sv']}"/>
+                        <h:message for="fInput" errorClass="invalid"/>
                         &#160;&#160;
-                        <h:inputText value="#{_property.value2}" size="23" required="#{_required and empty param['sv']}"/>
+                        <h:inputText id="sInput" value="#{_property.value2}" size="23" required="#{_required and empty param['sv']}"/>
+                        <h:message for="sInput" errorClass="invalid"/>
                         &#160;&#160;
                         <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors"/>
                         <a4j:commandLink action="#{_propertiesAction.removeItemFromSimpleDoubleProperties(_properties, _property)}" limitRender="true" render="#{_id}DoubleList" eventsQueue="#{_queue}">
@@ -25,7 +27,6 @@
                               <f:param name="sv" value="1"/>
                         </a4j:commandLink>
                     </h:panelGroup>
-                    <s:message styleClass="errors"/>
                 </h:panelGrid>
             </a4j:repeat>
 

@@ -30,10 +30,11 @@
                         <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                             <h:panelGroup >
                             <div >
-                                <h:inputText style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}" />
-                                
-                                <h:inputText  styleClass="col-md-4 form-control" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}"  />
-                               
+                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}" />
+                                <h:message for="fInput" errorClass="invalid"/>
+
+                                <h:inputText id="sInput" styleClass="col-md-4 form-control" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}"  />
+                                <h:message for="sInput" errorClass="invalid"/>
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
     
@@ -43,7 +44,6 @@
                                 </a4j:commandLink>
                                 </div>
                             </h:panelGroup>
-                            <s:message styleClass="errors" />
                         </h:panelGrid>
                     </a4j:repeat>
                     

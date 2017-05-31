@@ -1,16 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://java.sun.com/jsf/composite/richext"
-    xmlns:ox="http://java.sun.com/jsf/composite/ox"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions"
-    xmlns:c="http://java.sun.com/jsp/jstl/core">
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:ox="http://java.sun.com/jsf/composite/ox"
+>
 
     <h:outputStylesheet>
         .paddning4 {
@@ -31,7 +28,7 @@
             text-align: left;
             vertical-align: top;
         }
-        
+
         .col-sm-11 {
     		width: 80.66666667% !important;
 		}
@@ -50,6 +47,7 @@
 	   setPasswordMethod="#{configureCacheRefreshAction.updateBindPassword}"/>
 
     <h:form id="cacheRefreshForm">
+        <f:validateBean>
     <input type='hidden' name='cid' value='#{conversation.id}' />
     <div class="row">
             <div class="col-xs-12">
@@ -60,13 +58,12 @@
                   <li><a href="#ldap-servers" data-toggle="tab">#{msg['organization.sourceBackend']}</a></li>
                   <li><a href="#Inum" data-toggle="tab">#{msg['organization.inumLDAPServer']}</a></li>
                 </ul>
-        <s:validateAll />
          <div class="tab-content">
-                 
+
                   <div class="tab-pane active" id="cache-refresh">
-                    
+
                       <div style="display: inline-block;width: 75% !important;">
-                      
+
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
             <ox:decorate label="#{msg['organization.lastRun']}">
                 <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
@@ -115,7 +112,7 @@
             <ox:decorate label="#{msg['organization.snapshotCount']}">
                 <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotMaxCount}" size="5" required="true" />
             </ox:decorate>
-            
+
             <ox:decorate label="#{msg['organization.keepExternalPersons']}">
 
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"/>
@@ -142,16 +139,20 @@
 			</ox:decorate>
 
             </h:panelGroup>
-            
+
              <h:panelGroup id="vdsTogglePanelGroup">
                     <ox:ldapConfig ldapConfig="#{_configureCacheRefreshAction.targetConfig}" ldapConfigAction="#{configureCacheRefreshAction}"
-                        propertiesAction="#{_configureCacheRefreshAction}" displayBaseDn="false" displayAnonymousBind="false" displayEnable="false"
-                        displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'vds'}" /> 
+                                   propertiesAction="#{_configureCacheRefreshAction}" displayBaseDn="false"
+                                   displayAnonymousBind="false" displayEnable="false"
+                                   displayRemoveButton="false"
+                                   changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel"
+                                   rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'vds'}"/>
             </h:panelGroup>
-            
-</div></div>
-           
-               <div class="tab-pane" id="key-attributes">
+
+                      </div>
+                  </div>
+
+             <div class="tab-pane" id="key-attributes">
                 <div style="display: inline-block;width: 90% !important;">
                 <h:panelGroup >
                     <ox:simplePropertiesList label="#{msg['organization.keyAttribute']}" labelAdd="key attribute" maxItems="3" properties="#{_configureCacheRefreshAction.keyAttributes}"
@@ -166,63 +167,70 @@
                     <ox:decorate id="customLdapFilter" label="#{msg['organization.customLDAPFilter']}">
                         <h:panelGroup>
                             <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.customLdapFilter}" size="48" />
-                          
+
                         </h:panelGroup>
                     </ox:decorate>
                 </h:panelGroup></div></div>
-            
-            <div class="tab-pane" id="ldap-servers">              
-			
-				<div class="box box-primary" style="width:1021px !important;">
+
+             <div class="tab-pane" id="ldap-servers">
+
+                 <div class="box box-primary" style="width:1021px !important;">
 				<div class="box-header">
-				
-				</div>
+
+                </div>
                 <h:panelGroup>
                     <rich:dataGrid id="sourceConfigsId" value="#{_configureCacheRefreshAction.sourceConfigs}" var="_ldapConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
                        <div style="display: inline-block;width: 75% !important;">
                         <ox:ldapConfig ldapConfig="#{_ldapConfig}" ldapConfigList="#{_configureCacheRefreshAction.sourceConfigs}"
-                            ldapConfigAction="#{configureCacheRefreshAction}" propertiesAction="#{_configureCacheRefreshAction}"  displayEnable="false"
-                            renderAfterRomoval="sourceConfigsId" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" /> 
-                  		</div> 
+                                       ldapConfigAction="#{configureCacheRefreshAction}"
+                                       propertiesAction="#{_configureCacheRefreshAction}" displayEnable="false"
+                                       renderAfterRomoval="sourceConfigsId"
+                                       changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel"/>
+                       </div>
                     </rich:dataGrid>
 
                     <h:panelGroup layout="block" styleClass="addConfig">
                         <a4j:commandLink styleClass="btn btn-link" value="#{msg['organization.addSourceLDAPServer']}" action="#{_configureCacheRefreshAction.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
                     </h:panelGroup>
                 </h:panelGroup></div></div>
-            
- <div class="tab-pane" id="Inum">
+
+             <div class="tab-pane" id="Inum">
              <div style="display: inline-block;width: 75% !important;">
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-			
-			<ox:decorate label="#{msg['organization.defaultInumServer']}">
+
+            <ox:decorate label="#{msg['organization.defaultInumServer']}">
                 <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}">
                     <a4j:ajax event="click" render="inumServerId" execute="@this" limitRender="true" />
                 </h:selectBooleanCheckbox>
             </ox:decorate>
 
                 <h:panelGroup id="inumServerId">
-           
-                <ox:ldapConfig ldapConfig="#{_configureCacheRefreshAction.inumConfig}" ldapConfigAction="#{configureCacheRefreshAction}"
-                    propertiesAction="#{_configureCacheRefreshAction}" maxBaseDnItems="1" displayAnonymousBind="false" displayEnable="false"
-                    displayRemoveButton="false" changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel"
-                    rendered="#{not _configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}"/> 
+
+                    <ox:ldapConfig ldapConfig="#{_configureCacheRefreshAction.inumConfig}"
+                                   ldapConfigAction="#{configureCacheRefreshAction}"
+                                   propertiesAction="#{_configureCacheRefreshAction}" maxBaseDnItems="1"
+                                   displayAnonymousBind="false" displayEnable="false"
+                                   displayRemoveButton="false"
+                                   changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel"
+                                   rendered="#{not _configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}"/>
           </h:panelGroup></h:panelGroup></div></div>
 
-           
-       
-</div></div>
+
+         </div>
+              </div>
  <div class="box-footer">
-					
-							<rich:notifyMessages stayTime="2000" nonblocking="true" rendered="#{showGlobalMessages == 'false'}"/>
-							
-							 <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.update']}" action="#{configureCacheRefreshAction.update}" />
+
+     <rich:notifyMessages stayTime="2000" nonblocking="true" rendered="#{showGlobalMessages == 'false'}"/>
+
+     <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.update']}"
+                      action="#{configureCacheRefreshAction.update}"/>
                         <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.cancel']}" action="#{configureCacheRefreshAction.cancel}" immediate="true" style="margin-left:5px" />
                         <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.update']} &amp; #{msg['organization.validateScript']}" action="#{configureCacheRefreshAction.validateInterceptorScript}" style="margin-left:5px" />
-						
-					</div>
+
+ </div>
 					</div></div>
         <ui:insert name="controlButttons" />
+        </f:validateBean>
     </h:form>
 
     <ui:include src="/WEB-INF/incl/organization/cacheRefreshInterceptorValidationDialog.xhtml" />
