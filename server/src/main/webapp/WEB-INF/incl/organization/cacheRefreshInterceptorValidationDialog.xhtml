@@ -14,7 +14,7 @@
         <f:facet name="controls">
             <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('cacheRefreshInterceptorValidationModelPanel')}.hide(); return false;" />
         </f:facet>
-        <h:outputText value="#{_configureCacheRefreshAction.interceptorValidationMessage}" converter="newLineToBRConverter" escape="false"/>
+        <h:outputText value="#{_configureCacheRefreshAction.interceptorValidationMessage}" converter="org.gluu.jsf2.converter.newLineToBRConverter" escape="false"/>
     </rich:popupPanel>
 
     #{_configureCacheRefreshAction.hideShowInterceptorValidationDialog()}
