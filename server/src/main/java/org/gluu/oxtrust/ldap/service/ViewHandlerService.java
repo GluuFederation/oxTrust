@@ -27,12 +27,6 @@ import javax.inject.Named;
 public class ViewHandlerService {
 
 	@Inject
-	private FacesContext facesContext;
-
-	@Inject
-	private ExternalContext externalContext;
-
-	@Inject
 	private ViewHandler viewHandler;
 
 	public String getBookmarkableURL(String viewId, HashMap<String, List<String>> pageParams) {

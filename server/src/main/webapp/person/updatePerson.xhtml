@@ -23,15 +23,15 @@
                                 onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
                                 styleClass="btn btn-primary" value="#{msg['person.changePassword']}"/>
                         <h:commandButton action="#{updatePersonAction.save}"
-                                         rendered="#{organizationService.instance().allowPersonModification}"
+                                         rendered="#{organizationService.allowPersonModification}"
                                          styleClass="btn btn-primary" value="#{msg['person.update']}"/>
                         <a4j:commandButton eventsQueue="personQueue"
                                            onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-                                           rendered="#{not _new and organizationService.instance().allowPersonModification}"
+                                           rendered="#{not _new and organizationService.allowPersonModification}"
                                            styleClass="btn btn-primary" value="#{msg['person.delete']}"/>
                         <h:commandButton action="#{updatePersonAction.cancel}" immediate="true"
                                          styleClass="btn btn-primary"
-                                         value="#{organizationService.instance().allowPersonModification ? 'Cancel' : 'Back' }"/>
+                                         value="#{organizationService.allowPersonModification ? 'Cancel' : 'Back' }"/>
                     </h:panelGroup>
                 </ui:define>
             </ui:decorate>

@@ -147,9 +147,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
-	private FacesContext facesContext;
-
-	@Inject
 	private TrustContactsAction trustContactsAction;
 
 	@Inject
@@ -986,7 +983,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			IOUtils.closeQuietly(bos);
 		}
 
-		boolean result = ResponseHelper.downloadFile("shibboleth3-configuration.zip", OxTrustConstants.CONTENT_TYPE_APPLICATION_ZIP, bos.toByteArray(), facesContext);
+		boolean result = ResponseHelper.downloadFile("shibboleth3-configuration.zip", OxTrustConstants.CONTENT_TYPE_APPLICATION_ZIP, bos.toByteArray(), FacesContext.getCurrentInstance());
 
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
 	}
@@ -1385,45 +1382,47 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return GluuEntityType.values();
 	}
 	
-	public boolean generateSp() throws IOException{
-		try{
-		log.info(" generate sp ------------");
-		this.trustRelationship.setInum(trustService.generateInumForNewTrustRelationship());
-		
-		String cert = getCertForGeneratedSP();
-		//boolean val = generateSpMetaDataFile(cert);
-		
-		String spMetadataFileName = this.trustRelationship.getSpMetaDataFN();
+	public boolean generateSp() throws IOException {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		try {
+			log.info(" generate sp ------------");
+			this.trustRelationship.setInum(trustService.generateInumForNewTrustRelationship());
 
-		if (StringHelper.isEmpty(spMetadataFileName)) {
-			// Generate new file name
-			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
-			trustRelationship.setSpMetaDataFN(spMetadataFileName);
-		}
-		
-		String spMetadataFileContent = shibboleth3ConfService.generateSpMetadataFileContent( trustRelationship,  cert);
-		
-		//ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance()
-                //.getExternalContext().getContext();
-		HttpServletResponse response = (HttpServletResponse)externalContext.getResponse();
-			//InputStream fis = new ByteArrayInputStream(spMetadataFileContent.getBytes(StandardCharsets.UTF_8));//ctx.getResourceAsStream("/WEB-INF/testfile.zip");
-	
+			String cert = getCertForGeneratedSP();
+			// boolean val = generateSpMetaDataFile(cert);
+
+			String spMetadataFileName = this.trustRelationship.getSpMetaDataFN();
+
+			if (StringHelper.isEmpty(spMetadataFileName)) {
+				// Generate new file name
+				spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
+				trustRelationship.setSpMetaDataFN(spMetadataFileName);
+			}
+
+			String spMetadataFileContent = shibboleth3ConfService.generateSpMetadataFileContent(trustRelationship, cert);
+
+			// ServletContext ctx = (ServletContext)
+			// FacesContext.getCurrentInstance()
+			// .getExternalContext().getContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			// InputStream fis = new
+			// ByteArrayInputStream(spMetadataFileContent.getBytes(StandardCharsets.UTF_8));//ctx.getResourceAsStream("/WEB-INF/testfile.zip");
+
 			// Prepare the response
 			response.setContentType("application/xml");
-			response.setHeader("Content-Disposition",
-					"attachment;filename="+spMetadataFileName);
+			response.setHeader("Content-Disposition", "attachment;filename=" + spMetadataFileName);
 			ServletOutputStream os = response.getOutputStream();
 			os.write(spMetadataFileContent.getBytes());
 			os.flush();
 			os.close();
 			facesContext.responseComplete();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		facesContext.responseComplete();
-			return true;
+		return true;
 
 	}
 

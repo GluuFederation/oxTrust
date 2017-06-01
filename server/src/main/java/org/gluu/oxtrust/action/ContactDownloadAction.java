@@ -32,13 +32,7 @@ public class ContactDownloadAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private ExternalContext externalContext;
-
-	@Inject
 	protected GluuCustomPerson currentPerson;
-
-	@Inject
-	private FacesContext facesContext;
 
 	@Inject
 	private DownloadService downloadService;

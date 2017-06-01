@@ -60,9 +60,6 @@ public class SsoLoginAction implements Serializable {
 	private Identity identity;
 
 	@Inject
-	private FacesContext facesContext;
-
-	@Inject
 	private FacesService facesService;
 
 	private String userName;

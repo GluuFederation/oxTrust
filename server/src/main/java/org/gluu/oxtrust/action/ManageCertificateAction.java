@@ -87,9 +87,6 @@ public class ManageCertificateAction implements Serializable {
 	private OrganizationService organizationService;
 
 	@Inject
-	private FacesContext facesContext;
-
-	@Inject
 	private FacesMessages facesMessages;
 
 	@Inject

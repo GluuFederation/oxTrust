@@ -47,9 +47,6 @@ public class JoinFederationAction implements Serializable {
 	private String inum;
 
 	@Inject
-	private FacesContext facesContext;
-
-	@Inject
 	private OrganizationService organizationService;
 
 	@Inject

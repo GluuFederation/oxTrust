@@ -59,9 +59,6 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Inject
     private FacesMessages facesMessages;
-
-    @Inject
-    private FacesContext facesContext;
     
     @Inject
     private AsimbaService asimbaService;

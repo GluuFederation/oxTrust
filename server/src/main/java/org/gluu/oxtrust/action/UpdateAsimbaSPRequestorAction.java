@@ -69,9 +69,6 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
-	private FacesContext facesContext;
-
-	@Inject
 	private AsimbaService asimbaService;
 
 	@Inject

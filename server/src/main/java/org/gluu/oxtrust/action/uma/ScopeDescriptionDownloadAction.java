@@ -53,12 +53,6 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 	protected ImageService imageService;
 
 	@Inject
-	private ExternalContext externalContext;
-
-	@Inject
-	private FacesContext facesContext;
-
-	@Inject
 	private ViewHandlerService viewHandlerService;
 
 	private String scopeId;
