@@ -58,6 +58,7 @@ public class AttributeInventoryAction implements Serializable {
 	private LdifService ldifService;
 
 	private Map<String, Boolean> checked = new HashMap<String, Boolean>();
+	private boolean initialized;
 
 	public Map<String, Boolean> getChecked() {
 		return checked;
@@ -78,6 +79,8 @@ public class AttributeInventoryAction implements Serializable {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		}
+
+		this.initialized = true;
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -155,5 +158,10 @@ public class AttributeInventoryAction implements Serializable {
 		}
         checked.clear();
     }
+
+	public boolean isInitialized() {
+		return initialized;
+	}
+
 }
       
