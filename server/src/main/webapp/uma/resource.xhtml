@@ -7,7 +7,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{umaInventoryAction.start}"
-                      if="#{permissionService.throwOnLackOfPermissions('uma', 'access') and not umaInventoryAction.initialized and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('uma', 'access') and not umaInventoryAction.initialized and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

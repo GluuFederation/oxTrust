@@ -7,7 +7,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateResourceSetAction.modify}"
-                      if="#{permissionService.throwOnLackOfPermissions('uma', 'access') and updateResourceSetAction.resourceSet == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('uma', 'access') and updateResourceSetAction.resourceSet == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

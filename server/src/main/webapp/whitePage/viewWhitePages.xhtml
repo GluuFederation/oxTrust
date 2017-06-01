@@ -6,7 +6,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}"/>
         <f:viewAction action="#{whitePagesAction.start}"
-                      if="#{permissionService.throwOnLackOfPermissions(applianceService.appliance, ' whitePagesEnabled') and whitePagesAction.persons == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission(applianceService.appliance, ' whitePagesEnabled') and whitePagesAction.persons == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

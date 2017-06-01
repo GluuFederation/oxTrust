@@ -1,6 +1,5 @@
 package org.gluu.oxtrust.service;
 
-import org.gluu.oxtrust.exception.PermissionException;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.security.Identity;
@@ -94,10 +93,4 @@ public class PermissionService {
 
         return false;
     }
-
-    public void throwOnLackOfPermissions(Object target, String action) throws PermissionException {
-        if (!hasPermission(target, action))
-            throw new PermissionException("Target has no permission.");
-    }
-
 }

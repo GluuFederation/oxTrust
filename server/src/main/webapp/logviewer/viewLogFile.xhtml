@@ -8,7 +8,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{viewLogFileAction.init}"
-                      if="#{permissionService.throwOnLackOfPermissions('log', 'access') and not viewLogFileAction.initialized and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('log', 'access') and not viewLogFileAction.initialized and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

@@ -6,7 +6,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{searchClientAction.start}"
-                      if="#{permissionService.throwOnLackOfPermissions('client', 'access') and searchClientAction.clientList == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('client', 'access') and searchClientAction.clientList == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

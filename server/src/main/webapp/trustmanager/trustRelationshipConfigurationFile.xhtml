@@ -3,7 +3,7 @@
         locale="#{language.localeCode}">
     <f:metadata>
         <f:viewAction action="#{updateTrustRelationshipAction.downloadConfiguration}"
-                      if="#{permissionService.throwOnLackOfPermissions('trust', 'access') and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('trust', 'access') and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 </f:view>
