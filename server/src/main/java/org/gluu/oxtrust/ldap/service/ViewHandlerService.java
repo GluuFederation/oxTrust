@@ -29,6 +29,12 @@ public class ViewHandlerService {
 	@Inject
 	private ViewHandler viewHandler;
 
+	@Inject
+	private FacesContext facesContext;
+
+	@Inject
+	private ExternalContext externalContext;
+
 	public String getBookmarkableURL(String viewId, HashMap<String, List<String>> pageParams) {
 		StringBuilder sb = new StringBuilder(externalContext.getRequestScheme()).append("://").append(
 				externalContext.getRequestServerName());

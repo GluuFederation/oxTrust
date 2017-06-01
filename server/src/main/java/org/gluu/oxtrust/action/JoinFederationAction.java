@@ -297,6 +297,7 @@ public class JoinFederationAction implements Serializable {
 			String tail = "</EntitiesDescriptor>";
 			bos.write(tail.getBytes());
 
+			FacesContext facesContext = FacesContext.getCurrentInstance();
 			result = ResponseHelper.downloadFile("federation.xml", OxTrustConstants.CONTENT_TYPE_TEXT_PLAIN, bos.toByteArray(), facesContext);
 		}
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;

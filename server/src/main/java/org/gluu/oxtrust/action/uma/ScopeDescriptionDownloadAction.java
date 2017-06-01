@@ -79,6 +79,9 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 			}
 		}
 
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+
 		if (resultFile == null) {
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			FileDownloader.sendError(response, "Failed to generate json file");
@@ -102,6 +105,9 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 				log.error("Failed to generate image response", ex);
 			}
 		}
+
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
 
 		if (resultFile == null) {
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();

@@ -37,6 +37,12 @@ public class ContactDownloadAction implements Serializable {
 	@Inject
 	private DownloadService downloadService;
 
+	@Inject
+	private FacesContext facesContext;
+
+	@Inject
+	private ExternalContext externalContext;
+
 	public String download() {
 		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 		response.setContentType("text/plain");

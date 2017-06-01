@@ -229,6 +229,7 @@ public class ManageCertificateAction implements Serializable {
 			response.append(WordUtils.wrap(new String(Base64.encode(csr.getEncoded(ASN1Encoding.DER))), 64, "\n", true) + "\n");
 			response.append(END_CERT_REQ + "\n");
 
+			FacesContext facesContext = FacesContext.getCurrentInstance();
 			result = ResponseHelper.downloadFile("csr.pem", OxTrustConstants.CONTENT_TYPE_TEXT_PLAIN, response.toString().getBytes(),
 					facesContext);
 		}

@@ -23,6 +23,7 @@ import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
+import org.xdi.oxauth.model.uma.UmaConfiguration;
 import org.xdi.oxauth.model.uma.persistence.ResourceSet;
 import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
 import org.xdi.service.LookupService;
@@ -59,6 +60,9 @@ public class UmaInventoryAction implements Serializable {
 
 	@Inject
 	private LookupService lookupService;
+
+    @Inject
+   	private UmaConfiguration umaMetadataConfiguration;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -152,6 +156,10 @@ public class UmaInventoryAction implements Serializable {
 
 	public void setSearchPattern(String searchPattern) {
 		this.searchPattern = searchPattern;
+	}
+
+	public UmaConfiguration getUmaMetadataConfiguration() {
+		return umaMetadataConfiguration;
 	}
 
 }

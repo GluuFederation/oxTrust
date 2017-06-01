@@ -80,7 +80,10 @@ public class SsoLoginAction implements Serializable {
 		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
+
+		FacesContext facesContext = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+
 		relyingPartyId = request.getHeader("relyingPartyId");
 		setActionUrl(request.getHeader("actionUrl"));
 		log.debug("relyingPartyId is" + relyingPartyId);
@@ -151,6 +154,7 @@ public class SsoLoginAction implements Serializable {
 				OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE));
 
 		if (isShib3Authentication) {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
 			// After this redirect we should invalidate this session
 			try {
 				HttpServletResponse userResponse = (HttpServletResponse) facesContext.getExternalContext().getResponse();

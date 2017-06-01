@@ -63,7 +63,6 @@
                                             <h:button outcome="/uma/scope/modifyScopeDescription"
                                                       styleClass="btn btn-primary"
                                                       value="#{msg['uma.addScopeDescription']}">
-                                                <f:param name="scope" value="#{null}"/>
                                             </h:button>
 
                                             <richext:spacer height="8"/>
@@ -95,7 +94,7 @@
                                                     <f:facet name="header">#{msg['uma.referenceUrl']}</f:facet>
                                                     <ui:fragment>
                                                         <h:outputText rendered="#{_row.type.value eq 'internal'}"
-                                                                      value="#{umaMetadataConfiguration.scopeEndpoint}/#{_row.id}"/>
+                                                                      value="#{umaInventoryAction.umaMetadataConfiguration.scopeEndpoint}/#{_row.id}"/>
                                                         <h:outputText rendered="#{_row.type.value ne 'internal'}"
                                                                       value="#{_row.url}"/>
                                                     </ui:fragment>
