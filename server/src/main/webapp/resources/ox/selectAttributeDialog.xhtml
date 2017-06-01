@@ -39,11 +39,11 @@
                     <a4j:commandButton value="Search" style = "margin-top:5px;" styleClass="btn btn-primary" action="#{cc.attrs.searchMethod}" render="attributePanelId" eventsQueue="#{cc.attrs.queue}" /></div>
                 </ox:decorate>
 
-                <h:panelGroup id="attributeNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
+                <h:panelGroup id="attributeNoResultId" rendered="#{cc.attrs.searchResult.size() eq 0}">
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
 
-                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
                     <rich:dataTable sortMode="single" id="attributeListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">
                         <rich:column>
                             <f:facet name="header">X</f:facet>

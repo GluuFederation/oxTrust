@@ -15,7 +15,7 @@
 
 <cc:implementation>
     <a4j:repeat value="#{cc.attrs.value}" rowKeyVar="_itemIdx" var="_item">
-        <h:outputText value="#{_item}"/><h:outputText rendered="#{_itemIdx != cc.attrs.value.size - 1}" value=", "/>
+        <h:outputText value="#{_item}"/><h:outputText rendered="#{_itemIdx != cc.attrs.value.size() - 1}" value=", "/>
     </a4j:repeat>
 </cc:implementation>
 

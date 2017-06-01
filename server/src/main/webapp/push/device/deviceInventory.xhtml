@@ -26,12 +26,12 @@
                 <richext:spacer height="16"/>
 
                 <h:form id="clientsFormId">
-                    <ui:fragment rendered="#{pushDeviceInventoryAction.pushDeviceList.size eq 0}">
+                    <ui:fragment rendered="#{pushDeviceInventoryAction.pushDeviceList.size() eq 0}">
                         <richext:spacer height="30"/>
                         <h:outputText value="#{msg['deviceInventory.noSearchResultFound']}"/>
                     </ui:fragment>
 
-                    <rich:dataTable id="devicesListId" rendered="#{pushDeviceInventoryAction.pushDeviceList.size gt 0}"
+                    <rich:dataTable id="devicesListId" rendered="#{pushDeviceInventoryAction.pushDeviceList.size() gt 0}"
                                     rows="20" sortMode="single" styleClass="data sortable"
                                     value="#{pushDeviceInventoryAction.pushDeviceList}" var="_device">
                         <rich:column>
@@ -73,7 +73,7 @@
                         </rich:column>
                         <f:facet name="footer">
                             <rich:dataScroller align="left" for="devicesListId" renderIfSinglePage="false"
-                                               rendered="#{pushDeviceInventoryAction.pushDeviceList.size &gt; 0}"
+                                               rendered="#{pushDeviceInventoryAction.pushDeviceList.size() gt 0}"
                                                stepControls="auto"/>
                         </f:facet>
                     </rich:dataTable>

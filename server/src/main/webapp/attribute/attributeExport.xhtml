@@ -69,11 +69,11 @@
 
 
                                                                         <ui:fragment
-                                                                                rendered="#{attributeInventoryAction.attributeList.size eq 0}">
+                                                                                rendered="#{attributeInventoryAction.attributeList.size() eq 0}">
                                                                             <h:outputText value="No Attributes Found"/>
                                                                         </ui:fragment>
                                                                         <h:dataTable id="attributesListId"
-                                                                                     rendered="#{attributeInventoryAction.attributeList.size gt 0}"
+                                                                                     rendered="#{attributeInventoryAction.attributeList.size() gt 0}"
                                                                                      sortMode="single"
                                                                                      styleClass="table table-hover rt"
                                                                                      value="#{attributeInventoryAction.attributeList}"

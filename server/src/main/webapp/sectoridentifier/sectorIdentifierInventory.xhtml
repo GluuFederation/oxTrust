@@ -65,13 +65,13 @@
 
                                     <h:form id="sectorIdentifiersFormId">
                                         <ui:fragment
-                                                rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size eq 0}">
+                                                rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size() eq 0}">
                                             <richext:spacer height="30"/>
                                             <h:outputText value="#{msg['sectorIdentifier.noSearchResultFound']}"/>
                                         </ui:fragment>
 
                                         <rich:dataTable id="sectorIdentifierListId"
-                                                        rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size gt 0}"
+                                                        rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size() gt 0}"
                                                         rows="20" sortMode="single" styleClass="data sortable"
                                                         value="#{searchSectorIdentifierAction.sectorIdentifierList}"
                                                         var="si">
@@ -86,7 +86,7 @@
                                             <f:facet name="footer">
                                                 <rich:dataScroller align="left" for="sectorIdentifierListId"
                                                                    maxPages="10" renderIfSinglePage="false"
-                                                                   rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size &gt; 0}"
+                                                                   rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size() gt 0}"
                                                                    stepControls="auto"/>
                                             </f:facet>
                                         </rich:dataTable>

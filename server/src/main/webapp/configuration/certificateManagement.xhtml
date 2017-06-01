@@ -57,7 +57,7 @@
                 <h:form id="internalCertificatesFormId">
                     <H3>#{msg['configuration.internalGluuCertificates']}</H3>
 
-                    <ui:fragment rendered="#{certificateManagementAction.internalCertificates.size eq 0}">
+                    <ui:fragment rendered="#{certificateManagementAction.internalCertificates.size() eq 0}">
                         <richext:spacer height="30"/>
                         <h:outputText value="#{msg['configuration.noSearchResultFound']}"/>
                     </ui:fragment>
@@ -66,7 +66,7 @@
                             styleClass="table table-hover rt"
                             value="#{certificateManagementAction.internalCertificates}"
                             var="cert" id="asimbaCertificatesListId" width="100%"
-                            rendered="#{certificateManagementAction.internalCertificates.size gt 0}">
+                            rendered="#{certificateManagementAction.internalCertificates.size() gt 0}">
 
                         <h:column>
                             <f:facet name="header">
@@ -115,10 +115,10 @@
                 <richext:spacer height="16"/>
 
                 <h:form id="trustStoreCertificatesFormId"
-                        rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
+                        rendered="#{certificateManagementAction.trustStoreCertificates.size() gt 0}">
                     <H3>#{msg['configuration.trustStoreCertificates']}</H3>
 
-                    <ui:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size eq 0}">
+                    <ui:fragment rendered="#{certificateManagementAction.trustStoreCertificates.size() eq 0}">
                         <richext:spacer height="30"/>
                         <h:outputText value="#{msg['configuration.noSearchResultFound']}"/>
                     </ui:fragment>
@@ -127,7 +127,7 @@
                             styleClass="table table-hover rt"
                             value="#{certificateManagementAction.trustStoreCertificates}"
                             var="cert" id="asimbaCertificatesListId" width="100%"
-                            rendered="#{certificateManagementAction.trustStoreCertificates.size gt 0}">
+                            rendered="#{certificateManagementAction.trustStoreCertificates.size() gt 0}">
 
                         <h:column>
                             <f:facet name="header">
@@ -176,10 +176,10 @@
                 <richext:spacer height="16"/>
 
                 <h:form id="asimbaCertificatesFormId"
-                        rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
+                        rendered="#{certificateManagementAction.asimbaCertificates.size() gt 0}">
                     <H3>Asimba Certificates</H3>
 
-                    <ui:fragment rendered="#{certificateManagementAction.asimbaCertificates.size eq 0}">
+                    <ui:fragment rendered="#{certificateManagementAction.asimbaCertificates.size() eq 0}">
                         <richext:spacer height="30"/>
                         <h:outputText value="#{msg['configuration.noSearchResultFound']}"/>
                     </ui:fragment>
@@ -188,7 +188,7 @@
                             styleClass="table table-hover rt"
                             value="#{certificateManagementAction.asimbaCertificates}"
                             var="cert" id="asimbaCertificatesListId" width="100%"
-                            rendered="#{certificateManagementAction.asimbaCertificates.size gt 0}">
+                            rendered="#{certificateManagementAction.asimbaCertificates.size() gt 0}">
 
                         <h:column>
                             <f:facet name="header">

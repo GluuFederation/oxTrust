@@ -74,13 +74,13 @@
 
                                                     <h:form id="scopesFormId">
                                                         <ui:fragment
-                                                                rendered="#{searchScopeAction.scopeList.size eq 0}">
+                                                                rendered="#{searchScopeAction.scopeList.size() eq 0}">
 
                                                             <h:outputText value="#{msg['scope.noSearchResultFound']}"/>
                                                         </ui:fragment>
 
                                                         <h:dataTable id="scopesListId"
-                                                                     rendered="#{searchScopeAction.scopeList.size gt 0}"
+                                                                     rendered="#{searchScopeAction.scopeList.size() gt 0}"
                                                                      rows="20" sortMode="single"
                                                                      styleClass="table table-hover rt"
                                                                      value="#{searchScopeAction.scopeList}" var="clt">
@@ -120,7 +120,7 @@
                                                                 <rich:dataScroller align="left" for="scopesListId"
                                                                                    maxPages="10"
                                                                                    renderIfSinglePage="false"
-                                                                                   rendered="#{searchScopeAction.scopeList.size &gt; 0}"
+                                                                                   rendered="#{searchScopeAction.scopeList.size() gt 0}"
                                                                                    stepControls="auto"/>
                                                             </f:facet>
                                                         </h:dataTable>

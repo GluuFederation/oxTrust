@@ -42,7 +42,7 @@
                     <a4j:commandButton style = "margin-top:5px;" styleClass = "btn btn-primary" value="Search" action="#{cc.attrs.searchMethod}" render="scopePanelId"  />
                 </ox:decorate>
 
-                <h:panelGroup id="scopeNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
+                <h:panelGroup id="scopeNoResultId" rendered="#{cc.attrs.searchResult.size() eq 0}">
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
 
@@ -50,7 +50,7 @@
                     <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="scopePanelId"/>
                 </ui:fragment>
 
-                <h:panelGroup style="overflow-y:auto; width:815px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                <h:panelGroup style="overflow-y:auto; width:815px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
                     <h:dataTable styleClass="table table-hover rt" sortMode="single" id="scopeListId" value="#{cc.attrs.searchResult}"  var="prs" columnClasses=" , , ,selectscopedailoguefourthcolumn">
                         <h:column>
                             <f:facet name="header">X</f:facet>

@@ -52,12 +52,12 @@
                 <richext:spacer height="16"/>
 
                 <h:form id="selectorsFormId">
-                    <ui:fragment rendered="#{updateAsimbaSelectorAction.selectorList.size eq 0}">
+                    <ui:fragment rendered="#{updateAsimbaSelectorAction.selectorList.size() eq 0}">
                         <richext:spacer height="30"/>
                         <h:outputText value="#{msg['asimba.noSearchResult']}"/>
                     </ui:fragment>
 
-                    <h:dataTable id="attributesListId" rendered="#{updateAsimbaSelectorAction.selectorList.size gt 0}"
+                    <h:dataTable id="attributesListId" rendered="#{updateAsimbaSelectorAction.selectorList.size() gt 0}"
                                  styleClass="table table-hover rt" value="#{updateAsimbaSelectorAction.selectorList}"
                                  var="selector" width="100%">
 

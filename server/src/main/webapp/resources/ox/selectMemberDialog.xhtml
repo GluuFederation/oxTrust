@@ -40,7 +40,7 @@
                         </div>
                 </ox:decorate>
     
-                <h:panelGroup id="memberNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
+                <h:panelGroup id="memberNoResultId" rendered="#{cc.attrs.searchResult.size() eq 0}">
                     <h:outputText value="No Search Result Found" />
                 </h:panelGroup>
     
@@ -48,7 +48,7 @@
                     <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="memberPanelId"/>
                 </ui:fragment>
     
-                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
                     <rich:dataTable sortMode="single" id="memberListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="_item">
                         <rich:column>
                             <f:facet name="header">X</f:facet>

@@ -67,13 +67,13 @@
                                             </h:button>
 
                                             <richext:spacer height="8"/>
-                                            <ui:fragment rendered="#{umaInventoryAction.scopesList.size eq 0}">
+                                            <ui:fragment rendered="#{umaInventoryAction.scopesList.size() eq 0}">
                                                 <richext:spacer height="30"/>
                                                 <h:outputText value="#{msg['uma.noSearchResultFound']}"/>
                                             </ui:fragment>
 
                                             <rich:dataTable id="scopesListId"
-                                                            rendered="#{umaInventoryAction.scopesList.size gt 0}"
+                                                            rendered="#{umaInventoryAction.scopesList.size() gt 0}"
                                                             rows="20" sortMode="single" style="width: 750px;"
                                                             styleClass="data sortable"
                                                             value="#{umaInventoryAction.scopesList}" var="_row">
@@ -122,7 +122,7 @@
                                                 <f:facet name="footer">
                                                     <rich:dataScroller align="left" for="scopesListId" maxPages="10"
                                                                        renderIfSinglePage="false"
-                                                                       rendered="#{umaInventoryAction.scopesList.size &gt; 0}"
+                                                                       rendered="#{umaInventoryAction.scopesList.size() gt 0}"
                                                                        stepControls="auto"/>
                                                 </f:facet>
                                             </rich:dataTable>

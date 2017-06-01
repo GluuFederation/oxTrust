@@ -26,13 +26,13 @@
                 <richext:spacer height="16"/>
 
                 <h:form id="clientsFormId">
-                    <ui:fragment rendered="#{pushApplicationInventoryAction.pushApplicationList.size eq 0}">
+                    <ui:fragment rendered="#{pushApplicationInventoryAction.pushApplicationList.size() eq 0}">
                         <richext:spacer height="30"/>
                         <h:outputText value="#{msg['applicationInventory.noSearchResultFound']}"/>
                     </ui:fragment>
 
                     <rich:dataTable id="applicationsListId"
-                                    rendered="#{pushApplicationInventoryAction.pushApplicationList.size gt 0}" rows="20"
+                                    rendered="#{pushApplicationInventoryAction.pushApplicationList.size() gt 0}" rows="20"
                                     sortMode="single" styleClass="data sortable"
                                     value="#{pushApplicationInventoryAction.pushApplicationList}" var="_application">
                         <rich:column>

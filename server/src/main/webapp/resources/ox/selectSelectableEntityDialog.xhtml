@@ -42,11 +42,11 @@
                             <a4j:jsFunction name="executeSearch#{cc.attrs.id}" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />
                         </ui:fragment>
 
-                        <h:panelGroup id="searchNoResultId" rendered="#{cc.attrs.searchResult.size eq 0}">
+                        <h:panelGroup id="searchNoResultId" rendered="#{cc.attrs.searchResult.size() eq 0}">
                             <h:outputText value="No Search Result Found" />
                         </h:panelGroup>
 
-                        <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size gt 0}">
+                        <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
                             <rich:dataTable  sortMode="single" id="selectableListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs" style="width:100%">
                                 <rich:column width="35">
                                     <f:facet name="header">X</f:facet>

@@ -53,12 +53,12 @@
                 <richext:spacer height="16"/>
 
                 <h:form id="idpsFormId">
-                    <ui:fragment rendered="#{updateAsimbaIDPAction.idpList.size eq 0}">
+                    <ui:fragment rendered="#{updateAsimbaIDPAction.idpList.size() eq 0}">
                         <richext:spacer height="30"/>
                         <h:outputText value="#{msg['asimba.noSearchResult']}"/>
                     </ui:fragment>
 
-                    <h:dataTable id="attributesListId" rendered="#{updateAsimbaIDPAction.idpList.size gt 0}"
+                    <h:dataTable id="attributesListId" rendered="#{updateAsimbaIDPAction.idpList.size() gt 0}"
                                  styleClass="table table-hover rt" value="#{updateAsimbaIDPAction.idpList}" var="idp"
                                  width="100%">
 

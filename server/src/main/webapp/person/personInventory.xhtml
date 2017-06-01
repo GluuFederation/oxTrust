@@ -62,13 +62,13 @@
                                     <richext:spacer height="16"/>
 
                                     <h:form id="personsFormId">
-                                        <ui:fragment rendered="#{searchPersonAction.personList.size eq 0}">
+                                        <ui:fragment rendered="#{searchPersonAction.personList.size() eq 0}">
                                             <richext:spacer height="30"/>
                                             <h:outputText value="#{msg['person.noSearchResultFound']}"/>
                                         </ui:fragment>
 
                                         <rich:dataTable id="personsListId"
-                                                        rendered="#{searchPersonAction.personList.size gt 0}" rows="20"
+                                                        rendered="#{searchPersonAction.personList.size() gt 0}" rows="20"
                                                         sortMode="single" styleClass="data sortable"
                                                         value="#{searchPersonAction.personList}" var="prs">
                                             <rich:column sortBy="#{prs.displayName}">
@@ -100,7 +100,7 @@
                                             <f:facet name="footer">
                                                 <rich:dataScroller align="left" for="personsListId" maxPages="10"
                                                                    renderIfSinglePage="false"
-                                                                   rendered="#{searchPersonAction.personList.size &gt; 0}"
+                                                                   rendered="#{searchPersonAction.personList.size() gt 0}"
                                                                    stepControls="auto"/>
                                             </f:facet>
                                         </rich:dataTable>

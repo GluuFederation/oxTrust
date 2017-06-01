@@ -82,14 +82,14 @@
                                         <div class="table-responsive" style="overflow: auto">
                                             <h:form id="trustRelationsshipList">
                                                 <ui:fragment
-                                                        rendered="#{trustRelationshipInventoryAction.trustedSpList.size eq 0}">
+                                                        rendered="#{trustRelationshipInventoryAction.trustedSpList.size() eq 0}">
                                                     <richext:spacer height="30"/>
                                                     <h:outputText
                                                             value="#{msg['trustmanager.noTrsutRelationshipsFound']}"/>
                                                 </ui:fragment>
 
                                                 <rich:dataTable id="relationshipstable"
-                                                                rendered="#{trustRelationshipInventoryAction.trustedSpList.size gt 0}"
+                                                                rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
                                                                 rows="20" sortMode="single" style="width:100%;"
                                                                 styleClass="data sortable"
                                                                 value="#{trustRelationshipInventoryAction.trustedSpList}"
@@ -132,7 +132,7 @@
                                                     <f:facet name="footer">
                                                         <rich:dataScroller align="left" for="relationshipstable"
                                                                            maxPages="10" renderIfSinglePage="false"
-                                                                           rendered="#{trustRelationshipInventoryAction.trustedSpList.size &gt; 0}"
+                                                                           rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
                                                                            stepControls="auto"/>
                                                     </f:facet>
                                                 </rich:dataTable>
