@@ -28,7 +28,6 @@ import org.xdi.service.security.Secure;
 @Secure("#{permissionService.hasPermission('linktrack', 'access')}")
 public class ApisConfigurationAction implements Serializable {
 
-	
 	static final long serialVersionUID = 3932865544287448544L;
 
 	@Inject
