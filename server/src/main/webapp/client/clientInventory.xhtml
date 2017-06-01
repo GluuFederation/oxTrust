@@ -72,13 +72,13 @@
                                                 <div class="table-responsive" style="overflow: auto">
                                                     <h:form id="clientsFormId">
                                                         <ui:fragment
-                                                                rendered="#{searchClientAction.clientList.size eq 0}">
+                                                                rendered="#{searchClientAction.clientList.size() eq 0}">
 
                                                             <h:outputText value="#{msg['client.noSearchResultFound']}"/>
                                                         </ui:fragment>
 
                                                         <h:dataTable id="clientsListId"
-                                                                     rendered="#{searchClientAction.clientList.size gt 0}"
+                                                                     rendered="#{searchClientAction.clientList.size() gt 0}"
                                                                      rows="20" sortMode="single"
                                                                      styleClass="table table-hover rt"
                                                                      value="#{searchClientAction.clientList}" var="clt">
@@ -109,7 +109,7 @@
                                                                 <rich:dataScroller align="left" fastControls="hide"
                                                                                    for="clientsListId" maxPages="10"
                                                                                    renderIfSinglePage="false"
-                                                                                   rendered="#{searchClientAction.clientList.size &gt; 0}"
+                                                                                   rendered="#{searchClientAction.clientList.size() gt 0}"
                                                                                    stepControls="auto"/>
                                                             </f:facet>
                                                         </h:dataTable>
