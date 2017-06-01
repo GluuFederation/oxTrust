@@ -37,7 +37,6 @@
 
                     </h:inputText>
                     <a4j:commandButton value="Filter" action="#{federationDeconstructionAction.filterEntities()}" eventsQueue="trustQueue" render="federationDeconstructionMenu">
-                        <s:defaultAction />
                     </a4j:commandButton>
                 </h:panelGrid>
             </h:form>
@@ -68,7 +67,6 @@
                 <div id="DeconstructionUpdate">
                     <a4j:commandButton value="Save" action="#{federationDeconstructionAction.saveEntityList()}" render="attributes" eventsQueue="trustQueue"
                         oncomplete="#{rich:component('federationDeconstruction')}.hide()">
-                        <s:defaultAction />
                     </a4j:commandButton>
                     <a4j:commandButton value="Back" onclick="#{rich:component('federationDeconstruction')}.hide()" />
                 </div>

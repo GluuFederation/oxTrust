@@ -2,10 +2,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ox="http://java.sun.com/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://java.sun.com/jsf/composite/richext" xmlns:s="http://jboss.org/schema/seam/taglib"
+                xmlns:richext="http://java.sun.com/jsf/composite/richext"
                 xmlns:ui="http://java.sun.com/jsf/facelets" template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
     <f:metadata>
-        <f:viewAction action="#{conversationService.initConversation}" />
+        <f:viewAction action="#{conversationService.initConversation}"/>
         <f:viewAction action="#{registerPersonAction.initPerson}" if="#{registerPersonAction.person == null}"
                       onPostback="false"/>
     </f:metadata>
@@ -122,7 +122,7 @@
                                                             <f:selectItem id="item3" itemLabel="Music" itemValue="3"/>
                                                             <f:selectItem id="item4" itemLabel="Java" itemValue="4"/>
                                                             <f:selectItem id="item5" itemLabel="Web" itemValue="5"/>
-                                                            <s:validate/>
+                                                            <f:validateBean/>
                                                         </h:selectOneMenu>
                                                         <h:outputText value=" "/>
 
@@ -139,7 +139,7 @@
                                             <ox:decorate id="passwordField" label="#{msg['register.password']}"
                                                          style="margin-left: -15px;"
                                                          template="/WEB-INF/incl/layout/edit.xhtml">
-                                                <h:inputSecret autocomplete="off" class="form-control" id="password"
+                                                <h:inputSecret autocomplete="off" class="form-control" id="password" binding="#{passwordComponent}"
                                                                maxlength="60" redisplay="true" required="true" size="40"
                                                                tabindex="6" value="#{registerPersonAction.password}"/>
                                                 <h:outputText value=" "/>
@@ -152,8 +152,8 @@
                                                                id="passwordValidation" maxlength="60" redisplay="true"
                                                                required="true" size="40" tabindex="7"
                                                                value="#{registerPersonAction.repeatPassword}">
-                                                    <s:validateEquality for="#{'password'}"
-                                                                        message="#{msg['register.passwordsDontMatch']}"/>
+                                                    <f:validator validatorId="equalsValidator" />
+                                                    <f:attribute name="otherValue" value="#{passwordComponent.value}" />
                                                 </h:inputSecret>
                                                 <h:outputText value=" "/>
                                             </ox:decorate>

@@ -66,6 +66,8 @@ public class PermissionService {
                 if (((appliance.getProfileManagment() != null) && appliance.getProfileManagment().isBooleanValue())
                         && StringHelper.equals(applianceService.getAppliance().getInum(), targetAppliance.getInum())) {
                     return true;
+                } else {
+                    return false;
                 }
             }
 
@@ -75,6 +77,8 @@ public class PermissionService {
                 if (((appliance.getWhitePagesEnabled() != null) && appliance.getWhitePagesEnabled().isBooleanValue())
                         && StringHelper.equals(applianceService.getAppliance().getInum(), targetAppliance.getInum())) {
                     return true;
+                } else {
+                    return false;
                 }
             }
         }

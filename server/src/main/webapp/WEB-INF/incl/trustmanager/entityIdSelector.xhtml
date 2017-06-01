@@ -37,7 +37,6 @@
                     <h:inputText value="#{_trustRelationshipAction.filterString}">
                     </h:inputText>
                     <a4j:commandButton value="#{msg['trustmanager.filter']}" action="#{_trustRelationshipAction.filterEntities()}" eventsQueue="trustQueue" render="EntityIds">
-                        <s:defaultAction />
                     </a4j:commandButton>
                 </h:panelGrid>
             </h:form>
@@ -53,7 +52,6 @@
 
                 <div id="EntityIdUpdate">
                     <a4j:commandButton value="Done" onclick="#{rich:component('entityIdSelector')}.hide()" render="FederationWizardEntitySelection">
-                        <s:defaultAction />
                     </a4j:commandButton>
                 </div>
             </h:form>

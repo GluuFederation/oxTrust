@@ -25,7 +25,7 @@
 
         <h:panelGroup id="popPanelRules">
             <pre>
-                <s:formattedText value="#{joinFederationAction.rules}" rendered="#{joinFederationAction.federationProposal.containerFederation ne null}"/>
+                <h:outputText value="#{joinFederationAction.rules}" rendered="#{joinFederationAction.federationProposal.containerFederation ne null}"/>
             </pre>
         </h:panelGroup>
 

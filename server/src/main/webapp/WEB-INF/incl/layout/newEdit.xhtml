@@ -7,10 +7,10 @@
 <div class="col-sm-12" style="padding:5px;margin-bottom: 5px;">
     <h:panelGroup layout="block" rendered="#{not _hideLabel}" styleClass="col-sm-3">
     
-        <s:label styleClass="name #{invalid?'errors':''}" rendered="#{not _labelAsText}">
+        <h:outputLabel styleClass="name #{invalid?'errors':''}" rendered="#{not _labelAsText}">
             <ui:insert name="label"/>
             <h:panelGroup styleClass="required" rendered="#{required}">*</h:panelGroup>
-        </s:label>
+        </h:outputLabel>
 
         <h:panelGroup styleClass="name #{invalid?'errors':''}" rendered="#{_labelAsText}">
             <ui:insert name="label"/>
@@ -20,17 +20,16 @@
 
     <div class="col-sm-9 prop" style="float:left;">
             <span class="value #{invalid?'errors':''}">
-                <s:validateAll>
+                <f:validateBean>
                     <ui:insert/>
-                    
-                </s:validateAll>
+                </f:validateBean>
                 
             </span>
             
 
             <span class="error">
-                <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors"/>
-                <s:message styleClass="errors"/>
+                <h:graphicImage id="errorImg" value="/img/error.gif" rendered="#{invalid}" styleClass="errors"/>
+                <h:message for="errorImg" errorClass="invalid"/>
             </span>
     </div>
     

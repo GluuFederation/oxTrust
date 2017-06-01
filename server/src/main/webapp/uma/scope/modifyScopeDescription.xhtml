@@ -95,7 +95,7 @@
                                                                  rendered="#{updateScopeDescriptionAction.iconExist}"
                                                                  width="100%">
                                                         <h:panelGroup layout="block">
-                                                            <s:graphicImage
+                                                            <h:graphicImage
                                                                     fileName="#{updateScopeDescriptionAction.iconImageSourceName}"
                                                                     value="#{updateScopeDescriptionAction.iconImageThumbData}"/>
                                                         </h:panelGroup>
@@ -182,7 +182,7 @@
                                                            rendered="#{updateScopeDescriptionAction.update}"
                                                            style="margin-left:3px;" styleClass="btn btn-primary"
                                                            value="Delete"/>
-                                        <s:button action="#{updateScopeDescriptionAction.cancel}" immediate="true"
+                                        <h:button action="#{updateScopeDescriptionAction.cancel}" immediate="true"
                                                   propagation="end" style="margin-left:3px;"
                                                   styleClass="btn btn-primary" value="#{msg['uma.cancel']}"/>
                                     </h:panelGroup>

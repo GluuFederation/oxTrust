@@ -33,8 +33,8 @@
             <rich:menuItem label="#{msg['layout.manageAuthentication']}" action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
             <rich:menuItem label="#{msg['layout.manageCustomScripts']}" action="#{menuAction.endConversation('/script/manageCustomScript.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
             <rich:menuItem label="#{msg['layout.manageRegistration']}" action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
-            <rich:menuSeparator rendered="#{permissionService.hasPermission(organizationService.organization, 'linktrack')}"/>
-            <rich:menuItem label="#{msg['layout.configureLinktrackAPI']}" action="#{menuAction.endConversation('/apis/linktrack.xhtml')}" rendered="#{permissionService.hasPermission(organizationService.organization, 'linktrack')}" />
+            <rich:menuSeparator rendered="#{permissionService.hasPermission( 'linktrack', 'access')}"/>
+            <rich:menuItem label="#{msg['layout.configureLinktrackAPI']}" action="#{menuAction.endConversation('/apis/linktrack.xhtml')}" rendered="#{permissionService.hasPermission( 'linktrack', 'access')}" />
             <rich:menuSeparator/>
             <rich:menuItem label="#{msg['layout.attributes']}" action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}" rendered="#{permissionService.hasPermission('attribute', 'access')}" />
             <rich:menuItem label="#{msg['layout.cacheRefresh']}" action="#{menuAction.endConversation('/organization/cacheRefresh.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
