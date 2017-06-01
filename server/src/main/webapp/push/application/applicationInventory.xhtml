@@ -6,7 +6,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{pushApplicationInventoryAction.start}"
-                      if="#{permissionService.throwOnLackOfPermissions('oxpush', 'access') and pushApplicationInventoryAction.pushApplicationList == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('oxpush', 'access') and pushApplicationInventoryAction.pushApplicationList == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

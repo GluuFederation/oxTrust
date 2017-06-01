@@ -6,7 +6,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateTrustRelationshipAction.update}"
-                      if="#{permissionService.throwOnLackOfPermissions('trust', 'access') and updateTrustRelationshipAction.trustRelationship == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('trust', 'access') and updateTrustRelationshipAction.trustRelationship == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

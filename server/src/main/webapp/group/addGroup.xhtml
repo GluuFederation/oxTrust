@@ -5,7 +5,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateGroupAction.add}"
-                      if="#{permissionService.throwOnLackOfPermissions('group', 'access') and updateGroupAction.group == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('group', 'access') and updateGroupAction.group == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

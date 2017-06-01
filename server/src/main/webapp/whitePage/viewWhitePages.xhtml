@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:rich="http://richfaces.org/rich" xmlns:s="http://jboss.org/schema/seam/taglib"
+                xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}"/>
         <f:viewAction action="#{whitePagesAction.start}"
-                      if="#{permissionService.throwOnLackOfPermissions(applianceService.appliance, ' whitePagesEnabled') and whitePagesAction.persons == null and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission(applianceService.appliance, ' whitePagesEnabled') and whitePagesAction.persons == null and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

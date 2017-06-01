@@ -11,7 +11,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{certificateManagementAction.refresh}"
-                      if="#{permissionService.throwOnLackOfPermissions('trust', 'access') and identity.checkLoggedIn()}"
+                      if="#{permissionService.hasPermission('trust', 'access') and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
     <ui:define name="body">
