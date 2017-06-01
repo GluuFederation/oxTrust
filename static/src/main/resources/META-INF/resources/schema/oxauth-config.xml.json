@@ -801,7 +801,7 @@
         },
         "sessionIdUnusedLifetime": {
             "id": "sessionIdUnusedLifetime",
-            "description": "The lifetime for unused session IDs.",
+            "description": "The lifetime for unused session states.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -811,7 +811,17 @@
         },
         "sessionIdUnauthenticatedUnusedLifetime": {
             "id": "sessionIdUnauthenticatedUnusedLifetime",
-            "description": "The lifetime for unused unauthenticated session IDs.",
+            "description": "The lifetime for unused unauthenticated session states.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "sessionStateLifetime": {
+            "id": "sessionStateLifetime",
+            "description": "The lifetime of session state in seconds.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
