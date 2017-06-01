@@ -911,6 +911,16 @@
             "description": "Boolean value specifying whether to persist session ID on prompt none.",
             "type": "boolean"
         },
+        "sessionStateLifetime": {
+            "id": "sessionStateLifetime",
+            "description": "The lifetime of session ID (session_state) in seconds.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
         "configurationUpdateInterval": {
             "id": "configurationUpdateInterval",
             "description": "The interval for configuration update in seconds.",
