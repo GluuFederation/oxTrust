@@ -125,7 +125,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	}
 
 	public String getOAuthRedirectUrl(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
 		String oAuthAuthorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
 
 		String oAuthClientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
