@@ -6,12 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.constraints.Min;
-
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
@@ -24,6 +18,11 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
+
+import javax.validation.constraints.Min;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * GluuAppliance
@@ -215,6 +214,9 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "oxLogViewerConfig")
 	private String oxLogViewerConfig;
+
+    @LdapAttribute(name = "oxLogConfigLocation")
+    private String oxLogConfigLocation;
 
 	@LdapAttribute(name = "passwordResetAllowed")
 	private GluuBoolean passwordResetAllowed;
@@ -486,6 +488,14 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
     public void setOxLogViewerConfig(String oxLogViewerConfig) {
         this.oxLogViewerConfig = oxLogViewerConfig;
+    }
+
+    public String getOxLogConfigLocation() {
+        return oxLogConfigLocation;
+    }
+
+    public void setOxLogConfigLocation(String oxLogConfigLocation) {
+        this.oxLogConfigLocation = oxLogConfigLocation;
     }
 
     public GluuBoolean getPasswordResetAllowed() {

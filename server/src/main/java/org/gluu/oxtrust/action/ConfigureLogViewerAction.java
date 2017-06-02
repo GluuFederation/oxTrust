@@ -6,18 +6,12 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
+import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
@@ -25,9 +19,15 @@ import org.xdi.service.JsonService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * Action class for configuring log viewer
- * 
+ *
  * @author Yuriy Movchan Date: 07/08/2013
  */
 @Named("configureLogViewerAction")
@@ -39,7 +39,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	@Inject
 	private Logger log;
-	
+
 	@Inject
 	private ApplianceService applianceService;
 
@@ -49,7 +49,12 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	@Inject
 	private JsonService jsonService;
 
+	@Inject
+	private LoggerService loggerService;
+
 	private GluuAppliance appliance;
+
+	private String logConfigLocation;
 
 	private LogViewerConfig logViewerConfiguration;
 
@@ -61,6 +66,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		}
 
 		this.appliance = applianceService.getAppliance();
+		this.logConfigLocation = appliance.getOxLogConfigLocation();
 
 		initConfigurations();
 
@@ -87,7 +93,10 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		GluuAppliance updateAppliance = applianceService.getAppliance();
 		try {
 			updateAppliance.setOxLogViewerConfig(jsonService.objectToJson(logViewerConfiguration));
+			updateAppliance.setOxLogConfigLocation(logConfigLocation);
+
 			applianceService.updateAppliance(updateAppliance);
+			loggerService.updateLoggerConfigLocation();
 		} catch (Exception ex) {
 			log.error("Failed to save log viewer configuration '{}'", ex);
 		}
@@ -113,7 +122,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 				log.error("Failed to load log viewer configuration '{}'", ex, oxLogViewerConfig);
 			}
 		}
-		
+
 		if (logViewerConfig == null) {
 			logViewerConfig = new LogViewerConfig();
 		}
@@ -144,4 +153,11 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		return logViewerConfiguration;
 	}
 
+	public String getLogConfigLocation() {
+		return logConfigLocation;
+	}
+
+	public void setLogConfigLocation(String logConfigLocation) {
+		this.logConfigLocation = logConfigLocation;
+	}
 }
