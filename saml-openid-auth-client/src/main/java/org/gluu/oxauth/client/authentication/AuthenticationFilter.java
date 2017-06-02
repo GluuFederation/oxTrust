@@ -133,6 +133,9 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		clientRequest.queryParameter("response_type", responseType);
 		clientRequest.queryParameter("nonce", nonce);
 
+		String relyingPartyId = edu.internet2.middleware.shibboleth.idp.util.HttpServletHelper.getLoginContext(request).getRelyingPartyId();
+		clientRequest.queryParameter("origin_headers", relyingPartyId);
+
 		Cookie currentShibstateCookie = getCurrentShibstateCookie(request);
 		if (currentShibstateCookie != null) {
 			String requestUri = decodeCookieValue(currentShibstateCookie.getValue());

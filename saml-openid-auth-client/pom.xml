@@ -138,5 +138,11 @@
             </exclusions>
         </dependency>
 
+	<dependency>
+	    <groupId>edu.internet2.middleware</groupId>
+	    <artifactId>shibboleth-identityprovider</artifactId>
+	    <scope>provided</scope>
+	</dependency>
+
     </dependencies>
 </project>
