@@ -6,7 +6,7 @@
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
 		</Console>
 
-		<RollingFile name="FILE" fileName="${sys:catalina.base}/logs/oxtrust.log" filePattern="${sys:catalina.base}/logs/oxtrust-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="FILE" fileName="${sys:log.base}/logs/oxtrust.log" filePattern="${sys:log.base}/logs/oxtrust-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
 
 			<Policies>
@@ -16,7 +16,7 @@
 			<DefaultRolloverStrategy max="30" />
 		</RollingFile>
 
-		<RollingFile name="OX_PERSISTENCE_FILE" fileName="${sys:catalina.base}/logs/oxtrust_persistence.log" filePattern="${sys:catalina.base}/logs/oxtrust_persistence-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="OX_PERSISTENCE_FILE" fileName="${sys:log.base}/logs/oxtrust_persistence.log" filePattern="${sys:log.base}/logs/oxtrust_persistence-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
 
 			<Policies>
@@ -26,8 +26,8 @@
 			<DefaultRolloverStrategy max="30" />
 		</RollingFile>
 
-		<RollingFile name="OX_PERSISTENCE_LDAP_STATISTICS_FILE" fileName="${sys:catalina.base}/logs/oxtrust_persistence_ldap_statistics.log"
-			filePattern="${sys:catalina.base}/logs/oxtrust_persistence_ldap_statistics-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="OX_PERSISTENCE_LDAP_STATISTICS_FILE" fileName="${sys:log.base}/logs/oxtrust_persistence_ldap_statistics.log"
+			filePattern="${sys:log.base}/logs/oxtrust_persistence_ldap_statistics-%d{yyyy-MM-dd}-%i.log">
 
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
 
@@ -38,7 +38,7 @@
 			<DefaultRolloverStrategy max="30" />
 		</RollingFile>
 
-		<RollingFile name="OX_SCRIPT_LOG_FILE" fileName="${sys:catalina.base}/logs/oxtrust_script.log" filePattern="${sys:catalina.base}/logs/oxtrust_script-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="OX_SCRIPT_LOG_FILE" fileName="${sys:log.base}/logs/oxtrust_script.log" filePattern="${sys:log.base}/logs/oxtrust_script-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
 
 			<Policies>
@@ -48,7 +48,7 @@
 			<DefaultRolloverStrategy max="30" />
 		</RollingFile>
 
-		<RollingFile name="OX_CACHE_REFRESH_FILE" fileName="${sys:catalina.base}/logs/oxtrust_cache_refresh.log" filePattern="${sys:catalina.base}/logs/oxtrust_cache_refresh-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="OX_CACHE_REFRESH_FILE" fileName="${sys:log.base}/logs/oxtrust_cache_refresh.log" filePattern="${sys:log.base}/logs/oxtrust_cache_refresh-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
 
 			<Policies>
@@ -58,8 +58,8 @@
 			<DefaultRolloverStrategy max="30" />
 		</RollingFile>
 
-		<RollingFile name="OX_CACHE_REFRESH_PYTHON_FILE" fileName="${sys:catalina.base}/logs/oxtrust_cache_refresh_python.log"
-			filePattern="${sys:catalina.base}/logs/oxtrust_cache_refresh_python-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="OX_CACHE_REFRESH_PYTHON_FILE" fileName="${sys:log.base}/logs/oxtrust_cache_refresh_python.log"
+			filePattern="${sys:log.base}/logs/oxtrust_cache_refresh_python-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
 
 			<Policies>
@@ -69,7 +69,7 @@
 			<DefaultRolloverStrategy max="30" />
 		</RollingFile>
 
-		<RollingFile name="OX_APACHEHC_LOG_FILE" fileName="${sys:catalina.base}/logs/oxtrust_apachehc.log" filePattern="${sys:catalina.base}/logs/oxtrust_apachehc-%d{yyyy-MM-dd}-%i.log">
+		<RollingFile name="OX_APACHEHC_LOG_FILE" fileName="${sys:log.base}/logs/oxtrust_apachehc.log" filePattern="${sys:log.base}/logs/oxtrust_apachehc-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
 
 			<Policies>
