@@ -574,7 +574,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		if (isUpdate) {
 			String oldLogoutRedirectUri = trustService.getRelationshipByDn(trustRelationship.getDn()).getSpLogoutURL();
 			String newLogoutRedirectUri = trustRelationship.getSpLogoutURL();
-			boolean oxClientUpdateNeeded = ! newLogoutRedirectUri.equals(oldLogoutRedirectUri);
+			boolean oxClientUpdateNeeded = (oldLogoutRedirectUri != null) && (newLogoutRedirectUri != null) &&
+                                !newLogoutRedirectUri.equals(oldLogoutRedirectUri);
 			
 			boolean parentInactive = trustRelationship.getStatus().equals(GluuStatus.INACTIVE);
 			if(! federatedSites.isEmpty()){
