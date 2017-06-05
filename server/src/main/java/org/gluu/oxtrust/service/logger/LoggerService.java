@@ -4,8 +4,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.cdi.event.ConfigurationUpdate;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
@@ -20,6 +23,12 @@ public class LoggerService implements Serializable {
 
     @Inject
     private ApplianceService applianceService;
+
+    @Inject
+    private Event<AppConfiguration> configurationUpdateEvent;
+
+    @Inject
+    private AppConfiguration appConfiguration;
 
     /**
      * First trying to set external logger config from GluuAppliance.
@@ -44,6 +53,8 @@ public class LoggerService implements Serializable {
         LoggerContext loggerContext = LoggerContext.getContext(false);
         loggerContext.setConfigLocation(log4jFile.toURI());
         loggerContext.reconfigure();
+
+        configurationUpdateEvent.select(ConfigurationUpdate.Literal.INSTANCE).fire(this.appConfiguration);
         return true;
     }
 }
