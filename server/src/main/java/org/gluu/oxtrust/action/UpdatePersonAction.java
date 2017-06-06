@@ -7,9 +7,12 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -179,6 +182,15 @@ public class UpdatePersonAction implements Serializable {
 		for(GluuCustomAttribute customAttribute: customAttributes){
 			if(customAttribute.getName().equalsIgnoreCase("gluuStatus")){
 				customAttribute.setValue(gluuStatus.getValue());
+			}
+			
+			if(customAttribute.getName().equalsIgnoreCase("birthdate")){
+				if(customAttribute.getValue() !=null && !customAttribute.getValue().equals("")){
+					//String dDate="Sat Apr 11 12:16:44 IST 2015"; 
+					DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+					Date birthdate = df.parse(customAttribute.getValue());
+					customAttribute.setDate(birthdate);
+				}
 			}
 			
 		}
