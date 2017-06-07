@@ -97,6 +97,9 @@
 						-Dserver.base=${project.build.directory}
 						-Dlog.base=${project.build.directory}
 					</argLine>
+					<suiteXmlFiles>
+						<suiteXmlFile>target/test-classes/testng.xml</suiteXmlFile>
+					</suiteXmlFiles>
 				</configuration>
 			</plugin>
 

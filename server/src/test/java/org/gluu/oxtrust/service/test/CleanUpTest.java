@@ -44,7 +44,7 @@ public class CleanUpTest extends BaseTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+//	@Test
 	@Parameters(value = "test.keep.persons")
 	public void cleanUpPersons(String usedPersons) throws Exception {
 		System.out.println("cleanup person Test initialted ");
@@ -72,10 +72,10 @@ public class CleanUpTest extends BaseTest {
 				if (!usedPersonsList.contains(person.getInum())) {
 					try {
 						memberService.removePerson(person);
+						countRemoved++;
 					} catch (EntryPersistenceException ex) {
 						System.out.println("Failed to remove person: " + ex.getMessage());
 					}
-					countRemoved++;
 				}
 			}
 		}
@@ -88,7 +88,7 @@ public class CleanUpTest extends BaseTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+//	@Test
 	@Parameters(value = "test.keep.persons")
 	public void cleanUpGroups(String usedGroups) throws Exception {
 		System.out.println("cleanup person Test initialted ");
@@ -116,10 +116,10 @@ public class CleanUpTest extends BaseTest {
 				if (!usedGroupsList.contains(group.getInum())) {
 					try {
 						groupsService.removeGroup(group);
+						countRemoved++;
 					} catch (EntryPersistenceException ex) {
-						System.out.println("Failed to remove person: " + ex.getMessage());
+						System.out.println("Failed to remove group: " + ex.getMessage());
 					}
-					countRemoved++;
 				}
 			}
 		}
