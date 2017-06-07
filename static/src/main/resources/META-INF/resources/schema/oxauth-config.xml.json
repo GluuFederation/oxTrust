@@ -595,9 +595,19 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
-        "umaRequesterPermissionTokenLifetime": {
-            "id": "umaRequesterPermissionTokenLifetime",
-            "description": "",
+        "umaRptLifetime": {
+            "id": "umaRptLifetime",
+            "description": "UMA RPT lifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "umaPctLifetime": {
+            "id": "umaPctLifetime",
+            "description": "UMA PCT lifetime",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -1137,7 +1147,8 @@
         "idTokenLifetime",
         "shortLivedAccessTokenLifetime",
         "longLivedAccessTokenLifetime",
-        "umaRequesterPermissionTokenLifetime",
+        "umaRptLifetime",
+        "umaPctLifetime",
         "umaAddScopesAutomatically",
         "umaKeepClientDuringResourceSetRegistration",
         "cleanServiceInterval",
