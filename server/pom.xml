@@ -325,8 +325,8 @@
 			<artifactId>log4j-core</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-slf4j-impl</artifactId>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
 		</dependency>
 
 		<!-- Security -->
@@ -373,12 +373,12 @@
 
 		<!-- RestEasy -->
 		<dependency>
-		    <groupId>org.jboss.resteasy</groupId>
-		    <artifactId>resteasy-cdi</artifactId>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-cdi</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>org.jboss.resteasy</groupId>
-		    <artifactId>resteasy-client</artifactId>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
@@ -412,7 +412,7 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 		</dependency>
-		
+
 		<!-- Asimba -->
 		<dependency>
 			<groupId>org.asimba</groupId>
@@ -463,33 +463,33 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.openid4java</groupId> -->
-<!-- 			<artifactId>openid4java-consumer</artifactId> -->
-<!-- 			<type>pom</type> -->
-<!-- 			<exclusions> -->
-<!-- 				<exclusion> -->
-<!-- 					<artifactId>nekohtml</artifactId> -->
-<!-- 					<groupId>net.sourceforge.nekohtml</groupId> -->
-<!-- 				</exclusion> -->
-<!-- 				<exclusion> -->
-<!-- 					<artifactId>jcip-annotations</artifactId> -->
-<!-- 					<groupId>net.jcip</groupId> -->
-<!-- 				</exclusion> -->
-<!-- 				<exclusion> -->
-<!-- 					<artifactId>guice</artifactId> -->
-<!-- 					<groupId>com.google.code.guice</groupId> -->
-<!-- 				</exclusion> -->
-<!-- 				<exclusion> -->
-<!-- 					<artifactId>httpclient</artifactId> -->
-<!-- 					<groupId>org.apache.httpcomponents</groupId> -->
-<!-- 				</exclusion> -->
-<!-- 				<exclusion> -->
-<!-- 					<artifactId>commons-logging</artifactId> -->
-<!-- 					<groupId>commons-logging</groupId> -->
-<!-- 				</exclusion> -->
-<!-- 			</exclusions> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.openid4java</groupId>
+			<artifactId>openid4java-consumer</artifactId>
+			<type>pom</type>
+			<exclusions>
+				<exclusion>
+					<artifactId>nekohtml</artifactId>
+					<groupId>net.sourceforge.nekohtml</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jcip-annotations</artifactId>
+					<groupId>net.jcip</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>guice</artifactId>
+					<groupId>com.google.code.guice</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>httpclient</artifactId>
+					<groupId>org.apache.httpcomponents</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
@@ -519,6 +519,10 @@
 		<dependency>
 			<groupId>org.tmatesoft.svnkit</groupId>
 			<artifactId>svnkit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.javatuples</groupId>
+			<artifactId>javatuples</artifactId>
 		</dependency>
 
 		<!-- Test -->
@@ -618,15 +622,15 @@
 				</dependency>
 
 				<dependency>
-				    <groupId>org.hibernate</groupId>
-				    <artifactId>hibernate-validator-cdi</artifactId>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-validator-cdi</artifactId>
 				</dependency>
 
-		        <dependency>
-		            <groupId>org.jboss.spec.javax.ejb</groupId>
-		            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
-		            <scope>provided</scope>
-		        </dependency>
+				<dependency>
+					<groupId>org.jboss.spec.javax.ejb</groupId>
+					<artifactId>jboss-ejb-api_3.2_spec</artifactId>
+					<scope>provided</scope>
+				</dependency>
 
 				<!-- Test: Embedded Jetty -->
 				<dependency>
