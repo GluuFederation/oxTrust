@@ -6,27 +6,27 @@
 
 package org.gluu.oxtrust.action.test;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import javax.enterprise.context.Conversation;
-import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+import javax.inject.Inject;
 
+import org.gluu.oxtrust.action.Authenticator;
 import org.gluu.oxtrust.security.Identity;
-import org.xdi.model.security.Credentials;
 
 /**
  * Base class for all seam test which require authorization
  * 
  * @author Yuriy Movchan
  */
-public abstract class AbstractAuthorizationTest extends ConfigurableTest {
+public abstract class AbstractAuthenticationTest extends ConfigurableTest {
 	
 	@Inject
 	private Identity identity;
-
+	
 	@Inject
-	private Conversation conversation;
+	private Authenticator authenticator;
 
 	/**
 	 * Make attempt to login using specified userPropsKey. 
@@ -34,9 +34,8 @@ public abstract class AbstractAuthorizationTest extends ConfigurableTest {
 	 * userPropsKey.uid and userPropsKey.password. 
 	 * 
 	 * @param userPropsKey Prefix of the key in properties file
-	 * @throws java.lang.Exception 
 	 */
-	protected void loginAndCheckLoggedIn(String userPropsKey) throws Exception {
+	protected void loginAndCheckLoggedIn(String userPropsKey) {
 		checkLoggedIn(false);
 		checkLoginUser(testData.getString(userPropsKey + ".uid"), testData.getString(userPropsKey + ".password"));
 		checkLoggedIn(true);
@@ -46,10 +45,9 @@ public abstract class AbstractAuthorizationTest extends ConfigurableTest {
 	 * Check if user logged in
 	 * 
 	 * @param loggedIn Current user logged in state
-	 * @throws java.lang.Exception
 	 */
-	protected void checkLoggedIn(final boolean loggedIn) throws Exception {
-		assertTrue(identity.isLoggedIn());
+	protected void checkLoggedIn(final boolean loggedIn) {
+		assertEquals(identity.isLoggedIn(), loggedIn);
 	}
 
 	/**
@@ -57,25 +55,19 @@ public abstract class AbstractAuthorizationTest extends ConfigurableTest {
 	 * 
 	 * @param user User login name
 	 * @param password User login password
-	 * @throws java.lang.Exception 
 	 */
-	protected void checkLoginUser(final String user, final String password) throws Exception {
-		Credentials credentials = identity.getCredentials();
-		credentials.setUsername(user);
-		credentials.setPassword(password);
-		
-		identity.login();
+	protected void checkLoginUser(final String user, final String password) {
+		identity.getOauthData().setUserUid(user);
+		authenticator.authenticate();
 		
 		assertTrue(identity.isLoggedIn());
 	}
 
 	/**
-	 * Check user logout
-	 * 
-	 * @throws java.lang.Exception 
+	 * Process user logout
 	 */
 	protected void logoutUser() throws Exception {
-		identity.logout();
+		authenticator.postLogout();
 
 		assertFalse(identity.isLoggedIn());
 	}

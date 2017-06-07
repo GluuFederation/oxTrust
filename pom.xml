@@ -337,18 +337,6 @@
 				<version>1.54</version>
 			</dependency>
 
-			<!-- Drolls -->
-			<dependency>
-				<groupId>org.drools</groupId>
-				<artifactId>drools-core</artifactId>
-				<version>${drools.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.drools</groupId>
-				<artifactId>drools-compiler</artifactId>
-				<version>${drools.version}</version>
-			</dependency>
-
 			<!-- Net -->
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>

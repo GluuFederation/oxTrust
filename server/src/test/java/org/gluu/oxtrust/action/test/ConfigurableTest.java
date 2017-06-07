@@ -83,7 +83,7 @@ public abstract class ConfigurableTest extends Arquillian {
             parameters.put(key.toString(), value.toString());
         }
 
-        // Overrided test paramters
+        // Overrided test parameters
         context.getSuite().getXmlSuite().setParameters(parameters);
     }
 

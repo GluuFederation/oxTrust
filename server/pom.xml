@@ -36,16 +36,14 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
-					<include>META-INF/navigation/*.navigation.xml</include>
 					<include>**/*.xml</include>
 					<include>**/*.properties</include>
-					<include>**/*.drl</include>
-					<include>**/*.sql</include>
 					<include>**/*.pdf</include>
 					<include>**/*.js</include>
 					<include>**/*.png</include>
 					<include>**/*.gif</include>
 					<include>**/*.ico</include>
+					<include>META-INF/navigation/*.navigation.xml</include>
 				</includes>
 			</resource>
 		</resources>
@@ -79,7 +77,6 @@
 							<outputDirectory>${project.build.directory}/conf</outputDirectory>
 							<resources>
 								<resource>
-									<!-- TODO CDI -->
 									<directory>${basedir}/../configuration</directory>
 									<filtering>true</filtering>
 								</resource>
@@ -96,8 +93,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<argLine>-Dsun.lang.ClassLoader.allowArraySyntax=true
-						-Dgluu.base=${project.build.directory}
+					<argLine>-Dgluu.base=${project.build.directory}
 						-Dserver.base=${project.build.directory}
 						-Dlog.base=${project.build.directory}
 					</argLine>
@@ -108,6 +104,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -167,7 +164,6 @@
 				</configuration>
 			</plugin>
 
-
 			<!-- Jetty plugin -->
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
@@ -175,13 +171,14 @@
 				<configuration>
 					<webAppConfig>
 						<descriptor>${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml</descriptor>
-						<contextPath>/oxauth</contextPath>
+						<contextPath>/identity</contextPath>
 					</webAppConfig>
 
 					<webAppSourceDirectory>${project.build.directory}/${project.build.finalName}</webAppSourceDirectory>
 					<scanIntervalSeconds>3</scanIntervalSeconds>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<artifactId>exec-maven-plugin</artifactId>
 				<groupId>org.codehaus.mojo</groupId>
@@ -200,14 +197,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<failOnError>false</failOnError>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -244,6 +233,10 @@
 		<!-- Gluu -->
 		<dependency>
 			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
 			<artifactId>oxcore-util</artifactId>
 		</dependency>
 		<dependency>
@@ -270,10 +263,6 @@
 			<groupId>org.xdi</groupId>
 			<artifactId>oxcore-saml</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.xdi</groupId>
-			<artifactId>oxcore-model</artifactId>
-		</dependency>
 
 		<!-- Weld -->
 		<dependency>
@@ -292,6 +281,16 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- Pretty Faces -->
+		<dependency>
+			<groupId>org.ocpsoft.rewrite</groupId>
+			<artifactId>rewrite-servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ocpsoft.rewrite</groupId>
+			<artifactId>rewrite-config-prettyfaces</artifactId>
+		</dependency>
+
 		<!-- Richfaces -->
 		<dependency>
 			<groupId>org.richfaces</groupId>
@@ -304,16 +303,6 @@
 		<dependency>
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces-a4j</artifactId>
-		</dependency>
-
-		<!-- Pretty Faces -->
-		<dependency>
-			<groupId>org.ocpsoft.rewrite</groupId>
-			<artifactId>rewrite-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.ocpsoft.rewrite</groupId>
-			<artifactId>rewrite-config-prettyfaces</artifactId>
 		</dependency>
 
 		<!-- Commons libs -->
@@ -368,16 +357,6 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
-		</dependency>
-
-		<!-- Drolls -->
-		<dependency>
-			<groupId>org.drools</groupId>
-			<artifactId>drools-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.drools</groupId>
-			<artifactId>drools-compiler</artifactId>
 		</dependency>
 
 		<!-- Net -->
@@ -442,6 +421,10 @@
 			<artifactId>resteasy-jackson-provider</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>jaxrs-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
 		</dependency>
@@ -454,6 +437,7 @@
 		<dependency>
 			<groupId>org.asimba</groupId>
 			<artifactId>asimba-utility-ldap</artifactId>
+			<!-- Remove after updating Asimba dependencies -->
 			<exclusions>
 				<exclusion>
 					<groupId>org.xdi</groupId>
@@ -487,6 +471,74 @@
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sourceforge.jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.openid4java</groupId> -->
+<!-- 			<artifactId>openid4java-consumer</artifactId> -->
+<!-- 			<type>pom</type> -->
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>nekohtml</artifactId> -->
+<!-- 					<groupId>net.sourceforge.nekohtml</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>jcip-annotations</artifactId> -->
+<!-- 					<groupId>net.jcip</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>guice</artifactId> -->
+<!-- 					<groupId>com.google.code.guice</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>httpclient</artifactId> -->
+<!-- 					<groupId>org.apache.httpcomponents</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>commons-logging</artifactId> -->
+<!-- 					<groupId>commons-logging</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>xmltooling</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>bcprov-jdk15</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-httpclient</artifactId>
+					<groupId>commons-httpclient</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.tmatesoft.svnkit</groupId>
+			<artifactId>svnkit</artifactId>
 		</dependency>
 
 		<!-- Test -->
@@ -535,78 +587,6 @@
 		<dependency>
 			<groupId>com.wordnik</groupId>
 			<artifactId>swagger-annotations</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>net.sourceforge.jexcelapi</groupId>
-			<artifactId>jxl</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.openid4java</groupId>
-			<artifactId>openid4java-consumer</artifactId>
-			<type>pom</type>
-			<exclusions>
-				<exclusion>
-					<artifactId>nekohtml</artifactId>
-					<groupId>net.sourceforge.nekohtml</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jcip-annotations</artifactId>
-					<groupId>net.jcip</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>guice</artifactId>
-					<groupId>com.google.code.guice</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>httpclient</artifactId>
-					<groupId>org.apache.httpcomponents</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>xmltooling</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>bcprov-jdk15</artifactId>
-					<groupId>org.bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-httpclient</artifactId>
-					<groupId>commons-httpclient</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j-over-slf4j</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.tmatesoft.svnkit</groupId>
-			<artifactId>svnkit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.javatuples</groupId>
-			<artifactId>javatuples</artifactId>
 		</dependency>
 	</dependencies>
 
