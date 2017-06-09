@@ -4,6 +4,7 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{updateAttributeAction.setInum(param['inum'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateAttributeAction.update}"
                       if="#{permissionService.hasPermission('attribute', 'access') and updateAttributeAction.attribute == null and identity.checkLoggedIn()}"
