@@ -933,12 +933,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 			VelocityContext context = new VelocityContext();
 
-			context.put("spUrl", trustRelationship.getUrl());
+			context.put("spUrl", (trustRelationship.getUrl()!=null ? trustRelationship.getUrl() : ""));
 			String gluuSPEntityId = trustRelationship.getEntityId();
 			context.put("gluuSPEntityId", gluuSPEntityId);
-			String spHost = trustRelationship.getUrl().replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
+			String spHost = (trustRelationship.getUrl()!=null ? trustRelationship.getUrl().replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "") : "");
 			context.put("spHost", spHost);
-			String idpUrl = applicationConfiguration.getIdpUrl();
+			String idpUrl = (applicationConfiguration.getIdpUrl()!=null ? applicationConfiguration.getIdpUrl() : "");
 			context.put("idpUrl", idpUrl);
 			String idpHost = idpUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 			context.put("idpHost", idpHost);
