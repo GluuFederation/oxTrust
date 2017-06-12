@@ -755,7 +755,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to generate SP meta-data file due to undefined IDP root folder");
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolder = getIdpMetadataDir();
 
 		// Generate sp-metadata.xml meta-data file
 		String spMetadataFileContent = generateSpMetadataFileContent( trustRelationship,  certificate);
