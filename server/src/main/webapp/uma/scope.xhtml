@@ -86,11 +86,6 @@
                                                     </h:link>
                                                 </rich:column>
 
-                                                <rich:column sortBy="#{_row.type.displayName}">
-                                                    <f:facet name="header">#{msg['uma.uma']}</f:facet>
-                                                    <h:outputText value="#{_row.type.displayName}"/>
-                                                </rich:column>
-
                                                 <rich:column sortBy="#{_row.url}">
                                                     <f:facet name="header">#{msg['uma.referenceUrl']}</f:facet>
                                                     <ui:fragment>
