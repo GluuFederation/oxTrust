@@ -31,18 +31,18 @@
     </test>
 
     <!-- CopyUtils Create Test (embedded) -->
-    <test name="CopyUtils Create Test (embedded)" enabled="true">
-        <classes>
-            <class name="org.gluu.oxtrust.util.test.CopyUtilsTestCreate" />
-        </classes>
-    </test>
+<!--     <test name="CopyUtils Create Test (embedded)" enabled="true"> -->
+<!--         <classes> -->
+<!--             <class name="org.gluu.oxtrust.util.test.CopyUtilsTestCreate" /> -->
+<!--         </classes> -->
+<!--     </test> -->
 
     <!-- CopyUtils Update Test (embedded) -->
-    <test name="CopyUtils Update Test (embedded)" enabled="true">
-        <classes>
-            <class name="org.gluu.oxtrust.util.test.CopyUtilsTestUpdate" />
-        </classes>
-    </test>
+<!--     <test name="CopyUtils Update Test (embedded)" enabled="true"> -->
+<!--         <classes> -->
+<!--             <class name="org.gluu.oxtrust.util.test.CopyUtilsTestUpdate" /> -->
+<!--         </classes> -->
+<!--     </test> -->
 
     <!-- SCIM User Extension Service Test (embedded) -->
     <test name="SCIM User Extension Service Test (embedded)" enabled="true">
@@ -50,5 +50,23 @@
             <class name="org.gluu.oxtrust.service.test.UserExtensionsTest" />
         </classes>
     </test>
+
+	<!-- Login as administrator -->
+    <parameter name="test.login.user.admin.uid" value="${user.admin.uid}" />
+    <parameter name="test.login.user.admin.password" value="${user.admin.password}" />
+
+	<!-- Group -->
+    <parameter name="test.group.dn" value="inum=${user.admin.group.member.inum},ou=groups,o=${org.inum},o=gluu" />
+    <parameter name="test.group.dn.ownerDn" value="inum=${group.owner.user.inum},ou=people,o=${org.inum},o=gluu" />
+    <parameter name="test.group.dn.nonMemberDn" value="inum=${group.non_member.user.inum},ou=people,o=${org.inum},o=gluu" />
+
+	<!-- Person -->
+    <parameter name="person.search.pattern" value="${user.admin.uid}" />
+    <parameter name="person.uid" value="${user.admin.uid}" />
+
+    <parameter name="test.scim2.userext.create_json" value="${scim2.userext.create_json}" />
+
+    <parameter name="test.keep.persons" value="${test.keep.persons}" />
+    <parameter name="test.keep.groups" value="${test.keep.groups}" />
 
 </suite>
