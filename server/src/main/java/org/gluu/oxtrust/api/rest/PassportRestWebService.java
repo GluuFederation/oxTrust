@@ -92,7 +92,7 @@ public class PassportRestWebService {
 
 	protected Response processAuthorization(String authorization) {
 		if (!pasportUmaProtectionService.isEnabled()) {
-			log.info("UMA authentication is disabled");
+			log.info("UMA passport authentication is disabled");
 			return getErrorResponse(Response.Status.FORBIDDEN, "Passport configuration was disabled");
 		}
 

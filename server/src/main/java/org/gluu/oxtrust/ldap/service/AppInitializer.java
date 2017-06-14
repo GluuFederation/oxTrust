@@ -296,7 +296,7 @@ public class AppInitializer {
     @Produces @ApplicationScoped @Named(LDAP_CENTRAL_ENTRY_MANAGER_NAME) @CentralLdap
 	public LdapEntryManager createCentralLdapEntryManager() {
 		if (this.centralConnectionProvider == null) {
-			return null;
+			return new LdapEntryManager();
 		}
 
 		LdapEntryManager centralLdapEntryManager = new LdapEntryManager(new OperationsFacade(this.centralConnectionProvider));
@@ -339,7 +339,7 @@ public class AppInitializer {
 
 	private void closeLdapEntryManager(LdapEntryManager oldLdapEntryManager) {
 		// Close existing connections
-		if (oldLdapEntryManager != null) {
+		if ((oldLdapEntryManager != null) && (oldLdapEntryManager.getLdapOperationService() != null)) {
 	    	log.debug("Attempting to destroy {}: {}", LDAP_ENTRY_MANAGER_NAME, oldLdapEntryManager);
 	    	oldLdapEntryManager.destroy();
 	        log.debug("Destroyed {}: {}", LDAP_ENTRY_MANAGER_NAME, oldLdapEntryManager);
