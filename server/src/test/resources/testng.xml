@@ -64,7 +64,11 @@
     <parameter name="person.search.pattern" value="${user.admin.uid}" />
     <parameter name="person.uid" value="${user.admin.uid}" />
 
-    <parameter name="test.scim2.userext.create_json" value="${scim2.userext.create_json}" />
+    <parameter name="test.scim2.userext.create_json">
+        <value>
+            <![CDATA[${scim2.userext.create_json}]]>
+        </value>
+    </parameter>
 
     <parameter name="test.keep.persons" value="${test.keep.persons}" />
     <parameter name="test.keep.groups" value="${test.keep.groups}" />
