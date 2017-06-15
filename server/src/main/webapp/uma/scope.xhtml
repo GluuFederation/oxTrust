@@ -86,21 +86,6 @@
                                                     </h:link>
                                                 </rich:column>
 
-                                                <rich:column sortBy="#{_row.type.displayName}">
-                                                    <f:facet name="header">#{msg['uma.uma']}</f:facet>
-                                                    <h:outputText value="#{_row.type.displayName}"/>
-                                                </rich:column>
-
-                                                <rich:column sortBy="#{_row.url}">
-                                                    <f:facet name="header">#{msg['uma.referenceUrl']}</f:facet>
-                                                    <ui:fragment>
-                                                        <h:outputText rendered="#{_row.type.value eq 'internal'}"
-                                                                      value="#{umaInventoryAction.umaMetadataConfiguration.scopeEndpoint}/#{_row.id}"/>
-                                                        <h:outputText rendered="#{_row.type.value ne 'internal'}"
-                                                                      value="#{_row.url}"/>
-                                                    </ui:fragment>
-                                                </rich:column>
-
                                                 <rich:column>
                                                     <f:facet name="header">#{msg['uma.action']}</f:facet>
                                                     <ui:fragment rendered="#{_row.id != null}">
