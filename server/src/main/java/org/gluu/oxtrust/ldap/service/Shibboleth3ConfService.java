@@ -88,6 +88,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 	private static final String SHIB3_IDP_CONF_FOLDER = "conf";
 	public static final String SHIB3_IDP_METADATA_FOLDER = "metadata";
+        private static final String SHIB3_IDP_METADATA_CREDENTIALS_FOLDER = SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials";
 
 	private static final String SHIB3_IDP_METADATA_PROVIDERS_FILE = "metadata-providers.xml";
 	private static final String SHIB3_IDP_ATTRIBUTE_FILTER_FILE = "attribute-filter.xml";
@@ -113,8 +114,6 @@ public class Shibboleth3ConfService implements Serializable {
 	
 	public static final String SHIB3_IDP_PROPERTIES_FILE = "idp.properties";
 	private static final String SHIB3_IDP_LOGIN_CONFIG_FILE = "login.config";
-
-	private static final String SHIB3_IDP_METADATA_CREDENTIALS_FOLDER = SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials";
 
 	private static final String SHIB3_METADATA_FILE_PATTERN = "%s-metadata.xml";
 
@@ -346,8 +345,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 					trustEngine.put("id", "Trust" + StringHelper.removePunctuation(trustRelationship.getInum()));
 
-					trustEngine.put("certPath", appConfiguration.getShibboleth3IdpRootDir() + File.separator
-							+ SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator
+					trustEngine.put("certPath", getIdpMetadataDir() + "credentials" + File.separator
 							+ trustRelationship.getMetadataFilters().get("signatureValidation").getFilterCertFileName());
 
 					trustEngines.add(trustEngine);
@@ -408,7 +406,7 @@ public class Shibboleth3ConfService implements Serializable {
 			}
 		}
 
-		trustParams.put("idpCredentialsPath", appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator);
+		trustParams.put("idpCredentialsPath", getIdpMetadataDir() + "credentials" + File.separator);
 
 		trustParams.put("deconstructed", deconstructed);
 		trustParams.put("deconstructedIds", deconstructedIds);
@@ -640,6 +638,10 @@ public class Shibboleth3ConfService implements Serializable {
         public String getIdpMetadataDir() {
                 return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
         }
+        
+        public String getIdpMetadataCredentialsDir() {
+                return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER + File.separator;
+        }
 
 	public String getSpMetadataFilePath(String spMetaDataFN) {
 
@@ -647,7 +649,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to return SP meta-data file due to undefined IDP root folder");
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolder = getIdpMetadataDir();
 		return idpMetadataFolder + spMetaDataFN;
 	}
 
@@ -672,7 +674,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException(errorMessage);
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator;
+		String idpMetadataFolder = getIdpMetadataDir();
 		String tempFileName = getTempMetadataFilename(idpMetadataFolder, spMetadataFileName);
 		File spMetadataFile = new File(idpMetadataFolder + tempFileName);
 
@@ -785,7 +787,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to remove SP meta-data file due to undefined IDP root folder");
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolder = getIdpMetadataDir();
 		File spMetadataFile = new File(idpMetadataFolder + spMetadataFileName);
 
 		if (spMetadataFile.exists()) {
@@ -799,7 +801,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to check SP meta-data file due to undefined IDP root folder");
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER	+ File.separator;
+		String idpMetadataFolder = getIdpMetadataDir();
 		File metadataFile = new File(idpMetadataFolder + spMetadataFileName);
 		List<String> entityId = SAMLMetadataParser.getSpEntityIdFromMetadataFile(metadataFile);
 
@@ -874,7 +876,7 @@ public class Shibboleth3ConfService implements Serializable {
 		}
 
 		String idpConfFolder = getIdpConfDir();
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolder = getIdpMetadataDir();
 		String idpMetadataCredentialsFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER	+ File.separator;
 		String spConfFolder = appConfiguration.getShibboleth3SpConfDir() + File.separator;
 
@@ -909,7 +911,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to create SubversionFile file due to undefined IDP root folder");
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolder = getIdpMetadataDir();
 
 		return new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_FOLDER, idpMetadataFolder	+ trustRelationship.getSpMetaDataFN());
 	}
@@ -1021,7 +1023,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		File metadataDir = new File(appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER);
+		File metadataDir = new File(getIdpMetadataDir());
 
 		if (metadataDir.exists()) {
 
@@ -1144,7 +1146,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to check meta-data file due to undefined federation root folder");
 		}
 
-		String metadataFolder = appConfiguration.getShibboleth3FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER	+ File.separator;
+		String metadataFolder = getIdpMetadataDir();
 		File metadataFile = new File(metadataFolder + spMetaDataFN);
 		List<String> entityId = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 		return (entityId != null) && !entityId.isEmpty();
@@ -1156,7 +1158,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to remove meta-data file due to undefined federation root folder");
 		}
 
-		String metadataFolder = appConfiguration.getShibboleth3FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String metadataFolder = getIdpMetadataDir();
 		File spMetadataFile = new File(metadataFolder + spMetaDataFN);
 
 		if (spMetadataFile.exists()) {
@@ -1170,7 +1172,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to return meta-data file due to undefined federation root folder");
 		}
 
-		String metadataFolderName = appConfiguration.getShibboleth3FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String metadataFolderName = getIdpMetadataDir();
 		File metadataFolder = new File(metadataFolderName);
 		if (!metadataFolder.exists()) {
 			metadataFolder.mkdirs();
@@ -1192,7 +1194,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to save meta-data file due to undefined federation root folder");
 		}
 
-		String idpMetadataFolderName = appConfiguration.getShibboleth3FederationRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolderName = getIdpMetadataDir();
 		File idpMetadataFolder = new File(idpMetadataFolderName);
 		if (!idpMetadataFolder.exists()) {
 			idpMetadataFolder.mkdirs();
@@ -1256,7 +1258,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
+		String idpMetadataFolder = getIdpMetadataDir();
 
 		// Prepare data for files
 		VelocityContext context = new VelocityContext();
