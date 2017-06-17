@@ -421,8 +421,8 @@ public class AppInitializer {
 		}
 
 		String umaConfigurationEndpoint = umaIssuer;
-		if (!umaConfigurationEndpoint.endsWith("uma-configuration")) {
-			umaConfigurationEndpoint += "/.well-known/uma-configuration";
+		if (!umaConfigurationEndpoint.endsWith("uma2-configuration")) {
+			umaConfigurationEndpoint += "/.well-known/uma2-configuration";
 		}
 
 		return umaConfigurationEndpoint;
