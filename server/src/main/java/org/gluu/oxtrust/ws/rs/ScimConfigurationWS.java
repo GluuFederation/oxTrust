@@ -6,8 +6,17 @@
 
 package org.gluu.oxtrust.ws.rs;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.model.scim.ScimConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.oxauth.model.uma.UmaConstants;
+import org.xdi.oxauth.model.uma.UmaMetadata;
+import org.xdi.service.JsonService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,19 +25,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-
-import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.scim.ScimConfiguration;
-import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.oxauth.model.uma.UmaConfiguration;
-import org.xdi.oxauth.model.uma.UmaConstants;
-import org.xdi.service.JsonService;
-
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The endpoint at which the requester can obtain SCIM metadata configuration.
@@ -55,8 +53,8 @@ public class ScimConfigurationWS {
     @GET
     @Produces({UmaConstants.JSON_MEDIA_TYPE})
     @ApiOperation(
-            value = "Provides configuration data as json document. It contains options and endpoints supported by the SCIM server.",
-            response = UmaConfiguration.class
+            value = "Provides metadata as json document. It contains options and endpoints supported by the SCIM server.",
+            response = UmaMetadata.class
     )
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Failed to build SCIM configuration json object.")
