@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.gluu.oxtrust.action.test.AbstractAuthorizationTest;
+import org.gluu.oxtrust.action.test.AbstractAuthenticationTest;
 
 import org.testng.annotations.Test;
 
 
-public class PostLogoutRedirectUriTest extends AbstractAuthorizationTest {
+public class PostLogoutRedirectUriTest extends AbstractAuthenticationTest {
 
 	
 	@Test

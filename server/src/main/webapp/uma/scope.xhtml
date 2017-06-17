@@ -5,6 +5,7 @@
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{umaInventoryAction.setSearchPattern(param['searchPattern'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{umaInventoryAction.start}"
                       if="#{permissionService.hasPermission('uma', 'access') and not umaInventoryAction.initialized and identity.checkLoggedIn()}"
@@ -83,21 +84,6 @@
                                                             value="#{_row.displayName}">
                                                         <f:param name="scope" value="#{_row.inum}"/>
                                                     </h:link>
-                                                </rich:column>
-
-                                                <rich:column sortBy="#{_row.type.displayName}">
-                                                    <f:facet name="header">#{msg['uma.uma']}</f:facet>
-                                                    <h:outputText value="#{_row.type.displayName}"/>
-                                                </rich:column>
-
-                                                <rich:column sortBy="#{_row.url}">
-                                                    <f:facet name="header">#{msg['uma.referenceUrl']}</f:facet>
-                                                    <ui:fragment>
-                                                        <h:outputText rendered="#{_row.type.value eq 'internal'}"
-                                                                      value="#{umaInventoryAction.umaMetadataConfiguration.scopeEndpoint}/#{_row.id}"/>
-                                                        <h:outputText rendered="#{_row.type.value ne 'internal'}"
-                                                                      value="#{_row.url}"/>
-                                                    </ui:fragment>
                                                 </rich:column>
 
                                                 <rich:column>

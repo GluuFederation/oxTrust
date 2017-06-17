@@ -25,10 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.drools.CheckedDroolsException;
-import org.drools.RuleBase;
-import org.drools.WorkingMemory;
-import org.drools.compiler.RuleBaseLoader;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.security.Identity;
@@ -46,6 +42,7 @@ import org.xdi.util.StringHelper;
 @ConversationScoped
 @Named("ssoLoginAction")
 @Secure("#{identity.loggedIn}")
+@Deprecated
 public class SsoLoginAction implements Serializable {
 
 	private static final long serialVersionUID = 7409229786722653317L;
@@ -75,7 +72,7 @@ public class SsoLoginAction implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
-
+/*
 	public String start() {
 		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -148,7 +145,7 @@ public class SsoLoginAction implements Serializable {
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
-
+*/
 	public String logout() {
 		boolean isShib3Authentication = OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3.equals(identity.getSessionMap().get(
 				OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE));

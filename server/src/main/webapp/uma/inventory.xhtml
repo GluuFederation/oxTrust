@@ -5,6 +5,7 @@
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{umaInventoryAction.setSearchPattern(param['searchPattern'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{umaInventoryAction.start}"
                       if="#{permissionService.hasPermission('uma', 'access') and not umaInventoryAction.initialized and identity.checkLoggedIn()}"

@@ -6,13 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
@@ -24,6 +17,12 @@ import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * oxAuthClient
@@ -161,6 +160,9 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxPersistClientAuthorizations")
     private GluuBoolean oxAuthPersistClientAuthorizations = GluuBoolean.TRUE;
+
+    @LdapAttribute(name = "oxIncludeClaimsInIdToken")
+    private GluuBoolean oxIncludeClaimsInIdToken = GluuBoolean.FALSE;
 
     @LdapAttribute(name = "oxAuthDefaultAcrValues")
     private String[] defaultAcrValues;
@@ -494,6 +496,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setOxAuthPersistClientAuthorizations(GluuBoolean oxAuthPersistClientAuthorizations) {
         this.oxAuthPersistClientAuthorizations = oxAuthPersistClientAuthorizations;
+    }
+
+    public GluuBoolean getOxIncludeClaimsInIdToken() {
+        return oxIncludeClaimsInIdToken;
+    }
+
+    public void setOxIncludeClaimsInIdToken(GluuBoolean oxIncludeClaimsInIdToken) {
+        this.oxIncludeClaimsInIdToken = oxIncludeClaimsInIdToken;
     }
 
     public String[] getDefaultAcrValues() {

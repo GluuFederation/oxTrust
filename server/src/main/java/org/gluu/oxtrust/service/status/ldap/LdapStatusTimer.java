@@ -80,7 +80,7 @@ public class LdapStatusTimer {
     private void processInt() {
     	logConnectionProviderStatistic(ldapEntryManager, "connectionProvider", "bindConnectionProvider");
     	
-    	if (centralLdapService.isUseCentralServer()) {
+    	if (centralLdapService.isUseCentralServer() && (ldapCentralEntryManager.getLdapOperationService() != null)) {
     		logConnectionProviderStatistic(ldapCentralEntryManager, "centralConnectionProvider", "centralBindConnectionProvider");
     	}
     }

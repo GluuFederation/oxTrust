@@ -128,7 +128,7 @@ public class BaseScimWebService {
 		boolean authorized = getAuthorizedUser();
 		if (!authorized) {
 			if (!scimUmaProtectionService.isEnabled()) {
-				log.info("UMA authentication is disabled");
+				log.info("UMA SCIM authentication is disabled");
 				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 			}
 			Token patToken = scimUmaProtectionService.getPatToken();

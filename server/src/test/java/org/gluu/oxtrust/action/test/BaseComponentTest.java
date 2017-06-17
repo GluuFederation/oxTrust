@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.action.test;
 
-import org.xdi.oxauth.BaseTest;
-
 /**
  * @author Yuriy Zabrovarnyy
  * @author Yuriy Movchan

@@ -3,6 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{updateAsimbaIDPAction.setEditEntryInum(param['inum'])}"/>
         <f:viewAction action="#{updateAsimbaIDPAction.edit}"
                       if="#{permissionService.hasPermission('trust', 'access') and updateAsimbaIDPAction.editEntryInum != null and updateAsimbaIDPAction.editEntryInum != updateAsimbaIDPAction.idp.inum and identity.checkLoggedIn()}"
                       onPostback="true"/>

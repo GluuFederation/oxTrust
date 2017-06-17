@@ -65,7 +65,7 @@
 		                                    </h:selectOneMenu>
 		                                </ox:decorate>
 		            
-		                                <ox:decorate label="#{msg['customScript.level']}">
+		                                <ox:decorate label="#{msg['customScript.level']}" rendered="#{_scriptType.displayName != 'UMA Authorization Policies'}">
 		                                    <rich:inputNumberSpinner value="#{_customScript.level}" inputSize="2" minValue="0" maxValue="100"/>
 		                                </ox:decorate>
 
