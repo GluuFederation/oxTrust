@@ -6,28 +6,26 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.ejb.Stateless;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.ProgrammingLanguage;
-import org.xdi.oxauth.model.uma.persistence.InternalExternal;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
+
+import javax.ejb.Stateless;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Provides operations with organization
@@ -209,10 +207,6 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 
 	public ProgrammingLanguage[] getProgrammingLanguageTypes() {
 		return new ProgrammingLanguage[] { ProgrammingLanguage.PYTHON, ProgrammingLanguage.JAVA_SCRIPT };
-	}
-
-	public InternalExternal[] getInternalExternalTypes() {
-		return new InternalExternal[] { InternalExternal.INTERNAL, InternalExternal.EXTERNAL };
 	}
 
 	/**

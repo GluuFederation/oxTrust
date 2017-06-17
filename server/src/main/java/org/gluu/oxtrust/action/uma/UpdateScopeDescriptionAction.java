@@ -6,20 +6,6 @@
 
 package org.gluu.oxtrust.action.uma;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -34,13 +20,25 @@ import org.xdi.model.GluuImage;
 import org.xdi.model.SelectableEntity;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
-import org.xdi.oxauth.model.uma.UmaConfiguration;
-import org.xdi.oxauth.model.uma.persistence.InternalExternal;
-import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
+import org.xdi.oxauth.model.uma.UmaMetadata;
+import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.xdi.service.JsonService;
 import org.xdi.service.LookupService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Action class for view and update UMA scope description
@@ -78,11 +76,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	private CustomScriptService customScriptService;
 
     @Inject
-   	private UmaConfiguration umaMetadataConfiguration;
+   	private UmaMetadata umaMetadataConfiguration;
 
 	private String scopeInum;
 
-	private ScopeDescription scopeDescription;
+	private UmaScopeDescription scopeDescription;
 
 	private GluuImage curIconImage;
 
@@ -117,9 +115,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		this.scopeDescription = new ScopeDescription();
-		
-		this.scopeDescription.setType(InternalExternal.INTERNAL);
+		this.scopeDescription = new UmaScopeDescription();
+
 		this.authorizationPolicies = getInitialAuthorizationPolicies();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -157,9 +154,6 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		updateAuthorizationPolicies();
 
 		if (this.update) {
-			scopeDescription.setRevision(String.valueOf(StringHelper.toInteger(scopeDescription.getRevision(), 0) + 1));
-            scopeDescription.setUrl(umaMetadataConfiguration.getScopeEndpoint() + "/" + scopeDescription.getId());
-
 			// Update scope description
 			try {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
@@ -169,12 +163,9 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			}
 		} else {
 			// Check if scope description with this name already exist
-			ScopeDescription exampleScopeDescription = new ScopeDescription();
+			UmaScopeDescription exampleScopeDescription = new UmaScopeDescription();
 			exampleScopeDescription.setDn(scopeDescriptionService.getDnForScopeDescription(null));
 			exampleScopeDescription.setId(scopeDescription.getId());
-
-			// Prepare score description
-			this.scopeDescription.setRevision(String.valueOf(0));
 
 			String inum = scopeDescriptionService.generateInumForNewScopeDescription();
 			String scopeDescriptionDn = scopeDescriptionService.getDnForScopeDescription(inum);
@@ -182,7 +173,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			this.scopeDescription.setInum(inum);
 			this.scopeDescription.setDn(scopeDescriptionDn);
 			this.scopeDescription.setOwner(currentPerson.getDn());
-            this.scopeDescription.setUrl(umaMetadataConfiguration.getScopeEndpoint() + "/" + scopeDescription.getId());
+            this.scopeDescription.setId(scopeDescription.getId());
 
 			// Save scope description
 			try {
@@ -362,7 +353,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 
 		try {
-			List<CustomScript> availableScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.UMA_AUTHORIZATION_POLICY), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
+			List<CustomScript> availableScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.UMA_RPT_POLICY), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
 
 			List<SelectableEntity<CustomScript>> tmpAvailableAuthorizationPolicies = new ArrayList<SelectableEntity<CustomScript>>();
 			for (CustomScript authorizationPolicy : availableScripts) {
@@ -407,7 +398,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		this.scopeInum = scopeInum;
 	}
 
-	public ScopeDescription getScopeDescription() {
+	public UmaScopeDescription getScopeDescription() {
 		return scopeDescription;
 	}
 
@@ -418,12 +409,4 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	public List<CustomScript> getAuthorizationPolicies() {
 		return authorizationPolicies;
 	}
-	
-	public List<InternalExternal> getInternalExternalList(){
-		List<InternalExternal> list = new ArrayList<InternalExternal>();
-		list.add(InternalExternal.INTERNAL);
-		list.add(InternalExternal.UMA);
-		return list; 		
-	}
-
 }

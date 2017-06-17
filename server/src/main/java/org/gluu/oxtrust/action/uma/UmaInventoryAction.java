@@ -6,16 +6,6 @@
 
 package org.gluu.oxtrust.action.uma;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
@@ -23,13 +13,22 @@ import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
-import org.xdi.oxauth.model.uma.UmaConfiguration;
-import org.xdi.oxauth.model.uma.persistence.ResourceSet;
-import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
+import org.xdi.oxauth.model.uma.UmaMetadata;
+import org.xdi.oxauth.model.uma.persistence.UmaResource;
+import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.xdi.service.LookupService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Action class for UMA inventory
@@ -47,7 +46,7 @@ public class UmaInventoryAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private ResourceSetService resourceSetService;
+	private ResourceSetService umaResourcesService;
 
 	@Inject
 	private ClientService clientService;
@@ -62,7 +61,7 @@ public class UmaInventoryAction implements Serializable {
 	private LookupService lookupService;
 
     @Inject
-   	private UmaConfiguration umaMetadataConfiguration;
+   	private UmaMetadata umaMetadata;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -70,14 +69,14 @@ public class UmaInventoryAction implements Serializable {
 
 	private String oldSearchPattern;
 
-	private List<ResourceSet> resourcesList;
-	private List<ScopeDescription> scopesList;
+	private List<UmaResource> resourcesList;
+	private List<UmaScopeDescription> scopesList;
 	
 	private boolean initialized;
 
 	public String start() {
 		try {
-			resourceSetService.prepareResourceSetBranch();
+			umaResourcesService.prepareResourceBranch();
 		} catch (Exception ex) {
 			log.error("Failed to initialize form", ex);
 			return OxTrustConstants.RESULT_FAILURE;
@@ -102,10 +101,10 @@ public class UmaInventoryAction implements Serializable {
 		try {
 			if(searchPattern == null || searchPattern.isEmpty()){
 				this.scopesList = scopeDescriptionService.getAllScopeDescriptions(100);
-				this.resourcesList = resourceSetService.getAllResourceSets(100);
+				this.resourcesList = umaResourcesService.getAllResources(100);
 			}else{
 				this.scopesList = scopeDescriptionService.findScopeDescriptions(this.searchPattern, 100);
-				this.resourcesList = resourceSetService.findResourceSets(this.searchPattern, 100);
+				this.resourcesList = umaResourcesService.findResources(this.searchPattern, 100);
 			}
 			
 			this.oldSearchPattern = this.searchPattern;
@@ -142,11 +141,11 @@ public class UmaInventoryAction implements Serializable {
 		return initialized;
 	}
 
-	public List<ResourceSet> getResourcesList() {
+	public List<UmaResource> getResourcesList() {
 		return resourcesList;
 	}
 
-	public List<ScopeDescription> getScopesList() {
+	public List<UmaScopeDescription> getScopesList() {
 		return scopesList;
 	}
 
@@ -158,8 +157,8 @@ public class UmaInventoryAction implements Serializable {
 		this.searchPattern = searchPattern;
 	}
 
-	public UmaConfiguration getUmaMetadataConfiguration() {
-		return umaMetadataConfiguration;
+	public UmaMetadata getUmaMetadata() {
+		return umaMetadata;
 	}
 
 }

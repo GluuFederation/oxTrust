@@ -6,18 +6,6 @@
 
 package org.gluu.oxtrust.action.uma;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
@@ -28,23 +16,34 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
-import org.xdi.oxauth.model.uma.persistence.ResourceSet;
-import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
+import org.xdi.oxauth.model.uma.persistence.UmaResource;
+import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.xdi.service.LookupService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.SelectableEntityHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Action class for view and update resource sets
- * 
+ *
  * @author Yuriy Movchan Date: 11/21/2012
  */
 @ConversationScoped
 @Named
 @Secure("#{permissionService.hasPermission('uma', 'access')}")
-public class UpdateResourceSetAction implements Serializable {
+public class UpdateResourceAction implements Serializable {
 
 	private static final long serialVersionUID = 9180729281938167478L;
 
@@ -55,7 +54,7 @@ public class UpdateResourceSetAction implements Serializable {
 	protected GluuCustomPerson currentPerson;
 
 	@Inject
-	private ResourceSetService resourceSetService;
+	private ResourceSetService umaResourcesService;
 
 	@Inject
 	private ScopeDescriptionService scopeDescriptionService;
@@ -68,12 +67,12 @@ public class UpdateResourceSetAction implements Serializable {
 
 	private String resourceInum;
 
-	private ResourceSet resourceSet;
+	private UmaResource resource;
 	private List<DisplayNameEntry> scopes;
 	private List<DisplayNameEntry> clients;
 	private List<String> resources;
 
-	private List<SelectableEntity<ScopeDescription>> availableScopes;
+	private List<SelectableEntity<UmaScopeDescription>> availableScopes;
 	private String searchAvailableScopePattern, oldSearchAvailableScopePattern;
 
 	private List<SelectableEntity<OxAuthClient>> availableClients;
@@ -84,14 +83,14 @@ public class UpdateResourceSetAction implements Serializable {
 	private boolean update;
 
 	public String modify() {
-		if (this.resourceSet != null) {
+		if (this.resource != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
 		this.update = StringHelper.isNotEmpty(this.resourceInum);
 
 		try {
-			resourceSetService.prepareResourceSetBranch();
+			umaResourcesService.prepareResourceBranch();
 		} catch (Exception ex) {
 			log.error("Failed to initialize form", ex);
 			return OxTrustConstants.RESULT_FAILURE;
@@ -105,7 +104,7 @@ public class UpdateResourceSetAction implements Serializable {
 	}
 
 	private String add() {
-		this.resourceSet = new ResourceSet();
+		this.resource = new UmaResource();
 
 		this.scopes = new ArrayList<DisplayNameEntry>();
 		this.clients = new ArrayList<DisplayNameEntry>();
@@ -117,14 +116,14 @@ public class UpdateResourceSetAction implements Serializable {
 	private String update() {
 		log.debug("Loading UMA resource set '{}'", this.resourceInum);
 		try {
-			String resourceDn = resourceSetService.getDnForResourceSet(this.resourceInum);
-			this.resourceSet = resourceSetService.getResourceSetByDn(resourceDn);
+			String resourceDn = umaResourcesService.getDnForResource(this.resourceInum);
+			this.resource = umaResourcesService.getResourceByDn(resourceDn);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to find resource set '{}'", ex, this.resourceInum);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		if (this.resourceSet == null) {
+		if (this.resource == null) {
 			log.error("Resource set is null");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -132,10 +131,10 @@ public class UpdateResourceSetAction implements Serializable {
 		this.scopes = getScopesDisplayNameEntries();
 		this.clients = getClientDisplayNameEntries();
 
-		if (this.resourceSet.getResources() == null) {
+		if (this.resource.getResources() == null) {
 			this.resources = new ArrayList<String>();
 		} else {
-			this.resources = new ArrayList<String>(this.resourceSet.getResources());
+			this.resources = new ArrayList<String>(this.resource.getResources());
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -150,31 +149,31 @@ public class UpdateResourceSetAction implements Serializable {
 		updateResources();
 
 		if (this.update) {
-			resourceSet.setRev(String.valueOf(StringHelper.toInteger(resourceSet.getRev(), 0) + 1));
+			resource.setRev(String.valueOf(StringHelper.toInteger(resource.getRev(), 0) + 1));
 			// Update resource set
 			try {
-				resourceSetService.updateResourceSet(this.resourceSet);
+				umaResourcesService.updateResource(this.resource);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update resource set '{}'", ex, this.resourceSet.getInum());
+				log.error("Failed to update resource set '{}'", ex, this.resource.getInum());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
 			// Prepare resource set
 		    String id = String.valueOf(System.currentTimeMillis());
-			String inum = resourceSetService.generateInumForNewResourceSet();
-			String resourceSetDn = resourceSetService.getDnForResourceSet(inum);
+			String inum = umaResourcesService.generateInumForNewResource();
+			String resourceSetDn = umaResourcesService.getDnForResource(inum);
 
-			this.resourceSet.setId(id);
-			this.resourceSet.setInum(inum);
-			this.resourceSet.setDn(resourceSetDn);
-			this.resourceSet.setRev(String.valueOf(0));
-			this.resourceSet.setCreator(currentPerson.getDn());
+			this.resource.setId(id);
+			this.resource.setInum(inum);
+			this.resource.setDn(resourceSetDn);
+			this.resource.setRev(String.valueOf(0));
+			this.resource.setCreator(currentPerson.getDn());
 
 			// Save resource set
 			try {
-				resourceSetService.addResourceSet(this.resourceSet);
+				umaResourcesService.addResource(this.resource);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to add new resource set '{}'", ex, this.resourceSet.getInum());
+				log.error("Failed to add new resource set '{}'", ex, this.resource.getInum());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
@@ -189,17 +188,17 @@ public class UpdateResourceSetAction implements Serializable {
 		if (update) {
 			// Remove resource set
 			try {
-				resourceSetService.removeResourceSet(this.resourceSet);
+				umaResourcesService.removeResource(this.resource);
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove resource set {}", ex, this.resourceSet.getInum());
+				log.error("Failed to remove resource set {}", ex, this.resource.getInum());
 			}
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	@PreDestroy 
+	@PreDestroy
 	public void destroy() throws Exception {
 		cancel();
 	}
@@ -210,7 +209,7 @@ public class UpdateResourceSetAction implements Serializable {
 		}
 
 		try {
-			List<ScopeDescription> resultScopeDescriptions;
+			List<UmaScopeDescription> resultScopeDescriptions;
 			if (StringHelper.isEmpty(this.searchAvailableScopePattern)) {
 				resultScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
 			} else {
@@ -229,7 +228,7 @@ public class UpdateResourceSetAction implements Serializable {
 	public void selectAddedScopes() {
 		Set<String> addedScopeInums = getAddedScopesInums();
 
-		for (SelectableEntity<ScopeDescription> availableScope : this.availableScopes) {
+		for (SelectableEntity<UmaScopeDescription> availableScope : this.availableScopes) {
 			availableScope.setSelected(addedScopeInums.contains(availableScope.getEntity().getInum()));
 		}
 	}
@@ -237,8 +236,8 @@ public class UpdateResourceSetAction implements Serializable {
 	public void acceptSelectScopes() {
 		Set<String> addedScopeInums = getAddedScopesInums();
 
-		for (SelectableEntity<ScopeDescription> availableScope : this.availableScopes) {
-			ScopeDescription scopeDescription = availableScope.getEntity();
+		for (SelectableEntity<UmaScopeDescription> availableScope : this.availableScopes) {
+            UmaScopeDescription scopeDescription = availableScope.getEntity();
 			String scopeDescriptionInum = scopeDescription.getInum();
 
 			if (availableScope.isSelected() && !addedScopeInums.contains(scopeDescriptionInum)) {
@@ -268,7 +267,7 @@ public class UpdateResourceSetAction implements Serializable {
 	public void cancelSelectScopes() {
 	}
 
-	public void addScope(ScopeDescription scope) {
+	public void addScope(UmaScopeDescription scope) {
 		DisplayNameEntry oneScope = new DisplayNameEntry(scope.getDn(), scope.getId(), scope.getDisplayName());
 		this.scopes.add(oneScope);
 	}
@@ -291,7 +290,7 @@ public class UpdateResourceSetAction implements Serializable {
 
 	private void updateScopes() {
 		if ((this.scopes == null) || (this.scopes.size() == 0)) {
-			this.resourceSet.setScopes(null);
+			this.resource.setScopes(null);
 			return;
 		}
 
@@ -300,13 +299,13 @@ public class UpdateResourceSetAction implements Serializable {
 			tmpScopes.add(scope.getDn());
 		}
 
-		this.resourceSet.setScopes(tmpScopes);
+		this.resource.setScopes(tmpScopes);
 	}
 
 	private List<DisplayNameEntry> getScopesDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
 		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeDescriptionService.getDnForScopeDescription(null),
-				this.resourceSet.getScopes());
+				this.resource.getScopes());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -394,7 +393,7 @@ public class UpdateResourceSetAction implements Serializable {
 
 	private void updateClients() {
 		if ((this.clients == null) || (this.clients.size() == 0)) {
-			this.resourceSet.setClients(null);
+			this.resource.setClients(null);
 			return;
 		}
 
@@ -403,12 +402,12 @@ public class UpdateResourceSetAction implements Serializable {
 			tmpClients.add(client.getDn());
 		}
 
-		this.resourceSet.setClients(tmpClients);
+		this.resource.setClients(tmpClients);
 	}
 
 	private List<DisplayNameEntry> getClientDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null), this.resourceSet.getClients());
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null), this.resource.getClients());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -418,11 +417,11 @@ public class UpdateResourceSetAction implements Serializable {
 
 	private void updateResources() {
 		if ((this.resources == null) || (this.resources.size() == 0)) {
-			this.resourceSet.setResources(null);
+			this.resource.setResources(null);
 			return;
 		}
 
-		this.resourceSet.setResources(this.resources);
+		this.resource.setResources(this.resources);
 	}
 
 	public void acceptResource() {
@@ -455,15 +454,15 @@ public class UpdateResourceSetAction implements Serializable {
 		this.resourceInum = resourceInum;
 	}
 
-	public ResourceSet getResourceSet() {
-		return resourceSet;
+	public UmaResource getResource() {
+		return resource;
 	}
 
 	public List<DisplayNameEntry> getScopes() {
 		return scopes;
 	}
 
-	public List<SelectableEntity<ScopeDescription>> getAvailableScopes() {
+	public List<SelectableEntity<UmaScopeDescription>> getAvailableScopes() {
 		return availableScopes;
 	}
 

@@ -28,8 +28,8 @@ import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.OpenIdConnectDiscoveryClient;
 import org.xdi.oxauth.client.OpenIdConnectDiscoveryResponse;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
-import org.xdi.oxauth.client.uma.UmaConfigurationService;
-import org.xdi.oxauth.model.uma.UmaConfiguration;
+import org.xdi.oxauth.client.uma.UmaMetadataService;
+import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.oxauth.model.util.SecurityProviderUtility;
 import org.xdi.service.JsonService;
 import org.xdi.service.PythonService;
@@ -397,14 +397,14 @@ public class AppInitializer {
 	}
 
 	@Produces @ApplicationScoped @Named("umaMetadataConfiguration")
-	public UmaConfiguration initUmaMetadataConfiguration() throws OxIntializationException {
+	public UmaMetadata initUmaMetadataConfiguration() throws OxIntializationException {
 		String umaConfigurationEndpoint = getUmaConfigurationEndpoint();
 		if (StringHelper.isEmpty(umaConfigurationEndpoint)) {
 			return null;
 		}
 
-        UmaConfigurationService metaDataConfigurationService = UmaClientFactory.instance().createMetaDataConfigurationService(umaConfigurationEndpoint);
-		UmaConfiguration metadataConfiguration = metaDataConfigurationService.getMetadataConfiguration();
+        UmaMetadataService metaDataConfigurationService = UmaClientFactory.instance().createMetadataService(umaConfigurationEndpoint);
+        UmaMetadata metadataConfiguration = metaDataConfigurationService.getMetadata();
 
         if (metadataConfiguration == null) {
 			throw new OxIntializationException("UMA meta data configuration is invalid!");

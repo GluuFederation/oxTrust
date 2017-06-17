@@ -6,18 +6,6 @@
 
 package org.gluu.oxtrust.action.uma;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
-
 import org.codehaus.jettison.json.JSONObject;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.ViewHandlerService;
@@ -25,11 +13,22 @@ import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.model.GluuImage;
-import org.xdi.oxauth.model.uma.persistence.ScopeDescription;
+import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.xdi.service.security.Secure;
 import org.xdi.util.io.FileDownloader;
 import org.xdi.util.io.FileDownloader.ContentDisposition;
 import org.xdi.util.io.ResponseHelper;
+
+import javax.enterprise.context.RequestScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Action class for download scope descriptions
@@ -61,7 +60,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 	public void downloadFile() {
 		byte resultFile[] = null;
 
-		ScopeDescription scopeDescription = getScopeDescription();
+		UmaScopeDescription scopeDescription = getScopeDescription();
 
 		if (scopeDescription != null) {
 			JSONObject jsonObject = new JSONObject();
@@ -95,7 +94,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 	public void downloadIcon() {
 		byte resultFile[] = null;
 
-		ScopeDescription scopeDescription = getScopeDescription();
+        UmaScopeDescription scopeDescription = getScopeDescription();
 
 		if (scopeDescription != null) {
 			GluuImage gluuImage = imageService.getGluuImageFromXML(scopeDescription.getFaviconImageAsXml());
@@ -118,7 +117,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 		}
 	}
 
-	private ScopeDescription getScopeDescription() {
+	private UmaScopeDescription getScopeDescription() {
 		try {
 			scopeDescriptionService.prepareScopeDescriptionBranch();
 		} catch (Exception ex) {
@@ -127,9 +126,9 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 		}
 
 		log.debug("Loading UMA scope description '{}'", this.scopeId);
-		ScopeDescription scopeDescription;
+        UmaScopeDescription scopeDescription;
 		try {
-			List<ScopeDescription> scopeDescriptions = scopeDescriptionService.findScopeDescriptionsById(this.scopeId);
+			List<UmaScopeDescription> scopeDescriptions = scopeDescriptionService.findScopeDescriptionsById(this.scopeId);
 			if (scopeDescriptions.size() != 1) {
 				log.error("Failed to find scope description '{}'. Found: '{}'", this.scopeId, scopeDescriptions.size());
 				return null;

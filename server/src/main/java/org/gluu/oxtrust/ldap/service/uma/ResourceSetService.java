@@ -6,33 +6,29 @@
 
 package org.gluu.oxtrust.ldap.service.uma;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
-
-import java.io.Serializable;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.unboundid.ldap.sdk.Filter;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
-import org.xdi.oxauth.model.uma.persistence.ResourceSet;
+import org.xdi.oxauth.model.uma.persistence.UmaResource;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * Provides operations with resource sets
+ * Provides operations with resources
  * 
  * @author Yuriy Movchan Date: 12/06/2012
  */
 @Stateless
-@Named("resourceSetService")
+@Named("umaResourcesService")
 public class ResourceSetService implements Serializable {
 
 	private static final long serialVersionUID = -1537567020929600777L;
@@ -47,120 +43,120 @@ public class ResourceSetService implements Serializable {
 
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();
-		branch.setOrganizationalUnitName("resource_sets");
-		branch.setDn(getDnForResourceSet(null));
+		branch.setOrganizationalUnitName("resources");
+		branch.setDn(getDnForResource(null));
 
 		ldapEntryManager.persist(branch);
 	}
 
 	public boolean containsBranch() {
-		return ldapEntryManager.contains(SimpleBranch.class, getDnForResourceSet(null));
+		return ldapEntryManager.contains(SimpleBranch.class, getDnForResource(null));
 	}
 
 	/**
-	 * Create resource set branch if needed
+	 * Create resource branch if needed
 	 */
-	public void prepareResourceSetBranch() {
+	public void prepareResourceBranch() {
 		if (!containsBranch()) {
 			addBranch();
 		}
 	}
 
 	/**
-	 * Add new resource set entry
+	 * Add new resource entry
 	 * 
-	 * @param resourceSet Resource set
+	 * @param resource Resource
 	 */
-	public void addResourceSet(ResourceSet resourceSet) {
-		ldapEntryManager.persist(resourceSet);
+	public void addResource(UmaResource resource) {
+		ldapEntryManager.persist(resource);
 	}
 
 	/**
-	 * Update resource set entry
+	 * Update resource entry
 	 * 
-	 * @param resourceSet Resource set
+	 * @param resource Resource
 	 */
-	public void updateResourceSet(ResourceSet resourceSet) {
-		ldapEntryManager.merge(resourceSet);
+	public void updateResource(UmaResource resource) {
+		ldapEntryManager.merge(resource);
 	}
 
 	/**
-	 * Remove resource set entry
+	 * Remove resource entry
 	 * 
-	 * @param resourceSet Resource set
+	 * @param resource Resource
 	 */
-	public void removeResourceSet(ResourceSet resourceSet) {
-		ldapEntryManager.remove(resourceSet);
+	public void removeResource(UmaResource resource) {
+		ldapEntryManager.remove(resource);
 	}
 
 	/**
-	 * Check if LDAP server contains resource set with specified attributes
+	 * Check if LDAP server contains resource with specified attributes
 	 * 
-	 * @return True if resource set with specified attributes exist
+	 * @return True if resource with specified attributes exist
 	 */
-	public boolean containsResourceSet(ResourceSet resourceSet) {
-		return ldapEntryManager.contains(resourceSet);
+	public boolean containsResource(UmaResource resource) {
+		return ldapEntryManager.contains(resource);
 	}
 	
-  public List<ResourceSet> getAllResourceSets(int sizeLimit) {		
-		return ldapEntryManager.findEntries(getDnForResourceSet(null), ResourceSet.class, null, 0, sizeLimit);
+  public List<UmaResource> getAllResources(int sizeLimit) {
+		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, 0, sizeLimit);
     }
 
 	/**
-	 * Get all resource sets
+	 * Get all resources
 	 * 
-	 * @return List of resource sets
+	 * @return List of resources
 	 */
-	public List<ResourceSet> getAllResourceSets(String... ldapReturnAttributes) {
-		return ldapEntryManager.findEntries(getDnForResourceSet(null), ResourceSet.class, ldapReturnAttributes, null);
+	public List<UmaResource> getAllResources(String... ldapReturnAttributes) {
+		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, ldapReturnAttributes, null);
 	}
 
 	/**
-	 * Search resource sets by pattern
+	 * Search resources by pattern
 	 * 
 	 * @param pattern Pattern
 	 * @param sizeLimit Maximum count of results
-	 * @return List of resource sets
+	 * @return List of resources
 	 */
-	public List<ResourceSet> findResourceSets(String pattern, int sizeLimit) {
+	public List<UmaResource> findResources(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter oxIdFilter = Filter.createSubstringFilter("oxId", null, targetArray, null);
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
 
-		List<ResourceSet> result = ldapEntryManager.findEntries(getDnForResourceSet(null), ResourceSet.class, searchFilter, 0, sizeLimit);
+		List<UmaResource> result = ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter, 0, sizeLimit);
 
 		return result;
 	}
 
 	/**
-	 * Get resource sets by example
+	 * Get resources by example
 	 * 
-	 * @param resourceSet Resource set
-	 * @return List of ResourceSets which conform example
+	 * @param resource Resource
+	 * @return List of Resources which conform example
 	 */
-	public List<ResourceSet> findResourceSets(ResourceSet resourceSet) {
-		return ldapEntryManager.findEntries(resourceSet);
+	public List<UmaResource> findResourceSets(UmaResource resource) {
+		return ldapEntryManager.findEntries(resource);
 	}
 
 	/**
-	 * Get resource sets by Id
+	 * Get resources by Id
 	 * 
 	 * @param id Id
-	 * @return List of ResourceSets which specified id
+	 * @return List of Resources which specified id
 	 */
-	public List<ResourceSet> findResourceSetsById(String id) {
-		return ldapEntryManager.findEntries(getDnForResourceSet(null), ResourceSet.class, Filter.createEqualityFilter("oxId", id));
+	public List<UmaResource> findResourcesById(String id) {
+		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, Filter.createEqualityFilter("oxId", id));
 	}
 
 	/**
 	 * Get resource set by DN
 	 * 
-	 * @param DN Resource set DN
+	 * @param dn Resource set DN
 	 * @return Resource set
 	 */
-	public ResourceSet getResourceSetByDn(String dn) {
-		return ldapEntryManager.find(ResourceSet.class, dn);
+	public UmaResource getResourceByDn(String dn) {
+		return ldapEntryManager.find(UmaResource.class, dn);
 	}
 
 	/**
@@ -168,15 +164,14 @@ public class ResourceSetService implements Serializable {
 	 * 
 	 * @return New inum for resource set
 	 */
-	public String generateIdForNewResourceSet() {
-		ResourceSet resourceSet = new ResourceSet();
-		long currentTime = System.currentTimeMillis();
+	public String generateInumForNewResource() {
+		UmaResource resource = new UmaResource();
 		String newInum = null;
 		do {
-			newInum = Long.toString(currentTime);
-			String newDn = getDnForResourceSet(newInum);
-			resourceSet.setDn(newDn);
-		} while (ldapEntryManager.contains(resourceSet));
+			newInum = generateInumForNewResourceImpl();
+			String newDn = getDnForResource(newInum);
+			resource.setDn(newDn);
+		} while (ldapEntryManager.contains(resource));
 
 		return newInum;
 	}
@@ -186,32 +181,15 @@ public class ResourceSetService implements Serializable {
 	 * 
 	 * @return New inum for resource set
 	 */
-	public String generateInumForNewResourceSet() {
-		ResourceSet resourceSet = new ResourceSet();
-		String newInum = null;
-		do {
-			newInum = generateInumForNewResourceSetImpl();
-			String newDn = getDnForResourceSet(newInum);
-			resourceSet.setDn(newDn);
-		} while (ldapEntryManager.contains(resourceSet));
-
-		return newInum;
-	}
-
-	/**
-	 * Generate new inum for resource set
-	 * 
-	 * @return New inum for resource set
-	 */
-	private String generateInumForNewResourceSetImpl() {
+	private String generateInumForNewResourceImpl() {
 		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
 	}
 
 	/**
-	 * Build DN string for resource set
+	 * Build DN string for resource
 	 */
-	public String getDnForResourceSet(String inum) {
+	public String getDnForResource(String inum) {
 		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=resource_sets,ou=uma,%s", orgDn);

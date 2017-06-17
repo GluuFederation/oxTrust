@@ -1,20 +1,18 @@
 package org.gluu.oxtrust.service.uma;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.slf4j.Logger;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
-import org.xdi.oxauth.model.uma.UmaConfiguration;
+import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provide base methods to simplify work with UMA Rest services
@@ -32,7 +30,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 	private EncryptionService encryptionService;
 
 	@Inject
-	private UmaConfiguration umaMetadataConfiguration;
+	private UmaMetadata umaMetadata;
 
 	private Token umaPat;
 	private long umaPatAccessTokenExpiration = 0l; // When the "accessToken" will expire;
@@ -60,7 +58,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 	}
 
 	protected boolean isEnabledUmaAuthentication() {
-        return (umaMetadataConfiguration != null) && isExistPatToken();
+        return (umaMetadata != null) && isExistPatToken();
 	}
 
 	public boolean isExistPatToken() {
@@ -75,7 +73,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	private void retrievePatToken() throws UmaProtectionException {
 		this.umaPat = null;
-		if (umaMetadataConfiguration == null) {
+		if (umaMetadata == null) {
 			return;
 		}
 
@@ -95,7 +93,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 		
 
 		try {
-			this.umaPat = UmaClient.requestPat(umaMetadataConfiguration.getTokenEndpoint(), umaClientKeyStoreFile, umaClientKeyStorePassword, getClientId(), getClientKeyId());
+			this.umaPat = UmaClient.requestPat(umaMetadata.getTokenEndpoint(), umaClientKeyStoreFile, umaClientKeyStorePassword, getClientId(), getClientKeyId());
 			if (this.umaPat == null) {
 				this.umaPatAccessTokenExpiration = 0l;
 			} else {

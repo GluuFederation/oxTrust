@@ -1,16 +1,5 @@
 package org.gluu.oxtrust.service.uma;
 
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpResponse;
@@ -27,17 +16,27 @@ import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.oxauth.client.uma.PermissionRegistrationService;
-import org.xdi.oxauth.client.uma.RptStatusService;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
+import org.xdi.oxauth.client.uma.UmaRptIntrospectionService;
 import org.xdi.oxauth.model.uma.PermissionTicket;
 import org.xdi.oxauth.model.uma.RptIntrospectionResponse;
-import org.xdi.oxauth.model.uma.UmaConfiguration;
+import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.oxauth.model.uma.UmaPermission;
+import org.xdi.oxauth.model.uma.UmaPermissionList;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.service.JsonService;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
 
 /**
  * Provide methods to work with permissions and RPT tokens
@@ -48,13 +47,13 @@ import org.xdi.util.StringHelper;
 @Named("umaPermissionService")
 public class UmaPermissionService implements Serializable {
 
-	private static final long serialVersionUID = -3347131971095468865L;
+	private static final long serialVersionUID = -3347131971095468866L;
 
 	@Inject
 	private Logger log;
 
 	@Inject
-	private UmaConfiguration umaMetadataConfiguration;
+	private UmaMetadata umaMetadata;
 
 	@Inject
 	protected AppConfiguration appConfiguration;
@@ -65,15 +64,15 @@ public class UmaPermissionService implements Serializable {
 	@Inject
 	private AppInitializer appInitializer;
 
-	private PermissionRegistrationService resourceSetPermissionRegistrationService;
-	private RptStatusService rptStatusService;
+	private org.xdi.oxauth.client.uma.UmaPermissionService permissionService;
+	private UmaRptIntrospectionService rptStatusService;
 
 	private final Pair<Boolean, Response> authenticationFailure = new Pair<Boolean, Response>(false, null);
 	private final Pair<Boolean, Response> authenticationSuccess = new Pair<Boolean, Response>(true, null);
 
 	@PostConstruct
 	public void init() {
-		if (this.umaMetadataConfiguration != null) {
+		if (this.umaMetadata != null) {
 			if (appConfiguration.isRptConnectionPoolUseConnectionPooling()) {
 
 				// For more information about PoolingHttpClientConnectionManager, please see:
@@ -91,12 +90,12 @@ public class UmaPermissionService implements Serializable {
 				ClientExecutor clientExecutor = new ApacheHttpClient4Executor(client);
 				log.info("##### Initializing custom ClientExecutor DONE");
 
-				this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration, clientExecutor);
-				this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration, clientExecutor);
+				this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata, clientExecutor);
+				this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata, clientExecutor);
 
 			} else {
-				this.resourceSetPermissionRegistrationService = UmaClientFactory.instance().createResourceSetPermissionRegistrationService(this.umaMetadataConfiguration);
-				this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadataConfiguration);
+				this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata);
+				this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
 			}
 		}
 	}
@@ -119,7 +118,7 @@ public class UmaPermissionService implements Serializable {
 		if (rptHasPermissions) {
 			for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
 				if ((umaPermission.getScopes() != null) && umaPermission.getScopes().contains(scopeId) &&
-						(isGat || StringHelper.equals(resourceSetId, umaPermission.getResourceSetId()))) {
+						(isGat || StringHelper.equals(resourceSetId, umaPermission.getResourceId()))) {
 					return authenticationSuccess;
 				}
 			}
@@ -176,20 +175,17 @@ public class UmaPermissionService implements Serializable {
 		String authorization = "Bearer " + patToken.getAccessToken();
 
 		// Register permissions for resource set
-        UmaPermission resourceSetPermissionRequest = new UmaPermission();
-        resourceSetPermissionRequest.setResourceSetId(resourceSetId);
+        UmaPermission permission = new UmaPermission();
+        permission.setResourceId(resourceSetId);
 
-        resourceSetPermissionRequest.setScopes(Arrays.asList(umaScope));
+        permission.setScopes(Arrays.asList(umaScope));
 
         PermissionTicket resourceSetPermissionTicket = null;
         try {
-        	resourceSetPermissionTicket = this.resourceSetPermissionRegistrationService.registerResourceSetPermission(
-        			authorization,
-                    getHost(umaMetadataConfiguration.getIssuer()),
-                    resourceSetPermissionRequest);
-		} catch (MalformedURLException ex) {
-        	log.error("Failed to determine host by URI", ex);
-        } catch (ClientResponseFailure ex) {
+        	resourceSetPermissionTicket = this.permissionService.registerPermission(
+                    authorization,
+                    UmaPermissionList.instance(permission));
+		} catch (ClientResponseFailure ex) {
         	log.error("Failed to register permissions for resource set: '{}'", ex, resourceSetId);
         }
 
