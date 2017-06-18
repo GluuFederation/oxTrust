@@ -80,6 +80,9 @@ public class UpdateClientAction implements Serializable {
 	private List<String> loginUris;
 	private List<String> logoutUris;
 	private List<String> clientlogoutUris;
+	private List<String> claimRedirectURIList ;
+
+
 
 	private List<DisplayNameEntry> scopes;
 	private List<ResponseType> responseTypes;
@@ -100,6 +103,15 @@ public class UpdateClientAction implements Serializable {
 	private String availableContact = "";
 	private String availableDefaultAcrValue = "";
 	private String availableRequestUri = "https://";
+	private String availableClaimRedirectUri = "https://";
+
+	public String getAvailableClaimRedirectUri() {
+		return availableClaimRedirectUri;
+	}
+
+	public void setAvailableClaimRedirectUri(String availableClaimRedirectUri) {
+		this.availableClaimRedirectUri = availableClaimRedirectUri;
+	}
 
 	private List<OxAuthScope> availableScopes;
 	private List<GluuGroup> availableGroups;
@@ -124,6 +136,7 @@ public class UpdateClientAction implements Serializable {
 			this.contacts = getNonEmptyStringList(client.getContacts());
 			this.defaultAcrValues = getNonEmptyStringList(client.getDefaultAcrValues());
 			this.requestUris = getNonEmptyStringList(client.getRequestUris());
+			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
 
@@ -162,6 +175,7 @@ public class UpdateClientAction implements Serializable {
 			this.contacts = getNonEmptyStringList(client.getContacts());
 			this.defaultAcrValues = getNonEmptyStringList(client.getDefaultAcrValues());
 			this.requestUris = getNonEmptyStringList(client.getRequestUris());
+			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
 			return OxTrustConstants.RESULT_FAILURE;
@@ -199,6 +213,7 @@ public class UpdateClientAction implements Serializable {
 		updateContacts();
 		updateDefaultAcrValues();
 		updateRequestUris();
+		updateClaimredirectUri();
 
 		// Trim all URI properties
 		trimUriProperties();
@@ -271,6 +286,10 @@ public class UpdateClientAction implements Serializable {
 
 	public void removeClientLogoutURI(String uri) {
 		removeFromList(this.clientlogoutUris, uri);
+	}
+	
+	public void removeClaimRedirectURI(String uri) {
+		removeFromList(this.claimRedirectURIList, uri);
 	}
 
 	public void removeContact(String contact) {
@@ -392,6 +411,18 @@ public class UpdateClientAction implements Serializable {
 
 		this.availableClientlogoutUri = "https://";
 	}
+	
+	public void acceptSelectClaimRedirectUri() {
+		if (StringHelper.isEmpty(this.availableClaimRedirectUri)) {
+			return;
+		}
+
+		if (!this.claimRedirectURIList.contains(this.availableClaimRedirectUri)) {
+			this.claimRedirectURIList.add(this.availableClaimRedirectUri);
+		}
+
+		this.availableClaimRedirectUri = "https://";
+	}
 
 	public void acceptSelectContact() {
 		if (StringHelper.isEmpty(this.availableContact)) {
@@ -462,6 +493,10 @@ public class UpdateClientAction implements Serializable {
 
 	public void cancelClientLogoutUri() {
 		this.availableClientlogoutUri = "http://";
+	}
+	
+	public void cancelClaimRedirectUri() {
+		this.availableClaimRedirectUri = "http://";
 	}
 
 	public void cancelSelectContact() {
@@ -557,6 +592,20 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		client.setRequestUris(tmpRequestUris.toArray(new String[tmpRequestUris.size()]));
+	}
+	
+	private void updateClaimredirectUri() {
+		if (claimRedirectURIList == null || claimRedirectURIList.size() == 0) {
+			client.setClaimRedirectURI(null);
+			return;
+		}
+
+		List<String> tmpClaimRedirectURI = new ArrayList<String>();
+		for (String claimRedirectURI : claimRedirectURIList) {
+			tmpClaimRedirectURI.add(StringHelper.trimAll(claimRedirectURI));
+		}
+
+		client.setClaimRedirectURI(tmpClaimRedirectURI.toArray(new String[tmpClaimRedirectURI.size()]));
 	}
 
 	private void updateScopes() {
@@ -795,6 +844,14 @@ public class UpdateClientAction implements Serializable {
 		for (SelectableEntity<GrantType> availableGrantType : this.availableGrantTypes) {
 			availableGrantType.setSelected(addedGrantTypes.contains(availableGrantType.getEntity()));
 		}
+	}
+	
+	public List<String> getClaimRedirectURIList() {
+		return claimRedirectURIList;
+	}
+
+	public void setClaimRedirectURIList(List<String> claimRedirectURIList) {
+		this.claimRedirectURIList = claimRedirectURIList;
 	}
 
 	public String getInum() {

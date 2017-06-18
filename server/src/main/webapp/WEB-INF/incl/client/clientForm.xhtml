@@ -363,6 +363,35 @@
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
+                                
+                                <!--  -->
+                                
+                                <ox:decorate id="claimRedirectUrls" label="#{msg['clientForm.claimRedirectURI']}">
+                                    <h:panelGroup id="selectedClaimRedirectURIIsId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.claimRedirectURIList}" rowKeyVar="_urisIdx"
+                                                        var="_uri">
+                                                <h:outputText value="#{empty _uri ? _uri : _uri}"/>
+                                                <h:outputText value="&#160;"/>
+                                                <div class="row-fluid">
+                                                    <div class="span6 pull-right">
+                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
+                                                                         style="margin-top:-20px;"
+                                                                         action="#{_clientAction.removeClaimRedirectURI(_uri)}"
+                                                                         execute="@this" render="selectedClaimRedirectURIIsId"
+                                                                         eventsQueue="clientQueue">
+                                                            <!-- <h:graphicImage value="/img/remove.gif" /> -->
+                                                        </a4j:commandLink></div>
+                                                </div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+                                
+                                <!--  -->
 
                                 <ox:decorate id="scopes" label="#{msg['clientForm.scopes']}">
                                     <h:panelGroup id="selectedScopesId">
@@ -631,6 +660,11 @@
                                             <a4j:commandButton styleClass="btn btn-primary"
                                                                value="#{msg['clientForm.addFrontchannelLogoutURI']}"
                                                                oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
+                                                               
+                                            <a4j:commandButton styleClass="btn btn-primary"
+                                                               value="#{msg['clientForm.addClaimRedirectURI']}"
+                                                               oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
                                         </div>
                                     </h:panelGroup>

@@ -151,8 +151,11 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
     private String[] postLogoutRedirectUris;
+    
+    @LdapAttribute(name = "oxClaimRedirectURI")
+    private String[] claimRedirectURI ;
 
-    @LdapAttribute(name = "oxAuthLogoutURI")
+	@LdapAttribute(name = "oxAuthLogoutURI")
     private List<String> logoutUri;
 
     @LdapAttribute(name = "oxAuthLogoutSessionRequired")
@@ -185,6 +188,14 @@ public class OxAuthClient extends Entry implements Serializable {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+    
+    public String[] getClaimRedirectURI() {
+		return claimRedirectURI;
+	}
+
+	public void setClaimRedirectURI(String[] claimRedirectURI) {
+		this.claimRedirectURI = claimRedirectURI;
+	}
 
     public String getInum() {
         return inum;
