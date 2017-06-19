@@ -6,7 +6,7 @@
     <navigation-case>
       <from-action>#{authenticator.oAuthGetAccessToken}</from-action>
       <from-outcome>failure</from-outcome>
-      <to-view-id>/home.xhtml</to-view-id>
+      <to-view-id>/error.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
     <navigation-case>

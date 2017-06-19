@@ -5,7 +5,14 @@
     <from-view-id>/finishlogin.xhtml</from-view-id>
     <navigation-case>
       <from-action>#{authenticator.authenticate}</from-action>
+      <from-outcome>true</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+    <navigation-case>
+      <from-action>#{authenticator.authenticate}</from-action>
+      <from-outcome>false</from-outcome>
+      <to-view-id>/error.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>
