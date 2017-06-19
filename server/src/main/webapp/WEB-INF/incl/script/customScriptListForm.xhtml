@@ -65,7 +65,11 @@
 		                                    </h:selectOneMenu>
 		                                </ox:decorate>
 		            
-		                                <ox:decorate label="#{msg['customScript.level']}" rendered="#{_scriptType.displayName != 'UMA Authorization Policies'}">
+		                                <ox:decorate label="#{msg['customScript.level']}" rendered="#{_scriptType.value != 'uma_claims_gathering'}">
+		                                    <rich:inputNumberSpinner value="#{_customScript.level}" inputSize="2" minValue="0" maxValue="100"/>
+		                                </ox:decorate>
+		                                
+		                                <ox:decorate label="#{msg['customScript.priority']}" rendered="#{_scriptType.value == 'uma_claims_gathering'}">
 		                                    <rich:inputNumberSpinner value="#{_customScript.level}" inputSize="2" minValue="0" maxValue="100"/>
 		                                </ox:decorate>
 
