@@ -19,6 +19,7 @@ import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.exception.OxIntializationException;
 import org.xdi.model.custom.script.CustomScriptType;
@@ -63,6 +64,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.LogManager;
 
 /**
  * Perform startup time initialization. Provides factory methods for non Seam
@@ -172,7 +174,12 @@ public class AppInitializer {
 	@PostConstruct
     public void createApplicationComponents() {
     	SecurityProviderUtility.installBCProvider();
-    }
+
+    	// Remove JUL console logger
+    	SLF4JBridgeHandler.removeHandlersForRootLogger();
+    	// Add SLF4JBridgeHandler to JUL root logger
+    	SLF4JBridgeHandler.install();
+	}
 
 	/**
 	 * Initialize components and schedule DS connection time checker

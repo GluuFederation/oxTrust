@@ -18,11 +18,13 @@
             <var>msg</var>
         </resource-bundle>
     </application>
+
     <factory>
         <exception-handler-factory>
             org.gluu.oxtrust.exception.GlobalExceptionHandlerFactory
         </exception-handler-factory>
     </factory>
+
     <!--
         <lifecycle>
             <phase-listener>org.gluu.oxtrust.util.jsf.MultiPageMessagesSupport</phase-listener>

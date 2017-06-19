@@ -104,28 +104,14 @@
 		<Logger name="org.ajax4jsf.cache" level="error" />
 
 
-		<!-- ############### Seam logging ################### -->
-		<Logger name="org.jboss.seam" level="info" />
+		<!-- ############### JSF logging ################### -->
+		<Logger name="javax.faces" level="error" />
+		<Logger name="com.sun.faces" level="error" />
+		<Logger name="javax.enterprise.resource.webcontainer.jsf" level="error" />
 
-		<!-- These things are too noisy
-		<category name="org.jboss.seam.jsf.SeamVariableResolver" level="info" />
-		<category name="org.jboss.seam.contexts.Contexts" level="info" />
-		<category name="org.jboss.seam.Component" level="info" />
-		<category name="org.jboss.seam.deployment.Scanner" level="info" />
-		<category name="org.jboss.seam.util.Naming" level="info" />
-		<category name="org.jboss.seam.debug.hot" level="info" />
-		<category name="org.jboss.seam.core.Events" level="info" />
-		-->
-
-		<!-- Debugging conversations and persistence contexts
-		<Logger name="org.jboss.seam.core.Manager" level="debug" />
-		<Logger name="org.jboss.seam.core.ManagedPersistenceContext" level="debug" />
-		<Logger name="org.jboss.seam.jsf.AbstractSeamPhaseListener" level="debug" />
-		<Logger name="org.jboss.seam.interceptors.ConversationInterceptor" level="debug" />
-		<Logger name="org.jboss.seam.contexts.Lifecycle" level="debug" />
-		<Logger name="org.hibernate.impl.SessionImpl" level="debug" />
-		<Logger name="org.hibernate.event.def.AbstractFlushingEventListener" level="debug" />
-		-->
+		<!-- Disable JUL logging -->
+		<logger name="com.sun.common.util.logging" additivity="false">
+		</logger>
 
 		<logger name="org.gluu.site.ldap" level="${log4j.default.log.level}" additivity="false">
 			<AppenderRef ref="OX_PERSISTENCE_FILE" />
