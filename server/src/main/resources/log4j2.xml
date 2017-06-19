@@ -104,7 +104,7 @@
 		<Logger name="org.ajax4jsf.cache" level="error" />
 
 
-		<!-- ############### JSF logging ################### -->
+		<!-- ############### JSF2 logging ################### -->
 		<Logger name="javax.faces" level="error" />
 		<Logger name="com.sun.faces" level="error" />
 		<Logger name="javax.enterprise.resource.webcontainer.jsf" level="error" />
