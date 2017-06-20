@@ -133,6 +133,13 @@
             <ox:acceptRemovalDialog deleteMethod="#{updateClientAction.delete}" id="deleteConfirmation"
                                     queue="clientQueue" subject="client"
                                     value="#{updateClientAction.client.displayName}"/>
+                                    
+            <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectClaimRedirectUri()}"
+                                    cancelMethod="#{updateClientAction.cancelClaimRedirectUri()}" dialogWidth="600"
+                                    id="claimRedirectUri" inputLabel="#{msg['client.claimRedirect']}" inputWidth="80"
+                                    label="#{msg['client.claimRedirect']}" maxLength="256" queue="clientQueue"
+                                    render="selectedClaimRedirectURIIsId" text="#{updateClientAction.availableClaimRedirectUri}"
+                                    textId="claimRedirectTextId"/>
         </div>
     </ui:define>
 </ui:composition>
