@@ -27,9 +27,6 @@
 
         <h:panelGrid columns="1" id="federationDeconstructionMenu">
             <h:form>
-                <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-                <input type='hidden' name='cid' value='#{conversation.id}' />
-
                 <h:panelGrid columns="3">
                     <h:outputText value="Filter: " />
                     <h:inputText value="#{federationDeconstructionAction.filterString}">
@@ -41,9 +38,6 @@
             </h:form>
 
             <h:form>
-                <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-                <input type='hidden' name='cid' value='#{conversation.id}' />
-
                 <rich:pickList id="federationDeconstructionSelection" value="#{federationDeconstructionAction.managedEntities}"
                     listsHeigh="150" listWidth="230" sourceCaption="#{msg['trustmanager.availableFederationMembers']}"
                     targetCaption="#{msg['trustmanager.membersSelectedForIndividualsConfiguration']}">

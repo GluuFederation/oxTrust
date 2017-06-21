@@ -29,8 +29,6 @@
     <ox:acceptRemovalDialog id="deleteConfirmation" subject="federation" value="#{joinFederationAction.federationProposal.displayName}" deleteMethod="#{joinFederationAction.delete}" queue="federationQueue" />
 
     <h:form enctype="multipart/form-data" id="joinFederationForm" rendered="#{_isFederation or (not empty federationService.allFederations)}">
-        <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-        <input type='hidden' name='cid' value='#{conversation.id}' />
         <!--a4j:queue onrequestqueue="changeButtonsAvailability('updateButtons',false);" 
             onrequestdequeue="changeButtonsAvailability('updateButtons',true);"/-->
         <h:panelGrid columns="3" width="100%" columnClasses="attributeColumn, , formColumn" border="0" cellpadding="0" cellspacing="0">

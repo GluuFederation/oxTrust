@@ -116,9 +116,6 @@
 	<ui:include src="/WEB-INF/incl/trustmanager/entityIdSelector.xhtml" />
 
 	<h:form enctype="multipart/form-data" id="trustForm">
-		<!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-		<input type='hidden' name='cid' value='#{conversation.id}' />
-
 		<!--a4j:queue onrequestqueue="changeButtonsAvailability('updateButtons',false);" onrequestdequeue="changeButtonsAvailability('updateButtons',true);" /-->
 		<h:panelGrid columns="2" width="100%"
 			columnClasses="formColumn, formColumn" border="0"

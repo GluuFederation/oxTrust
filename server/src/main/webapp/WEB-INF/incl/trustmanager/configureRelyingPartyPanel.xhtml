@@ -76,9 +76,6 @@
         </f:facet>
 
         <h:form>
-            <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-            <input type='hidden' name='cid' value='#{conversation.id}' />
-
             <h:panelGrid columns="1" id="RelyingPartyMenu" width="700"  style="margin: 0 auto; ">
                 <rich:pickList id="profileConfigurationSelection" value="#{relyingPartyAction.profileConfigurations}"
                     listsHeight="150" listWidth="230" sourceCaption="#{msg['trustmanager.availableProfileConfigurations']}" targetCaption="#{msg['trustmanager.selectedProfileConfigurations']}">

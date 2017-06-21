@@ -71,18 +71,6 @@
         </ui:fragment>
 
       <div class="footer">
-         <ui:fragment rendered="#{init.debug}">
-         <a:log hotkey="D"/>
-         <p style="margin-top: -0.5em;">
-            Conversation: id = #{conversation.id}, #{conversation.longRunning ? 'long running' : 'temporary'}#{conversation.nested ? ', nested, parent id = '.concat(conversation.parentId) : ''}
-            #{' - '}
-            Ajax4jsf Log (Ctrl+Shift+D)
-            #{' - '}
-            <h:link includeViewParams="false" id="debugConsole" outcome="/debug" value="Debug console" target="debugConsole"/>
-            #{' - '}
-            <h:link includeViewParams="false" id="resetSession" outcome="/home" action="#{org.jboss.seam.web.session.invalidate()}" value="Terminate session"/>
-         </p>
-         </ui:fragment>
       </div>
     </h:body>
 </f:view>

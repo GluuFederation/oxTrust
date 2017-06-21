@@ -19,9 +19,6 @@
         </f:facet>
 
         <h:form>
-            <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-            <input type='hidden' name='cid' value='#{conversation.id}' />
-
             <h:panelGrid columns="1" id="MetadataFilterMenu">
                 <rich:pickList id="metadataFilterSelection" value="#{metadataFiltersAction.metadataFilters}"
                     listsHeight="150" listWidth="130" sourceCaption="#{msg['trustmanager.availableFilter']}" targetCaption="Selected Filters">
