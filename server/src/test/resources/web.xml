@@ -17,7 +17,7 @@
 
 	<context-param>
 		<param-name>resteasy.servlet.mapping.prefix</param-name>
-		<param-value>/seam/resource/restv1</param-value>
+		<param-value>/restv1</param-value>
 	</context-param>
 
 	<servlet>

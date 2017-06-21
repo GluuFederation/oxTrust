@@ -7,7 +7,7 @@
 
     "baseDN":"o=gluu",
 
-    "baseEndpoint":"${config.host.schema}://${config.host.idp_name}/identity/seam/resource/restv1",
+    "baseEndpoint":"${config.host.schema}://${config.host.idp_name}/identity/restv1",
 
     "idpUrl":"${config.host.schema}://${config.host.idp_name}",
     "applianceUrl":"${config.host.schema}://${config.host.idp_name}",

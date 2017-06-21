@@ -11,9 +11,6 @@
             <h:outputText value="#{msg['profile.configureWhitePage']}" />
         </f:facet>
         <h:form id="configureListingOptionsForm">
-            <!-- Workaround. TODO: Remove after upgrade to SEAM 2.3.1 -->
-            <input type='hidden' name='cid' value='#{conversation.id}' />
-
             <h:panelGrid columns="1">
                 <h:outputText value="#{msg['profile.clickOnAttributeName']}" />
                 <h:panelGrid columns="2">

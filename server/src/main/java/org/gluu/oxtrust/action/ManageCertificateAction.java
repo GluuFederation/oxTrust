@@ -98,7 +98,6 @@ public class ManageCertificateAction implements Serializable {
 	@Inject
 	private ApplianceService applianceService;
 
-	@SuppressWarnings("seam-unresolved-variable")
 	@Inject
 	protected GluuCustomPerson currentPerson;
 

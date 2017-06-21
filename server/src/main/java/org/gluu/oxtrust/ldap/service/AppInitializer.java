@@ -67,9 +67,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.LogManager;
 
 /**
- * Perform startup time initialization. Provides factory methods for non Seam
- * components.
- * 
+ * Perform startup time initialization
+ *
  * @author Yuriy Movchan
  */
 @ApplicationScoped

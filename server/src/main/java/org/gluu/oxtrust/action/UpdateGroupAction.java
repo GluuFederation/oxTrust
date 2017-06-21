@@ -69,7 +69,6 @@ public class UpdateGroupAction implements Serializable {
 
 	private List<GluuCustomPerson> availableMembers;
 
-	@SuppressWarnings("seam-unresolved-variable")
 	@Inject
 	protected GluuCustomPerson currentPerson;
 	

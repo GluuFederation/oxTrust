@@ -117,7 +117,7 @@ public class BulkWebService extends BaseScimWebService {
 						bulkResponses.setMethod(method);
 						GluuCustomPerson gluuPerson = personService.getPersonByUid(person.getUserName());
 						String iD = gluuPerson.getInum();
-						String location = (new StringBuilder()).append(domain).append("/oxTrust/seam/resource/restv1/Users/").append(iD)
+						String location = (new StringBuilder()).append(domain).append("/identity/restv1/Users/").append(iD)
 								.toString();
 						bulkResponses.setLocation(location);
 						BulkResponseStatus result = new BulkResponseStatus();
@@ -156,7 +156,7 @@ public class BulkWebService extends BaseScimWebService {
 						BulkResponses bulkResponses = new BulkResponses();
 						bulkResponses.setMethod(method);
 						String iD = personiD;
-						String location = (new StringBuilder()).append(domain).append("/oxTrust/seam/resource/restv1/Users/").append(iD)
+						String location = (new StringBuilder()).append(domain).append("/identity/restv1/Users/").append(iD)
 								.toString();
 						bulkResponses.setLocation(location);
 						EntityTag eTag = new EntityTag(version, true);
@@ -192,7 +192,7 @@ public class BulkWebService extends BaseScimWebService {
 
 						BulkResponses bulkResponses = new BulkResponses();
 						bulkResponses.setMethod(method);
-						String location = (new StringBuilder()).append(domain).append("/oxTrust/seam/resource/restv1/Users/")
+						String location = (new StringBuilder()).append(domain).append("/identity/restv1/Users/")
 								.append(personiD).toString();
 						bulkResponses.setLocation(location);
 						BulkResponseStatus result = new BulkResponseStatus();
@@ -233,7 +233,7 @@ public class BulkWebService extends BaseScimWebService {
 						bulkResponses.setMethod(method);
 						GluuGroup gluuGroup = groupService.getGroupByDisplayName(group.getDisplayName());
 						String iD = gluuGroup.getInum();
-						String location = (new StringBuilder()).append(domain).append("/oxTrust/seam/resource/restv1/Groups/").append(iD)
+						String location = (new StringBuilder()).append(domain).append("/identity/restv1/Groups/").append(iD)
 								.toString();
 						bulkResponses.setLocation(location);
 						BulkResponseStatus result = new BulkResponseStatus();
@@ -271,7 +271,7 @@ public class BulkWebService extends BaseScimWebService {
 						BulkResponses bulkResponses = new BulkResponses();
 						bulkResponses.setMethod(method);
 						String iD = groupiD;
-						String location = (new StringBuilder()).append(domain).append("/oxTrust/seam/resource/restv1/Groups/").append(iD)
+						String location = (new StringBuilder()).append(domain).append("/identity/restv1/Groups/").append(iD)
 								.toString();
 						bulkResponses.setLocation(location);
 						EntityTag eTag = new EntityTag(version, true);
@@ -307,7 +307,7 @@ public class BulkWebService extends BaseScimWebService {
 
 						BulkResponses bulkResponses = new BulkResponses();
 						bulkResponses.setMethod(method);
-						String location = (new StringBuilder()).append(domain).append("/oxTrust/seam/resource/restv1/Groups/")
+						String location = (new StringBuilder()).append(domain).append("/identity/restv1/Groups/")
 								.append(groupiD).toString();
 						bulkResponses.setLocation(location);
 						BulkResponseStatus result = new BulkResponseStatus();
