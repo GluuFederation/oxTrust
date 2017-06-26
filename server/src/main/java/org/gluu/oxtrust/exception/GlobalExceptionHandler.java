@@ -27,7 +27,6 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
         this.wrapped = exception;
     }
 
-
     @Override
     public ExceptionHandler getWrapped() {
         return this.wrapped;
@@ -45,10 +44,12 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
             final ExternalContext externalContext = fc.getExternalContext();
             final ConfigurableNavigationHandler nav = (ConfigurableNavigationHandler) fc.getApplication().getNavigationHandler();
             try {
-                if (isForbidden(t))
+                if (isForbidden(t)) {
                     performRedirect(externalContext, "/login");
-                else
+                } else {
+                	log.error(t.getMessage(), t);
                     performRedirect(externalContext, "/error");
+                }
                 fc.renderResponse();
             } finally {
                 i.remove();

@@ -7,8 +7,7 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-		xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+		xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
 
     <h:outputStylesheet>
         .attributeColumn {
@@ -102,12 +101,11 @@
                                 <h:panelGroup id="tabPanelGroupId">
 
                                     <rich:tabPanel switchType="client" id="attributeTabPanelId">
-                                        <c:forEach items="#{_customAttributeAction.attributeByOrigin.entrySet()}"
-                                                   var="origin">
+                                        <ui:repeat var="origin" value="#{_customAttributeAction.attributeByOrigin.entrySet()}">
                                             <rich:tab header="#{_customAttributeAction.originDisplayNames[origin.key]}">
                                                 <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0">
                                                     <h4 style="font-size: 18px;text-decoration: underline;">#{msg['person.addAttributesToPerson']}</h4>
-                                                    <c:forEach items="#{origin.value}" var="attr">
+                                                    <ui:repeat var="attr" value="#{origin.value}">
                                                         <ui:param name="_aid"
                                                                   value="#{_customAttributeAction.attributeIds[attr]}"/>
                                                         <a4j:commandLink id="#{_aid}" value="#{attr.displayName}"
@@ -118,10 +116,10 @@
                                                                          eventsQueue="personQueue">
                                                             <f:param name="sv" value="1"/>
                                                         </a4j:commandLink>
-                                                    </c:forEach>
+                                                    </ui:repeat>
                                                 </h:panelGrid>
                                             </rich:tab>
-                                        </c:forEach>
+                                        </ui:repeat>
                                     </rich:tabPanel>
                                 </h:panelGroup>
 
