@@ -1330,18 +1330,10 @@ public class Shibboleth3ConfService implements Serializable {
 	 * @throws ParserConfigurationException
          * @return GluuErrorHandler
 	 */
-<<<<<<< HEAD
 	public GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
-		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
-		// String schemaDir = configurationFactory.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
-		String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
-		Schema schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
-                
-=======
-	public static GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
                 Schema schema;
                 try {
-                    String idpTemplatesLocation = OxTrustConfiguration.instance().getIDPTemplatesLocation();
+                    String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
                     // String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
                     String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
                     schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
@@ -1353,7 +1345,6 @@ public class Shibboleth3ConfService implements Serializable {
                     // return internal error
                     return new GluuErrorHandler(false, true, validationLog);
                 }
->>>>>>> 764d5fc... SAML SP metadata validation error #529 - fix
 		return XMLValidator.validateMetadata(stream, schema);
 	}
 
