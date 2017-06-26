@@ -7,7 +7,8 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-		xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
+                xmlns:gluufn="http://www.gluu.org/jsf/functions"
+                xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
 
     <h:outputStylesheet>
         .attributeColumn {
@@ -101,11 +102,11 @@
                                 <h:panelGroup id="tabPanelGroupId">
 
                                     <rich:tabPanel switchType="client" id="attributeTabPanelId">
-                                        <ui:repeat var="origin" value="#{_customAttributeAction.attributeByOrigin.entrySet()}">
+                                        <ui:repeat var="origin" value="#{gluufn:toList(_customAttributeAction.attributeByOrigin.entrySet())}">
                                             <rich:tab header="#{_customAttributeAction.originDisplayNames[origin.key]}">
                                                 <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0">
                                                     <h4 style="font-size: 18px;text-decoration: underline;">#{msg['person.addAttributesToPerson']}</h4>
-                                                    <ui:repeat var="attr" value="#{origin.value}">
+                                                    <ui:repeat var="attr" value="#{gluufn:toList(origin.value)}">
                                                         <ui:param name="_aid"
                                                                   value="#{_customAttributeAction.attributeIds[attr]}"/>
                                                         <a4j:commandLink id="#{_aid}" value="#{attr.displayName}"
