@@ -8,7 +8,9 @@ package org.gluu.oxtrust.util.jsf;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.oxtrust.model.User;
@@ -127,6 +129,10 @@ public class JsfFunctions {
 
 	public static boolean hasPermission(Object target, String action) {
 		return CdiUtil.bean(PermissionService.class).hasPermission(target, action);
+	}
+
+	public static List<Map.Entry<?, ?>> toList(Map<?, ?> map) {
+		return map != null ? new ArrayList<Map.Entry<?, ?>>(map.entrySet()) : null;
 	}
 
 }
