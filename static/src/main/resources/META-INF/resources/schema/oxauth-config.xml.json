@@ -1089,6 +1089,16 @@
                     }
                 }
             }
+        },
+        "logClientIdOnClientAuthentication": {
+            "id": "logClientIdOnClientAuthentication",
+            "description": "Boolean value to specify if application should log the Client ID on client authentication.",
+            "type": "boolean"
+        },
+        "logClientNameOnClientAuthentication": {
+            "id": "logClientNameOnClientAuthentication",
+            "description": "Boolean value to specify if application should log the Client Name on client authentication.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1194,6 +1204,8 @@
         "updateUserLastLogonTime",
         "updateClientAccessTime",
         "loggingLevel",
-        "corsConfigurationFilters"
+        "corsConfigurationFilters",
+        "logClientIdOnClientAuthentication",
+        "logClientNameOnClientAuthentication"
     ]
 }
