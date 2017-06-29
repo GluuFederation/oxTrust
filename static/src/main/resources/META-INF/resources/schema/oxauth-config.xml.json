@@ -575,19 +575,9 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
-        "shortLivedAccessTokenLifetime": {
-            "id": "shortLivedAccessTokenLifetime",
+        "accessTokenLifetime": {
+            "id": "accessTokenLifetime",
             "description": "The lifetime of the short lived Access Token.",
-            "type": "integer",
-            "multipleOf": 1,
-            "maximum": 2147483647,
-            "minimum": 1,
-            "exclusiveMaximum": false,
-            "exclusiveMinimum": false
-        },
-        "longLivedAccessTokenLifetime": {
-            "id": "longLivedAccessTokenLifetime",
-            "description": "The lifetime of the long lived Access Token.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -1155,8 +1145,7 @@
         "authorizationCodeLifetime",
         "refreshTokenLifetime",
         "idTokenLifetime",
-        "shortLivedAccessTokenLifetime",
-        "longLivedAccessTokenLifetime",
+        "accessTokenLifetime",
         "umaRptLifetime",
         "umaPctLifetime",
         "umaAddScopesAutomatically",
