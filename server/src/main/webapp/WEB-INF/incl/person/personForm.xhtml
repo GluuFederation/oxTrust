@@ -8,6 +8,7 @@
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:gluufn="http://www.gluu.org/jsf/functions"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
 
     <h:outputStylesheet>
@@ -107,12 +108,15 @@
 	                                            <h4 style="font-size: 18px;text-decoration: underline;">#{msg['person.addAttributesToPerson']}</h4>
 	                                            <a4j:repeat var="attr" value="#{origin.value}">
 	                                            	<div>
-		                                                 <a4j:commandLink name="#{_aid}" value="#{attr.displayName}" action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
+                                                        <ui:param name="_aid"
+                                                                  value="#{_customAttributeAction.attributeIds[attr]}"/>
+		                                                 <a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}" action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
 		                                                                  render="selectedCustomAttributesId"
 		                                                                  oncomplete="changeAttributeVisibility(${component.clientId}, false);"
 		                                                                  style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
 		                                                                  eventsQueue="personQueue">
 		                                                     <f:param name="sv" value="1"/>
+		                                                     <f:event listener="#{_customAttributeAction.renderAttribute}" type="preRenderComponent" />
 		                                                 </a4j:commandLink>
 	                                                </div>
 	                                            </a4j:repeat>
