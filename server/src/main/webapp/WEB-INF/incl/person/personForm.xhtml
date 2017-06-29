@@ -102,25 +102,22 @@
                                 <h:panelGroup id="tabPanelGroupId">
 
                                     <rich:tabPanel switchType="client" id="attributeTabPanelId">
-                                        <ui:repeat var="origin" value="#{gluufn:toList(_customAttributeAction.attributeByOrigin.entrySet())}">
+                                        <a4j:repeat var="origin" value="#{gluufn:toList(_customAttributeAction.attributeByOrigin)}">
                                             <rich:tab header="#{_customAttributeAction.originDisplayNames[origin.key]}">
-                                                <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0">
-                                                    <h4 style="font-size: 18px;text-decoration: underline;">#{msg['person.addAttributesToPerson']}</h4>
-                                                    <ui:repeat var="attr" value="#{gluufn:toList(origin.value)}">
-                                                        <ui:param name="_aid"
-                                                                  value="#{_customAttributeAction.attributeIds[attr]}"/>
-                                                        <a4j:commandLink id="#{_aid}" value="#{attr.displayName}"
-                                                                         action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-                                                                         render="selectedCustomAttributesId"
-                                                                         oncomplete="changeAttributeVisibility('#{_aid}', false);"
-                                                                         style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-                                                                         eventsQueue="personQueue">
-                                                            <f:param name="sv" value="1"/>
-                                                        </a4j:commandLink>
-                                                    </ui:repeat>
-                                                </h:panelGrid>
+	                                            <h4 style="font-size: 18px;text-decoration: underline;">#{msg['person.addAttributesToPerson']}</h4>
+	                                            <a4j:repeat var="attr" value="#{origin.value}">
+	                                            	<div>
+		                                                 <a4j:commandLink name="#{_aid}" value="#{attr.displayName}" action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
+		                                                                  render="selectedCustomAttributesId"
+		                                                                  oncomplete="changeAttributeVisibility(${component.clientId}, false);"
+		                                                                  style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
+		                                                                  eventsQueue="personQueue">
+		                                                     <f:param name="sv" value="1"/>
+		                                                 </a4j:commandLink>
+	                                                </div>
+	                                            </a4j:repeat>
                                             </rich:tab>
-                                        </ui:repeat>
+                                        </a4j:repeat>
                                     </rich:tabPanel>
                                 </h:panelGroup>
 
