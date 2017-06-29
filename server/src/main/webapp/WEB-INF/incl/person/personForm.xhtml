@@ -54,13 +54,12 @@
 
     <h:outputScript>
         function changeAttributeVisibility(attrId, show) {
-            var attr = $('a[id*=' + attrId + ']');
-            var currentState = attr.is(":visible");
+        	var attr = document.getElementById(attrId);
 
-            if (/* !currentState and */ show) {
-                attr.show();
+            if (show) {
+	        	attr.style['display'] = '';
             } else {
-                attr.hide();
+	        	attr.style['display'] = 'none';
             }
         }
         
