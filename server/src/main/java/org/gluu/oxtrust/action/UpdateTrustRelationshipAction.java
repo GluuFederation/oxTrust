@@ -192,7 +192,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 
 	@Inject
-	private ExternalContext externalContext;
+	private transient ExternalContext externalContext;
 
 	// @Inject
 	// private ResourceLoader resourceLoader;
