@@ -1,13 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:gluufn="http://www.gluu.org/jsf/functions"
-    xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+    xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <cc:interface>
     <cc:attribute name="label" default="" type="java.lang.String" />
@@ -22,27 +23,28 @@
 
 <cc:implementation>
     <a4j:region>
-        <ox:decorate label="#{cc.attrs.label}">
+        <s:decorate template="/WEB-INF/incl/layout/edit.xhtml">
+            <ui:define name="label">#{cc.attrs.label}</ui:define>
             <h:panelGroup id="customList">
                 <a4j:region>
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
                         <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                             <h:panelGroup >
-                            <div >
-                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}" />
-                                <h:message for="fInput" errorClass="invalid"/>
-
-                                <h:inputText id="sInput" styleClass="col-md-4 form-control" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}"  />
-                                <h:message for="sInput" errorClass="invalid"/>
-    
+                            <div>
+                                <h:inputText style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}" />
+                                
+                                <h:inputSecret  styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" redisplay="true"/>
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
-    
+    							
                                 <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@region">
                                    <!--  <h:graphicImage value="/img/remove.gif" /> -->
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink>
+                                <h:graphicImage value="/img/eye.png"  id="view" onclick="return viewValue(this);"/>
+                                <h:graphicImage value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);"/>
                                 </div>
                             </h:panelGroup>
+                            <s:message styleClass="errors" />
                         </h:panelGrid>
                     </a4j:repeat>
                     
@@ -54,7 +56,7 @@
                     </a4j:commandLink>
                 </a4j:region>
             </h:panelGroup>
-        </ox:decorate>
+        </s:decorate>
     </a4j:region>
 </cc:implementation>
 </html>
