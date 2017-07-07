@@ -1,59 +1,66 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.org/schema/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+
+    <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{manageCustomScriptAction.modify}" onPostback="false" />
+    </f:metadata>
 
     <ui:define name="head">
     </ui:define>
 
     <ui:define name="body">
-    	<h:outputScript>
+		    	<h:outputScript>
     	function viewValue(obj){
-			debugger;
 			$(obj).css({"display":"none"});
 			$(obj).siblings("input.togglefield").attr("type","text");
 			$(obj).siblings("img[id$='hide']").css({"display":"block"});
 		}
 				
 		function hideValue(obj){
-			debugger;
 			$(obj).css({"display":"none"});
 			$(obj).siblings("input.togglefield").attr("type","password");
 			$(obj).siblings("img[id$='view']").css({"display":"block"});
 		}
 
 		</h:outputScript>
-    <section class="content-header">
-		<h1 style="color: #333;">
-            #{msg['customScript.configuration']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i>#{msg['customScript.manageCustomScripts']}</small>
-		</h1>
-		<ol class="breadcrumb">
-<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration">#{msg['customScript.manageCustomScripts']}</li>
-		</ol>
-		</section>
+        <section class="content-header">
+            <h1 style="color: #333;">
+                #{msg['customScript.configuration']}
+                <small>
+                    <i class="fa fa-caret-right"
+                       style="color: #333 !important;"/>#{msg['customScript.manageCustomScripts']}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#{request.contextPath}/home">
+                        <i class="fa fa-home"/>
+                    </a>
+                </li>
+                <li class="organization/configuration">#{msg['customScript.manageCustomScripts']}</li>
+            </ol>
+        </section>
         <section class="content">
-        <div id="formArea">
-            <ui:decorate template="/WEB-INF/incl/script/customScriptListForm.xhtml">
-                <ui:param name="_action" value="#{manageCustomScriptAction}" />
+            <div id="formArea">
+                <ui:decorate template="/WEB-INF/incl/script/customScriptListForm.xhtml">
+                    <ui:param name="_action" value="#{manageCustomScriptAction}"/>
 
-                <ui:define name="controlButttons">
-                    <div id="updateButtons" style="margin-top:10px;">
-                        <h:commandButton value="#{msg['customScript.update']}" action="#{manageCustomScriptAction.save}" styleClass="btn btn-success" />
-                        <h:commandButton value="#{msg['customScript.cancel']}" action="#{manageCustomScriptAction.cancel}" immediate="true" styleClass="btn btn-success" style="margin-left:5px !important;" />
-                    </div>
-                </ui:define>
-            </ui:decorate>
-        </div>
+                    <ui:define name="controlButttons">
+                        <div id="updateButtons" style="margin-top:10px;">
+                            <h:commandButton action="#{manageCustomScriptAction.save}" styleClass="btn btn-success"
+                                             value="#{msg['customScript.update']}"/>
+                            <h:commandButton action="#{manageCustomScriptAction.cancel}" immediate="true"
+                                             style="margin-left:5px !important;" styleClass="btn btn-success"
+                                             value="#{msg['customScript.cancel']}"/>
+                        </div>
+                    </ui:define>
+                </ui:decorate>
+            </div>
         </section>
 
-        
+
     </ui:define>
 
 </ui:composition>
