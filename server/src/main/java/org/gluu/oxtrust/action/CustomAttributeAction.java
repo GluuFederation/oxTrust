@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -65,6 +66,7 @@ public class CustomAttributeAction implements Serializable {
 
 	private List<GluuAttribute> attributes;
 	private Map<GluuAttribute, String> attributeIds;
+	private Map<String, GluuAttribute> attributeToIds;
 	private Map<String, List<GluuAttribute>> attributeByOrigin;
 	private Map<String, GluuAttribute> attributeInums;
 	private List<String> availableAttributeIds;
@@ -100,6 +102,7 @@ public class CustomAttributeAction implements Serializable {
 		// Init special list and maps
 		this.availableAttributeIds = new ArrayList<String>();
 		this.attributeIds = new IdentityHashMap<GluuAttribute, String>();
+		this.attributeToIds = new HashMap<String, GluuAttribute>();
 		this.attributeInums = new HashMap<String, GluuAttribute>();
 
 		int componentId = 1;
@@ -109,6 +112,7 @@ public class CustomAttributeAction implements Serializable {
 			this.availableAttributeIds.add(id);
 			this.attributeInums.put(attribute.getInum(), attribute);
 			this.attributeIds.put(attribute, id);
+			this.attributeToIds.put(id, attribute);
 		}
 
 		// Init origin display names
@@ -527,6 +531,15 @@ public class CustomAttributeAction implements Serializable {
 		}
 
 		removeRemovedPhotos();
+	}
+
+	public void renderAttribute(ComponentSystemEvent event) {
+		// Replace dummy component id with real one
+		String dummyId = event.getComponent().getAttributes().get("aid").toString();
+		String clientId = event.getComponent().getClientId();
+		
+		GluuAttribute attribute = this.attributeToIds.get(dummyId);
+		this.attributeIds.put(attribute, clientId);
 	}
 
 	@PreDestroy

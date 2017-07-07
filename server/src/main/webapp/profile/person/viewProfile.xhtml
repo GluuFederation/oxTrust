@@ -4,6 +4,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
                 xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
@@ -16,16 +17,15 @@
         <div id="viewProfile">
             <script src="#{oxTrustConfigurationService.jsLocation}/attributesSlide.js" type="text/javascript"/>
             <h:outputScript>
-                function changeAttributeVisibility(attrId, show) {
-                    var attr = $('a[id*=' + attrId + ']');
-                    var currentState = attr.is(":visible");
-
-                    if (/* !currentState and */ show) {
-                        attr.show();
-                    } else {
-                        attr.hide();
-                    }
-                }
+		        function changeAttributeVisibility(attrId, show) {
+		        	var attr = document.getElementById(attrId);
+		
+		            if (show) {
+			        	attr.style['display'] = '';
+		            } else {
+			        	attr.style['display'] = 'none';
+		            }
+		        }
             </h:outputScript>
             <ox:changePasswordDialog id="appliancePassword" label="#{msg['profile.changeAppliancePassword']}"
                                      password="#{appliancePasswordAction.newPassword}"
@@ -48,10 +48,6 @@
             <section class="content"><ui:include src="/WEB-INF/incl/profile/person/configureListingOptions.xhtml"/>
 
                 <h:form id="personForm">
-                    <!-- Workaround which required by manual tab panel. TODO: Remove after upgrade to SEAM 2.3.1 -->
-                    <input name="cid" type="hidden" value="#{conversation.id}"/>
-
-
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box box-primary">
@@ -323,14 +319,14 @@
                                             <div style="background: #1E282C;padding: 15px;color:white;font-weight: bold;">#{msg['profile.customAttributes']}</div>
                                             <div style="height: 400px; overflow-y: auto;">
                                                 <ul class="sidebar-menu">
-                                                    <c:forEach items="#{customAttributeAction.attributes}" var="attr">
+                                                    <a4j:repeat value="#{customAttributeAction.attributes}" var="attr">
                                                         <ui:param name="_aid"
                                                                   value="#{customAttributeAction.attributeIds[attr]}"/>
                                                         <li class="treeview"
-                                                            id="#{customAttributeAction.attributeIds[attr]}">
+                                                            p:id="#{customAttributeAction.attributeIds[attr]}">
                                                             <a4j:commandLink
                                                                     action="#{customAttributeAction.addCustomAttribute(attr.inum)}"
-                                                                    id="#{_aid}"
+                                                                    p:aid="#{_aid}"
                                                                     oncomplete="changeAttributeVisibility('#{_aid}', false);"
                                                                     render="selectedCustomAttributesId"
                                                                     style="#{customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
@@ -338,7 +334,7 @@
                                                                 <f:param name="sv" value="1"/>
                                                             </a4j:commandLink>
                                                         </li>
-                                                    </c:forEach>
+                                                    </a4j:repeat>
                                                 </ul>
                                             </div>
                                         </h:panelGroup>

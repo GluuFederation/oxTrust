@@ -5,4 +5,7 @@
 	<Call name="prependServerClass">
 		<Arg>-org.eclipse.jetty.</Arg>
 	</Call>
+
+	<Set name="maxFormContentSize" type="int">600000</Set>
+
 </Configure>
