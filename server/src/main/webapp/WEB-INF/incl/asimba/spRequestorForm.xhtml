@@ -68,7 +68,6 @@
             <div class="row">
                 <div class="col-xs-12">
                     
-            <h:panelGroup id="spRequestorSelectSPGroupId">
             <ox:decorate
                 id="spRequestorSelectSP"
                 rendered="true" label="#{msg['asimba.selectParentSPPool']}">
@@ -80,9 +79,7 @@
                     <f:selectItems value="#{_updateAsimbaSPRequestorAction.spPoolList}" var="spPool" itemValue="#{spPool.id}" itemLabel="#{spPool.friendlyName}" />
                 </h:selectOneMenu>
             </ox:decorate>
-            </h:panelGroup>
             
-            <h:panelGroup id="spRequestorEditIDGroupId">
             <ox:decorate
                 id="spRequestorEditID"
                 rendered="true" label="#{msg['asimba.id']}">
@@ -95,9 +92,7 @@
                     value="#{_spRequestor.id}" size="100" tabindex="0" 
                     required="true" />
             </ox:decorate>
-            </h:panelGroup>
             
-            <h:panelGroup id="spRequestorEditFriendlyNameGroupId">
             <ox:decorate
                     id="spRequestorEditFriendlyName"
                     rendered="true" label="#{msg['asimba.friendlyName']}">
@@ -108,9 +103,7 @@
                 title="#{msg['asimba.theSPRequestorFriendly']}"
                 value="#{_spRequestor.friendlyName}" size="100" tabindex="1" />
             </ox:decorate>
-            </h:panelGroup>
             
-            <h:panelGroup id="idpEditMetadataURLGroupId">
             <ox:decorate
                 id="idpEditMetadataURL"
                 rendered="true" label="#{msg['asimba.metadataURL']}">
@@ -122,9 +115,7 @@
                     title="#{msg['asimba.configureTheURL']}"
                     value="#{_spRequestor.metadataUrl}" size="100" tabindex="2" />
             </ox:decorate>
-            </h:panelGroup>
             
-            <h:panelGroup id="idpEditMetadataTimeoutGroupId">
             <ox:decorate
                     id="idpEditMetadataTimeout"
                     rendered="true" label="#{msg['asimba.metadataTimeout']}">
@@ -136,9 +127,7 @@
                         title="#{msg['asimba.theTimeoutToBeUsedInConnection']}"
                         value="#{_spRequestor.metadataTimeout}" size="100" label="#{msg['asimba.metadataTimeout']}" tabindex="3" />
             </ox:decorate>
-            </h:panelGroup>
             
-            <h:panelGroup id="spRequestorEditMetadataFileGroupId">
             <ox:decorate
                     id="spRequestorEditMetadataFile"
                     rendered="true" label="#{msg['asimba.metadataFile']}">
@@ -152,17 +141,16 @@
                         value="#{_spRequestor.metadataFile}" />
                     
                     <!-- upload file button -->
-                    <rich:fileUpload id="spRequestorRichUploadMetadataFile" addLabel="#{msg['asimba.upload']}"
+                    <!-- TODO: rich:fileUpload -->
+                    <!-- <rich:fileUpload id="spRequestorRichUploadMetadataFile" addLabel="#{msg['asimba.upload']}"
                         fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadFile}" 
                             maxFilesQuantity="1" 
                             immediateUpload="true" 
                             listHeight="60px" >
                         <a4j:ajax parent="spRequestorRichUploadMetadataFile" event="uploadcomplete"  render="spRequestorEditMetadataFileOutputText"/>
-                    </rich:fileUpload>
+                    </rich:fileUpload> -->
             </ox:decorate>
-            </h:panelGroup>
             
-            <h:panelGroup id="spRequestorEditTrustCertificateFileGroupId">
             <ox:decorate
                     id="spRequestorEditTrustCertificateFile"
                     rendered="true" label="#{msg['asimba.trustCertificateFile']}">
@@ -172,15 +160,14 @@
                     value="#{msg['asimba.addCertificateFile']}"/>
                 
                 <!-- upload file button -->
-                <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" addLabel="#{msg['asimba.upload']}"
+                <!-- TODO: rich:fileUpload -->
+                <!--<rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" addLabel="#{msg['asimba.upload']}"
                                  acceptedTypes="crt, cert, pem, txt" ontyperejected="alert('Only CRT, CERT, PEM, TXT files are accepted');"
                                      maxFilesQuantity="1" 
                                      immediateUpload="true"
-                                     listHeight="60px" styleClass="uploadFile" />
+                                     listHeight="60px" styleClass="uploadFile" />-->
             </ox:decorate>
-            </h:panelGroup>
             
-            <h:panelGroup id="spRequestorEditAdditionalPropertiesGroupId">
             <ox:decorate
                     id="spRequestorEditAdditionalProperties"
                     rendered="true" label="#{msg['asimba.properties']}">
@@ -192,7 +179,6 @@
                         title=""
                         value="#{_updateAsimbaSPRequestorAction.spRequestorAdditionalProperties}" tabindex="4" />
             </ox:decorate>
-            </h:panelGroup>
             
             <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">
                 <tbody>
