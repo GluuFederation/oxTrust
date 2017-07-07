@@ -61,12 +61,12 @@
                     <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
                 </h:selectOneMenu>
             </h:panelGrid>
-            <s:fileUpload id="SAML2AttributeQueryWrapperId" fileName="#{_relyingPartyAction.fileWrappers.get('SAML2AttributeQuery').fileName}"
+            <rich:fileUpload id="SAML2AttributeQueryWrapperId" fileName="#{_relyingPartyAction.fileWrappers.get('SAML2AttributeQuery').fileName}"
                 data="#{_relyingPartyAction.fileWrappers.get('SAML2AttributeQuery').stream}" fileSize="#{_relyingPartyAction.fileWrappers.get('SAML2AttributeQuery').fileSize}"
                 contentType="#{_relyingPartyAction.fileWrappers.get('SAML2AttributeQuery').contentType}" maxlength="100"
                 rendered="#{empty _profileConfigurationSelected.profileConfigurationCertFileName}" immediate="true" style="width: 180px;">
 <!--                <a4j:ajax event="complete" action="#{_relyingPartyAction.showFile()}"/> -->
-            </s:fileUpload>
+            </rich:fileUpload>
 
             <h:panelGrid>
                 <h:outputText value="#{_profileConfigurationSelected.profileConfigurationCertFileName}"
