@@ -168,11 +168,11 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 						customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
 					}
 					
-					if (customScript.getConfigurationProperties().size() == 0) {
+					if ((customScript.getConfigurationProperties() != null) && (customScript.getConfigurationProperties().size() == 0)) {
 						customScript.setConfigurationProperties(null);
 					}
 					
-					if (customScript.getModuleProperties().size() == 0) {
+					if ((customScript.getConfigurationProperties() != null) && (customScript.getModuleProperties().size() == 0)) {
 						customScript.setModuleProperties(null);
 					}
 					
