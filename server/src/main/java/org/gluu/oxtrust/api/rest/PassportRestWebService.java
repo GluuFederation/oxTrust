@@ -44,7 +44,7 @@ public class PassportRestWebService {
 	private PassportService passportService;
 
 	@Inject
-	private PassportUmaProtectionService pasportUmaProtectionService;
+	private PassportUmaProtectionService passportUmaProtectionService;
 
 	@Inject
 	private UmaPermissionService umaPermissionService;
@@ -91,21 +91,21 @@ public class PassportRestWebService {
 	}
 
 	protected Response processAuthorization(String authorization) {
-		if (!pasportUmaProtectionService.isEnabled()) {
+		if (!passportUmaProtectionService.isEnabled()) {
 			log.info("UMA passport authentication is disabled");
 			return getErrorResponse(Response.Status.FORBIDDEN, "Passport configuration was disabled");
 		}
 
 		Token patToken;
 		try {
-			patToken = pasportUmaProtectionService.getPatToken();
+			patToken = passportUmaProtectionService.getPatToken();
 		} catch (UmaProtectionException ex) {
 			return getErrorResponse(Response.Status.FORBIDDEN, "Failed to obtain PAT token");
 		}
 
 		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken,
-				authorization, pasportUmaProtectionService.getUmaResourceId(),
-				pasportUmaProtectionService.getUmaScope());
+				authorization, passportUmaProtectionService.getUmaResourceId(),
+				passportUmaProtectionService.getUmaScope());
 		if (rptTokenValidationResult.getFirst()) {
 			if (rptTokenValidationResult.getSecond() != null) {
 				return rptTokenValidationResult.getSecond();

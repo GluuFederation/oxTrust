@@ -23,7 +23,6 @@ import org.xdi.ldap.model.GluuBoolean;
  * @author Yuriy Movchan Date: 012/06/2016
  */
 @ApplicationScoped
-@Named("pasportUmaProtectionService")
 public class PassportUmaProtectionService extends BaseUmaProtectionService implements Serializable {
 
 	private static final long serialVersionUID = -5547131971095468865L;
