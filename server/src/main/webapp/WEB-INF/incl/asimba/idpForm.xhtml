@@ -66,6 +66,7 @@
             <div class="row">
                 <div class="col-xs-12">
             
+            <h:panelGroup id="idpEditIDGroupId">
             <ox:decorate
                     id="idpEditID"
                     label="#{msg['asimba.id']}">
@@ -78,10 +79,13 @@
                     value="#{_idp.id}" size="100" tabindex="0" 
                     required="true" />
             </ox:decorate>
+            </h:panelGroup>
             
+            <h:panelGroup id="idpEditFriendlyNameGroupId">
             <ox:decorate
                     id="idpEditFriendlyName"
                     label="#{msg['asimba.friendlyName']}">
+                
                 <h:outputLabel 
                     title="#{msg['asimba.anythingReadable']}"
                     value="The organization friendly name"/>
@@ -89,7 +93,9 @@
                     title="#{msg['asimba.anythingReadable']}"
                     value="#{_idp.friendlyName}" size="100" tabindex="1" />
             </ox:decorate>
+            </h:panelGroup>
             
+            <h:panelGroup id="idpEditMetadataURLGroupId">
             <ox:decorate
                     id="idpEditMetadataURL"
                     label="#{msg['asimba.metadataURL']}">
@@ -101,7 +107,9 @@
                     title="#{msg['asimba.configureTheURL']}"
                     value="#{_idp.metadataUrl}" size="100" tabindex="3" />
             </ox:decorate>
+            </h:panelGroup>
             
+            <h:panelGroup id="idpEditMetadataTimeoutGroupId">
             <ox:decorate
                     id="idpEditMetadataTimeout"
                     label="#{msg['asimba.metadataTimeout']}">
@@ -113,7 +121,9 @@
                     title="#{msg['asimba.theTimeoutToBeUsedInConnection']}"
                     value="#{_idp.metadataTimeout}" size="100" label="#{msg['asimba.metadataTimeout']}" tabindex="4" />
             </ox:decorate>
+            </h:panelGroup>
             
+            <h:panelGroup id="idpEditMetadataFileGroupId">
             <ox:decorate
                     id="idpEditMetadataFile"
                     label="#{msg['asimba.metadataFile']}">
@@ -135,7 +145,9 @@
                     <a4j:ajax parent="idpRichUploadMetadataFile" event="uploadcomplete"  render="idpEditMetadataFileOutputText"/>
                 </rich:fileUpload>
             </ox:decorate>
+            </h:panelGroup>
             
+            <h:panelGroup id="idpEditTrustCertificateFileGroupId">
             <ox:decorate
                     id="idpEditTrustCertificateFile"
                     label="#{msg['asimba.trustCertificateFile']}">
@@ -151,7 +163,9 @@
                                      immediateUpload="true"
                                      listHeight="60px" styleClass="uploadFile" />
             </ox:decorate>
+            </h:panelGroup>
             
+            <h:panelGroup id="idpEditNameIDFormatGroupId">
             <ox:decorate
                     id="idpEditNameIDFormat"
                     label="#{msg['asimba.nameIDFormat']}">
@@ -163,6 +177,7 @@
                         title="#{msg['asimba.theNameIDFormat']}"
                         value="#{_idp.nameIdFormat}" size="100" tabindex="5" />
             </ox:decorate>
+            </h:panelGroup>
             
             <table style="width: 100%; text-align: left;" border="0" cellpadding="2" cellspacing="2">
                 <tbody>
