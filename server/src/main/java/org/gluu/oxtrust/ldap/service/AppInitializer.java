@@ -180,6 +180,7 @@ public class AppInitializer {
 
     	// Remove JUL console logger
     	SLF4JBridgeHandler.removeHandlersForRootLogger();
+
     	// Add SLF4JBridgeHandler to JUL root logger
     	SLF4JBridgeHandler.install();
 	}
