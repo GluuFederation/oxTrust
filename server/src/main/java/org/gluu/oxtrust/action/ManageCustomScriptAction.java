@@ -199,17 +199,10 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		reset();
-
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration updated successfully");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
-
-	private void reset() {
-		this.initialized = false;
-	}
-
 
 	public String cancel() throws Exception {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration not updated");
