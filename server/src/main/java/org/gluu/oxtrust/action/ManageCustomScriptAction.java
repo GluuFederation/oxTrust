@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
@@ -72,6 +73,9 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	
 	@Inject
 	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private ConversationService conversationService;
 
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 
@@ -113,6 +117,9 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			}
 		} catch (Exception ex) {
 			log.error("Failed to load custom scripts ", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load custom scripts");
+
+			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -135,7 +142,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					
 					String configId = customScript.getName();
 					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'{}' is reserved script name", configId);
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'{0}' is reserved script name", configId);
 						return OxTrustConstants.RESULT_FAILURE;
 					}
 
@@ -187,10 +194,14 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			}
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update custom scripts", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update custom script configuration");
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		reset();
+
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration updated successfully");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -200,7 +211,12 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	}
 
 
-	public void cancel() throws Exception {
+	public String cancel() throws Exception {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration not updated");
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public Map<CustomScriptType, List<CustomScript>> getCustomScriptsByTypes() {
