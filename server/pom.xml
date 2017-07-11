@@ -209,12 +209,6 @@
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-scim</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- oxAuth -->
