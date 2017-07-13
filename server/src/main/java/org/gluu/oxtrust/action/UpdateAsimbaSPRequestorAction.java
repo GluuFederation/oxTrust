@@ -204,8 +204,8 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String uploadFile(FileUploadEvent event) {
-		log.info("uploadFile() Requestor", spRequestor);
+	public String uploadMetadataFile(FileUploadEvent event) {
+		log.info("uploadMetadataFile() Requestor", spRequestor);
 		try {
 			UploadedFile uploadedFile = event.getUploadedFile();
 			String filepath = asimbaService.saveSPRequestorMetadataFile(uploadedFile);

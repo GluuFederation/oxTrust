@@ -230,20 +230,19 @@
 							</ox:decorate>						
 							<a4j:region>
 
-								<h:panelGroup id="urlId">
+								<h:panelGroup id="urlId" rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) or (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}" label="URL">
 									<ox:decorate id="url"
-										required="true"
-										rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) or (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}" label="URL">
+                                                                                     required="true">
 										<h:inputText styleClass="form-control"
 											value="#{_trustRelationship.url}" rows="3" size="40"
 											maxlength="4000" id="urlInputId" />
 									</ox:decorate>
 								</h:panelGroup>
 
-								<h:panelGroup id="FederationWizard">
-									<ox:decorate
+								<h:panelGroup id="FederationWizard" rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'federation'}">
+									<ox:decorate 
 										id="spMetaDataSourceTypeFederation"
-										rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'federation'}" label="#{msg['trustmanager.federationName']}">
+										 label="#{msg['trustmanager.federationName']}">
 										<h:selectOneMenu styleClass="form-control"
 											value="#{_trustRelationship.containerFederation}"
 											id="spMetaDataSourceTypeFederationId"
@@ -287,10 +286,11 @@
 
 						<h:panelGroup id="MetadataOperations">
 
-							<h:panelGroup id="fileWrapperGroupId">
+							<h:panelGroup id="fileWrapperGroupId" rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'file'}">
+                                                            <!-- TODO: ox:decorate rendered -->
 								<ox:decorate
 									id="fileWrapper"
-									rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'file'}" label="
+									 label="
 										#{msg['trustmanager.spMetadataFile']}:">
                                     
 
@@ -376,7 +376,9 @@
 								</h:panelGrid>
 							</a4j:region>
 						</ox:decorate>
-						<ox:decorate rendered="#{oxTrustConfiguration.applicationConfiguration.oxIncommonFlag  eq 'true'}"
+                                                <h:panelGroup rendered="#{oxTrustConfiguration.applicationConfiguration.oxIncommonFlag  eq 'true'}" >
+                                                <!-- TODO: ox:decorate rendered -->
+						<ox:decorate 
 							id="enableInCommon" label="#{msg['trustmanager.enableInCommon']}">
 							<h:panelGrid columns="2">
 							<h:selectBooleanCheckbox
@@ -386,7 +388,7 @@
 									
 								</h:panelGrid>
 						</ox:decorate>
-
+                                                </h:panelGroup>
 						<ox:decorate
 							id="attributes" label="#{msg['trustmanager.released']} ">
 							<h:panelGroup id="selectedCustomAttributesId">

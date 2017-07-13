@@ -189,8 +189,8 @@ public class UpdateAsimbaIDPAction implements Serializable {
     }
     
 
-    public String uploadFile(FileUploadEvent event) {
-        log.info("uploadFile() call for IDP");
+    public String uploadMetadataFile(FileUploadEvent event) {
+        log.info("uploadMetadataFile() call for IDP");
         try {
             UploadedFile uploadedFile = event.getUploadedFile();
             String filepath = asimbaService.saveIDPMetadataFile(uploadedFile, idp);

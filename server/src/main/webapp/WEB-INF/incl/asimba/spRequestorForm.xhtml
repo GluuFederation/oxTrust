@@ -154,7 +154,7 @@
                     
                     <!-- upload file button -->
                     <rich:fileUpload id="spRequestorRichUploadMetadataFile" addLabel="#{msg['asimba.upload']}"
-                        fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadFile}" 
+                        fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadMetadataFile}" 
                             maxFilesQuantity="1" 
                             immediateUpload="true" 
                             listHeight="60px" >
@@ -173,11 +173,11 @@
                     value="#{msg['asimba.addCertificateFile']}"/>
                 
                 <!-- upload file button -->
-                <!--<rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" addLabel="#{msg['asimba.upload']}"
+                <rich:fileUpload fileUploadListener="#{_updateAsimbaSPRequestorAction.uploadCertificateFile}" addLabel="#{msg['asimba.upload']}"
                                  acceptedTypes="crt, cert, pem, txt" ontyperejected="alert('Only CRT, CERT, PEM, TXT files are accepted');"
                                      maxFilesQuantity="1" 
                                      immediateUpload="true"
-                                     listHeight="60px" styleClass="uploadFile" />-->
+                                     listHeight="60px" styleClass="uploadFile" />
             </ox:decorate>
             </h:panelGroup>
             
