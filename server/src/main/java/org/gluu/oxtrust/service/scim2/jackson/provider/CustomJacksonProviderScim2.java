@@ -25,6 +25,7 @@ import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
 import org.gluu.oxtrust.service.scim2.jackson.custom.UserSerializer;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RESTEasy custom Jackson provider-interceptor for registration of custom serializers and deserializers
@@ -38,8 +39,12 @@ import org.slf4j.Logger;
 @Named("customJacksonProviderScim2")
 public class CustomJacksonProviderScim2 extends JacksonJaxbJsonProvider implements ContextResolver<ObjectMapper> {
 
-    @Inject
-    private Logger log;
+/*
+ * Try to enable in next RestEasy releases. Now the value is null
+ */
+//    @Inject
+//    private Logger log;
+    private Logger log = LoggerFactory.getLogger(CustomJacksonProviderScim2.class);
 
     public CustomJacksonProviderScim2() {
 
