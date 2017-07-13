@@ -73,7 +73,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	
 	@Inject
 	private AppConfiguration appConfiguration;
-	
+
 	@Inject
 	private ConversationService conversationService;
 

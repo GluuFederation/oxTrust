@@ -90,7 +90,7 @@
                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
                                              columns="1" width="100%">
                                     <h:form id="oxAuthConfigForm" prependId="false">
-                                        <ox:decorate id="oxAuth" template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                        <ui:decorate id="oxAuth" template="/WEB-INF/incl/layout/jsoneditor.xhtml">
                                             <ui:param name="id" value="oxAuthConfig"/>
                                             <ui:param name="parentId" value="oxAuth"/>
                                             <ui:param name="json" value="#{jsonConfigAction.oxAuthDynamicConfigJson}"/>
@@ -99,7 +99,7 @@
                                             <ui:param name="saveBtnId" value="saveOxAuthConfigBtn"/>
                                             <ui:param name="saveBtnLabel"
                                                       value="#{msg['updateConfiguration.saveConfiguration']}"/>
-                                        </ox:decorate>
+                                        </ui:decorate>
                                         <h:commandButton action="#{jsonConfigAction.saveOxAuthDynamicConfigJson}"
                                                          id="saveOxAuthConfigBtn" prependId="false" style="display:none"
                                                          value="#{msg['updateConfiguration.saveOxAuthConfiguration']}"/>
@@ -111,7 +111,7 @@
                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
                                              columns="1" width="100%">
                                     <h:form id="oxTrustImportPersonConfigForm" prependId="false">
-                                        <ox:decorate id="oxTrustImportPerson" prependId="false"
+                                        <ui:decorate id="oxTrustImportPerson" prependId="false"
                                                      template="/WEB-INF/incl/layout/jsoneditor.xhtml">
                                             <ui:param name="id" value="oxTrustImportPersonConfig"/>
                                             <ui:param name="parentId" value="oxTrustImportPerson"/>
@@ -122,7 +122,7 @@
                                             <ui:param name="saveBtnId" value="saveOxTrustImportPersonConfigBtn"/>
                                             <ui:param name="saveBtnLabel"
                                                       value="#{msg['updateConfiguration.saveConfiguration']}"/>
-                                        </ox:decorate>
+                                        </ui:decorate>
                                         <h:commandButton action="#{jsonConfigAction.saveOxTrustImportPersonConfigJson}"
                                                          id="saveOxTrustImportPersonConfigBtn" prependId="false"
                                                          style="display:none"
@@ -135,7 +135,7 @@
                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop"
                                              columns="1" width="100%">
                                     <h:form id="oxMemCacheConfigForm" prependId="false">
-                                        <ox:decorate id="oxMemcache" template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                        <ui:decorate id="oxMemcache" template="/WEB-INF/incl/layout/jsoneditor.xhtml">
                                             <ui:param name="id" value="oxMemcacheConfig"/>
                                             <ui:param name="parentId" value="oxMemcache"/>
                                             <ui:param name="json" value="#{jsonConfigAction.cacheConfigurationJson}"/>
@@ -144,7 +144,7 @@
                                             <ui:param name="saveBtnId" value="saveOxMemcacheConfigBtn"/>
                                             <ui:param name="saveBtnLabel"
                                                       value="#{msg['updateConfiguration.saveConfiguration']}"/>
-                                        </ox:decorate>
+                                        </ui:decorate>
                                         <h:commandButton action="#{jsonConfigAction.saveOxMemCacheConfigJson}"
                                                          id="saveOxMemcacheConfigBtn" prependId="false"
                                                          style="display:none"
