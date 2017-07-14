@@ -3,11 +3,9 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateClientAction.setInum(param['inum'])}"/>
+    	<f:viewParam name="inum" value="#{updateClientAction.inum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateClientAction.add}"
-                      if="#{permissionService.hasPermission('client', 'access') and updateClientAction.client == null and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateClientAction.add}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">

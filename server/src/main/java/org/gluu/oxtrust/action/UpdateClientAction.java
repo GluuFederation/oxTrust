@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
@@ -64,6 +65,9 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
@@ -139,6 +143,9 @@ public class UpdateClientAction implements Serializable {
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
+
+			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -162,6 +169,10 @@ public class UpdateClientAction implements Serializable {
 
 		if (this.client == null) {
 			log.error("Failed to load client {}", inum);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find client");
+
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -178,6 +189,10 @@ public class UpdateClientAction implements Serializable {
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load client");
+
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -200,7 +215,16 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
-	public void cancel() {
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Client '#{updateClientAction.client.displayName}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New client not added");
+		}
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() throws Exception {
@@ -226,7 +250,7 @@ public class UpdateClientAction implements Serializable {
 
 				log.error("Failed to update client {}", ex, this.inum);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client '#{updateScopeAction.scope.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -239,12 +263,16 @@ public class UpdateClientAction implements Serializable {
 			try {
 				clientService.addClient(this.client);
 			} catch (LdapMappingException ex) {
-				log.info("error saving client ");
+				log.info("Failed to add new client");
 				log.error("Failed to add new client {}", ex, this.inum);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New client '#{updateClientAction.client.displayName}' added successfully");
+
+			conversationService.endConversation();
 
 			this.update = true;
 		}
@@ -267,11 +295,18 @@ public class UpdateClientAction implements Serializable {
 			// Remove client
 			try {
 				clientService.removeClient(this.client);
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Client '#{updateClientAction.client.displayName}' removed successfully");
+
+				conversationService.endConversation();
+
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				log.error("Failed to remove client {}", ex, this.inum);
 			}
 		}
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove client '#{updateClientAction.client.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

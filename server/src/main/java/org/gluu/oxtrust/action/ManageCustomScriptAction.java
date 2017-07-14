@@ -63,6 +63,9 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	private FacesMessages facesMessages;
 
 	@Inject
+	private ConversationService conversationService;
+
+	@Inject
 	private OrganizationService organizationService;
 
 	@Inject
@@ -73,9 +76,6 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	
 	@Inject
 	private AppConfiguration appConfiguration;
-
-	@Inject
-	private ConversationService conversationService;
 
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 

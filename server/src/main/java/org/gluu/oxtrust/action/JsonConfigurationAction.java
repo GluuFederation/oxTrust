@@ -118,8 +118,6 @@ public class JsonConfigurationAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in LDAP");
 		}
 
-		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
@@ -141,8 +139,6 @@ public class JsonConfigurationAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust configuration in LDAP");
 		}
 
-		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 	
@@ -160,8 +156,6 @@ public class JsonConfigurationAction implements Serializable {
 			log.error("Failed to update oxMemcache-config.json", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust configuration in LDAP");
 		}
-
-		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -185,8 +179,6 @@ public class JsonConfigurationAction implements Serializable {
 			log.error("Failed to oxtrust-import-person.json", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust Import Person configuration in LDAP");
 		}
-
-		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
