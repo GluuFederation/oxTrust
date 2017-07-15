@@ -5,9 +5,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/template.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}"/>
-        <f:viewAction action="#{apisConfigurationAction.init}"
-                      if="#{permissionService.hasPermission('configuration', 'access') and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{apisConfigurationAction.init}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">

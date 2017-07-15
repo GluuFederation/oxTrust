@@ -6,7 +6,6 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{asimbaAddIDPAction.refresh}"
-                      if="#{permissionService.hasPermission('trust', 'access') and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 
