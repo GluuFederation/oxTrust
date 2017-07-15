@@ -250,9 +250,11 @@ public class UpdateClientAction implements Serializable {
 
 				log.error("Failed to update client {}", ex, this.inum);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client '#{updateScopeAction.scope.displayName}'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client '#{updateClientAction.client.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Client '#{updateClientAction.client.displayName}' updated successfully");
 		} else {
 			this.inum = clientService.generateInumForNewClient();
 			String dn = clientService.getDnForClient(this.inum);

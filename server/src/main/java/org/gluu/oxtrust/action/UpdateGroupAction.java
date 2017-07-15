@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -82,10 +83,13 @@ public class UpdateGroupAction implements Serializable {
 	private LookupService lookupService;
 
 	@Inject
-	private IPersonService personService;
+	private FacesMessages facesMessages;
 
 	@Inject
-	private FacesMessages facesMessages;
+	private ConversationService conversationService;
+
+	@Inject
+	private IPersonService personService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -103,7 +107,10 @@ public class UpdateGroupAction implements Serializable {
 		try {
 			this.members = getMemberDisplayNameEntiries();
 		} catch (LdapMappingException ex) {
-			log.error("Failed to load person display names", ex);
+			log.error("Failed to prepare lists", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
+
+			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -127,14 +134,21 @@ public class UpdateGroupAction implements Serializable {
 		}
 
 		if (this.group == null) {
-			log.info("Group is null ");
+			log.error("Failed to load group {}", inum);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find group");
+
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		try {
 			this.members = getMemberDisplayNameEntiries();
 		} catch (LdapMappingException ex) {
-			log.error("Failed to load person display names", ex);
+			log.error("Failed to prepare lists", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load group");
+
+			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -142,7 +156,16 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public void cancel() {
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New group not added");
+		}
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() throws Exception {
@@ -168,9 +191,11 @@ public class UpdateGroupAction implements Serializable {
 				log.info("error updating group ", ex);
 				log.error("Failed to update group {}", ex, this.inum);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group '#{updateGroupAction.group.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' updated successfully");
 		} else {
 			this.inum = groupService.generateInumForNewGroup();
 			String dn = groupService.getDnForGroup(this.inum);
@@ -190,6 +215,10 @@ public class UpdateGroupAction implements Serializable {
 
 			}
 
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New group '#{updateGroupAction.group.displayName}' added successfully");
+
+			conversationService.endConversation();
+
 			this.update = true;
 		}
 		log.info(" returning success updating or saving group");
@@ -201,12 +230,18 @@ public class UpdateGroupAction implements Serializable {
 			// Remove group
 			try {
 				groupService.removeGroup(this.group);
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' removed successfully");
+
+				conversationService.endConversation();
+
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				log.error("Failed to remove group {}", ex, this.group.getInum());
-
 			}
 		}
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove group '#{updateGroupAction.group.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

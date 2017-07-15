@@ -77,7 +77,7 @@ public class SearchClientAction implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to find clients", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find clients");
-			
+
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
