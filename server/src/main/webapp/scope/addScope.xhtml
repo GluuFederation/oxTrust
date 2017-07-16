@@ -6,7 +6,7 @@
         <f:viewAction action="#{updateScopeAction.setInum(param['inum'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateScopeAction.add}"
-                      if="#{permissionService.hasPermission('scope', 'access') and updateScopeAction.scope == null and identity.checkLoggedIn()}"
+                      if="#{ updateScopeAction.scope == null }"
                       onPostback="false"/>
     </f:metadata>
 
