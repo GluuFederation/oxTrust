@@ -7,7 +7,7 @@
         <f:viewAction action="#{searchPersonAction.setSearchPattern(param['searchPattern'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{searchPersonAction.start}"
-                      if="#{permissionService.hasPermission('person', 'access') and searchPersonAction.personList == null and identity.checkLoggedIn()}"
+                      if="#{ searchPersonAction.personList == null }"
                       onPostback="false"/>
     </f:metadata>
 
