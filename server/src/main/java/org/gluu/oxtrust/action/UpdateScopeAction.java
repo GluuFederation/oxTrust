@@ -44,7 +44,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("updateScopeAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('scope', 'access')}")
 public class UpdateScopeAction implements Serializable {
 
 	private static final long serialVersionUID = 8198574569820157032L;
