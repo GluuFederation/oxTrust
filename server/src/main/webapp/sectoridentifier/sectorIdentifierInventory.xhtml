@@ -7,7 +7,7 @@
         <f:viewAction action="#{searchSectorIdentifierAction.setSearchPattern(param['searchPattern'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{searchSectorIdentifierAction.start}"
-                      if="#{permissionService.hasPermission('sectorIdentifier', 'access') and searchSectorIdentifierAction.sectorIdentifierList == null and identity.checkLoggedIn()}"
+                      if="#{searchSectorIdentifierAction.sectorIdentifierList == null }"
                       onPostback="false"/>
     </f:metadata>
 
