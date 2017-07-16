@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
@@ -54,6 +55,12 @@ public class UpdateScopeAction implements Serializable {
 	@Inject
 	private Logger log;
 
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
+
 	private String inum;
 
 	private boolean update;
@@ -75,13 +82,10 @@ public class UpdateScopeAction implements Serializable {
 	private LookupService lookupService;
 
 	@Inject
-	private transient AttributeService attributeService;
+	private AttributeService attributeService;
 
 	@Inject
 	private CustomScriptService customScriptService;
-
-	@Inject
-	private FacesMessages facesMessages;
 
 	private List<CustomScript> dynamicScripts;
 	private List<SelectableEntity<CustomScript>> availableDynamicScripts;
@@ -104,6 +108,9 @@ public class UpdateScopeAction implements Serializable {
 
 		} catch (LdapMappingException ex) {
 			log.error("Failed to load scopes", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
+
+			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -131,7 +138,11 @@ public class UpdateScopeAction implements Serializable {
 		}
 
 		if (this.scope == null) {
-			log.info("Group is null ");
+			log.error("Failed to load scope {}", inum);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find scope");
+
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -145,14 +156,27 @@ public class UpdateScopeAction implements Serializable {
 
 		} catch (LdapMappingException ex) {
 			log.error("Failed to load claims", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load scope");
+
+			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+
 		log.info("returning Success");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public void cancel() {
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Scope '#{updateScopeAction.scope.displayName}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New scope not added");
+		}
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() throws Exception {
@@ -174,13 +198,13 @@ public class UpdateScopeAction implements Serializable {
 			try {
 				scopeService.updateScope(this.scope);
 			} catch (LdapMappingException ex) {
-
-				log.info("error updating scope ", ex);
 				log.error("Failed to update scope {}", ex, this.inum);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope '#{updateScopeAction.scope.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Scope '#{updateScopeAction.scope.displayName}' updated successfully");
 		} else {
 			this.inum = scopeService.generateInumForNewScope();
 			String dn = scopeService.getDnForScope(this.inum);
@@ -191,13 +215,16 @@ public class UpdateScopeAction implements Serializable {
 			try {
 				scopeService.addScope(this.scope);
 			} catch (Exception ex) {
-				log.info("error saving scope ");
 				log.error("Failed to add new scope {}", ex, this.scope.getInum());
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
 				return OxTrustConstants.RESULT_FAILURE;
-
 			}
+
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New scope '#{updateScopeAction.scope.displayName}' added successfully");
+
+			conversationService.endConversation();
+
 			this.update = true;
 		}
 		log.info(" returning success updating or saving scope");
@@ -226,6 +253,11 @@ public class UpdateScopeAction implements Serializable {
 			// Remove scope
 			try {
 				scopeService.removeScope(this.scope);
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Scope '#{updateScopeAction.scope.displayName}' removed successfully");
+
+				conversationService.endConversation();
+
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				log.error("Failed to remove scope {}", ex, this.scope.getInum());
@@ -255,7 +287,6 @@ public class UpdateScopeAction implements Serializable {
 				break;
 			}
 		}
-
 	}
 
 	public String getSearchAvailableClaimPattern() {
