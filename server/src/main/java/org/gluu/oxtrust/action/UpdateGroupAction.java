@@ -124,12 +124,12 @@ public class UpdateGroupAction implements Serializable {
 		}
 
 		this.update = true;
-		log.info("this.update : " + this.update);
+		log.debug("this.update : " + this.update);
 		try {
-			log.info("inum : " + inum);
+			log.debug("inum : " + inum);
 			this.group = groupService.getGroupByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find group {}", ex, inum);
+			log.error("Failed to find group {}", inum, ex);
 		}
 
 		if (this.group == null) {
@@ -151,7 +151,7 @@ public class UpdateGroupAction implements Serializable {
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		log.info("returning Success");
+		log.debug("returning Success");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -203,7 +203,7 @@ public class UpdateGroupAction implements Serializable {
 				groupService.addGroup(this.group);
 				updatePersons(oldMembers, this.members);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to add new group {}", ex, this.group.getInum());
+				log.error("Failed to add new group {}", this.group.getInum(), ex);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -215,7 +215,7 @@ public class UpdateGroupAction implements Serializable {
 
 			this.update = true;
 		}
-		log.info(" returning success updating or saving group");
+		log.debug(" returning success updating or saving group");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -231,7 +231,7 @@ public class UpdateGroupAction implements Serializable {
 
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove group {}", ex, this.group.getInum());
+				log.error("Failed to remove group {}", this.group.getInum(), ex);
 			}
 		}
 

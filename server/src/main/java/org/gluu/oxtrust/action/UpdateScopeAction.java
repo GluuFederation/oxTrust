@@ -127,13 +127,13 @@ public class UpdateScopeAction implements Serializable {
 		}
 
 		this.update = true;
-		log.info("this.update : " + this.update);
+		log.debug("this.update : " + this.update);
 		try {
 
-			log.info("inum : " + this.inum);
+			log.debug("inum : " + this.inum);
 			this.scope = scopeService.getScopeByInum(this.inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find scope {}", ex, inum);
+			log.error("Failed to find scope {}", inum, ex);
 
 		}
 
@@ -163,7 +163,7 @@ public class UpdateScopeAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		log.info("returning Success");
+		log.debug("returning Success");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -198,7 +198,7 @@ public class UpdateScopeAction implements Serializable {
 			try {
 				scopeService.updateScope(this.scope);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update scope {}", ex, this.inum);
+				log.error("Failed to update scope {}", this.inum, ex);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope '#{updateScopeAction.scope.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -215,7 +215,7 @@ public class UpdateScopeAction implements Serializable {
 			try {
 				scopeService.addScope(this.scope);
 			} catch (Exception ex) {
-				log.error("Failed to add new scope {}", ex, this.scope.getInum());
+				log.error("Failed to add new scope {}", this.scope.getInum(), ex);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -227,7 +227,7 @@ public class UpdateScopeAction implements Serializable {
 
 			this.update = true;
 		}
-		log.info(" returning success updating or saving scope");
+		log.debug(" returning success updating or saving scope");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -260,7 +260,7 @@ public class UpdateScopeAction implements Serializable {
 
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove scope {}", ex, this.scope.getInum());
+				log.error("Failed to remove scope {}", this.scope.getInum(), ex);
 
 			}
 		}
