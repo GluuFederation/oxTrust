@@ -6,7 +6,7 @@
         <f:viewAction action="#{updateTrustRelationshipAction.setInum(param['inum'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateTrustRelationshipAction.add}"
-                      if="#{permissionService.hasPermission('trust', 'access') and updateTrustRelationshipAction.trustRelationship == null and identity.checkLoggedIn()}"
+                      if="#{updateTrustRelationshipAction.trustRelationship == null}"
                       onPostback="false"/>
     </f:metadata>
 

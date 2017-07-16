@@ -8,7 +8,7 @@
         <f:viewAction action="#{trustRelationshipInventoryAction.setSearchPattern(param['searchPattern'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{trustRelationshipInventoryAction.start}"
-                      if="#{permissionService.hasPermission('trust', 'access') and trustRelationshipInventoryAction.trustedSpList == null and identity.checkLoggedIn()}"
+                      if="#{ trustRelationshipInventoryAction.trustedSpList == null}"
                       onPostback="false"/>
     </f:metadata>
 
