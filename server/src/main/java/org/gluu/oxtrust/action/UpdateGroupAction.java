@@ -130,7 +130,6 @@ public class UpdateGroupAction implements Serializable {
 			this.group = groupService.getGroupByInum(inum);
 		} catch (LdapMappingException ex) {
 			log.error("Failed to find group {}", ex, inum);
-
 		}
 
 		if (this.group == null) {
@@ -173,7 +172,6 @@ public class UpdateGroupAction implements Serializable {
 		try {
 			oldMembers = getMemberDisplayNameEntiries();
 		} catch (LdapMappingException ex) {
-			log.info("error getting oldmembers");
 			log.error("Failed to load person display names", ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group");
@@ -187,9 +185,7 @@ public class UpdateGroupAction implements Serializable {
 				groupService.updateGroup(this.group);
 				updatePersons(oldMembers, this.members);
 			} catch (LdapMappingException ex) {
-
-				log.info("error updating group ", ex);
-				log.error("Failed to update group {}", ex, this.inum);
+				log.error("Failed to update group {}", this.inum, ex);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group '#{updateGroupAction.group.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -207,12 +203,10 @@ public class UpdateGroupAction implements Serializable {
 				groupService.addGroup(this.group);
 				updatePersons(oldMembers, this.members);
 			} catch (LdapMappingException ex) {
-				log.info("error saving group ");
 				log.error("Failed to add new group {}", ex, this.group.getInum());
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
 				return OxTrustConstants.RESULT_FAILURE;
-
 			}
 
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New group '#{updateGroupAction.group.displayName}' added successfully");
@@ -339,12 +333,17 @@ public class UpdateGroupAction implements Serializable {
 	}
 
 	private void updateMembers() {
-		List<String> members = new ArrayList<String>();
-		this.group.setMembers(members);
-
-		for (DisplayNameEntry member : this.members) {
-			members.add(member.getDn());
+		if (this.members == null || this.members.size() == 0) {
+			this.group.setMembers(null);
+			return;
 		}
+
+		List<String> tmpMembers = new ArrayList<String>();
+		for (DisplayNameEntry member : this.members) {
+			tmpMembers.add(member.getDn());
+		}
+
+		this.group.setMembers(tmpMembers);
 	}
 
 	private void updatePersons(List<DisplayNameEntry> oldMembers, List<DisplayNameEntry> newMembers) throws Exception {
