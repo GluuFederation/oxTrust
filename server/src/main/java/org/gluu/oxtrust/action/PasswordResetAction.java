@@ -12,11 +12,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
@@ -26,6 +29,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.python.antlr.PythonParser.return_stmt_return;
 import org.slf4j.Logger;
 
 /**
@@ -42,6 +46,13 @@ public class PasswordResetAction implements Serializable {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;	
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
+
 	@Inject
 	private RecaptchaService recaptchaService;
 	
@@ -63,7 +74,7 @@ public class PasswordResetAction implements Serializable {
 
 	public String start() throws ParseException{
 		GluuAppliance appliance = applianceService.getAppliance();
-		this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
+		this.request = ldapEntryManager.find(PasswordResetRequest.class, "oxGuid=" + this.guid + ",ou=resetPasswordRequests," + appliance.getDn());
 		Calendar requestCalendarExpiry = Calendar.getInstance();
 		Calendar currentCalendar = Calendar.getInstance();
 		if (request!= null ){
@@ -81,13 +92,30 @@ public class PasswordResetAction implements Serializable {
 				securityQuestion = question.getValue();
 			}
 		    return OxTrustConstants.RESULT_SUCCESS;
-		}else{
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Your link is not valid or your user is not allowed to perform a password reset. If you want to initiate a reset password procedure please fill this form.");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		
 	}
+
+	public String update() throws ParseException{
+		String outcome = updateImpl();
+		
+		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Password reset successful.");
+			conversationService.endConversation();
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Your secret answer or Captcha code may have been wrong. Please try to correct it or contact your administrator to change your password.");
+			conversationService.endConversation();
+		}
+		
+		return outcome;
+	}
 	
-	public String update() throws ParseException{		
+	public String updateImpl() throws ParseException{		
 		boolean valid = true;
 		if (recaptchaService.isEnabled()) {
 			valid = recaptchaService.verifyRecaptchaResponse();
@@ -110,7 +138,11 @@ public class PasswordResetAction implements Serializable {
 				question = person.getGluuCustomAttribute("secretQuestion");
 				answer = person.getGluuCustomAttribute("secretAnswer");
 			}
-			if(request!= null && requestCalendarExpiry.after(currentCalendar) /*&& question != null && answer != null*/){	
+			if(request!= null && requestCalendarExpiry.after(currentCalendar) /*&& question != null && answer != null*/){
+				PasswordResetRequest removeRequest = new PasswordResetRequest();
+				removeRequest.setBaseDn(request.getBaseDn());
+				ldapEntryManager.remove(removeRequest);
+
 				if(question != null && answer != null){
 				    String correctAnswer = answer.getValue();
 				    Boolean securityQuestionAnswered = (securityAnswer != null) && securityAnswer.equals(correctAnswer);
@@ -126,8 +158,12 @@ public class PasswordResetAction implements Serializable {
 				}
 			}
 		}
+
 		return OxTrustConstants.RESULT_FAILURE;
-		
+	}
+
+	public String cancel() {
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
 	public String checkAnswer(){
