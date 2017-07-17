@@ -5,7 +5,7 @@
     <f:metadata>
         <f:viewAction action="#{updateAsimbaSPPoolAction.setEditEntryInum(param['inum'])}"/>
         <f:viewAction action="#{updateAsimbaSPPoolAction.edit}"
-                      if="#{permissionService.hasPermission('trust', 'access') and updateAsimbaSPPoolAction.editEntryInum != null and identity.checkLoggedIn()}"
+                      if="#{updateAsimbaSPPoolAction.editEntryInum != null}"
                       onPostback="true"/>
     </f:metadata>
 
