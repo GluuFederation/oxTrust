@@ -3,10 +3,11 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateAsimbaSPPoolAction.setEditEntryInum(param['inum'])}"/>
+        <f:viewParam name="inum" value="#{updateAsimbaSPPoolAction.editEntryInum}" />
         <f:viewAction action="#{updateAsimbaSPPoolAction.edit}"
                       if="#{updateAsimbaSPPoolAction.editEntryInum != null}"
                       onPostback="true"/>
+        <f:viewAction action="#{conversationService.initConversation}" />
     </f:metadata>
 
     <ui:define name="body">

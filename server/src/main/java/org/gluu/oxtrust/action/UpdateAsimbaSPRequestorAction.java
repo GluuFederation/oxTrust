@@ -28,6 +28,7 @@ import javax.validation.constraints.Size;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.security.Identity;
@@ -73,6 +74,9 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 
 	@Inject
 	private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
+    
+        @Inject
+        private ConversationService conversationService;
 
 	@Produces
 	private RequestorEntry spRequestor;
@@ -165,6 +169,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 			log.error("Requestor certificate - add CertificateFile exception", e);
 		}
 		clearEdit();
+                conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -185,13 +190,14 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 			log.error("Requestor certificate - add CertificateFile exception", e);
 		}
 		newEntry = false;
-
+                conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String cancel() {
 		log.info("cancel() Requestor", spRequestor);
 		clearEdit();
+                conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -201,6 +207,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 			asimbaService.removeRequestorEntry(spRequestor);
 		}
 		clearEdit();
+                conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
