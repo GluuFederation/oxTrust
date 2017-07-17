@@ -107,13 +107,12 @@ public class BulkWebService extends BaseScimWebService {
 			// @Context HttpServletRequest request,
 			// @Context HttpServletResponse response,
 			@HeaderParam("Authorization") String authorization, @HeaderParam("Content-Length") int contentLength,
-			@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 			@ApiParam(value = "BulkRequest", required = true) BulkRequest bulkRequest) throws Exception {
 
 		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(token);
+			authorizationResponse = processTestModeAuthorization(authorization);
 		} else {
 			authorizationResponse = processAuthorization(authorization);
 		}

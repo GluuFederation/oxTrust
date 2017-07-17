@@ -184,8 +184,6 @@ public final class OxTrustConstants extends OxConstants {
      */
     public static final String QUERY_PARAMETER_START_INDEX = "startIndex";
 
-    public static final String QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN = "access_token";
-
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Unexpected processing error; please check the input parameters";
 
     /**

@@ -6,23 +6,18 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
 //import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor.getUserLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor.getFidoDeviceLdapAttributeName;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
@@ -41,6 +36,7 @@ import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
+import org.gluu.oxtrust.ldap.SimpleToken;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -92,36 +88,41 @@ public class BaseScimWebService {
 	private ScimFilterParserService scimFilterParserService;
 	
 	public int getMaxCount(){
-		return appConfiguration.getScimProperties().getMaxCount() ;
+	    return Constants.MAX_COUNT;
+        //return appConfiguration.getScimProperties().getMaxCount() ;
 	}
 
+	private String getClientsDn(){
+	    StringBuffer tmp=new StringBuffer("ou=clients");
+	    tmp.append(String.format(",o=%s", appConfiguration.getOrgInum()));
+	    tmp.append(String.format(",%s",appConfiguration.getBaseDN()));
+        return tmp.toString();
+    }
+
 	protected Response processTestModeAuthorization(String token) throws Exception {
+
+        Response response=null;
+
 		try {
-/*
-			String validateTokenEndpoint = openIdService.getOpenIdConfiguration().getValidateTokenEndpoint();
+            token=token.replaceFirst("Bearer\\s+","");
+            log.info("Validating token {}", token);
 
-			ValidateTokenClient validateTokenClient = new ValidateTokenClient(validateTokenEndpoint);
-			ValidateTokenResponse validateTokenResponse = validateTokenClient.execValidateToken(token);
+            String dn=getClientsDn();
+		    Filter filter=Filter.create(String.format("oxAuthTokenCode=%s", "{sha256Hex}" + DigestUtils.sha256Hex(token)));
+            List<SimpleToken> list = ldapEntryManager.findEntries(dn, SimpleToken.class, filter);
 
-			log.info(" (BaseScimWebService) validateToken token = " + token);
-			log.info(" (BaseScimWebService) validateToken status = " + validateTokenResponse.getStatus());
-			log.info(" (BaseScimWebService) validateToken entity = " + validateTokenResponse.getEntity());
-			log.info(" (BaseScimWebService) validateToken isValid = " + validateTokenResponse.isValid());
-			log.info(" (BaseScimWebService) validateToken expires = " + validateTokenResponse.getExpiresIn());
+            int size=list.size();
+            log.info("Found {} entries in LDAP for this token", size);
 
-			if (!validateTokenResponse.isValid() ||
-				(validateTokenResponse.getExpiresIn() == null || (validateTokenResponse.getExpiresIn() != null && validateTokenResponse.getExpiresIn() <= 0)) ||
-				(validateTokenResponse.getStatus() != Response.Status.OK.getStatusCode())) {
-				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
-			}
-*/
-			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
-		} catch (Exception e) {
+            if (size!=1)
+                response=getErrorResponse(Response.Status.FORBIDDEN, "Invalid token "+ token);
+        }
+		catch (Exception e) {
 			e.printStackTrace();
-			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
+			response=getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 		}
+        return response;
 
-//		return null;
 	}
 
 	protected Response processAuthorization(String authorization) throws Exception {

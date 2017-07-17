@@ -123,7 +123,6 @@
     "rptConnectionPoolCustomKeepAliveTimeout":5,
 
     "scimTestMode":false,
-    "scimTestModeAccessToken":"",
     "oxIncommonFlag":false,
 
     "shibbolethVersion":"",

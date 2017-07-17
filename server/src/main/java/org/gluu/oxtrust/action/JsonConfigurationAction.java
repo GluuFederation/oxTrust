@@ -233,8 +233,7 @@ public class JsonConfigurationAction implements Serializable {
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "caCertsPassphrase");
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "oxAuthClientPassword");
 
-			jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustappConfiguration, resultOxTrustappConfiguration);
-
+			//jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustappConfiguration, resultOxTrustappConfiguration);
 			return resultOxTrustappConfiguration;
 		} catch (Exception ex) {
 			log.error("Failed to prepare appConfiguration from JSON: '{}'", ex, oxTrustappConfigurationJson);
