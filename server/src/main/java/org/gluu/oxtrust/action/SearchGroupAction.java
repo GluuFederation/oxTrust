@@ -10,11 +10,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -36,6 +39,12 @@ public class SearchGroupAction implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be between 0 and 30")
@@ -64,10 +73,13 @@ public class SearchGroupAction implements Serializable {
 				this.groupList = groupService.searchGroups(this.searchPattern, OxTrustConstants.searchGroupSizeLimit);
 			}
 			
-			log.debug("Found \"" + this.groupList.size() + "\" groups.");
+			log.debug("Found '{}' groups.", this.groupList.size());
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
 			log.error("Failed to find groups", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find groups");
+
+			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

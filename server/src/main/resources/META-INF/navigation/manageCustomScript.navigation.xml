@@ -6,13 +6,6 @@
 
     <navigation-case>
       <from-action>#{manageCustomScriptAction.modify}</from-action>
-      <from-outcome>no_permissions</from-outcome>
-      <to-view-id>/home.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-
-    <navigation-case>
-      <from-action>#{manageCustomScriptAction.modify}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
@@ -24,6 +17,7 @@
       <to-view-id>/home.xhtml</to-view-id>
       <redirect />
     </navigation-case>
+
   </navigation-rule>
 
 </faces-config>

@@ -5,7 +5,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{attributeInventoryAction.start}"
-                      if="#{permissionService.hasPermission('attribute', 'access') and attributeInventoryAction.attributeList == null and identity.checkLoggedIn()}"
+                      if="#{attributeInventoryAction.attributeList == null}"
                       onPostback="false"/>
     </f:metadata>
 

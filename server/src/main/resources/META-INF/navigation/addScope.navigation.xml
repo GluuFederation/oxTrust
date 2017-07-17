@@ -3,34 +3,33 @@
   <rewrite pattern="/scope/manage/add" xmlns="http://xmlns.gluu.org/jsf/pages"/>
   <navigation-rule>
     <from-view-id>/scope/addScope.xhtml</from-view-id>
-    <navigation-case>
-      <from-action>#{updateScopeAction.add}</from-action>
-      <from-outcome>no_permissions</from-outcome>
-      <to-view-id>/home.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
+
     <navigation-case>
       <from-action>#{updateScopeAction.add}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/scope/scopeInventory.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
+    <navigation-case>
+      <from-action>#{updateScopeAction.cancel}</from-action>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/scope/scopeInventory.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
     <navigation-case>
       <from-action>#{updateScopeAction.save}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/scope/updateScope.xhtml</to-view-id>
-      <redirect/>
+      <redirect>
+		<view-param>
+			<name>inum</name>
+			<value>#{updateScopeAction.inum}</value>
+		</view-param>
+      </redirect>
     </navigation-case>
-    <navigation-case>
-      <from-action>#{updateScopeAction.save}</from-action>
-      <from-outcome>failure</from-outcome>
-      <to-view-id>/scope/scopeInventory.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateScopeAction.cancel}</from-action>
-      <to-view-id>/scope/scopeInventory.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
+
   </navigation-rule>
+
 </faces-config>

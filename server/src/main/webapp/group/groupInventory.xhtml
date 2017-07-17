@@ -6,9 +6,7 @@
     <f:metadata>
         <f:viewAction action="#{searchGroupAction.setSearchPattern(param['searchPattern'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{searchGroupAction.start}"
-                      if="#{permissionService.hasPermission('group', 'access') and searchGroupAction.groupList == null and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{searchGroupAction.start}" if="#{searchGroupAction.groupList == null}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
