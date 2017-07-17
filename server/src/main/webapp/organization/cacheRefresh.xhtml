@@ -4,7 +4,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{configureCacheRefreshAction.init}"
-                      if="#{permissionService.hasPermission('configuration', 'access') and not configureCacheRefreshAction.initialized and identity.checkLoggedIn()}"
+                      if="#{ not configureCacheRefreshAction.initialized }"
                       onPostback="false"/>
     </f:metadata>
 

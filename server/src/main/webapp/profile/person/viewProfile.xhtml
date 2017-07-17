@@ -9,7 +9,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{userProfileAction.show}"
-                      if="#{permissionService.hasPermission('profile', 'access') and userProfileAction.person== null and identity.checkLoggedIn()}"
+                      if="#{ userProfileAction.person== null }"
                       onPostback="false"/>
     </f:metadata>
 

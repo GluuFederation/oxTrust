@@ -5,7 +5,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{manageCertificateAction.init}"
-                      if="#{permissionService.hasPermission('configuration', 'access') and not manageCertificateAction.initialized and identity.checkLoggedIn()}"
+                      if="#{ not manageCertificateAction.initialized}"
                       onPostback="false"/>
     </f:metadata>
 

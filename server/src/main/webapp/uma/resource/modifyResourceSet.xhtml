@@ -8,7 +8,7 @@
         <f:viewAction action="#{updateResourceSetAction.setResourceInum(param['resource'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateResourceSetAction.modify}"
-                      if="#{permissionService.hasPermission('uma', 'access') and updateResourceSetAction.resourceSet == null and identity.checkLoggedIn()}"
+                      if="#{updateResourceSetAction.resourceSet == null }"
                       onPostback="false"/>
     </f:metadata>
 
