@@ -37,7 +37,7 @@ import org.xdi.service.security.Secure;
  */
 @Named("whitePagesAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission(applianceService.appliance, ' whitePagesEnabled')}")
 public class WhitePagesAction implements Serializable {
 
 	private static final long serialVersionUID = 6730313815008211305L;
