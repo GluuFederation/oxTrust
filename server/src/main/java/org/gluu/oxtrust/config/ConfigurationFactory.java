@@ -409,7 +409,7 @@ public class ConfigurationFactory {
 	private String loadLdapConfiguration(String ldapFileName) {
 		log.info("########## ldapFileName = " + ldapFileName);
 		this.ldapConfiguration = createFileConfiguration(ldapFileName, true);
-		this.replaceWithSystemValues();
+		replaceWithSystemValues();
 		File ldapFile = new File(ldapFileName);
 		if (ldapFile.exists()) {
 			this.ldapFileLastModifiedTime = ldapFile.lastModified();
@@ -418,12 +418,12 @@ public class ConfigurationFactory {
 		return ldapFileName;
 	}
 
-	private void replaceWithSystemValues(){		
-		Set<Map.Entry<Object, Object>> ldapProperties = this.ldapConfiguration.getProperties().entrySet();		
-		for(Map.Entry<Object, Object> ldapPropertyEntry: ldapProperties){			
-			String ldapPropertyKey = (String)ldapPropertyEntry.getKey();			
-			if(System.getenv(ldapPropertyKey) != null){				
-				ldapPropertyEntry.setValue(System.getenv(ldapPropertyKey));			
+	private void replaceWithSystemValues() {
+		Set<Map.Entry<Object, Object>> ldapProperties = this.ldapConfiguration.getProperties().entrySet();
+		for (Map.Entry<Object, Object> ldapPropertyEntry : ldapProperties) {
+			String ldapPropertyKey = (String) ldapPropertyEntry.getKey();
+			if (System.getenv(ldapPropertyKey) != null) {
+				ldapPropertyEntry.setValue(System.getenv(ldapPropertyKey));
 			}
 		}
 	}
