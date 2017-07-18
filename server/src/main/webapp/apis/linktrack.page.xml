@@ -10,7 +10,7 @@
     <rewrite pattern="/Configure/linktrack"></rewrite>
     
     <action execute="#{apisConfigurationAction.init}" on-postback="false" />
-    
+
     <navigation from-action="#{apisConfigurationAction.init}">
         <rule if-outcome="success">
             <begin-conversation join="true" flush-mode="manual" />

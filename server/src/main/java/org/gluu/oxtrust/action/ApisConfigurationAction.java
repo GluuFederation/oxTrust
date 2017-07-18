@@ -24,7 +24,6 @@ import org.xdi.service.security.Secure;
  * @author Oleksiy Tataryn Date: 06.04.2014
  */
 @ConversationScoped
-@Named("apisConfigurationAction")
 @Secure("#{permissionService.hasPermission('linktrack', 'access')}")
 public class ApisConfigurationAction implements Serializable {
 
