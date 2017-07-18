@@ -22,7 +22,7 @@ import org.xdi.service.security.Secure;
 
 @ConversationScoped
 @Named("federationProposalsInventoryAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class FederationProposalsInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -1477997697645117954L;

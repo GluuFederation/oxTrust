@@ -38,7 +38,7 @@ import com.unboundid.ldap.sdk.ResultCode;
  */
 @Named("attributeImportAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 public class AttributeImportAction implements Serializable {
 
 	private static final long serialVersionUID = 8755036208872218664L;

@@ -37,7 +37,7 @@ import org.xdi.util.io.ResponseHelper;
 
 @ConversationScoped
 @Named("joinFederationAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class JoinFederationAction implements Serializable {
 
 	private static final long serialVersionUID = -1032167044333943680L;
