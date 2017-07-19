@@ -296,6 +296,16 @@
 			<artifactId>richfaces-a4j</artifactId>
 		</dependency>
 
+		<!-- OmniFaces -->
+		<dependency>
+			<groupId>org.omnifaces</groupId>
+			<artifactId>omnifaces</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+		</dependency>
+
 		<!-- Commons libs -->
 		<dependency>
 			<groupId>commons-codec</groupId>
