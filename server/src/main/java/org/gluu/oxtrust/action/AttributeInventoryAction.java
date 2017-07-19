@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -20,6 +21,8 @@ import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -46,6 +49,12 @@ public class AttributeInventoryAction implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	private List<GluuAttribute> attributeList;
 
@@ -75,6 +84,9 @@ public class AttributeInventoryAction implements Serializable {
 				this.setActiveAttributeList(attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN));
 			} catch (LdapMappingException ex) {
 				log.error("Failed to load attributes", ex);
+
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load attributes");
+				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_FAILURE;
 			}

@@ -4,11 +4,9 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateAttributeAction.setInum(param['inum'])}"/>
+    	<f:viewParam name="inum" value="#{updateAttributeAction.inum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateAttributeAction.update}"
-                      if="#{updateAttributeAction.attribute == null}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateAttributeAction.update}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
