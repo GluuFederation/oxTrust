@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
@@ -104,6 +105,9 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -303,6 +307,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Cache configuration update were canceled");
+		
+		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
