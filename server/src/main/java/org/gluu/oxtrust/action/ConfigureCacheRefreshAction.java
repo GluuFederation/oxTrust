@@ -134,7 +134,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private CacheRefreshUpdateMethod updateMethod;
 	
 	public String init() {
-		if (this.cacheRefreshConfiguration != null) {
+		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
@@ -175,6 +175,18 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 
 	public String update() {
+		String outcome = updateImpl();
+		
+		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Cache configuration updated");
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update cache refresh configuration");
+		}
+		
+		return outcome;
+	}
+
+	public String updateImpl() {
 		checkDuplicateKetattribute();
 		
 		if (!vdsCacheRefreshPollingInterval()) {
@@ -264,15 +276,15 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		boolean result = true;
 		if (ldapConfig.getServers().size() == 0) {
 			log.error("{} LDAP configuration '{}' should contains at least one server", configType, ldapConfig.getConfigId());
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} LDAP configuration '{}' should contains at least one server", configType,
-					ldapConfig.getConfigId());
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, String.format("%s LDAP configuration '%s' should contains at least one server", configType,
+					ldapConfig.getConfigId()));
 			result = false;
 		}
 
 		if (validateBaseDNs && (ldapConfig.getBaseDNs().size() == 0)) {
 			log.error("{} LDAP configuration '{}' should contains at least one Base DN", configType, ldapConfig.getConfigId());
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} LDAP configuration '{}' should contains at least one Base DN", configType,
-					ldapConfig.getConfigId());
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, String.format("%s LDAP configuration '%s' should contains at least one Base DN", configType,
+					ldapConfig.getConfigId()));
 			result = false;
 		}
 
@@ -281,15 +293,18 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private boolean validateList(List<String> values, String attributeName) {
 		if (values.size() == 0) {
-			log.error("{} should contains at least one {}", attributeName);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "{} should contains at least one {}", attributeName);
+			log.error("{} should contains at least one {}", attributeName, attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, String.format("%s should contains at least one '%s'", attributeName, attributeName));
 			return false;
 		}
 
 		return true;
 	}
 
-	public void cancel() {
+	public String cancel() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Cache configuration update were canceled");
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public boolean isCacheRefreshEnabled() {
