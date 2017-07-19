@@ -9,9 +9,11 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.LinktrackService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -24,10 +26,14 @@ import org.xdi.service.security.Secure;
  * @author Oleksiy Tataryn Date: 06.04.2014
  */
 @ConversationScoped
+@Named("apisConfigurationAction")
 @Secure("#{permissionService.hasPermission('linktrack', 'access')}")
 public class ApisConfigurationAction implements Serializable {
 
-	static final long serialVersionUID = 3932865544287448544L;
+	public static final long serialVersionUID = 3932865544287448544L;
+
+	@Inject
+	private FacesMessages facesMessages;
 
 	@Inject
 	private LinktrackService linktrackService;
@@ -65,6 +71,9 @@ public class ApisConfigurationAction implements Serializable {
 		organization.setLinktrackLogin(linktrackLogin);
 		organization.setLinktrackPassword(linktrackPassword);
 		organizationService.updateOrganization(organization);
+		
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Linktrack API Configuration Saved");
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
