@@ -843,15 +843,21 @@ public class Shibboleth3ConfService implements Serializable {
 			return null;
 		}
 
-		List<String> lines = null;
 		ByteArrayInputStream bis = new ByteArrayInputStream(cert);
 		try {
-			lines = IOUtils.readLines(new InputStreamReader(bis, "US-ASCII"));
+			return getPublicCertificate(bis);
+		} finally {
+			IOUtils.closeQuietly(bis);
+		}
+	}
+
+	public String getPublicCertificate(InputStream is) {
+		List<String> lines = null;
+		try {
+			lines = IOUtils.readLines(new InputStreamReader(is, "US-ASCII"));
 		} catch (IOException ex) {
 			log.error("Failed to read public key file", ex);
 			ex.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(bis);
 		}
 
 		StringBuilder sb = new StringBuilder();

@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -169,8 +170,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	@Inject
 	private SSLService sslService;
 
-	private UploadedFile fileWrapper;
-	private UploadedFile certWrapper;
+	private Part fileWrapper;
+	private Part certWrapper;
 
 	private String selectedTR;
 
@@ -316,27 +317,41 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			boolean updateShib3Configuration = appConfiguration.isConfigGeneration();
 			switch (trustRelationship.getSpMetaDataSourceType()) {
 			case GENERATE:
-				String certificate = getCertForGeneratedSP();
-				GluuStatus status = StringHelper.isNotEmpty(certificate) ? GluuStatus.ACTIVE : GluuStatus.INACTIVE;
-				this.trustRelationship.setStatus(status);
-				if (generateSpMetaDataFile(certificate)) {
-					setEntityId();
-				} else {
-					log.error("Failed to generate SP meta-data file");
+				try {
+					String certificate = getCertForGeneratedSP();
+					GluuStatus status = StringHelper.isNotEmpty(certificate) ? GluuStatus.ACTIVE : GluuStatus.INACTIVE;
+					this.trustRelationship.setStatus(status);
+					if (generateSpMetaDataFile(certificate)) {
+						setEntityId();
+					} else {
+						log.error("Failed to generate SP meta-data file");
+						return OxTrustConstants.RESULT_FAILURE;
+					}
+				} catch (IOException ex) {
+					log.error("Failed to download SP certificate", ex);
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download SP certificate");
+
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 
 				break;
 			case FILE:
-				if (saveSpMetaDataFileSourceTypeFile()) {
-					//update = true;
-					updateSpMetaDataCert(certWrapper);
-//					setEntityId();
-					if(!update){
-						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
-					 }
-				} else {
-					log.error("Failed to save SP meta-data file {}", fileWrapper);
+				try {
+					if (saveSpMetaDataFileSourceTypeFile()) {
+						//update = true;
+						updateSpMetaDataCert(certWrapper);
+	//					setEntityId();
+						if(!update){
+							this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+						 }
+					} else {
+						log.error("Failed to save SP meta-data file {}", fileWrapper);
+						return OxTrustConstants.RESULT_FAILURE;
+					}
+				} catch (IOException ex) {
+					log.error("Failed to download SP metadata", ex);
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download SP metadata");
+
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 
@@ -528,14 +543,15 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	 * 
 	 * @author �Oleksiy Tataryn�
 	 * @return certificate for generated SP
+	 * @throws IOException 
 	 * @throws CertificateEncodingException
 	 */
-	public String getCertForGeneratedSP() {
+	public String getCertForGeneratedSP() throws IOException {
 		X509Certificate cert = null;
 
-		if ((certWrapper != null) && (certWrapper.getData() != null)) {
+		if ((certWrapper != null) && (certWrapper.getInputStream() != null)) {
 			try {
-				cert = sslService.getPEMCertificate(certWrapper.getData());
+				cert = sslService.getPEMCertificate(certWrapper.getInputStream());
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
@@ -664,12 +680,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		
 	}
 
-	private void updateSpMetaDataCert(UploadedFile certWrapper) {
-		if ((certWrapper == null) || (certWrapper.getData() == null)) {
+	private void updateSpMetaDataCert(Part certWrapper) throws IOException {
+		if ((certWrapper == null) || (certWrapper.getInputStream() == null)) {
 			return;
 		}
 
-		String certificate = shibboleth3ConfService.getPublicCertificate(certWrapper.getData());
+		String certificate = shibboleth3ConfService.getPublicCertificate(certWrapper.getInputStream());
 		if (certificate == null) {
 			return;
 		}
@@ -834,12 +850,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return shibboleth3ConfService.generateSpMetadataFile(trustRelationship, certificate);
 	}
 
-	private boolean saveSpMetaDataFileSourceTypeFile() {
+	private boolean saveSpMetaDataFileSourceTypeFile() throws IOException {
 		log.trace("Saving metadata file source type: File");
 		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
 		boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
 
-		if ((fileWrapper == null) || (fileWrapper.getData() == null)) {
+		if ((fileWrapper == null) || (fileWrapper.getInputStream() == null)) {
 			if (emptySpMetadataFileName) {
 				return false;
 			}
@@ -871,7 +887,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				trustService.updateTrustRelationship(this.trustRelationship);
 			}
 		}
-		String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, fileWrapper.getData());
+		String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, fileWrapper.getInputStream());
 		if (StringHelper.isNotEmpty(result)) {
 			metadataValidationTimer.queue(result);
 		} else {
@@ -1051,12 +1067,20 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
 	}
 
-	public UploadedFile getFileWrapper() {
+	public Part getFileWrapper() {
 		return fileWrapper;
 	}
 
-	public UploadedFile getCertWrapper() {
+	public void setFileWrapper(Part fileWrapper) {
+		this.fileWrapper = fileWrapper;
+	}
+
+	public Part getCertWrapper() {
 		return certWrapper;
+	}
+
+	public void setCertWrapper(Part certWrapper) {
+		this.certWrapper = certWrapper;
 	}
 
 	private List<GluuCustomAttribute> getCurrentCustomAttributes() {
@@ -1488,14 +1512,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		facesContext.responseComplete();
 		return true;
-	}
-
-	public void uploadFile(FileUploadEvent event) {
-		this.fileWrapper = event.getUploadedFile();
-	}
-
-	public void uploadCertFile(FileUploadEvent event) {
-		this.certWrapper = event.getUploadedFile();
 	}
 
 }

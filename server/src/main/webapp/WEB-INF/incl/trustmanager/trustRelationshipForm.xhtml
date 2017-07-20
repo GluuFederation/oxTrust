@@ -287,24 +287,21 @@
 										id="fileWrapper"
 										 label="
 											#{msg['trustmanager.spMetadataFile']}">
-										<rich:fileUpload id="fileWrapperId"
+										<h:inputFile id="fileWrapperId"
 											required="#{(_trustRelationship.spMetaDataSourceType.value eq 'file') and (empty param['sv'])}"
-											maxFilesQuantity="1" listHeight="60px"
-											fileUploadListener="#{_trustRelationshipAction.uploadFile}" limitRender="true"
-											rendered="#{(empty _trustRelationship.spMetaDataFN) and (_trustRelationshipAction.fileWrapper == null)}">
-											<a4j:ajax event="uploadcomplete" execute="@this" limitRender="true" render="MetadataOperations"/>
-	                    				</rich:fileUpload>
+											value="#{_trustRelationshipAction.fileWrapper}"
+											rendered="#{empty _trustRelationship.spMetaDataFN}" />
 											
 										<a4j:commandLink id="fileWrapperFileNameId" value="#{_trustRelationship.spMetaDataFN}"
 											onclick="#{rich:component('spMetadataPanel')}.show();"
-											rendered="#{(not empty _trustRelationship.spMetaDataFN) or (_trustRelationshipAction.fileWrapper != null)}"
+											rendered="#(not empty _trustRelationship.spMetaDataFN}"
 											execute="@this" />
 	
 										<a4j:commandLink style="margin-left:305px;"
 											styleClass="glyphicon glyphicon-remove"
 											action="#{_trustRelationship.setSpMetaDataFN('')}"
 											limitRender="true" render="MetadataOperations"
-											rendered="#{(not empty _trustRelationship.spMetaDataFN) or (_trustRelationshipAction.fileWrapper != null)}">
+											rendered="#{not empty _trustRelationship.spMetaDataFN}">
 											<!-- <h:graphicImage value="/img/remove.gif" />  -->
 										</a4j:commandLink>
 									</ox:decorate>
@@ -317,12 +314,9 @@
 									id="certUpdate" label="
                                         #{_trustRelationship.spMetaDataSourceType.value eq 'file' ? 'Update public certificate' : 'Public certificate'}">
                                     
-									<rich:fileUpload id="certWrapperId"
-										acceptedTypes="crt, cert, pem, txt" ontyperejected="alert('Only CRT, CERT, PEM, TXT files are accepted');"
-										maxFilesQuantity="1" listHeight="60px"
-										fileUploadListener="#{_trustRelationshipAction.uploadCertFile}" limitRender="true">
-										<a4j:ajax event="uploadcomplete" execute="@this" limitRender="true" render="MetadataOperations"/>
-									</rich:fileUpload>
+									<h:inputFile id="certWrapperId"
+										value="#{_trustRelationshipAction.certWrapper}"
+										rendered="#{empty _trustRelationship.spMetaDataFN}" />
 								</ox:decorate>
 							</h:panelGroup>
 						</h:panelGroup>
