@@ -39,7 +39,7 @@ import org.xdi.service.security.Secure;
  */
 @Named("whitePagesAction")
 @ConversationScoped
-@Secure("#{permissionService.hasPermission(applianceService.appliance, ' whitePagesEnabled')}")
+@Secure("#{permissionService.hasPermission('profile', 'access')}")
 public class WhitePagesAction implements Serializable {
 
 	private static final long serialVersionUID = 6730313815008211305L;
@@ -76,6 +76,7 @@ public class WhitePagesAction implements Serializable {
 		this.tableAttributes = Arrays.asList("cn", "photo1", "mail", "phone");
 	}
 
+	@Secure("#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}")
 	public String start() {
 		if (persons != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -84,6 +85,7 @@ public class WhitePagesAction implements Serializable {
 		return search();
 	}
 
+	@Secure("#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}")
 	public String search() {
 		try {
 			GluuCustomPerson person = new GluuCustomPerson();

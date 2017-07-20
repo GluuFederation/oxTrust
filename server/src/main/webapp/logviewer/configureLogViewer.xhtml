@@ -5,9 +5,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{configureLogViewerAction.init}"
-                      if="#{ not configureLogViewerAction.initialized }"
-                      onPostback="false"/>
+        <f:viewAction action="#{configureLogViewerAction.init}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
