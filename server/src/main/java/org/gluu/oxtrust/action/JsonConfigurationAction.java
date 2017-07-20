@@ -109,7 +109,6 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			log.debug("Saving oxauth-config.json:" + oxAuthDynamicConfigJson);
 			jsonConfigurationService.saveOxAuthDynamicConfigJson(oxAuthDynamicConfigJson);
-
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;

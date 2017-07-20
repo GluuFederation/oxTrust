@@ -14,10 +14,12 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -53,6 +55,9 @@ public class WhitePagesAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
+	private ConversationService conversationService;
+
+	@Inject
 	private AttributeService attributeService;
 
 	@Inject
@@ -86,6 +91,10 @@ public class WhitePagesAction implements Serializable {
 			this.persons = personService.findPersons(person, 0);
 		} catch (Exception ex) {
 			log.error("Failed to find persons", ex);
+
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find persons white pages");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

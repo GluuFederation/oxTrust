@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -664,6 +665,15 @@ public class Shibboleth3ConfService implements Serializable {
         return String.format(SHIB3_SP_METADATA_FILE_PATTERN, relationshipInum);
     }
 
+    public String saveSpMetadataFile(String spMetadataFileName, byte[] data) {
+    	ByteArrayInputStream bis = new ByteArrayInputStream(data);
+    	try {
+    		return saveSpMetadataFile(spMetadataFileName, bis);
+    	} finally {
+    		IOUtils.closeQuietly(bis);
+    	}
+    }
+
 	public String saveSpMetadataFile(String spMetadataFileName, InputStream input) {
 
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
@@ -828,20 +838,20 @@ public class Shibboleth3ConfService implements Serializable {
 		return SHIB3_SP_READ_ME_WINDOWS;
 	}
 
-	public String getPublicCertificate(FileUploadWrapper fileWrapper) {
-
-		if (fileWrapper.getStream() == null) {
+	public String getPublicCertificate(byte[] cert) {
+		if (cert == null) {
 			return null;
 		}
 
 		List<String> lines = null;
+		ByteArrayInputStream bis = new ByteArrayInputStream(cert);
 		try {
-			lines = IOUtils.readLines(new InputStreamReader(fileWrapper.getStream(), "US-ASCII"));
+			lines = IOUtils.readLines(new InputStreamReader(bis, "US-ASCII"));
 		} catch (IOException ex) {
-			log.error("Failed to read public key file '{}'", ex, fileWrapper.getFileName());
+			log.error("Failed to read public key file", ex);
 			ex.printStackTrace();
 		} finally {
-			IOUtils.closeQuietly(fileWrapper.getStream());
+			IOUtils.closeQuietly(bis);
 		}
 
 		StringBuilder sb = new StringBuilder();
