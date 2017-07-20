@@ -291,10 +291,10 @@
 											required="#{(_trustRelationship.spMetaDataSourceType.value eq 'file') and (empty param['sv'])}"
 											value="#{_trustRelationshipAction.fileWrapper}"
 											rendered="#{empty _trustRelationship.spMetaDataFN}" />
-											
+										
 										<a4j:commandLink id="fileWrapperFileNameId" value="#{_trustRelationship.spMetaDataFN}"
 											onclick="#{rich:component('spMetadataPanel')}.show();"
-											rendered="#(not empty _trustRelationship.spMetaDataFN}"
+											rendered="#{not empty _trustRelationship.spMetaDataFN}"
 											execute="@this" />
 	
 										<a4j:commandLink style="margin-left:305px;"
