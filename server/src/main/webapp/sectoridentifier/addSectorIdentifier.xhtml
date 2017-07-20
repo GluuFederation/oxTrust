@@ -6,7 +6,7 @@
         <f:viewAction action="#{updateSectorIdentifierAction.setInum(param['inum'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateSectorIdentifierAction.add}"
-                      if="#{permissionService.hasPermission('sectorIdentifier', 'access') and updateSectorIdentifierAction.sectorIdentifier == null and identity.checkLoggedIn()}"
+                      if="#{updateSectorIdentifierAction.sectorIdentifier == null }"
                       onPostback="false"/>
     </f:metadata>
 

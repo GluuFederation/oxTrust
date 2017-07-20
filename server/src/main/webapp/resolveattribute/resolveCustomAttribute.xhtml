@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+                
+      <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
+    </f:metadata>
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="body">
+    
+    	    <section class="content-header">
+		<h1 style="color: #333;">
+            Custom Attribute Name Id<small><i class="fa fa-caret-right" style="color: #333 !important;"></i>Custom Attribute Name Id</small>
+		</h1>
+		<ol class="breadcrumb">
+<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+			<li class="organization/configuration">Resolve Attribute</li>
+		</ol>
+		</section>
+        <section class="content">
+        <h:form>
+     <div class="row">
+            <div class="col-xs-12">
+              <div class="box box-primary">
+              <div class="box-header">
+              <div style="display: inline-block;width: 75% !important;">
+              
+        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+        	<div class="col-sm-2">
+        	<h:outputLabel value="Create NameID" />
+        	</div>
+        	<div class="col-sm-10">
+        	<h:selectBooleanCheckbox value="#{attributeResolverAction.enable}"  styleClass="form-control"/>
+        	</div>
+        </div>
+        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+        	<div class="col-sm-2">
+        	<h:outputLabel value="Attribute Name" />
+        	</div>
+        	<div class="col-sm-10">
+        	<h:inputText value="#{attributeResolverAction.attribute.name}" styleClass="form-control"/>
+        	</div>
+        </div>
+        
+        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+        	<div class="col-sm-2">
+        	<h:outputLabel value="Attribute Base" />
+        	</div>
+        	<div class="col-sm-10">
+        	<h:inputText value="#{attributeResolverAction.base}"  styleClass="form-control"/>
+        	</div>
+        </div>
+        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+        	<div class="col-sm-2">
+        	<h:outputLabel value="Attribute Type" />
+        	</div>
+        	<div class="col-sm-10">
+        	<h:selectOneMenu value="#{attributeResolverAction.attribute.nameIdType}"  styleClass="form-control">
+        		<f:selectItem itemLabel="emailAddress" itemValue="emailAddress"/>
+        		<f:selectItem itemLabel="unspecified" itemValue="unspecified"/>
+        	</h:selectOneMenu>
+        	</div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+                    <div id="updateButtons">
+                        <h:commandButton styleClass="btn btn-primary" value="Resolve Attribute" action="#{attributeResolverAction.saveCustomAttributetoResolve}" />
+                        <h:commandButton styleClass="btn btn-success" value="#{msg['attribute.cancel']}" action="#{attributeResolverAction.cancel}" immediate="true" style="margin-left:5px"/>
+                    </div>
+          </h:form>
+        </section>
+    </ui:define>
+
+</ui:composition>

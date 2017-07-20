@@ -37,6 +37,7 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -342,6 +343,7 @@ public class Authenticator implements Serializable {
 		String oxAuthHost = getOxAuthHost(oxAuthAuthorizeUrl);
 		if (StringHelper.isEmpty(oxAuthHost)) {
 			log.info("Failed to determine oxAuth host using oxAuthAuthorizeUrl: '{}'", oxAuthAuthorizeUrl);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
 
@@ -365,6 +367,8 @@ public class Authenticator implements Serializable {
 			String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
 
 			log.info("No authorization code sent. Error: " + error + ". Error description: " + errorDescription);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
 
@@ -395,6 +399,12 @@ public class Authenticator implements Serializable {
 
 		String result = requestAccessToken(oxAuthHost, authorizationCode, sessionState, idToken, scopes, clientID,
 				clientPassword);
+		
+		if (OxTrustConstants.RESULT_NO_PERMISSIONS.equals(result)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(result)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed");
+		}
 
 		return result;
 	}

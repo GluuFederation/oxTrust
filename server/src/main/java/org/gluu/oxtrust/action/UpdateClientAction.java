@@ -159,12 +159,12 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		this.update = true;
-		log.info("this.update : " + this.update);
+		log.debug("this.update : " + this.update);
 		try {
-			log.info("inum : " + inum);
+			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find client {}", ex, inum);
+			log.error("Failed to find client {}", inum, ex);
 		}
 
 		if (this.client == null) {
@@ -248,11 +248,13 @@ public class UpdateClientAction implements Serializable {
 				clientService.updateClient(this.client);
 			} catch (LdapMappingException ex) {
 
-				log.error("Failed to update client {}", ex, this.inum);
+				log.error("Failed to update client {}", this.inum, ex);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client '#{updateScopeAction.scope.displayName}'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client '#{updateClientAction.client.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Client '#{updateClientAction.client.displayName}' updated successfully");
 		} else {
 			this.inum = clientService.generateInumForNewClient();
 			String dn = clientService.getDnForClient(this.inum);
@@ -263,8 +265,7 @@ public class UpdateClientAction implements Serializable {
 			try {
 				clientService.addClient(this.client);
 			} catch (LdapMappingException ex) {
-				log.info("Failed to add new client");
-				log.error("Failed to add new client {}", ex, this.inum);
+				log.error("Failed to add new client {}", this.inum, ex);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -302,7 +303,7 @@ public class UpdateClientAction implements Serializable {
 
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove client {}", ex, this.inum);
+				log.error("Failed to remove client {}", this.inum, ex);
 			}
 		}
 

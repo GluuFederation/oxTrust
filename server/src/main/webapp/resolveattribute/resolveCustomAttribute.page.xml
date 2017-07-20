@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.org/schema/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
+    login-required="true" no-conversation-view-id="/home.xhtml"
+    view-id="/resolveattribute/resolveCustomAttribute.xhtml">
+
+    <restrict>#{s:hasPermission('attribute', 'access')}</restrict>
+    <rewrite pattern="/resolveattribute/resolveCustomAttribute" />
+    
+     <navigation from-action="#{attributeResolverAction.saveCustomAttributetoResolve}">
+        <rule if-outcome="success">
+            <begin-conversation join="true" flush-mode="manual" />
+            <render view-id="/resolveattribute/resolveCustomAttribute.xhtml" />
+        </rule>
+
+        <rule if-outcome="failure">
+            <end-conversation />
+            <redirect view-id="/resolveattribute/resolveCustomAttribute.xhtml">
+                <message severity="ERROR">Failed to Create Name Id</message>
+            </redirect>
+        </rule>
+    </navigation>
+    
+    <navigation from-action="#{attributeResolverAction.cancel}">
+        <rule if-outcome="success">
+            <begin-conversation join="true" flush-mode="manual" />
+            <render view-id="/resolveattribute/resolveCustomAttribute.xhtml" />
+        </rule>
+
+        <rule if-outcome="failure">
+            <end-conversation />
+            <redirect view-id="/resolveattribute/resolveCustomAttribute.xhtml">
+                <message severity="ERROR">Failed to Create Name Id</message>
+            </redirect>
+        </rule>
+    </navigation>
+    </page>

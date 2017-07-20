@@ -6,7 +6,6 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{registrationManagementAction.init}"
-                      if="#{permissionService.hasPermission('configuration', 'access') and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 

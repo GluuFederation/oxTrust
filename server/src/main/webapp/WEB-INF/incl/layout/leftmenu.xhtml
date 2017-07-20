@@ -72,14 +72,22 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									
-									<li id="subMenuLinkConfiguration7"><h:commandLink
+									<li id="subMenuLinkConfiguration6"><h:commandLink
 											value="#{msg['leftmenu.attributes']}"
 											action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}"
+											rendered="#{permissionService.hasPermission('configuration', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
+										
+									<li id="subMenuLinkConfiguration7"><h:commandLink
+											value="#{msg['leftmenu.nameId']}"
+											action="#{menuAction.endConversation('/resolveattribute/resolveCustomAttribute.xhtml')}"
 											rendered="#{permissionService.hasPermission('attribute', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-									<li id="subMenuLinkConfiguration7"><h:commandLink
+									<li id="subMenuLinkConfiguration12"><h:commandLink
 											value="Import/Export Attribute LDIF"
 											action="#{menuAction.endConversation('/attribute/attributeImport.xhtml')}"
 											rendered="#{permissionService.hasPermission('attribute', 'access')}">

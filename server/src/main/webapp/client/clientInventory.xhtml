@@ -4,10 +4,10 @@
                 xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{searchClientAction.setSearchPattern(param['searchPattern'])}"/>
+    	<f:viewParam name="searchPattern" value="#{searchClientAction.searchPattern}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{searchClientAction.start}"
-                      if="#{permissionService.hasPermission('client', 'access') and searchClientAction.clientList == null and identity.checkLoggedIn()}"
+                      if="#{searchClientAction.clientList == null}"
                       onPostback="false"/>
     </f:metadata>
 

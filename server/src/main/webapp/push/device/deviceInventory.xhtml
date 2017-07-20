@@ -7,7 +7,7 @@
         <f:viewAction action="#{pushDeviceInventoryAction.setSearchPattern(param['searchPattern'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{pushDeviceInventoryAction.start}"
-                      if="#{permissionService.hasPermission('oxpush', 'access') and pushDeviceInventoryAction.pushDeviceList == null and identity.checkLoggedIn()}"
+                      if="#{pushDeviceInventoryAction.pushDeviceList == null }"
                       onPostback="false"/>
     </f:metadata>
 

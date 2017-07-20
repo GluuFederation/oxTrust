@@ -6,7 +6,7 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{configureLogViewerAction.init}"
-                      if="#{permissionService.hasPermission('configuration', 'access') and not configureLogViewerAction.initialized and identity.checkLoggedIn()}"
+                      if="#{ not configureLogViewerAction.initialized }"
                       onPostback="false"/>
     </f:metadata>
 

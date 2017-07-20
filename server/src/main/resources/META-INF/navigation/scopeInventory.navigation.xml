@@ -3,17 +3,21 @@
   <rewrite pattern="/scope/inventory/{searchPattern}" xmlns="http://xmlns.gluu.org/jsf/pages"/>
   <navigation-rule>
     <from-view-id>/scope/scopeInventory.xhtml</from-view-id>
+
     <navigation-case>
       <from-action>#{searchScopeAction.start}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
     <navigation-case>
       <from-action>#{searchScopeAction.search}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
   </navigation-rule>
+
 </faces-config>

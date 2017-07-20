@@ -7,6 +7,8 @@
 package org.gluu.oxtrust.config;
 
 import java.io.File;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
@@ -65,9 +67,10 @@ public class ConfigurationFactory {
 	@Inject
 	private Event<String> event;
 
-	@Inject @Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
+	@Inject
+	@Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
 	private Instance<LdapEntryManager> ldapEntryManagerInstance;
-	
+
 	@Inject
 	private Instance<Configuration> configurationInstance;
 
@@ -76,22 +79,23 @@ public class ConfigurationFactory {
 
 	private final static int DEFAULT_INTERVAL = 30; // 30 seconds
 
-    static {
-        if (System.getProperty("gluu.base") != null) {
-            BASE_DIR = System.getProperty("gluu.base");
-        } else if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
-            BASE_DIR = System.getProperty("catalina.base");
-        } else if (System.getProperty("catalina.home") != null) {
-            BASE_DIR = System.getProperty("catalina.home");
-        } else if (System.getProperty("jboss.home.dir") != null) {
-            BASE_DIR = System.getProperty("jboss.home.dir");
-        } else {
-            BASE_DIR = null;
-        }
-    }
+	static {
+		if (System.getProperty("gluu.base") != null) {
+			BASE_DIR = System.getProperty("gluu.base");
+		} else if ((System.getProperty("catalina.base") != null)
+				&& (System.getProperty("catalina.base.ignore") == null)) {
+			BASE_DIR = System.getProperty("catalina.base");
+		} else if (System.getProperty("catalina.home") != null) {
+			BASE_DIR = System.getProperty("catalina.home");
+		} else if (System.getProperty("jboss.home.dir") != null) {
+			BASE_DIR = System.getProperty("jboss.home.dir");
+		} else {
+			BASE_DIR = null;
+		}
+	}
 
-    public static final String BASE_DIR;
-    public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
+	public static final String BASE_DIR;
+	public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
 	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
 	public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "ox-ldap.properties";
@@ -102,7 +106,6 @@ public class ConfigurationFactory {
 	public static final String LOG_ROTATION_CONFIGURATION = "oxTrustLogRotationConfiguration.xml";
 	public static final String SALT_FILE_NAME = "salt";
 
-
 	private String confDir, configFilePath, cacheRefreshFilePath, logRotationFilePath, saltFilePath;
 
 	private boolean loaded = false;
@@ -111,45 +114,45 @@ public class ConfigurationFactory {
 	private AppConfiguration appConfiguration;
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 	private String cryptoConfigurationSalt;
-	private ImportPersonConfig  importPersonConfig;
+	private ImportPersonConfig importPersonConfig;
 
-    private AtomicBoolean isActive;
+	private AtomicBoolean isActive;
 
 	private String prevLdapFileName;
-    private long ldapFileLastModifiedTime = -1;
-    private long ldapCentralFileLastModifiedTime = -1;
+	private long ldapFileLastModifiedTime = -1;
+	private long ldapCentralFileLastModifiedTime = -1;
 
-    private long loadedRevision = -1;
-    private boolean loadedFromLdap = true;
-	
+	private long loadedRevision = -1;
+	private boolean loadedFromLdap = true;
+
 	@PostConstruct
 	public void init() {
-        this.isActive = new AtomicBoolean(true);
-    	try {
+		this.isActive = new AtomicBoolean(true);
+		try {
 			log.info("Creating oxTrustConfiguration");
-        	String ldapFileName = determineLdapConfigurationFileName();
-        	this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
+			String ldapFileName = determineLdapConfigurationFileName();
+			this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
 			loadLdapCentralConfiguration();
-	    	this.confDir = confDir();
-	
-	    	this.configFilePath = confDir + APPLICATION_CONFIGURATION;
-	    	this.cacheRefreshFilePath = confDir + CACHE_PROPERTIES_FILE;
-	    	this.logRotationFilePath = confDir + LOG_ROTATION_CONFIGURATION;
-	    	this.saltFilePath = confDir + SALT_FILE_NAME;
-	    	
-	    	loadCryptoConfigurationSalt();
-    	} finally {
-	    	this.isActive.set(false);
-	    }
+			this.confDir = confDir();
+
+			this.configFilePath = confDir + APPLICATION_CONFIGURATION;
+			this.cacheRefreshFilePath = confDir + CACHE_PROPERTIES_FILE;
+			this.logRotationFilePath = confDir + LOG_ROTATION_CONFIGURATION;
+			this.saltFilePath = confDir + SALT_FILE_NAME;
+
+			loadCryptoConfigurationSalt();
+		} finally {
+			this.isActive.set(false);
+		}
 	}
 
 	public void create() {
-        if (!createFromLdap(true)) {
-            log.error("Failed to load configuration from LDAP. Please fix it!!!.");
-            throw new ConfigurationException("Failed to load configuration from LDAP.");
-        } else {
-        	log.info("Configuration loaded successfully.");
-        }
+		if (!createFromLdap(true)) {
+			log.error("Failed to load configuration from LDAP. Please fix it!!!.");
+			throw new ConfigurationException("Failed to load configuration from LDAP.");
+		} else {
+			log.info("Configuration loaded successfully.");
+		}
 	}
 
 	public void initTimer() {
@@ -181,63 +184,66 @@ public class ConfigurationFactory {
 		}
 	}
 
-    private void reloadConfiguration() {
-        // Reload LDAP configuration if needed
-    	String ldapFileName = determineLdapConfigurationFileName();
-        File ldapFile = new File(ldapFileName);
-        if (ldapFile.exists()) {
-            final long lastModified = ldapFile.lastModified();
-            if (!StringHelper.equalsIgnoreCase(this.prevLdapFileName, ldapFileName) || (lastModified > ldapFileLastModifiedTime)) { // reload configuration only if it was modified
+	private void reloadConfiguration() {
+		// Reload LDAP configuration if needed
+		String ldapFileName = determineLdapConfigurationFileName();
+		File ldapFile = new File(ldapFileName);
+		if (ldapFile.exists()) {
+			final long lastModified = ldapFile.lastModified();
+			if (!StringHelper.equalsIgnoreCase(this.prevLdapFileName, ldapFileName)
+					|| (lastModified > ldapFileLastModifiedTime)) { // reload configuration only if it was modified
 				// Reload configuration only if it was modified
-            	this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
+				this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
 				event.select(LdapConfigurationReload.Literal.INSTANCE).fire(LDAP_CONFIGUARION_RELOAD_EVENT_TYPE);
-            }
-        }
+			}
+		}
 
-        // Reload LDAP central configuration if needed
-        File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
-        if (ldapCentralFile.exists()) {
-            final long lastModified = ldapCentralFile.lastModified();
-            if (lastModified > ldapCentralFileLastModifiedTime) {
+		// Reload LDAP central configuration if needed
+		File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
+		if (ldapCentralFile.exists()) {
+			final long lastModified = ldapCentralFile.lastModified();
+			if (lastModified > ldapCentralFileLastModifiedTime) {
 				// Reload configuration only if it was modified
-            	loadLdapCentralConfiguration();
-				event.select(LdapCentralConfigurationReload.Literal.INSTANCE).fire(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
-            }
-        } else if (this.ldapCentralConfiguration != null) {
-        	// Allow to remove not mandatory configuration file
-    		this.ldapCentralConfiguration = null;
-			event.select(LdapCentralConfigurationReload.Literal.INSTANCE).fire(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
-        }
+				loadLdapCentralConfiguration();
+				event.select(LdapCentralConfigurationReload.Literal.INSTANCE)
+						.fire(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+			}
+		} else if (this.ldapCentralConfiguration != null) {
+			// Allow to remove not mandatory configuration file
+			this.ldapCentralConfiguration = null;
+			event.select(LdapCentralConfigurationReload.Literal.INSTANCE)
+					.fire(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+		}
 
-    	if (!loadedFromLdap) {
-    		return;
-    	}
+		if (!loadedFromLdap) {
+			return;
+		}
 
-    	final LdapOxTrustConfiguration conf = loadConfigurationFromLdap("oxRevision");
-        if (conf == null) {
-        	return;
-        }
+		final LdapOxTrustConfiguration conf = loadConfigurationFromLdap("oxRevision");
+		if (conf == null) {
+			return;
+		}
 
-        if (conf.getRevision() <= this.loadedRevision) {
-        	return;
-        }
+		if (conf.getRevision() <= this.loadedRevision) {
+			return;
+		}
 
-    	createFromLdap(false);
-    }
+		createFromLdap(false);
+	}
 
-    public String confDir() {
-        final String confDir = getLdapConfiguration().getString("confDir", null);
-        if (StringUtils.isNotBlank(confDir)) {
-            return confDir;
-        }
+	public String confDir() {
+		final String confDir = getLdapConfiguration().getString("confDir", null);
+		if (StringUtils.isNotBlank(confDir)) {
+			return confDir;
+		}
 
-        return DIR;
-    }
+		return DIR;
+	}
 
 	public FileConfiguration getLdapConfiguration() {
 		return ldapConfiguration;
 	}
-	
+
 	public FileConfiguration getLdapCentralConfiguration() {
 		return ldapCentralConfiguration;
 	}
@@ -253,7 +259,7 @@ public class ConfigurationFactory {
 	public CacheRefreshConfiguration getCacheRefreshConfiguration() {
 		return cacheRefreshConfiguration;
 	}
-	
+
 	@Produces
 	@ApplicationScoped
 	public ImportPersonConfig getImportPersonConfig() {
@@ -269,28 +275,28 @@ public class ConfigurationFactory {
 	}
 
 	private boolean createFromFile() {
-    	boolean result = reloadAppConfFromFile();
-    	
-    	return result;
-    }
+		boolean result = reloadAppConfFromFile();
 
-    private boolean reloadAppConfFromFile() {
-        final AppConfiguration appConfiguration = loadAppConfFromFile();
-        if (appConfiguration != null) {
-            log.info("Reloaded application configuration from file: " + configFilePath);
-            this.appConfiguration = appConfiguration;
-            return true;
-        } else {
-        	log.error("Failed to load application configuration from file: " + configFilePath);
-        }
+		return result;
+	}
 
-        return false;
-    }
+	private boolean reloadAppConfFromFile() {
+		final AppConfiguration appConfiguration = loadAppConfFromFile();
+		if (appConfiguration != null) {
+			log.info("Reloaded application configuration from file: " + configFilePath);
+			this.appConfiguration = appConfiguration;
+			return true;
+		} else {
+			log.error("Failed to load application configuration from file: " + configFilePath);
+		}
+
+		return false;
+	}
 
 	private AppConfiguration loadAppConfFromFile() {
 		try {
-	        String jsonConfig = FileUtils.readFileToString(new File(configFilePath));
-	        AppConfiguration appConfiguration = jsonService.jsonToObject(jsonConfig, AppConfiguration.class);
+			String jsonConfig = FileUtils.readFileToString(new File(configFilePath));
+			AppConfiguration appConfiguration = jsonService.jsonToObject(jsonConfig, AppConfiguration.class);
 
 			return appConfiguration;
 		} catch (Exception ex) {
@@ -309,23 +315,24 @@ public class ConfigurationFactory {
 		}
 	}
 
-    public void loadCryptoConfigurationSalt() {
-        try {
-            FileConfiguration cryptoConfiguration = createFileConfiguration(saltFilePath, true);
+	public void loadCryptoConfigurationSalt() {
+		try {
+			FileConfiguration cryptoConfiguration = createFileConfiguration(saltFilePath, true);
 
 			this.cryptoConfigurationSalt = cryptoConfiguration.getString("encodeSalt");
-        } catch (Exception ex) {
+		} catch (Exception ex) {
 			log.error("Failed to load configuration from {}", ex, this.saltFilePath);
 			throw new ConfigurationException("Failed to load configuration from " + this.saltFilePath, ex);
-        }
-    }
+		}
+	}
 
 	private FileConfiguration createFileConfiguration(String fileName, boolean isMandatory) {
 		try {
 			FileConfiguration fileConfiguration = new FileConfiguration(fileName);
 			if (fileConfiguration.isLoaded()) {
 				log.debug("########## fileName = " + fileConfiguration.getFileName());
-				log.debug("########## oxtrust_ConfigurationEntryDN = " + fileConfiguration.getString("oxtrust_ConfigurationEntryDN"));
+				log.debug("########## oxtrust_ConfigurationEntryDN = "
+						+ fileConfiguration.getString("oxtrust_ConfigurationEntryDN"));
 				return fileConfiguration;
 			}
 		} catch (Exception ex) {
@@ -340,12 +347,12 @@ public class ConfigurationFactory {
 
 	private boolean createFromLdap(boolean recoverFromFiles) {
 		log.info("Loading configuration from LDAP...");
-        try {
-            final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
-            if (conf != null) {
-                init(conf);
+		try {
+			final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
+			if (conf != null) {
+				init(conf);
 
-                // Destroy old configuration
+				// Destroy old configuration
 				if (this.loaded) {
 					destroy(AppConfiguration.class);
 					destroy(CacheRefreshConfiguration.class);
@@ -355,17 +362,17 @@ public class ConfigurationFactory {
 				this.loaded = true;
 				configurationUpdateEvent.select(ConfigurationUpdate.Literal.INSTANCE).fire(this.appConfiguration);
 
-                return true;
-            }
-        } catch (Exception ex) {
-    		log.error(ex.getMessage(), ex);
-        }
+				return true;
+			}
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
 
 		if (recoverFromFiles) {
 			log.warn("Unable to find configuration in LDAP, try to load configuration from file system... ");
 			if (createFromFile()) {
 				this.loadedFromLdap = false;
-                return true;
+				return true;
 			}
 		}
 
@@ -376,20 +383,21 @@ public class ConfigurationFactory {
 		Instance<? extends Configuration> confInstance = configurationInstance.select(clazz);
 		configurationInstance.destroy(confInstance.get());
 	}
-    
-    private LdapOxTrustConfiguration loadConfigurationFromLdap(String ... returnAttributes) {
-		final LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
-    	final String configurationDn = getConfigurationDn();
-        try {
-            final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn, returnAttributes);
 
-            return conf;
-        } catch (LdapMappingException ex) {
-            log.error("Failed to load configuration from LDAP", ex);
-        }
-        
-        return null;
-    }
+	private LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
+		final LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
+		final String configurationDn = getConfigurationDn();
+		try {
+			final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn,
+					returnAttributes);
+
+			return conf;
+		} catch (LdapMappingException ex) {
+			log.error("Failed to load configuration from LDAP", ex);
+		}
+
+		return null;
+	}
 
 	private void init(LdapOxTrustConfiguration conf) {
 		this.appConfiguration = conf.getApplication();
@@ -401,7 +409,7 @@ public class ConfigurationFactory {
 	private String loadLdapConfiguration(String ldapFileName) {
 		log.info("########## ldapFileName = " + ldapFileName);
 		this.ldapConfiguration = createFileConfiguration(ldapFileName, true);
-
+		replaceWithSystemValues();
 		File ldapFile = new File(ldapFileName);
 		if (ldapFile.exists()) {
 			this.ldapFileLastModifiedTime = ldapFile.lastModified();
@@ -410,18 +418,28 @@ public class ConfigurationFactory {
 		return ldapFileName;
 	}
 
+	private void replaceWithSystemValues() {
+		Set<Map.Entry<Object, Object>> ldapProperties = this.ldapConfiguration.getProperties().entrySet();
+		for (Map.Entry<Object, Object> ldapPropertyEntry : ldapProperties) {
+			String ldapPropertyKey = (String) ldapPropertyEntry.getKey();
+			if (System.getenv(ldapPropertyKey) != null) {
+				ldapPropertyEntry.setValue(System.getenv(ldapPropertyKey));
+			}
+		}
+	}
+
 	private String determineLdapConfigurationFileName() {
 		File ldapFile = new File(LDAP_PROPERTIES_FILE);
 		if (ldapFile.exists()) {
 			return LDAP_PROPERTIES_FILE;
 		}
-		
+
 		return LDAP_DEFAULT_PROPERTIES_FILE;
 	}
 
 	public String getIDPTemplatesLocation() {
 		String jetyBase = System.getProperty("jetty.base");
-		
+
 		if (StringHelper.isEmpty(jetyBase)) {
 			return ConfigurationFactory.DIR;
 		}

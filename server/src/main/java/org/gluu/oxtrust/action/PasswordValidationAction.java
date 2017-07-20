@@ -31,7 +31,7 @@ import org.xdi.util.StringHelper;
  */
 @RequestScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('profile', 'access')}")
 public class PasswordValidationAction implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1952428504080910113L;
