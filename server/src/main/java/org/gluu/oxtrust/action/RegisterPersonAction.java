@@ -24,6 +24,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -61,7 +62,7 @@ public class RegisterPersonAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private ExternalContext externalContext;
+	private transient ExternalContext externalContext;
 
 	@Inject
 	private AttributeService attributeService;
@@ -116,6 +117,7 @@ public class RegisterPersonAction implements Serializable {
 	private boolean captchaDisabled = false;
 
     private String postRegistrationInformation;
+    
 
 	/**
 	 * Initializes attributes for registering new person
@@ -232,7 +234,7 @@ public class RegisterPersonAction implements Serializable {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
 				}
-				if (this.inum != null) {
+				if (!this.inum.isEmpty()) {
 					personService.updatePerson(this.person);
 				} else {
 					personService.addPerson(this.person);
@@ -254,6 +256,21 @@ public class RegisterPersonAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		return OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED;
+	}
+	
+	public void confirmRegistration(){
+		GluuCustomPerson updatedPerson;
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		String code = request.getParameter("code");
+		try {
+			updatedPerson = personService.getPersonByAttribute("userRandomKey", code);
+			updatedPerson.setStatus(GluuStatus.ACTIVE);
+			personService.updatePerson(updatedPerson);
+			boolean result = externalUserRegistrationService.executeExternalConfirmRegistrationMethods(updatedPerson, requestParameters);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void cancel() {
