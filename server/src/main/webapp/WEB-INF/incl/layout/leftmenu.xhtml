@@ -80,13 +80,6 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 										
-									<li id="subMenuLinkConfiguration7"><h:commandLink
-											value="#{msg['leftmenu.nameId']}"
-											action="#{menuAction.endConversation('/resolveattribute/resolveCustomAttribute.xhtml')}"
-											rendered="#{permissionService.hasPermission('attribute', 'access')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration12"><h:commandLink
 											value="Import/Export Attribute LDIF"
 											action="#{menuAction.endConversation('/attribute/attributeImport.xhtml')}"
@@ -161,6 +154,14 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>	
+										
+										<li id="subMenuLinkSAML3"><h:commandLink
+											value="#{msg['leftmenu.nameId']}"
+											action="#{menuAction.endConversation('/resolveattribute/resolveCustomAttribute.xhtml')}"
+											rendered="#{permissionService.hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>
                                                                     
                                                                     </li>
                                                                 </ul>
@@ -288,7 +289,7 @@
 									<li id="subMenuLinkUsers4"><h:commandLink
 										value="#{msg['leftmenu.importPeople']}"
 										action="#{menuAction.endConversation('/person/personImport.xhtml')}"
-										rendered="#{permissionService.hasPermission('import', 'person')}">
+										rendered="#{permissionService.hasPermission( 'person', 'access')}">
 										<i class="fa fa-chevron-right"
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
