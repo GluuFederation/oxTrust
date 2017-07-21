@@ -210,7 +210,6 @@ public class UpdateGroupAction implements Serializable {
 			}
 
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New group '#{updateGroupAction.group.displayName}' added successfully");
-
 			conversationService.endConversation();
 
 			this.update = true;
@@ -226,7 +225,6 @@ public class UpdateGroupAction implements Serializable {
 				groupService.removeGroup(this.group);
 
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' removed successfully");
-
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
