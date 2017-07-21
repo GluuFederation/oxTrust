@@ -32,7 +32,6 @@ import java.util.TreeSet;
 import java.util.zip.Deflater;
 import java.util.zip.ZipOutputStream;
 
-import org.xdi.service.cdi.async.Asynchronous;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
@@ -42,6 +41,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -56,6 +56,7 @@ import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
@@ -74,6 +75,8 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.richfaces.event.FileUploadEvent;
+import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -81,9 +84,9 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
 import org.xdi.service.SchemaService;
+import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
-import org.xdi.util.io.FileUploadWrapper;
 import org.xdi.util.io.ResponseHelper;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
@@ -147,6 +150,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
+	private ConversationService conversationService;
+
+	@Inject
 	private TrustContactsAction trustContactsAction;
 
 	@Inject
@@ -164,9 +170,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	@Inject
 	private SSLService sslService;
 
-	private FileUploadWrapper fileWrapper = new FileUploadWrapper();
-
-	private FileUploadWrapper certWrapper = new FileUploadWrapper();
+	private Part fileWrapper;
+	private Part certWrapper;
 
 	private String selectedTR;
 
@@ -220,11 +225,13 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		this.update = false;
 		this.trustRelationship = new GluuSAMLTrustRelationship();
 		this.trustRelationship.setMaxRefreshDelay("PT8H");
-		this.fileWrapper = new FileUploadWrapper();
 		this.trustRelationship.setOwner(organizationService.getOrganization().getDn());
 
 		boolean initActionsResult = initActions();
 		if (!initActionsResult) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add relationship");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -244,24 +251,59 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 
 		if (this.trustRelationship == null) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update relationship");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		this.fileWrapper = new FileUploadWrapper();
-		this.fileWrapper.setFileName(this.trustRelationship.getSpMetaDataFN());
+//		this.fileWrapper.setFileName(this.trustRelationship.getSpMetaDataFN());
 
 		boolean initActionsResult = initActions();
 		if (!initActionsResult) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update relationship");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public void cancel() {
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New relationship not added");
+		}
+		conversationService.endConversation();
+		
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() {
+		boolean currentUpdate = update;
+		String outcome = saveImpl();
+
+		if (currentUpdate) {
+			if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' updateted successfully'");
+			} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}'");
+			}
+		} else {
+			if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' added successfully");
+				conversationService.endConversation();
+			} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new relationship");
+			}
+		}
+
+		return outcome;
+	}
+
+	public String saveImpl() {
 		synchronized (svnSyncTimer) {
 			if (StringHelper.isEmpty(this.trustRelationship.getInum())) {
 				this.inum = trustService.generateInumForNewTrustRelationship();
@@ -275,27 +317,41 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			boolean updateShib3Configuration = appConfiguration.isConfigGeneration();
 			switch (trustRelationship.getSpMetaDataSourceType()) {
 			case GENERATE:
-				String certificate = getCertForGeneratedSP();
-				GluuStatus status = StringHelper.isNotEmpty(certificate) ? GluuStatus.ACTIVE : GluuStatus.INACTIVE;
-				this.trustRelationship.setStatus(status);
-				if (generateSpMetaDataFile(certificate)) {
-					setEntityId();
-				} else {
-					log.error("Failed to generate SP meta-data file");
+				try {
+					String certificate = getCertForGeneratedSP();
+					GluuStatus status = StringHelper.isNotEmpty(certificate) ? GluuStatus.ACTIVE : GluuStatus.INACTIVE;
+					this.trustRelationship.setStatus(status);
+					if (generateSpMetaDataFile(certificate)) {
+						setEntityId();
+					} else {
+						log.error("Failed to generate SP meta-data file");
+						return OxTrustConstants.RESULT_FAILURE;
+					}
+				} catch (IOException ex) {
+					log.error("Failed to download SP certificate", ex);
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download SP certificate");
+
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 
 				break;
 			case FILE:
-				if (saveSpMetaDataFileSourceTypeFile()) {
-					//update = true;
-					updateSpMetaDataCert(certWrapper);
-//					setEntityId();
-					if(!update){
-						this.trustRelationship.setStatus(GluuStatus.ACTIVE);
-					 }
-				} else {
-					log.error("Failed to save SP meta-data file {}", fileWrapper);
+				try {
+					if (saveSpMetaDataFileSourceTypeFile()) {
+						//update = true;
+						updateSpMetaDataCert(certWrapper);
+	//					setEntityId();
+						if(!update){
+							this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+						 }
+					} else {
+						log.error("Failed to save SP meta-data file {}", fileWrapper);
+						return OxTrustConstants.RESULT_FAILURE;
+					}
+				} catch (IOException ex) {
+					log.error("Failed to download SP metadata", ex);
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download SP metadata");
+
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 
@@ -318,6 +374,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 						return OxTrustConstants.RESULT_FAILURE;
 					}*/
 				} catch (Exception e) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Unable to download metadata");
 					return "unable_download_metadata";
 				}
 				break;
@@ -326,6 +383,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					this.trustRelationship.setStatus(GluuStatus.ACTIVE);
 				}
 				if (this.trustRelationship.getEntityId() == null) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "EntityID must be set to a value");
 					return "invalid_entity_id";
 				}
 
@@ -485,27 +543,27 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	 * 
 	 * @author �Oleksiy Tataryn�
 	 * @return certificate for generated SP
+	 * @throws IOException 
 	 * @throws CertificateEncodingException
 	 */
-	public String getCertForGeneratedSP() {
-
+	public String getCertForGeneratedSP() throws IOException {
 		X509Certificate cert = null;
 
-		try {
-			cert = sslService.getPEMCertificate(certWrapper.getStream());
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+		if ((certWrapper != null) && (certWrapper.getInputStream() != null)) {
+			try {
+				cert = sslService.getPEMCertificate(certWrapper.getInputStream());
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
 		}
 
-		if (cert == null) {
-
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+		if ((cert == null) && (trustRelationship.getUrl() != null)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
 			if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 				Security.addProvider(new BouncyCastleProvider());
 			}
 			
 			try {
-				
 				KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", "BC"); 
 				keyPairGen.initialize(2048); 
 				KeyPair pair = keyPairGen.generateKeyPair(); 
@@ -563,7 +621,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			}
 
 		} else {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
 		}
 
 		return certificate;
@@ -622,8 +680,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		
 	}
 
-	private void updateSpMetaDataCert(FileUploadWrapper certWrapper) {
-		String certificate = shibboleth3ConfService.getPublicCertificate(certWrapper);
+	private void updateSpMetaDataCert(Part certWrapper) throws IOException {
+		if ((certWrapper == null) || (certWrapper.getInputStream() == null)) {
+			return;
+		}
+
+		String certificate = shibboleth3ConfService.getPublicCertificate(certWrapper.getInputStream());
 		if (certificate == null) {
 			return;
 		}
@@ -788,12 +850,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return shibboleth3ConfService.generateSpMetadataFile(trustRelationship, certificate);
 	}
 
-	private boolean saveSpMetaDataFileSourceTypeFile() {
+	private boolean saveSpMetaDataFileSourceTypeFile() throws IOException {
 		log.trace("Saving metadata file source type: File");
 		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
 		boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
 
-		if (fileWrapper.getStream() == null) {
+		if ((fileWrapper == null) || (fileWrapper.getInputStream() == null)) {
 			if (emptySpMetadataFileName) {
 				return false;
 			}
@@ -825,7 +887,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				trustService.updateTrustRelationship(this.trustRelationship);
 			}
 		}
-		String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, fileWrapper.getStream());
+		String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, fileWrapper.getInputStream());
 		if (StringHelper.isNotEmpty(result)) {
 			metadataValidationTimer.queue(result);
 		} else {
@@ -886,11 +948,27 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				updateShibboleth3Configuration(trustRelationships);
 			}
 		}
+		
+		if (OxTrustConstants.RESULT_SUCCESS.equals(result)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' removed successfully");
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(result)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}'");
+		}
 
 		return result;
 	}
 
 	public String downloadConfiguration() {
+		String outcome = downloadConfigurationImpl();
+		
+		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare Shibboleth3 configuration files for download'");
+		}
+		
+		return outcome;
+	}
+
+	public String downloadConfigurationImpl() {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
 		ZipOutputStream zos = ResponseHelper.createZipStream(bos, "Shibboleth v3 configuration files");
 		try {
@@ -989,12 +1067,20 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
 	}
 
-	public FileUploadWrapper getFileWrapper() {
+	public Part getFileWrapper() {
 		return fileWrapper;
 	}
 
-	public FileUploadWrapper getCertWrapper() {
+	public void setFileWrapper(Part fileWrapper) {
+		this.fileWrapper = fileWrapper;
+	}
+
+	public Part getCertWrapper() {
 		return certWrapper;
+	}
+
+	public void setCertWrapper(Part certWrapper) {
+		this.certWrapper = certWrapper;
 	}
 
 	private List<GluuCustomAttribute> getCurrentCustomAttributes() {
@@ -1304,6 +1390,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 		updateShibboleth3Configuration(trustRelationships);
 
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' #{updateTrustRelationshipAction.active ? 'activated' : 'deactivated'} successfully");
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -1424,7 +1512,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		facesContext.responseComplete();
 		return true;
-
 	}
 
 }

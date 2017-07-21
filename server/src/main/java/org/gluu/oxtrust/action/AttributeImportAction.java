@@ -19,6 +19,7 @@ import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -38,7 +39,7 @@ import com.unboundid.ldap.sdk.ResultCode;
  */
 @Named("attributeImportAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('attribute', 'access')}")
 public class AttributeImportAction implements Serializable {
 
 	private static final long serialVersionUID = 8755036208872218664L;
@@ -54,6 +55,9 @@ public class AttributeImportAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	private UploadedFile uploadedFile;
 	private FileDataToImport fileDataToImport;
@@ -126,8 +130,12 @@ public class AttributeImportAction implements Serializable {
 		}
 	}
 
-	public void cancel() {
+	public String cancel() {
 		destroy();
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	@PreDestroy

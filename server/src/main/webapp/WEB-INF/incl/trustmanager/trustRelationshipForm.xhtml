@@ -83,13 +83,12 @@
 
 	<h:outputScript>		
         function changeAttributeVisibility(attrId, show) {
-            var attr = $('a[id*=' + attrId + ']');
-            var currentState = attr.is(":visible");
+        	var attr = document.getElementById(attrId);
 
-            if (/* !currentState and */ show) {
-                attr.show();
+            if (show) {
+	        	attr.style['display'] = '';
             } else {
-                attr.hide();
+	        	attr.style['display'] = 'none';
             }
         }
 
@@ -138,15 +137,15 @@
 									<rich:tab
 										header="#{_customAttributeAction.originDisplayNames[origin.key]}">
 										<div style="height: 450px; overflow-y: auto;">
-											<ul class="sidebar-menu"> 
-											<ui:repeat items="#{origin.value}" var="attr">												
+											<ul class="sidebar-menu">
+											<a4j:repeat value="#{origin.value}" var="attr">												
 												<li class="treeview" id="#{_customAttributeAction.attributeIds[attr]}">
 												<ui:param name="_aid"
 													value="#{_customAttributeAction.attributeIds[attr]}" />
-												<a4j:commandLink  p:aid="#{_aid}" value="#{attr.displayName}"
+												<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
 													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
 													render="selectedCustomAttributesId"
-													oncomplete="changeAttributeVisibility('#{_aid}', false);"
+													oncomplete="changeAttributeVisibility('${component.clientId}', false);"
 													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
 													execute="@this" limitRender="true">
 													<rich:tooltip styleClass="tooltip" layout="block">
@@ -157,9 +156,10 @@
 														</span>
 													</rich:tooltip>
 													<f:param name="sv" value="1" />
+		                                            <f:event listener="#{_customAttributeAction.renderAttribute}" type="preRenderComponent" />
 												</a4j:commandLink>
 												</li> 
-											</ui:repeat>
+											</a4j:repeat>
 											</ul> 
 										</div>
 									</rich:tab>
@@ -196,13 +196,11 @@
 								id="entityType" label="#{msg['trustmanager.entityType']}">
 								<h:selectOneMenu styleClass="form-control"
 									value="#{_trustRelationship.entityType}"
-									required="#{empty param['sv']}" id="entityTypeId">
+									required="#{empty param['sv']}" id="entityTypeId" converter="omnifaces.GenericEnumConverter">
 									<f:selectItem noSelectionOption="true"  itemLabel="Entity type"/>
 									<f:selectItems value="#{_trustRelationshipAction.entityTypeList}"
 										var="_type"
 										itemLabel="#{_type.displayName}" />
-									<f:converter
-										converterId="org.gluu.jsf2.converter.EnumConverter" />
 									<a4j:ajax event="change"
 										render="metadataType, spSingleGroup"
 										execute="@this" />
@@ -215,13 +213,11 @@
 								id="spMetaDataSourceType" label="#{msg['trustmanager.metadataLocation']}">
 								<h:selectOneMenu styleClass="form-control"
 									value="#{_trustRelationship.spMetaDataSourceType}" onchange="changeEvent(this)"
-									required="#{empty param['sv']}" id="spMetaDataSourceTypeId">
+									required="#{empty param['sv']}" id="spMetaDataSourceTypeId" converter="omnifaces.GenericEnumConverter">
 									<f:selectItem noSelectionOption="true"  itemLabel="Metadata type"/>
 									<f:selectItems value="#{_trustRelationshipAction.metadataSourceTypesList}"
 										var="_type"
 										itemLabel="#{_type.displayName}" />
-									<f:converter
-										converterId="org.gluu.jsf2.converter.EnumConverter" />
 									<a4j:ajax event="change" 
 										render="MetadataOperations, FederationWizard, spMetaDataUrlGroupId, 
                                                 FederationWizardEntitySelection, urlId" 
@@ -229,7 +225,6 @@
 								</h:selectOneMenu>
 							</ox:decorate>						
 							<a4j:region>
-
 								<h:panelGroup id="urlId" rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) or (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}" label="URL">
 									<ox:decorate id="url"
                                                                                      required="true">
@@ -285,39 +280,33 @@
 						</h:panelGroup>
 
 						<h:panelGroup id="MetadataOperations">
-
-							<h:panelGroup id="fileWrapperGroupId" rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'file'}">
-                                                            <!-- TODO: ox:decorate rendered -->
-								<ox:decorate
-									id="fileWrapper"
-									 label="
-										#{msg['trustmanager.spMetadataFile']}:">
-                                    
-
-									<rich:fileUpload id="fileWrapperId"
-										required="#{(_trustRelationship.spMetaDataSourceType.value eq 'file') and (empty param['sv'])}"
-										fileName="#{_trustRelationshipAction.fileWrapper.fileName}"
-										data="#{_trustRelationshipAction.fileWrapper.stream}"
-										fileSize="#{_trustRelationshipAction.fileWrapper.fileSize}"
-										contentType="#{_trustRelationshipAction.fileWrapper.contentType}"
-										maxlength="100"
-										rendered="#{empty _trustRelationship.spMetaDataFN}" />
-									<a4j:commandLink value="#{_trustRelationship.spMetaDataFN}"
-										onclick="#{rich:component('spMetadataPanel')}.show();"
-										rendered="#{not empty _trustRelationship.spMetaDataFN}"
-										execute="@this" />
-
-									<a4j:commandLink style="margin-left:305px;"
-										styleClass="glyphicon glyphicon-remove"
-										action="#{_trustRelationship.setSpMetaDataFN('')}"
-										limitRender="true" render="MetadataOperations"
-										rendered="#{not empty _trustRelationship.spMetaDataFN}">
-										<!-- <h:graphicImage value="/img/remove.gif" />  -->
-
-										<f:param name="sv" value="1" />
-									</a4j:commandLink>
-								</ox:decorate>
-							</h:panelGroup>
+							<a4j:region>
+								<h:panelGroup id="fileWrapperGroupId" rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'file'}">
+	                                                            <!-- TODO: ox:decorate rendered -->
+									<ox:decorate
+										id="fileWrapper"
+										 label="
+											#{msg['trustmanager.spMetadataFile']}">
+										<h:inputFile id="fileWrapperId"
+											required="#{(_trustRelationship.spMetaDataSourceType.value eq 'file') and (empty param['sv'])}"
+											value="#{_trustRelationshipAction.fileWrapper}"
+											rendered="#{empty _trustRelationship.spMetaDataFN}" />
+										
+										<a4j:commandLink id="fileWrapperFileNameId" value="#{_trustRelationship.spMetaDataFN}"
+											onclick="#{rich:component('spMetadataPanel')}.show();"
+											rendered="#{not empty _trustRelationship.spMetaDataFN}"
+											execute="@this" />
+	
+										<a4j:commandLink style="margin-left:305px;"
+											styleClass="glyphicon glyphicon-remove"
+											action="#{_trustRelationship.setSpMetaDataFN('')}"
+											limitRender="true" render="MetadataOperations"
+											rendered="#{not empty _trustRelationship.spMetaDataFN}">
+											<!-- <h:graphicImage value="/img/remove.gif" />  -->
+										</a4j:commandLink>
+									</ox:decorate>
+								</h:panelGroup>
+							</a4j:region>
 
 							<h:panelGroup id="certUpdateWrapperGroupId"
 								rendered="#{((not empty _trustRelationship.spMetaDataFN) and (_trustRelationship.spMetaDataSourceType.value eq 'file')) or (_trustRelationship.spMetaDataSourceType.value eq 'generate')}">
@@ -325,13 +314,9 @@
 									id="certUpdate" label="
                                         #{_trustRelationship.spMetaDataSourceType.value eq 'file' ? 'Update public certificate' : 'Public certificate'}">
                                     
-									<rich:fileUpload id="certWrapperId"
-										fileName="#{_trustRelationshipAction.certWrapper.fileName}"
-										data="#{_trustRelationshipAction.certWrapper.stream}"
-										fileSize="#{_trustRelationshipAction.certWrapper.fileSize}"
-										contentType="#{_trustRelationshipAction.certWrapper.contentType}"
-										maxlength="100">
-									</rich:fileUpload>
+									<h:inputFile id="certWrapperId"
+										value="#{_trustRelationshipAction.certWrapper}"
+										rendered="#{empty _trustRelationship.spMetaDataFN}" />
 								</ox:decorate>
 							</h:panelGroup>
 						</h:panelGroup>
@@ -524,8 +509,6 @@
 			<richext:spacer height="8" />
 			<ui:insert name="configurationLink" />
 		</h:panelGrid>
-
-		
 
 	</h:form>
 

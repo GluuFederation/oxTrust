@@ -7,9 +7,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{viewLogFileAction.init}"
-                      if="#{permissionService.hasPermission('log', 'access') and not viewLogFileAction.initialized and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{viewLogFileAction.init}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="head">

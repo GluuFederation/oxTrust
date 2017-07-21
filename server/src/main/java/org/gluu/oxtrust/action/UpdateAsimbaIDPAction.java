@@ -86,10 +86,6 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     private byte uploadedCertBytes[] = null;
     
-    public UpdateAsimbaIDPAction() {
-        
-    }
-    
     @PostConstruct
     public void init() {        
         log.info("init() IDP call");

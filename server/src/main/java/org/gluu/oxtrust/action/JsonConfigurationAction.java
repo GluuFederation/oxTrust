@@ -109,7 +109,6 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			log.debug("Saving oxauth-config.json:" + oxAuthDynamicConfigJson);
 			jsonConfigurationService.saveOxAuthDynamicConfigJson(oxAuthDynamicConfigJson);
-
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -233,8 +232,7 @@ public class JsonConfigurationAction implements Serializable {
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "caCertsPassphrase");
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "oxAuthClientPassword");
 
-			jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustappConfiguration, resultOxTrustappConfiguration);
-
+			//jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustappConfiguration, resultOxTrustappConfiguration);
 			return resultOxTrustappConfiguration;
 		} catch (Exception ex) {
 			log.error("Failed to prepare appConfiguration from JSON: '{}'", ex, oxTrustappConfigurationJson);

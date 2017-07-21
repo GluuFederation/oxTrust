@@ -4,7 +4,7 @@
                 xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{searchPersonAction.setSearchPattern(param['searchPattern'])}"/>
+        <f:viewParam name="searchPattern" value="#{searchPersonAction.searchPattern}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{searchPersonAction.start}"
                       if="#{ searchPersonAction.personList == null }"

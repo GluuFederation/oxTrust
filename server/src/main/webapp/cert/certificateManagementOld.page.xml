@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
        no-conversation-view-id="/home.xhtml" login-required="true"
-       view-id="/cert/certificateManagement.xhtml">
+       view-id="/cert/certificateManagementOld.xhtml">
 
     <restrict>#{s:hasPermission('configuration', 'access')}</restrict>
 
@@ -14,7 +14,7 @@
 	<navigation from-action="#{manageCertificateAction.init}">
 		<rule if-outcome="success">
 			<begin-conversation join="true" flush-mode="manual" />
-			<render view-id="/cert/certificateManagement.xhtml" />
+			<render view-id="/cert/certificateManagementOld.xhtml" />
 		</rule>
 
 		<rule if-outcome="no_permissions">
@@ -34,13 +34,13 @@
 
     <navigation from-action="#{manageCertificateAction.update}">
         <rule if-outcome="success">
-            <redirect view-id="/cert/certificateManagement.xhtml">
+            <redirect view-id="/cert/certificateManagementOld.xhtml">
                 <message severity="INFO">Certificates configuration updated</message>
             </redirect>
         </rule>
 
         <rule if-outcome="failure">
-            <redirect view-id="/cert/certificateManagement.xhtml">
+            <redirect view-id="/cert/certificateManagementOld.xhtml">
                 <message severity="ERROR">Failed to update certificates configuration</message>
             </redirect>
         </rule>
@@ -55,13 +55,13 @@
 
     <navigation from-action="#{manageCertificateAction.generateCSR(_certFN)}">
         <rule if-outcome="failure">
-            <redirect view-id="/cert/certificateManagement.xhtml">
+            <redirect view-id="/cert/certificateManagementOld.xhtml">
                 <message severity="INFO">Failed to generate CSR</message>
             </redirect>
         </rule>
 
         <rule if-outcome="success">
-            <redirect view-id="/cert/certificateManagement.xhtml">
+            <redirect view-id="/cert/certificateManagementOld.xhtml">
                 <message severity="INFO">CSR was generated successfully</message>
             </redirect>
         </rule>
