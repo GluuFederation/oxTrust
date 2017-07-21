@@ -158,7 +158,10 @@ public class UpdateAsimbaIDPAction implements Serializable {
                 String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, idp.getId());
             }
         } catch (Exception e) {
-            log.error("Requestor certificate - add CertificateFile exception", e);
+            log.error("IDP certificate - add CertificateFile exception", e);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "IDP certificate - add CertificateFile exception");
+            conversationService.endConversation();
+            return OxTrustConstants.RESULT_FAILURE;
         }
         clearEdit();
         conversationService.endConversation();
@@ -179,7 +182,10 @@ public class UpdateAsimbaIDPAction implements Serializable {
                 String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, idp.getId());
             }
         } catch (Exception e) {
-            log.error("Requestor certificate - add CertificateFile exception", e);
+            log.error("IDP certificate - add CertificateFile exception", e);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "IDP certificate - add CertificateFile exception");
+            conversationService.endConversation();
+            return OxTrustConstants.RESULT_FAILURE;
         }
         newEntry = false;
         conversationService.endConversation();
@@ -249,6 +255,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
             facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add Certificate ERROR: ", e.getMessage());
             return OxTrustConstants.RESULT_VALIDATION_ERROR;
         }
+        facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate uploaded");
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -260,6 +267,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
                     idpList = asimbaService.searchIDPs(searchPattern, 0);
                 } catch (Exception ex) {
                     log.error("LDAP search exception", ex);
+                    return OxTrustConstants.RESULT_FAILURE;
                 }
             } else {
                 //list loading
