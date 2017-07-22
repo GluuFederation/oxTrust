@@ -214,21 +214,21 @@
                                     <li id="subMenuLinkOpenID1">
                                         <h:commandLink value="#{msg['leftmenu.scopes']}"
                                                        action="#{menuAction.endConversation('/scope/scopeInventory.xhtml')}"
-                                                       rendered="#{permissionService.hasPermission('oxauth', 'access')}">
+                                                       rendered="#{permissionService.hasPermission('scope', 'access')}">
                                             <i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
                                         </h:commandLink>
                                     </li>
                                     <li id="subMenuLinkOpenID2">
                                         <h:commandLink value="#{msg['leftmenu.clients']}"
                                                        action="#{menuAction.endConversation('/client/clientInventory.xhtml')}"
-                                                       rendered="#{permissionService.hasPermission('oxauth', 'access')}">
+                                                       rendered="#{permissionService.hasPermission('client', 'access')}">
                                             <i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
                                         </h:commandLink>
                                     </li>
                                     <li id="subMenuLinkOpenID3">
                                         <h:commandLink value="#{msg['leftmenu.sectorIdentifier']}"
                                                        action="#{menuAction.endConversation('/sectoridentifier/sectorIdentifierInventory.xhtml')}"
-                                                       rendered="#{false and permissionService.hasPermission('oxauth', 'access')}">
+                                                       rendered="#{permissionService.hasPermission('sectorIdentifier', 'access')}">
                                             <i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
                                         </h:commandLink>
                                     </li>

@@ -67,9 +67,9 @@ public class SearchGroupAction implements Serializable {
 		}
 
 		try {
-			if(searchPattern == null || searchPattern.isEmpty()){
+			if (searchPattern == null || searchPattern.isEmpty()) {
 				this.groupList = groupService.getAllGroups(OxTrustConstants.searchGroupSizeLimit);
-			}else{
+			} else {
 				this.groupList = groupService.searchGroups(this.searchPattern, OxTrustConstants.searchGroupSizeLimit);
 			}
 			
@@ -77,9 +77,10 @@ public class SearchGroupAction implements Serializable {
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
 			log.error("Failed to find groups", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find groups");
 
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find groups");
 			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

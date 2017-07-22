@@ -4,7 +4,7 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateSectorIdentifierAction.setInum(param['inum'])}"/>
+        <f:viewParam name="inum" value="#{updateSectorIdentifierAction.inum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateSectorIdentifierAction.update}"
                       if="#{updateSectorIdentifierAction.sectorIdentifier == null }"
