@@ -185,6 +185,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
                     selectorList = asimbaService.searchSelectors(searchPattern, 0);
                 } catch (Exception ex) {
                     log.error("LDAP search exception", ex);
+                    return OxTrustConstants.RESULT_FAILURE;
                 }
             } else {
                 //list loading
