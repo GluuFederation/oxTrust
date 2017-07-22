@@ -5,7 +5,7 @@
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateResourceSetAction.setResourceInum(param['resource'])}"/>
+       	<f:viewParam name="resource" value="#{updateResourceSetAction.resourceInum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateResourceSetAction.modify}"
                       if="#{updateResourceSetAction.resourceSet == null }"
