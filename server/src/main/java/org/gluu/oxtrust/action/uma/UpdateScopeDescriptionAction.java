@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Action class for view and update UMA scope description
+ * Action class for view and update UMA resource
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
@@ -111,9 +111,9 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			log.error("Failed to initialize form", ex);
 
 			if (update) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find UMA scope description");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find UMA resource");
 			} else {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add UMA scope description");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add UMA resource");
 			}
 			conversationService.endConversation();
 
@@ -144,7 +144,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		log.debug("Loading UMA scope description '{}'", this.scopeInum);
+		log.debug("Loading UMA resource '{}'", this.scopeInum);
 		try {
 			String scopeDn = scopeDescriptionService.getDnForScopeDescription(this.scopeInum);
 			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
@@ -166,9 +166,9 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	public String cancel() {
 		if (update) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA scope description '#{updateScopeDescriptionAction.scopeDescription.displayName}' not updated");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' not updated");
 		} else {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA scope description not added");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource not added");
 		}
 
 		conversationService.endConversation();
@@ -185,12 +185,12 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update scope description '{}'", ex, this.scopeDescription.getId());
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA scope description '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
 	        log.debug("Scope description were updated successfully");
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA scope description '#{updateScopeDescriptionAction.scopeDescription.displayName}' updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' updated successfully");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
@@ -211,14 +211,14 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				scopeDescriptionService.addScopeDescription(this.scopeDescription);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to add new UMA scope description '{}'", this.scopeDescription.getId(), ex);
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA scope description");
+				log.error("Failed to add new UMA resource '{}'", this.scopeDescription.getId(), ex);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
 
                 return OxTrustConstants.RESULT_FAILURE;
 			}
 
 	        log.debug("Scope description were add successfully");
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA scope description '#{updateScopeDescriptionAction.scopeDescription.displayName}' added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' added successfully");
 			conversationService.endConversation();
 
 			this.update = true;
@@ -234,7 +234,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				scopeDescriptionService.removeScopeDescription(this.scopeDescription);
 
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA scope description '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -243,7 +243,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			}
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove UMA scope description '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

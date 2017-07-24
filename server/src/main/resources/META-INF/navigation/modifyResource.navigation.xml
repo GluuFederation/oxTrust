@@ -4,7 +4,7 @@
   <rewrite pattern="/uma/resource/modify/{resource}" xmlns="http://xmlns.gluu.org/jsf/pages"/>
 
   <navigation-rule>
-    <from-view-id>/uma/resource/modifyResourceSet.xhtml</from-view-id>
+    <from-view-id>/uma/resource/modifyResource.xhtml</from-view-id>
 
     <navigation-case>
       <from-action>#{updateResourceAction.modify}</from-action>
