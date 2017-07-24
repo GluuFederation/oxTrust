@@ -63,9 +63,6 @@ public class RegisterPersonAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private transient ExternalContext externalContext;
-
-	@Inject
 	private AttributeService attributeService;
 
 	@Inject
@@ -179,7 +176,7 @@ public class RegisterPersonAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		requestParameters.putAll(externalContext.getRequestParameterValuesMap());
+		requestParameters.putAll(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterValuesMap());
 
 		return OxTrustConstants.RESULT_SUCCESS;
 
