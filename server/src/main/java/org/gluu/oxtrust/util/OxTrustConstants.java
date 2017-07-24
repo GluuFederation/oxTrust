@@ -64,6 +64,7 @@ public final class OxTrustConstants extends OxConstants {
     public static final String RESULT_EXISTS = "exists";
     public static final String RESULT_LOGOUT = "logout";
     public static final String RESULT_CLEAR = "clear";
+    public static final String RESULT_UPDATE = "update";
 
 
     public static final String CACHE_ATTRIBUTE_PERSON_KEY_LIST = "personAttributeList";

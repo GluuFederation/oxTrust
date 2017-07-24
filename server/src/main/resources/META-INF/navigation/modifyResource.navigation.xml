@@ -1,42 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
   <rewrite pattern="/uma/resource/modify/{resource}" xmlns="http://xmlns.gluu.org/jsf/pages"/>
+
   <navigation-rule>
     <from-view-id>/uma/resource/modifyResourceSet.xhtml</from-view-id>
+
     <navigation-case>
-      <from-action>#{updateResourceSetAction.modify}</from-action>
-      <from-outcome>no_permissions</from-outcome>
-      <to-view-id>/home.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-    <navigation-case>
-      <from-action>#{updateResourceSetAction.modify}</from-action>
+      <from-action>#{updateResourceAction.modify}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/uma/resource.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
     <navigation-case>
-      <from-action>#{updateResourceSetAction.save}</from-action>
-      <from-outcome>failure</from-outcome>
+      <from-action>#{updateResourceAction.cancel}</from-action>
+      <from-outcome>success</from-outcome>
       <to-view-id>/uma/resource.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
-    <navigation-case>
-      <from-action>#{updateResourceSetAction.cancel}</from-action>
-      <to-view-id>/uma/resource.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
+
     <navigation-case>
       <from-action>#{cc.attrs.deleteMethod}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/uma/resource.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
     <navigation-case>
-      <from-action>#{cc.attrs.deleteMethod}</from-action>
-      <from-outcome>failure</from-outcome>
-      <to-view-id>/uma/resource.xhtml</to-view-id>
-      <redirect/>
+      <from-action>#{updateResourceAction.save}</from-action>
+      <from-outcome>update</from-outcome>
+      <to-view-id>/uma/resource/modifyResourceSet.xhtml</to-view-id>
+      <redirect>
+		<view-param>
+			<name>scope</name>
+			<value>#{updateResourceAction.resourceInum}</value>
+		</view-param>
+      </redirect>
     </navigation-case>
   </navigation-rule>
+
 </faces-config>

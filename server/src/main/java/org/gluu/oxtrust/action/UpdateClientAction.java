@@ -143,8 +143,8 @@ public class UpdateClientAction implements Serializable {
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
 
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -298,7 +298,6 @@ public class UpdateClientAction implements Serializable {
 				clientService.removeClient(this.client);
 
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Client '#{updateClientAction.client.displayName}' removed successfully");
-
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
