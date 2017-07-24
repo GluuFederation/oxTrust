@@ -35,7 +35,7 @@ import org.xdi.util.io.FileDownloader.ContentDisposition;
  * 
  * @author Yuriy Movchan Date: 11.16.2010
  */
-@WebServlet(urlPatterns = "/servlet/favicon")
+@WebServlet(urlPatterns = "/servlet/logo")
 public class LogoImageServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5445488800130871634L;

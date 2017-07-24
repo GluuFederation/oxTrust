@@ -31,7 +31,7 @@ import org.xdi.util.io.DownloadWrapper;
 import org.xdi.util.io.FileDownloader;
 import org.xdi.util.io.FileDownloader.ContentDisposition;
 
-@WebServlet(urlPatterns = "/servlet/logo")
+@WebServlet(urlPatterns = "/servlet/favicon")
 public class FaviconImageServlet extends HttpServlet {
 	
 	@Inject
