@@ -24,8 +24,7 @@
                     </a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/uma/scopehome">#{msg['uma.scopes']}
-                    </a>
+                    <a href="#{request.contextPath}/uma/scopehome">#{msg['uma.scopes']}</a>
                 </li>
             </ol>
         </section>
@@ -47,18 +46,14 @@
                                                        render="resourcesListId, scopesListId"
                                                        style="float: left;margin-left:5px;" styleClass="btn btn-primary"
                                                        value="#{msg['uma.search']}"/>
-
-
                                 </ox:decorate>
-                                </h:form>
 
                                 <div class="nav-tabs-custom" style="margin-bottom: 0px;">
                                     <div class="tab-pane" id="scopeTab">
                                         <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
                                                      width="100%">
 		                                    <h:link includeViewParams="false" outcome="/uma/scope/modifyScopeDescription"
-		                                            rendered="#{organizationService.allowPersonModification}"
-		                                            styleClass="addPerson btn btn-primary" value="#{msg['uma.addScopeDescription']}"/>
+		                                            styleClass="btn btn-primary" value="#{msg['uma.addScopeDescription']}"/>
 
                                             <richext:spacer height="8"/>
                                             <ui:fragment rendered="#{umaInventoryAction.scopesList.size() eq 0}">
@@ -108,6 +103,7 @@
                                         </h:panelGrid>
                                     </div>
                                 </div>
+                            </h:form>
                         </div>
                     </div>
                 </div>

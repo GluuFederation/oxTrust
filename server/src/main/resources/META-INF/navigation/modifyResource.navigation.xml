@@ -30,7 +30,7 @@
     <navigation-case>
       <from-action>#{updateResourceAction.save}</from-action>
       <from-outcome>update</from-outcome>
-      <to-view-id>/uma/resource/modifyResourceSet.xhtml</to-view-id>
+      <to-view-id>/uma/resource/modifyResource.xhtml</to-view-id>
       <redirect>
 		<view-param>
 			<name>scope</name>
