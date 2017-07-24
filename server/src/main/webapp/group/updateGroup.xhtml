@@ -4,11 +4,9 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateGroupAction.setInum(param['inum'])}"/>
+    	<f:viewParam name="inum" value="#{updateGroupAction.inum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateGroupAction.update}"
-                      if="#{permissionService.hasPermission('group', 'access') and updateGroupAction.group == null and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateGroupAction.update}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">

@@ -33,7 +33,7 @@
 		<richfaces.version>4.5.17.Final</richfaces.version>
 		<jsf.version>2.2.14</jsf.version>
 		<uel.version>2.2</uel.version>
-		<omnifaces.version>2.6.1</omnifaces.version>
+		<omnifaces.version>2.6.3</omnifaces.version>
 
 		<shibboleth.jce.version>1.1.0</shibboleth.jce.version>
 		<shibboleth.idp.version>2.4.5</shibboleth.idp.version>
@@ -197,6 +197,11 @@
 				<groupId>org.glassfish.web</groupId>
 				<artifactId>el-impl</artifactId>
 				<version>${uel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.websocket</groupId>
+				<artifactId>javax.websocket-api</artifactId>
+				<version>1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.faces</groupId>

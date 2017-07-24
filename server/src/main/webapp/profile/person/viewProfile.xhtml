@@ -8,9 +8,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{userProfileAction.show}"
-                      if="#{permissionService.hasPermission('profile', 'access') and userProfileAction.person== null and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{userProfileAction.show}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
@@ -75,7 +73,7 @@
                                                     <h:panelGroup id="configureListing">
                                                         <a4j:commandButton execute="@this" limitRender="true"
                                                                            oncomplete="#{rich:component('configureListingOptions')}.show();"
-                                                                           rendered="#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled') and  (userProfileAction.person.allowPublication)}"
+                                                                           rendered="#{(userProfileAction.person.allowPublication)}"
                                                                            styleClass="btn btn-success"
                                                                            value="#{msg['profile.configureListing']}"/>
                                                     </h:panelGroup>
@@ -327,7 +325,7 @@
                                                             <a4j:commandLink
                                                                     action="#{customAttributeAction.addCustomAttribute(attr.inum)}"
                                                                     p:aid="#{_aid}"
-                                                                    oncomplete="changeAttributeVisibility('#{_aid}', false);"
+                                                                    oncomplete="changeAttributeVisibility('${component.clientId}', false);"
                                                                     render="selectedCustomAttributesId"
                                                                     style="#{customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
                                                                     value="#{attr.displayName}">

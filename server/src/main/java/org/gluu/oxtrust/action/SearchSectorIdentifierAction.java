@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -33,8 +35,11 @@ public class SearchSectorIdentifierAction implements Serializable {
     @Inject
     private Logger log;
 
-    @Inject
-    private FacesMessages facesMessages;
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
     @NotNull
     @Size(min = 0, max = 30, message = "Length of search string should be between 0 and 30")
@@ -52,17 +57,26 @@ public class SearchSectorIdentifierAction implements Serializable {
     }
 
     public String search() {
-        if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
-            return OxTrustConstants.RESULT_SUCCESS;
-        }
+		if ((this.searchPattern != null) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
 
         try {
-            this.sectorIdentifierList = sectorIdentifierService.searchSectorIdentifiers(this.searchPattern, OxTrustConstants.searchSectorIdentifierSizeLimit);
-            log.debug("Found \"" + this.sectorIdentifierList.size() + "\" sector identifiers.");
+			if (searchPattern == null || searchPattern.isEmpty()) {
+				this.sectorIdentifierList = sectorIdentifierService.getAllSectorIdentifiers();
+			} else {
+	            this.sectorIdentifierList = sectorIdentifierService.searchSectorIdentifiers(this.searchPattern, OxTrustConstants.searchSectorIdentifierSizeLimit);
+			}
+
+			log.debug("Found \"" + this.sectorIdentifierList.size() + "\" sector identifiers.");
             this.oldSearchPattern = this.searchPattern;
         } catch (Exception ex) {
             log.error("Failed to find sector identifiers", ex);
-            return OxTrustConstants.RESULT_FAILURE;
+
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find sector identifiers");
+			conversationService.endConversation();
+
+			return OxTrustConstants.RESULT_FAILURE;
         }
 
         return OxTrustConstants.RESULT_SUCCESS;

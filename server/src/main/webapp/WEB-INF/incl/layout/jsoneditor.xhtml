@@ -38,7 +38,7 @@
 		  
 
 		  document.getElementById('save_#{id}').onclick = function () {
-		  		var hiddenField = document.getElementById("#{parentId}:#{id}_hidden");
+		  		var hiddenField = document.getElementById("#{id}_hidden");  //#{parentId}:
 		  		var action = document.getElementById("#{saveBtnId}");
 		  		var editedJson = editor_#{id}.getValue();			  	
 		  		hiddenField.value=JSON.stringify(editedJson);

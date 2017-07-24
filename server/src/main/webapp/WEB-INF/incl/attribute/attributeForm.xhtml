@@ -79,11 +79,11 @@
              </ox:decorate>
 
              <ox:decorate id="usageType" label="#{msg['attribute.usageType']}">
-                <h:selectManyListbox styleClass="form-control" value="#{_attribute.usageType}" required="false" id="usageTypeId" rendered="#{_attributeAction.canEdit()}">
+                <h:selectManyListbox styleClass="form-control" value="#{_attribute.usageType}" required="false"
+                	id="usageTypeId" rendered="#{_attributeAction.canEdit()}" converter="omnifaces.GenericEnumConverter">
                     <f:selectItem noSelectionOption="true"  itemLabel="Not defined"/>
                     <f:selectItems value="#{attributeService.attributeUsageTypes}"
                               var="_type" itemLabel="#{_type.displayName}"/>
-                    <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectManyListbox>
 
                 <ui:fragment rendered="#{not _attributeAction.canEdit()}">

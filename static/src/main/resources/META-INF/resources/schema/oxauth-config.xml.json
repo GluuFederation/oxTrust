@@ -179,16 +179,18 @@
             "minItems": 1,
             "uniqueItems": true,
             "items": {
-                "type": "string",
-                "enum": [
-                    "code",
-                    "code id_token",
-                    "token",
-                    "token id_token",
-                    "code token",
-                    "code token id_token",
-                    "id_token"
-                ]
+                "type": "array",
+                "format": "select",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "enum": [
+                        "code",
+                        "token",
+                        "id_token"
+                    ]
+                }
             }
         },
         "grantTypesSupported": {
@@ -203,7 +205,10 @@
                 "enum": [
                     "authorization_code",
                     "implicit",
-                    "urn:ietf:params:oauth:grant-type:jwt-bearer"
+                    "password",
+                    "client_credentials",
+                    "refresh_token",
+                    "urn:ietf:params:oauth:grant-type:uma-ticket"
                 ]
             }
         },

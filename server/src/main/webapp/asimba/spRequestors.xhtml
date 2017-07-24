@@ -6,7 +6,6 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateAsimbaSPRequestorAction.refresh}"
-                      if="#{permissionService.hasPermission('trust', 'access') and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 
@@ -24,7 +23,7 @@
                         <i class="fa fa-home"/> #{msg['asimba.spRequestors']}</a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/asimba/editSPRequestor/">#{msg['asimba.addSPRequestor']}</a>
+                    <a href="#{request.contextPath}/asimba/editSPRequestor.htm">#{msg['asimba.addSPRequestor']}</a>
                 </li>
             </ol>
         </section>

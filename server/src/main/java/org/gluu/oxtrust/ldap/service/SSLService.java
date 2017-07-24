@@ -74,7 +74,22 @@ public class SSLService implements Serializable {
 
         return cert;
     }
-    
+
+    /**
+     * Extracts X509 certificate from pem-encoded stream.
+     * 
+     * @param certStream
+     * @return
+     */
+    public X509Certificate getPEMCertificate(byte[] cert) {
+    	ByteArrayInputStream bis = new ByteArrayInputStream(cert);
+    	try {
+    		return getPEMCertificate(bis);
+        } finally {
+			IOUtils.closeQuietly(bis);
+		}
+    }
+
     /**
      * Extracts X509 certificate from pem-encoded stream.
      * 

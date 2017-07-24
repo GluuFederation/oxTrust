@@ -5,11 +5,9 @@
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateResourceSetAction.setResourceInum(param['resource'])}"/>
+       	<f:viewParam name="resource" value="#{updateResourceAction.resourceInum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateResourceSetAction.modify}"
-                      if="#{permissionService.hasPermission('uma', 'access') and updateResourceSetAction.resourceSet == null and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateResourceAction.modify}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
@@ -50,12 +48,12 @@
                                     }
                                 </h:outputStylesheet>
 
-                                <ui:param name="_resourceSet" value="#{updateResourceSetAction.resourceSet}"/>
+                                <ui:param name="_resourceSet" value="#{updateResourceAction.resource}"/>
 
                                 <h:form>
                                     <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
-                                        <ox:decorate id="resourceSet" label="#{msg['uma.resourceSet']}"
-                                                     rendered="#{updateResourceSetAction.update}">
+                                        <ox:decorate id="resourceSet" label="#{msg['uma.resource']}"
+                                                     rendered="#{updateResourceAction.update}">
                                             <h:outputText value="#{_resourceSet.inum}"/>
                                         </ox:decorate>
 
@@ -82,7 +80,7 @@
                                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
                                                              width="100%">
                                                     <a4j:repeat rowKeyVar="_scopeIdx"
-                                                                value="#{updateResourceSetAction.scopes}" var="_scope">
+                                                                value="#{updateResourceAction.scopes}" var="_scope">
                                                         <div class="col-sm-12">
                                                             <div class="col-sm-6">
                                                                 <h:outputText style="margin-left:-29px;"
@@ -91,7 +89,7 @@
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <a4j:commandLink
-                                                                        action="#{updateResourceSetAction.removeScope(_scope.inum)}"
+                                                                        action="#{updateResourceAction.removeScope(_scope.inum)}"
                                                                         eventsQueue="resourceSetQueue"
                                                                         render="selectedScopesId"
                                                                         styleClass="glyphicon glyphicon-remove">
@@ -110,14 +108,14 @@
 
                                                                     <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 
-                                                                        <a4j:repeat value="#{updateResourceSetAction.clients}" rowKeyVar="_clientIdx" var="_client">
+                                                                        <a4j:repeat value="#{updateResourceAction.clients}" rowKeyVar="_clientIdx" var="_client">
                                                                         <div class = "col-sm-12">
                                                                          <div class = "col-sm-6" >
                                                                             <h:outputText value="#{_client.displayName}" style="margin-left:-29px;"/>
                                                                             <h:outputText value="&#160;" />
                                                                             </div>
                                                                              <div class = "col-sm-6">
-                                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceSetAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
+                                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
                                                                                 <h:graphicImage value="/img/remove.gif" />
                                                                             </a4j:commandLink>
                                                                             </div>
@@ -141,15 +139,15 @@
                                         <div class="box-footer" style="margin-top:10px !important;">
                                             <h:panelGroup id="updateButtons" layout="block"
                                                           style="margin-top:10px;margin-bottom: 10px;">
-                                                <h:commandButton action="#{updateResourceSetAction.save}"
+                                                <h:commandButton action="#{updateResourceAction.save}"
                                                                  style="margin-left:3px;" styleClass="btn btn-primary"
-                                                                 value="#{updateResourceSetAction.update ? 'Update' : 'Add'}"/>
+                                                                 value="#{updateResourceAction.update ? 'Update' : 'Add'}"/>
                                                 <a4j:commandButton ajaxSingle="true"
                                                                    onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-                                                                   rendered="#{updateResourceSetAction.update}"
+                                                                   rendered="#{updateResourceAction.update}"
                                                                    style="margin-left:3px;" styleClass="btn btn-primary"
                                                                    value="Delete"/>
-                                                <h:button action="#{updateResourceSetAction.cancel}" immediate="true"
+                                                <h:button action="#{updateResourceAction.cancel}" immediate="true"
                                                           propagation="end" style="margin-left:3px;"
                                                           styleClass="btn btn-primary" value="Cancel"/>
                                             </h:panelGroup>
@@ -159,34 +157,34 @@
                                 </h:form>
                             </h:panelGroup>
 
-                            <ox:inputTextDialog acceptMethod="#{updateResourceSetAction.acceptResource}"
-                                                cancelMethod="#{updateResourceSetAction.cancelResource}"
+                            <ox:inputTextDialog acceptMethod="#{updateResourceAction.acceptResource}"
+                                                cancelMethod="#{updateResourceAction.cancelResource}"
                                                 dialogWidth="600" id="resource" inputLabel="#{msg['uma.resource']}"
                                                 inputWidth="80" label="#{msg['uma.addResource']}" maxLength="256"
                                                 queue="resourceSetQueue" render="selectedResourcesId"
-                                                text="#{updateResourceSetAction.newResource}"/>
+                                                text="#{updateResourceAction.newResource}"/>
 
                             <ox:selectSelectableEntityDialog
-                                    acceptMethod="#{updateResourceSetAction.acceptSelectScopes}"
-                                    cancelMethod="#{updateResourceSetAction.cancelSelectScopes}"
+                                    acceptMethod="#{updateResourceAction.acceptSelectScopes}"
+                                    cancelMethod="#{updateResourceAction.cancelSelectScopes}"
                                     displayNameProperty="entity.displayName" id="scope" label="#{msg['uma.addScope']}"
                                     nameProperty="entity.id" render="selectedScopesId"
-                                    searchMethod="#{updateResourceSetAction.searchAvailableScopes}"
-                                    searchPattern="#{updateResourceSetAction.searchAvailableScopePattern}"
-                                    searchResult="#{updateResourceSetAction.availableScopes}"/>
+                                    searchMethod="#{updateResourceAction.searchAvailableScopes}"
+                                    searchPattern="#{updateResourceAction.searchAvailableScopePattern}"
+                                    searchResult="#{updateResourceAction.availableScopes}"/>
 
                             <ox:selectSelectableEntityDialog
-                                    acceptMethod="#{updateResourceSetAction.acceptSelectClients}"
-                                    cancelMethod="#{updateResourceSetAction.cancelSelectClients}"
+                                    acceptMethod="#{updateResourceAction.acceptSelectClients}"
+                                    cancelMethod="#{updateResourceAction.cancelSelectClients}"
                                     displayNameProperty="entity.displayName" id="client" label="#{msg['uma.addClient']}"
                                     nameProperty="entity.inum" render="selectedClientsId"
-                                    searchMethod="#{updateResourceSetAction.searchAvailableClients}"
-                                    searchPattern="#{updateResourceSetAction.searchAvailableClientPattern}"
-                                    searchResult="#{updateResourceSetAction.availableClients}"/>
+                                    searchMethod="#{updateResourceAction.searchAvailableClients}"
+                                    searchPattern="#{updateResourceAction.searchAvailableClientPattern}"
+                                    searchResult="#{updateResourceAction.availableClients}"/>
 
-                            <ox:acceptRemovalDialog deleteMethod="#{updateResourceSetAction.delete}"
+                            <ox:acceptRemovalDialog deleteMethod="#{updateResourceAction.delete}"
                                                     id="deleteConfirmation" subject="resource set"
-                                                    value="#{updateResourceSetAction.resourceSet.id}"/>
+                                                    value="#{updateResourceAction.resource.id}"/>
                         </div>
                     </div>
                 </div>

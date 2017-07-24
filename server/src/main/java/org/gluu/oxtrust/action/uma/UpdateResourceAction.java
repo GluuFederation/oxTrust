@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.action.uma;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
@@ -26,6 +28,7 @@ import org.xdi.util.Util;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -49,6 +52,12 @@ public class UpdateResourceAction implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	protected GluuCustomPerson currentPerson;
@@ -93,6 +102,14 @@ public class UpdateResourceAction implements Serializable {
 			umaResourcesService.prepareResourceBranch();
 		} catch (Exception ex) {
 			log.error("Failed to initialize form", ex);
+
+			if (update) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find UMA resource");
+			} else {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add UMA resource");
+			}
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -140,7 +157,16 @@ public class UpdateResourceAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public void cancel() {
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateResourceAction.resource.name}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource not added");
+		}
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() {
@@ -155,8 +181,14 @@ public class UpdateResourceAction implements Serializable {
 				umaResourcesService.updateResource(this.resource);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update resource set '{}'", ex, this.resource.getInum());
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateResourceAction.resource.name}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			log.debug("Resource were updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateResourceAction.resource.name}' updated successfully");
+
+			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
 			// Prepare resource set
 		    String id = String.valueOf(System.currentTimeMillis());
@@ -173,15 +205,21 @@ public class UpdateResourceAction implements Serializable {
 			try {
 				umaResourcesService.addResource(this.resource);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to add new resource set '{}'", ex, this.resource.getInum());
+				log.error("Failed to add new resource set '{}'", this.resource.getInum(), ex);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
+
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+			 
+			log.debug("Resource were add successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource '#{updateResourceAction.resource.name}' added successfully");
+			conversationService.endConversation();
 
 			this.update = true;
+			this.resourceInum = inum;
+			
+			return OxTrustConstants.RESULT_UPDATE;
 		}
-
-		log.debug("Resource set were {} successfully", (this.update ? "added" : "updated"));
-		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String delete() {
@@ -189,11 +227,17 @@ public class UpdateResourceAction implements Serializable {
 			// Remove resource set
 			try {
 				umaResourcesService.removeResource(this.resource);
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateResourceAction.resource.name}' removed successfully");
+				conversationService.endConversation();
+
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				log.error("Failed to remove resource set {}", ex, this.resource.getInum());
 			}
 		}
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove UMA resource '#{updateResourceAction.resource.name}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

@@ -3,29 +3,42 @@
   <rewrite pattern="/configuration/update" xmlns="http://xmlns.gluu.org/jsf/pages"/>
   <navigation-rule>
     <from-view-id>/configuration/updateConfiguration.xhtml</from-view-id>
+
     <navigation-case>
       <from-action>#{jsonConfigAction.init}</from-action>
-      <from-outcome>no_permissions</from-outcome>
+      <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
-    <navigation-case>
-      <from-action>#{jsonConfigAction.saveOxTrustConfigJson}</from-action>
-      <from-outcome>no_permissions</from-outcome>
-      <to-view-id>/home.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
+
     <navigation-case>
       <from-action>#{jsonConfigAction.saveOxAuthDynamicConfigJson}</from-action>
-      <from-outcome>no_permissions</from-outcome>
+      <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
     <navigation-case>
-      <from-action>#{jsonConfigAction.cancel}</from-action>
-      <from-outcome>success</from-outcome>
+      <from-action>#{jsonConfigAction.saveOxTrustConfigJson}</from-action>
+      <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
+    <navigation-case>
+      <from-action>#{jsonConfigAction.saveOxMemCacheConfigJson}</from-action>
+      <from-outcome>failure</from-outcome>
+      <to-view-id>/home.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
+      <from-action>#{jsonConfigAction.saveOxTrustImportPersonConfigJson}</from-action>
+      <from-outcome>failure</from-outcome>
+      <to-view-id>/home.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
   </navigation-rule>
+
 </faces-config>

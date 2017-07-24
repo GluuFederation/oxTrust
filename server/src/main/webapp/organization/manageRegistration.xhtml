@@ -6,7 +6,6 @@
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{registrationManagementAction.init}"
-                      if="#{permissionService.hasPermission('configuration', 'access') and identity.checkLoggedIn()}"
                       onPostback="false"/>
     </f:metadata>
 
@@ -182,7 +181,40 @@
                                                 <a4j:ajax event="click" render="attributes"/>
                                             </h:selectBooleanCheckbox>
                                         </ox:decorate>
-                                        <h:panelGroup id="attributes" style="display:none;" styleClass="checkbox2Div">
+											<ox:decorate id="recaptchasiteid" label="Recaptcha Site Key">
+												<h:inputText styleClass="form-control"
+													value="#{registrationManagementAction.oxTrustappConfiguration.recaptchaSiteKey}" size="30"
+													 id="recaptchaSiteKeyId"/>
+												<!-- <h:outputText value="#{_attribute.name}"
+													rendered="#{not _new}" /> -->
+											</ox:decorate>
+											
+											<ox:decorate id="recaptchakeyid" label="Recaptcha Secret Key">
+												<h:inputText styleClass="form-control"
+													value="#{registrationManagementAction.oxTrustappConfiguration.recaptchaSecretKey}" size="30"
+													 id="recaptchaSiteKeyId"/>
+												<!-- <h:outputText value="#{_attribute.name}"
+													rendered="#{not _new}" /> -->
+											</ox:decorate>
+											
+											<ox:decorate id="csslocationid" label="Design CSS Loaction">
+												<h:inputText styleClass="form-control"
+													value="#{registrationManagementAction.oxTrustappConfiguration.cssLocation}" size="30"
+													 id="recaptchaSiteKeyId"/>
+												<!-- <h:outputText value="#{_attribute.name}"
+													rendered="#{not _new}" /> -->
+											</ox:decorate>
+											
+											<ox:decorate id="jslocationid" label="Javascript Location">
+												<h:inputText styleClass="form-control"
+													value="#{registrationManagementAction.oxTrustappConfiguration.jsLocation}" size="30"
+													 id="recaptchaSiteKeyId"/>
+												<!-- <h:outputText value="#{_attribute.name}"
+													rendered="#{not _new}" /> -->
+											</ox:decorate>
+											
+											
+											<h:panelGroup id="attributes" style="display:none;" styleClass="checkbox2Div">
                                             <h:panelGroup>
                                                 <a4j:region>
                                                     <ox:decorate id="searchPattern"

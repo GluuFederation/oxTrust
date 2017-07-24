@@ -34,6 +34,7 @@ public class PermissionService {
     private String[][] managerActions = new String[][]{
             {"attribute", "access"},
             {"person", "access"},
+            {"person", "import"},
             {"group", "access"},
             {"sectorIdentifier", "access"},
             {"trust", "access"},
@@ -59,7 +60,7 @@ public class PermissionService {
         }
 
         if (identity.hasRole(GluuUserRole.MANAGER.getValue()) || identity.hasRole(GluuUserRole.USER.getValue())) {
-            if (StringHelper.equals("profile_management", action)) {
+            if (StringHelper.equalsIgnoreCase("profile_management", action)) {
                 GluuAppliance appliance = applianceService.getAppliance();
                 GluuAppliance targetAppliance = (GluuAppliance) target;
                 if (((appliance.getProfileManagment() != null) && appliance.getProfileManagment().isBooleanValue())
@@ -70,7 +71,7 @@ public class PermissionService {
                 }
             }
 
-            if (StringHelper.equals("whitePagesEnabled", action)) {
+            if (StringHelper.equalsIgnoreCase("whitePagesEnabled", action)) {
                 GluuAppliance appliance = applianceService.getAppliance();
                 GluuAppliance targetAppliance = (GluuAppliance) target;
                 if (((appliance.getWhitePagesEnabled() != null) && appliance.getWhitePagesEnabled().isBooleanValue())

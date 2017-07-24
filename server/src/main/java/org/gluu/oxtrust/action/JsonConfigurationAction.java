@@ -16,6 +16,7 @@ import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -62,6 +63,9 @@ public class JsonConfigurationAction implements Serializable {
 	@Inject
 	private EncryptionService encryptionService;
 
+	@Inject
+	private ConversationService conversationService;
+
 	private AppConfiguration oxTrustappConfiguration;
 	private ImportPersonConfig oxTrustImportPersonConfiguration;
 
@@ -87,15 +91,15 @@ public class JsonConfigurationAction implements Serializable {
 			this.oxAuthDynamicConfigJson = jsonConfigurationService.getOxAuthDynamicConfigJson();
 			this.cacheConfigurationJson = getCacheConfiguration(cacheConfiguration);
 
-			if ((this.oxTrustConfigJson == null) || (this.oxAuthDynamicConfigJson == null)) {
-				return OxTrustConstants.RESULT_FAILURE;
+			if ((this.oxTrustConfigJson != null) && (this.oxAuthDynamicConfigJson != null)) {
+				return OxTrustConstants.RESULT_SUCCESS;
 			}
-
-			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to load configuration from LDAP", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load configuration from LDAP");
 		}
+
+		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -105,7 +109,6 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			log.debug("Saving oxauth-config.json:" + oxAuthDynamicConfigJson);
 			jsonConfigurationService.saveOxAuthDynamicConfigJson(oxAuthDynamicConfigJson);
-
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -229,8 +232,7 @@ public class JsonConfigurationAction implements Serializable {
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "caCertsPassphrase");
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "oxAuthClientPassword");
 
-			jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustappConfiguration, resultOxTrustappConfiguration);
-
+			//jsonConfigurationService.processScimTestModeIsTrue(this.oxTrustappConfiguration, resultOxTrustappConfiguration);
 			return resultOxTrustappConfiguration;
 		} catch (Exception ex) {
 			log.error("Failed to prepare appConfiguration from JSON: '{}'", ex, oxTrustappConfigurationJson);

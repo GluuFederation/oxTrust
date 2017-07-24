@@ -14,10 +14,12 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -37,7 +39,7 @@ import org.xdi.service.security.Secure;
  */
 @Named("whitePagesAction")
 @ConversationScoped
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('profile', 'access')}")
 public class WhitePagesAction implements Serializable {
 
 	private static final long serialVersionUID = 6730313815008211305L;
@@ -51,6 +53,9 @@ public class WhitePagesAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private AttributeService attributeService;
@@ -71,6 +76,7 @@ public class WhitePagesAction implements Serializable {
 		this.tableAttributes = Arrays.asList("cn", "photo1", "mail", "phone");
 	}
 
+	@Secure("#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}")
 	public String start() {
 		if (persons != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -79,6 +85,7 @@ public class WhitePagesAction implements Serializable {
 		return search();
 	}
 
+	@Secure("#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}")
 	public String search() {
 		try {
 			GluuCustomPerson person = new GluuCustomPerson();
@@ -86,6 +93,10 @@ public class WhitePagesAction implements Serializable {
 			this.persons = personService.findPersons(person, 0);
 		} catch (Exception ex) {
 			log.error("Failed to find persons", ex);
+
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find persons white pages");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

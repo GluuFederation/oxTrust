@@ -3,17 +3,21 @@
   <rewrite pattern="/client/inventory/{searchPattern}" xmlns="http://xmlns.gluu.org/jsf/pages"/>
   <navigation-rule>
     <from-view-id>/client/clientInventory.xhtml</from-view-id>
+
     <navigation-case>
       <from-action>#{searchClientAction.start}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
     <navigation-case>
       <from-action>#{searchClientAction.search}</from-action>
       <from-outcome>failure</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
+
   </navigation-rule>
+
 </faces-config>

@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.action.uma;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
@@ -22,6 +24,7 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
@@ -44,6 +47,12 @@ public class UmaInventoryAction implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private ResourceSetService umaResourcesService;
@@ -79,6 +88,9 @@ public class UmaInventoryAction implements Serializable {
 			umaResourcesService.prepareResourceBranch();
 		} catch (Exception ex) {
 			log.error("Failed to initialize form", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to initialize UMA inventory");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		
@@ -110,6 +122,9 @@ public class UmaInventoryAction implements Serializable {
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
 			log.error("Failed to find resource sets", ex);
+
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to filter UMA inventory by '#{umaInventoryAction.searchPattern}'");
+			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}

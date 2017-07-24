@@ -104,7 +104,7 @@ public class AttributeResolverAction implements Serializable {
 		FileReader fr = null;
 		FileWriter fw = null;
 		PrintWriter pw = null;
-		String filePath = applicationConfiguration.getAttributeResolverPath();
+		String filePath = ""; //applicationConfiguration.getAttributeResolverPath();
 		File fileRead = new File(filePath);
 		File fileWrite = new File(filePath+".tmp");
 		try {

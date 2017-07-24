@@ -4,8 +4,8 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{registerPersonAction.setInum(param['inum'])}"/>
+    <f:metadata>        
+        <f:viewParam name="inum" value="#{registerPersonAction.inum}" />
         <f:viewAction action="#{conversationService.initConversation}"/>
         <f:viewAction action="#{registerPersonAction.initPerson}" if="#{registerPersonAction.person == null}"
                       onPostback="false"/>

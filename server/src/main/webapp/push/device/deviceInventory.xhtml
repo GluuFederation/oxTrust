@@ -2,12 +2,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
                 xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/template.xhtml">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{pushDeviceInventoryAction.setSearchPattern(param['searchPattern'])}"/>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{pushDeviceInventoryAction.start}"
-                      if="#{permissionService.hasPermission('oxpush', 'access') and pushDeviceInventoryAction.pushDeviceList == null and identity.checkLoggedIn()}"
+                      if="#{pushDeviceInventoryAction.pushDeviceList == null }"
                       onPostback="false"/>
     </f:metadata>
 

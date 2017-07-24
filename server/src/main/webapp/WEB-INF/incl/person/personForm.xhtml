@@ -100,7 +100,6 @@
                                          border="0" cellpadding="0" cellspacing="0">
 
                                 <h:panelGroup id="tabPanelGroupId">
-
                                     <rich:tabPanel switchType="client" id="attributeTabPanelId">
                                         <a4j:repeat var="origin" value="#{gluufn:toList(_customAttributeAction.attributeByOrigin)}">
                                             <rich:tab header="#{_customAttributeAction.originDisplayNames[origin.key]}">
@@ -112,8 +111,7 @@
 		                                                 <a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}" action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
 		                                                                  render="selectedCustomAttributesId"
 		                                                                  oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-		                                                                  style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-		                                                                  eventsQueue="personQueue">
+		                                                                  style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}">
 		                                                     <f:param name="sv" value="1"/>
 		                                                     <f:event listener="#{_customAttributeAction.renderAttribute}" type="preRenderComponent" />
 		                                                 </a4j:commandLink>

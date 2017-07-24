@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -76,6 +77,10 @@ public class SectorIdentifierService implements Serializable {
 
         return result;
     }
+
+    public List<OxAuthSectorIdentifier> getAllSectorIdentifiers() {
+		return ldapEntryManager.findEntries(getDnForSectorIdentifier(null), OxAuthSectorIdentifier.class, null);
+	}
 
     /**
      * Get sector identifier by inum

@@ -3,10 +3,11 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewAction action="#{updateAsimbaIDPAction.setEditEntryInum(param['inum'])}"/>
+        <f:viewParam name="inum" value="#{updateAsimbaIDPAction.editEntryInum}" />
         <f:viewAction action="#{updateAsimbaIDPAction.edit}"
-                      if="#{permissionService.hasPermission('trust', 'access') and updateAsimbaIDPAction.editEntryInum != null and updateAsimbaIDPAction.editEntryInum != updateAsimbaIDPAction.idp.inum and identity.checkLoggedIn()}"
+                      if="#{updateAsimbaIDPAction.editEntryInum != null and updateAsimbaIDPAction.editEntryInum != updateAsimbaIDPAction.idp.inum}"
                       onPostback="true"/>
+        <f:viewAction action="#{conversationService.initConversation}" />
     </f:metadata>
 
     <ui:define name="body">
@@ -19,7 +20,7 @@
             <ol class="breadcrumb">
 
                 <li>
-                    <a href="#{request.contextPath}/asimba/idps">
+                    <a href="#{request.contextPath}/asimba/idps.htm">
                         <i class="fa fa-home"/> #{msg['asimba.idps']}</a>
                 </li>
                 <li class="organization/configuration">

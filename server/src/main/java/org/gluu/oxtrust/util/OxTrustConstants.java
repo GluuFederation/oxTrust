@@ -63,6 +63,8 @@ public final class OxTrustConstants extends OxConstants {
     public static final String RESULT_CONFIRM = "confirm";
     public static final String RESULT_EXISTS = "exists";
     public static final String RESULT_LOGOUT = "logout";
+    public static final String RESULT_CLEAR = "clear";
+    public static final String RESULT_UPDATE = "update";
 
 
     public static final String CACHE_ATTRIBUTE_PERSON_KEY_LIST = "personAttributeList";
@@ -183,8 +185,6 @@ public final class OxTrustConstants extends OxConstants {
      * page results.
      */
     public static final String QUERY_PARAMETER_START_INDEX = "startIndex";
-
-    public static final String QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN = "access_token";
 
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Unexpected processing error; please check the input parameters";
 
