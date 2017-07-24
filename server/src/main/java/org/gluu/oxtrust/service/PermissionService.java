@@ -34,6 +34,7 @@ public class PermissionService {
     private String[][] managerActions = new String[][]{
             {"attribute", "access"},
             {"person", "access"},
+            {"person", "import"},
             {"group", "access"},
             {"sectorIdentifier", "access"},
             {"trust", "access"},

@@ -108,8 +108,8 @@ public class UpdateGroupAction implements Serializable {
 			this.members = getMemberDisplayNameEntiries();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
 
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -134,8 +134,8 @@ public class UpdateGroupAction implements Serializable {
 
 		if (this.group == null) {
 			log.error("Failed to load group {}", inum);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find group");
 
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find group");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -145,8 +145,8 @@ public class UpdateGroupAction implements Serializable {
 			this.members = getMemberDisplayNameEntiries();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to prepare lists", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load group");
 
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load group");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -186,8 +186,8 @@ public class UpdateGroupAction implements Serializable {
 				updatePersons(oldMembers, this.members);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update group {}", this.inum, ex);
-
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group '#{updateGroupAction.group.displayName}'");
+
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
@@ -204,8 +204,8 @@ public class UpdateGroupAction implements Serializable {
 				updatePersons(oldMembers, this.members);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to add new group {}", this.group.getInum(), ex);
-
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
+
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 

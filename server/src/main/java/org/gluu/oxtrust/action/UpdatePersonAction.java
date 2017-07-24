@@ -20,6 +20,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -60,6 +62,12 @@ public class UpdatePersonAction implements Serializable {
 	private boolean update;
 
 	private GluuCustomPerson person;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -112,6 +120,9 @@ public class UpdatePersonAction implements Serializable {
 	 */
 	public String add() {
 		if (!organizationService.isAllowPersonModification()) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -142,7 +153,11 @@ public class UpdatePersonAction implements Serializable {
 		try {
 			this.person = personService.getPersonByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find person {}", ex, inum);
+			log.error("Failed to find person {}", inum, ex);
+
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find person");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -154,7 +169,16 @@ public class UpdatePersonAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public void cancel() {
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Person '#{updatePersonAction.person.displayName}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New person not added");
+		}
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	/**
@@ -194,10 +218,15 @@ public class UpdatePersonAction implements Serializable {
 				personService.updatePerson(this.person);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update person {}", ex, inum);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update person '#{updatePersonAction.person.displayName}'");
+
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Person '#{updatePersonAction.person.displayName}' updated successfully");
 		} else {
 			if (personService.getPersonByUid(this.person.getUid()) != null) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Person with the uid '#{updatePersonAction.person.uid}' already exist'");
 				return OxTrustConstants.RESULT_DUPLICATE;
 			}
 
@@ -227,10 +256,14 @@ public class UpdatePersonAction implements Serializable {
 				}
 				personService.addPerson(this.person);
 			} catch (Exception ex) {
-				log.error("Failed to add new person {}", ex, this.person.getInum());
+				log.error("Failed to add new person {}", this.person.getInum(), ex);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person'");
 
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New person '#{updatePersonAction.person.displayName}' added successfully");
+			conversationService.endConversation();
 
 			this.update = true;
 		}
@@ -257,6 +290,7 @@ public class UpdatePersonAction implements Serializable {
 	 */
 	public String delete() {
 		if (!organizationService.isAllowPersonModification()) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove person '#{updatePersonAction.person.displayName}'");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -267,11 +301,17 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
 				}
 				memberService.removePerson(this.person);
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Person '#{updatePersonAction.person.displayName}' removed successfully");
+				conversationService.endConversation();
+
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				log.error("Failed to remove person {}", ex, this.person.getInum());
 			}
 		}
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove person '#{updatePersonAction.person.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

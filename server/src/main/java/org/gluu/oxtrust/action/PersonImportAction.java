@@ -28,6 +28,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
@@ -58,7 +59,7 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named
-@Secure("#{permissionService.hasPermission('import', 'person')}")
+@Secure("#{permissionService.hasPermission('person', 'import')}")
 public class PersonImportAction implements Serializable {
 
 	private static final long serialVersionUID = -1270460481895022468L;
@@ -89,6 +90,9 @@ public class PersonImportAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private transient ImportPersonConfiguration importPersonConfiguration;
@@ -125,6 +129,7 @@ public class PersonImportAction implements Serializable {
 
 	public String importPersons() throws Exception {
 		if (!fileDataToImport.isReady()) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "File to import is invalid");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -141,15 +146,19 @@ public class PersonImportAction implements Serializable {
 					log.debug("Added new person: {}", person.getUid());
 				}
 				else{
-					log.debug("Failed to Add new person: {}", person.getUid());
+					log.debug("Failed to add new person: {}", person.getUid());
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, String.format("Failed to add new person: '%s'", person.getUid()));
 				}
 			}
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to add new person", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to import users");
 
+			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		log.info("All {} persons added successfully", fileDataToImport.getPersons().size());
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Users successfully imported");
 
 		removeFileToImport();
 
@@ -189,8 +198,17 @@ public class PersonImportAction implements Serializable {
 		}
 	}
 
-	public void cancel() {
+	public String cancel() {
+		boolean cancel = this.uploadedFile != null;
 		destroy();
+
+		if (cancel) {
+			return OxTrustConstants.RESULT_CLEAR;
+		}
+
+		conversationService.endConversation();
+		
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	@PreDestroy
@@ -234,14 +252,14 @@ public class PersonImportAction implements Serializable {
 	private boolean prepareAndValidateImportData(Table table, List<ImportAttribute> importAttributes) throws Exception {
 		String attributesString = getAttributesString(this.attributes);
 		if ((table == null) || (importAttributes == null)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Missing columns: {}", attributesString);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Missing columns: %s", attributesString);
 			return false;
 		}
 
 		List<GluuAttribute> mandatoryAttributes = getMandatoryAttributes(this.attributes);
 		List<ImportAttribute> mandatoryImportAttributes = getMandatoryImportAttributes(importAttributes);
 		if (mandatoryAttributes.size() != mandatoryImportAttributes.size()) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Required columns: {}", attributesString);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Required columns: %s", attributesString);
 			return false;
 		}
 
@@ -339,7 +357,7 @@ public class PersonImportAction implements Serializable {
 		List<GluuCustomPerson> existPersons = personService.findPersonsByUids(new ArrayList<String>(uids),
 				PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES);
 		if (existPersons.size() > 0) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. There are persons with existing uid(s): {}",
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. There are persons with existing uid(s): %s",
 					personService.getPersonString(existPersons));
 			return false;
 		}
@@ -364,7 +382,7 @@ public class PersonImportAction implements Serializable {
 				String cellValue = table.getCellValue(importAttribute.getCol(), i);
 				if (StringHelper.isEmpty(cellValue)) {
 					if (attribute.isRequred()) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Empty '{}' not allowed", attribute.getDisplayName());
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. Empty '%s' not allowed", attribute.getDisplayName());
 						validTable = false;
 					}
 					continue;
@@ -372,7 +390,7 @@ public class PersonImportAction implements Serializable {
 				
 				String ldapValue = getTypedValue(attribute, cellValue);
 				if (StringHelper.isEmpty(ldapValue)) {
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Invalid value '{}' in column '{}' at row {} were specified", cellValue,
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Invalid value '%s' in column '%s' at row %s were specified", cellValue,
 							attribute.getDisplayName(), i + 1);
 					validTable = false;
 					continue;

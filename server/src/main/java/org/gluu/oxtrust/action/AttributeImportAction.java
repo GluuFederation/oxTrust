@@ -78,6 +78,7 @@ public class AttributeImportAction implements Serializable {
 
 	public String importAttributes() throws Exception {
 		if (!fileDataToImport.isReady()) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "File to import is invalid");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

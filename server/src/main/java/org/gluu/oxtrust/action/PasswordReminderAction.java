@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
-
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -21,6 +19,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -37,7 +36,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -72,6 +70,9 @@ public class PasswordReminderAction implements Serializable {
 
     @Inject
     private FacesMessages facesMessages;
+
+    @Inject
+	private ConversationService conversationService;
 
     /**
      * @return the MESSAGE_NOT_FOUND
@@ -120,6 +121,20 @@ public class PasswordReminderAction implements Serializable {
 			
 
 	public String requestReminder() throws Exception {
+		String outcome = requestReminderImpl();
+		
+		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO,"We have sent a letter with password reset instructions to the specified email.");
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,"Instructions letter was not sent.");
+		}
+		
+		conversationService.endConversation();
+		
+		return outcome;
+	}
+
+	public String requestReminderImpl() throws Exception {
 		if (enabled()) {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			if (facesContext == null) {
