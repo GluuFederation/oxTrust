@@ -33,7 +33,7 @@
       <to-view-id>/uma/resource/modifyResource.xhtml</to-view-id>
       <redirect>
 		<view-param>
-			<name>scope</name>
+			<name>resource</name>
 			<value>#{updateResourceAction.resourceInum}</value>
 		</view-param>
       </redirect>

@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -24,9 +25,11 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.OxMultivalued;
+import org.xdi.service.security.Secure;
 
 @ConversationScoped
 @Named("attributeResolverAction")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class AttributeResolverAction implements Serializable {
 
 	private static final long serialVersionUID = -9125609238796284572L;
@@ -39,6 +42,9 @@ public class AttributeResolverAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+	
+	@Inject
+	private ConversationService conversationService;
 	
 	@Inject
 	private AppConfiguration applicationConfiguration;
@@ -64,9 +70,23 @@ public class AttributeResolverAction implements Serializable {
 	public String getBase() {
 		return base;
 	}
+
 	public void setBase(String base) {
 		this.base = base;
 	}
+
+	public String saveCustomAttributetoResolveImpl(){
+		String outcome = saveCustomAttributetoResolve();
+		
+		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "NameId configuration updated successfully");
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update NameId configuration");
+		}
+		
+		return outcome;
+	}
+
 	public String saveCustomAttributetoResolve(){
 		if(!enable){
 			return OxTrustConstants.RESULT_FAILURE;
@@ -191,7 +211,9 @@ public class AttributeResolverAction implements Serializable {
 	}
 	
 	public String cancel(){
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Create NameId Cancelled.");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration not updated");
+		conversationService.endConversation();
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 }

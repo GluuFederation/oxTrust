@@ -49,7 +49,7 @@ public class PermissionService {
             {"scope", "access"},
             {"oxauth", "access"},
             {"uma", "access"},
-            {"oxpush", "access"},
+            {"super-gluu", "access"},
             {"linktrack", "access"},
     };
 
