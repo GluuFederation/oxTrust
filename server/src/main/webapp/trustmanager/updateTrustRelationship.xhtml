@@ -6,9 +6,7 @@
     <f:metadata>    
         <f:viewParam name="inum" value="#{updateTrustRelationshipAction.inum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateTrustRelationshipAction.update}"
-                      if="#{updateTrustRelationshipAction.trustRelationship == null}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateTrustRelationshipAction.update}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
