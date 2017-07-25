@@ -564,7 +564,7 @@ public class PersonImportAction implements Serializable {
                 }
 				personService.addPerson(this.person);
 			} catch (Exception ex) {
-				log.error("Failed to add new person {}", ex, this.person.getInum());
+				log.error("Failed to add new person {}", this.person.getInum(), ex);
 
 				return OxTrustConstants.RESULT_FAILURE;
 			}

@@ -279,7 +279,7 @@ public class ImageRepository {
 				FileUtils.copyFile(thumbFile, reovedThumbFile);
 				FileUtils.copyFile(sourceFile, removedSourceFile);
 			} catch (IOException ex) {
-				log.error("Failed to create backup for photo {} before removal", ex, image);
+				log.error("Failed to create backup for photo {} before removal", image, ex);
 			}
 		}
 

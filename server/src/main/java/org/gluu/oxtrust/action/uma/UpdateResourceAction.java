@@ -136,7 +136,7 @@ public class UpdateResourceAction implements Serializable {
 			String resourceDn = umaResourcesService.getDnForResource(this.resourceInum);
 			this.resource = umaResourcesService.getResourceByDn(resourceDn);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find resource set '{}'", ex, this.resourceInum);
+			log.error("Failed to find resource set '{}'", this.resourceInum, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -180,7 +180,7 @@ public class UpdateResourceAction implements Serializable {
 			try {
 				umaResourcesService.updateResource(this.resource);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update resource set '{}'", ex, this.resource.getInum());
+				log.error("Failed to update resource set '{}'", this.resource.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateResourceAction.resource.name}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -233,7 +233,7 @@ public class UpdateResourceAction implements Serializable {
 
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove resource set {}", ex, this.resource.getInum());
+				log.error("Failed to remove resource set {}", this.resource.getInum(), ex);
 			}
 		}
 

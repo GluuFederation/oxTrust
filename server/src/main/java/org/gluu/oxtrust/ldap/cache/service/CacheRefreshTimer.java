@@ -546,7 +546,7 @@ public class CacheRefreshTimer {
 				result.add(changedInum);
 				log.debug("Updated entry with inum {}", changedInum);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update entry with inum '{}' using baseDN {}", ex, changedInum, baseDn);
+				log.error("Failed to update entry with inum '{}' using baseDN {}", changedInum, baseDn, ex);
 			}
 		}
 
@@ -658,7 +658,7 @@ public class CacheRefreshTimer {
 				targetPerson = personService.findPersonByDn(targetPersonDn);
 				log.debug("Found person by inum '{}'", targetInum);
 			} catch (EntryPersistenceException ex) {
-				log.error("Failed to find person '{}'", ex, targetInum);
+				log.error("Failed to find person '{}'", targetInum, ex);
 				return false;
 			}
 			updatePerson = true;
@@ -691,7 +691,7 @@ public class CacheRefreshTimer {
 				log.debug("Added new person '{}'", targetInum);
 			}
 		} catch (Exception ex) {
-			log.error("Failed to '{}' person '{}'", ex, updatePerson ? "update" : "add", targetInum);
+			log.error("Failed to '{}' person '{}'", updatePerson ? "update" : "add", targetInum, ex);
 			return false;
 		}
 
@@ -730,7 +730,7 @@ public class CacheRefreshTimer {
 					inumDbLdapEntryManager.merge(removedInumMap);
 					result2.add(removedInumMap.getInum());
 				} catch (LdapMappingException ex) {
-					log.error("Failed to update entry with inum '{}' and DN: {}", ex, currentInumMap.getInum(), currentInumMap.getDn());
+					log.error("Failed to update entry with inum '{}' and DN: {}", currentInumMap.getInum(), currentInumMap.getDn(), ex);
 					continue;
 				}
 			}
@@ -740,7 +740,7 @@ public class CacheRefreshTimer {
 				targetLdapEntryManager.removeWithSubtree(removedPerson.getDn());
 				result1.add(inum);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove person entry with inum '{}' and DN: {}", ex, inum, removedPerson.getDn());
+				log.error("Failed to remove person entry with inum '{}' and DN: {}", inum, removedPerson.getDn(), ex);
 				continue;
 			}
 

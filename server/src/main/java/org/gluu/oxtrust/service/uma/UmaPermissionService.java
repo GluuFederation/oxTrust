@@ -186,7 +186,7 @@ public class UmaPermissionService implements Serializable {
                     authorization,
                     UmaPermissionList.instance(permission));
 		} catch (ClientResponseFailure ex) {
-        	log.error("Failed to register permissions for resource set: '{}'", ex, resourceSetId);
+        	log.error("Failed to register permissions for resource set: '{}'", resourceSetId, ex);
         }
 
         if ((resourceSetPermissionTicket == null) || StringHelper.isEmpty(resourceSetPermissionTicket.getTicket())) {

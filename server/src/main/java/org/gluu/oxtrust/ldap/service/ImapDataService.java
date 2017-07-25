@@ -31,8 +31,8 @@ public class ImapDataService {
 	public String getJsonStringFromImap(GluuIMAPData imapData){
 		try {
 			return jsonService.objectToJson(imapData);
-		} catch (Exception e) {
-			log.error("Failed to convert GluuIMAPData {} to JSON", e, imapData);
+		} catch (Exception ex) {
+			log.error("Failed to convert GluuIMAPData {} to JSON", imapData, ex);
 		} 
 		return null;
 		

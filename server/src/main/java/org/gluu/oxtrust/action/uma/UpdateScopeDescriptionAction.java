@@ -150,7 +150,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find scope description '{}'", ex, this.scopeInum);
+			log.error("Failed to find scope description '{}'", this.scopeInum, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -184,7 +184,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update scope description '{}'", ex, this.scopeDescription.getId());
+				log.error("Failed to update scope description '{}'", this.scopeDescription.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -239,7 +239,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove scope description {}", ex, this.scopeDescription.getId());
+				log.error("Failed to remove scope description {}", this.scopeDescription.getId(), ex);
 			}
 		}
 
@@ -279,7 +279,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		try {
 			this.scopeDescription.setFaviconImageAsXml(jsonService.objectToJson(this.curIconImage));
 		} catch (Exception ex) {
-			log.error("Failed to store icon image: '{}'", ex, newIcon);
+			log.error("Failed to store icon image: '{}'", newIcon, ex);
 		}
 	}
 
@@ -289,7 +289,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				this.curIconImage = jsonService.jsonToObject(faviconImageAsXml, GluuImage.class);
 			} catch (Exception ex) {
-				log.error("Faield to deserialize image: '{}'", ex, faviconImageAsXml);
+				log.error("Faield to deserialize image: '{}'", faviconImageAsXml, ex);
 			}
 		}
 	}

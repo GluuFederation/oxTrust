@@ -131,7 +131,7 @@ public class Authenticator implements Serializable {
 			postLogin(user);
 			log.info("User '{}' authenticated successfully", userName);
 		} catch (Exception ex) {
-			log.error("Failed to authenticate user '{}'", ex, userName);
+			log.error("Failed to authenticate user '{}'", userName, ex);
 			return false;
 		}
 
@@ -166,7 +166,7 @@ public class Authenticator implements Serializable {
 		try {
 			user = personService.getUserByUid(userName);
 		} catch (Exception ex) {
-			log.error("Failed to find user '{}' in ldap", ex, userName);
+			log.error("Failed to find user '{}' in ldap", userName, ex);
 		}
 
 		return user;
@@ -177,7 +177,7 @@ public class Authenticator implements Serializable {
 		try {
 			person = personService.getPersonByDn(userDn);
 		} catch (Exception ex) {
-			log.error("Failed to find person '{}' in ldap", ex, userDn);
+			log.error("Failed to find person '{}' in ldap", userDn, ex);
 		}
 
 		return person;
@@ -504,7 +504,7 @@ public class Authenticator implements Serializable {
 			URL url = new URL(oxAuthAuthorizeUrl);
 			return String.format("%s://%s:%s", url.getProtocol(), url.getHost(), url.getPort());
 		} catch (MalformedURLException ex) {
-			log.error("Invalid oxAuth authorization URI: '{}'", ex, oxAuthAuthorizeUrl);
+			log.error("Invalid oxAuth authorization URI: '{}'", oxAuthAuthorizeUrl, ex);
 		}
 
 		return null;

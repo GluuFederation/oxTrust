@@ -131,7 +131,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			try {
 				logViewerConfig = jsonService.jsonToObject(appliance.getOxLogViewerConfig(), LogViewerConfig.class);
 			} catch (Exception ex) {
-				log.error("Failed to load log viewer configuration '{}'", ex, oxLogViewerConfig);
+				log.error("Failed to load log viewer configuration '{}'", oxLogViewerConfig, ex);
 			}
 		}
 

@@ -118,7 +118,7 @@ public class UserProfileAction implements Serializable {
 		try {
 			this.person = personService.getPersonByInum(currentPerson.getInum());
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find person {}", ex, currentPerson.getInum());
+			log.error("Failed to find person {}", currentPerson.getInum(), ex);
 		}
 
 		if (this.person == null) {
@@ -157,7 +157,7 @@ public class UserProfileAction implements Serializable {
 			person.setGluuOptOuts(optOuts.size() == 0 ? null : optOuts);
 			personService.updatePerson(person);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to update profile {}", ex, person.getInum());
+			log.error("Failed to update profile {}", person.getInum(), ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update profile '#{userProfileAction.person.displayName}'");
 
 			return OxTrustConstants.RESULT_FAILURE;

@@ -277,7 +277,7 @@ public class RegisterPersonAction implements Serializable {
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 			} catch (Exception ex) {
-				log.error("Failed to add new person {}", ex, this.person.getInum());
+				log.error("Failed to add new person {}", this.person.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person");
 				this.person = archivedPerson;
 				return OxTrustConstants.RESULT_FAILURE;

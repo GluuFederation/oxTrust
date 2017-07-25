@@ -217,7 +217,7 @@ public class UpdatePersonAction implements Serializable {
 				}
 				personService.updatePerson(this.person);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update person {}", ex, inum);
+				log.error("Failed to update person {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update person '#{updatePersonAction.person.displayName}'");
 
 				return OxTrustConstants.RESULT_FAILURE;
@@ -307,7 +307,7 @@ public class UpdatePersonAction implements Serializable {
 
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove person {}", ex, this.person.getInum());
+				log.error("Failed to remove person {}", this.person.getInum(), ex);
 			}
 		}
 

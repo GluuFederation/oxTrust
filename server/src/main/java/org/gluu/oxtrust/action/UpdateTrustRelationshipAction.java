@@ -247,7 +247,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		try {
 			this.trustRelationship = trustService.getRelationshipByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find trust relationship {}", ex, inum);
+			log.error("Failed to find trust relationship {}", inum, ex);
 		}
 
 		if (this.trustRelationship == null) {
@@ -403,7 +403,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				try {
 					saveTR(update);
 				} catch (LdapMappingException ex) {
-					log.error("Failed to update trust relationship {}", ex, inum);
+					log.error("Failed to update trust relationship {}", inum, ex);
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 			} else {
@@ -413,7 +413,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				try {
 					saveTR(update);
 				} catch (LdapMappingException ex) {
-					log.error("Failed to add new trust relationship {}", ex, this.trustRelationship.getInum());
+					log.error("Failed to add new trust relationship {}", this.trustRelationship.getInum(), ex);
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 
@@ -800,7 +800,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				tmpTrustRelationship.setStatus(GluuStatus.INACTIVE);
 				saveTR(update);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update trust relationship {}", ex, inum);
+				log.error("Failed to update trust relationship {}", inum, ex);
 			}
 		} else {
 			// Remove file name to generate new one during new save attempt.
@@ -940,7 +940,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				result = OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
 				result = OxTrustConstants.RESULT_FAILURE;
-				log.error("Failed to remove trust relationship {}", ex, this.trustRelationship.getInum());
+				log.error("Failed to remove trust relationship {}", this.trustRelationship.getInum(), ex);
 			} catch (InterruptedException e) {
 				log.error("Failed to add trust relationship to remove queue. It will be removed during next application restart", e);
 			} finally {

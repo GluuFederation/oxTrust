@@ -132,7 +132,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
             log.info("inum : " + inum);
             this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierByInum(inum);
         } catch (LdapMappingException ex) {
-            log.error("Failed to find sector identifier {}", ex, inum);
+            log.error("Failed to find sector identifier {}", inum, ex);
         }
 
         if (this.sectorIdentifier == null) {
@@ -186,7 +186,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (LdapMappingException ex) {
                 log.info("error updating sector identifier ", ex);
-                log.error("Failed to update sector identifier {}", ex, this.inum);
+                log.error("Failed to update sector identifier {}", this.inum, ex);
 
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}'");
                 return OxTrustConstants.RESULT_FAILURE;
@@ -207,7 +207,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (LdapMappingException ex) {
                 log.info("error saving sector identifier ");
-                log.error("Failed to add new sector identifier {}", ex, this.sectorIdentifier.getInum());
+                log.error("Failed to add new sector identifier {}", this.sectorIdentifier.getInum(), ex);
 
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
                 return OxTrustConstants.RESULT_FAILURE;
@@ -235,7 +235,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
 				return OxTrustConstants.RESULT_SUCCESS;
             } catch (LdapMappingException ex) {
-                log.error("Failed to remove sector identifier {}", ex, this.sectorIdentifier.getInum());
+                log.error("Failed to remove sector identifier {}", this.sectorIdentifier.getInum(), ex);
             }
         }
 

@@ -64,7 +64,7 @@ public class AuthenticationSessionService implements Serializable {
     	    	log.error("Invalid response code at oxAuth logout. User: '{}'", userUid);
             }
 		} catch (Exception ex) {
-	    	log.error("Exception happened at oxAuth logout. User: '{}'", ex, userUid);
+	    	log.error("Exception happened at oxAuth logout. User: '{}'", userUid, ex);
 		}
     }
 

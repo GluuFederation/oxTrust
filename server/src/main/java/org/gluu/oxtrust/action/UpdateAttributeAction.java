@@ -118,7 +118,7 @@ public class UpdateAttributeAction implements Serializable {
 		try {
 			this.attribute = attributeService.getAttributeByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find attribute {}", ex, inum);
+			log.error("Failed to find attribute {}", inum, ex);
 		}
 
 		if (this.attribute == null) {
@@ -220,7 +220,7 @@ public class UpdateAttributeAction implements Serializable {
 
 				attributeService.updateAttribute(this.attribute);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update attribute {}", ex, inum);
+				log.error("Failed to update attribute {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update attribute");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -268,7 +268,7 @@ public class UpdateAttributeAction implements Serializable {
 		try {
 			attributeService.addAttribute(this.attribute);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to add new attribute {}", ex, this.attribute.getInum());
+			log.error("Failed to add new attribute {}", this.attribute.getInum(), ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new attribute");
 			return false;

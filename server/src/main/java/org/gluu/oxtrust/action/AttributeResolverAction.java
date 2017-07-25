@@ -1,3 +1,4 @@
+
 package org.gluu.oxtrust.action;
 
 import java.io.BufferedReader;
@@ -114,7 +115,7 @@ public class AttributeResolverAction implements Serializable {
 		try {
 		attributeService.addAttribute(this.attribute);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to add new attribute {0}", ex, this.attribute.getInum());
+			log.error("Failed to add new attribute {0}", this.attribute.getInum(), ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new attribute");
 			return OxTrustConstants.RESULT_FAILURE;
