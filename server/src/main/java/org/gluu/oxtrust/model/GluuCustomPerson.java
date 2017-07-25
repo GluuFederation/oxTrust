@@ -54,6 +54,9 @@ public class GluuCustomPerson extends User
     
     @LdapAttribute(name = "oxPPID")
     private List<String> oxPPID;
+    
+    @LdapAttribute(name = "userRandomKey")
+    private String userRandomKey;
 
     public List<String> getOxPPID() {
 		return oxPPID;
@@ -192,7 +195,15 @@ public class GluuCustomPerson extends User
         return getAttribute("preferredLanguage");
     }
 
-    public int getAttributeIndex(String attributeName) {
+    public String getUserRandomKey() {
+		return userRandomKey;
+	}
+
+	public void setUserRandomKey(String userRandomKey) {
+		this.userRandomKey = userRandomKey;
+	}
+
+	public int getAttributeIndex(String attributeName) {
         int idx = 0;
         for (GluuCustomAttribute attribute : customAttributes) {
             if (attribute.getName().equalsIgnoreCase(attributeName)) {
