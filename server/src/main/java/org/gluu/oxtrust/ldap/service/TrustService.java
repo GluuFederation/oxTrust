@@ -409,13 +409,13 @@ public class TrustService implements Serializable {
 		List<GluuSAMLTrustRelationship> trustRelationships = getAllTrustRelationships();
 		log.trace(String.format("Iterating '%d' trustRelationships", trustRelationships.size()));
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			log.trace(String.format("Analyzing '%s'.", trustRelationship.getDisplayName()));
+			log.trace("Analyzing '%s'.", trustRelationship.getDisplayName());
 			List<String> customAttrs = trustRelationship.getReleasedAttributes();
 			if (customAttrs != null) {
 				for (String attrDN : customAttrs) {
-					log.trace(String.format("'%s' has custom attribute '%s'", trustRelationship.getDisplayName(), attrDN));
+					log.trace("'%s' has custom attribute '%s'", trustRelationship.getDisplayName(), attrDN);
 					if (attrDN.equals(attribute.getDn())) {
-						log.trace(String.format("'%s' matches '%s'.  deleting it.", attrDN, attribute.getDn()));
+						log.trace("'%s' matches '%s'.  deleting it.", attrDN, attribute.getDn());
 						List<String> updatedAttrs = new ArrayList<String>();
 						updatedAttrs.addAll(customAttrs);
 						updatedAttrs.remove(attrDN);

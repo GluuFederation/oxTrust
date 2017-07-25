@@ -147,7 +147,7 @@ public class PersonImportAction implements Serializable {
 				}
 				else{
 					log.debug("Failed to add new person: {}", person.getUid());
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, String.format("Failed to add new person: '%s'", person.getUid()));
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person: '%s'", person.getUid());
 				}
 			}
 		} catch (EntryPersistenceException ex) {
