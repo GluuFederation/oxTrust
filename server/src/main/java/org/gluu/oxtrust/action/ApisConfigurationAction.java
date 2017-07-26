@@ -64,7 +64,7 @@ public class ApisConfigurationAction implements Serializable {
 		linktrackVerified = true;
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
-	
+
 	public String save(){
 		GluuOrganization organization = organizationService.getOrganization();
 		organization.setLinktrackEnabled(enableLinktrack);
