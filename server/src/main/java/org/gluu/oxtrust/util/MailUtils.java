@@ -72,6 +72,7 @@ public class MailUtils {
 		props.put("mail.smtp.timeout", this.connectionTimeout);
 		props.put("mail.debug", true);
 		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.smtp.ssl.trust", this.hostName);
 		if (requiresSsl) {
 			// props.put("mail.smtp.socketFactory.port", "465");
 			props.put("mail.smtp.starttls.enable", true);
