@@ -488,11 +488,6 @@
             "id": "scimTestMode",
             "type": "boolean"
         },
-        "scimTestModeAccessToken": {
-            "id": "scimTestModeAccessToken",
-            "type": "string",
-            "readonly": true
-        },
         "shibbolethVersion": {
             "id": "shibbolethVersion",
             "type": "string",
@@ -653,7 +648,6 @@
         "rptConnectionPoolValidateAfterInactivity",
         "rptConnectionPoolCustomKeepAliveTimeout",
         "scimTestMode",
-        "scimTestModeAccessToken",
         "shibbolethVersion",
         "shibboleth3IdpRootDir",
         "shibboleth3SpConfDir",

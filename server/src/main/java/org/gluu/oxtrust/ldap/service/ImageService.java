@@ -83,7 +83,7 @@ public class ImageService {
 		try {
 			imageRepository.addThumbnail(image, thumbWidth, thumbHeight);
 		} catch (Exception ex) {
-			log.error("Failed to generate thumbnail for photo {}", ex, image);
+			log.error("Failed to generate thumbnail for photo {}", image, ex);
 		}
 
 		return image;
@@ -101,7 +101,7 @@ public class ImageService {
 		try {
 			return imageRepository.createRepositoryImageFiles(image, thumbWidth, thumbHeight);
 		} catch (Exception ex) {
-			log.error("Failed to save photo {}", ex, image);
+			log.error("Failed to save photo {}", image, ex);
 		}
 		return false;
 	}
@@ -172,7 +172,7 @@ public class ImageService {
 			try {
 				return imageRepository.getThumbImageData(image);
 			} catch (Exception ex) {
-				log.error("Failed to load GluuImage {}", ex, image);
+				log.error("Failed to load GluuImage {}", image, ex);
 			}
 		}
 
@@ -184,7 +184,7 @@ public class ImageService {
 			try {
 				return imageRepository.getThumbImageData(image);
 			} catch (Exception ex) {
-				log.error("Failed to load GluuImage {}", ex, image);
+				log.error("Failed to load GluuImage {}", image, ex);
 			}
 		}
 
@@ -195,7 +195,7 @@ public class ImageService {
 		try {
 			imageRepository.moveImageToPersistentStore(image);
 		} catch (Exception ex) {
-			log.error("Failed to load GluuImage {}", ex, image);
+			log.error("Failed to load GluuImage {}", image, ex);
 		}
 	}
 
@@ -203,7 +203,7 @@ public class ImageService {
 		try {
 			imageRepository.moveLogoImageToPersistentStore(image);
 		} catch (IOException ex) {
-			log.error("Failed to load GluuImage {}", ex, image);
+			log.error("Failed to load GluuImage {}", image, ex);
 		}
 	}
 
@@ -219,7 +219,7 @@ public class ImageService {
 		try {
 			return imageRepository.createRepositoryFaviconImageFiles(image);
 		} catch (IOException ex) {
-			log.error("Failed to save photo {}", ex, image);
+			log.error("Failed to save photo {}", image, ex);
 		}
 
 		return false;

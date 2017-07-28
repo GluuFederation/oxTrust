@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -59,6 +60,9 @@ public class UpdateAttributeAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
+	private ConversationService conversationService;
+
+	@Inject
 	private AppConfiguration appConfiguration;
 
 	private String inum;
@@ -101,6 +105,9 @@ public class UpdateAttributeAction implements Serializable {
 		this.showAttributeDeleteConfirmation = false;
 
 		if (!loadAttribute(this.inum)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find attribute");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -111,7 +118,7 @@ public class UpdateAttributeAction implements Serializable {
 		try {
 			this.attribute = attributeService.getAttributeByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find attribute {}", ex, inum);
+			log.error("Failed to find attribute {}", inum, ex);
 		}
 
 		if (this.attribute == null) {
@@ -156,10 +163,40 @@ public class UpdateAttributeAction implements Serializable {
 		return this.attribute.isAdminCanEdit();
 	}
 
-	public void cancel() {
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Attribute '#{updateAttributeAction.attribute.displayName}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New attribute not added");
+		}
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() {
+		String outcome = saveImpl();
+		
+		if (update) {
+			if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Attribute '#{updateAttributeAction.attribute.displayName}' updated successfully");
+			} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new attribute");
+			}
+		} else {
+			if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "New attribute '#{updateAttributeAction.attribute.displayName}' added successfully");
+				conversationService.endConversation();
+			} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update attribute '#{updateAttributeAction.attribute.displayName}'");
+			}
+		}
+		
+		return outcome;
+	}
+
+	public String saveImpl() {
 		if (!tooltipToggle) {
 			attribute.setGluuTooltip(null);
 		}
@@ -183,7 +220,7 @@ public class UpdateAttributeAction implements Serializable {
 
 				attributeService.updateAttribute(this.attribute);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update attribute {}", ex, inum);
+				log.error("Failed to update attribute {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update attribute");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -198,11 +235,6 @@ public class UpdateAttributeAction implements Serializable {
 			}
 		}
 
-		this.update = true;
-		if (!loadAttribute(this.attribute.getInum())) {
-			return OxTrustConstants.RESULT_FAILURE;
-		}
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -212,7 +244,7 @@ public class UpdateAttributeAction implements Serializable {
 			return false;
 		}
 
-		String inum = attributeService.generateInumForNewAttribute();
+		this.inum = attributeService.generateInumForNewAttribute();
 		String dn = attributeService.getDnForAttribute(inum);
 		if (attribute.getSaml1Uri() == null || attribute.getSaml1Uri().equals("")) {
 			attribute.setSaml1Uri("urn:gluu:dir:attribute-def:" + attributeName);
@@ -236,7 +268,7 @@ public class UpdateAttributeAction implements Serializable {
 		try {
 			attributeService.addAttribute(this.attribute);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to add new attribute {}", ex, this.attribute.getInum());
+			log.error("Failed to add new attribute {}", this.attribute.getInum(), ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new attribute");
 			return false;
@@ -248,15 +280,14 @@ public class UpdateAttributeAction implements Serializable {
 	private boolean validateAttributeDefinition(String attributeName) {
 		boolean containsAttribute = schemaService.containsAttributeTypeInSchema(attributeName);
 		if (!containsAttribute) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The attribute type '{}' not defined in LDAP schema", attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The attribute type '#{updateAttributeAction.attribute.name}' not defined in LDAP schema");
 			return false;
 		}
 
 		// Check if attribute defined in gluuPerson or in custom object class
 		boolean containsAttributeInGluuObjectClasses = containsAttributeInGluuObjectClasses(attributeName);
 		if (!containsAttributeInGluuObjectClasses) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Attribute type '{}' definition not belong to list of allowed object classes",
-					attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Attribute type '#{updateAttributeAction.attribute.name}' definition not belong to list of allowed object classes");
 			return false;
 		}
 
@@ -307,6 +338,9 @@ public class UpdateAttributeAction implements Serializable {
 			showAttributeDeleteConfirmation = false;
 
 			if (trustService.removeAttribute(this.attribute)) {
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Attribute '#{updateAttributeAction.attribute.displayName}' removed successfully");
+				conversationService.endConversation();
+
 				return OxTrustConstants.RESULT_SUCCESS;
 			} else {
 				log.error("Failed to remove attribute {}", this.attribute.getInum());
@@ -314,6 +348,8 @@ public class UpdateAttributeAction implements Serializable {
 		}
 
 		showAttributeDeleteConfirmation = false;
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove attribute '#{updateAttributeAction.attribute.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

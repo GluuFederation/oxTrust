@@ -31,7 +31,6 @@
 
 		<script type="text/javascript"
 			src="#{oxTrustConfigurationService.jsLocation}/gluuCommon.js"></script>
-		<h:outputScript name="jquery.js" />
 		<ui:param name="themeColor"
 			value="#{organizationService.organization.themeColor}" />
 		<ui:fragment rendered="#{not empty themeColor}">
@@ -106,6 +105,8 @@
 			<div class="#{not isLogin?'body':'loginBody'}">
 				
 				<div class="content-wrapper">
+					<a:status startText="Loading..."
+						startStyle="background-color: #006699; color: white; font-weight: bold; position: fixed; left: 0px; top: 0px; padding: 5px 5px 5px 5px;" />
 					<h:messages style="display: none;" id="messages" globalOnly="true"
 						styleClass="message" errorClass="errormsg" infoClass="infomsg"
 						warnClass="warnmsg" rendered="#{showGlobalMessages != 'false'}" />

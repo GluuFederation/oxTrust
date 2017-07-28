@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -63,9 +64,6 @@ public class RegisterPersonAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private transient ExternalContext externalContext;
-
-	@Inject
 	private AttributeService attributeService;
 
 	@Inject
@@ -76,6 +74,9 @@ public class RegisterPersonAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private ExternalUserRegistrationService externalUserRegistrationService;
@@ -126,6 +127,20 @@ public class RegisterPersonAction implements Serializable {
 	 * @throws Exception
 	 */
 	public String initPerson() {
+		String outcome = initPersonImpl();
+		
+		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "You cannot enter this page. Please contact site administration.");
+			conversationService.endConversation();
+		} else if (OxTrustConstants.RESULT_NO_PERMISSIONS.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to execute registration script. Please contact site administration.");
+			conversationService.endConversation();
+		}
+		
+		return outcome;
+	}
+
+	public String initPersonImpl() {
 		initRecaptcha();
 
 		String result = sanityCheck();
@@ -161,7 +176,7 @@ public class RegisterPersonAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		requestParameters.putAll(externalContext.getRequestParameterValuesMap());
+		requestParameters.putAll(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterValuesMap());
 
 		return OxTrustConstants.RESULT_SUCCESS;
 
@@ -179,6 +194,21 @@ public class RegisterPersonAction implements Serializable {
 	}
 
 	public String register() throws CloneNotSupportedException {
+		String outcome = registerImpl();
+		
+		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "You successfully registered.");
+			conversationService.endConversation();
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
+		} else if (OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Captcha validation failed. Please try again.");
+		}
+		
+		return outcome;
+	}
+
+	public String registerImpl() throws CloneNotSupportedException {
 		boolean registrationFormValid = StringHelper.equals(password, repeatPassword);
 
 		if (!captchaDisabled) {
@@ -251,7 +281,7 @@ public class RegisterPersonAction implements Serializable {
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 			} catch (Exception ex) {
-				log.error("Failed to add new person {}", ex, this.person.getInum());
+				log.error("Failed to add new person {}", this.person.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person");
 				this.person = archivedPerson;
 				return OxTrustConstants.RESULT_FAILURE;
@@ -278,7 +308,12 @@ public class RegisterPersonAction implements Serializable {
 			e.printStackTrace();
 		}
 	}
-	public void cancel() {
+
+  public String cancel() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "You didn't register.");
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private void initAttributes() {

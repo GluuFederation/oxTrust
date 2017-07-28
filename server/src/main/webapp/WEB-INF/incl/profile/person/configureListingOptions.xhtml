@@ -33,7 +33,7 @@
                     <h:outputText value="#{msg['profile.phone']} " styleClass="#{userProfileAction.released('telephoneNumber')? 'name' : 'striked name'}" />
                     <h:outputText value="#{sel.getAttribute('telephoneNumber')}" rendered="#{userProfileAction.released('telephoneNumber')}" />
                 </h:panelGrid>
-                <a4j:repeat value="#{whitePagesAction.getReleasedAttributes(userProfileAction.person)}" var="_custAttr" rowKeyVar="rowKey">
+                <a4j:repeat value="#{whitePagesAction.getReleasedAttributes(userProfileAction.getPerson())}" var="_custAttr" rowKeyVar="rowKey">
                     <h:panelGrid rendered="#{_custAttr ne null}" columns="2">
                         <a4j:ajax event="click" listener="#{userProfileAction.toggle(_custAttr.metadata.name)}" render="configureListingOptionsForm" execute="@this" limitRender="true" />
                         <h:outputText value="#{_custAttr.metadata.displayName} " styleClass="#{userProfileAction.released(_custAttr.metadata.name)? 'name' : 'striked name'}" />

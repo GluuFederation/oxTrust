@@ -13,9 +13,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -49,6 +52,12 @@ public class UserProfileAction implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private IPersonService personService;
@@ -109,10 +118,13 @@ public class UserProfileAction implements Serializable {
 		try {
 			this.person = personService.getPersonByInum(currentPerson.getInum());
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find person {}", ex, currentPerson.getInum());
+			log.error("Failed to find person {}", currentPerson.getInum(), ex);
 		}
 
 		if (this.person == null) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load profile");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -145,11 +157,15 @@ public class UserProfileAction implements Serializable {
 			person.setGluuOptOuts(optOuts.size() == 0 ? null : optOuts);
 			personService.updatePerson(person);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to update profile {}", ex, person.getInum());
+			log.error("Failed to update profile {}", person.getInum(), ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update profile '#{userProfileAction.person.displayName}'");
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		customAttributeAction.savePhotos();
+
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Profile '#{userProfileAction.person.displayName}' updated successfully");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -159,7 +175,11 @@ public class UserProfileAction implements Serializable {
 		customAttributeAction.removeCustomAttribute(inum);
 	}
 
-	public void cancel() {
+	public String cancel() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Profile modification canceled");
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private void initAttributes() {

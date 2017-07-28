@@ -1,3 +1,4 @@
+
 package org.gluu.oxtrust.action;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -24,9 +26,11 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.OxMultivalued;
+import org.xdi.service.security.Secure;
 
 @ConversationScoped
 @Named("attributeResolverAction")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class AttributeResolverAction implements Serializable {
 
 	private static final long serialVersionUID = -9125609238796284572L;
@@ -39,6 +43,9 @@ public class AttributeResolverAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+	
+	@Inject
+	private ConversationService conversationService;
 	
 	@Inject
 	private AppConfiguration applicationConfiguration;
@@ -64,9 +71,23 @@ public class AttributeResolverAction implements Serializable {
 	public String getBase() {
 		return base;
 	}
+
 	public void setBase(String base) {
 		this.base = base;
 	}
+
+	public String saveCustomAttributetoResolveImpl(){
+		String outcome = saveCustomAttributetoResolve();
+		
+		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "NameId configuration updated successfully");
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update NameId configuration");
+		}
+		
+		return outcome;
+	}
+
 	public String saveCustomAttributetoResolve(){
 		if(!enable){
 			return OxTrustConstants.RESULT_FAILURE;
@@ -94,7 +115,7 @@ public class AttributeResolverAction implements Serializable {
 		try {
 		attributeService.addAttribute(this.attribute);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to add new attribute {0}", ex, this.attribute.getInum());
+			log.error("Failed to add new attribute {0}", this.attribute.getInum(), ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new attribute");
 			return OxTrustConstants.RESULT_FAILURE;
@@ -104,7 +125,7 @@ public class AttributeResolverAction implements Serializable {
 		FileReader fr = null;
 		FileWriter fw = null;
 		PrintWriter pw = null;
-		String filePath = applicationConfiguration.getAttributeResolverPath();
+		String filePath = ""; //applicationConfiguration.getAttributeResolverPath();
 		File fileRead = new File(filePath);
 		File fileWrite = new File(filePath+".tmp");
 		try {
@@ -191,7 +212,9 @@ public class AttributeResolverAction implements Serializable {
 	}
 	
 	public String cancel(){
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Create NameId Cancelled.");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration not updated");
+		conversationService.endConversation();
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 }

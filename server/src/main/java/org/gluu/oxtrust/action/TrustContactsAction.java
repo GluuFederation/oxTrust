@@ -24,7 +24,7 @@ import org.xdi.util.Util;
 
 @ConversationScoped
 @Named("trustContactsAction")
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class TrustContactsAction implements Serializable {
 
 	private static final long serialVersionUID = -1032167044333943680L;

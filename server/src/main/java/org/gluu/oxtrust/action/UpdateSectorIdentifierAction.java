@@ -17,6 +17,7 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthClient;
@@ -75,8 +76,11 @@ public class UpdateSectorIdentifierAction implements Serializable {
     @Inject
     private ClientService clientService;
 
-    @Inject
-    private FacesMessages facesMessages;
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
     @Inject
     private AppConfiguration appConfiguration;
@@ -95,15 +99,29 @@ public class UpdateSectorIdentifierAction implements Serializable {
             	this.loginUris.addAll(clientRedirectUriList(sectorIdentifier.getClientIds()));
             this.clientDisplayNameEntries = loadClientDisplayNameEntries();
         } catch (LdapMappingException ex) {
-            log.error("Failed to load person display names", ex);
+            log.error("Failed to load login Uris", ex);
+
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
+			conversationService.endConversation();
 
             return OxTrustConstants.RESULT_FAILURE;
         }
 
         return OxTrustConstants.RESULT_SUCCESS;
     }
+    
+    public String update() {
+    	String outcome = updateImpl();
+    	
+    	if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find sector identifier");
+			conversationService.endConversation();
+    	}
+    	
+    	return outcome;
+    }
 
-    public String update() throws Exception {
+    public String updateImpl() {
         if (this.sectorIdentifier != null) {
             return OxTrustConstants.RESULT_SUCCESS;
         }
@@ -114,7 +132,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
             log.info("inum : " + inum);
             this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierByInum(inum);
         } catch (LdapMappingException ex) {
-            log.error("Failed to find sector identifier {}", ex, inum);
+            log.error("Failed to find sector identifier {}", inum, ex);
         }
 
         if (this.sectorIdentifier == null) {
@@ -125,17 +143,27 @@ public class UpdateSectorIdentifierAction implements Serializable {
         try {
             this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
             this.clientDisplayNameEntries = loadClientDisplayNameEntries();
-        } catch (LdapMappingException ex) {
+        } catch (Exception ex) {
             log.error("Failed to load person display names", ex);
 
             return OxTrustConstants.RESULT_FAILURE;
-        }
+		}
+
         log.info("returning Success");
+
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    public void cancel() {
-    }
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New sector identifier not added");
+		}
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
 
     public String save() throws Exception {
         List<DisplayNameEntry> oldClientDisplayNameEntries = null;
@@ -158,13 +186,15 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (LdapMappingException ex) {
                 log.info("error updating sector identifier ", ex);
-                log.error("Failed to update sector identifier {}", ex, this.inum);
+                log.error("Failed to update sector identifier {}", this.inum, ex);
 
-                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}'");
                 return OxTrustConstants.RESULT_FAILURE;
             } catch (Exception ex) {
-                ex.printStackTrace();
+				log.error("Failed to update sector identifier {}", this.inum, ex);
             }
+
+            facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}' updated successfully");
         } else {
             this.inum = sectorIdentifierService.generateInumForNewSectorIdentifier();
             String dn = sectorIdentifierService.getDnForSectorIdentifier(this.inum);
@@ -177,15 +207,20 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (LdapMappingException ex) {
                 log.info("error saving sector identifier ");
-                log.error("Failed to add new sector identifier {}", ex, this.sectorIdentifier.getInum());
+                log.error("Failed to add new sector identifier {}", this.sectorIdentifier.getInum(), ex);
 
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
                 return OxTrustConstants.RESULT_FAILURE;
             }
 
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}' added successfully");
+			conversationService.endConversation();
+
             this.update = true;
         }
+
         log.info(" returning success updating or saving sector identifier");
+
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
@@ -194,11 +229,17 @@ public class UpdateSectorIdentifierAction implements Serializable {
             // Remove sectorIdentifier
             try {
                 sectorIdentifierService.removeSectorIdentifier(this.sectorIdentifier);
-                return OxTrustConstants.RESULT_SUCCESS;
+
+                facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}' removed successfully");
+				conversationService.endConversation();
+
+				return OxTrustConstants.RESULT_SUCCESS;
             } catch (LdapMappingException ex) {
-                log.error("Failed to remove sector identifier {}", ex, this.sectorIdentifier.getInum());
+                log.error("Failed to remove sector identifier {}", this.sectorIdentifier.getInum(), ex);
             }
         }
+
+        facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}'");
 
         return OxTrustConstants.RESULT_FAILURE;
     }

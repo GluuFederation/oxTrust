@@ -66,7 +66,7 @@
             <rich:menuItem label="#{msg['layout.manageGroups']}" action="#{menuAction.endConversation('/group/groupInventory.xhtml')}" rendered="#{permissionService.hasPermission('group', 'access')}" />
             <rich:menuItem label="#{msg['layout.managePeople']}" action="#{menuAction.endConversation('/person/personInventory.xhtml')}" rendered="#{permissionService.hasPermission('person', 'access')}" />
             <rich:menuItem label="#{msg['layout.addPerson']}" action="#{menuAction.endConversation('/person/addPerson.xhtml')}" rendered="#{permissionService.hasPermission('person', 'access')}" />
-            <rich:menuItem label="#{msg['layout.importPeople']}" action="#{menuAction.endConversation('/person/personImport.xhtml')}" rendered="#{permissionService.hasPermission('import', 'person')}" />
+            <rich:menuItem label="#{msg['layout.importPeople']}" action="#{menuAction.endConversation('/person/personImport.xhtml')}" rendered="#{permissionService.hasPermission('person', 'import')}" />
         </rich:dropDownMenu>
 
         <rich:dropDownMenu mode="server" label="#{msg['layout.personal']}" rendered="#{permissionService.hasPermission('profile', 'access') or permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}">

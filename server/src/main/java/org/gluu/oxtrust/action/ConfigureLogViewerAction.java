@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
@@ -20,6 +21,7 @@ import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -45,6 +47,9 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private JsonService jsonService;
@@ -81,10 +86,13 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	public String update() {
 		if (!validateLists()) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Log viewer configuration updated");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		updateAppliance();
+
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Failed to update log viewer configuration");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -108,7 +116,11 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		return result;
 	}
 
-	public void cancel() {
+	public String cancel() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration update were canceled");
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private LogViewerConfig prepareLogViewerConfig() {
@@ -119,7 +131,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			try {
 				logViewerConfig = jsonService.jsonToObject(appliance.getOxLogViewerConfig(), LogViewerConfig.class);
 			} catch (Exception ex) {
-				log.error("Failed to load log viewer configuration '{}'", ex, oxLogViewerConfig);
+				log.error("Failed to load log viewer configuration '{}'", oxLogViewerConfig, ex);
 			}
 		}
 

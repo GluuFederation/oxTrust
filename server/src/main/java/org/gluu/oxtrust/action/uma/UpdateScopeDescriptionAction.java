@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.action.uma;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -29,6 +31,7 @@ import org.xdi.util.StringHelper;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
@@ -41,7 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Action class for view and update UMA scope description
+ * Action class for view and update UMA resource
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
@@ -56,6 +59,12 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	protected GluuCustomPerson currentPerson;
@@ -100,6 +109,14 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			scopeDescriptionService.prepareScopeDescriptionBranch();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to initialize form", ex);
+
+			if (update) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find UMA resource");
+			} else {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add UMA resource");
+			}
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -127,13 +144,13 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		log.debug("Loading UMA scope description '{}'", this.scopeInum);
+		log.debug("Loading UMA resource '{}'", this.scopeInum);
 		try {
 			String scopeDn = scopeDescriptionService.getDnForScopeDescription(this.scopeInum);
 			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find scope description '{}'", ex, this.scopeInum);
+			log.error("Failed to find scope description '{}'", this.scopeInum, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -147,7 +164,16 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public void cancel() {
+	public String cancel() {
+		if (update) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' not updated");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource not added");
+		}
+
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() {
@@ -158,9 +184,15 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to update scope description '{}'", ex, this.scopeDescription.getId());
+				log.error("Failed to update scope description '{}'", this.scopeDescription.getId(), ex);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+	        log.debug("Scope description were updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' updated successfully");
+
+			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
 			// Check if scope description with this name already exist
 			UmaScopeDescription exampleScopeDescription = new UmaScopeDescription();
@@ -179,15 +211,21 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				scopeDescriptionService.addScopeDescription(this.scopeDescription);
 			} catch (LdapMappingException ex) {
-				log.error("Failed to add new scope description '{}'", ex, this.scopeDescription.getId());
-				return OxTrustConstants.RESULT_FAILURE;
+				log.error("Failed to add new UMA resource '{}'", this.scopeDescription.getId(), ex);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
+
+                return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			this.update = true;
-		}
+	        log.debug("Scope description were add successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' added successfully");
+			conversationService.endConversation();
 
-		log.debug("Scope description were {} successfully", (this.update ? "added" : "updated"));
-		return OxTrustConstants.RESULT_SUCCESS;
+			this.update = true;
+			this.scopeInum = inum; 
+
+			return OxTrustConstants.RESULT_UPDATE;
+		}
 	}
 
 	public String delete() {
@@ -195,11 +233,17 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			// Remove scope description
 			try {
 				scopeDescriptionService.removeScopeDescription(this.scopeDescription);
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
+				conversationService.endConversation();
+
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (LdapMappingException ex) {
-				log.error("Failed to remove scope description {}", ex, this.scopeDescription.getId());
+				log.error("Failed to remove scope description {}", this.scopeDescription.getId(), ex);
 			}
 		}
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -235,7 +279,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		try {
 			this.scopeDescription.setFaviconImageAsXml(jsonService.objectToJson(this.curIconImage));
 		} catch (Exception ex) {
-			log.error("Failed to store icon image: '{}'", ex, newIcon);
+			log.error("Failed to store icon image: '{}'", newIcon, ex);
 		}
 	}
 
@@ -245,7 +289,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				this.curIconImage = jsonService.jsonToObject(faviconImageAsXml, GluuImage.class);
 			} catch (Exception ex) {
-				log.error("Faield to deserialize image: '{}'", ex, faviconImageAsXml);
+				log.error("Faield to deserialize image: '{}'", faviconImageAsXml, ex);
 			}
 		}
 	}

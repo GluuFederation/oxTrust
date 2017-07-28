@@ -32,7 +32,7 @@ import org.xdi.util.StringHelper;
 
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
+@Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class FederationDeconstructionAction implements Serializable {
 	private static final long serialVersionUID = 1216276324815043884L;
 

@@ -30,17 +30,6 @@
                 <h:inputTextarea styleClass="form-control" value="#{_scope.description}" rows="3" cols="80" maxlength="4000" id="descriptionId" />
             </ox:decorate>
   
-            <ox:decorate label="#{msg['scope.scopeType']}">
-                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
-                	<f:selectItem noSelectionOption="true"  itemLabel="Default"/>
-                    <f:selectItems value="#{scopeService.scopeTypes}" var="_type" itemLabel="#{_type.displayName}" />
-                    <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
-                    <a4j:ajax event="change"
-						render="dynamicScripts, selectedClaims"
-						execute="@this" />
-                </h:selectOneMenu>
-            </ox:decorate>
-  
             <ox:decorate label="#{msg['scope.defaultScope']}">
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
                 	<f:selectItem noSelectionOption="true"  itemLabel="Select"/>

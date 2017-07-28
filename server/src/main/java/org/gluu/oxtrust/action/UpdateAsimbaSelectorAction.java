@@ -24,6 +24,7 @@ import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.asimba.util.ldap.selector.ApplicationSelectorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.security.Identity;
@@ -62,6 +63,9 @@ public class UpdateAsimbaSelectorAction implements Serializable {
     
     @Inject
     private AsimbaService asimbaService;
+    
+    @Inject
+    private ConversationService conversationService;
     
     @Produces
     private ApplicationSelectorEntry selector;
@@ -142,6 +146,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
             asimbaService.addApplicationSelectorEntry(selector);
         }
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -151,12 +156,14 @@ public class UpdateAsimbaSelectorAction implements Serializable {
             asimbaService.updateApplicationSelectorEntry(selector);
         }
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     public String cancel() {
         log.info("cancel() Selector", selector);
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -166,6 +173,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
             asimbaService.removeApplicationSelectorEntry(selector);
         }
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -177,6 +185,7 @@ public class UpdateAsimbaSelectorAction implements Serializable {
                     selectorList = asimbaService.searchSelectors(searchPattern, 0);
                 } catch (Exception ex) {
                     log.error("LDAP search exception", ex);
+                    return OxTrustConstants.RESULT_FAILURE;
                 }
             } else {
                 //list loading

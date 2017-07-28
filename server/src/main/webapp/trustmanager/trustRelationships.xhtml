@@ -4,11 +4,11 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{trustRelationshipInventoryAction.setSearchPattern(param['searchPattern'])}"/>
+    <f:metadata>    
+        <f:viewParam name="searchPattern" value="#{trustRelationshipInventoryAction.searchPattern}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{trustRelationshipInventoryAction.start}"
-                      if="#{permissionService.hasPermission('trust', 'access') and trustRelationshipInventoryAction.trustedSpList == null and identity.checkLoggedIn()}"
+                      if="#{trustRelationshipInventoryAction.trustedSpList == null}"
                       onPostback="false"/>
     </f:metadata>
 

@@ -4,12 +4,10 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{updateScopeDescriptionAction.setScopeInum(param['scope'])}"/>
+    <f:metadata>    
+        <f:viewParam name="scope" value="#{updateScopeDescriptionAction.scopeInum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateScopeDescriptionAction.modify}"
-                      if="#{permissionService.hasPermission('uma', 'access') and updateScopeDescriptionAction.scopeDescription == null and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateScopeDescriptionAction.modify}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
@@ -66,17 +64,6 @@
                                                                value="#{_scopeDescription.displayName}"/>
                                         </ox:decorate>
                                         <h:panelGroup id="internalTypeGroupId">
-                                            <ox:decorate id="scope" label="#{msg['uma.id']}"
-                                                         rendered="#{_scopeDescription.type.value eq 'internal'}">
-                                                <rich:inplaceInput defaultLabel="Click to enter Scope Name" id="scope"
-                                                                   inputWidth="180" maxlength="300" required="true"
-                                                                   value="#{_scopeDescription.id}"/>
-                                            </ox:decorate>
-
-                                            <ox:decorate label="#{msg['uma.icon']}"
-                                                         rendered="#{_scopeDescription.type.value eq 'internal'}">
-
-
                                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
                                                              id="iconPanelId" width="100%">
                                                     <rich:fileUpload acceptedTypes="jpg, jpeg, gif, png, bmp"
@@ -109,25 +96,6 @@
                                                                 render="iconPanelId" value="#{msg['uma.remove']}"/>
                                                     </h:panelGrid>
                                                 </h:panelGrid>
-
-
-                                            </ox:decorate>
-                                        </h:panelGroup>
-
-                                        <h:panelGroup id="externalTypeGroupId">
-                                            <ox:decorate label="#{msg['uma.iconURI']}"
-                                                         rendered="#{_scopeDescription.type.value eq 'external'}">
-                                                <rich:inplaceInput defaultLabel="Click to enter Icon Url" id="iconUrlId"
-                                                                   inputWidth="180" maxlength="60" required="true"
-                                                                   value="#{_scopeDescription.iconUrl}"/>
-                                            </ox:decorate>
-
-                                            <ox:decorate label="#{msg['uma.url']}"
-                                                         rendered="#{_scopeDescription.type.value eq 'external'}">
-                                                <rich:inplaceInput defaultLabel="Click to enter Url" id="urlId"
-                                                                   inputWidth="180" maxlength="60" required="true"
-                                                                   value="#{_scopeDescription.url}"/>
-                                            </ox:decorate>
                                         </h:panelGroup>
 
                                         <ox:decorate id="responseTypes" label="#{msg['uma.authorizationPolicy']}">
@@ -183,8 +151,7 @@
                                                            rendered="#{updateScopeDescriptionAction.update}"
                                                            style="margin-left:3px;" styleClass="btn btn-primary"
                                                            value="Delete"/>
-                                        <h:button action="#{updateScopeDescriptionAction.cancel}" immediate="true"
-                                                  propagation="end" style="margin-left:3px;"
+                                        <h:commandButton action="#{updateScopeDescriptionAction.cancel}" immediate="true" style="margin-left:3px;"
                                                   styleClass="btn btn-primary" value="#{msg['uma.cancel']}"/>
                                     </h:panelGroup>
                                 </div>
@@ -192,7 +159,6 @@
                         </div>
                     </div>
                 </h:panelGroup>
-
             </section>
         </h:form>
 

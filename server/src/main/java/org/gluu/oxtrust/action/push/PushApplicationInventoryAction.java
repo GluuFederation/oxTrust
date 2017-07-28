@@ -10,11 +10,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.model.push.PushApplication;
 import org.gluu.oxtrust.service.push.PushApplicationConfigurationService;
 import org.gluu.oxtrust.service.push.PushApplicationService;
@@ -30,13 +33,19 @@ import org.xdi.util.Util;
  */
 @Named("pushApplicationInventoryAction")
 @ConversationScoped
-@Secure("#{permissionService.hasPermission('oxpush', 'access')}")
+@Secure("#{permissionService.hasPermission('super-gluu', 'access')}")
 public class PushApplicationInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -2233178742652918022L;
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -67,8 +76,11 @@ public class PushApplicationInventoryAction implements Serializable {
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
-			log.error("Failed to find scopes", ex);
+			log.error("Failed to find Super-Gluu applications", ex);
 		}
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find Super-Gluu applications");
+		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

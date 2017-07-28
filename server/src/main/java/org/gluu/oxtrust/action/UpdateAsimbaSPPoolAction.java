@@ -25,6 +25,7 @@ import javax.validation.constraints.Size;
 
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.security.Identity;
@@ -63,6 +64,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
     
     @Inject
     private AsimbaService asimbaService;
+    
+    @Inject
+    private ConversationService conversationService;
     
     @Produces
     private RequestorPoolEntry spPool;
@@ -137,6 +141,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
             asimbaService.addRequestorPoolEntry(spPool);
         }
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -147,12 +152,14 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
             asimbaService.updateRequestorPoolEntry(spPool);
         }
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
     public String cancel() {
         log.info("cancel() RequestorPool", spPool);
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -162,6 +169,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
             asimbaService.removeRequestorPoolEntry(spPool);
         }
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -173,6 +181,7 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
                     spPoolList = asimbaService.searchRequestorPools(searchPattern, 0);
                 } catch (Exception ex) {
                     log.error("LDAP search exception", ex);
+                    return OxTrustConstants.RESULT_FAILURE;
                 }
             } else {
                 //list loading

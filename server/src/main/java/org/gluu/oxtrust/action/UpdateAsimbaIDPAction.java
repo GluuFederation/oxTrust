@@ -16,7 +16,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
@@ -24,6 +23,7 @@ import javax.validation.constraints.Size;
 
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
@@ -65,6 +65,9 @@ public class UpdateAsimbaIDPAction implements Serializable {
     @Inject
     private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
     
+    @Inject
+    private ConversationService conversationService;
+    
     private IDPEntry idp;
     
     private String selectedIdpId = "";
@@ -82,10 +85,6 @@ public class UpdateAsimbaIDPAction implements Serializable {
     private String searchPattern = "";
     
     private byte uploadedCertBytes[] = null;
-    
-    public UpdateAsimbaIDPAction() {
-        
-    }
     
     @PostConstruct
     public void init() {        
@@ -155,9 +154,13 @@ public class UpdateAsimbaIDPAction implements Serializable {
                 String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, idp.getId());
             }
         } catch (Exception e) {
-            log.error("Requestor certificate - add CertificateFile exception", e);
+            log.error("IDP certificate - add CertificateFile exception", e);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "IDP certificate - add CertificateFile exception");
+            conversationService.endConversation();
+            return OxTrustConstants.RESULT_FAILURE;
         }
         clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -175,9 +178,13 @@ public class UpdateAsimbaIDPAction implements Serializable {
                 String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, idp.getId());
             }
         } catch (Exception e) {
-            log.error("Requestor certificate - add CertificateFile exception", e);
+            log.error("IDP certificate - add CertificateFile exception", e);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "IDP certificate - add CertificateFile exception");
+            conversationService.endConversation();
+            return OxTrustConstants.RESULT_FAILURE;
         }
         newEntry = false;
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -185,6 +192,16 @@ public class UpdateAsimbaIDPAction implements Serializable {
     public String cancel() {
         log.info("cancel IDP", idp);
         clearEdit();
+        conversationService.endConversation();
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
+    
+    public String delete() {
+        synchronized (svnSyncTimer) {
+            asimbaService.removeIDPEntry(idp);
+        }
+        clearEdit();
+        conversationService.endConversation();
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -234,14 +251,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
             facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add Certificate ERROR: ", e.getMessage());
             return OxTrustConstants.RESULT_VALIDATION_ERROR;
         }
-        return OxTrustConstants.RESULT_SUCCESS;
-    }
-    
-    public String delete() {
-        synchronized (svnSyncTimer) {
-            asimbaService.removeIDPEntry(idp);
-        }
-        clearEdit();
+        facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificate uploaded");
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -253,6 +263,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
                     idpList = asimbaService.searchIDPs(searchPattern, 0);
                 } catch (Exception ex) {
                     log.error("LDAP search exception", ex);
+                    return OxTrustConstants.RESULT_FAILURE;
                 }
             } else {
                 //list loading

@@ -136,7 +136,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 
 			scopeDescription = scopeDescriptions.get(0);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find scope description '{}'", ex, this.scopeId);
+			log.error("Failed to find scope description '{}'", this.scopeId, ex);
 			return null;
 		}
 

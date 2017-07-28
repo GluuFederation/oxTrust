@@ -9,9 +9,8 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -24,9 +23,8 @@ import org.xdi.service.security.Secure;
  * 
  * @author Oleksiy Tataryn Date: 11.14.2013
  */
-@ConversationScoped
-@Named("applianceStatusAction")
-@Secure("#{identity.loggedIn}")
+@RequestScoped
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ApplianceStatusAction implements Serializable {
 
 	private static final long serialVersionUID = -7470520478553992898L;

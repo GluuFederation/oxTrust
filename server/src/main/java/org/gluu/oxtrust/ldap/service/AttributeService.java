@@ -430,7 +430,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return Array of Usage types
 	 */
 	public GluuAttributeUsageType[] getAttributeUsageTypes() {
-		return GluuAttributeUsageType.values();
+		return new GluuAttributeUsageType[] { GluuAttributeUsageType.OPENID };
 	}
 
 	/**

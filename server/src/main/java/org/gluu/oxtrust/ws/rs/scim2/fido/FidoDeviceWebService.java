@@ -76,8 +76,8 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	@Inject
 	private Scim2FidoDeviceService scim2FidoDeviceService;
 
-        @Inject
-        private CopyUtils2 copyUtils2;
+    @Inject
+    private CopyUtils2 copyUtils2;
 
 	@GET
 	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
@@ -85,7 +85,6 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	@ApiOperation(value = "Search devices", notes = "Returns a list of devices (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response searchDevices(
 		@HeaderParam("Authorization") String authorization,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@QueryParam("userId") final String userId,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
@@ -97,7 +96,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(token);
+			authorizationResponse = processTestModeAuthorization(authorization);
 		} else {
 			authorizationResponse = processAuthorization(authorization);
 		}
@@ -169,7 +168,6 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	@ApiOperation(value = "Find device by id", notes = "Returns a device by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = FidoDevice.class)
 	public Response getDeviceById(
 		@HeaderParam("Authorization") String authorization,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@PathParam("id") String id,
 		@QueryParam("userId") final String userId,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
@@ -177,7 +175,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(token);
+			authorizationResponse = processTestModeAuthorization(authorization);
 		} else {
 			authorizationResponse = processAuthorization(authorization);
 		}
@@ -243,7 +241,6 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	@ApiOperation(value = "Update device", notes = "Update device (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = FidoDevice.class)
 	public Response updateDevice(
 		@HeaderParam("Authorization") String authorization,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@PathParam("id") String id,
 		@ApiParam(value = "FidoDevice", required = true) FidoDevice fidoDevice,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
@@ -251,7 +248,7 @@ public class FidoDeviceWebService extends BaseScimWebService {
 		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(token);
+			authorizationResponse = processTestModeAuthorization(authorization);
 		} else {
 			authorizationResponse = processAuthorization(authorization);
 		}
@@ -305,13 +302,12 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	@ApiOperation(value = "Delete device", notes = "Delete device (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteDevice(
 		@HeaderParam("Authorization") String authorization,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse;
 		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
 			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(token);
+			authorizationResponse = processTestModeAuthorization(authorization);
 		} else {
 			authorizationResponse = processAuthorization(authorization);
 		}
@@ -346,7 +342,6 @@ public class FidoDeviceWebService extends BaseScimWebService {
 	@ApiOperation(value = "Search devices POST /.search", notes = "Returns a list of devices (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
 	public Response searchDevicesPost(
 		@HeaderParam("Authorization") String authorization,
-		@QueryParam(OxTrustConstants.QUERY_PARAMETER_TEST_MODE_OAUTH2_TOKEN) final String token,
 		@QueryParam("userId") final String userId,
 		@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) throws Exception {
 
@@ -357,7 +352,6 @@ public class FidoDeviceWebService extends BaseScimWebService {
 			// Authorization check is done in searchDevices()
 			Response response = searchDevices(
 				authorization,
-				token,
 				userId,
 				searchRequest.getFilter(),
 				searchRequest.getStartIndex(),

@@ -25,6 +25,7 @@ import javax.mail.MessagingException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
@@ -62,6 +63,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private GluuCustomPerson currentPerson;
@@ -112,6 +116,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 		if (!StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultOrganization)
 				|| !StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultApplliance)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare for organization configuration update");
+			conversationService.endConversation();
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -195,8 +202,11 @@ public class UpdateOrganizationAction implements Serializable {
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update organization", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update organization");
+
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+		
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Organization configuration updated successfully");
 
 		return modify();
 	}
@@ -234,15 +244,19 @@ public class UpdateOrganizationAction implements Serializable {
 			mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">",
 					appliance.getSmtpFromEmailAddress(), "SMTP Server Configuration Verification",
 					"SMTP Server Configuration Verification Successful.");
+			log.info("Connection Successful");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
+
+            return OxTrustConstants.RESULT_SUCCESS;
 		} catch (AuthenticationFailedException ex) {
 			log.error("SMTP Authentication Error: ", ex);
-			return OxTrustConstants.RESULT_FAILURE;
 		} catch (MessagingException ex) {
 			log.error("SMTP Host Connection Error", ex);
-			return OxTrustConstants.RESULT_FAILURE;
 		}
-		log.info("Connection Successful");
-		return OxTrustConstants.RESULT_SUCCESS;
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to connect to SMTP server");
+
+		return OxTrustConstants.RESULT_FAILURE;
 	}
 
 	private String modifyApplliance() {
@@ -305,9 +319,14 @@ public class UpdateOrganizationAction implements Serializable {
 		return this.buildNumber;
 	}
 
-	public void cancel() throws Exception {
+	public String cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();
+		
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Organization configuration not updated");
+		conversationService.endConversation();
+		
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public void setCustLogoImage(FileUploadEvent event) {
@@ -336,7 +355,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 			this.organization.setLogoImage(imageService.getXMLFromGluuImage(newLogoImage));
 		} catch (Exception ex) {
-			log.error("Failed to store icon image: '{}'", ex, newLogoImage);
+			log.error("Failed to store icon image: '{}'", newLogoImage, ex);
 		}
 	}
 
@@ -356,7 +375,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.deleteImage(this.curLogoImage);
 			} catch (Exception ex) {
-				log.error("Failed to delete temporary icon image: '{}'", ex, this.curLogoImage);
+				log.error("Failed to delete temporary icon image: '{}'", this.curLogoImage, ex);
 			}
 		}
 	}
@@ -384,7 +403,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.deleteImage(this.oldLogoImage);
 			} catch (Exception ex) {
-				log.error("Failed to remove old icon image: '{}'", ex, this.oldLogoImage);
+				log.error("Failed to remove old icon image: '{}'", this.oldLogoImage, ex);
 			}
 		}
 
@@ -394,7 +413,7 @@ public class UpdateOrganizationAction implements Serializable {
 				imageService.moveLogoImageToPersistentStore(this.curLogoImage);
 				this.organization.setLogoImage(imageService.getXMLFromGluuImage(curLogoImage));
 			} catch (Exception ex) {
-				log.error("Failed to move new icon image to persistence store: '{}'", ex, this.curLogoImage);
+				log.error("Failed to move new icon image to persistence store: '{}'", this.curLogoImage, ex);
 			}
 		}
 
@@ -427,7 +446,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 			this.organization.setFaviconImage(imageService.getXMLFromGluuImage(newFaviconImage));
 		} catch (Exception ex) {
-			log.error("Failed to store favicon image: '{}'", ex, newFaviconImage);
+			log.error("Failed to store favicon image: '{}'", newFaviconImage, ex);
 		}
 	}
 
@@ -447,7 +466,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.deleteImage(this.curFaviconImage);
 			} catch (Exception ex) {
-				log.error("Failed to delete temporary favicon image: '{}'", ex, this.curFaviconImage);
+				log.error("Failed to delete temporary favicon image: '{}'", this.curFaviconImage, ex);
 			}
 		}
 	}
@@ -475,7 +494,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.deleteImage(this.oldFaviconImage);
 			} catch (Exception ex) {
-				log.error("Failed to remove old favicon image: '{}'", ex, this.oldFaviconImage);
+				log.error("Failed to remove old favicon image: '{}'", this.oldFaviconImage, ex);
 			}
 		}
 
@@ -484,7 +503,7 @@ public class UpdateOrganizationAction implements Serializable {
 			try {
 				imageService.moveImageToPersistentStore(this.curFaviconImage);
 			} catch (Exception ex) {
-				log.error("Failed to move new favicon image to persistence store: '{}'", ex, this.curFaviconImage);
+				log.error("Failed to move new favicon image to persistence store: '{}'", this.curFaviconImage, ex);
 			}
 		}
 

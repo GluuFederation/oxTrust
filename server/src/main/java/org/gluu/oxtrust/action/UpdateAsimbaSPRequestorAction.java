@@ -28,6 +28,7 @@ import javax.validation.constraints.Size;
 import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.security.Identity;
@@ -73,6 +74,9 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 
 	@Inject
 	private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
+    
+        @Inject
+        private ConversationService conversationService;
 
 	@Produces
 	private RequestorEntry spRequestor;
@@ -159,12 +163,16 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 		try {
 			if (uploadedCertBytes != null) {
 				String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, spRequestor.getId());
-				log.error("Add CertificateFile: " + message);
+				log.info("Add CertificateFile: " + message);
 			}
 		} catch (Exception e) {
 			log.error("Requestor certificate - add CertificateFile exception", e);
+                        facesMessages.add(FacesMessage.SEVERITY_ERROR, "Requestor certificate - add CertificateFile exception");
+                        conversationService.endConversation();
+                        return OxTrustConstants.RESULT_FAILURE;
 		}
 		clearEdit();
+                conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -179,19 +187,23 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 		try {
 			if (uploadedCertBytes != null) {
 				String message = asimbaXMLConfigurationService.addCertificateFile(uploadedCertBytes, spRequestor.getId());
-				log.error("Add CertificateFile: " + message);
+				log.info("Add CertificateFile: " + message);
 			}
 		} catch (Exception e) {
 			log.error("Requestor certificate - add CertificateFile exception", e);
+                        facesMessages.add(FacesMessage.SEVERITY_ERROR, "Requestor certificate - add CertificateFile exception");
+                        conversationService.endConversation();
+                        return OxTrustConstants.RESULT_FAILURE;
 		}
 		newEntry = false;
-
+                conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String cancel() {
 		log.info("cancel() Requestor", spRequestor);
 		clearEdit();
+                conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -201,6 +213,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 			asimbaService.removeRequestorEntry(spRequestor);
 		}
 		clearEdit();
+                conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -260,6 +273,7 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 					spRequestorList = asimbaService.searchRequestors(searchPattern, 0);
 				} catch (Exception ex) {
 					log.error("LDAP search exception", ex);
+                                        return OxTrustConstants.RESULT_FAILURE;
 				}
 			} else {
 				// list loading

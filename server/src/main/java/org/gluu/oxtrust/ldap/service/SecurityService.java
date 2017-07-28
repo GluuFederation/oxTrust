@@ -89,7 +89,7 @@ public class SecurityService implements Serializable {
 				}
 			}
 		} catch (Exception ex) {
-			log.error("Failed to find user '{}' in ldap", ex, userName);
+			log.error("Failed to find user '{}' in ldap", userName, ex);
 		}
 			
 		return false;

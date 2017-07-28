@@ -12,10 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
@@ -24,6 +28,7 @@ import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.Tuple;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.service.security.Secure;
@@ -36,12 +41,26 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("registrationManagementAction")
-@Secure("#{identity.loggedIn}")
 //TODO: Remove configureInterceptors, registrationInterceptors, removeCustomAuthenticationConfiguration, addRegistrationInterceptor
 //TODO: Clean up LDAP OC
 public class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
+
+	@Inject
+	private Logger log;
+
+	@Inject 
+	private OrganizationService organizationService;
+	
+	@Inject
+	private AttributeService attributeService;
+
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 	
 	private boolean configureInterceptors;
 
@@ -51,28 +70,32 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 	
 	private boolean configureRegistrationForm;
 	
-	@Inject
-	private AttributeService attributeService;
-	
 	private List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
 	private List<GluuAttribute> selectedAttributes = new ArrayList<GluuAttribute>();
 	
 	private String searchPattern;
 	
 	private String oldSearchPattern;
-	
-	@Inject 
-	private OrganizationService organizationService;
-	
+
 	@Inject
-	private Logger log;
+	private JsonConfigurationService jsonConfigurationService;
 
 	private List<String> customScriptTypes;
 
 	private String attributeName;
 
 	private String attributeData;
+
+	private AppConfiguration oxTrustappConfiguration;
 	
+	public AppConfiguration getOxTrustappConfiguration() {
+		return oxTrustappConfiguration;
+	}
+
+	public void setOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
+		this.oxTrustappConfiguration = oxTrustappConfiguration;
+	}
+
 	public String search() {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -103,6 +126,9 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		customScriptTypes.add(OxTrustConstants.INIT_REGISTRATION_SCRIPT);
 		customScriptTypes.add(OxTrustConstants.PRE_REGISTRATION_SCRIPT);
 		customScriptTypes.add(OxTrustConstants.POST_REGISTRATION_SCRIPT);
+		
+
+		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 
 		GluuOrganization org = organizationService.getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
@@ -173,31 +199,35 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		return result;
 	}
 
-	public String save(){
+	public String save() {
 		GluuOrganization org = organizationService.getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
-		if(config == null){
+		if (config == null) {
 			config = new RegistrationConfiguration();
 		}
 		config.setRegistrationInterceptorsConfigured(configureInterceptors);
-		if(configureInterceptors){
+		if (configureInterceptors) {
 			config.setRegistrationInterceptorScripts(registrationInterceptors);
-		}else{
+		} else {
 			config.setRegistrationInterceptorScripts(null);
 		}
-		
-        config.setCaptchaDisabled(captchaDisabled);
-		
+
+		config.setCaptchaDisabled(captchaDisabled);
+
 		List<String> attributeList = new ArrayList<String>();
-		if(configureRegistrationForm){
-			for(GluuAttribute attribute: selectedAttributes){
+		if (configureRegistrationForm) {
+			for (GluuAttribute attribute : selectedAttributes) {
 				attributeList.add(attribute.getInum());
 			}
 		}
 		config.setAdditionalAttributes(attributeList);
-		
 		org.setOxRegistrationConfiguration(config);
 		organizationService.updateOrganization(org);
+
+		jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
+
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Registration configuration updated successfully");
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
@@ -257,7 +287,10 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
-	public String cancel(){
+	public String cancel() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Registration configuration not updated");
+		conversationService.endConversation();
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	

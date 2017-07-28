@@ -53,7 +53,7 @@ public class TemplateService implements Serializable {
 		try {
 			Velocity.mergeTemplate(template + ".vm", "UTF-8", context, sw);
 		} catch (Exception ex) {
-			log.error("Failed to load velocity template '{}'", ex, template);
+			log.error("Failed to load velocity template '{}'", template, ex);
 			return null;
 		}
 
@@ -64,7 +64,7 @@ public class TemplateService implements Serializable {
 		try {
 			FileUtils.writeStringToFile(new File(confFile), conf, "UTF-8");
 		} catch (IOException ex) {
-			log.error("Failed to write IDP configuration file '{}'", ex, confFile);
+			log.error("Failed to write IDP configuration file '{}'", confFile, ex);
 			ex.printStackTrace();
 			return false;
 		}

@@ -4,12 +4,10 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{umaInventoryAction.setSearchPattern(param['searchPattern'])}"/>
+    <f:metadata>        
+        <f:viewParam name="searchPattern" value="#{umaInventoryAction.searchPattern}" />
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{umaInventoryAction.start}"
-                      if="#{permissionService.hasPermission('uma', 'access') and not umaInventoryAction.initialized and identity.checkLoggedIn()}"
-                      onPostback="false"/>
+        <f:viewAction action="#{umaInventoryAction.start}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
@@ -41,8 +39,6 @@
                         <div style="display: inline-block; width: 100% !important;">
                             <h:form>
                                 <ox:decorate id="searchPattern" label="#{msg['uma.searchKey']}" style="height:60px;">
-
-
                                     <h:inputText alt="Search parameters for UMA resource set like Inum, Display Name"
                                                  id="searchPatternId" maxlength="30" placeholder="Search Key" size="30"
                                                  style="width:50%;float: left;" styleClass="form-control"
@@ -51,21 +47,16 @@
                                                        render="resourcesListId, scopesListId"
                                                        style="float: left;margin-left:5px;" styleClass="btn btn-primary"
                                                        value="#{msg['uma.search']}"/>
-
-
                                 </ox:decorate>
 
                                 <div class="nav-tabs-custom" style="margin-bottom: 0px;">
-
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="resourceTab">
                                             <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
                                                          width="100%">
 
-                                                <h:button outcome="/uma/resource/modifyResourceSet"
-                                                          styleClass="btn btn-primary"
-                                                          value="#{msg['uma.addResourceSet']}">
-                                                </h:button>
+			                                    <h:link includeViewParams="false" outcome="/uma/resource/modifyResource"
+			                                            styleClass="btn btn-primary" value="#{msg['uma.addResourceSet']}"/>
 
                                                 <richext:spacer height="8"/>
 
@@ -82,7 +73,7 @@
                                                     <rich:column sortBy="#{_row.name}">
                                                         <f:facet name="header">#{msg['uma.name']}</f:facet>
                                                         <h:link includeViewParams="false"
-                                                                outcome="/uma/resource/modifyResourceSet"
+                                                                outcome="/uma/resource/modifyResource"
                                                                 value="#{_row.name}">
                                                             <f:param name="resource" value="#{_row.inum}"/>
                                                         </h:link>
@@ -118,17 +109,13 @@
                                                 </rich:dataTable>
                                             </h:panelGrid>
                                         </div>
-
                                     </div>
                                 </div>
                             </h:form>
-
                         </div>
-
                     </div>
                 </div>
             </div>
-
 
         </section>
     </ui:define>

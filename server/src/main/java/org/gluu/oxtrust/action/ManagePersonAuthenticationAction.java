@@ -23,6 +23,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
@@ -72,6 +73,9 @@ public class ManagePersonAuthenticationAction
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
 
 	@Inject
 	private ImageService imageService;
@@ -125,6 +129,17 @@ public class ManagePersonAuthenticationAction
 	private AppConfiguration appConfiguration;
 
 	public String modify() {
+		String outcome = modifyImpl();
+		
+		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare for person authentication configuration update");
+			conversationService.endConversation();
+		}
+		
+		return outcome;
+	}
+
+	public String modifyImpl() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
@@ -214,7 +229,10 @@ public class ManagePersonAuthenticationAction
 
 		reset();
 
-		return modify();
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Person authentication configuration updated successfully");
+		conversationService.endConversation();
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private void reset() {
@@ -226,7 +244,11 @@ public class ManagePersonAuthenticationAction
 		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
 	}
 
-	public void cancel() throws Exception {
+	public String cancel() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Person authentication configuration not updated");
+		conversationService.endConversation();
+		
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private Object jsonToObject(String json, Class<?> clazz)
@@ -309,16 +331,20 @@ public class ManagePersonAuthenticationAction
 					PropertiesDecrypter.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "LDAP Connection Test succeeded!");
+
 				return OxTrustConstants.RESULT_SUCCESS;
 
 			}
 			connectionProvider.closeConnectionPool();
-			return OxTrustConstants.RESULT_FAILURE;
-
 		} catch (Exception ex) {
 			log.error("Could not connect to LDAP", ex);
-			return OxTrustConstants.RESULT_FAILURE;
 		}
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to connect to LDAP server");
+
+		return OxTrustConstants.RESULT_FAILURE;
 	}
 
 	private String buildServersString(List<SimpleProperty> servers) {

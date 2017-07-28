@@ -75,7 +75,7 @@ public class ImportPersonConfiguration {
 					try {
 						attr = attributeService.getAttributeByName(attributeName);
 					} catch (EntryPersistenceException ex) {
-						log.error("Failed to load attribute '{}' definition from LDAP", ex, attributeName);
+						log.error("Failed to load attribute '{}' definition from LDAP", attributeName, ex);
 					}
 					if (attr == null) {
 						log.warn("Failed to find attribute '{}' definition in LDAP", attributeName);

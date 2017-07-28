@@ -14,10 +14,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.Size;
 
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -49,6 +51,9 @@ public class CertificateManagementAction implements Serializable {
     @Inject
     private Logger log;
 
+	@Inject
+	private FacesMessages facesMessages;
+
     @Inject
     private SvnSyncTimer svnSyncTimer;
     
@@ -57,7 +62,7 @@ public class CertificateManagementAction implements Serializable {
 
     @Inject
     private ApplianceService applianceService;
-    
+
     private KeystoreWrapper asimbaKeystore;
     
     private List<X509CertificateShortInfo> asimbaCertificates;
@@ -103,10 +108,11 @@ public class CertificateManagementAction implements Serializable {
         refresh();
         return OxTrustConstants.RESULT_SUCCESS;
     }
-    
+
     public String cancel() {
         log.info("cancel CertificateManagement");
         
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificates not updated");
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
