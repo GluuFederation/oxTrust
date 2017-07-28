@@ -283,22 +283,4 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	 */
 	Map<String[], String> idComponentMap = new HashMap<String[], String>();
 
-	public void validateAttribute(FacesContext context, UIComponent comp, Object value) {
-		metadata.validateAttribute(context, comp, value);
-		Iterator<Map.Entry<String[], String>> iterator = idComponentMap.entrySet().iterator();
-		if (value != null && comp.getClientId().endsWith("custId")) {
-			String[] inputIdComponent = comp.getClientId().split(":");
-	
-			while (iterator.hasNext()) {
-				Entry<String[], String> idComponent = iterator.next();
-				if (idComponent.getKey()[2].equals(inputIdComponent[2])	&& !idComponent.getKey()[4].equals(inputIdComponent[4])	&& idComponent.getValue().equals((String) value)) {
-					((UIInput) comp).setValid(false);
-					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, metadata.getDisplayName()+" has same value!", metadata.getDisplayName()+" has same value!");
-					context.addMessage(comp.getClientId(context), message);
-					return;
-				}
-			}
-			idComponentMap.put(inputIdComponent, (String) value);
-		}
-	}
 }

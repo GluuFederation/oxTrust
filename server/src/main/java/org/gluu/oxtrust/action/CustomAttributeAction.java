@@ -21,10 +21,18 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.component.visit.VisitCallback;
+import javax.faces.component.visit.VisitContext;
+import javax.faces.component.visit.VisitResult;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -55,6 +63,9 @@ public class CustomAttributeAction implements Serializable {
 
 	@Inject
 	private Identity identity;
+
+	@Inject
+	private FacesMessages facesMessages;
 
 	@Inject
 	private AttributeService attributeService;
@@ -526,7 +537,6 @@ public class CustomAttributeAction implements Serializable {
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (GluuAttributeDataType.PHOTO.equals(customAttribute.getMetadata().getDataType())) {
 				removePhoto(customAttribute.getMetadata().getInum());
-
 			}
 		}
 
@@ -547,6 +557,48 @@ public class CustomAttributeAction implements Serializable {
 		// When user decided to leave form without saving we must remove added
 		// images from disk
 		cancelPhotos();
+	}
+
+	public void validateAttributeValues(ComponentSystemEvent event) {
+	    final FacesContext facesContext = FacesContext.getCurrentInstance();
+	    final List<Object> values = new ArrayList<Object>();
+
+	    event.getComponent().visitTree(VisitContext.createVisitContext(facesContext), new VisitCallback() {
+	        @Override
+	        public VisitResult visit(VisitContext context, UIComponent target) {
+	    		if (target instanceof UIInput) {
+		    		GluuAttribute attribute = (GluuAttribute) target.getAttributes().get("attribute");
+		    		if (attribute != null) {
+		    			values.add(((UIInput) target).getValue());
+		    		}
+	            }
+
+	    		return VisitResult.ACCEPT;
+	        }
+	    });
+
+	    values.removeAll(Arrays.asList(null, ""));
+	    Set<Object> uniqValues = new HashSet<Object>(values);
+	    
+	    if (values.size() != uniqValues.size()) {
+	        event.getComponent().visitTree(VisitContext.createVisitContext(facesContext), new VisitCallback() {
+	            @Override
+	            public VisitResult visit(VisitContext context, UIComponent target) {
+	                if (target instanceof UIInput) {
+			    		GluuAttribute attribute = (GluuAttribute) target.getAttributes().get("attribute");
+			    		if (attribute != null) {
+			    			((UIInput) target).setValid(false);
+
+			    			String message = "Please fill out an unique value for all of '" + attribute.getDisplayName() + "' fields";
+			    			facesMessages.add(target.getClientId(facesContext), FacesMessage.SEVERITY_ERROR, message);
+			    		}
+	                }
+	                return VisitResult.ACCEPT;
+	            }
+	        });
+
+	        facesContext.validationFailed();
+	    }
 	}
 
 }
