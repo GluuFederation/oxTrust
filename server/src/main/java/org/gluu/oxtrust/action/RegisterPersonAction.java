@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -119,6 +118,7 @@ public class RegisterPersonAction implements Serializable {
 	private boolean captchaDisabled = false;
 
     private String postRegistrationInformation;
+    
 
 	/**
 	 * Initializes attributes for registering new person
@@ -228,7 +228,6 @@ public class RegisterPersonAction implements Serializable {
 				String inum = personService.generateInumForNewPerson();
 				this.person.setInum(inum);
 			}
-			
 
 			if (person.getIname() == null) {
 				String iname = personService.generateInameForNewPerson(this.person.getUid());
@@ -239,7 +238,6 @@ public class RegisterPersonAction implements Serializable {
 				String dn = personService.getDnForPerson(this.person.getInum());
 				this.person.setDn(dn);
 			}
-			
 
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
@@ -260,17 +258,15 @@ public class RegisterPersonAction implements Serializable {
 			try {
 				// Set default message
 				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
-
-				boolean result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
-				if (!result) {
+				boolean result = false;
+				this.person = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
+				if (this.person == null) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
 				}
-				if (!this.inum.isEmpty()) {
+				if ((this.inum != null) && !this.inum.isEmpty()) {
 					personService.updatePerson(this.person);
 				} else {
-					String randomKey = UUID.randomUUID().toString();
-					person.setUserRandomKey(randomKey);
 					personService.addPerson(this.person);
 				}
 				

@@ -45,6 +45,10 @@ public class GluuCustomPerson extends User
 
     @LdapAttribute(name = "gluuWhitePagesListed")
     private String gluuAllowPublication;
+    
+
+    @LdapAttribute(name = "oxGuid")
+    private String guid;
 
     @LdapAttribute(name = "gluuOptOuts")
     private List<String> gluuOptOuts;
@@ -54,9 +58,6 @@ public class GluuCustomPerson extends User
     
     @LdapAttribute(name = "oxPPID")
     private List<String> oxPPID;
-    
-    @LdapAttribute(name = "userRandomKey")
-    private String userRandomKey;
 
     public List<String> getOxPPID() {
 		return oxPPID;
@@ -195,15 +196,7 @@ public class GluuCustomPerson extends User
         return getAttribute("preferredLanguage");
     }
 
-    public String getUserRandomKey() {
-		return userRandomKey;
-	}
-
-	public void setUserRandomKey(String userRandomKey) {
-		this.userRandomKey = userRandomKey;
-	}
-
-	public int getAttributeIndex(String attributeName) {
+    public int getAttributeIndex(String attributeName) {
         int idx = 0;
         for (GluuCustomAttribute attribute : customAttributes) {
             if (attribute.getName().equalsIgnoreCase(attributeName)) {
@@ -390,4 +383,12 @@ public class GluuCustomPerson extends User
     public GluuCustomPerson clone() throws CloneNotSupportedException{
     	return (GluuCustomPerson) super.clone();
     }
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 }
