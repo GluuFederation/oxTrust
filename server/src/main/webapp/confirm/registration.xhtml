@@ -2,10 +2,14 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+                
+    <f:metadata>
+        <f:viewAction action="#{conversationService.initConversation}" />
+        <f:viewAction action="#{registerPersonAction.confirmRegistration}"
+                      onPostback="false"/>
+    </f:metadata>
+
     <ui:define name="body">
-    <div>
-    
-<h:outputText escape="false" value="#{registerPersonAction.postRegistrationInformation}"/>
-</div>
+    <h3>User Registration Confirmed</h3>
     </ui:define>
 </ui:composition>

@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -118,7 +119,6 @@ public class RegisterPersonAction implements Serializable {
 	private boolean captchaDisabled = false;
 
     private String postRegistrationInformation;
-    
 
 	/**
 	 * Initializes attributes for registering new person
@@ -150,7 +150,7 @@ public class RegisterPersonAction implements Serializable {
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}  
 				
-			this.person = (inum == null) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
+			this.person = (inum.isEmpty()) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
 
 			boolean isPersonActiveOrDisabled = GluuStatus.ACTIVE.equals(person.getStatus()) || GluuStatus.INACTIVE.equals(person.getStatus());
 
@@ -228,6 +228,7 @@ public class RegisterPersonAction implements Serializable {
 				String inum = personService.generateInumForNewPerson();
 				this.person.setInum(inum);
 			}
+			
 
 			if (person.getIname() == null) {
 				String iname = personService.generateInameForNewPerson(this.person.getUid());
@@ -238,6 +239,7 @@ public class RegisterPersonAction implements Serializable {
 				String dn = personService.getDnForPerson(this.person.getInum());
 				this.person.setDn(dn);
 			}
+			
 
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
@@ -267,6 +269,8 @@ public class RegisterPersonAction implements Serializable {
 				if (!this.inum.isEmpty()) {
 					personService.updatePerson(this.person);
 				} else {
+					String randomKey = UUID.randomUUID().toString();
+					person.setUserRandomKey(randomKey);
 					personService.addPerson(this.person);
 				}
 				
@@ -287,11 +291,13 @@ public class RegisterPersonAction implements Serializable {
 		}
 		return OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED;
 	}
-	
+
 	public void confirmRegistration(){
 		GluuCustomPerson updatedPerson;
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		String code = request.getParameter("code");
+		String code = "";
+		code = request.getParameter("code");
+		requestParameters.put("code", new String[]{code});
 		try {
 			updatedPerson = personService.getPersonByAttribute("userRandomKey", code);
 			updatedPerson.setStatus(GluuStatus.ACTIVE);
@@ -303,7 +309,7 @@ public class RegisterPersonAction implements Serializable {
 		}
 	}
 
-	public String cancel() {
+  public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "You didn't register.");
 		conversationService.endConversation();
 
