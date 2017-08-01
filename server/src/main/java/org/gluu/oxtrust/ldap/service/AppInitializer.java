@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -30,6 +31,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
+import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
@@ -38,10 +40,12 @@ import org.gluu.oxtrust.service.status.ldap.LdapStatusTimer;
 import org.gluu.oxtrust.util.BuildVersion;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.exception.OxIntializationException;
+import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
@@ -66,6 +70,8 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import com.unboundid.ldap.sdk.ResultCode;
 
 /**
  * Perform startup time initialization
@@ -174,6 +180,16 @@ public class AppInitializer {
     private AtomicBoolean isActive;
 	private long lastFinishedTime;
 
+	private List<GluuLdapConfiguration> ldapAuthConfigs;
+
+	private List<LdapConnectionService> authConnectionProviders;
+	private List<LdapConnectionService> authBindConnectionProviders;
+	
+	public static final String LDAP_AUTH_CONFIG_NAME = "ldapAuthConfig";
+
+	@Inject @Named(LDAP_AUTH_CONFIG_NAME)
+	private Instance<List<GluuLdapConfiguration>> ldapAuthConfigInstance;
+
 	@PostConstruct
     public void createApplicationComponents() {
     	SecurityProviderUtility.installBCProvider();
@@ -199,7 +215,11 @@ public class AppInitializer {
 
 		configurationFactory.create();
         LdapEntryManager localLdapEntryManager = ldapEntryManagerInstance.get();
-
+        
+        //
+        List<GluuLdapConfiguration> ldapAuthConfigs = loadLdapAuthConfigs(localLdapEntryManager);
+        createAuthConnectionProviders(ldapAuthConfigs);
+        //
 		// Initialize central LDAP connection provider
 		createCentralConnectionProvider();
 
@@ -466,6 +486,78 @@ public class AppInitializer {
 			}
 		}
 	}
+	
+	private List<GluuLdapConfiguration> loadLdapAuthConfigs(LdapEntryManager localLdapEntryManager) {
+		List<GluuLdapConfiguration> ldapAuthConfigs = new ArrayList<GluuLdapConfiguration>();
+
+		List<OxIDPAuthConf> ldapIdpAuthConfigs = loadLdapIdpAuthConfigs(localLdapEntryManager);
+		if (ldapIdpAuthConfigs == null) {
+			return ldapAuthConfigs;
+		}
+
+		for (OxIDPAuthConf ldapIdpAuthConfig : ldapIdpAuthConfigs) {
+			GluuLdapConfiguration ldapAuthConfig = loadLdapAuthConfig(ldapIdpAuthConfig);
+			if ((ldapAuthConfig != null) && ldapAuthConfig.isEnabled()) {
+				ldapAuthConfigs.add(ldapAuthConfig);
+			}
+		}
+		
+		return ldapAuthConfigs; 
+	}
+	
+	private List<OxIDPAuthConf> loadLdapIdpAuthConfigs(LdapEntryManager localLdapEntryManager) {
+		org.gluu.oxtrust.model.GluuAppliance appliance = loadAppliance(localLdapEntryManager, "oxIDPAuthentication");
+
+		if ((appliance == null) || (appliance.getOxIDPAuthentication() == null)) {
+			return null;
+		}
+
+		List<OxIDPAuthConf> configurations = new ArrayList<OxIDPAuthConf>();
+		for (OxIDPAuthConf configuration : appliance.getOxIDPAuthentication()) {
+
+				if (configuration.getType().equalsIgnoreCase("ldap") || configuration.getType().equalsIgnoreCase("auth")) {
+					configurations.add(configuration);
+				}
+		}
+
+		return configurations;
+	}
+	
+	private org.gluu.oxtrust.model.GluuAppliance loadAppliance(LdapEntryManager localLdapEntryManager, String ... ldapReturnAttributes) {
+		String baseDn = "ou=appliances,o=gluu";
+		String applianceInum = configurationFactory.getAppConfiguration().getApplianceInum();
+		if (StringHelper.isEmpty(baseDn) || StringHelper.isEmpty(applianceInum)) {
+			return null;
+		}
+
+		String applianceDn = String.format("inum=%s,%s", applianceInum, baseDn);
+
+		org.gluu.oxtrust.model.GluuAppliance appliance = null;
+		try {
+			appliance = localLdapEntryManager.find(org.gluu.oxtrust.model.GluuAppliance.class, applianceDn, ldapReturnAttributes);
+		} catch (LdapMappingException ex) {
+			log.error("Failed to load appliance entry from Ldap", ex);
+			return null;
+		}
+
+		return appliance;
+	}
+	
+	public GluuLdapConfiguration loadLdapAuthConfig(OxIDPAuthConf configuration) {
+		if (configuration == null) {
+			return null;
+		}
+
+		try {
+			if (configuration.getType().equalsIgnoreCase("auth")) {
+				return mapLdapConfig(configuration.getConfig());
+			}
+		} catch (Exception ex) {
+			log.error("Failed to create object by oxIDPAuthConf: '{}'", ex, configuration);
+		}
+
+		return null;
+	}
 
     public String getGluuRevisionVersion() {
         return buildVersion.getRevisionVersion();
@@ -481,6 +573,126 @@ public class AppInitializer {
 
     public String getGluuBuildNumber() {
         return buildVersion.getBuildNumber();
+    }
+    
+    private void createAuthConnectionProviders(List<GluuLdapConfiguration> newLdapAuthConfigs) {
+    	// Backup current references to objects to allow shutdown properly
+    	List<GluuLdapConfiguration> oldLdapAuthConfigs = ldapAuthConfigInstance.get();
+
+    	List<LdapConnectionService> tmpAuthConnectionProviders = new ArrayList<LdapConnectionService>();
+    	List<LdapConnectionService> tmpAuthBindConnectionProviders = new ArrayList<LdapConnectionService>();
+
+    	// Prepare connection providers per LDAP authentication configuration
+        for (GluuLdapConfiguration ldapAuthConfig : newLdapAuthConfigs) {
+        	LdapConnectionProviders ldapConnectionProviders = createAuthConnectionProviders(ldapAuthConfig);
+
+	        tmpAuthConnectionProviders.add(ldapConnectionProviders.getConnectionProvider());
+	        tmpAuthBindConnectionProviders.add(ldapConnectionProviders.getConnectionBindProvider());
+    	}
+
+		this.ldapAuthConfigs = newLdapAuthConfigs;
+		this.authConnectionProviders = tmpAuthConnectionProviders;
+    	this.authBindConnectionProviders = tmpAuthBindConnectionProviders;
+
+		ldapAuthConfigInstance.destroy(oldLdapAuthConfigs);
+    }
+    
+    private class LdapConnectionProviders {
+		private LdapConnectionService connectionProvider;
+		private LdapConnectionService connectionBindProvider;
+
+		public LdapConnectionProviders(LdapConnectionService connectionProvider, LdapConnectionService connectionBindProvider) {
+			this.connectionProvider = connectionProvider;
+			this.connectionBindProvider = connectionBindProvider;
+		}
+
+		public LdapConnectionService getConnectionProvider() {
+			return connectionProvider;
+		}
+
+		public LdapConnectionService getConnectionBindProvider() {
+			return connectionBindProvider;
+		}
+
+	}
+
+    public LdapConnectionProviders createAuthConnectionProviders(GluuLdapConfiguration ldapAuthConfig) {
+        Properties connectionProperties = prepareAuthConnectionProperties(ldapAuthConfig);
+        LdapConnectionService connectionProvider = createConnectionProvider(connectionProperties);
+
+        Properties bindConnectionProperties = prepareBindConnectionProperties(connectionProperties);
+        LdapConnectionService bindConnectionProvider = createBindConnectionProvider(bindConnectionProperties, connectionProperties);
+    	
+        return new LdapConnectionProviders(connectionProvider, bindConnectionProvider);
+    }
+    
+	private Properties prepareAuthConnectionProperties(GluuLdapConfiguration ldapAuthConfig) {
+        FileConfiguration configuration = configurationFactory.getLdapConfiguration();
+
+		Properties properties = (Properties) configuration.getProperties().clone();
+		if (ldapAuthConfig != null) {
+		    properties.setProperty("servers", buildServersString(ldapAuthConfig.getServers()));
+		    
+		    String bindDn = ldapAuthConfig.getBindDN();
+		    if (StringHelper.isNotEmpty(bindDn)) {
+		    	properties.setProperty("bindDN", bindDn);
+				properties.setProperty("bindPassword", ldapAuthConfig.getBindPassword());
+		    }
+			properties.setProperty("useSSL", Boolean.toString(ldapAuthConfig.isUseSSL()));
+			properties.setProperty("maxconnections", Integer.toString(ldapAuthConfig.getMaxConnections()));
+		}
+
+		return properties;
+	}
+	
+	private String buildServersString(List<?> servers) {
+		StringBuilder sb = new StringBuilder();
+
+		if (servers == null) {
+			return sb.toString();
+		}
+		
+		boolean first = true;
+		for (Object server : servers) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(",");
+			}
+
+			if (server instanceof SimpleProperty) {
+				sb.append(((SimpleProperty) server).getValue());
+			} else {
+				sb.append(server);
+			}
+		}
+
+		return sb.toString();
+	}
+	
+    private Properties prepareBindConnectionProperties(Properties connectionProperties) {
+		// TODO: Use own properties with prefix specified in variable 'bindConfigurationComponentName'
+		Properties bindProperties = (Properties) connectionProperties.clone();
+		bindProperties.remove("bindDN");
+		bindProperties.remove("bindPassword");
+
+		return bindProperties;
+	}
+    
+	private LdapConnectionService createBindConnectionProvider(Properties bindConnectionProperties, Properties connectionProperties) {
+		LdapConnectionService bindConnectionProvider = createConnectionProvider(bindConnectionProperties);
+		if (ResultCode.INAPPROPRIATE_AUTHENTICATION.equals(bindConnectionProvider.getCreationResultCode())) {
+			log.warn("It's not possible to create authentication LDAP connection pool using anonymous bind. Attempting to create it using binDN/bindPassword");
+			bindConnectionProvider = createConnectionProvider(connectionProperties);
+		}
+		
+		return bindConnectionProvider;
+	}
+	
+
+    @Produces @ApplicationScoped @Named(LDAP_AUTH_CONFIG_NAME)
+    public List<GluuLdapConfiguration> createLdapAuthConfigs() {
+    	return ldapAuthConfigs;
     }
 
 }
