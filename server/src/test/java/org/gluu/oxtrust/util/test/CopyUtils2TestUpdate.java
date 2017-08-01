@@ -1,108 +1,88 @@
 package org.gluu.oxtrust.util.test;
 
-import static org.testng.AssertJUnit.*;
-import java.util.ArrayList;
-import java.util.List;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
 
-import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.test.ConfigurableTest;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.scim.PersonMeta;
-import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
-import org.gluu.oxtrust.model.scim.ScimEntitlements;
-import org.gluu.oxtrust.model.scim.ScimName;
-import org.gluu.oxtrust.model.scim.ScimPerson;
-import org.gluu.oxtrust.model.scim.ScimPersonAddresses;
-import org.gluu.oxtrust.model.scim.ScimPersonEmails;
-import org.gluu.oxtrust.model.scim.ScimPersonGroups;
-import org.gluu.oxtrust.model.scim.ScimPersonIms;
-import org.gluu.oxtrust.model.scim.ScimPersonPhones;
-import org.gluu.oxtrust.model.scim.ScimPersonPhotos;
-import org.gluu.oxtrust.model.scim.ScimRoles;
-import org.gluu.oxtrust.model.scim.Scimx509Certificates;
-import org.gluu.oxtrust.util.CopyUtils;
+import org.gluu.oxtrust.model.scim2.Address;
+import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.Email;
+import org.gluu.oxtrust.model.scim2.Entitlement;
+import org.gluu.oxtrust.model.scim2.Extension;
+import org.gluu.oxtrust.model.scim2.GroupRef;
+import org.gluu.oxtrust.model.scim2.Im;
+import org.gluu.oxtrust.model.scim2.Meta;
+import org.gluu.oxtrust.model.scim2.Name;
+import org.gluu.oxtrust.model.scim2.PhoneNumber;
+import org.gluu.oxtrust.model.scim2.Photo;
+import org.gluu.oxtrust.model.scim2.Role;
+import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.model.scim2.X509Certificate;
+import org.gluu.oxtrust.util.CopyUtils2;
 import org.testng.annotations.Test;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.ldap.model.GluuStatus;
 
-public class CopyUtilsTestUpdate extends ConfigurableTest {
+public class CopyUtils2TestUpdate extends ConfigurableTest {
+
 	private static final String GLUU_STATUS = "gluuStatus";
-
 	private static final String OX_TRUST_PHOTOS_TYPE = "oxTrustPhotosType";
-
 	private static final String OX_TRUST_PHONE_TYPE = "oxTrustPhoneType";
-
 	private static final String OX_TRUST_ADDRESS_PRIMARY = "oxTrustAddressPrimary";
-
 	private static final String OX_TRUST_ADDRESS_TYPE = "oxTrustAddressType";
-
 	private static final String OX_TRUST_COUNTRY = "oxTrustCountry";
-
 	private static final String OX_TRUST_POSTAL_CODE = "oxTrustPostalCode";
-
 	private static final String OX_TRUST_REGION = "oxTrustRegion";
-
 	private static final String OX_TRUST_LOCALITY = "oxTrustLocality";
-
 	private static final String OX_TRUST_ADDRESS_FORMATTED = "oxTrustAddressFormatted";
-
 	private static final String OX_TRUST_STREET = "oxTrustStreet";
-
 	private static final String OX_TRUST_EMAIL_PRIMARY = "oxTrustEmailPrimary";
-
 	private static final String OX_TRUST_EMAIL_TYPE = "oxTrustEmailType";
-
 	private static final String OX_TRUST_META_LOCATION = "oxTrustMetaLocation";
-
 	private static final String OX_TRUST_META_VERSION = "oxTrustMetaVersion";
-
 	private static final String OX_TRUST_META_LAST_MODIFIED = "oxTrustMetaLastModified";
-
 	private static final String OX_TRUST_META_CREATED = "oxTrustMetaCreated";
-
 	private static final String OX_TRUSTX509_CERTIFICATE = "oxTrustx509Certificate";
-
-	private static final String OX_TRUST_ENTITLEMENTS = "oxTrustEntitlements";
-
+	private static final String OX_TRUST_ENTITLEMENTS = "oxTrustEntitlement";
 	private static final String OX_TRUST_ROLE = "oxTrustRole";
-
 	private static final String OX_TRUST_ACTIVE = "oxTrustActive";
-
-	private static final String OX_TRUST_LOCALE = "oxTrustLocale";
-
+	private static final String OX_TRUST_LOCALE = "locale";
 	private static final String OX_TRUST_TITLE = "oxTrustTitle";
-
 	private static final String OX_TRUST_USER_TYPE = "oxTrustUserType";
-
 	private static final String OX_TRUST_PHOTOS = "oxTrustPhotos";
-
 	private static final String OX_TRUST_IMS_VALUE = "oxTrustImsValue";
-
 	private static final String OX_TRUST_PHONE_VALUE = "oxTrustPhoneValue";
-
 	private static final String OX_TRUST_ADDRESSES = "oxTrustAddresses";
-
 	private static final String OX_TRUST_EMAIL = "oxTrustEmail";
-
 	private static final String OX_TRUST_PROFILE_URL = "oxTrustProfileURL";
-
-	private static final String OX_TRUST_NICK_NAME = "oxTrustNickName";
-
+	private static final String OX_TRUST_NICK_NAME = "nickname";
 	private static final String OX_TRUST_EXTERNAL_ID = "oxTrustExternalId";
-
 	private static final String OX_TRUSTHONORIFIC_SUFFIX = "oxTrusthonorificSuffix";
-
 	private static final String OX_TRUSTHONORIFIC_PREFIX = "oxTrusthonorificPrefix";
-
-	private static final String OX_TRUST_MIDDLE_NAME = "oxTrustMiddleName";
+	private static final String OX_TRUST_MIDDLE_NAME = "middleName";
 
 	@Inject
-	private CopyUtils copyUtils;
+	private CopyUtils2 copyUtils;
+	
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	@Test
-	public void testCopyScim1EmptyUpdate() throws Exception {
+	public void testCopyScim2EmptyUpdateImpl() throws Exception {
 		GluuCustomPerson destination = new GluuCustomPerson();
-		ScimPerson source = new ScimPerson();
+		User source = new User();
 		GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 		assertNotNull(copy);
 		assertNull(copy.getUid());
@@ -132,101 +112,95 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNull(copy.getAttribute(OX_TRUST_META_VERSION));
 		assertNull(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED));
 		assertNull(copy.getAttribute(OX_TRUST_META_CREATED));
-		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "[]");
-		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[]");
-		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "[]");
+		assertNull(copy.getAttribute(OX_TRUSTX509_CERTIFICATE));
+		assertNull(copy.getAttribute(OX_TRUST_ENTITLEMENTS));
+		assertNull(copy.getAttribute(OX_TRUST_ROLE));
 		assertNull(copy.getAttribute(OX_TRUST_ACTIVE));
-		assertEquals(copy.getAttribute(OX_TRUST_LOCALE), "");
-		assertEquals(copy.getAttribute(OX_TRUST_TITLE), "");
-		assertEquals(copy.getAttribute(OX_TRUST_USER_TYPE), "");
-		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "[]");
-		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "[]");
-		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "[]");
-		assertEquals(copy.getAttribute(OX_TRUST_ADDRESSES), "[]");
-		assertEquals(copy.getAttribute(OX_TRUST_EMAIL), "[]");
-		assertEquals(copy.getAttribute(OX_TRUST_PROFILE_URL), "");
-		assertEquals(copy.getAttribute(OX_TRUST_NICK_NAME), "");
-		assertEquals(copy.getAttribute(OX_TRUST_EXTERNAL_ID), "");
-		assertEquals(copy.getAttribute(OX_TRUSTHONORIFIC_SUFFIX), "");
-		assertEquals(copy.getAttribute(OX_TRUSTHONORIFIC_PREFIX), "");
-		assertEquals(copy.getAttribute(OX_TRUST_MIDDLE_NAME), "");
+		assertNull(copy.getAttribute(OX_TRUST_LOCALE));
+		assertNull(copy.getAttribute(OX_TRUST_TITLE));
+		assertNull(copy.getAttribute(OX_TRUST_USER_TYPE));
+		assertNull(copy.getAttribute(OX_TRUST_PHOTOS));
+		assertNull(copy.getAttribute(OX_TRUST_IMS_VALUE));
+		assertNull(copy.getAttribute(OX_TRUST_PHONE_VALUE));
+		assertNull(copy.getAttribute(OX_TRUST_ADDRESSES));
+		assertNull(copy.getAttribute(OX_TRUST_EMAIL));
+		assertNull(copy.getAttribute(OX_TRUST_PROFILE_URL));
+		assertNull(copy.getAttribute(OX_TRUST_NICK_NAME));
+		assertNull(copy.getAttribute(OX_TRUST_EXTERNAL_ID));
+		assertNull(copy.getAttribute(OX_TRUSTHONORIFIC_SUFFIX));
+		assertNull(copy.getAttribute(OX_TRUSTHONORIFIC_PREFIX));
+		assertNull(copy.getAttribute(OX_TRUST_MIDDLE_NAME));
 	}
 
 	@Test
-	public void testCopyScim1FilledUpdate() throws Exception {
+	public void testCopyScim2FilledUpdate() throws Exception {
 		GluuCustomPerson destination = new GluuCustomPerson();
-		ScimPerson source = new ScimPerson();
+		User source = new User();
 
-		source.setActive("active");
+		source.setActive(true);
 
-		ScimPersonAddresses address = new ScimPersonAddresses();
+		Address address = new Address();
 		address.setCountry("country");
 		address.setFormatted("formatted");
 		address.setLocality("locality");
 		address.setPostalCode("postalCode");
-		address.setPrimary("address_primary");
+		address.setPrimary(true);
 		address.setRegion("region");
 		address.setStreetAddress("streetAddress");
-		address.setType("address_type");
-		List<ScimPersonAddresses> addresses = new ArrayList<ScimPersonAddresses>();
+		address.setType(Address.Type.WORK);
+		List<Address> addresses = new ArrayList<Address>();
 		addresses.add(address);
 
 		source.setAddresses(addresses);
 
-		List<ScimCustomAttributes> customAttributes = new ArrayList<ScimCustomAttributes>();
-		ScimCustomAttributes customattribute = new ScimCustomAttributes();
-		customattribute.setName("custom_name");
-		List<String> values = new ArrayList<String>();
-		String value = "value";
-		values.add(value);
-		customattribute.setValues(values);
-		customAttributes.add(customattribute);
-		source.setCustomAttributes(customAttributes);
+		Extension.Builder extensionBuilder = new Extension.Builder(Constants.USER_EXT_SCHEMA_ID);
+        extensionBuilder.setField("custom_name", "20170731150544.790Z");
+        source.addExtension(extensionBuilder.build());
 
 		source.setDisplayName("displayName");
 
-		ScimPersonEmails email = new ScimPersonEmails();
-		email.setPrimary("email_primary");
-		email.setType("email_type");
-		email.setValue("email_value");
-		List<ScimPersonEmails> emails = new ArrayList<ScimPersonEmails>();
+		Email email = new Email();
+		email.setPrimary(true);
+		email.setType(Email.Type.WORK);
+		email.setValue("email_value@test.org");
+		List<Email> emails = new ArrayList<Email>();
 		emails.add(email);
 		source.setEmails(emails);
 
-		ScimEntitlements entitlement = new ScimEntitlements();
+		Entitlement entitlement = new Entitlement();
 		entitlement.setValue("entitlement_value");
-		List<ScimEntitlements> entitlements = new ArrayList<ScimEntitlements>();
+		List<Entitlement> entitlements = new ArrayList<Entitlement>();
 		entitlements.add(entitlement);
 		source.setEntitlements(entitlements);
 
 		source.setExternalId("externalId");
 
-		ScimPersonGroups group = new ScimPersonGroups();
+		GroupRef group = new GroupRef();
 		group.setDisplay("group_display");
 		group.setValue("group_value");
-		List<ScimPersonGroups> groups = new ArrayList<ScimPersonGroups>();
+		List<GroupRef> groups = new ArrayList<GroupRef>();
 		groups.add(group);
 		source.setGroups(groups);
 
 		source.setId("id");
 
-		ScimPersonIms personims = new ScimPersonIms();
-		personims.setType("ims_type");
+		Im personims = new Im();
+		personims.setType(Im.Type.SKYPE);
 		personims.setValue("ims_value");
-		List<ScimPersonIms> ims = new ArrayList<ScimPersonIms>();
+		List<Im> ims = new ArrayList<Im>();
 		ims.add(personims);
 		source.setIms(ims);
 
 		source.setLocale("locale");
 
-		PersonMeta meta = new PersonMeta();
-		meta.setCreated("created");
-		meta.setLastModified("lastModified");
+		Meta meta = new Meta();
+		meta.setCreated(new Date());
+		meta.setLastModified(new Date());
 		meta.setLocation("location");
 		meta.setVersion("version");
 		source.setMeta(meta);
 
-		ScimName name = new ScimName();
+		Name name = new Name();
 		name.setFamilyName("familyName");
 		name.setGivenName("givenName");
 		name.setHonorificPrefix("honorificPrefix");
@@ -237,30 +211,30 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setNickName("nickName");
 		source.setPassword("password");
 
-		ScimPersonPhones phonenumber = new ScimPersonPhones();
-		phonenumber.setType("phone_type");
+		PhoneNumber phonenumber = new PhoneNumber();
+		phonenumber.setType(PhoneNumber.Type.WORK);;
 		phonenumber.setValue("phone_value");
-		List<ScimPersonPhones> phoneNumbers = new ArrayList<ScimPersonPhones>();
+		List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 		phoneNumbers.add(phonenumber);
 		source.setPhoneNumbers(phoneNumbers);
 
-		ScimPersonPhotos photo = new ScimPersonPhotos();
-		photo.setType("photo_type");
-		photo.setValue("photo_value");
-		List<ScimPersonPhotos> photos = new ArrayList<ScimPersonPhotos>();
+		Photo photo = new Photo();
+		photo.setType(Photo.Type.PHOTO);
+		photo.setValue("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC");
+		List<Photo> photos = new ArrayList<Photo>();
 		photos.add(photo);
 		source.setPhotos(photos);
 
 		source.setPreferredLanguage("preferredLanguage");
 		source.setProfileUrl("profileUrl");
 
-		ScimRoles role = new ScimRoles();
+		Role role = new Role();
 		role.setValue("role_value");
-		List<ScimRoles> roles = new ArrayList<ScimRoles>();
+		List<Role> roles = new ArrayList<Role>();
 		roles.add(role);
 		source.setRoles(roles);
 
-		List<String> schemas = new ArrayList<String>();
+		Set<String> schemas = new HashSet<String>();
 		schemas.add("shema");
 		source.setSchemas(schemas);
 
@@ -269,9 +243,9 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setUserName("userName");
 		source.setUserType("userType");
 
-		Scimx509Certificates cert = new Scimx509Certificates();
+		X509Certificate cert = new X509Certificate();
 		cert.setValue("cert_value");
-		List<Scimx509Certificates> x509Certificates = new ArrayList<Scimx509Certificates>();
+		List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
 		x509Certificates.add(cert);
 		source.setX509Certificates(x509Certificates);
 
@@ -286,9 +260,9 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertEquals(copy.getUserPassword(), "password");
 		assertNotNull(copy.getMemberOf());
 		assertEquals(copy.getMemberOf().size(), 1);
-		assertEquals(copy.getMemberOf().get(0), "Mocked DN");
+		assertEquals(copy.getMemberOf().get(0), String.format("inum=group_value,ou=groups,o=%s,o=gluu", appConfiguration.getOrgInum()));
 
-		assertNull(copy.getAttribute(GLUU_STATUS));
+		assertEquals(copy.getAttribute(GLUU_STATUS), "active");
 		assertNull(copy.getAttribute(OX_TRUST_PHOTOS_TYPE));
 		assertNull(copy.getAttribute(OX_TRUST_PHONE_TYPE));
 		assertNull(copy.getAttribute(OX_TRUST_ADDRESS_PRIMARY));
@@ -301,24 +275,25 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNull(copy.getAttribute(OX_TRUST_STREET));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_PRIMARY));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_TYPE));
-		assertEquals(copy.getAttribute(OX_TRUST_META_LOCATION), "location");
-		assertEquals(copy.getAttribute(OX_TRUST_META_VERSION), "version");
-		assertEquals(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED), "lastModified");
-		assertEquals(copy.getAttribute(OX_TRUST_META_CREATED), "created");
-		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "[{\"value\":\"cert_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[{\"value\":\"entitlement_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "[{\"value\":\"role_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ACTIVE), "active");
+		assertNull(copy.getAttribute(OX_TRUST_META_LOCATION));
+		assertNull(copy.getAttribute(OX_TRUST_META_VERSION));
+
+		assertNull(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED));
+		assertNull(copy.getAttribute(OX_TRUST_META_CREATED));
+		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "{\"operation\":null,\"value\":\"cert_value\",\"display\":null,\"primary\":false,\"type\":null}");
+		assertNull(copy.getAttribute(OX_TRUST_ENTITLEMENTS));
+		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "{\"operation\":null,\"value\":\"role_value\",\"display\":null,\"primary\":false,\"type\":null}");
+		assertEquals(copy.getAttribute(OX_TRUST_ACTIVE), "true");
 		assertEquals(copy.getAttribute(OX_TRUST_LOCALE), "locale");
 		assertEquals(copy.getAttribute(OX_TRUST_TITLE), "title");
 		assertEquals(copy.getAttribute(OX_TRUST_USER_TYPE), "userType");
-		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "[{\"value\":\"photo_value\",\"type\":\"photo_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "[{\"value\":\"ims_value\",\"type\":\"ims_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "[{\"value\":\"phone_value\",\"type\":\"phone_type\"}]");
+		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "{\"operation\":null,\"value\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"display\":null,\"primary\":false,\"type\":\"photo\",\"valueAsImageDataURI\":{\"asURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"mimeType\":\"image/png\",\"asInputStream\":{}},\"valueType\":\"IMAGE_DATA_URI\",\"valueAsURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "{\"operation\":null,\"value\":\"ims_value\",\"display\":null,\"primary\":false,\"type\":\"skype\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "{\"operation\":null,\"value\":\"phone_value\",\"display\":null,\"primary\":false,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_ADDRESSES),
-				"[{\"type\":\"address_type\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"formatted\":\"formatted\",\"primary\":\"address_primary\"}]");
+				"{\"operation\":null,\"primary\":true,\"formatted\":\"formatted\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_EMAIL),
-				"[{\"value\":\"email_value\",\"type\":\"email_type\",\"primary\":\"email_primary\"}]");
+				"{\"operation\":null,\"value\":\"email_value@test.org\",\"display\":null,\"primary\":true,\"reference\":null,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_PROFILE_URL), "profileUrl");
 		assertEquals(copy.getAttribute(OX_TRUST_NICK_NAME), "nickName");
 		assertEquals(copy.getAttribute(OX_TRUST_EXTERNAL_ID), "externalId");
@@ -330,7 +305,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNull(copy.getCommonName());
 		List<GluuCustomAttribute> customAttributes2 = copy.getCustomAttributes();
 		assertNotNull(customAttributes2);
-		assertEquals(customAttributes2.size(), 31);
+		assertEquals(customAttributes2.size(), 28);
 
 		assertEquals(copy.getDisplayName(), "displayName");
 		assertNull(copy.getDn());
@@ -339,21 +314,21 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		GluuCustomAttribute gluuCustomAttribute = copy.getGluuCustomAttribute("custom_name");
 		assertNotNull(gluuCustomAttribute);
 		assertEquals(gluuCustomAttribute.getName(), "custom_name");
-		assertEquals(gluuCustomAttribute.getValue(), "value");
-		assertNull(gluuCustomAttribute.getDate());
-		assertEquals(gluuCustomAttribute.getDisplayValue(), "value");
+		assertEquals(gluuCustomAttribute.getValue(), "20170731150544.790Z");
+		assertNotNull(gluuCustomAttribute.getDate());
+		assertEquals(gluuCustomAttribute.getDisplayValue(), "20170731150544.790Z");
 		assertNull(gluuCustomAttribute.getMetadata());
-		assertEquals(gluuCustomAttribute.getValues()[0], "value");
+		assertEquals(gluuCustomAttribute.getValues()[0], "20170731150544.790Z");
 		assertNull(copy.getGluuOptOuts());
 		assertNull(copy.getIname());
 		assertNull(copy.getMail());
-		assertEquals(copy.getMemberOf().get(0), "Mocked DN");
+		assertEquals(copy.getMemberOf().get(0), String.format("inum=group_value,ou=groups,o=%s,o=gluu", appConfiguration.getOrgInum()));
 		assertNull(copy.getNetworkPoken());
 		assertNull(copy.getCreationDate());
 		assertEquals(copy.getPreferredLanguage(), "preferredLanguage");
 		assertNull(copy.getSLAManager());
 		assertNull(copy.getSourceServerName());
-		assertNull(copy.getStatus());
+		assertEquals(copy.getStatus(), GluuStatus.ACTIVE);
 		assertEquals(copy.getSurname(), "familyName");
 		assertEquals(copy.getTimezone(), "timezone");
 		assertEquals(copy.getUid(), "userName");
@@ -361,7 +336,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 	}
 
 	@Test
-	public void testCopyScim1FilledUpdateExisting() throws Exception {
+	public void testCopyScim2FilledUpdateExisting() throws Exception {
 		GluuCustomPerson destination = new GluuCustomPerson();
 
 		destination.setAllowPublication(true);
@@ -371,7 +346,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		associatedClientDNs.add("c");
 		destination.setAssociatedClient(associatedClientDNs);
 		destination.setBaseDn("dn");
-		destination.setAttribute(OX_TRUST_NICK_NAME, "original nickname");
+		destination.setAttribute(OX_TRUST_NICK_NAME, "nickname");
 		destination.setAttribute(OX_TRUST_PROFILE_URL, "original url");
 		destination.setCommonName("CN");
 		destination.setGivenName("original givenname");
@@ -379,86 +354,73 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 
 		destination.setAttribute(OX_TRUST_ENTITLEMENTS, "[{\"value\":\"original entitlement_value\"}]");
 
-		ScimPerson source = new ScimPerson();
+		User source = new User();
 
-		source.setActive("true");
+		source.setActive(true);
 
-		ScimPersonAddresses address = new ScimPersonAddresses();
+		Address address = new Address();
 		address.setCountry("country");
 		address.setFormatted("formatted");
 		address.setLocality("locality");
 		address.setPostalCode("postalCode");
-		address.setPrimary("address_primary");
+		address.setPrimary(true);
 		address.setRegion("region");
 		address.setStreetAddress("streetAddress");
-		address.setType("address_type");
-		List<ScimPersonAddresses> addresses = new ArrayList<ScimPersonAddresses>();
+		address.setType(Address.Type.WORK);
+		List<Address> addresses = new ArrayList<Address>();
 		addresses.add(address);
 
 		source.setAddresses(addresses);
 
-		List<ScimCustomAttributes> customAttributes = new ArrayList<ScimCustomAttributes>();
-		ScimCustomAttributes customattribute = new ScimCustomAttributes();
-		customattribute.setName("custom_name");
-		List<String> values = new ArrayList<String>();
-		String value = "value";
-		values.add(value);
-		customattribute.setValues(values);
-		customAttributes.add(customattribute);
-
-		ScimCustomAttributes customattribute2 = new ScimCustomAttributes();
-		customattribute2.setName("custom_name2");
-		List<String> values2 = new ArrayList<String>();
-		String value2 = "value";
-		values2.add(value2);
-		customattribute2.setValues(values2);
-		customAttributes.add(customattribute2);
-		source.setCustomAttributes(customAttributes);
+		Extension.Builder extensionBuilder = new Extension.Builder(Constants.USER_EXT_SCHEMA_ID);
+        extensionBuilder.setField("custom_name", "20170731150544.790Z");
+        extensionBuilder.setField("custom_name2", "value");
+        source.addExtension(extensionBuilder.build());
 
 		source.setDisplayName("displayName");
 
-		ScimPersonEmails email = new ScimPersonEmails();
-		email.setPrimary("email_primary");
-		email.setType("email_type");
-		email.setValue("email_value");
-		List<ScimPersonEmails> emails = new ArrayList<ScimPersonEmails>();
+		Email email = new Email();
+		email.setPrimary(true);
+		email.setType(Email.Type.WORK);
+		email.setValue("email_value@test.org");
+		List<Email> emails = new ArrayList<Email>();
 		emails.add(email);
 		source.setEmails(emails);
 
-		ScimEntitlements entitlement = new ScimEntitlements();
+		Entitlement entitlement = new Entitlement();
 		entitlement.setValue("entitlement_value");
-		List<ScimEntitlements> entitlements = new ArrayList<ScimEntitlements>();
+		List<Entitlement> entitlements = new ArrayList<Entitlement>();
 		entitlements.add(entitlement);
 		source.setEntitlements(entitlements);
 
 		source.setExternalId("externalId");
 
-		ScimPersonGroups group = new ScimPersonGroups();
+		GroupRef group = new GroupRef();
 		group.setDisplay("group_display");
 		group.setValue("group_value");
-		List<ScimPersonGroups> groups = new ArrayList<ScimPersonGroups>();
+		List<GroupRef> groups = new ArrayList<GroupRef>();
 		groups.add(group);
 		source.setGroups(groups);
 
 		source.setId("id");
 
-		ScimPersonIms personims = new ScimPersonIms();
-		personims.setType("ims_type");
+		Im personims = new Im();
+		personims.setType(Im.Type.SKYPE);
 		personims.setValue("ims_value");
-		List<ScimPersonIms> ims = new ArrayList<ScimPersonIms>();
+		List<Im> ims = new ArrayList<Im>();
 		ims.add(personims);
 		source.setIms(ims);
 
 		source.setLocale("locale");
 
-		PersonMeta meta = new PersonMeta();
-		meta.setCreated("created");
-		meta.setLastModified("lastModified");
+		Meta meta = new Meta();
+		meta.setCreated(new Date());
+		meta.setLastModified(new Date());
 		meta.setLocation("location");
 		meta.setVersion("version");
 		source.setMeta(meta);
 
-		ScimName name = new ScimName();
+		Name name = new Name();
 		name.setFamilyName("familyName");
 		name.setGivenName("givenName");
 		name.setHonorificPrefix("honorificPrefix");
@@ -469,30 +431,30 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setNickName("nickName");
 		source.setPassword("password");
 
-		ScimPersonPhones phonenumber = new ScimPersonPhones();
-		phonenumber.setType("phone_type");
+		PhoneNumber phonenumber = new PhoneNumber();
+		phonenumber.setType(PhoneNumber.Type.WORK);;
 		phonenumber.setValue("phone_value");
-		List<ScimPersonPhones> phoneNumbers = new ArrayList<ScimPersonPhones>();
+		List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 		phoneNumbers.add(phonenumber);
 		source.setPhoneNumbers(phoneNumbers);
 
-		ScimPersonPhotos photo = new ScimPersonPhotos();
-		photo.setType("photo_type");
-		photo.setValue("photo_value");
-		List<ScimPersonPhotos> photos = new ArrayList<ScimPersonPhotos>();
+		Photo photo = new Photo();
+		photo.setType(Photo.Type.PHOTO);
+		photo.setValue("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC");
+		List<Photo> photos = new ArrayList<Photo>();
 		photos.add(photo);
 		source.setPhotos(photos);
 
 		source.setPreferredLanguage("preferredLanguage");
 		source.setProfileUrl(null);
 
-		ScimRoles role = new ScimRoles();
+		Role role = new Role();
 		role.setValue("role_value");
-		List<ScimRoles> roles = new ArrayList<ScimRoles>();
+		List<Role> roles = new ArrayList<Role>();
 		roles.add(role);
 		source.setRoles(roles);
 
-		List<String> schemas = new ArrayList<String>();
+		Set<String> schemas = new HashSet<String>();
 		schemas.add("shema");
 		source.setSchemas(schemas);
 
@@ -501,9 +463,9 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setUserName("userName");
 		source.setUserType("userType");
 
-		Scimx509Certificates cert = new Scimx509Certificates();
+		X509Certificate cert = new X509Certificate();
 		cert.setValue("cert_value");
-		List<Scimx509Certificates> x509Certificates = new ArrayList<Scimx509Certificates>();
+		List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
 		x509Certificates.add(cert);
 		source.setX509Certificates(x509Certificates);
 
@@ -518,9 +480,9 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertEquals(copy.getUserPassword(), "password");
 		assertNotNull(copy.getMemberOf());
 		assertEquals(copy.getMemberOf().size(), 1);
-		assertEquals(copy.getMemberOf().get(0), "Mocked DN");
+		assertEquals(copy.getMemberOf().get(0), String.format("inum=group_value,ou=groups,o=%s,o=gluu", appConfiguration.getOrgInum()));
 
-		assertEquals(copy.getAttribute(GLUU_STATUS), "true");
+		assertEquals(copy.getAttribute(GLUU_STATUS), "active");
 
 		assertNull(copy.getAttribute(OX_TRUST_PHOTOS_TYPE));
 		assertNull(copy.getAttribute(OX_TRUST_PHONE_TYPE));
@@ -534,25 +496,25 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNull(copy.getAttribute(OX_TRUST_STREET));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_PRIMARY));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_TYPE));
-		assertEquals(copy.getAttribute(OX_TRUST_META_LOCATION), "location");
-		assertEquals(copy.getAttribute(OX_TRUST_META_VERSION), "version");
-		assertEquals(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED), "lastModified");
-		assertEquals(copy.getAttribute(OX_TRUST_META_CREATED), "created");
-		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "[{\"value\":\"cert_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[{\"value\":\"entitlement_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "[{\"value\":\"role_value\"}]");
+		assertNull(copy.getAttribute(OX_TRUST_META_LOCATION));
+		assertNull(copy.getAttribute(OX_TRUST_META_VERSION));
+		assertNull(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED));
+		assertNull(copy.getAttribute(OX_TRUST_META_CREATED));
+		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "{\"operation\":null,\"value\":\"cert_value\",\"display\":null,\"primary\":false,\"type\":null}");
+		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[{\"value\":\"original entitlement_value\"}]");
+		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "{\"operation\":null,\"value\":\"role_value\",\"display\":null,\"primary\":false,\"type\":null}");
 		assertEquals(copy.getAttribute(OX_TRUST_ACTIVE), "true");
 		assertEquals(copy.getAttribute(OX_TRUST_LOCALE), "locale");
 		assertEquals(copy.getAttribute(OX_TRUST_TITLE), "title");
 		assertEquals(copy.getAttribute(OX_TRUST_USER_TYPE), "userType");
-		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "[{\"value\":\"photo_value\",\"type\":\"photo_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "[{\"value\":\"ims_value\",\"type\":\"ims_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "[{\"value\":\"phone_value\",\"type\":\"phone_type\"}]");
+		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "{\"operation\":null,\"value\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"display\":null,\"primary\":false,\"type\":\"photo\",\"valueAsImageDataURI\":{\"asURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"mimeType\":\"image/png\",\"asInputStream\":{}},\"valueType\":\"IMAGE_DATA_URI\",\"valueAsURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "{\"operation\":null,\"value\":\"ims_value\",\"display\":null,\"primary\":false,\"type\":\"skype\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "{\"operation\":null,\"value\":\"phone_value\",\"display\":null,\"primary\":false,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_ADDRESSES),
-				"[{\"type\":\"address_type\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"formatted\":\"formatted\",\"primary\":\"address_primary\"}]");
+				"{\"operation\":null,\"primary\":true,\"formatted\":\"formatted\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_EMAIL),
-				"[{\"value\":\"email_value\",\"type\":\"email_type\",\"primary\":\"email_primary\"}]");
-		assertNull(copy.getAttribute(OX_TRUST_PROFILE_URL));
+				"{\"operation\":null,\"value\":\"email_value@test.org\",\"display\":null,\"primary\":true,\"reference\":null,\"type\":\"work\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_PROFILE_URL), "original url");
 		assertEquals(copy.getAttribute(OX_TRUST_NICK_NAME), "nickName");
 		assertEquals(copy.getAttribute(OX_TRUST_EXTERNAL_ID), "externalId");
 		assertEquals(copy.getAttribute(OX_TRUSTHONORIFIC_SUFFIX), "honorificSuffix");
@@ -563,7 +525,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertEquals(copy.getCommonName(), "CN");
 		List<GluuCustomAttribute> customAttributes2 = copy.getCustomAttributes();
 		assertNotNull(customAttributes2);
-		assertEquals(customAttributes2.size(), 33);
+		assertEquals(customAttributes2.size(), 31);
 
 		assertEquals(copy.getDisplayName(), "displayName");
 		assertEquals(copy.getDn(), "dn");
@@ -572,21 +534,21 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		GluuCustomAttribute gluuCustomAttribute = copy.getGluuCustomAttribute("custom_name");
 		assertNotNull(gluuCustomAttribute);
 		assertEquals(gluuCustomAttribute.getName(), "custom_name");
-		assertEquals(gluuCustomAttribute.getValue(), "value");
-		assertNull(gluuCustomAttribute.getDate());
-		assertEquals(gluuCustomAttribute.getDisplayValue(), "value");
+		assertEquals(gluuCustomAttribute.getValue(), "20170731150544.790Z");
+		assertNotNull(gluuCustomAttribute.getDate());
+		assertEquals(gluuCustomAttribute.getDisplayValue(), "20170731150544.790Z");
 		assertNull(gluuCustomAttribute.getMetadata());
-		assertEquals(gluuCustomAttribute.getValues()[0], "value");
+		assertEquals(gluuCustomAttribute.getValues()[0], "20170731150544.790Z");
 		assertNull(copy.getGluuOptOuts());
 		assertNull(copy.getIname());
 		assertNull(copy.getMail());
-		assertEquals(copy.getMemberOf().get(0), "Mocked DN");
+		assertEquals(copy.getMemberOf().get(0), String.format("inum=group_value,ou=groups,o=%s,o=gluu", appConfiguration.getOrgInum()));
 		assertNull(copy.getNetworkPoken());
 		assertNull(copy.getCreationDate());
 		assertEquals(copy.getPreferredLanguage(), "preferredLanguage");
 		assertNull(copy.getSLAManager());
 		assertNull(copy.getSourceServerName());
-		assertNull(copy.getStatus());
+		assertEquals(copy.getStatus(), GluuStatus.ACTIVE);
 		assertEquals(copy.getSurname(), "familyName");
 		assertEquals(copy.getTimezone(), "timezone");
 		assertEquals(copy.getUid(), "userName");
@@ -594,7 +556,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 	}
 
 	@Test
-	public void testCopyScim1EmptyCustomAttributeUpdateExisting() throws Exception {
+	public void testCopyScim2EmptyCustomAttributeUpdateExisting() throws Exception {
 		GluuCustomPerson destination = new GluuCustomPerson();
 
 		destination.setAllowPublication(true);
@@ -604,7 +566,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		associatedClientDNs.add("c");
 		destination.setAssociatedClient(associatedClientDNs);
 		destination.setBaseDn("dn");
-		destination.setAttribute(OX_TRUST_NICK_NAME, "original nickname");
+		destination.setAttribute(OX_TRUST_NICK_NAME, "nickname");
 		destination.setAttribute(OX_TRUST_PROFILE_URL, "original url");
 		destination.setCommonName("CN");
 		destination.setGivenName("original givenname");
@@ -612,65 +574,60 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 
 		destination.setAttribute(OX_TRUST_ENTITLEMENTS, "[{\"value\":\"original entitlement_value\"}]");
 
-		ScimPerson source = new ScimPerson();
+		User source = new User();
 
-		source.setActive("true");
+		source.setActive(true);
 
-		ScimPersonAddresses address = new ScimPersonAddresses();
+		Address address = new Address();
 		address.setCountry("country");
 		address.setFormatted("formatted");
 		address.setLocality("locality");
 		address.setPostalCode("postalCode");
-		address.setPrimary("address_primary");
+		address.setPrimary(true);
 		address.setRegion("region");
 		address.setStreetAddress("streetAddress");
-		address.setType("address_type");
-		List<ScimPersonAddresses> addresses = new ArrayList<ScimPersonAddresses>();
+		address.setType(Address.Type.WORK);
+		List<Address> addresses = new ArrayList<Address>();
 		addresses.add(address);
 
 		source.setAddresses(addresses);
 
-		List<ScimCustomAttributes> customAttributes = new ArrayList<ScimCustomAttributes>();
-		ScimCustomAttributes customattribute = new ScimCustomAttributes();
-		customattribute.setName("custom_name");
-		List<String> values = new ArrayList<String>();
-		customattribute.setValues(values);
-		customAttributes.add(customattribute);
-
-		source.setCustomAttributes(customAttributes);
+		Extension.Builder extensionBuilder = new Extension.Builder(Constants.USER_EXT_SCHEMA_ID);
+        extensionBuilder.setField("custom_name", "20170731150544.790Z");
+        source.addExtension(extensionBuilder.build());
 
 		source.setDisplayName(null);
 
-		ScimPersonEmails email = new ScimPersonEmails();
-		email.setPrimary("email_primary");
-		email.setType("email_type");
-		email.setValue("email_value");
-		List<ScimPersonEmails> emails = new ArrayList<ScimPersonEmails>();
+		Email email = new Email();
+		email.setPrimary(true);
+		email.setType(Email.Type.WORK);
+		email.setValue("email_value@test.org");
+		List<Email> emails = new ArrayList<Email>();
 		emails.add(email);
 		source.setEmails(emails);
 
-		List<ScimPersonGroups> groups = new ArrayList<ScimPersonGroups>();
+		List<GroupRef> groups = new ArrayList<GroupRef>();
 		source.setGroups(groups);
 
 		source.setId("id");
 
-		ScimPersonIms personims = new ScimPersonIms();
-		personims.setType("ims_type");
+		Im personims = new Im();
+		personims.setType(Im.Type.SKYPE);
 		personims.setValue("ims_value");
-		List<ScimPersonIms> ims = new ArrayList<ScimPersonIms>();
+		List<Im> ims = new ArrayList<Im>();
 		ims.add(personims);
 		source.setIms(ims);
 
 		source.setLocale("locale");
 
-		PersonMeta meta = new PersonMeta();
-		meta.setCreated("created");
-		meta.setLastModified("lastModified");
+		Meta meta = new Meta();
+		meta.setCreated(new Date());
+		meta.setLastModified(new Date());
 		meta.setLocation("location");
 		meta.setVersion("version");
 		source.setMeta(meta);
 
-		ScimName name = new ScimName();
+		Name name = new Name();
 		name.setFamilyName("familyName");
 		name.setGivenName("givenName");
 		name.setHonorificPrefix("honorificPrefix");
@@ -681,30 +638,30 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setNickName("nickName");
 		source.setPassword("password");
 
-		ScimPersonPhones phonenumber = new ScimPersonPhones();
-		phonenumber.setType("phone_type");
+		PhoneNumber phonenumber = new PhoneNumber();
+		phonenumber.setType(PhoneNumber.Type.WORK);;
 		phonenumber.setValue("phone_value");
-		List<ScimPersonPhones> phoneNumbers = new ArrayList<ScimPersonPhones>();
+		List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 		phoneNumbers.add(phonenumber);
 		source.setPhoneNumbers(phoneNumbers);
 
-		ScimPersonPhotos photo = new ScimPersonPhotos();
-		photo.setType("photo_type");
-		photo.setValue("photo_value");
-		List<ScimPersonPhotos> photos = new ArrayList<ScimPersonPhotos>();
+		Photo photo = new Photo();
+		photo.setType(Photo.Type.PHOTO);
+		photo.setValue("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC");
+		List<Photo> photos = new ArrayList<Photo>();
 		photos.add(photo);
 		source.setPhotos(photos);
 
 		source.setPreferredLanguage("preferredLanguage");
 		source.setProfileUrl(null);
 
-		ScimRoles role = new ScimRoles();
+		Role role = new Role();
 		role.setValue("role_value");
-		List<ScimRoles> roles = new ArrayList<ScimRoles>();
+		List<Role> roles = new ArrayList<Role>();
 		roles.add(role);
 		source.setRoles(roles);
 
-		List<String> schemas = new ArrayList<String>();
+		Set<String> schemas = new HashSet<String>();
 		schemas.add("shema");
 		source.setSchemas(schemas);
 
@@ -713,9 +670,9 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setUserName("userName");
 		source.setUserType("userType");
 
-		Scimx509Certificates cert = new Scimx509Certificates();
+		X509Certificate cert = new X509Certificate();
 		cert.setValue("cert_value");
-		List<Scimx509Certificates> x509Certificates = new ArrayList<Scimx509Certificates>();
+		List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
 		x509Certificates.add(cert);
 		source.setX509Certificates(x509Certificates);
 
@@ -731,7 +688,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNotNull(copy.getMemberOf());
 		assertEquals(copy.getMemberOf().size(), 0);
 
-		assertEquals(copy.getAttribute(GLUU_STATUS), "true");
+		assertEquals(copy.getAttribute(GLUU_STATUS), "active");
 
 		assertNull(copy.getAttribute(OX_TRUST_PHOTOS_TYPE));
 		assertNull(copy.getAttribute(OX_TRUST_PHONE_TYPE));
@@ -745,27 +702,23 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNull(copy.getAttribute(OX_TRUST_STREET));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_PRIMARY));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_TYPE));
-		assertEquals(copy.getAttribute(OX_TRUST_META_LOCATION), "location");
-		assertEquals(copy.getAttribute(OX_TRUST_META_VERSION), "version");
-		assertEquals(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED), "lastModified");
-		assertEquals(copy.getAttribute(OX_TRUST_META_CREATED), "created");
-		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "[{\"value\":\"cert_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[]");
-		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "[{\"value\":\"role_value\"}]");
+		assertNull(copy.getAttribute(OX_TRUST_META_LOCATION));
+		assertNull(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED));
+		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "{\"operation\":null,\"value\":\"cert_value\",\"display\":null,\"primary\":false,\"type\":null}");
+		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[{\"value\":\"original entitlement_value\"}]");
+		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "{\"operation\":null,\"value\":\"role_value\",\"display\":null,\"primary\":false,\"type\":null}");
 		assertEquals(copy.getAttribute(OX_TRUST_ACTIVE), "true");
 		assertEquals(copy.getAttribute(OX_TRUST_LOCALE), "locale");
 		assertEquals(copy.getAttribute(OX_TRUST_TITLE), "title");
 		assertEquals(copy.getAttribute(OX_TRUST_USER_TYPE), "userType");
-		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "[{\"value\":\"photo_value\",\"type\":\"photo_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "[{\"value\":\"ims_value\",\"type\":\"ims_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "[{\"value\":\"phone_value\",\"type\":\"phone_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ADDRESSES),
-				"[{\"type\":\"address_type\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"formatted\":\"formatted\",\"primary\":\"address_primary\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_EMAIL),
-				"[{\"value\":\"email_value\",\"type\":\"email_type\",\"primary\":\"email_primary\"}]");
-		assertNull(copy.getAttribute(OX_TRUST_PROFILE_URL));
+		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "{\"operation\":null,\"value\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"display\":null,\"primary\":false,\"type\":\"photo\",\"valueAsImageDataURI\":{\"asURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"mimeType\":\"image/png\",\"asInputStream\":{}},\"valueType\":\"IMAGE_DATA_URI\",\"valueAsURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "{\"operation\":null,\"value\":\"ims_value\",\"display\":null,\"primary\":false,\"type\":\"skype\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "{\"operation\":null,\"value\":\"phone_value\",\"display\":null,\"primary\":false,\"type\":\"work\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_ADDRESSES), "{\"operation\":null,\"primary\":true,\"formatted\":\"formatted\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"type\":\"work\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_EMAIL),	"{\"operation\":null,\"value\":\"email_value@test.org\",\"display\":null,\"primary\":true,\"reference\":null,\"type\":\"work\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_PROFILE_URL), "original url");
 		assertEquals(copy.getAttribute(OX_TRUST_NICK_NAME), "nickName");
-		assertEquals(copy.getAttribute(OX_TRUST_EXTERNAL_ID), "");
+		assertNull(copy.getAttribute(OX_TRUST_EXTERNAL_ID));
 		assertEquals(copy.getAttribute(OX_TRUSTHONORIFIC_SUFFIX), "honorificSuffix");
 		assertEquals(copy.getAttribute(OX_TRUSTHONORIFIC_PREFIX), "honorificPrefix");
 		assertEquals(copy.getAttribute(OX_TRUST_MIDDLE_NAME), "middleName");
@@ -774,7 +727,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertEquals(copy.getCommonName(), "CN");
 		List<GluuCustomAttribute> customAttributes2 = copy.getCustomAttributes();
 		assertNotNull(customAttributes2);
-		assertEquals(customAttributes2.size(), 30);
+		assertEquals(customAttributes2.size(), 26);
 
 		assertNull(copy.getDisplayName());
 		assertEquals(copy.getDn(), "dn");
@@ -783,11 +736,11 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		GluuCustomAttribute gluuCustomAttribute = copy.getGluuCustomAttribute("custom_name");
 		assertNotNull(gluuCustomAttribute);
 		assertEquals(gluuCustomAttribute.getName(), "custom_name");
-		assertNull(gluuCustomAttribute.getValue());
-		assertNull(gluuCustomAttribute.getDate());
-		assertEquals(gluuCustomAttribute.getDisplayValue(), "");
+		assertEquals(gluuCustomAttribute.getValue(), "20170731150544.790Z");
+		assertNotNull(gluuCustomAttribute.getDate());
+		assertEquals(gluuCustomAttribute.getDisplayValue(), "20170731150544.790Z");
 		assertNull(gluuCustomAttribute.getMetadata());
-		assertEquals(gluuCustomAttribute.getValues().length, 0);
+		assertEquals(gluuCustomAttribute.getValues().length, 1);
 		assertNull(copy.getGluuOptOuts());
 		assertNull(copy.getIname());
 		assertNull(copy.getMail());
@@ -797,7 +750,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertEquals(copy.getPreferredLanguage(), "preferredLanguage");
 		assertNull(copy.getSLAManager());
 		assertNull(copy.getSourceServerName());
-		assertNull(copy.getStatus());
+		assertEquals(copy.getStatus(), GluuStatus.ACTIVE);
 		assertEquals(copy.getSurname(), "familyName");
 		assertEquals(copy.getTimezone(), "timezone");
 		assertEquals(copy.getUid(), "userName");
@@ -805,86 +758,78 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 	}
 
 	@Test
-	public void testCopyScim1FilledMultipleAttributesUpdate() throws Exception {
+	public void testCopyScim2FilledMultipleAttributesUpdate() throws Exception {
 		GluuCustomPerson destination = new GluuCustomPerson();
-		ScimPerson source = new ScimPerson();
+		User source = new User();
 
-		source.setActive("true");
+		source.setActive(true);
 
-		ScimPersonAddresses address = new ScimPersonAddresses();
+		Address address = new Address();
 		address.setCountry("country");
 		address.setFormatted("formatted");
 		address.setLocality("locality");
 		address.setPostalCode("postalCode");
-		address.setPrimary("address_primary");
+		address.setPrimary(true);
 		address.setRegion("region");
 		address.setStreetAddress("streetAddress");
-		address.setType("address_type");
-		List<ScimPersonAddresses> addresses = new ArrayList<ScimPersonAddresses>();
+		address.setType(Address.Type.WORK);
+		List<Address> addresses = new ArrayList<Address>();
 		addresses.add(address);
 
 		source.setAddresses(addresses);
 
-		List<ScimCustomAttributes> customAttributes = new ArrayList<ScimCustomAttributes>();
-		ScimCustomAttributes customattribute = new ScimCustomAttributes();
-		customattribute.setName("custom_name");
-		List<String> values = new ArrayList<String>();
-		values.add("value1");
-		values.add("value3");
-		values.add("value2");
-		values.add("value4");
-		customattribute.setValues(values);
-		customAttributes.add(customattribute);
-		source.setCustomAttributes(customAttributes);
+		Extension.Builder extensionBuilder = new Extension.Builder(Constants.USER_EXT_SCHEMA_ID);
+        extensionBuilder.setFieldAsList("custom_name",  Arrays.asList(new String[]{ "value1", "value2", "value3", "value4" }));
+        source.addExtension(extensionBuilder.build());
 
 		source.setDisplayName("displayName");
 
-		ScimPersonEmails email = new ScimPersonEmails();
-		email.setPrimary("email_primary");
-		email.setType("email_type");
-		email.setValue("email_value");
-		List<ScimPersonEmails> emails = new ArrayList<ScimPersonEmails>();
+		Email email = new Email();
+		email.setPrimary(true);
+		email.setType(Email.Type.WORK);
+		email.setValue("email_value@test.org");
+		List<Email> emails = new ArrayList<Email>();
 		emails.add(email);
 		source.setEmails(emails);
 
-		ScimEntitlements entitlement = new ScimEntitlements();
+		Entitlement entitlement = new Entitlement();
 		entitlement.setValue("entitlement_value");
-		List<ScimEntitlements> entitlements = new ArrayList<ScimEntitlements>();
+		List<Entitlement> entitlements = new ArrayList<Entitlement>();
 		entitlements.add(entitlement);
 		source.setEntitlements(entitlements);
 
 		source.setExternalId("externalId");
 
-		ScimPersonGroups group1 = new ScimPersonGroups();
+		GroupRef group1 = new GroupRef();
 		group1.setDisplay("group_display");
 		group1.setValue("group_value");
-		ScimPersonGroups group2 = new ScimPersonGroups();
+		GroupRef group2 = new GroupRef();
 		group2.setDisplay("group_display1");
 		group2.setValue("group_value1");
-		List<ScimPersonGroups> groups = new ArrayList<ScimPersonGroups>();
+		List<GroupRef> groups = new ArrayList<GroupRef>();
 		groups.add(group1);
 		groups.add(group2);
 		source.setGroups(groups);
 
 		source.setId("id");
 
-		ScimPersonIms personims = new ScimPersonIms();
-		personims.setType("ims_type");
+		Im personims = new Im();
+		personims.setType(Im.Type.SKYPE);
 		personims.setValue("ims_value");
-		List<ScimPersonIms> ims = new ArrayList<ScimPersonIms>();
+		List<Im> ims = new ArrayList<Im>();
 		ims.add(personims);
 		source.setIms(ims);
 
 		source.setLocale("locale");
 
-		PersonMeta meta = new PersonMeta();
-		meta.setCreated("created");
-		meta.setLastModified("lastModified");
+		Meta meta = new Meta();
+		meta.setCreated(new Date());
+		meta.setLastModified(new Date());
 		meta.setLocation("location");
 		meta.setVersion("version");
 		source.setMeta(meta);
 
-		ScimName name = new ScimName();
+		Name name = new Name();
 		name.setFamilyName("familyName");
 		name.setGivenName("givenName");
 		name.setHonorificPrefix("honorificPrefix");
@@ -895,30 +840,30 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setNickName("nickName");
 		source.setPassword("password");
 
-		ScimPersonPhones phonenumber = new ScimPersonPhones();
-		phonenumber.setType("phone_type");
+		PhoneNumber phonenumber = new PhoneNumber();
+		phonenumber.setType(PhoneNumber.Type.WORK);;
 		phonenumber.setValue("phone_value");
-		List<ScimPersonPhones> phoneNumbers = new ArrayList<ScimPersonPhones>();
+		List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 		phoneNumbers.add(phonenumber);
 		source.setPhoneNumbers(phoneNumbers);
 
-		ScimPersonPhotos photo = new ScimPersonPhotos();
-		photo.setType("photo_type");
-		photo.setValue("photo_value");
-		List<ScimPersonPhotos> photos = new ArrayList<ScimPersonPhotos>();
+		Photo photo = new Photo();
+		photo.setType(Photo.Type.PHOTO);
+		photo.setValue("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC");
+		List<Photo> photos = new ArrayList<Photo>();
 		photos.add(photo);
 		source.setPhotos(photos);
 
 		source.setPreferredLanguage("preferredLanguage");
 		source.setProfileUrl("profileUrl");
 
-		ScimRoles role = new ScimRoles();
+		Role role = new Role();
 		role.setValue("role_value");
-		List<ScimRoles> roles = new ArrayList<ScimRoles>();
+		List<Role> roles = new ArrayList<Role>();
 		roles.add(role);
 		source.setRoles(roles);
 
-		List<String> schemas = new ArrayList<String>();
+		Set<String> schemas = new HashSet<String>();
 		schemas.add("shema");
 		source.setSchemas(schemas);
 
@@ -927,9 +872,9 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setUserName("userName");
 		source.setUserType("userType");
 
-		Scimx509Certificates cert = new Scimx509Certificates();
+		X509Certificate cert = new X509Certificate();
 		cert.setValue("cert_value");
-		List<Scimx509Certificates> x509Certificates = new ArrayList<Scimx509Certificates>();
+		List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
 		x509Certificates.add(cert);
 		source.setX509Certificates(x509Certificates);
 
@@ -944,10 +889,10 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertEquals(copy.getUserPassword(), "password");
 		assertNotNull(copy.getMemberOf());
 		assertEquals(copy.getMemberOf().size(), 2);
-		assertEquals(copy.getMemberOf().get(0), "Mocked DN");
-		assertEquals(copy.getMemberOf().get(1), "Mocked DN1");
+		assertEquals(copy.getMemberOf().get(0), String.format("inum=group_value,ou=groups,o=%s,o=gluu", appConfiguration.getOrgInum()));
+		assertEquals(copy.getMemberOf().get(1), String.format("inum=group_value1,ou=groups,o=%s,o=gluu", appConfiguration.getOrgInum()));
 
-		assertEquals(copy.getAttribute(GLUU_STATUS), "true");
+		assertEquals(copy.getAttribute(GLUU_STATUS), "active");
 
 		assertNull(copy.getAttribute(OX_TRUST_PHOTOS_TYPE));
 		assertNull(copy.getAttribute(OX_TRUST_PHONE_TYPE));
@@ -961,24 +906,24 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNull(copy.getAttribute(OX_TRUST_STREET));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_PRIMARY));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_TYPE));
-		assertEquals(copy.getAttribute(OX_TRUST_META_LOCATION), "location");
-		assertEquals(copy.getAttribute(OX_TRUST_META_VERSION), "version");
-		assertEquals(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED), "lastModified");
-		assertEquals(copy.getAttribute(OX_TRUST_META_CREATED), "created");
-		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "[{\"value\":\"cert_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[{\"value\":\"entitlement_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "[{\"value\":\"role_value\"}]");
+		assertNull(copy.getAttribute(OX_TRUST_META_LOCATION));
+		assertNull(copy.getAttribute(OX_TRUST_META_VERSION));
+		assertNull(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED));
+		assertNull(copy.getAttribute(OX_TRUST_META_CREATED));
+		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "{\"operation\":null,\"value\":\"cert_value\",\"display\":null,\"primary\":false,\"type\":null}");
+		assertNull(copy.getAttribute(OX_TRUST_ENTITLEMENTS));
+		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "{\"operation\":null,\"value\":\"role_value\",\"display\":null,\"primary\":false,\"type\":null}");
 		assertEquals(copy.getAttribute(OX_TRUST_ACTIVE), "true");
 		assertEquals(copy.getAttribute(OX_TRUST_LOCALE), "locale");
 		assertEquals(copy.getAttribute(OX_TRUST_TITLE), "title");
 		assertEquals(copy.getAttribute(OX_TRUST_USER_TYPE), "userType");
-		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "[{\"value\":\"photo_value\",\"type\":\"photo_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "[{\"value\":\"ims_value\",\"type\":\"ims_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "[{\"value\":\"phone_value\",\"type\":\"phone_type\"}]");
+		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "{\"operation\":null,\"value\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"display\":null,\"primary\":false,\"type\":\"photo\",\"valueAsImageDataURI\":{\"asURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"mimeType\":\"image/png\",\"asInputStream\":{}},\"valueType\":\"IMAGE_DATA_URI\",\"valueAsURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "{\"operation\":null,\"value\":\"ims_value\",\"display\":null,\"primary\":false,\"type\":\"skype\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "{\"operation\":null,\"value\":\"phone_value\",\"display\":null,\"primary\":false,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_ADDRESSES),
-				"[{\"type\":\"address_type\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"formatted\":\"formatted\",\"primary\":\"address_primary\"}]");
+				"{\"operation\":null,\"primary\":true,\"formatted\":\"formatted\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_EMAIL),
-				"[{\"value\":\"email_value\",\"type\":\"email_type\",\"primary\":\"email_primary\"}]");
+				"{\"operation\":null,\"value\":\"email_value@test.org\",\"display\":null,\"primary\":true,\"reference\":null,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_PROFILE_URL), "profileUrl");
 		assertEquals(copy.getAttribute(OX_TRUST_NICK_NAME), "nickName");
 		assertEquals(copy.getAttribute(OX_TRUST_EXTERNAL_ID), "externalId");
@@ -988,76 +933,74 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 	}
 
 	@Test
-	public void testCopyScim1FilledNullCustomAttributesUpdate() throws Exception {
+	public void testCopyScim2FilledNullCustomAttributesUpdate() throws Exception {
 		GluuCustomPerson destination = new GluuCustomPerson();
-		ScimPerson source = new ScimPerson();
+		User source = new User();
 
-		source.setActive("active");
+		source.setActive(true);
 
-		ScimPersonAddresses address = new ScimPersonAddresses();
+		Address address = new Address();
 		address.setCountry("country");
 		address.setFormatted("formatted");
 		address.setLocality("locality");
 		address.setPostalCode("postalCode");
-		address.setPrimary("address_primary");
+		address.setPrimary(true);
 		address.setRegion("region");
 		address.setStreetAddress("streetAddress");
-		address.setType("address_type");
-		List<ScimPersonAddresses> addresses = new ArrayList<ScimPersonAddresses>();
+		address.setType(Address.Type.WORK);
+		List<Address> addresses = new ArrayList<Address>();
 		addresses.add(address);
 
 		source.setAddresses(addresses);
 
-		source.setCustomAttributes(null);
-
 		source.setDisplayName("displayName");
 
-		ScimPersonEmails email = new ScimPersonEmails();
-		email.setPrimary("email_primary");
-		email.setType("email_type");
-		email.setValue("email_value");
-		List<ScimPersonEmails> emails = new ArrayList<ScimPersonEmails>();
+		Email email = new Email();
+		email.setPrimary(true);
+		email.setType(Email.Type.WORK);
+		email.setValue("email_value@test.org");
+		List<Email> emails = new ArrayList<Email>();
 		emails.add(email);
 		source.setEmails(emails);
 
-		ScimEntitlements entitlement = new ScimEntitlements();
+		Entitlement entitlement = new Entitlement();
 		entitlement.setValue("entitlement_value");
-		List<ScimEntitlements> entitlements = new ArrayList<ScimEntitlements>();
+		List<Entitlement> entitlements = new ArrayList<Entitlement>();
 		entitlements.add(entitlement);
 		source.setEntitlements(entitlements);
 
 		source.setExternalId("externalId");
 
-		ScimPersonGroups group1 = new ScimPersonGroups();
+		GroupRef group1 = new GroupRef();
 		group1.setDisplay("group_display");
 		group1.setValue("group_value");
-		ScimPersonGroups group2 = new ScimPersonGroups();
+		GroupRef group2 = new GroupRef();
 		group2.setDisplay("group_display1");
 		group2.setValue("group_value1");
-		List<ScimPersonGroups> groups = new ArrayList<ScimPersonGroups>();
+		List<GroupRef> groups = new ArrayList<GroupRef>();
 		groups.add(group1);
 		groups.add(group2);
 		source.setGroups(groups);
 
 		source.setId("id");
 
-		ScimPersonIms personims = new ScimPersonIms();
-		personims.setType("ims_type");
+		Im personims = new Im();
+		personims.setType(Im.Type.SKYPE);
 		personims.setValue("ims_value");
-		List<ScimPersonIms> ims = new ArrayList<ScimPersonIms>();
+		List<Im> ims = new ArrayList<Im>();
 		ims.add(personims);
 		source.setIms(ims);
 
 		source.setLocale("locale");
 
-		PersonMeta meta = new PersonMeta();
-		meta.setCreated("created");
-		meta.setLastModified("lastModified");
+		Meta meta = new Meta();
+		meta.setCreated(new Date());
+		meta.setLastModified(new Date());
 		meta.setLocation("location");
 		meta.setVersion("version");
 		source.setMeta(meta);
 
-		ScimName name = new ScimName();
+		Name name = new Name();
 		name.setFamilyName("familyName");
 		name.setGivenName("givenName");
 		name.setHonorificPrefix("honorificPrefix");
@@ -1068,30 +1011,30 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setNickName("nickName");
 		source.setPassword("password");
 
-		ScimPersonPhones phonenumber = new ScimPersonPhones();
-		phonenumber.setType("phone_type");
+		PhoneNumber phonenumber = new PhoneNumber();
+		phonenumber.setType(PhoneNumber.Type.WORK);;
 		phonenumber.setValue("phone_value");
-		List<ScimPersonPhones> phoneNumbers = new ArrayList<ScimPersonPhones>();
+		List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 		phoneNumbers.add(phonenumber);
 		source.setPhoneNumbers(phoneNumbers);
 
-		ScimPersonPhotos photo = new ScimPersonPhotos();
-		photo.setType("photo_type");
-		photo.setValue("photo_value");
-		List<ScimPersonPhotos> photos = new ArrayList<ScimPersonPhotos>();
+		Photo photo = new Photo();
+		photo.setType(Photo.Type.PHOTO);
+		photo.setValue("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC");
+		List<Photo> photos = new ArrayList<Photo>();
 		photos.add(photo);
 		source.setPhotos(photos);
 
 		source.setPreferredLanguage("preferredLanguage");
 		source.setProfileUrl("profileUrl");
 
-		ScimRoles role = new ScimRoles();
+		Role role = new Role();
 		role.setValue("role_value");
-		List<ScimRoles> roles = new ArrayList<ScimRoles>();
+		List<Role> roles = new ArrayList<Role>();
 		roles.add(role);
 		source.setRoles(roles);
 
-		List<String> schemas = new ArrayList<String>();
+		Set<String> schemas = new HashSet<String>();
 		schemas.add("shema");
 		source.setSchemas(schemas);
 
@@ -1100,9 +1043,9 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setUserName("userName");
 		source.setUserType("userType");
 
-		Scimx509Certificates cert = new Scimx509Certificates();
+		X509Certificate cert = new X509Certificate();
 		cert.setValue("cert_value");
-		List<Scimx509Certificates> x509Certificates = new ArrayList<Scimx509Certificates>();
+		List<X509Certificate> x509Certificates = new ArrayList<X509Certificate>();
 		x509Certificates.add(cert);
 		source.setX509Certificates(x509Certificates);
 
@@ -1117,10 +1060,10 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertEquals(copy.getUserPassword(), "password");
 		assertNotNull(copy.getMemberOf());
 		assertEquals(copy.getMemberOf().size(), 2);
-		assertEquals(copy.getMemberOf().get(0), "Mocked DN");
-		assertEquals(copy.getMemberOf().get(1), "Mocked DN1");
+		assertEquals(copy.getMemberOf().get(0), String.format("inum=group_value,ou=groups,o=%s,o=gluu", appConfiguration.getOrgInum()));
+		assertEquals(copy.getMemberOf().get(1), String.format("inum=group_value1,ou=groups,o=%s,o=gluu", appConfiguration.getOrgInum()));
 
-		assertNull(copy.getAttribute(GLUU_STATUS));
+		assertEquals(copy.getAttribute(GLUU_STATUS), "active");
 		assertNull(copy.getAttribute(OX_TRUST_PHOTOS_TYPE));
 		assertNull(copy.getAttribute(OX_TRUST_PHONE_TYPE));
 		assertNull(copy.getAttribute(OX_TRUST_ADDRESS_PRIMARY));
@@ -1133,24 +1076,24 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNull(copy.getAttribute(OX_TRUST_STREET));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_PRIMARY));
 		assertNull(copy.getAttribute(OX_TRUST_EMAIL_TYPE));
-		assertEquals(copy.getAttribute(OX_TRUST_META_LOCATION), "location");
-		assertEquals(copy.getAttribute(OX_TRUST_META_VERSION), "version");
-		assertEquals(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED), "lastModified");
-		assertEquals(copy.getAttribute(OX_TRUST_META_CREATED), "created");
-		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "[{\"value\":\"cert_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[{\"value\":\"entitlement_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "[{\"value\":\"role_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ACTIVE), "active");
+		assertNull(copy.getAttribute(OX_TRUST_META_LOCATION));
+		assertNull(copy.getAttribute(OX_TRUST_META_VERSION));
+		assertNull(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED));
+		assertNull(copy.getAttribute(OX_TRUST_META_CREATED));
+		assertEquals(copy.getAttribute(OX_TRUSTX509_CERTIFICATE), "{\"operation\":null,\"value\":\"cert_value\",\"display\":null,\"primary\":false,\"type\":null}");
+		assertNull(copy.getAttribute(OX_TRUST_ENTITLEMENTS));
+		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "{\"operation\":null,\"value\":\"role_value\",\"display\":null,\"primary\":false,\"type\":null}");
+		assertEquals(copy.getAttribute(OX_TRUST_ACTIVE), "true");
 		assertEquals(copy.getAttribute(OX_TRUST_LOCALE), "locale");
 		assertEquals(copy.getAttribute(OX_TRUST_TITLE), "title");
 		assertEquals(copy.getAttribute(OX_TRUST_USER_TYPE), "userType");
-		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "[{\"value\":\"photo_value\",\"type\":\"photo_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "[{\"value\":\"ims_value\",\"type\":\"ims_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "[{\"value\":\"phone_value\",\"type\":\"phone_type\"}]");
+		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "{\"operation\":null,\"value\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"display\":null,\"primary\":false,\"type\":\"photo\",\"valueAsImageDataURI\":{\"asURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"mimeType\":\"image/png\",\"asInputStream\":{}},\"valueType\":\"IMAGE_DATA_URI\",\"valueAsURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "{\"operation\":null,\"value\":\"ims_value\",\"display\":null,\"primary\":false,\"type\":\"skype\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "{\"operation\":null,\"value\":\"phone_value\",\"display\":null,\"primary\":false,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_ADDRESSES),
-				"[{\"type\":\"address_type\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"formatted\":\"formatted\",\"primary\":\"address_primary\"}]");
+				"{\"operation\":null,\"primary\":true,\"formatted\":\"formatted\",\"streetAddress\":\"streetAddress\",\"locality\":\"locality\",\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_EMAIL),
-				"[{\"value\":\"email_value\",\"type\":\"email_type\",\"primary\":\"email_primary\"}]");
+				"{\"operation\":null,\"value\":\"email_value@test.org\",\"display\":null,\"primary\":true,\"reference\":null,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_PROFILE_URL), "profileUrl");
 		assertEquals(copy.getAttribute(OX_TRUST_NICK_NAME), "nickName");
 		assertEquals(copy.getAttribute(OX_TRUST_EXTERNAL_ID), "externalId");
@@ -1160,69 +1103,66 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 	}
 
 	@Test
-	public void testCopyScim1MixedUpdate() throws Exception {
+	public void testCopyScim2MixedUpdate() throws Exception {
 		GluuCustomPerson destination = new GluuCustomPerson();
-		ScimPerson source = new ScimPerson();
+		User source = new User();
 
-		source.setActive("false");
+		source.setActive(false);
 
-		ScimPersonAddresses address = new ScimPersonAddresses();
+		Address address = new Address();
 		address.setCountry("country");
 		address.setFormatted("");
 		address.setPostalCode("postalCode");
-		address.setPrimary("address_primary");
+		address.setPrimary(true);
 		address.setRegion("region");
 		address.setLocality(null);
 		address.setStreetAddress("streetAddress");
-		address.setType("address_type");
-		List<ScimPersonAddresses> addresses = new ArrayList<ScimPersonAddresses>();
+		address.setType(Address.Type.WORK);
+		List<Address> addresses = new ArrayList<Address>();
 		addresses.add(address);
 
 		source.setAddresses(addresses);
 
-		List<ScimCustomAttributes> customAttributes = new ArrayList<ScimCustomAttributes>();
-		source.setCustomAttributes(customAttributes);
-
 		source.setDisplayName("displayName");
 
-		ScimPersonEmails email = new ScimPersonEmails();
-		email.setPrimary("email_primary");
-		email.setType("email_type");
-		email.setValue("email_value");
-		List<ScimPersonEmails> emails = new ArrayList<ScimPersonEmails>();
+		Email email = new Email();
+		email.setPrimary(true);
+		email.setType(Email.Type.WORK);
+		email.setValue("email_value@test.org");
+		List<Email> emails = new ArrayList<Email>();
 		emails.add(email);
 		source.setEmails(emails);
 
-		ScimEntitlements entitlement = new ScimEntitlements();
+		Entitlement entitlement = new Entitlement();
 		entitlement.setValue("entitlement_value");
-		List<ScimEntitlements> entitlements = new ArrayList<ScimEntitlements>();
+		List<Entitlement> entitlements = new ArrayList<Entitlement>();
 		entitlements.add(entitlement);
 		source.setEntitlements(entitlements);
 
 		source.setExternalId("externalId");
 
-		List<ScimPersonGroups> groups = new ArrayList<ScimPersonGroups>();
+		List<GroupRef> groups = new ArrayList<GroupRef>();
 		source.setGroups(groups);
 
 		source.setId("id");
 
-		ScimPersonIms personims = new ScimPersonIms();
-		personims.setType("ims_type");
+		Im personims = new Im();
+		personims.setType(Im.Type.SKYPE);
 		personims.setValue("ims_value");
-		List<ScimPersonIms> ims = new ArrayList<ScimPersonIms>();
+		List<Im> ims = new ArrayList<Im>();
 		ims.add(personims);
 		source.setIms(ims);
 
 		source.setLocale("locale");
 
-		PersonMeta meta = new PersonMeta();
-		meta.setCreated("");
-		meta.setLastModified("");
+		Meta meta = new Meta();
+		meta.setCreated(null);
+		meta.setLastModified(null);
 		meta.setLocation("");
 		meta.setVersion("");
 		source.setMeta(meta);
 
-		ScimName name = new ScimName();
+		Name name = new Name();
 		name.setFamilyName("familyName");
 		name.setGivenName("givenName");
 		name.setHonorificPrefix("honorificPrefix");
@@ -1233,30 +1173,30 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		source.setNickName("nickName");
 		source.setPassword("password");
 
-		ScimPersonPhones phonenumber = new ScimPersonPhones();
-		phonenumber.setType("phone_type");
+		PhoneNumber phonenumber = new PhoneNumber();
+		phonenumber.setType(PhoneNumber.Type.WORK);;
 		phonenumber.setValue("phone_value");
-		List<ScimPersonPhones> phoneNumbers = new ArrayList<ScimPersonPhones>();
+		List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 		phoneNumbers.add(phonenumber);
 		source.setPhoneNumbers(phoneNumbers);
 
-		ScimPersonPhotos photo = new ScimPersonPhotos();
-		photo.setType("photo_type");
-		photo.setValue("photo_value");
-		List<ScimPersonPhotos> photos = new ArrayList<ScimPersonPhotos>();
+		Photo photo = new Photo();
+		photo.setType(Photo.Type.PHOTO);
+		photo.setValue("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC");
+		List<Photo> photos = new ArrayList<Photo>();
 		photos.add(photo);
 		source.setPhotos(photos);
 
 		source.setPreferredLanguage("");
 		source.setProfileUrl("profileUrl");
 
-		ScimRoles role = new ScimRoles();
+		Role role = new Role();
 		role.setValue("role_value");
-		List<ScimRoles> roles = new ArrayList<ScimRoles>();
+		List<Role> roles = new ArrayList<Role>();
 		roles.add(role);
 		source.setRoles(roles);
 
-		List<String> schemas = new ArrayList<String>();
+		Set<String> schemas = new HashSet<String>();
 		schemas.add("shema");
 		source.setSchemas(schemas);
 
@@ -1279,7 +1219,7 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNotNull(copy.getMemberOf());
 		assertEquals(copy.getMemberOf().size(), 0);
 
-		assertEquals(copy.getAttribute(GLUU_STATUS), "false");
+		assertEquals(copy.getAttribute(GLUU_STATUS), "inactive");
 
 		assertNull(copy.getAttribute(OX_TRUST_PHOTOS_TYPE));
 		assertNull(copy.getAttribute(OX_TRUST_PHONE_TYPE));
@@ -1298,19 +1238,19 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 		assertNull(copy.getAttribute(OX_TRUST_META_LAST_MODIFIED));
 		assertNull(copy.getAttribute(OX_TRUST_META_CREATED));
 		assertNull(copy.getAttribute(OX_TRUSTX509_CERTIFICATE));
-		assertEquals(copy.getAttribute(OX_TRUST_ENTITLEMENTS), "[{\"value\":\"entitlement_value\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "[{\"value\":\"role_value\"}]");
+		assertNull(copy.getAttribute(OX_TRUST_ENTITLEMENTS));
+		assertEquals(copy.getAttribute(OX_TRUST_ROLE), "{\"operation\":null,\"value\":\"role_value\",\"display\":null,\"primary\":false,\"type\":null}");
 		assertEquals(copy.getAttribute(OX_TRUST_ACTIVE), "false");
 		assertEquals(copy.getAttribute(OX_TRUST_LOCALE), "locale");
 		assertEquals(copy.getAttribute(OX_TRUST_TITLE), "title");
 		assertEquals(copy.getAttribute(OX_TRUST_USER_TYPE), "userType");
-		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "[{\"value\":\"photo_value\",\"type\":\"photo_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "[{\"value\":\"ims_value\",\"type\":\"ims_type\"}]");
-		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "[{\"value\":\"phone_value\",\"type\":\"phone_type\"}]");
+		assertEquals(copy.getAttribute(OX_TRUST_PHOTOS), "{\"operation\":null,\"value\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"display\":null,\"primary\":false,\"type\":\"photo\",\"valueAsImageDataURI\":{\"asURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\",\"mimeType\":\"image/png\",\"asInputStream\":{}},\"valueType\":\"IMAGE_DATA_URI\",\"valueAsURI\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_IMS_VALUE), "{\"operation\":null,\"value\":\"ims_value\",\"display\":null,\"primary\":false,\"type\":\"skype\"}");
+		assertEquals(copy.getAttribute(OX_TRUST_PHONE_VALUE), "{\"operation\":null,\"value\":\"phone_value\",\"display\":null,\"primary\":false,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_ADDRESSES),
-				"[{\"type\":\"address_type\",\"streetAddress\":\"streetAddress\",\"locality\":null,\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"formatted\":\"\",\"primary\":\"address_primary\"}]");
+				"{\"operation\":null,\"primary\":true,\"formatted\":\"\",\"streetAddress\":\"streetAddress\",\"locality\":null,\"region\":\"region\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_EMAIL),
-				"[{\"value\":\"email_value\",\"type\":\"email_type\",\"primary\":\"email_primary\"}]");
+				"{\"operation\":null,\"value\":\"email_value@test.org\",\"display\":null,\"primary\":true,\"reference\":null,\"type\":\"work\"}");
 		assertEquals(copy.getAttribute(OX_TRUST_PROFILE_URL), "profileUrl");
 		assertEquals(copy.getAttribute(OX_TRUST_NICK_NAME), "nickName");
 		assertEquals(copy.getAttribute(OX_TRUST_EXTERNAL_ID), "externalId");
@@ -1320,17 +1260,17 @@ public class CopyUtilsTestUpdate extends ConfigurableTest {
 	}
 
 	@Test
-	public void testCopyScim1UpdateNullSource() throws Exception {
+	public void testCopyScim2UpdateNullSource() throws Exception {
 		GluuCustomPerson destination = new GluuCustomPerson();
-		ScimPerson source = null;
+		User source = null;
 		GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 		assertNull(copy);
 	}
 
 	@Test
-	public void testCopyScim1UpdateNullDestination() throws Exception {
+	public void testCopyScim2UpdateNullDestination() throws Exception {
 		GluuCustomPerson destination = null;
-		ScimPerson source = new ScimPerson();
+		User source = new User();
 		;
 		GluuCustomPerson copy = copyUtils.copy(source, destination, true);
 		assertNotNull(copy);

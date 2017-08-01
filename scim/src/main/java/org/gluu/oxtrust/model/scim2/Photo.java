@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.annotate.JsonValue;
 import org.gluu.oxtrust.model.data.ImageDataURI;
 import org.gluu.oxtrust.model.data.PhotoValueType;
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * </p>
  */
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE)
+@JsonPropertyOrder({"operation", "value", "display", "primary", "type", "valueAsImageDataURI", "valueType", "valueAsURI"})
 public class Photo extends MultiValuedAttribute {
 
     @JsonProperty
