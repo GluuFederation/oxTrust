@@ -35,7 +35,6 @@ import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.ListResponse;
@@ -46,7 +45,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.ws.rs.scim.PATCH;
+import org.gluu.oxtrust.ws.rs.PATCH;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
@@ -378,29 +377,6 @@ public class UserWebService extends BaseScimWebService {
 			ex.printStackTrace();
 			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
-	}
-
-	@Path("{id}")
-	@PATCH
-	@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-	@Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response updateUserPatch(
-		@HeaderParam("Authorization") String authorization,
-		@PathParam("id") String id, ScimPersonPatch person) throws Exception {
-
-		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(authorization);
-		} else {
-			authorizationResponse = processAuthorization(authorization);
-		}
-		if (authorizationResponse != null) {
-			return authorizationResponse;
-		}
-
-		return null;
 	}
 
 	@Path("/.search")
