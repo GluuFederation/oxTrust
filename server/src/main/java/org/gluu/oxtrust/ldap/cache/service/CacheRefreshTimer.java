@@ -168,24 +168,21 @@ public class CacheRefreshTimer {
             return;
         }
 
-        if (!this.isActive.compareAndSet(false, true)) {
-            return;
-        }
+		if (!this.isActive.compareAndSet(false, true)) {
+			log.debug("Failed to start process exclusively");
+			return;
+		}
 
         try {
             processInt();
         } finally {
+			log.debug("Allowing to run new process exclusively");
             this.isActive.set(false);
         }
     }
 
 	public void processInt() {
 		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
-
-		if (!this.isActive.compareAndSet(false, true)) {
-			log.debug("Failed to start process exclusively");
-			return;
-		}
 
 		try {
 			GluuAppliance currentAppliance = applianceService.getAppliance();
@@ -200,9 +197,6 @@ public class CacheRefreshTimer {
 			this.lastFinishedTime = System.currentTimeMillis();
 		} catch (Throwable ex) {
 			log.error("Exception happened while executing cache refresh synchronization", ex);
-		} finally {
-			log.debug("Allowing to run new process exclusively");
-			this.isActive.set(false);
 		}
 	}
 
