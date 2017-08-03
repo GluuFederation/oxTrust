@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.gluu.oxtrust.model.scim.ScimCustomAttributes;
 
 /**
  * oxIDPAuthConf
@@ -35,11 +34,11 @@ public class OxIDPAuthConf {
 
 	private boolean enabled;
 	private int version;
-	private List<ScimCustomAttributes> fields;
+	private List<CustomAttribute> fields;
 	private String config;
 
 	public OxIDPAuthConf() {
-		this.fields = new ArrayList<ScimCustomAttributes>();
+		this.fields = new ArrayList<CustomAttribute>();
 	}
 
 	public String getType() {
@@ -90,11 +89,11 @@ public class OxIDPAuthConf {
 		this.version = version;
 	}
 
-	public List<ScimCustomAttributes> getFields() {
+	public List<CustomAttribute> getFields() {
 		return this.fields;
 	}
 
-	public void setFields(List<ScimCustomAttributes> fields) {
+	public void setFields(List<CustomAttribute> fields) {
 		this.fields = fields;
 	}
 

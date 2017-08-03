@@ -38,10 +38,6 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.Person;
 import org.gluu.oxtrust.model.PersonAttribute;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.oxtrust.model.scim.ScimGroup;
-import org.gluu.oxtrust.model.scim.ScimGroupMembers;
-import org.gluu.oxtrust.model.scim.ScimPerson;
-import org.gluu.oxtrust.model.scim.ScimPersonPatch;
 import org.gluu.oxtrust.model.scim2.Address;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Email;
@@ -58,6 +54,7 @@ import org.gluu.oxtrust.model.scim2.PhoneNumber;
 import org.gluu.oxtrust.model.scim2.Photo;
 import org.gluu.oxtrust.model.scim2.Role;
 import org.gluu.oxtrust.model.scim2.ScimData;
+import org.gluu.oxtrust.model.scim2.ScimGroupMembers;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
@@ -65,13 +62,13 @@ import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.OxMultivalued;
-import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 @Stateless
@@ -994,26 +991,6 @@ public class CopyUtils2 implements Serializable {
 	}
 
 	/**
-	 * Copy data from ScimPerson object to GluuCustomPerson object
-	 * 
-	 * @param source
-	 * @param destination
-	 * @return
-	 * @throws Exception
-	 */
-	public GluuCustomPerson copyChangePassword(ScimPerson source, GluuCustomPerson destination) {
-		if (source == null) {
-			return null;
-		}
-		if (destination == null) {
-			return null;
-		}
-		// only update password
-		destination.setUserPassword(source.getPassword());
-		return destination;
-	}
-
-	/**
 	 * Copy the User Password
 	 * 
 	 * @param person
@@ -1193,48 +1170,6 @@ public class CopyUtils2 implements Serializable {
 		destination.setMeta(meta);
 
 		return destination;
-	}
-
-	public GluuGroup copy(ScimGroup source, GluuGroup destination, List<GluuGroup> attributes) throws Exception {
-		if (source == null) {
-			return null;
-		}
-		if (destination == null) {
-			destination = new GluuGroup();
-		}
-		destination.setInum(source.getId());
-		destination.setDisplayName(source.getDisplayName());
-		List<ScimGroupMembers> mapMembers = source.getMembers();
-		List<String> listMembers = new ArrayList<String>();
-		// mapMembers.
-
-		for (String dn : listMembers) {
-			GluuCustomPerson gluuPerson = personService.getPersonByDn(dn);
-			ScimGroupMembers member = new ScimGroupMembers();
-			member.setDisplay(gluuPerson.getDisplayName());
-			member.setValue(gluuPerson.getInum());
-			mapMembers.add(member);
-		}
-		destination.setMembers(listMembers);
-		return destination;
-	}
-
-	private boolean isValidData(ScimPersonPatch person, boolean isUpdate) {
-		if (isUpdate) {
-			// if (isEmpty(person.getFirstName()) ||
-			// isEmpty(person.getDisplayName())
-			// || isEmpty(person.getLastName())
-			// || isEmpty(person.getEmail())) {
-			// return false;
-			// }
-		} else if (isEmpty(person.getUserName()) || isEmpty(person.getName().getGivenName()) || isEmpty(person.getDisplayName())
-				|| isEmpty(person.getName().getFamilyName())
-				// || (person.getEmails() == null || person.getEmails().size() <
-				// 1)
-				|| isEmpty(person.getPassword())) {
-			return false;
-		}
-		return true;
 	}
 
 	/**
@@ -1461,11 +1396,6 @@ public class CopyUtils2 implements Serializable {
 				setGluuStatus(destination, GluuBoolean.INACTIVE.getValue());
 			}
 		}
-	}
-
-	private void setGluuStatus(ScimPersonPatch source, GluuCustomPerson destination) {
-		String active = source.getActive();
-		setGluuStatus(destination, active);
 	}
 
 	private void setGluuStatus(GluuCustomPerson destination, String active) {

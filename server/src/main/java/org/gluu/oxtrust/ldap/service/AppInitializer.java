@@ -44,6 +44,7 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.exception.ConfigurationException;
 import org.xdi.exception.OxIntializationException;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
@@ -298,6 +299,9 @@ public class AppInitializer {
 
         Properties connectionProperties = (Properties) this.ldapConfig.getProperties();
         this.connectionProvider = createConnectionProvider(connectionProperties);
+        if (!ResultCode.SUCCESS.equals(this.connectionProvider.getCreationResultCode())) {
+    		throw new ConfigurationException("Failed to create LDAP connection pool!");
+        }
         log.debug("Created connectionProvider: {}", connectionProvider);
     }
 

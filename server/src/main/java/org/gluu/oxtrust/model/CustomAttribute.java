@@ -4,15 +4,16 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.model.scim;
+package org.gluu.oxtrust.model;
 
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 /**
  * SCIM Custom Attributes
@@ -21,12 +22,12 @@ import java.util.List;
  */
 @JsonPropertyOrder({ "name", "values" })
 @XmlType(propOrder = { "name", "values" })
-public class ScimCustomAttributes {
+public class CustomAttribute {
 
 	private String name;
 	private List<String> values;
 
-	public ScimCustomAttributes() {
+	public CustomAttribute() {
 		name = "";
 		values = new ArrayList<String>();
 	}
