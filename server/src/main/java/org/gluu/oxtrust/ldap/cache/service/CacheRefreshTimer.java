@@ -164,6 +164,7 @@ public class CacheRefreshTimer {
     @Asynchronous
     public void process(@Observes @Scheduled CacheRefreshEvent cacheRefreshEvent) {
         if (this.isActive.get()) {
+			log.debug("Another process is active");
             return;
         }
 
@@ -179,11 +180,6 @@ public class CacheRefreshTimer {
     }
 
 	public void processInt() {
-		if (this.isActive.get()) {
-			log.debug("Another process is active");
-			return;
-		}
-
 		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
 
 		if (!this.isActive.compareAndSet(false, true)) {
