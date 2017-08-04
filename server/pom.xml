@@ -193,6 +193,11 @@
 	</build>
 
 	<dependencies>
+		<!-- https://github.com/wywygmbh/log4j-plugin-fluency -->
+		<dependency>
+			<groupId>com.wywy</groupId>
+			<artifactId>log4j-plugin-fluency</artifactId>
+		</dependency>
 		<!-- oxTrust -->
 		<dependency>
 			<groupId>org.xdi</groupId>
@@ -304,7 +309,6 @@
 		<dependency>
 			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- Commons libs -->
