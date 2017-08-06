@@ -25,6 +25,7 @@ import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.ImapDataService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -86,6 +87,9 @@ public class UserProfileAction implements Serializable {
 	@Inject
 	private AppConfiguration appConfiguration;
 
+	@Inject
+	private Identity identity;
+
 	private GluuCustomPerson person;
 
 	private List<String> optOuts;
@@ -116,7 +120,7 @@ public class UserProfileAction implements Serializable {
 		}
 
 		try {
-			this.person = personService.getPersonByInum(currentPerson.getInum());
+			this.person = identity.getUser();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to find person {}", currentPerson.getInum(), ex);
 		}
