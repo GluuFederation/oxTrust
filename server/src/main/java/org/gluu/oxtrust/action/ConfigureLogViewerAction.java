@@ -99,13 +99,14 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	public String update() {
 		if (!validateLists()) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Log viewer configuration updated");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update log viewer configuration");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		updateAppliance();
 		updateOxAuthConfiguration();
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
+
+    facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
