@@ -9,6 +9,7 @@ package org.gluu.oxtrust.action;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
@@ -16,6 +17,7 @@ import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.SimpleCustomProperty;
+import org.xdi.oxauth.model.configuration.AppConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
@@ -24,6 +26,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -57,9 +60,13 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	@Inject
 	private LoggerService loggerService;
 
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
+
 	private GluuAppliance appliance;
 
-	private String logConfigLocation;
+	private String oxTrustLogConfigLocation;
+	private String oxAuthLogConfigLocation;
 
 	private LogViewerConfig logViewerConfiguration;
 
@@ -71,7 +78,13 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		}
 
 		this.appliance = applianceService.getAppliance();
-		this.logConfigLocation = appliance.getOxLogConfigLocation();
+		this.oxTrustLogConfigLocation = appliance.getOxLogConfigLocation();
+		
+		try {
+			this.oxAuthLogConfigLocation = jsonConfigurationService.getOxauthAppConfiguration().getExternalLoggerConfiguration();
+		} catch (Exception e) {
+			log.error("Failed to retrieve oxauth configuration", e);
+		}
 
 		initConfigurations();
 
@@ -91,8 +104,8 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		}
 
 		updateAppliance();
-
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Failed to update log viewer configuration");
+		updateOxAuthConfiguration();
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -101,12 +114,23 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		GluuAppliance updateAppliance = applianceService.getAppliance();
 		try {
 			updateAppliance.setOxLogViewerConfig(jsonService.objectToJson(logViewerConfiguration));
-			updateAppliance.setOxLogConfigLocation(logConfigLocation);
+			updateAppliance.setOxLogConfigLocation(oxTrustLogConfigLocation);
 
 			applianceService.updateAppliance(updateAppliance);
 			loggerService.updateLoggerConfigLocation();
 		} catch (Exception ex) {
 			log.error("Failed to save log viewer configuration '{}'", ex);
+		}
+	}
+
+	private void updateOxAuthConfiguration() {
+		try {
+			AppConfiguration appConfiguration = jsonConfigurationService.getOxauthAppConfiguration();
+			appConfiguration.setExternalLoggerConfiguration(oxAuthLogConfigLocation);
+			jsonConfigurationService.saveOxAuthAppConfiguration(appConfiguration);
+		} catch (IOException e) {
+			log.error("Failed to update oxauth-config.json", e);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in LDAP");
 		}
 	}
 
@@ -165,11 +189,19 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		return logViewerConfiguration;
 	}
 
-	public String getLogConfigLocation() {
-		return logConfigLocation;
+	public String getOxTrustLogConfigLocation() {
+		return oxTrustLogConfigLocation;
 	}
 
-	public void setLogConfigLocation(String logConfigLocation) {
-		this.logConfigLocation = logConfigLocation;
+	public void setOxTrustLogConfigLocation(String oxTrustLogConfigLocation) {
+		this.oxTrustLogConfigLocation = oxTrustLogConfigLocation;
+	}
+
+	public String getOxAuthLogConfigLocation() {
+		return oxAuthLogConfigLocation;
+	}
+
+	public void setOxAuthLogConfigLocation(String oxAuthLogConfigLocation) {
+		this.oxAuthLogConfigLocation = oxAuthLogConfigLocation;
 	}
 }
