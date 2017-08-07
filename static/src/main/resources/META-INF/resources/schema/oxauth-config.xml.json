@@ -696,7 +696,7 @@
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
-            "minimum": 1,
+            "minimum": 0,
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
