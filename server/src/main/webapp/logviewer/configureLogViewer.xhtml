@@ -43,11 +43,18 @@
 
                                     <h:panelGroup>
                                         <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
-                                            <h:outputLabel for="logConfigLocation"
-                                                           class="col-sm-2">External log4j location:</h:outputLabel>
-                                            <h:inputText id="logConfigLocation" class="col-md-4 form-control"
+                                            <h:outputLabel for="oxTrustLogConfigLocation"
+                                                           class="col-sm-2">oxTrust External log4j location:</h:outputLabel>
+                                            <h:inputText id="oxTrustLogConfigLocation" class="col-md-4 form-control"
                                                          style="margin-right:5px;margin-bottom:10px;width:35%;float:left;"
-                                                         value="#{configureLogViewerAction.logConfigLocation}"></h:inputText>
+                                                         value="#{configureLogViewerAction.oxTrustLogConfigLocation}"></h:inputText>
+                                        </div>
+                                        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
+                                            <h:outputLabel for="oxAuthLogConfigLocation"
+                                                           class="col-sm-2">oxAuth External log4j location:</h:outputLabel>
+                                            <h:inputText id="oxAuthLogConfigLocation" class="col-md-4 form-control"
+                                                         style="margin-right:5px;margin-bottom:10px;width:35%;float:left;"
+                                                         value="#{configureLogViewerAction.oxAuthLogConfigLocation}"></h:inputText>
                                         </div>
                                         <ox:simpleCustomPropertiesList label="#{msg['logViewer.allowedLogTemplates']}"
                                                                        labelAdd="#{msg['logViewer.logTemplate']}"

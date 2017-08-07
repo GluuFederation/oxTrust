@@ -128,6 +128,16 @@ public class JsonConfigurationService implements Serializable {
 		return true;
 	}
 
+	public boolean saveOxAuthAppConfiguration(org.xdi.oxauth.model.configuration.AppConfiguration appConfiguration) {
+		try {
+			String appConfigurationJson = jsonService.objectToJson(appConfiguration);
+			return saveOxAuthDynamicConfigJson(appConfigurationJson);
+		} catch (IOException e) {
+			log.error("Failed to serialize AppConfiguration", e);
+		}
+		return false;
+	}
+
 	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws JsonParseException, JsonMappingException, IOException {
 		String configurationDn = configurationFactory.getConfigurationDn();
 
