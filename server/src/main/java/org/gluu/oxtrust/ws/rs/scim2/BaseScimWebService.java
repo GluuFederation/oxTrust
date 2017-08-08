@@ -100,7 +100,6 @@ public class BaseScimWebService {
     }
 
 	protected Response processTestModeAuthorization(String token) throws Exception {
-
         Response response=null;
 
 		try {
