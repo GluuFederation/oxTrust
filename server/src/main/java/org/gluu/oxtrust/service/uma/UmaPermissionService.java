@@ -183,18 +183,7 @@ public class UmaPermissionService implements Serializable {
 			return null;
 		}
 
-    	String entity = null;
-		try {
-			entity = jsonService.objectToJson(new PermissionTicket(ticket));
-		} catch (Exception ex) {
-        	log.error("Failed to prepare response", ex);
-		}
-
-		if (entity == null) {
-			return null;
-		}
-
-    	log.debug("Construct response: HTTP 401 (Unauthorized), entity: '{}'",  entity);
+    	log.debug("Construct response: HTTP 401 (Unauthorized), ешслуе: '{}'",  ticket);
         Response response = null;
 		try {
 			String authHeaderValue = String.format("UMA realm=\"Authorization required\", host_id=%s, as_uri=%s, ticket=%s",

@@ -126,42 +126,22 @@ public class BaseScimWebService {
 	}
 
 	protected Response processAuthorization(String authorization) throws Exception {
-		boolean enabled = isScimEnabled();
-		if (!enabled) {
-			if (!scimUmaProtectionService.isEnabled()) {
-				log.info("UMA SCIM authentication is disabled");
-				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
+		if (!scimUmaProtectionService.isEnabled()) {
+			log.info("UMA SCIM authentication is disabled");
+			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
+		}
+
+		Token patToken = scimUmaProtectionService.getPatToken();
+		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, scimUmaProtectionService.getUmaResourceId(), scimUmaProtectionService.getUmaScope());
+		if (rptTokenValidationResult.getFirst()) {
+			if (rptTokenValidationResult.getSecond() != null) {
+				return rptTokenValidationResult.getSecond();
 			}
-			Token patToken = scimUmaProtectionService.getPatToken();
-			Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, scimUmaProtectionService.getUmaResourceId(), scimUmaProtectionService.getUmaScope());
-			if (rptTokenValidationResult.getFirst()) {
-				if (rptTokenValidationResult.getSecond() != null) {
-					return rptTokenValidationResult.getSecond();
-				}
-			} else {
-				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
-			}
+		} else {
+			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
 		}
 
 		return null;
-	}
-
-	protected boolean isScimEnabled() {
-		try {
-			GluuAppliance appliance = applianceService.getAppliance();
-			if (appliance == null) {
-				return false;
-			}
-
-			if (!(GluuBoolean.TRUE.equals(appliance.getScimEnabled()) || GluuBoolean.ENABLED.equals(appliance.getScimEnabled()))) {
-				return false;
-			}
-
-			return true;
-		} catch (Exception ex) {
-			log.error("Exception: ", ex);
-			return false;
-		}
 	}
 
 	public <T> List<T> search(String dn, Class<T> entryClass, String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String attributesArray) throws Exception {
