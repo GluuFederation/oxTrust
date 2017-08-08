@@ -91,7 +91,7 @@ public class UserWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Search users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response searchUsers(
-		@HeaderParam("Authorization") String authorization,
+		@HeaderParam("Authorization") @DefaultValue("") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT)  Integer count,
@@ -115,10 +115,8 @@ public class UserWebService extends BaseScimWebService {
 			count = (count == null) ? getMaxCount() : count;
 
 			if (count > getMaxCount()) {
-
 				String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
 				return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
-
 			} else {
 				log.info(" Searching users from LDAP ");
 
@@ -180,7 +178,7 @@ public class UserWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
 	public Response getUserById(
-		@HeaderParam("Authorization") String authorization,
+		@HeaderParam("Authorization") @DefaultValue("") String authorization,
 		@PathParam("id") String id,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
@@ -240,7 +238,7 @@ public class UserWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Create user", notes = "Create user (https://tools.ietf.org/html/rfc7644#section-3.3)", response = User.class)
 	public Response createUser(
-		@HeaderParam("Authorization") String authorization,
+		@HeaderParam("Authorization") @DefaultValue("") String authorization,
 		@ApiParam(value = "User", required = true) User user,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
@@ -292,7 +290,7 @@ public class UserWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Update user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
 	public Response updateUser(
-		@HeaderParam("Authorization") String authorization,
+		@HeaderParam("Authorization") @DefaultValue("") String authorization,
 		@PathParam("id") String id,
 		@ApiParam(value = "User", required = true) User user,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
@@ -345,7 +343,7 @@ public class UserWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteUser(
-		@HeaderParam("Authorization") String authorization,
+		@HeaderParam("Authorization") @DefaultValue("") String authorization,
 		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse;
@@ -385,7 +383,7 @@ public class UserWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Search users POST /.search", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
 	public Response searchUsersPost(
-		@HeaderParam("Authorization") String authorization,
+		@HeaderParam("Authorization") @DefaultValue("") String authorization,
 		@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) throws Exception {
 
 		try {
@@ -442,7 +440,6 @@ public class UserWebService extends BaseScimWebService {
 	}
 
 	private String serializeToJson(Object object, String attributesArray) throws Exception {
-
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 		SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
@@ -454,7 +451,6 @@ public class UserWebService extends BaseScimWebService {
 		return mapper.writeValueAsString(object);
 	}
 	
-	
 	//  PATCH WEBSERVICES
 	@Path("/patch/{id}")
 	@PUT
@@ -463,7 +459,7 @@ public class UserWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "patch user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
 	public Response patchUser(
-		@HeaderParam("Authorization") String authorization,
+		@HeaderParam("Authorization") @DefaultValue("") String authorization,
 		@PathParam("id") String id,
 		@ApiParam(value = "User", required = true) ScimPatchUser user,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
