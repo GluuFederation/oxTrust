@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -54,7 +55,7 @@ public class PassportRestWebService {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getPassportConfig(@HeaderParam("Authorization") String authorization) {
+	public Response getPassportConfig(@HeaderParam("Authorization") @DefaultValue("") String authorization) {
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;
