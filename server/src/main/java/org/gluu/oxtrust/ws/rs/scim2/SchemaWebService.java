@@ -63,7 +63,7 @@ public class SchemaWebService extends BaseScimWebService {
     @GET
     @Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
     @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    public Response listSchemas(@HeaderParam("Authorization") @DefaultValue("") String authorization) throws Exception {
+    public Response listSchemas(@HeaderParam("Authorization") String authorization) throws Exception {
 
         log.info(" listSchemas() ");
 
@@ -107,7 +107,7 @@ public class SchemaWebService extends BaseScimWebService {
     @Path("{id}")
     @Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
     @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    public Response getSchemaById(@HeaderParam("Authorization") @DefaultValue("") String authorization, @PathParam("id") String id) throws Exception {
+    public Response getSchemaById(@HeaderParam("Authorization") String authorization, @PathParam("id") String id) throws Exception {
 
         log.info(" getSchemaById(), id = '" + id + "'");
 

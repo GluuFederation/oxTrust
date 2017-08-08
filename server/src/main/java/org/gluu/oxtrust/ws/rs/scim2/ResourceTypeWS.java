@@ -41,7 +41,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 	@GET
 	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response listResources(@HeaderParam("Authorization") @DefaultValue("") String authorization) throws Exception {
+	public Response listResources(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ListResponse listResponse = new ListResponse();
 
@@ -117,7 +117,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 	@GET
 	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response getResourceTypeUser(@HeaderParam("Authorization") @DefaultValue("") String authorization) throws Exception {
+	public Response getResourceTypeUser(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ResourceType userResourceType = new ResourceType();
 		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
@@ -150,7 +150,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 	@GET
 	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response getResourceTypeGroup(@HeaderParam("Authorization") @DefaultValue("") String authorization) throws Exception {
+	public Response getResourceTypeGroup(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ResourceType groupResourceType = new ResourceType();
 		groupResourceType.setDescription(Constants.GROUP_CORE_SCHEMA_DESCRIPTION);
@@ -176,7 +176,7 @@ public class ResourceTypeWS extends BaseScimWebService {
 	@GET
 	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response getResourceTypeFidoDevice(@HeaderParam("Authorization") @DefaultValue("") String authorization) throws Exception {
+	public Response getResourceTypeFidoDevice(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ResourceType fidoDeviceResourceType = new ResourceType();
 		fidoDeviceResourceType.setDescription(Constants.FIDO_DEVICES_CORE_SCHEMA_DESCRIPTION);

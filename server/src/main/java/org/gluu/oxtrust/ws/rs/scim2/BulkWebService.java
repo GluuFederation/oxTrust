@@ -106,7 +106,7 @@ public class BulkWebService extends BaseScimWebService {
 	public Response processBulkOperations(
 			// @Context HttpServletRequest request,
 			// @Context HttpServletResponse response,
-			@HeaderParam("Authorization") @DefaultValue("") String authorization, @HeaderParam("Content-Length") int contentLength,
+			@HeaderParam("Authorization") String authorization, @HeaderParam("Content-Length") int contentLength,
 			@ApiParam(value = "BulkRequest", required = true) BulkRequest bulkRequest) throws Exception {
 
 		Response authorizationResponse;

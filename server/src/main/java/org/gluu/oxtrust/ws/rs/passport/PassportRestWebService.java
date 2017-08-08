@@ -55,7 +55,7 @@ public class PassportRestWebService {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getPassportConfig(@HeaderParam("Authorization") @DefaultValue("") String authorization) {
+	public Response getPassportConfig(@HeaderParam("Authorization") String authorization) {
 		Response authorizationResponse = processAuthorization(authorization);
 		if (authorizationResponse != null) {
 			return authorizationResponse;

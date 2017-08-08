@@ -86,7 +86,7 @@ public class GroupWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Search groups", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
 	public Response searchGroups(
-		@HeaderParam("Authorization") @DefaultValue("") String authorization,
+		@HeaderParam("Authorization") String authorization,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT) final int count,
@@ -173,7 +173,7 @@ public class GroupWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Find group by id", notes = "Returns a group by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.2.1)", response = Group.class)
 	public Response getGroupById(
-		@HeaderParam("Authorization") @DefaultValue("") String authorization,
+		@HeaderParam("Authorization") String authorization,
 		@PathParam("id") String id,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
@@ -233,7 +233,7 @@ public class GroupWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Create group", notes = "Create group (https://tools.ietf.org/html/rfc7644#section-3.3)", response = Group.class)
 	public Response createGroup(
-		@HeaderParam("Authorization") @DefaultValue("") String authorization,
+		@HeaderParam("Authorization") String authorization,
 		@ApiParam(value = "Group", required = true) Group group,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
 
@@ -281,7 +281,7 @@ public class GroupWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Update group", notes = "Update group (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = Group.class)
 	public Response updateGroup(
-		@HeaderParam("Authorization") @DefaultValue("") String authorization,
+		@HeaderParam("Authorization") String authorization,
 		@PathParam("id") String id,
 		@ApiParam(value = "Group", required = true) Group group,
 		@QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
@@ -334,7 +334,7 @@ public class GroupWebService extends BaseScimWebService {
 	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
 	@ApiOperation(value = "Delete group", notes = "Delete group (https://tools.ietf.org/html/rfc7644#section-3.6)")
 	public Response deleteGroup(
-		@HeaderParam("Authorization") @DefaultValue("") String authorization,
+		@HeaderParam("Authorization") String authorization,
 		@PathParam("id") String id) throws Exception {
 
 		Response authorizationResponse;
@@ -374,7 +374,7 @@ public class GroupWebService extends BaseScimWebService {
     @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
     @ApiOperation(value = "Search group POST /.search", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
     public Response searchGroupsPost(
-        @HeaderParam("Authorization") @DefaultValue("") String authorization,
+        @HeaderParam("Authorization") String authorization,
         @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) throws Exception {
 
         try {
