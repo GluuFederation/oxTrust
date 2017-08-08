@@ -194,7 +194,7 @@ public class UmaPermissionService implements Serializable {
 			return null;
 		}
 
-    	log.debug("Construct response: HTTP 403 (Forbidden), entity: '{}'",  entity);
+    	log.debug("Construct response: HTTP 401 (Unauthorized), entity: '{}'",  entity);
         Response response = null;
 		try {
 			String authHeaderValue = String.format("UMA realm=\"Authorization required\", host_id=%s, as_uri=%s, ticket=%s",
