@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.api.rest;
+package org.gluu.oxtrust.ws.rs.passport;
 
 import java.io.IOException;
 import java.util.HashMap;

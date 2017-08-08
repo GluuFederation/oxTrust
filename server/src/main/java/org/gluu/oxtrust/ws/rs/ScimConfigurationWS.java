@@ -56,7 +56,7 @@ public class ScimConfigurationWS {
     @Produces({UmaConstants.JSON_MEDIA_TYPE})
     @ApiOperation(
             value = "Provides metadata as json document. It contains options and endpoints supported by the SCIM server.",
-            response = UmaMetadata.class
+            response = ScimConfiguration.class
     )
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Failed to build SCIM configuration json object.")
