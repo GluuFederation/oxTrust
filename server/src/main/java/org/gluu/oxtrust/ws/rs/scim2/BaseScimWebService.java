@@ -126,8 +126,8 @@ public class BaseScimWebService {
 	}
 
 	protected Response processAuthorization(String authorization) throws Exception {
-		boolean authorized = getAuthorizedUser();
-		if (!authorized) {
+		boolean enabled = isScimEnabled();
+		if (!enabled) {
 			if (!scimUmaProtectionService.isEnabled()) {
 				log.info("UMA SCIM authentication is disabled");
 				return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
@@ -146,14 +146,8 @@ public class BaseScimWebService {
 		return null;
 	}
 
-	protected boolean getAuthorizedUser() {
+	protected boolean isScimEnabled() {
 		try {
-			GluuCustomPerson authUser = (GluuCustomPerson) identity.getSessionMap().get(OxTrustConstants.CURRENT_PERSON);
-
-			if (authUser == null) {
-				return false;
-			}
-
 			GluuAppliance appliance = applianceService.getAppliance();
 			if (appliance == null) {
 				return false;
