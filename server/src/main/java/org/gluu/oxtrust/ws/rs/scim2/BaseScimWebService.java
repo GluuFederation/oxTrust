@@ -36,6 +36,7 @@ import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
+import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.SimpleToken;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -114,11 +115,10 @@ public class BaseScimWebService {
             log.info("Found {} entries in LDAP for this token", size);
 
             if (size!=1)
-                response=getErrorResponse(Response.Status.FORBIDDEN, "Invalid token "+ token);
-        }
-		catch (Exception e) {
-			e.printStackTrace();
-			response=getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
+                response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token "+ token);
+        } catch (Exception e) {
+			log.error("Faield to check test token", e);
+			response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token");
 		}
         return response;
 
@@ -127,17 +127,22 @@ public class BaseScimWebService {
 	protected Response processAuthorization(String authorization) throws Exception {
 		if (!scimUmaProtectionService.isEnabled()) {
 			log.info("UMA SCIM authentication is disabled");
-			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
+			return getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "SCIM was disabled");
 		}
 
-		Token patToken = scimUmaProtectionService.getPatToken();
+		Token patToken;
+		try {
+			patToken = scimUmaProtectionService.getPatToken();
+		} catch (UmaProtectionException ex) {
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
+		}
 		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, scimUmaProtectionService.getUmaResourceId(), scimUmaProtectionService.getUmaScope());
 		if (rptTokenValidationResult.getFirst()) {
 			if (rptTokenValidationResult.getSecond() != null) {
 				return rptTokenValidationResult.getSecond();
 			}
 		} else {
-			return getErrorResponse(Response.Status.FORBIDDEN, "User isn't authorized");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "nvalid GAT/RPT token");
 		}
 
 		return null;

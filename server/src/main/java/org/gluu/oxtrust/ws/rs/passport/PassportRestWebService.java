@@ -85,7 +85,7 @@ public class PassportRestWebService {
 		try {
 			passportConfigResponseJson = jsonService.objectToPerttyJson(passportConfigResponse);
 		} catch (IOException ex) {
-			return getErrorResponse(Response.Status.FORBIDDEN, "Failed to prepare configuration");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to prepare configuration");
 		}
 
 		return Response.status(Response.Status.OK).entity(passportConfigResponseJson).build();
@@ -94,14 +94,14 @@ public class PassportRestWebService {
 	protected Response processAuthorization(String authorization) {
 		if (!passportUmaProtectionService.isEnabled()) {
 			log.info("UMA passport authentication is disabled");
-			return getErrorResponse(Response.Status.FORBIDDEN, "Passport configuration was disabled");
+			return getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Passport configuration was disabled");
 		}
 
 		Token patToken;
 		try {
 			patToken = passportUmaProtectionService.getPatToken();
 		} catch (UmaProtectionException ex) {
-			return getErrorResponse(Response.Status.FORBIDDEN, "Failed to obtain PAT token");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
 		}
 
 		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken,
@@ -112,7 +112,7 @@ public class PassportRestWebService {
 				return rptTokenValidationResult.getSecond();
 			}
 		} else {
-			return getErrorResponse(Response.Status.FORBIDDEN, "Invalid GAT/RPT token");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Invalid GAT/RPT token");
 		}
 
 		return null;
