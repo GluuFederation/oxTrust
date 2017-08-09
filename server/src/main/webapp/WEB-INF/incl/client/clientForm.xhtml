@@ -613,6 +613,14 @@
                                     </rich:tooltip>
                                 </a4j:outputPanel>
 
+                                <ox:decorate id="oxRefreshTokenLifetime"
+                                             label="#{msg['clientForm.oxRefreshTokenLifetime']}">
+                                    <rich:inplaceInput value="#{_client.oxRefreshTokenLifetime}"
+                                                       defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
+                                                       maxlength="60" inputWidth="695" required="false"
+                                                       id="oxRefreshTokenLifetimeId"/>
+                                </ox:decorate>
+
                                 <ox:decorate id="clientsecretexpiry"
                                              rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
                                              label="#{msg['clientForm.clientSecretExpires']}">
