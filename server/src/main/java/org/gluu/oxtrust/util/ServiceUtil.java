@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +36,7 @@ import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.util.ArrayHelper;
 
 /**
  * User: Dejan Maric
@@ -328,6 +330,17 @@ public class ServiceUtil implements Serializable {
         byte[] fileContent = copyUploadedFile(uploadedFile);
         
         return saveRandomFile(fileContent, baseDir, extension);
+    }
+    
+    public static String getFirstValue(Map<String, String[]> map, String key) {
+        if (map.containsKey(key)) {
+            String[] values = map.get(key);
+            if (ArrayHelper.isNotEmpty(values)) {
+                return values[0];
+            }
+        }
+
+        return null;
     }
 
 	/**
