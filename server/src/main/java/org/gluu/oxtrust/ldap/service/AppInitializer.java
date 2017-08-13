@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import com.unboundid.ldap.sdk.ResultCode;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
