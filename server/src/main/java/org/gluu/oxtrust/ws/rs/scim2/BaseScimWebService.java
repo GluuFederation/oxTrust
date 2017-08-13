@@ -19,9 +19,9 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
@@ -37,15 +37,14 @@ import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.exception.UmaProtectionException;
-import org.gluu.oxtrust.ldap.SimpleToken;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
+import org.xdi.oxauth.client.ClientInfoClient;
+import org.xdi.oxauth.client.ClientInfoResponse;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 
@@ -87,42 +86,39 @@ public class BaseScimWebService {
 
 	@Inject
 	private ScimFilterParserService scimFilterParserService;
-	
+
+    @Inject
+    private AppInitializer appInitializer;
+
 	public int getMaxCount(){
 	    return Constants.MAX_COUNT;
         //return appConfiguration.getScimProperties().getMaxCount() ;
 	}
 
-	private String getClientsDn(){
-	    StringBuffer tmp=new StringBuffer("ou=clients");
-	    tmp.append(String.format(",o=%s", appConfiguration.getOrgInum()));
-	    tmp.append(String.format(",%s",appConfiguration.getBaseDN()));
-        return tmp.toString();
-    }
+    protected Response processTestModeAuthorization(String token) throws Exception {
 
-	protected Response processTestModeAuthorization(String token) throws Exception {
         Response response=null;
 
-		try {
+        try {
             token=token.replaceFirst("Bearer\\s+","");
-            log.info("Validating token {}", token);
+            log.debug("Validating token {}", token);
 
-            String dn=getClientsDn();
-		    Filter filter=Filter.create(String.format("oxAuthTokenCode=%s", "{sha256Hex}" + DigestUtils.sha256Hex(token)));
-            List<SimpleToken> list = ldapEntryManager.findEntries(dn, SimpleToken.class, filter);
+            String clientInfoEndpoint=openIdService.getOpenIdConfiguration().getClientInfoEndpoint();
+            ClientInfoClient clientInfoClient = new ClientInfoClient(clientInfoEndpoint);
+            ClientInfoResponse clientInfoResponse = clientInfoClient.execClientInfo(token);
 
-            int size=list.size();
-            log.info("Found {} entries in LDAP for this token", size);
-
-            if (size!=1)
+            if (clientInfoResponse.getErrorType()==null) {
                 response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token "+ token);
-        } catch (Exception e) {
-			log.error("Faield to check test token", e);
-			response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token");
-		}
+                log.debug("Error validating access token: {}", clientInfoResponse.getErrorDescription());
+            }
+        }
+        catch (Exception e) {
+            log.error("Failed to check test token", e);
+            response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token");
+        }
         return response;
 
-	}
+    }
 
 	protected Response processAuthorization(String authorization) throws Exception {
 		if (!scimUmaProtectionService.isEnabled()) {
