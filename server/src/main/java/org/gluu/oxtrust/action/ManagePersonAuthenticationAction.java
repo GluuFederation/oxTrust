@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -155,9 +156,16 @@ public class ManagePersonAuthenticationAction
 			this.customScripts = customScriptService.findCustomScripts(
 					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 
-			OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
-			if (idpConf != null) {
-				this.ldapConfig = mapLdapConfig(idpConf.getConfig());
+			//OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
+			List<OxIDPAuthConf>  list = getIDPAuthConfOrNull(appliance);
+			//this.sourceConfigs = getIDPAuthConfOrNull(appliance);
+			this.sourceConfigs = this.sourceConfigs == null ?  new ArrayList<GluuLdapConfiguration>() : this.sourceConfigs;
+			if (list != null) {
+				for(OxIDPAuthConf oxIDPAuthConf : list){
+					GluuLdapConfiguration oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
+					this.sourceConfigs.add(oxldapConfig);
+				}
+				
 			}
 
 			this.existLdapConfigIdpAuthConf = this.ldapConfig != null;
@@ -186,7 +194,7 @@ public class ManagePersonAuthenticationAction
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String save() {
+	public String save() throws JsonParseException, JsonMappingException, IOException {
 		try {
 			// Reload entry to include latest changes
 			GluuAppliance appliance = applianceService.getAppliance();
@@ -194,25 +202,23 @@ public class ManagePersonAuthenticationAction
 			boolean updateAuthenticationMode = false;
 			boolean updateOxTrustAuthenticationMode = false;
 
-			OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
-			if (idpConf != null && idpConf.getName() != null) {
-				if (idpConf.getName().equals(this.authenticationMode)) {
-					updateAuthenticationMode = true;
+			//OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
+			
+			/*List<OxIDPAuthConf>  list = getIDPAuthConfOrNull(appliance);
+			//this.sourceConfigs = getIDPAuthConfOrNull(appliance);
+			if (list != null) {
+				for(OxIDPAuthConf oxIDPAuthConf : list){
+					this.ldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
+					GluuLdapConfiguration  oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
+					this.sourceConfigs.add(oxldapConfig);
 				}
-				if (idpConf.getName().equals(this.oxTrustAuthenticationMode)) {
-					updateOxTrustAuthenticationMode = true;
-				}
-			}
-
-			this.ldapConfig.updateStringsLists();
+				
+			}*/				
 
 			updateAuthConf(appliance);
 
-			String updatedAuthMode = updateAuthenticationMode ? this.ldapConfig.getConfigId() : this.authenticationMode;
-			String updatedOxTrustAuthMode = updateOxTrustAuthenticationMode ? this.ldapConfig.getConfigId()
-					: this.oxTrustAuthenticationMode;
-			appliance.setAuthenticationMode(updatedAuthMode);
-			appliance.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
+			appliance.setAuthenticationMode(this.authenticationMode);
+			appliance.setOxTrustAuthenticationMode(this.oxTrustAuthenticationMode);
 
 			appliance.setPassportEnabled(passportEnable);
 
@@ -266,22 +272,25 @@ public class ManagePersonAuthenticationAction
 	public boolean updateAuthConf(GluuAppliance appliance) {
 		try {
 			List<OxIDPAuthConf> idpConf = new ArrayList<OxIDPAuthConf>();
-			if (this.existLdapConfigIdpAuthConf) {
-				if (this.ldapConfig.isUseAnonymousBind()) {
-					this.ldapConfig.setBindDN(null);
-				}
-
-				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
-				ldapConfigIdpAuthConf.setType("auth");
-				ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
-				ldapConfigIdpAuthConf.setName(this.ldapConfig.getConfigId());
-				ldapConfigIdpAuthConf.setEnabled(this.ldapConfig.isEnabled());
-				ldapConfigIdpAuthConf.setConfig(objectToJson(this.ldapConfig));
-
-				idpConf.add(ldapConfigIdpAuthConf);
-			}
+			for(GluuLdapConfiguration ldapConfig :this.sourceConfigs ){
+				//if (this.existLdapConfigIdpAuthConf) {
+					if (ldapConfig.isUseAnonymousBind()) {
+						ldapConfig.setBindDN(null);
+					}
+	
+					OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
+					ldapConfig.updateStringsLists();
+					ldapConfigIdpAuthConf.setType("auth");
+					ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
+					ldapConfigIdpAuthConf.setName(ldapConfig.getConfigId());
+					ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
+					ldapConfigIdpAuthConf.setConfig(objectToJson(ldapConfig));
+	
+					idpConf.add(ldapConfigIdpAuthConf);
+				//}
 
 			appliance.setOxIDPAuthentication(idpConf);
+			}
 		} catch (Exception ex) {
 			log.error("An Error occured ", ex);
 
@@ -304,10 +313,17 @@ public class ManagePersonAuthenticationAction
 					this.customAuthenticationConfigNames.add(customScript.getName());
 				}
 			}
+			
+			boolean internalServerName = true;
+			
+			for(GluuLdapConfiguration ldapConfig :this.sourceConfigs){
+				if ((ldapConfig != null) && StringHelper.isNotEmpty(ldapConfig.getConfigId())) {
+					this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
+					internalServerName = false;
+				} 
+			}
 
-			if ((ldapConfig != null) && StringHelper.isNotEmpty(ldapConfig.getConfigId())) {
-				this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
-			} else {
+			if (internalServerName) {
 				this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
 			}
 		}
@@ -396,13 +412,13 @@ public class ManagePersonAuthenticationAction
 	public void setActiveLdapConfig(GluuLdapConfiguration activeLdapConfig) {
 	}
 
-	@Override
+	/*@Override
 	public void addLdapConfig(List<GluuLdapConfiguration> ldapConfigList) {
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void removeLdapConfig(List<GluuLdapConfiguration> ldapConfigList, GluuLdapConfiguration removeLdapConfig) {
-	}
+	}*/
 
 	@Override
 	public void addItemToSimpleProperties(List<SimpleProperty> simpleProperties) {
@@ -476,16 +492,50 @@ public class ManagePersonAuthenticationAction
 		this.passportEnable = passportEnable;
 	}
 
-	private OxIDPAuthConf getIDPAuthConfOrNull(GluuAppliance appliance) {
+	private List<OxIDPAuthConf> getIDPAuthConfOrNull(GluuAppliance appliance) {
 		List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
+		List<OxIDPAuthConf> authIdpConfs = new ArrayList<OxIDPAuthConf> ();
 		if (idpConfs != null) {
 			for (OxIDPAuthConf idpConf : idpConfs) {
 				if (idpConf.getType().equalsIgnoreCase("auth")) {
-					return idpConf;
+					authIdpConfs.add(idpConf);
 				}
 			}
 		}
+		return authIdpConfs;
 
-		return null;
 	}
+	
+
+	private List<GluuLdapConfiguration> sourceConfigs;
+	
+	public List<GluuLdapConfiguration> getSourceConfigs() {
+		return sourceConfigs;
+	}
+
+	public void setSourceConfigs(List<GluuLdapConfiguration> sourceConfigs) {
+		this.sourceConfigs = sourceConfigs;
+	}
+	
+	public void addSourceConfig() {
+		addLdapConfig(this.getSourceConfigs());
+	}
+	
+	//@Override
+	public void addLdapConfig(List<GluuLdapConfiguration> ldapConfigList) {
+		GluuLdapConfiguration ldapConfiguration = new GluuLdapConfiguration();
+		//ldapConfiguration.setBindPassword("");
+		ldapConfigList.add(ldapConfiguration);
+	}
+	
+	public void removeLdapConfig(List<GluuLdapConfiguration> ldapConfigList, GluuLdapConfiguration removeLdapConfig) {
+		for (Iterator<GluuLdapConfiguration> iterator = ldapConfigList.iterator(); iterator.hasNext();) {
+			GluuLdapConfiguration ldapConfig = iterator.next();
+			if (System.identityHashCode(removeLdapConfig) == System.identityHashCode(ldapConfig)) {
+				iterator.remove();
+				return;
+			}
+		}
+	}
+
 }

@@ -41,23 +41,38 @@
 						<div class="tab-pane active" id="manage-ldap">
 						<div style="display: inline-block; width: 75% !important;">
 							<h:panelGroup id="ldapManagementGroupId">
+							
+							<rich:dataGrid id="sourceConfigsId" value="#{_action.sourceConfigs}" var="_ldapConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
+                       			<div style="display: inline-block;width: 75% !important;">
 								
-								<ox:ldapConfig ldapConfig="#{_action.ldapConfig}"
+								<ox:ldapConfig ldapConfig="#{_ldapConfig}"
 									ldapConfigAction="#{_action}" propertiesAction="#{_action}"
 									displayBaseDn="true" displayAnonymousBind="false"
 									displayRemoveButton="false" displayPrimaryKey="true"
 									displayLocalPrimaryKey="true" displayEnable="false"
-									changePasswordDialogId="bindPassword:changePasswordModalPanel"
-									rendered="#{_action.existLdapConfigIdpAuthConf}" />
+									changePasswordDialogId="bindPassword:changePasswordModalPanel" />
+									
+								 <a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_ldapConfig.setEnabled(true)}" rendered="#{not _ldapConfig.enabled}"
+							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"/>
+				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_ldapConfig.ldapConfig.setEnabled(false)}" rendered="#{_ldapConfig.enabled}"
+			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/>
+									<!-- 
 								 <a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
 							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"/>
 				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_action.setExistLdapConfigIdpAuthConf(false)}" rendered="#{_action.existLdapConfigIdpAuthConf}"
-			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/>
+			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/> -->
 			                    	
 								<h:commandButton styleClass="btn btn-success"
 									style="margin-left:4px" value="#{msg['manageAuthentication.testLDAPConnection']}"
 									action="#{_action.testLdapConnection}"
 									rendered="#{_action.existLdapConfigIdpAuthConf}" />
+							</div>
+									
+							</rich:dataGrid>
+
+		                    <h:panelGroup layout="block" styleClass="addConfig">
+		                        <a4j:commandLink styleClass="btn btn-link" value="#{msg['organization.addSourceLDAPServer']}" action="#{_action.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
+		                    </h:panelGroup>
 
 							</h:panelGroup>
 
@@ -198,7 +213,7 @@
 						<h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.cancel']}"
 							action="#{managePersonAuthenticationAction.cancel}"
 							immediate="true" style="margin-left:4px" />
-						<h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.activate']}"
+						<!-- <h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.activate']}"
 							action="#{_action.setExistLdapConfigIdpAuthConf(true)}"
 							rendered="#{not _action.existLdapConfigIdpAuthConf}"
 							render="ldapManagementGroupId" limitRender="true"
@@ -207,7 +222,7 @@
 							action="#{_action.setExistLdapConfigIdpAuthConf(false)}"
 							rendered="#{_action.existLdapConfigIdpAuthConf}"
 							render="ldapManagementGroupId" limitRender="true"
-							immediate="true" style="margin-left:4px" />
+							immediate="true" style="margin-left:4px" /> -->
 
 					</div>
 
