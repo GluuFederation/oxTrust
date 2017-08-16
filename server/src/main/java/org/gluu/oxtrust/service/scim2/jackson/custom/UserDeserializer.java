@@ -26,6 +26,7 @@ import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.User;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Custom deserializer for the SCIM 2.0 User class.
@@ -37,8 +38,9 @@ import org.slf4j.Logger;
 @Named
 public class UserDeserializer extends JsonDeserializer<User> {
 
-    @Inject
-    private Logger log;
+    //@Inject
+    //private Logger log;
+    private Logger log= LoggerFactory.getLogger(UserDeserializer.class);
 
     @Override
     public User deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
@@ -91,4 +93,5 @@ public class UserDeserializer extends JsonDeserializer<User> {
             throw new IOException(INTERNAL_SERVER_ERROR_MESSAGE);
         }
     }
+
 }
