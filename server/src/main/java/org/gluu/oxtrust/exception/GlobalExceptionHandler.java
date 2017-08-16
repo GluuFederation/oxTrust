@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xdi.service.security.SecurityEvaluationException;
 
+import javax.enterprise.context.NonexistentConversationException;
 import javax.faces.FacesException;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.context.ExceptionHandler;
@@ -44,12 +45,15 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
             final ExternalContext externalContext = fc.getExternalContext();
             final ConfigurableNavigationHandler nav = (ConfigurableNavigationHandler) fc.getApplication().getNavigationHandler();
             try {
-                if (isForbidden(t)) {
-                    performRedirect(externalContext, "/login");
-                } else {
-                	log.error(t.getMessage(), t);
-                    performRedirect(externalContext, "/error");
-                }
+				if (isSecurityException(t)) {
+					performRedirect(externalContext, "/login");
+				} else if (isConversationException(t)) {
+					log.error(t.getMessage(), t);
+					performRedirect(externalContext, "/conversation_error");
+				} else {
+					log.error(t.getMessage(), t);
+					performRedirect(externalContext, "/error");
+				}
                 fc.renderResponse();
             } finally {
                 i.remove();
@@ -58,9 +62,12 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
         getWrapped().handle();
     }
 
-
-    private boolean isForbidden(Throwable t) {
+    private boolean isSecurityException(Throwable t) {
         return ExceptionUtils.getRootCause(t) instanceof SecurityEvaluationException;
+    }
+
+    private boolean isConversationException(Throwable t) {
+        return ExceptionUtils.getRootCause(t) instanceof NonexistentConversationException;
     }
 
     private void performRedirect(ExternalContext externalContext, String viewId) {
