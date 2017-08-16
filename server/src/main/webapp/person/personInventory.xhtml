@@ -52,8 +52,7 @@
                                         <ox:decorate hideLabel="true" id="searchPattern">
                                             <h:inputText alt="search parameters for person like uid,iname,email"
                                                          id="searchPatternId" maxlength="30" required="true" size="30"
-                                                         style="width: 50%; float: left;"
-                                                         styleClass="searchParameters form-control"
+                                                         style="width: 50%; float: left;"  label="searchPattern"                                                 styleClass="searchParameters form-control"
                                                          value="#{searchPersonAction.searchPattern}"/>
                                             <h:commandButton action="#{searchPersonAction.search}" style="float: left;"
                                                              styleClass="btn btn-primary" value="Search"/>

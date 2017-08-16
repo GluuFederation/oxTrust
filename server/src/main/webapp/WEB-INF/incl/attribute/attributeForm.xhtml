@@ -19,7 +19,7 @@
 						
         <h:panelGroup columns="1" width="100%">
              <ox:decorate id="name" label="#{msg['attribute.name']}">
-                <h:inputText styleClass="form-control" value="#{_attribute.name}" size="30" maxlength="30" required="true" id="nameId" rendered="#{_new}"/>
+                <h:inputText styleClass="form-control" value="#{_attribute.name}" label="#{msg['attribute.name']}" size="30" maxlength="30" required="true" id="nameId" rendered="#{_new}"/>
                 <h:outputText value="#{_attribute.name}" rendered="#{not _new}"/>
              </ox:decorate>
              
@@ -32,12 +32,12 @@
              </ox:decorate>
 
              <ox:decorate id="displayName" label="#{msg['attribute.displayName']}">
-                <h:inputText styleClass="form-control" value="#{_attribute.displayName}" size="30" maxlength="60" required="true" id="displayNameId" rendered="#{_attributeAction.canEdit()}"/>
+                <h:inputText styleClass="form-control" value="#{_attribute.displayName}" label="#{msg['attribute.displayName']}" size="30" maxlength="60" required="true" id="displayNameId" rendered="#{_attributeAction.canEdit()}"/>
                 <h:outputText value="#{_attribute.displayName}" rendered="#{not _attributeAction.canEdit()}"/>
              </ox:decorate>
 
              <ox:decorate id="dataType" label="#{msg['attribute.type']}">
-                <h:selectOneMenu styleClass="form-control" value="#{_attribute.dataType}" required="true" id="dataTypeId" rendered="#{_attributeAction.canEdit()}">
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.dataType}" label="#{msg['attribute.type']}" required="true" id="dataTypeId" rendered="#{_attributeAction.canEdit()}">
                     <f:selectItem noSelectionOption="true"  itemLabel="Data type"/>
                     <f:selectItems value="#{attributeService.dataTypes}" 
                               var="_type" itemLabel="#{_type.displayName}"/>
@@ -95,7 +95,7 @@
              </ox:decorate>
 
              <ox:decorate id="multivalued" label="#{msg['attribute.multivalued']}">
-                <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxMultivaluedAttribute}" required="true" id="multivaluedId" rendered="#{_attributeAction.canEdit()}">
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxMultivaluedAttribute}" label="#{msg['attribute.multivalued']}" required="true" id="multivaluedId" rendered="#{_attributeAction.canEdit()}">
                     <f:selectItem noSelectionOption="true"  itemLabel="Multivalued"/>
                     <f:selectItems value="#{attributeService.oxMultivalued}"
                               var="_custom" itemLabel="#{_custom.displayName}"/>
@@ -120,7 +120,7 @@
              </ox:decorate>
 
              <ox:decorate id="description" label="#{msg['attribute.description']}">
-                <h:inputTextarea styleClass="form-control" value="#{_attribute.description}" rows="3" size="40" maxlength="4000" required="true" id="descriptionId" disabled="#{not _attributeAction.canEdit()}"/>
+                <h:inputTextarea styleClass="form-control" value="#{_attribute.description}" label="#{msg['attribute.description']}" rows="3" size="40" maxlength="4000" required="true" id="descriptionId" disabled="#{not _attributeAction.canEdit()}"/>
              </ox:decorate>
             
              <ox:decorate id="validationToggle" label="#{msg['attribute.enableCustomValidation']}">
@@ -172,7 +172,7 @@
              </ox:decorate>
              
              <ox:decorate id="status" label="#{msg['attribute.status']}">
-                <h:selectOneMenu styleClass="form-control" value="#{_attribute.status}" required="true" id="statusId" rendered="#{_attributeAction.canEdit()}">
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.status}" label="#{msg['attribute.status']}" required="true" id="statusId" rendered="#{_attributeAction.canEdit()}">
                     <f:selectItems value="#{organizationService.activeInactiveStatuses}"
                               var="_type" itemLabel="#{_type.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
