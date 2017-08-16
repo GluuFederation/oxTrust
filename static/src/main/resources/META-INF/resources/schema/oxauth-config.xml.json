@@ -836,10 +836,14 @@
             "description": "Boolean value specifying whether to persist session ID on prompt none.",
             "type": "boolean"
         },
-        "sessionStateHttpOnly": {
-            "id": "sessionStateHttpOnly",
-            "description": "Boolean value specifying whether to set Session State HttpOnly.",
-            "type": "boolean"
+        "sessionIdLifetime": {
+            "id": "sessionIdLifetime",
+            "description": "The lifetime of session id in seconds.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
         },
         "configurationUpdateInterval": {
             "id": "configurationUpdateInterval",
@@ -1160,7 +1164,7 @@
         "sessionIdUnauthenticatedUnusedLifetime",
         "sessionIdEnabled",
         "sessionIdPersistOnPromptNone",
-        "sessionStateHttpOnly",
+        "sessionIdLifetime",
         "configurationUpdateInterval",
         "cssLocation",
         "jsLocation",
