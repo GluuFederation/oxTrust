@@ -147,7 +147,7 @@ public class RegisterPersonAction implements Serializable {
 
 			if(!externalUserRegistrationService.isEnabled()){
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}  
+			}      
 				
 			this.person = (inum == null || inum.isEmpty()) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
 
