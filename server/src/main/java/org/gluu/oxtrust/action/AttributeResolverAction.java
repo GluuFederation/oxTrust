@@ -108,6 +108,7 @@ public class AttributeResolverAction implements Serializable {
 		GluuUserRole[] gluuViewRole = new GluuUserRole[]{GluuUserRole.ADMIN, GluuUserRole.USER};
 		this.attribute.setViewType(gluuViewRole);
 		this.attribute.setOxMultivaluedAttribute(OxMultivalued.FALSE);
+		this.attribute.setOrigin("gluuPerson");
 		this.attribute.setStatus(GluuStatus.ACTIVE);
 		this.attribute.setInum(inum);
 		this.attribute.setDisplayName(attributeName);
@@ -207,7 +208,7 @@ public class AttributeResolverAction implements Serializable {
 			fileRead.delete();
 			fileWrite.renameTo(fileRead);
 		}
-
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration updated successfully.");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	

@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
@@ -148,9 +147,9 @@ public class RegisterPersonAction implements Serializable {
 
 			if(!externalUserRegistrationService.isEnabled()){
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}  
+			}      
 				
-			this.person = (inum.isEmpty()) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
+			this.person = (inum == null || inum.isEmpty()) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
 
 			boolean isPersonActiveOrDisabled = GluuStatus.ACTIVE.equals(person.getStatus()) || GluuStatus.INACTIVE.equals(person.getStatus());
 
@@ -254,7 +253,6 @@ public class RegisterPersonAction implements Serializable {
 			this.person.setCreationDate(new Date());
 			this.person.setMail(email);
 			
-
 			try {
 				// Set default message
 				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
@@ -291,17 +289,14 @@ public class RegisterPersonAction implements Serializable {
 	public void confirmRegistration(){
 		GluuCustomPerson updatedPerson;
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		String code = "";
-		code = request.getParameter("code");
+		String code = request.getParameter("code");
 		requestParameters.put("code", new String[]{code});
 		try {
-			updatedPerson = personService.getPersonByAttribute("userRandomKey", code);
-			updatedPerson.setStatus(GluuStatus.ACTIVE);
-			personService.updatePerson(updatedPerson);
+			updatedPerson = personService.getPersonByAttribute("oxGuid", code);
 			boolean result = externalUserRegistrationService.executeExternalConfirmRegistrationMethods(updatedPerson, requestParameters);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Failed to confirm registration.", e);
 		}
 	}
 
