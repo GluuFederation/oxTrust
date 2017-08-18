@@ -45,7 +45,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.ws.rs.PATCH;
+import org.gluu.oxtrust.ws.rs.scim2.validators.UserValidator;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
@@ -254,29 +254,28 @@ public class UserWebService extends BaseScimWebService {
         }
 
         try {
-
-            User createdUser = scim2UserService.createUser(user);
-
-            // Serialize to JSON
-            String json = serializeToJson(createdUser, attributesArray);
-
-            URI location = new URI(createdUser.getMeta().getLocation());
-
-            // Return HTTP response with status code 201 Created
-            return Response.created(location).entity(json).build();
-
-        } catch (DuplicateEntryException ex) {
-
+            if (UserValidator.validate(user)) {
+                User createdUser = scim2UserService.createUser(user);
+                // Serialize to JSON
+                String json = serializeToJson(createdUser, attributesArray);
+                URI location = new URI(createdUser.getMeta().getLocation());
+                // Return HTTP response with status code 201 Created
+                return Response.created(location).entity(json).build();
+            }
+            else{
+                return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE,"User object did not pass validation of one or more attributes");
+            }
+        }
+        catch (DuplicateEntryException ex) {
             log.error("DuplicateEntryException", ex);
             ex.printStackTrace();
             return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
-
-        } catch (PersonRequiredFieldsException ex) {
-
+        }
+        catch (PersonRequiredFieldsException ex) {
             log.error("PersonRequiredFieldsException: ", ex);
             return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, ex.getMessage());
-
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             log.error("Failed to create user " + ex.getMessage(), ex);
             return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
         }
@@ -306,30 +305,30 @@ public class UserWebService extends BaseScimWebService {
         }
 
         try {
-
-            User updatedUser = scim2UserService.updateUser(id, user);
-
-            // Serialize to JSON
-            String json = serializeToJson(updatedUser, attributesArray);
-
-            URI location = new URI(updatedUser.getMeta().getLocation());
-
-            return Response.ok(json).location(location).build();
-
-        } catch (EntryPersistenceException ex) {
-
+            if (UserValidator.validate(user)) {
+                User updatedUser = scim2UserService.updateUser(id, user);
+                // Serialize to JSON
+                String json = serializeToJson(updatedUser, attributesArray);
+                URI location = new URI(updatedUser.getMeta().getLocation());
+                return Response.ok(json).location(location).build();
+            }
+            else{
+                return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE,"User object did not pass validation of one or more attributes");
+            }
+        }
+        catch (EntryPersistenceException ex) {
             log.error("Failed to update user", ex);
             ex.printStackTrace();
             return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
 
-        } catch (DuplicateEntryException ex) {
-
+        }
+        catch (DuplicateEntryException ex) {
             log.error("DuplicateEntryException", ex);
             ex.printStackTrace();
             return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
 
-        } catch (Exception ex) {
-
+        }
+        catch (Exception ex) {
             log.error("Failed to update user", ex);
             ex.printStackTrace();
             return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
@@ -475,30 +474,28 @@ public class UserWebService extends BaseScimWebService {
         }
 
         try {
-
-            User updatedUser = scim2UserService.patchUser(id, user);
-
-            // Serialize to JSON
-            String json = serializeToJson(updatedUser, attributesArray);
-
-            URI location = new URI(updatedUser.getMeta().getLocation());
-
-            return Response.ok(json).location(location).build();
-
-        } catch (EntryPersistenceException ex) {
-
+            if (UserValidator.validate(user)) {
+                User updatedUser = scim2UserService.patchUser(id, user);
+                // Serialize to JSON
+                String json = serializeToJson(updatedUser, attributesArray);
+                URI location = new URI(updatedUser.getMeta().getLocation());
+                return Response.ok(json).location(location).build();
+            }
+            else{
+                return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE,"User object did not pass validation of one or more attributes");
+            }
+        }
+        catch (EntryPersistenceException ex) {
             log.error("Failed to update user", ex);
             ex.printStackTrace();
             return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
-
-        } catch (DuplicateEntryException ex) {
-
+        }
+        catch (DuplicateEntryException ex) {
             log.error("DuplicateEntryException", ex);
             ex.printStackTrace();
             return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
-
-        } catch (Exception ex) {
-
+        }
+        catch (Exception ex) {
             log.error("Failed to update user", ex);
             ex.printStackTrace();
             return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
