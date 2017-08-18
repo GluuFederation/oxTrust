@@ -295,9 +295,8 @@
 											cellpadding="0" border="0" columnClasses="alignCenter"
 											rendered="#{_organization.logoImage ne null}">
 											<h:panelGroup layout="block">
-												<h:graphicImage
-													value="#{_organizationAction.logoImageThumbData}"
-													fileName="#{_organizationAction.logoImageSourceName}" />
+												<img
+													src="#{request.contextPath}/servlet/logo?preview=true" />
 											</h:panelGroup>
 											<richext:spacer height="8" />
 											<a4j:commandLink value="Remove"
