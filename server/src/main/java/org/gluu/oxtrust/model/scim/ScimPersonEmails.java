@@ -55,4 +55,5 @@ public class ScimPersonEmails {
 	public void setPrimary(String primary) {
 		this.primary = primary;
 	}
+
 }

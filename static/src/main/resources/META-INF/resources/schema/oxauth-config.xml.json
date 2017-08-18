@@ -696,7 +696,7 @@
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
-            "minimum": 1,
+            "minimum": 0,
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
@@ -824,9 +824,9 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
-        "sessionStateLifetime": {
-            "id": "sessionStateLifetime",
-            "description": "The lifetime of session state in seconds.",
+        "sessionIdLifetime": {
+            "id": "sessionIdLifetime",
+            "description": "The lifetime of session id in seconds.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -842,11 +842,6 @@
         "sessionIdPersistOnPromptNone": {
             "id": "sessionIdPersistOnPromptNone",
             "description": "Boolean value specifying whether to persist session ID on prompt none.",
-            "type": "boolean"
-        },
-        "sessionStateHttpOnly": {
-            "id": "sessionStateHttpOnly",
-            "description": "Boolean value specifying whether to set Session State HttpOnly.",
             "type": "boolean"
         },
         "configurationUpdateInterval": {
@@ -1177,7 +1172,7 @@
         "sessionIdUnauthenticatedUnusedLifetime",
         "sessionIdEnabled",
         "sessionIdPersistOnPromptNone",
-        "sessionStateHttpOnly",
+        "sessionIdLifetime",
         "configurationUpdateInterval",
         "cssLocation",
         "jsLocation",
