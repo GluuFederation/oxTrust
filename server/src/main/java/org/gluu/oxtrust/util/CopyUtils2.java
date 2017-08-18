@@ -6,24 +6,6 @@
 
 package org.gluu.oxtrust.util;
 
-import java.io.IOException;
-import java.io.Serializable;
-// import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -32,31 +14,10 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.model.GluuCustomAttribute;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.Person;
-import org.gluu.oxtrust.model.PersonAttribute;
+import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.oxtrust.model.scim2.Address;
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.Email;
-import org.gluu.oxtrust.model.scim2.Entitlement;
-import org.gluu.oxtrust.model.scim2.Extension;
-import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.model.scim2.GroupRef;
-import org.gluu.oxtrust.model.scim2.Im;
-import org.gluu.oxtrust.model.scim2.MemberRef;
-import org.gluu.oxtrust.model.scim2.Meta;
-import org.gluu.oxtrust.model.scim2.MultiValuedAttribute;
-import org.gluu.oxtrust.model.scim2.PhoneNumber;
-import org.gluu.oxtrust.model.scim2.Photo;
-import org.gluu.oxtrust.model.scim2.Role;
-import org.gluu.oxtrust.model.scim2.ScimData;
-import org.gluu.oxtrust.model.scim2.ScimGroupMembers;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.User;
-import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.joda.time.DateTime;
@@ -70,6 +31,17 @@ import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.OxMultivalued;
 import org.xdi.util.StringHelper;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+// import java.io.StringWriter;
 
 @Stateless
 @Named
@@ -1311,6 +1283,7 @@ public class CopyUtils2 implements Serializable {
 		destination.setStatus(source.getStatus());
 		destination.setDisplayName(source.getDisplayName());
 		destination.setDescription(source.getDescription());
+		destination.setNickname(source.getNickname());
 
 		if (source.getDn() != null) {
 			String[] dnArray = source.getDn().split("\\,");
@@ -1379,11 +1352,11 @@ public class CopyUtils2 implements Serializable {
 			destination = new GluuCustomFidoDevice();
 		}
 
-		// Only update displayName and description
+		// Only update displayName, description and nickname
 		// All the other fields are not editable
 		destination.setDisplayName(source.getDisplayName());
 		destination.setDescription(source.getDescription());
-
+		destination.setNickname(source.getNickname());
 		return destination;
 	}
 

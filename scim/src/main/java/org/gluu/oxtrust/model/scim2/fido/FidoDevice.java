@@ -56,6 +56,9 @@ public class FidoDevice extends Resource {
     @LdapAttribute(name = "description")
     private String description;
 
+    @LdapAttribute(name = "oxNickName")
+    private String nickname;
+
     public FidoDevice() {
         Meta fidoDeviceMeta = new Meta();
         fidoDeviceMeta.setResourceType("FidoDevice");
@@ -169,5 +172,13 @@ public class FidoDevice extends Resource {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }
