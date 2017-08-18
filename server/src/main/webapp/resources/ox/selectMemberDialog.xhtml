@@ -22,7 +22,7 @@
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="selectMemberModalPanel" onmaskclick="#{rich:component('selectMemberModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
+    <rich:popupPanel id="selectMemberModalPanel" onmaskclick="#{rich:component('selectMemberModalPanel')}.hide()" top="100" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
         <f:facet name="header">
             <h:outputText value="#{cc.attrs.label}" />
         </f:facet>
