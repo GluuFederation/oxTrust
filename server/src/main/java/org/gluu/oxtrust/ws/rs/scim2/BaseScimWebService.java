@@ -107,7 +107,7 @@ public class BaseScimWebService {
             ClientInfoClient clientInfoClient = new ClientInfoClient(clientInfoEndpoint);
             ClientInfoResponse clientInfoResponse = clientInfoClient.execClientInfo(token);
 
-            if (clientInfoResponse.getErrorType()==null) {
+            if (clientInfoResponse.getErrorType()!=null) {
                 response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token "+ token);
                 log.debug("Error validating access token: {}", clientInfoResponse.getErrorDescription());
             }
