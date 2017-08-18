@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -54,7 +55,6 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("registerPersonAction")
-@Secure("#{identity.loggedIn}")
 public class RegisterPersonAction implements Serializable {
 
 	private static final long serialVersionUID = 6002737004324917338L;
@@ -148,9 +148,9 @@ public class RegisterPersonAction implements Serializable {
 
 			if(!externalUserRegistrationService.isEnabled()){
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}  
-				
-			this.person = (inum.isEmpty()) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
+			}
+            this.person = StringUtils.isEmpty(inum) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
+			//this.person = (inum.isEmpty()) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
 
 			boolean isPersonActiveOrDisabled = GluuStatus.ACTIVE.equals(person.getStatus()) || GluuStatus.INACTIVE.equals(person.getStatus());
 
@@ -239,6 +239,7 @@ public class RegisterPersonAction implements Serializable {
 				this.person.setDn(dn);
 			}
 
+log.debug("1");
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
 				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
@@ -248,7 +249,7 @@ public class RegisterPersonAction implements Serializable {
 			} else {
 				this.person.setCommonName(this.person.getCommonName());
 			}
-
+log.debug("2");
 			// save password
 			this.person.setUserPassword(password);
 			this.person.setCreationDate(new Date());
@@ -259,6 +260,7 @@ public class RegisterPersonAction implements Serializable {
 				// Set default message
 				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
 				boolean result = false;
+log.debug("3");
 				this.person = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
 				if (this.person == null) {
 					this.person = archivedPerson;
