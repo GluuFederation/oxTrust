@@ -99,12 +99,11 @@ public class ManagePersonAuthenticationAction
 	@Inject
 	private EncryptionService encryptionService;
 
-	private GluuLdapConfiguration ldapConfig;
 	private boolean existLdapConfigIdpAuthConf;
 
 	private List<CustomScript> customScripts;
 
-	private String authenticationMode="auth_ldap_server";
+	private String authenticationMode = "auth_ldap_server";
 	private String oxTrustAuthenticationMode;
 
 	private List<String> customAuthenticationConfigNames;
@@ -156,10 +155,8 @@ public class ManagePersonAuthenticationAction
 			this.customScripts = customScriptService.findCustomScripts(
 					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 
-			//OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
-			List<OxIDPAuthConf>  list = getIDPAuthConfOrNull(appliance);
-			//this.sourceConfigs = getIDPAuthConfOrNull(appliance);
-			this.sourceConfigs = this.sourceConfigs == null ?  new ArrayList<GluuLdapConfiguration>() : this.sourceConfigs;
+			List<OxIDPAuthConf> list = getIDPAuthConfOrNull(appliance);
+			this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
 			if (list != null) {
 				for(OxIDPAuthConf oxIDPAuthConf : list){
 					GluuLdapConfiguration oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
@@ -199,26 +196,26 @@ public class ManagePersonAuthenticationAction
 			// Reload entry to include latest changes
 			GluuAppliance appliance = applianceService.getAppliance();
 
-			boolean updateAuthenticationMode = false;
-			boolean updateOxTrustAuthenticationMode = false;
-
-			//OxIDPAuthConf idpConf = getIDPAuthConfOrNull(appliance);
-			
-			/*List<OxIDPAuthConf>  list = getIDPAuthConfOrNull(appliance);
-			//this.sourceConfigs = getIDPAuthConfOrNull(appliance);
-			if (list != null) {
-				for(OxIDPAuthConf oxIDPAuthConf : list){
-					this.ldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
-					GluuLdapConfiguration  oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
-					this.sourceConfigs.add(oxldapConfig);
+ 			boolean updateAuthenticationMode = false;
+ 			boolean updateOxTrustAuthenticationMode = false;
+ 			
+ 			String oldAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
+			if (oldAuthName != null) {
+				if (oldAuthName.equals(this.authenticationMode)) {
+					updateAuthenticationMode = true;
 				}
-				
-			}*/				
+				if (oldAuthName.equals(this.oxTrustAuthenticationMode)) {
+					updateOxTrustAuthenticationMode = true;
+				}
+			}
 
 			updateAuthConf(appliance);
 
-			appliance.setAuthenticationMode(this.authenticationMode);
-			appliance.setOxTrustAuthenticationMode(this.oxTrustAuthenticationMode);
+ 			String newAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
+			String updatedAuthMode = updateAuthenticationMode ? newAuthName : this.authenticationMode;
+			String updatedOxTrustAuthMode = updateOxTrustAuthenticationMode ? newAuthName : this.oxTrustAuthenticationMode;
+			appliance.setAuthenticationMode(updatedAuthMode);
+			appliance.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
 
 			appliance.setPassportEnabled(passportEnable);
 
@@ -239,6 +236,14 @@ public class ManagePersonAuthenticationAction
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private String getFirstConfigName(List<OxIDPAuthConf> idpConfs) {
+		if ((idpConfs == null) || idpConfs.isEmpty()) {
+			return null;
+		}
+
+		return idpConfs.get(0).getName();
 	}
 
 	private void reset() {
@@ -271,26 +276,29 @@ public class ManagePersonAuthenticationAction
 
 	public boolean updateAuthConf(GluuAppliance appliance) {
 		try {
+			String configId = null;
 			List<OxIDPAuthConf> idpConf = new ArrayList<OxIDPAuthConf>();
-			for(GluuLdapConfiguration ldapConfig :this.sourceConfigs ){
-				//if (this.existLdapConfigIdpAuthConf) {
-					if (ldapConfig.isUseAnonymousBind()) {
-						ldapConfig.setBindDN(null);
-					}
-	
-					OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
-					ldapConfig.updateStringsLists();
-					ldapConfigIdpAuthConf.setType("auth");
-					ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
-					ldapConfigIdpAuthConf.setName(ldapConfig.getConfigId());
-					ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
-					ldapConfigIdpAuthConf.setConfig(objectToJson(ldapConfig));
-	
-					idpConf.add(ldapConfigIdpAuthConf);
-				//}
+			for (GluuLdapConfiguration ldapConfig : this.sourceConfigs) {
+				if (idpConf.isEmpty()) {
+					configId = ldapConfig.getConfigId();
+				}
+				if (ldapConfig.isUseAnonymousBind()) {
+					ldapConfig.setBindDN(null);
+				}
+
+				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
+				ldapConfig.setConfigId(configId);
+				ldapConfig.updateStringsLists();
+				ldapConfigIdpAuthConf.setType("auth");
+				ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
+				ldapConfigIdpAuthConf.setName(configId);
+				ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
+				ldapConfigIdpAuthConf.setConfig(objectToJson(ldapConfig));
+
+				idpConf.add(ldapConfigIdpAuthConf);
+			}
 
 			appliance.setOxIDPAuthentication(idpConf);
-			}
 		} catch (Exception ex) {
 			log.error("An Error occured ", ex);
 
@@ -316,11 +324,12 @@ public class ManagePersonAuthenticationAction
 			
 			boolean internalServerName = true;
 			
-			for(GluuLdapConfiguration ldapConfig :this.sourceConfigs){
+			for (GluuLdapConfiguration ldapConfig : this.sourceConfigs) {
 				if ((ldapConfig != null) && StringHelper.isNotEmpty(ldapConfig.getConfigId())) {
 					this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
 					internalServerName = false;
-				} 
+					break;
+				}
 			}
 
 			if (internalServerName) {
