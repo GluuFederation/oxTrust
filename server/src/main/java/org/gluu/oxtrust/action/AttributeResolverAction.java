@@ -207,7 +207,7 @@ public class AttributeResolverAction implements Serializable {
 			fileRead.delete();
 			fileWrite.renameTo(fileRead);
 		}
-
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration updated successfully.");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
