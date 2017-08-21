@@ -740,11 +740,17 @@
             "type": "string",
             "minLength": 1
         },
-        "personCustomObjectClass": {
-            "id": "personCustomObjectClass",
-            "description": "LDAP custom object class for dynamic person enrollment.",
-            "type": "string",
-            "minLength": 1
+        "personCustomObjectClassList": {
+            "id": "personCustomObjectClassList",
+            "description": "LDAP custom object class list for dynamic person enrollment.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
         },
         "authenticationFiltersEnabled": {
             "id": "authenticationFiltersEnabled",
@@ -1194,7 +1200,7 @@
         "trustedClientEnabled",
         "dynamicRegistrationScopesParamEnabled",
         "dynamicRegistrationCustomObjectClass",
-        "personCustomObjectClass",
+        "personCustomObjectClassList",
         "authenticationFiltersEnabled",
         "clientAuthenticationFiltersEnabled",
         "authenticationFilters",
