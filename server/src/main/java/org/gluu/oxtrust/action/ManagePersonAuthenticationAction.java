@@ -99,6 +99,7 @@ public class ManagePersonAuthenticationAction
 	@Inject
 	private EncryptionService encryptionService;
 
+	private GluuLdapConfiguration ldapConfig;
 	private boolean existLdapConfigIdpAuthConf;
 
 	private List<CustomScript> customScripts;
