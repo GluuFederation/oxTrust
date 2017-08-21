@@ -104,9 +104,7 @@
 
             var updateTooltip = function(personData){
             $('div.tooltip').remove();
-            $('
-            <div class="tooltip">' + personData + '</div>
-            ')
+            $('<div class="tooltip">' + personData + '</div>')
             .appendTo('body');
             $('.tooltip').css({top: tooltipY, left: tooltipX});
             }
@@ -135,7 +133,7 @@
             $('.checkbox2').on('ifUnchecked', function(event){
             $('.checkbox2Div').hide();
             });
-
+            
             });
 
 

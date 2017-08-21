@@ -516,6 +516,16 @@
                 "minLength": 1
             }
         },
+        "persistIdTokenInLdap": {
+            "id": "persistIdTokenInLdap",
+            "description": "Specifies whether to persist id_token into LDAP (otherwise saves into cache).",
+            "type": "boolean"
+        },
+        "persistRefreshTokenInLdap": {
+            "id": "persistRefreshTokenInLdap",
+            "description": "Specifies whether to persist refresh_token into LDAP (otherwise saves into cache).",
+            "type": "boolean"
+        },
         "claimsParameterSupported": {
             "id": "claimsParameterSupported",
             "description": "Specifies whether the OP supports use of the claims parameter.",
