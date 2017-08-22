@@ -36,9 +36,10 @@ public class ProductInstallationChecker {
     }
     
     public static boolean isOxTrustInstalled() {
-        return new File(OXASIMBA_PATH).exists();
+        return new File(OXTRUST_PATH).exists();
     }
     
+    @Deprecated
     public static boolean isShibbolethIDP2Installed() {
         return new File(SHIBBOLETH_IDP2_PATH).exists();
     }
@@ -47,6 +48,7 @@ public class ProductInstallationChecker {
         return new File(SHIBBOLETH_IDP3_PATH).exists();
     }
     
+    @Deprecated
     public static boolean isCASInstalled() {
         return new File(CAS_PATH).exists();
     }

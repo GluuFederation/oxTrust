@@ -1315,7 +1315,8 @@ public class CopyUtils2 implements Serializable {
         destination.setStatus(source.getStatus());
         destination.setDisplayName(source.getDisplayName());
         destination.setDescription(source.getDescription());
-
+        destination.setNickname(source.getNickname());
+      
         if (source.getDn() != null) {
             String[] dnArray = source.getDn().split("\\,");
             for (String e : dnArray) {
@@ -1383,11 +1384,12 @@ public class CopyUtils2 implements Serializable {
             destination = new GluuCustomFidoDevice();
         }
 
-        // Only update displayName and description
+        // Only update displayName, description and nickname
         // All the other fields are not editable
         destination.setDisplayName(source.getDisplayName());
         destination.setDescription(source.getDescription());
-
+        destination.setNickname(source.getNickname());
+      
         return destination;
     }
 
