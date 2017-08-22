@@ -72,7 +72,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									
-									<li id="subMenuLinkConfiguration6"><h:commandLink
+									<li id="subMenuLinkConfiguration7"><h:commandLink
 											value="#{msg['leftmenu.attributes']}"
 											action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -416,6 +416,15 @@
 											'block');
 									$('#menuConfiguration').addClass('active');
 									$('#subMenuLinkConfiguration11').addClass(
+											'active');
+								}
+
+								if (window.location.href
+										.indexOf("attribute/import") != -1) {
+									$('#subMenuConfiguration').css('display',
+											'block');
+									$('#menuConfiguration').addClass('active');
+									$('#subMenuLinkConfiguration12').addClass(
 											'active');
 								}
                                                                 
