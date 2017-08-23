@@ -101,13 +101,13 @@ public class AttributeResolverAction implements Serializable {
 		
 		String orgInum = applicationConfiguration.getOrgInum();
 		String dn = "inum="+inum+",ou=attributes,o="+orgInum+",o=gluu";
-		System.out.println(dn);
 		this.attribute.setDataType(GluuAttributeDataType.STRING);
 		GluuUserRole[] gluuEditRole = new GluuUserRole[]{GluuUserRole.ADMIN};
 		this.attribute.setEditType(gluuEditRole);
 		GluuUserRole[] gluuViewRole = new GluuUserRole[]{GluuUserRole.ADMIN, GluuUserRole.USER};
 		this.attribute.setViewType(gluuViewRole);
 		this.attribute.setOxMultivaluedAttribute(OxMultivalued.FALSE);
+		this.attribute.setOrigin("gluuPerson");
 		this.attribute.setStatus(GluuStatus.ACTIVE);
 		this.attribute.setInum(inum);
 		this.attribute.setDisplayName(attributeName);
@@ -125,7 +125,7 @@ public class AttributeResolverAction implements Serializable {
 		FileReader fr = null;
 		FileWriter fw = null;
 		PrintWriter pw = null;
-		String filePath = ""; //applicationConfiguration.getAttributeResolverPath();
+		String filePath = "/opt/gluu/jetty/identity/conf/shibboleth3/attribute-resolver.xml.vm"; 
 		File fileRead = new File(filePath);
 		File fileWrite = new File(filePath+".tmp");
 		try {
