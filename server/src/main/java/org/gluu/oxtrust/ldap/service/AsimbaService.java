@@ -512,4 +512,14 @@ public class AsimbaService implements Serializable {
         return serviceUtil.saveUploadedFile(uploadedFile, baseDir, "xml");
     }
     
+    public void restartAsimbaService() {
+        try {
+            // shell call
+            log.info("restart asimba service throught shell");
+            Runtime.getRuntime().exec(new String[]{"service", "asimba", "restart"});
+        } catch (Exception e) {
+            log.error("restartAsimbaService() exception", e);
+        }
+    } 
+    
 }
