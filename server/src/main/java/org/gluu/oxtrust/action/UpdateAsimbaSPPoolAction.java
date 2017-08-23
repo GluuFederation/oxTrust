@@ -142,6 +142,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         }
         clearEdit();
         conversationService.endConversation();
+        
+        asimbaService.restartAsimbaService();
+        
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -153,6 +156,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         }
         clearEdit();
         conversationService.endConversation();
+        
+        asimbaService.restartAsimbaService();
+        
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

@@ -173,6 +173,9 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 		}
 		clearEdit();
                 conversationService.endConversation();
+        
+                asimbaService.restartAsimbaService();
+        
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -197,6 +200,9 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 		}
 		newEntry = false;
                 conversationService.endConversation();
+        
+                asimbaService.restartAsimbaService();
+        
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
