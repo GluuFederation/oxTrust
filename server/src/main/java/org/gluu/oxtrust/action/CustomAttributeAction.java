@@ -53,7 +53,6 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named
-@Secure("#{identity.loggedIn}")
 public class CustomAttributeAction implements Serializable {
 
 	private static final long serialVersionUID = -719594782175672946L;

@@ -212,6 +212,25 @@
                 ]
             }
         },
+        "dynamicGrantTypeDefault": {
+            "id": "dynamicGrantTypeDefault",
+            "description": "A list of the OAuth 2.0 Grant Type values that it's possible to set via client registration API.",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "authorization_code",
+                    "implicit",
+                    "password",
+                    "client_credentials",
+                    "refresh_token",
+                    "urn:ietf:params:oauth:grant-type:uma-ticket"
+                ]
+            }
+        },
         "subjectTypesSupported": {
             "id": "subjectTypesSupported",
             "description": "A list of the Subject Identifier types that this OP supports. Valid types include pairwise and public.",
@@ -516,6 +535,16 @@
                 "minLength": 1
             }
         },
+        "persistIdTokenInLdap": {
+            "id": "persistIdTokenInLdap",
+            "description": "Specifies whether to persist id_token into LDAP (otherwise saves into cache).",
+            "type": "boolean"
+        },
+        "persistRefreshTokenInLdap": {
+            "id": "persistRefreshTokenInLdap",
+            "description": "Specifies whether to persist refresh_token into LDAP (otherwise saves into cache).",
+            "type": "boolean"
+        },
         "claimsParameterSupported": {
             "id": "claimsParameterSupported",
             "description": "Specifies whether the OP supports use of the claims parameter.",
@@ -721,6 +750,18 @@
             "type": "string",
             "minLength": 1
         },
+        "personCustomObjectClassList": {
+            "id": "personCustomObjectClassList",
+            "description": "LDAP custom object class list for dynamic person enrollment.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
         "authenticationFiltersEnabled": {
             "id": "authenticationFiltersEnabled",
             "description": "Boolean value specifying whether to enable user authentication filters.",
@@ -824,9 +865,9 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
-        "sessionStateLifetime": {
-            "id": "sessionStateLifetime",
-            "description": "The lifetime of session state in seconds.",
+        "sessionIdLifetime": {
+            "id": "sessionIdLifetime",
+            "description": "The lifetime of session id in seconds.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
@@ -842,11 +883,6 @@
         "sessionIdPersistOnPromptNone": {
             "id": "sessionIdPersistOnPromptNone",
             "description": "Boolean value specifying whether to persist session ID on prompt none.",
-            "type": "boolean"
-        },
-        "sessionStateHttpOnly": {
-            "id": "sessionStateHttpOnly",
-            "description": "Boolean value specifying whether to set Session State HttpOnly.",
             "type": "boolean"
         },
         "configurationUpdateInterval": {
@@ -999,6 +1035,11 @@
             "description": "Boolean value to specify if application should update oxLastAccessTime/oxLastLogonTime attributes on client authentication.",
             "type": "boolean"
         },
+        "enableClientGrantTypeUpdate": {
+        	"id": "enableClientGrantTypeUpdate",
+            "description": "Boolean value to specify if client can update Grant Type values.",
+            "type": "boolean"
+        },
         "loggingLevel": {
             "id": "loggingLevel",
             "description": "Logging level for oxAuth logers.",
@@ -1122,6 +1163,7 @@
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
+		"dynamicGrantTypeDefault",
         "subjectTypesSupported",
         "defaultSubjectType",
         "userInfoSigningAlgValuesSupported",
@@ -1168,6 +1210,7 @@
         "trustedClientEnabled",
         "dynamicRegistrationScopesParamEnabled",
         "dynamicRegistrationCustomObjectClass",
+        "personCustomObjectClassList",
         "authenticationFiltersEnabled",
         "clientAuthenticationFiltersEnabled",
         "authenticationFilters",
@@ -1177,7 +1220,7 @@
         "sessionIdUnauthenticatedUnusedLifetime",
         "sessionIdEnabled",
         "sessionIdPersistOnPromptNone",
-        "sessionStateHttpOnly",
+        "sessionIdLifetime",
         "configurationUpdateInterval",
         "cssLocation",
         "jsLocation",
@@ -1197,6 +1240,7 @@
         "frontChannelLogoutSessionSupported",
         "updateUserLastLogonTime",
         "updateClientAccessTime",
+        "enableClientGrantTypeUpdate",
         "loggingLevel",
         "corsConfigurationFilters",
         "logClientIdOnClientAuthentication",

@@ -36,7 +36,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
  * @author Yuriy Movchan Date: 11/06/2015
  */
 @Named("scimConfigurationRestWebService")
-@Path("/oxtrust/scim-configuration")
+@Path("/scim-configuration")
 @Api(value = "/.well-known/scim-configuration", description = "The SCIM server endpoint that provides configuration data. ")
 public class ScimConfigurationWS {
 
@@ -56,7 +56,7 @@ public class ScimConfigurationWS {
     @Produces({UmaConstants.JSON_MEDIA_TYPE})
     @ApiOperation(
             value = "Provides metadata as json document. It contains options and endpoints supported by the SCIM server.",
-            response = UmaMetadata.class
+            response = ScimConfiguration.class
     )
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Failed to build SCIM configuration json object.")

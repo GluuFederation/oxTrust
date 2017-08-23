@@ -1,5 +1,17 @@
 package org.gluu.oxtrust.service.uma;
 
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpResponse;
@@ -12,7 +24,6 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.jboss.resteasy.client.ClientExecutor;
-import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -27,16 +38,6 @@ import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.service.JsonService;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
 
 /**
  * Provide methods to work with permissions and RPT tokens
@@ -100,51 +101,40 @@ public class UmaPermissionService implements Serializable {
 		}
 	}
 
-	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String resourceSetId, String scopeId) {
-		if ((patToken == null) || (authorization == null) || !authorization.startsWith("Bearer ")) {
-			return authenticationFailure;
+	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String resourceId, String scopeId) {
+		if (patToken == null) {
+	        return authenticationFailure;
 		}
 
-		String rptToken = authorization.substring(7);
-		boolean isGat = rptToken.startsWith("gat_");
-
-        RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
-		if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
-			log.error("Status response for RPT token: '{}' is invalid", rptToken);
-			return authenticationFailure;
-		}
-		
-		boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
-		if (rptHasPermissions) {
-			for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
-				if ((umaPermission.getScopes() != null) && umaPermission.getScopes().contains(scopeId) &&
-						(isGat || StringHelper.equals(resourceSetId, umaPermission.getResourceId()))) {
-					return authenticationSuccess;
-				}
+		if (StringHelper.isNotEmpty(authorization) && authorization.startsWith("Bearer ")) {
+			String rptToken = authorization.substring(7);
+			boolean isGat = rptToken.startsWith("gat_");
+	
+	        RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
+			if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
+				log.error("Status response for RPT token: '{}' is invalid", rptToken);
+				return authenticationFailure;
 			}
-
-			log.error("Status response for RPT token: '{}' not contains right permission", rptToken);
-			return authenticationFailure;
+			
+			boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
+			if (rptHasPermissions) {
+				for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
+					if ((umaPermission.getScopes() != null) && umaPermission.getScopes().contains(scopeId) &&
+							(isGat || StringHelper.equals(resourceId, umaPermission.getResourceId()))) {
+						return authenticationSuccess;
+					}
+				}
+	
+				log.error("Status response for RPT token: '{}' not contains right permissions", rptToken);
+			}
 		}
 
-		// If the RPT is valid but has insufficient authorization data for the type of access sought,
-        // the resource server SHOULD register a requested permission with the authorization server
-        // that would suffice for that scope of access (see Section 3.2),
-        // and then respond with the HTTP 403 (Forbidden) status code,
-        // along with providing the authorization server's URI in an "as_uri" property in the header,
-        // and the permission ticket it just received from the AM in the body in a JSON-encoded "ticket" property.
-		
-        final String ticket = registerUmaPermissions(patToken, resourceSetId, scopeId);
-        if (StringHelper.isEmpty(ticket)) {
-        	return authenticationFailure;
-        }
-        
-        Response registerUmaPermissionsResponse = prepareRegisterUmaPermissionsResponse(patToken, resourceSetId, scopeId);
-        if (registerUmaPermissionsResponse == null) {
+		Response registerPermissionsResponse = prepareRegisterPermissionsResponse(patToken, resourceId, Arrays.asList(scopeId));
+        if (registerPermissionsResponse == null) {
         	return authenticationFailure;
         }
 
-		return new Pair<Boolean, Response>(true, registerUmaPermissionsResponse);
+        return new Pair<Boolean, Response>(true, registerPermissionsResponse);
 	}
 
 	private boolean isRptHasPermissions(RptIntrospectionResponse umaRptStatusResponse) {
@@ -171,57 +161,35 @@ public class UmaPermissionService implements Serializable {
 		return rptStatusResponse;
 	}
 
-	private String registerUmaPermissions(Token patToken, String resourceSetId, String umaScope) {
-		String authorization = "Bearer " + patToken.getAccessToken();
+	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopes) {
 
-		// Register permissions for resource set
         UmaPermission permission = new UmaPermission();
-        permission.setResourceId(resourceSetId);
+        permission.setResourceId(resourceId);
+        permission.setScopes(scopes);
 
-        permission.setScopes(Arrays.asList(umaScope));
-
-        PermissionTicket resourceSetPermissionTicket = null;
-        try {
-        	resourceSetPermissionTicket = this.permissionService.registerPermission(
-                    authorization,
-                    UmaPermissionList.instance(permission));
-		} catch (ClientResponseFailure ex) {
-        	log.error("Failed to register permissions for resource set: '{}'", resourceSetId, ex);
-        }
-
-        if ((resourceSetPermissionTicket == null) || StringHelper.isEmpty(resourceSetPermissionTicket.getTicket())) {
-        	log.error("Resource set permission ticket is invalid");
+        PermissionTicket ticket = permissionService.registerPermission(
+                "Bearer " + patToken.getAccessToken(), UmaPermissionList.instance(permission));
+        
+        if (ticket == null) {
         	return null;
         }
 
-        return resourceSetPermissionTicket.getTicket();
-	}
+        return ticket.getTicket();
+    }
 
-	private Response prepareRegisterUmaPermissionsResponse(Token patToken, String resourceSetId, String umaScope) {
-		String ticket = registerUmaPermissions(patToken, resourceSetId, umaScope);
+	private Response prepareRegisterPermissionsResponse(Token patToken, String resourceId, List<String> scopes) {
+		String ticket = registerResourcePermission(patToken, resourceId, scopes);
 		if (StringHelper.isEmpty(ticket)) {
 			return null;
 		}
 
-    	String entity = null;
-		try {
-			entity = jsonService.objectToJson(new PermissionTicket(ticket));
-		} catch (Exception ex) {
-        	log.error("Failed to prepare response", ex);
-		}
-
-		if (entity == null) {
-			return null;
-		}
-
-    	log.debug("Construct response: HTTP 403 (Forbidden), entity: '{}'",  entity);
+    	log.debug("Construct response: HTTP 401 (Unauthorized), ешслуе: '{}'",  ticket);
         Response response = null;
 		try {
-			response = Response.status(Response.Status.FORBIDDEN).
-			        header("host_id", getHost(appConfiguration.getIdpUrl())).
-			        header("as_uri",  appInitializer.getUmaConfigurationEndpoint()).
-			        header("error", "insufficient_scope").
-			        entity(entity).
+			String authHeaderValue = String.format("UMA realm=\"Authorization required\", host_id=%s, as_uri=%s, ticket=%s",
+					getHost(appConfiguration.getIdpUrl()),  appInitializer.getUmaConfigurationEndpoint(), ticket);
+			response = Response.status(Response.Status.UNAUTHORIZED).
+			        header("WWW-Authenticate", authHeaderValue).
 			        build();
 		} catch (MalformedURLException ex) {
         	log.error("Failed to determine host by URI", ex);

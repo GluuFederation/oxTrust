@@ -91,6 +91,16 @@ public class PermissionService {
                 }
             }
         }
+        
+        if (identity.hasRole(GluuUserRole.USER.getValue())) {
+            for (String[] managerAction : managerActions) {
+                String targetString = (String) target;
+                if (StringHelper.equals("profile", targetString) && StringHelper.equals(managerAction[0], targetString) && StringHelper.equals(managerAction[1], action)) {
+                    return true;
+                }
+            }
+        }
+
 
         return false;
     }
