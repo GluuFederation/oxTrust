@@ -35,6 +35,8 @@ public class AttributeResolverAction implements Serializable {
 
 	private static final long serialVersionUID = -9125609238796284572L;
 
+	private static final String SHIBBOLETH3_ATTR_RESOLVER_VM_PATH = "/opt/gluu/jetty/identity/conf/shibboleth3/attribute-resolver.xml.vm";
+	
 	@Inject
 	private Logger log;
 
@@ -125,7 +127,7 @@ public class AttributeResolverAction implements Serializable {
 		FileReader fr = null;
 		FileWriter fw = null;
 		PrintWriter pw = null;
-		String filePath = "/opt/gluu/jetty/identity/conf/shibboleth3/attribute-resolver.xml.vm"; 
+		String filePath = SHIBBOLETH3_ATTR_RESOLVER_VM_PATH; 
 		File fileRead = new File(filePath);
 		File fileWrite = new File(filePath+".tmp");
 		try {
