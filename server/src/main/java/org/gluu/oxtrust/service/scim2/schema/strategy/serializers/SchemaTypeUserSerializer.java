@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -29,6 +28,7 @@ import org.gluu.oxtrust.model.scim2.schema.core.UserCoreSchema;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Val Pecaoco
@@ -36,8 +36,7 @@ import org.slf4j.Logger;
 @Named("schemaTypeUserSerializer")
 public class SchemaTypeUserSerializer extends JsonSerializer<User> {
 
-    @Inject
-    private Logger log;
+    private Logger log= LoggerFactory.getLogger(getClass());
 
     private SchemaType schemaType;
 
