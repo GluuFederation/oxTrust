@@ -179,10 +179,21 @@ public class GroupService implements Serializable, IGroupService {
 			newInum = generateInumForNewGroupImpl();
 			String newDn = getDnForGroup(newInum);
 			group.setDn(newDn);
-		} while (ldapEntryManager.contains(group));
+		} while (containsGroup(group));
 
 		return newInum;
 	}
+
+    private boolean containsGroup(GluuGroup group) {
+        boolean result=false;
+        try {
+            result = ldapEntryManager.contains(group);
+        }
+        catch (Exception e){
+            log.debug(e.getMessage(), e);
+        }
+        return result;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#generateInameForNewGroup(java.lang.String)
