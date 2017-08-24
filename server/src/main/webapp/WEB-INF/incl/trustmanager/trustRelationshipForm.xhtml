@@ -103,6 +103,17 @@
     if(val === 'None') {
        #{rich:component('createSPMetadata:createSPMeatadataModalPanel')}.show();
     }
+    
+    var entityVal = $(element).parents('tr:first').prev().find("select").find('option:selected').text();
+    
+    if(entityVal !== "Federation/Aggregate"){
+    	if(val !== "URI"){ 
+    	if(val === "Federation"){
+    		$("[id$='spMetaDataUrlGroupId']").html('');
+    	}
+    	}
+    }
+    
 	}        
     </h:outputScript>
 
@@ -225,7 +236,7 @@
 								</h:selectOneMenu>
 							</ox:decorate>						
 							<a4j:region>
-								<h:panelGroup id="urlId" rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) or (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}" label="URL">
+								<h:panelGroup id="urlId" rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) and (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}" label="URL">
 									<ox:decorate id="url"
                                                                                      required="true">
 										<h:inputText styleClass="form-control"
