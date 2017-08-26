@@ -8,7 +8,6 @@ package org.gluu.oxtrust.util;
 
 import java.io.IOException;
 import java.io.Serializable;
-// import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,7 +54,6 @@ import org.gluu.oxtrust.model.scim2.PhoneNumber;
 import org.gluu.oxtrust.model.scim2.Photo;
 import org.gluu.oxtrust.model.scim2.Role;
 import org.gluu.oxtrust.model.scim2.ScimData;
-import org.gluu.oxtrust.model.scim2.ScimGroupMembers;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
@@ -63,6 +61,7 @@ import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
@@ -78,8 +77,7 @@ public class CopyUtils2 implements Serializable {
 
     private static final long serialVersionUID = -1715995162448707004L;
 
-    @Inject
-    private Logger log;
+    private Logger log= LoggerFactory.getLogger(getClass());
 
     @Inject
     private OrganizationService organizationService;
@@ -878,12 +876,12 @@ public class CopyUtils2 implements Serializable {
                 for (GluuAttribute scimCustomAttribute : scimCustomAttributes) {
 
                     if (customAttribute.getName().equals(scimCustomAttribute.getName())) {
-
+                        log.debug("Found custom attribute {}", customAttribute.getName());
                         hasExtension = true;
                         GluuAttributeDataType scimCustomAttributeDataType = scimCustomAttribute.getDataType();
 
                         if ((scimCustomAttribute.getOxMultivaluedAttribute() != null) && scimCustomAttribute.getOxMultivaluedAttribute().equals(OxMultivalued.TRUE)) {
-
+                            log.debug("Multivalued cust. attribute contents: {}", customAttribute.getValues());
                             extensionBuilder.setFieldAsList(customAttribute.getName(), Arrays.asList(customAttribute.getValues()));
 
                         } else {

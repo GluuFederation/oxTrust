@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -25,6 +24,7 @@ import org.gluu.oxtrust.model.scim2.schema.AttributeHolder;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.core.fido.FidoDeviceCoreSchema;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Val Pecaoco
@@ -32,8 +32,7 @@ import org.slf4j.Logger;
 @Named("schemaTypeFidoDeviceSerializer")
 public class SchemaTypeFidoDeviceSerializer extends JsonSerializer<FidoDevice> {
 
-	@Inject
-	private Logger log;
+    private Logger log= LoggerFactory.getLogger(getClass());
 
 	private SchemaType schemaType;
 

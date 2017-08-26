@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.service.scim2.jackson.provider;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -39,12 +38,7 @@ import org.slf4j.LoggerFactory;
 @Named("customJacksonProviderScim2")
 public class CustomJacksonProviderScim2 extends JacksonJaxbJsonProvider implements ContextResolver<ObjectMapper> {
 
-/*
- * Try to enable in next RestEasy releases. Now the value is null
- */
-//    @Inject
-//    private Logger log;
-    private Logger log = LoggerFactory.getLogger(CustomJacksonProviderScim2.class);
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     public CustomJacksonProviderScim2() {
 

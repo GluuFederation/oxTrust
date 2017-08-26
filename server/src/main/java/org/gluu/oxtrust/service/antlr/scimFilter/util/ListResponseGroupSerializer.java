@@ -14,7 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -30,6 +29,7 @@ import org.gluu.oxtrust.model.scim2.Group;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Val Pecaoco
@@ -37,8 +37,7 @@ import org.slf4j.Logger;
 @Named("listResponseGroupSerializer")
 public class ListResponseGroupSerializer extends JsonSerializer<Group> {
 
-    @Inject
-    private Logger log;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     private String attributesArray;
     private Set<String> attributes;
