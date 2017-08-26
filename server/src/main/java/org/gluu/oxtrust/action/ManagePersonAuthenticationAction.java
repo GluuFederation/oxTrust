@@ -258,7 +258,7 @@ public class ManagePersonAuthenticationAction
 		try {
 			List<OxIDPAuthConf> idpConf = new ArrayList<OxIDPAuthConf>();
 			if (this.existLdapConfigIdpAuthConf) {
-				if(this.ldapConfig.isUseAnonymousBind()){
+				if (this.ldapConfig.isUseAnonymousBind()) {
 					this.ldapConfig.setBindDN(null);
 				}
 				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
