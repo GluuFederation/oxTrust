@@ -640,6 +640,10 @@ public class Shibboleth3ConfService implements Serializable {
                 return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
         }
         
+        public String getIdpMetadataTempDir(){
+        	return appConfiguration.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator;    	
+        }
+        
         public String getIdpMetadataCredentialsDir() {
                 return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER + File.separator;
         }
@@ -683,10 +687,13 @@ public class Shibboleth3ConfService implements Serializable {
 			log.error(errorMessage);
 			throw new InvalidConfigurationException(errorMessage);
 		}
-
-		String idpMetadataFolder = getIdpMetadataDir();
-		String tempFileName = getTempMetadataFilename(idpMetadataFolder, spMetadataFileName);
-		File spMetadataFile = new File(idpMetadataFolder + tempFileName);
+		
+		//String idpMetadataFolder = getIdpMetadataDir();
+		String idpMetadataTempFolder = getIdpMetadataTempDir();
+		String tempFileName = getTempMetadataFilename(idpMetadataTempFolder, spMetadataFileName);
+		
+		//temp file location for metadatavalidator thread process .
+		File spMetadataFile = new File(idpMetadataTempFolder + tempFileName);
 
 		FileOutputStream os = null;
 		try {
