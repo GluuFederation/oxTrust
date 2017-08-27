@@ -128,12 +128,15 @@ public class UpdateAsimbaSelectorAction implements Serializable {
         newEntry = true;
     }
     
+    /**
+     * Set "add new" or "edit" mode by inum request parameter.
+     */
     public void edit() {
         log.info("edit() Selector call, inum: "+editEntryInum);
-        if (editEntryInum == null || "".equals(editEntryInum)) {
+        if (editEntryInum == null || "".equals(editEntryInum) || "new".equals(editEntryInum)) {
             // no inum, new entry mode
             clearEdit();
-        } else {
+        } else if ((editEntryInum != null) && (selector != null) && (editEntryInum != selector.getInum())) {
             // edit entry
             newEntry = false;
             selector = asimbaService.readApplicationSelectorEntry(editEntryInum);

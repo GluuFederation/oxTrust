@@ -4,10 +4,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewParam name="inum" value="#{updateAsimbaSPPoolAction.editEntryInum}" />
-        <f:viewAction action="#{updateAsimbaSPPoolAction.edit}"
-                      if="#{updateAsimbaSPPoolAction.editEntryInum != null}"
-                      onPostback="true"/>
         <f:viewAction action="#{conversationService.initConversation}" />
+        <f:viewAction action="#{updateAsimbaSPPoolAction.edit}" phase="UPDATE_MODEL_VALUES" onPostback="false" />
     </f:metadata>
 
     <ui:define name="body">
@@ -24,7 +22,7 @@
                         <i class="fa fa-home"/> #{msg['asimba.spPools']}</a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/asimba/editSPPool/">#{msg['asimba.addSPPool']}</a>
+                    <a href="#{request.contextPath}/asimba/editSPPool.htm?inum=new">#{msg['asimba.addSPPool']}</a>
                 </li>
             </ol>
         </section>

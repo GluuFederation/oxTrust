@@ -5,8 +5,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateAsimbaSPPoolAction.refresh}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateAsimbaSPPoolAction.refresh}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
@@ -23,14 +22,14 @@
                         <i class="fa fa-home"/> #{msg['asimba.spPools']}</a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/asimba/editSPPool.htm">#{msg['asimba.addSPPool']}</a>
+                    <a href="#{request.contextPath}/asimba/editSPPool.htm?inum=new">#{msg['asimba.addSPPool']}</a>
                 </li>
             </ol>
         </section>
 
         <section class="content">
             <div style="margin-left: 16px;">
-                <h:link includeViewParams="false" outcome="/asimba/editSPPool" styleClass="addPerson btn btn-primary"
+                <h:link includeViewParams="false" outcome="/asimba/editSPPool?inum=new" styleClass="addPerson btn btn-primary"
                         value="#{msg['asimba.addSPPool']}"/>
             </div>
 

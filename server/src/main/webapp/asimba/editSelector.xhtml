@@ -4,10 +4,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewParam name="inum" value="#{updateAsimbaSelectorAction.editEntryInum}" />
-        <f:viewAction action="#{updateAsimbaSelectorAction.edit}"
-                      if="#{updateAsimbaSelectorAction.editEntryInum != null}"
-                      onPostback="true"/>
         <f:viewAction action="#{conversationService.initConversation}" />
+        <f:viewAction action="#{updateAsimbaSelectorAction.edit}" phase="UPDATE_MODEL_VALUES" onPostback="false" />
     </f:metadata>
 
     <ui:define name="body">
@@ -24,7 +22,7 @@
                         <i class="fa fa-home"/> #{msg['asimba.selectors']}</a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/asimba/editSelector/">#{msg['asimba.addSelector']}</a>
+                    <a href="#{request.contextPath}/asimba/editSelector.htm?inum=new">#{msg['asimba.addSelector']}</a>
                 </li>
             </ol>
         </section>

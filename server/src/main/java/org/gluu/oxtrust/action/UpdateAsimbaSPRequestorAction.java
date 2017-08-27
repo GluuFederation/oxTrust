@@ -138,19 +138,22 @@ public class UpdateAsimbaSPRequestorAction implements Serializable {
 		uploadedCertBytes = null;
 	}
 
+    /**
+     * Set "add new" or "edit" mode by inum request parameter.
+     */
 	public void edit() {
-		log.info("edit() SPRequestor call, inum: " + editEntryInum);
-		if (editEntryInum == null || "".equals(editEntryInum)) {
-			// no inum, new entry mode
-			clearEdit();
-		} else {
-			// edit entry
-			newEntry = false;
-			spRequestor = asimbaService.readRequestorEntry(editEntryInum);
-			if (spRequestor != null) {
-				setProperties(spRequestor.getProperties());
-			}
-		}
+            log.info("edit() SPRequestor call, inum: " + editEntryInum);
+            if (editEntryInum == null || "".equals(editEntryInum) || "new".equals(editEntryInum)) {
+                // no inum, new entry mode
+                clearEdit();
+            } else if ((editEntryInum != null) && (spRequestor != null) && (editEntryInum != spRequestor.getInum())) {
+                // edit entry
+                newEntry = false;
+                spRequestor = asimbaService.readRequestorEntry(editEntryInum);
+                if (spRequestor != null) {
+                    setProperties(spRequestor.getProperties());
+                }
+            }
 	}
 
 	public String add() {

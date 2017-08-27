@@ -5,8 +5,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateAsimbaIDPAction.refresh}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateAsimbaIDPAction.refresh}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
@@ -23,7 +22,7 @@
                         <i class="fa fa-home"/> #{msg['asimba.idps']}</a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/asimba/editIDP.htm">#{msg['asimba.addIdp']}</a>
+                    <a href="#{request.contextPath}/asimba/editIDP.htm?inum=new">#{msg['asimba.addIdp']}</a>
                 </li>
             </ol>
         </section>
@@ -31,7 +30,7 @@
         <section class="content">
 
             <div style="margin-left: 16px;">
-                <h:link includeViewParams="false" outcome="/asimba/editIDP" styleClass="btn btn-primary"
+                <h:link includeViewParams="false" outcome="/asimba/editIDP?inum=new" styleClass="btn btn-primary"
                         value="#{msg['asimba.addIdp']}"/>
             </div>
 
