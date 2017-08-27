@@ -14,6 +14,7 @@ import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeFidoDeviceSerializer;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xdi.config.oxtrust.AppConfiguration;
 
 import javax.inject.Inject;
@@ -25,8 +26,7 @@ import javax.inject.Named;
 @Named
 public class FidoDeviceCoreLoadingStrategy implements LoadingStrategy {
 
-	@Inject
-	private Logger log;
+    private Logger log= LoggerFactory.getLogger(getClass());
 
 	@Override
 	public SchemaType load(AppConfiguration appConfiguration, SchemaType schemaType) throws Exception {

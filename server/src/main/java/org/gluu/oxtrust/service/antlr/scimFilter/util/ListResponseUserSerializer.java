@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -41,9 +40,7 @@ import org.slf4j.LoggerFactory;
 @Named("listResponseUserSerializer")
 public class ListResponseUserSerializer extends UserSerializer {
 
-    //@Inject
-    //private Logger log;
-    private Logger log = LoggerFactory.getLogger(ListResponseUserSerializer.class);
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public void serialize(User user, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {

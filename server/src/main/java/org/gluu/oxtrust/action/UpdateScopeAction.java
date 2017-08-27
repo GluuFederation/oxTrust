@@ -434,8 +434,7 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	private void updateDynamicScripts() {
-		if ((org.xdi.oxauth.model.common.ScopeType.DYNAMIC != this.scope.getScopeType()) ||
-			(this.dynamicScripts == null) || (this.dynamicScripts.size() == 0)) {
+		if ((this.dynamicScripts == null) || (this.dynamicScripts.size() == 0)) {
 			this.scope.setDynamicScopeScripts(null);
 			return;
 		}

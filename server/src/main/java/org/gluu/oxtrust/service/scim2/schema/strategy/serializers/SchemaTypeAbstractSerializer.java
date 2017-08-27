@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -22,6 +21,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Val Pecaoco
@@ -29,8 +29,7 @@ import org.slf4j.Logger;
 @Named("listResponseSerializer")
 public class SchemaTypeAbstractSerializer extends JsonSerializer<SchemaType> {
 
-    @Inject
-    private Logger log;
+    private Logger log= LoggerFactory.getLogger(getClass());;
 
     @Override
     public void serialize(SchemaType schemaType, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {

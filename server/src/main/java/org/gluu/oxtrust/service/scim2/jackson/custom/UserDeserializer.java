@@ -11,7 +11,6 @@ import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSA
 import java.io.IOException;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.jackson.JsonNode;
@@ -38,8 +37,6 @@ import org.slf4j.LoggerFactory;
 @Named
 public class UserDeserializer extends JsonDeserializer<User> {
 
-    //@Inject
-    //private Logger log;
     private Logger log= LoggerFactory.getLogger(UserDeserializer.class);
 
     @Override
