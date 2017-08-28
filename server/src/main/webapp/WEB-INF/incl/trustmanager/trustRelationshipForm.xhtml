@@ -9,7 +9,8 @@
 	xmlns:gluufn="http://www.gluu.org/jsf/functions"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
- 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
+ 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
 	<h:outputStylesheet>
         .attributeColumn {
@@ -103,17 +104,6 @@
     if(val === 'None') {
        #{rich:component('createSPMetadata:createSPMeatadataModalPanel')}.show();
     }
-    
-    var entityVal = $(element).parents('tr:first').prev().find("select").find('option:selected').text();
-    
-    if(entityVal !== "Federation/Aggregate"){
-    	if(val !== "URI"){ 
-    	if(val === "Federation"){
-    		$("[id$='spMetaDataUrlGroupId']").html('');
-    	}
-    	}
-    }
-    
 	}        
     </h:outputScript>
 
@@ -219,9 +209,8 @@
 							</ox:decorate>
 						
 						<h:panelGroup id="metadataType">
-						<a4j:region>												
-							<ox:decorate
-								id="spMetaDataSourceType" label="#{msg['trustmanager.metadataLocation']}">
+						<a4j:region>	
+						<ox:decorate id="spMetaDataSourceType" label="#{msg['trustmanager.metadataLocation']}">
 								<h:selectOneMenu styleClass="form-control"
 									value="#{_trustRelationship.spMetaDataSourceType}" onchange="changeEvent(this)"
 									required="#{empty param['sv']}" id="spMetaDataSourceTypeId" converter="omnifaces.GenericEnumConverter">
@@ -230,13 +219,14 @@
 										var="_type"
 										itemLabel="#{_type.displayName}" />
 									<a4j:ajax event="change" 
-										render="MetadataOperations, FederationWizard, spMetaDataUrlGroupId, 
+										render="MetadataOperations, spMetaDataUrlGroupId, 
                                                 FederationWizardEntitySelection, urlId" 
 										limitRender="true" execute="@this" />
 								</h:selectOneMenu>
-							</ox:decorate>						
+							</ox:decorate>	
+					
 							<a4j:region>
-								<h:panelGroup id="urlId" rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) and (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}" label="URL">
+								<h:panelGroup id="urlId" rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) or (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}" label="URL">
 									<ox:decorate id="url"
                                                                                      required="true">
 										<h:inputText styleClass="form-control"
