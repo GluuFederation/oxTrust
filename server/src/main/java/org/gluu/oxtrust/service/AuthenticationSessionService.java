@@ -54,7 +54,7 @@ public class AuthenticationSessionService implements Serializable {
             String endSessionState = UUID.randomUUID().toString();
 
             EndSessionRequest endSessionRequest = new EndSessionRequest(oauthData.getIdToken(), appConfiguration.getLogoutRedirectUrl(), endSessionState);
-            endSessionRequest.setSessionState(oauthData.getSessionState());
+            endSessionRequest.setSessionId(oauthData.getSessionState());
 
             EndSessionClient endSessionClient = new EndSessionClient(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
             endSessionClient.setRequest(endSessionRequest);

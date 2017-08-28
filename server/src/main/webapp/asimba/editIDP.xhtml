@@ -4,10 +4,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewParam name="inum" value="#{updateAsimbaIDPAction.editEntryInum}" />
-        <f:viewAction action="#{updateAsimbaIDPAction.edit}"
-                      if="#{updateAsimbaIDPAction.editEntryInum != null and updateAsimbaIDPAction.editEntryInum != updateAsimbaIDPAction.idp.inum}"
-                      onPostback="true"/>
         <f:viewAction action="#{conversationService.initConversation}" />
+        <f:viewAction action="#{updateAsimbaIDPAction.edit}" phase="UPDATE_MODEL_VALUES" onPostback="false" />
     </f:metadata>
 
     <ui:define name="body">
@@ -24,7 +22,7 @@
                         <i class="fa fa-home"/> #{msg['asimba.idps']}</a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/asimba/editIDP/">#{msg['asimba.addIdp']}</a>
+                    <a href="#{request.contextPath}/asimba/editIDP.htm?inum=new">#{msg['asimba.addIdp']}</a>
                 </li>
             </ol>
         </section>

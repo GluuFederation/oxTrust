@@ -6,17 +6,8 @@
 
 package org.gluu.oxtrust.ws.rs;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.scim.ScimConfiguration;
-import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.oxauth.model.uma.UmaConstants;
-import org.xdi.oxauth.model.uma.UmaMetadata;
-import org.xdi.service.JsonService;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,8 +16,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.model.scim.ScimConfiguration;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.oxauth.model.uma.UmaConstants;
+import org.xdi.oxauth.model.uma.UmaMetadata;
+import org.xdi.service.JsonService;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 /**
  * The endpoint at which the requester can obtain SCIM metadata configuration.
@@ -34,7 +36,7 @@ import java.util.List;
  * @author Yuriy Movchan Date: 11/06/2015
  */
 @Named("scimConfigurationRestWebService")
-@Path("/oxtrust/scim-configuration")
+@Path("/scim-configuration")
 @Api(value = "/.well-known/scim-configuration", description = "The SCIM server endpoint that provides configuration data. ")
 public class ScimConfigurationWS {
 
@@ -54,7 +56,7 @@ public class ScimConfigurationWS {
     @Produces({UmaConstants.JSON_MEDIA_TYPE})
     @ApiOperation(
             value = "Provides metadata as json document. It contains options and endpoints supported by the SCIM server.",
-            response = UmaMetadata.class
+            response = ScimConfiguration.class
     )
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Failed to build SCIM configuration json object.")
@@ -64,19 +66,6 @@ public class ScimConfigurationWS {
             final String baseEndpointUri = appConfiguration.getBaseEndpoint();
 
             final List<ScimConfiguration> cl = new ArrayList<ScimConfiguration>();
-
-//            cl.setScimConfigurationList(new ArrayList<ScimConfiguration>());
-
-            // SCIM 1.0
-            final ScimConfiguration c1 = new ScimConfiguration();
-            c1.setVersion("1.0");
-            c1.setAuthorizationSupported(new String[]{"uma"});
-            c1.setUserEndpoint(baseEndpointUri + "/scim/v1/Users");
-            c1.setUserSearchEndpoint(baseEndpointUri + "/scim/v1/Users/Search");
-            c1.setGroupEndpoint(baseEndpointUri + "/scim/v1/Groups");
-            c1.setBulkEndpoint(baseEndpointUri + "/scim/v1/Bulk");
-
-            cl.add(c1);
 
             // SCIM 2.0
             final ScimConfiguration c2 = new ScimConfiguration();

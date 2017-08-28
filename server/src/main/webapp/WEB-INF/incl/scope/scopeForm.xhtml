@@ -30,6 +30,17 @@
                 <h:inputTextarea styleClass="form-control" value="#{_scope.description}" rows="3" cols="80" maxlength="4000" id="descriptionId" />
             </ox:decorate>
   
+            <ox:decorate label="#{msg['scope.scopeType']}">
+                <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.scopeType}">
+                	<f:selectItem noSelectionOption="true"  itemLabel="Default"/>
+                    <f:selectItems value="#{scopeService.scopeTypes}" var="_type" itemLabel="#{_type.displayName}" />
+                    <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
+                    <a4j:ajax event="change"
+						render="dynamicScripts, selectedClaims"
+						execute="@this" />
+                </h:selectOneMenu>
+            </ox:decorate>
+  
             <ox:decorate label="#{msg['scope.defaultScope']}">
                 <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_scope.defaultScope}">
                 	<f:selectItem noSelectionOption="true"  itemLabel="Select"/>
@@ -61,7 +72,7 @@
 	            </a4j:region>
             </h:panelGroup>
 			<h:panelGroup id="dynamicScripts">
-				<a4j:region rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
+				<a4j:region >
 					<ox:decorate label="#{msg['scope.dynamicScopeScripts']}">
 						<h:panelGroup id="selectedDynamicScriptId">
 							<h:panelGrid columns="1" width="100%" border="0"
@@ -92,8 +103,7 @@
 						<h:panelGroup>
 							<a4j:commandButton value="#{msg['scope.addDynamicScopeScript']}"
 								oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
-								execute="@this" styleClass="btn btn-primary"
-								style="margin-left:-95px;" />
+								execute="@this" styleClass="btn btn-primary"/>
 						</h:panelGroup>
 					</ox:decorate>
 				</a4j:region>

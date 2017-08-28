@@ -10,11 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.gluu.oxtrust.model.exception.SCIMDataValidationException;
 
 /**
  * A URI of the form data:image/[image extension][;base64],data
  */
+@JsonPropertyOrder({"asURI", "mimeType", "asInputStream"})
 public class ImageDataURI extends DataURI {
 
     public static final String IMAGE_MIME_TYPE = "data:image/";

@@ -53,6 +53,9 @@ public class GluuCustomFidoDevice extends Entry {
 	@LdapAttribute(name = "description")
 	private String description;
 
+	@LdapAttribute(name = "oxNickName")
+	private String nickname;
+
 	@LdapAttribute(name = "oxTrustMetaLastModified")
 	private String metaLastModified;
 
@@ -164,6 +167,14 @@ public class GluuCustomFidoDevice extends Entry {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public String getMetaLastModified() {

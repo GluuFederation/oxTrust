@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -35,12 +34,15 @@ import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
+import org.gluu.oxtrust.util.DateUtil;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.OxMultivalued;
+import org.xdi.service.cdi.util.CdiUtil;
 
 /**
  * Custom serializer for the SCIM 2.0 User class.
@@ -52,10 +54,8 @@ import org.xdi.model.OxMultivalued;
 @Named
 public class UserSerializer extends JsonSerializer<User> {
 
-    @Inject
-    private Logger log;
-    
-    @Inject
+    private Logger log= LoggerFactory.getLogger(getClass());
+
     private AttributeService attributeService;
 
     protected String attributesArray;
@@ -104,7 +104,7 @@ public class UserSerializer extends JsonSerializer<User> {
         Extension extension = user.getExtension(rootNodeEntry.getKey());
 
         Map<String, Object> list = new HashMap<String, Object>();
-
+        attributeService= CdiUtil.bean(AttributeService.class);
         boolean enclosingWritten = false;
         for (Map.Entry<String, Extension.Field> extEntry : extension.getFields().entrySet()) {
 
@@ -145,7 +145,15 @@ public class UserSerializer extends JsonSerializer<User> {
                         list.put(extEntry.getKey(), stringList);
 
                     } else if (attributeDataType.equals(GluuAttributeDataType.DATE)) {
-
+                        //Take generalized time dates and convert back to ISO format, namely,
+                        //the converse of org.gluu.oxtrust.service.scim2.jackson.custom.ExtensionDeserializer.deserialize()
+                        List<String> strDates=Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), String[].class));
+                        List<String> formattedStrDates = new ArrayList<String>();
+                        for (String strDate : strDates){
+                            formattedStrDates.add(DateUtil.generalizedToISOStringDate(strDate));
+                        }
+                        list.put(extEntry.getKey(), formattedStrDates);
+                        /*
                         List<Date> dateList = Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), Date[].class));
                         List<String> stringList = new ArrayList<String>();
                         DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
@@ -154,7 +162,7 @@ public class UserSerializer extends JsonSerializer<User> {
                             stringList.add(dateString);
                         }
                         list.put(extEntry.getKey(), stringList);
-
+                        */
                     } else if (attributeDataType.equals(GluuAttributeDataType.NUMERIC)) {
 
                         List<BigDecimal> numberList = Arrays.asList(mapper.readValue(extEntry.getValue().getValue(), BigDecimal[].class));

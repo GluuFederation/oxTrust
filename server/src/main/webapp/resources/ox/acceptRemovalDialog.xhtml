@@ -26,26 +26,27 @@
             <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" />
         </f:facet>
 
-        <h:form>
-            <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
-                <h:panelGroup>
-                    <h:outputText value="Warning:&#160;" styleClass="bolded" />
-                    <h:outputText
-                        value="Removing #{cc.attrs.subject} '#{cc.attrs.value}' will cause any data stored 
-                       in the #{cc.attrs.subject} to be permanently lost. Are you sure you want to continue?" />
-                </h:panelGroup>
+        <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
+            <h:panelGroup>
+                <h:outputText value="Warning:&#160;" styleClass="bolded" />
+                <h:outputText
+                    value="Removing #{cc.attrs.subject} '#{cc.attrs.value}' will cause any data stored 
+                   in the #{cc.attrs.subject} to be permanently lost. Are you sure you want to continue?" />
+            </h:panelGroup>
 
-                <richext:spacer height="8" />
+            <richext:spacer height="8" />
 
-                <h:panelGroup>
-                    <a4j:commandButton styleClass="btn btn-primary" value="Ok" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide();" render="#{cc.attrs.render}" execute="@this" action="#{cc.attrs.deleteMethod}"/>&nbsp;
-                    <a4j:commandButton styleClass="btn btn-primary" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
-                    <a4j:commandButton styleClass="btn btn-primary" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
-                        action="#{cc.attrs.cancelMethod}"/>&nbsp;
-                    <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
-                </h:panelGroup>
-            </h:panelGrid>
-        </h:form>
+            <h:panelGroup>
+                <a4j:commandButton styleClass="btn btn-primary" value="Ok" onbegin="#{rich:component('acceptRemovalModalPanel')}.hide();" action="#{cc.attrs.deleteMethod}" render="#{cc.attrs.render}" execute="@this">
+					<f:param name="sv" value="1" />
+                </a4j:commandButton>
+                &nbsp;
+                <a4j:commandButton styleClass="btn btn-primary" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
+                <a4j:commandButton styleClass="btn btn-primary" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
+                    action="#{cc.attrs.cancelMethod}"/>&nbsp;
+                <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
+            </h:panelGroup>
+        </h:panelGrid>
     </rich:popupPanel>
 </cc:implementation>
 

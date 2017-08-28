@@ -5,9 +5,6 @@
  */
 package org.gluu.oxtrust.service.scim2.schema.strategy;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -17,7 +14,11 @@ import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.service.scim2.schema.strategy.serializers.SchemaTypeFidoDeviceSerializer;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xdi.config.oxtrust.AppConfiguration;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * @author Val Pecaoco
@@ -25,8 +26,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
 @Named
 public class FidoDeviceCoreLoadingStrategy implements LoadingStrategy {
 
-	@Inject
-	private Logger log;
+    private Logger log= LoggerFactory.getLogger(getClass());
 
 	@Override
 	public SchemaType load(AppConfiguration appConfiguration, SchemaType schemaType) throws Exception {
@@ -68,7 +68,7 @@ public class FidoDeviceCoreLoadingStrategy implements LoadingStrategy {
 		fidoDevice.setStatus("");
 		fidoDevice.setDisplayName("");
 		fidoDevice.setDescription("");
-
+		fidoDevice.setNickname("");
 		return fidoDevice;
 	}
 }

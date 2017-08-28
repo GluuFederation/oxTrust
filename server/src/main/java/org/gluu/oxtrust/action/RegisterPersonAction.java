@@ -13,14 +13,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
@@ -29,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -55,7 +54,6 @@ import org.xdi.util.StringHelper;
  */
 @ConversationScoped
 @Named("registerPersonAction")
-@Secure("#{identity.loggedIn}")
 public class RegisterPersonAction implements Serializable {
 
 	private static final long serialVersionUID = 6002737004324917338L;
@@ -119,6 +117,7 @@ public class RegisterPersonAction implements Serializable {
 	private boolean captchaDisabled = false;
 
     private String postRegistrationInformation;
+    
 
 	/**
 	 * Initializes attributes for registering new person
@@ -148,9 +147,9 @@ public class RegisterPersonAction implements Serializable {
 
 			if(!externalUserRegistrationService.isEnabled()){
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}  
+			}      
 				
-			this.person = (inum.isEmpty()) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
+			this.person = (inum == null || inum.isEmpty()) ? new GluuCustomPerson() : personService.getPersonByInum(inum);
 
 			boolean isPersonActiveOrDisabled = GluuStatus.ACTIVE.equals(person.getStatus()) || GluuStatus.INACTIVE.equals(person.getStatus());
 
@@ -228,7 +227,6 @@ public class RegisterPersonAction implements Serializable {
 				String inum = personService.generateInumForNewPerson();
 				this.person.setInum(inum);
 			}
-			
 
 			if (person.getIname() == null) {
 				String iname = personService.generateInameForNewPerson(this.person.getUid());
@@ -239,8 +237,8 @@ public class RegisterPersonAction implements Serializable {
 				String dn = personService.getDnForPerson(this.person.getInum());
 				this.person.setDn(dn);
 			}
-			
 
+log.debug("1");
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
 				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
@@ -250,27 +248,25 @@ public class RegisterPersonAction implements Serializable {
 			} else {
 				this.person.setCommonName(this.person.getCommonName());
 			}
-
+log.debug("2");
 			// save password
 			this.person.setUserPassword(password);
 			this.person.setCreationDate(new Date());
 			this.person.setMail(email);
 			
-
 			try {
 				// Set default message
 				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
-
-				boolean result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
-				if (!result) {
+				boolean result = false;
+log.debug("3");
+				this.person = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
+				if (this.person == null) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
 				}
-				if (!this.inum.isEmpty()) {
+				if ((this.inum != null) && !this.inum.isEmpty()) {
 					personService.updatePerson(this.person);
 				} else {
-					String randomKey = UUID.randomUUID().toString();
-					person.setUserRandomKey(randomKey);
 					personService.addPerson(this.person);
 				}
 				
@@ -292,20 +288,14 @@ public class RegisterPersonAction implements Serializable {
 		return OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED;
 	}
 
-	public void confirmRegistration(){
-		GluuCustomPerson updatedPerson;
+	public void confirm(){ 
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		String code = "";
-		code = request.getParameter("code");
+		String code = request.getParameter("code");
 		requestParameters.put("code", new String[]{code});
 		try {
-			updatedPerson = personService.getPersonByAttribute("userRandomKey", code);
-			updatedPerson.setStatus(GluuStatus.ACTIVE);
-			personService.updatePerson(updatedPerson);
-			boolean result = externalUserRegistrationService.executeExternalConfirmRegistrationMethods(updatedPerson, requestParameters);
-			
+			boolean result = externalUserRegistrationService.executeExternalConfirmRegistrationMethods(this.person, requestParameters);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Failed to confirm registration.", e);
 		}
 	}
 

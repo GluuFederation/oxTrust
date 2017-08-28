@@ -167,6 +167,9 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxIncludeClaimsInIdToken")
     private GluuBoolean oxIncludeClaimsInIdToken = GluuBoolean.FALSE;
 
+    @LdapAttribute(name = "oxRefreshTokenLifetime")
+    private Integer oxRefreshTokenLifetime;
+
     @LdapAttribute(name = "oxAuthDefaultAcrValues")
     private String[] defaultAcrValues;
 
@@ -515,6 +518,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setOxIncludeClaimsInIdToken(GluuBoolean oxIncludeClaimsInIdToken) {
         this.oxIncludeClaimsInIdToken = oxIncludeClaimsInIdToken;
+    }
+
+    public Integer getOxRefreshTokenLifetime() {
+        return oxRefreshTokenLifetime;
+    }
+
+    public void setOxRefreshTokenLifetime(Integer oxRefreshTokenLifetime) {
+        this.oxRefreshTokenLifetime = oxRefreshTokenLifetime;
     }
 
     public String[] getDefaultAcrValues() {

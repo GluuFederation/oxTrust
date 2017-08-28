@@ -42,6 +42,8 @@ public class AttributeResolverAction implements Serializable {
 
 	private static final long serialVersionUID = -9125609238796284572L;
 
+	private static final String SHIBBOLETH3_ATTR_RESOLVER_VM_PATH = "/opt/gluu/jetty/identity/conf/shibboleth3/attribute-resolver.xml.vm";
+	
 	@Inject
 	private Logger log;
 
@@ -119,14 +121,14 @@ public class AttributeResolverAction implements Serializable {
 		String inum = attributeService.generateInumForNewAttribute();
 
 		String orgInum = applicationConfiguration.getOrgInum();
-		String dn = "inum=" + inum + ",ou=attributes,o=" + orgInum + ",o=gluu";
-		System.out.println(dn);
+		String dn = "inum="+inum+",ou=attributes,o="+orgInum+",o=gluu";
 		this.attribute.setDataType(GluuAttributeDataType.STRING);
 		GluuUserRole[] gluuEditRole = new GluuUserRole[] { GluuUserRole.ADMIN };
 		this.attribute.setEditType(gluuEditRole);
 		GluuUserRole[] gluuViewRole = new GluuUserRole[] { GluuUserRole.ADMIN, GluuUserRole.USER };
 		this.attribute.setViewType(gluuViewRole);
 		this.attribute.setOxMultivaluedAttribute(OxMultivalued.FALSE);
+		this.attribute.setOrigin("gluuPerson");
 		this.attribute.setStatus(GluuStatus.ACTIVE);
 		this.attribute.setInum(inum);
 		this.attribute.setDisplayName(attributeName);
@@ -146,11 +148,11 @@ public class AttributeResolverAction implements Serializable {
 		StringWriter sw = null;
 		StringReader sr = null;
 		final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
-		if (conf.getOxTrustAttributeResolver() != null || conf.getOxTrustAttributeResolver().isEmpty()) {
-			sr = new StringReader(conf.getOxTrustAttributeResolver());
+		if (conf.getAttributeResolverConfig() != null || !conf.getAttributeResolverConfig().isEmpty()) {
+			sr = new StringReader(conf.getAttributeResolverConfig());
 		}
 
-		String filePath = ""; // applicationConfiguration.getAttributeResolverPath();
+		String filePath = SHIBBOLETH3_ATTR_RESOLVER_VM_PATH; 
 		File fileRead = new File(filePath);
 		try {
 			fr = new FileReader(fileRead);
@@ -233,7 +235,7 @@ public class AttributeResolverAction implements Serializable {
 			}
 
 		}
-
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration updated successfully.");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 

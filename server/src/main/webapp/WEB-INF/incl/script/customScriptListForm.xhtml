@@ -40,17 +40,16 @@
 								
 			<rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId" >
 			<a4j:repeat value="#{applianceService.customScriptTypes}" var="_scriptType">
-	        	<ui:param name="_customScriptTypeId" value="#{_action.getId(_scriptType)}" />
 	        	<ui:param name="_customScripts" value="#{_action.customScriptsByTypes[_scriptType]}" />
 	            <rich:tab header="#{_scriptType.displayName}">
 		            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
 		                <a4j:region>
-		                    <rich:dataGrid id="#{_customScriptTypeId}" columns="1" value="#{_customScripts}" var="_customScript" style="width: 100%;">            
+		                    <rich:dataGrid id="customScriptTypeId" columns="1" value="#{_customScripts}" var="_customScript" style="width: 100%;">            
 					        	<ui:param name="_customScriptId" value="#{_action.getId(_customScript)}" />
 		                        <h:panelGrid id="#{_customScriptId}" columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
 		                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop" style="margin-bottom:10px;">
 		                                <ox:decorate label="#{msg['customScript.name']}">
-		                                    <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" validatorMessage="Script Name cannot contain space(s)." styleClass="form-control">
+		                                    <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" validatorMessage="Script Name cannot contain space(s)" styleClass="form-control">
 												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>						    
 											</h:inputText>
 		                                </ox:decorate>
@@ -113,16 +112,16 @@
 
 		    
 		                            <a4j:commandLink immediate="true"   onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="glyphicon glyphicon-remove" style="margin-top: -14px; margin-left: -18px;">
-		                                
 		                                <f:param name="sv" value="1" />
 		                            </a4j:commandLink>
-		                            <ox:acceptRemovalDialog id="deleteConfirmation" subject="Script" value="#{_customScript.name}" deleteMethod="#{manageCustomScriptAction.removeCustomScript(_customScript)}" render="#{_customScriptTypeId}"/>
+		                            <ox:acceptRemovalDialog id="deleteConfirmation" subject="Script" value="#{_customScript.name}" deleteMethod="#{manageCustomScriptAction.removeCustomScript(_customScript)}" render="customScriptTypeId"/>
 		                        </h:panelGrid>
 		                    </rich:dataGrid>
 		    
 		                    <h:panelGroup layout="block" styleClass="addConfig">
-		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['customScript.addCustomScriptConfiguration']}" action="#{_action.addCustomScript(_scriptType)}" render="#{_customScriptTypeId}" execute="@region" />
-		                        <f:param name="sv" value="1" />
+		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['customScript.addCustomScriptConfiguration']}" action="#{_action.addCustomScript(_scriptType)}" render="customScriptTypeId" execute="@region">
+		                        	<f:param name="sv" value="1" />
+		                        </a4j:commandLink>
 		                    </h:panelGroup>
 
 		                </a4j:region>

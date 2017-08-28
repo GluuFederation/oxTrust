@@ -88,6 +88,7 @@ public class UpdateAsimbaIDPAction implements Serializable {
     
     @PostConstruct
     public void init() {        
+        log.info("UpdateAsimbaIDPAction.editEntryInum="+editEntryInum);
         log.info("init() IDP call");
         
         clearEdit();
@@ -128,13 +129,15 @@ public class UpdateAsimbaIDPAction implements Serializable {
         uploadedCertBytes = null;
     }
     
-
+    /**
+     * Set "add new" or "edit" mode by inum request parameter.
+     */
     public void edit() {
         log.info("edit() IDP call, inum: "+editEntryInum);
-        if (editEntryInum == null || "".equals(editEntryInum)) {
+        if (editEntryInum == null || "".equals(editEntryInum) || "new".equals(editEntryInum)) {
             // no inum, new entry mode
             clearEdit();
-        } else {
+        } else if ((editEntryInum != null) && (idp != null) && (editEntryInum != idp.getInum())) {
             // edit entry
             newEntry = false;
             idp = asimbaService.readIDPEntry(editEntryInum);
@@ -161,6 +164,9 @@ public class UpdateAsimbaIDPAction implements Serializable {
         }
         clearEdit();
         conversationService.endConversation();
+        
+        asimbaService.restartAsimbaService();
+        
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -185,6 +191,9 @@ public class UpdateAsimbaIDPAction implements Serializable {
         }
         newEntry = false;
         conversationService.endConversation();
+        
+        asimbaService.restartAsimbaService();
+        
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

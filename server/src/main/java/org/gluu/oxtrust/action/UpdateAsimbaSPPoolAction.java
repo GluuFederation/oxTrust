@@ -119,12 +119,15 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         newEntry = true;
     }
     
+    /**
+     * Set "add new" or "edit" mode by inum request parameter.
+     */
     public void edit() {
         log.info("edit() SPPool call, inum: "+editEntryInum);
-        if (editEntryInum == null || "".equals(editEntryInum)) {
+        if (editEntryInum == null || "".equals(editEntryInum) || "new".equals(editEntryInum)) {
             // no inum, new entry mode
             clearEdit();
-        } else {
+        } else if ((editEntryInum != null) && (spPool != null) && (editEntryInum != spPool.getInum())) {
             // edit entry
             newEntry = false;
             spPool = asimbaService.readRequestorPoolEntry(editEntryInum);
@@ -142,6 +145,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         }
         clearEdit();
         conversationService.endConversation();
+        
+        asimbaService.restartAsimbaService();
+        
         return OxTrustConstants.RESULT_SUCCESS;
     }
     
@@ -153,6 +159,9 @@ public class UpdateAsimbaSPPoolAction implements Serializable {
         }
         clearEdit();
         conversationService.endConversation();
+        
+        asimbaService.restartAsimbaService();
+        
         return OxTrustConstants.RESULT_SUCCESS;
     }
     

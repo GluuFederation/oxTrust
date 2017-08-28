@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -33,6 +32,7 @@ import org.gluu.oxtrust.service.scim2.schema.SchemaTypeMapping;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Val Pecaoco
@@ -40,8 +40,7 @@ import org.slf4j.Logger;
 @Named("listResponseUserSerializer")
 public class ListResponseUserSerializer extends UserSerializer {
 
-    @Inject
-    private Logger log;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public void serialize(User user, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
@@ -109,7 +108,7 @@ public class ListResponseUserSerializer extends UserSerializer {
                     }
 
                     if ((((parent != null && !parent.isEmpty()) && parent.equalsIgnoreCase(split[0])) && rootNodeEntry.getKey().equalsIgnoreCase(split[1])) ||
-                        rootNodeEntry.getKey().equalsIgnoreCase(split[0])) {
+                            rootNodeEntry.getKey().equalsIgnoreCase(split[0])) {
 
                         // log.info(" ##### MATCH: " + attribute);
                         writeStructure(parent, rootNodeEntry, mapper, user, jsonGenerator);
@@ -241,4 +240,5 @@ public class ListResponseUserSerializer extends UserSerializer {
             serializeUserExtension(rootNodeEntry, mapper, user, jsonGenerator);
         }
     }
+
 }

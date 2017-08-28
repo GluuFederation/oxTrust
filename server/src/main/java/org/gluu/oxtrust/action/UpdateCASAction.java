@@ -75,7 +75,6 @@ public class UpdateCASAction implements Serializable {
     @Inject
     private CASService casService;
     
-    @Produces
     private String casBaseURL;
     
     private List<String> sessionStorageTypes = new ArrayList<String>();

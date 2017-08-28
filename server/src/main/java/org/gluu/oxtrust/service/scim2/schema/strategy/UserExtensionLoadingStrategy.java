@@ -9,7 +9,6 @@ package org.gluu.oxtrust.service.scim2.schema.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -18,9 +17,11 @@ import org.gluu.oxtrust.model.scim2.schema.AttributeHolder;
 import org.gluu.oxtrust.model.scim2.schema.SchemaType;
 import org.gluu.oxtrust.model.scim2.schema.extension.UserExtensionSchema;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
+import org.xdi.service.cdi.util.CdiUtil;
 
 /**
  * Loading strategy for the User Extension schema.
@@ -30,10 +31,8 @@ import org.xdi.model.GluuAttributeDataType;
 @Named
 public class UserExtensionLoadingStrategy implements LoadingStrategy {
 
-    @Inject
-    private Logger log;
-    
-    @Inject
+    private Logger log= LoggerFactory.getLogger(getClass());
+
     private AttributeService attributeService;
 
     @Override
@@ -45,6 +44,8 @@ public class UserExtensionLoadingStrategy implements LoadingStrategy {
         meta.setResourceType("Schema");
         schemaType.setMeta(meta);
 
+        attributeService= CdiUtil.bean(AttributeService.class);
+
         // List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributesImpl(attributeService.getCustomAttributes());
         List<GluuAttribute> scimCustomAttributes = attributeService.getSCIMRelatedAttributes();
 
@@ -53,7 +54,7 @@ public class UserExtensionLoadingStrategy implements LoadingStrategy {
         for (GluuAttribute scimCustomAttribute : scimCustomAttributes) {
 
             AttributeHolder attributeHolder = new AttributeHolder();
-
+            log.debug("Custom attribute name {}", scimCustomAttribute.getName());
             attributeHolder.setName(scimCustomAttribute.getName());
 
             if (scimCustomAttribute.getDataType() != null) {
@@ -74,7 +75,7 @@ public class UserExtensionLoadingStrategy implements LoadingStrategy {
                     log.info(" NO MATCH: scimCustomAttribute.getDataType().getDisplayName() = " + scimCustomAttribute.getDataType().getDisplayName());
                     typeStr = "string";
                 }
-
+                log.debug("of type {}", typeStr);
                 attributeHolder.setType(typeStr);
             }
 

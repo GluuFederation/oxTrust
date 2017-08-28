@@ -9,6 +9,8 @@ package org.gluu.oxtrust.ldap.service;
 import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -18,6 +20,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.xdi.oxauth.model.common.ScopeType;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -194,8 +197,10 @@ public class ScopeService implements Serializable {
 	 * 
 	 * @return Array of scope types
 	 */
-	public org.xdi.oxauth.model.common.ScopeType[] getScopeTypes() {
-		return org.xdi.oxauth.model.common.ScopeType.values();
+	public List<ScopeType> getScopeTypes() {		
+		List<ScopeType> scopeTypes= new ArrayList<ScopeType>(Arrays.asList(org.xdi.oxauth.model.common.ScopeType.values()));
+		scopeTypes.remove(ScopeType.DYNAMIC);
+		return scopeTypes;
 	}
 
 	/**

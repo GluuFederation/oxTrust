@@ -164,32 +164,25 @@ public class CacheRefreshTimer {
     @Asynchronous
     public void process(@Observes @Scheduled CacheRefreshEvent cacheRefreshEvent) {
         if (this.isActive.get()) {
-            return;
-        }
-
-        if (!this.isActive.compareAndSet(false, true)) {
-            return;
-        }
-
-        try {
-            processInt();
-        } finally {
-            this.isActive.set(false);
-        }
-    }
-
-	public void processInt() {
-		if (this.isActive.get()) {
 			log.debug("Another process is active");
-			return;
-		}
-
-		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
+            return;
+        }
 
 		if (!this.isActive.compareAndSet(false, true)) {
 			log.debug("Failed to start process exclusively");
 			return;
 		}
+
+        try {
+            processInt();
+        } finally {
+			log.debug("Allowing to run new process exclusively");
+            this.isActive.set(false);
+        }
+    }
+
+	public void processInt() {
+		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
 
 		try {
 			GluuAppliance currentAppliance = applianceService.getAppliance();
@@ -204,9 +197,6 @@ public class CacheRefreshTimer {
 			this.lastFinishedTime = System.currentTimeMillis();
 		} catch (Throwable ex) {
 			log.error("Exception happened while executing cache refresh synchronization", ex);
-		} finally {
-			log.debug("Allowing to run new process exclusively");
-			this.isActive.set(false);
 		}
 	}
 

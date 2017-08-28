@@ -5,8 +5,7 @@
                 template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateAsimbaSPRequestorAction.refresh}"
-                      onPostback="false"/>
+        <f:viewAction action="#{updateAsimbaSPRequestorAction.refresh}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="body">
@@ -23,14 +22,14 @@
                         <i class="fa fa-home"/> #{msg['asimba.spRequestors']}</a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/asimba/editSPRequestor.htm">#{msg['asimba.addSPRequestor']}</a>
+                    <a href="#{request.contextPath}/asimba/editSPRequestor.htm?inum=new">#{msg['asimba.addSPRequestor']}</a>
                 </li>
             </ol>
         </section>
 
         <section class="content">
             <div style="margin-left: 16px;">
-                <h:link includeViewParams="false" outcome="/asimba/editSPRequestor"
+                <h:link includeViewParams="false" outcome="/asimba/editSPRequestor?inum=new"
                         styleClass="addPerson btn btn-primary" value="#{msg['asimba.addSPRequestor']}"/>
             </div>
 
