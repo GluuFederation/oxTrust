@@ -148,17 +148,18 @@ public class AttributeResolverAction implements Serializable {
 		StringWriter sw = null;
 		StringReader sr = null;
 		final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
-		if (conf.getAttributeResolverConfig() != null || !conf.getAttributeResolverConfig().isEmpty()) {
+		if (conf.getAttributeResolverConfig() != null) {
 			sr = new StringReader(conf.getAttributeResolverConfig());
 		}
 
-		String filePath = SHIBBOLETH3_ATTR_RESOLVER_VM_PATH; 
-		File fileRead = new File(filePath);
+		
 		try {
-			fr = new FileReader(fileRead);
 			if (sr != null) {
 				br = new BufferedReader(sr);
 			} else {
+				String filePath = SHIBBOLETH3_ATTR_RESOLVER_VM_PATH; 
+				File fileRead = new File(filePath);
+				fr = new FileReader(fileRead);
 				br = new BufferedReader(fr);
 			}
 
