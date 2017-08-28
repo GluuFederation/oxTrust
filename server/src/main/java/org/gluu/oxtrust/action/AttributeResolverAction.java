@@ -206,7 +206,7 @@ public class AttributeResolverAction implements Serializable {
 				}
 			}
 
-			conf.setOxTrustAttributeResolver(sw.toString());
+			conf.setAttributeResolverConfig(sw.toString());
 			ldapEntryManager.merge(conf);
 
 		} catch (IOException ex) {
