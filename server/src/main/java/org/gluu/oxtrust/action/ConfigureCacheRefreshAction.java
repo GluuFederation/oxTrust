@@ -390,7 +390,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		if (ldapConfig.isUseAnonymousBind()) {
 			ldapConfig.setBindDN(null);
 		}
-		
+
 		return ldapConfig;
 	}
 

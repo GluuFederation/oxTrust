@@ -58,23 +58,14 @@
 								value="#{cc.attrs.ldapConfig.configId}"
 								size="#{cc.attrs.inputWidth}" required="true" />
 						</ox:decorate>
-
-						<ox:decorate
-							id="useAnonymousBind" rendered="#{cc.attrs.displayAnonymousBind}" label="#{msg['ldapConfig.useAnonymousBind']}">
-							<h:selectBooleanCheckbox
-								value="#{cc.attrs.ldapConfig.useAnonymousBind}">
-								<a4j:ajax event="click" render="bindDnGroup" execute="@this" />
-							</h:selectBooleanCheckbox>
-						</ox:decorate>
-
+            
 						<h:panelGroup id="bindDnGroup">
-							<ox:decorate
-								id="bindDn"
-								rendered="#{not cc.attrs.ldapConfig.useAnonymousBind}" label="#{msg['ldapConfig.bindDN']}">
+							<s:decorate template="/WEB-INF/incl/layout/edit.xhtml"
+								id="bindDn">
+								<ui:define name="label">#{msg['ldapConfig.bindDN']}</ui:define>
 								<h:inputText styleClass="form-control"
-									value="#{cc.attrs.ldapConfig.bindDN}" size="46"
-									required="#{not ldapConfig.useAnonymousBind}" />
-							</ox:decorate>
+									value="#{cc.attrs.ldapConfig.bindDN}" size="46"/>
+							</s:decorate>
 						</h:panelGroup>
 
 						<ox:decorate id="useSSL" label="#{msg['ldapConfig.maxConnections']}">
