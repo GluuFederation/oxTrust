@@ -40,6 +40,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
@@ -973,6 +974,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public String downloadConfigurationImpl() {
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		inum = request.getParameter("inum");
+		log.info("inum " + inum);
+		
+		GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
 		ZipOutputStream zos = ResponseHelper.createZipStream(bos, "Shibboleth v3 configuration files");
 		try {
@@ -986,28 +992,28 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			if (this.trustRelationship.getSpMetaDataFN() == null) {
+			if (trustRelationship.getSpMetaDataFN() == null) {
 				log.error("SpMetaDataFN is not set.");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			String spMetadataFilePath = shibboleth3ConfService.getSpMetadataFilePath(this.trustRelationship.getSpMetaDataFN());
+			String spMetadataFilePath = shibboleth3ConfService.getSpMetadataFilePath(trustRelationship.getSpMetaDataFN());
 			if (!ResponseHelper.addFileToZip(spMetadataFilePath, zos, Shibboleth3ConfService.SHIB3_IDP_SP_METADATA_FILE)) {
 				log.error("Failed to add " + spMetadataFilePath + " to zip");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
-			String spKeyFilePath = sslDirFN + shibboleth3ConfService.getSpNewMetadataFileName(this.trustRelationship).replaceFirst("\\.xml$", ".key");
+			String spKeyFilePath = sslDirFN + shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".key");
 			if (!ResponseHelper.addFileToZip(spKeyFilePath, zos, Shibboleth3ConfService.SHIB3_IDP_SP_KEY_FILE)) {
 				log.error("Failed to add " + spKeyFilePath + " to zip");
 //				return OxTrustConstants.RESULT_FAILURE;
 			}
-			String spCertFilePath = sslDirFN + shibboleth3ConfService.getSpNewMetadataFileName(this.trustRelationship).replaceFirst("\\.xml$", ".crt");
+			String spCertFilePath = sslDirFN + shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".crt");
 			if (!ResponseHelper.addFileToZip(spCertFilePath, zos, Shibboleth3ConfService.SHIB3_IDP_SP_CERT_FILE)) {
 				log.error("Failed to add " + spCertFilePath + " to zip");
 //				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			String spAttributeMap = shibboleth3ConfService.generateSpAttributeMapFile(this.trustRelationship);
+			String spAttributeMap = shibboleth3ConfService.generateSpAttributeMapFile(trustRelationship);
 			if (spAttributeMap == null) {
 				log.error("spAttributeMap is not set.");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -1042,8 +1048,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			String fileName = (new File(spReadMeResourceName)).getName();
 			// InputStream is = resourceLoader.getResourceAsStream(spReadMeResourceName);
 			//InputStream is = this.getClass().getClassLoader().getResourceAsStream(spReadMeResourceName);
+			InputStream is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(spReadMeResourceName);
 
-			InputStream is = getClass().getResourceAsStream(spReadMeResourceName);
+			//InputStream is = getClass().getResourceAsStream(spReadMeResourceName);
 
 			if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
 				log.error("Failed to add " + spReadMeResourceName + " to zip");
@@ -1054,7 +1061,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			fileName = (new File(spReadMeWindowsResourceName)).getName();
 			// is = resourceLoader.getResourceAsStream(spReadMeWindowsResourceName);
 
-			is = getClass().getResourceAsStream(spReadMeWindowsResourceName);
+			is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(spReadMeWindowsResourceName);
 
 			if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
 				log.error("Failed to add " + spReadMeWindowsResourceName + " to zip");
