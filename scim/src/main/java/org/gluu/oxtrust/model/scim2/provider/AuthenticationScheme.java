@@ -238,8 +238,8 @@ public class AuthenticationScheme implements Serializable {
 
 	public static AuthenticationScheme createUma(final boolean primary) {
 		return new AuthenticationScheme(
-				"UMA 1.0.1", "UMA Authentication Scheme",
-				"https://kantarainitiative.org/confluence/display/uma/UMA+Protocol", "https://gluu.org/docs/integrate/uma/",
+				"UMA 2.0", "UMA Authentication Scheme",
+				"https://docs.kantarainitiative.org/uma/ed/oauth-uma-grant-2.0-06.html", "https://www.gluu.org/docs/ce/admin-guide/uma/",
 				"uma", primary);
 	}
 }
