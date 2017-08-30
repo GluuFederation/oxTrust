@@ -12,7 +12,20 @@
     </ui:define>
 
     <ui:define name="body">
+		    	<h:outputScript>
+    	function viewValue(obj){
+			$(obj).css({"display":"none"});
+			$(obj).siblings("input.togglefield").attr("type","text");
+			$(obj).siblings("img[id$='hide']").css({"display":"block"});
+		}
+				
+		function hideValue(obj){
+			$(obj).css({"display":"none"});
+			$(obj).siblings("input.togglefield").attr("type","password");
+			$(obj).siblings("img[id$='view']").css({"display":"block"});
+		}
 
+		</h:outputScript>
         <section class="content-header">
             <h1 style="color: #333;">
                 #{msg['customScript.configuration']}

@@ -32,7 +32,7 @@
                                 <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}" />
                                 <h:message for="fInput" errorClass="invalid"/>
 
-                                <h:inputText id="sInput" styleClass="col-md-4 form-control" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}"  />
+                                <h:inputSecret id="sInput" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" redisplay="true" />
                                 <h:message for="sInput" errorClass="invalid"/>
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
@@ -41,6 +41,9 @@
                                    <!--  <h:graphicImage value="/img/remove.gif" /> -->
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink>
+                                
+                                <h:graphicImage value="/img/eye.png"  id="view" onclick="return viewValue(this);"/>
+                                <h:graphicImage value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);"/>
                                 </div>
                             </h:panelGroup>
                         </h:panelGrid>
