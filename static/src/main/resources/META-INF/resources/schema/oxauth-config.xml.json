@@ -321,6 +321,7 @@
             "items": {
                 "type": "string",
                 "enum": [
+                    "none",
                     "HS256",
                     "HS384",
                     "HS512",
