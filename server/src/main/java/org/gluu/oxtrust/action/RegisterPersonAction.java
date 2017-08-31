@@ -199,6 +199,7 @@ public class RegisterPersonAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "You successfully registered.");
 			conversationService.endConversation();
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			log.error("Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
 		} else if (OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Captcha validation failed. Please try again.");
