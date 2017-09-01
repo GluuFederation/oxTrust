@@ -286,7 +286,6 @@ public class ManagePersonAuthenticationAction
 				if (ldapConfig.isUseAnonymousBind()) {
 					ldapConfig.setBindDN(null);
 				}
-
 				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
 				ldapConfig.setConfigId(configId);
 				ldapConfig.updateStringsLists();
