@@ -7,7 +7,8 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:gluufn="http://www.gluu.org/jsf/functions"
     xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+    xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
 <cc:interface>
     <cc:attribute name="label" default="" type="java.lang.String" />
@@ -18,22 +19,40 @@
     <cc:attribute name="propertiesAction" rerquired="true" type="org.gluu.oxtrust.model.SimpleCustomPropertiesListModel"/>
     <cc:attribute name="requiredName" default="true" type="java.lang.Boolean" />
     <cc:attribute name="requiredValue" default="false" type="java.lang.Boolean" />
+    <cc:attribute name="hideValue" default="false" type="java.lang.Boolean" />
 </cc:interface>
 
 <cc:implementation>
+	<h:outputScript rendered="#{cc.attrs.hideValue eq true}">
+    	function viewValue(obj){
+			$(obj).css({"display":"none"});
+			$(obj).siblings("input.togglefield").attr("type","text");
+			$(obj).siblings("img[id$='hide']").css({"display":"block"});
+		}
+				
+		function hideValue(obj){
+			$(obj).css({"display":"none"});
+			$(obj).siblings("input.togglefield").attr("type","password");
+			$(obj).siblings("img[id$='view']").css({"display":"block"});
+		}
+
+	</h:outputScript>
     <a4j:region>
         <ox:decorate label="#{cc.attrs.label}">
             <h:panelGroup id="customList">
                 <a4j:region>
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
-                        <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                    	<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
                             <h:panelGroup >
                             <div >
-                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}" />
+                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}"/>
                                 <h:message for="fInput" errorClass="invalid"/>
 
-                                <h:inputText id="sInput" styleClass="col-md-4 form-control" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}"  />
-                                <h:message for="sInput" errorClass="invalid"/>
+	                            <h:inputText id="sInput1" styleClass="col-md-4 form-control" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" rendered="#{cc.attrs.hideValue eq false}" />
+	                            <h:message for="sInput1" errorClass="invalid" rendered="#{cc.attrs.hideValue eq false}"/>
+	                            
+                                <h:inputSecret id="sInput" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" redisplay="true" rendered="#{cc.attrs.hideValue eq true}" />
+                                <h:message for="sInput" errorClass="invalid" rendered="#{cc.attrs.hideValue eq true}"/>
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
     
@@ -41,9 +60,13 @@
                                    <!--  <h:graphicImage value="/img/remove.gif" /> -->
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink>
+                                
+                                <h:graphicImage value="/img/eye.png"  id="view" onclick="return viewValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
+                                <h:graphicImage value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
                                 </div>
                             </h:panelGroup>
                         </h:panelGrid>
+                        
                     </a4j:repeat>
                     
    
