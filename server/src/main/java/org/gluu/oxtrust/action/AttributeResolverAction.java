@@ -218,6 +218,8 @@ public class AttributeResolverAction implements Serializable {
 		@SuppressWarnings("unchecked")
 		List<GluuAttribute> attributes = (List<GluuAttribute>)aP.get("attributes");
 		attributes.add(this.attribute);
+		aP.put("attributes", attributes);
+		context.put("attrParams", aP);
 		
 		String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
 		if(attributeResolver != null){
