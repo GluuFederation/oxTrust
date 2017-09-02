@@ -92,6 +92,7 @@
 		                                <ox:simpleCustomPropertiesList label="#{msg['customScript.customProperty']}" labelAdd="custom property"
 		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" hideValue="true" />
 		                
+		                
 		                                <h:panelGroup id="scriptAreaId">
 			                                <ox:decorate rendered="#{_customScript.locationType.value ne 'file'}" label="#{msg['customScript.script']}">
 			                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
