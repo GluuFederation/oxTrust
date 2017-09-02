@@ -59,9 +59,10 @@
 				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_ldapConfig.ldapConfig.setEnabled(false)}" rendered="#{_ldapConfig.enabled}"
 			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/>
 			                    	
-								<h:commandButton styleClass="btn btn-success"
-									style="margin-left:4px" value="#{msg['manageAuthentication.testLDAPConnection']}"
-									action="#{_action.testLdapConnection(_ldapConfig)}" rendered="#{_ldapConfig.enabled}"/>
+								<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-success"
+									value="#{msg['manageAuthentication.testLDAPConnection']}"
+									rendered="#{_ldapConfig.enabled}"
+									action="#{_action.testLdapConnection(_ldapConfig)}"/>
 							</div>
 									
 							</rich:dataGrid>

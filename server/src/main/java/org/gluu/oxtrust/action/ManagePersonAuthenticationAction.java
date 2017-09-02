@@ -97,6 +97,10 @@ public class ManagePersonAuthenticationAction
 
 	private List<CustomScript> customScripts;
 
+	private List<GluuLdapConfiguration> sourceConfigs;
+
+	private GluuLdapConfiguration activeLdapConfig;
+
 	private String authenticationMode = "auth_ldap_server";
 	private String oxTrustAuthenticationMode;
 
@@ -153,7 +157,6 @@ public class ManagePersonAuthenticationAction
 					GluuLdapConfiguration oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
 					this.sourceConfigs.add(oxldapConfig);
 				}
-				
 			}
 
 			this.authenticationMode = appliance.getAuthenticationMode();
@@ -164,7 +167,6 @@ public class ManagePersonAuthenticationAction
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
 			this.ldapPassportConfigurations = ldapOxPassportConfiguration.getPassportConfigurations();
-			
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -326,7 +328,6 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public String testLdapConnection(GluuLdapConfiguration ldapConfig) {
-
 		try {
 			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
 			if (!configuration.isLoaded()) {
@@ -379,12 +380,11 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public void updateLdapBindPassword(GluuLdapConfiguration ldapConfig) {
-		
-	log.info("hello setting passoword" + ldapConfig.getPrimaryKey());
-	for (Iterator<GluuLdapConfiguration> iterator = sourceConfigs.iterator(); iterator.hasNext();) {
-		GluuLdapConfiguration ldapConfig1 = iterator.next();
-		
-	}
+		log.info("hello setting passoword" + ldapConfig.getPrimaryKey());
+		for (Iterator<GluuLdapConfiguration> iterator = sourceConfigs.iterator(); iterator.hasNext();) {
+			GluuLdapConfiguration ldapConfig1 = iterator.next();
+
+		}
 	}
 	
 	public String updateLdapBindPassword(String bindPassword) {
@@ -398,8 +398,6 @@ public class ManagePersonAuthenticationAction
 
 		return null;
 	}
-	
-	public void updateLdapBindPassword() {}
 
 	public boolean isExistLdapConfigIdpAuthConf() {
 		return existLdapConfigIdpAuthConf;
@@ -492,11 +490,6 @@ public class ManagePersonAuthenticationAction
 
 	}
 	
-
-	private List<GluuLdapConfiguration> sourceConfigs;
-
-	private GluuLdapConfiguration activeLdapConfig;
-	
 	public List<GluuLdapConfiguration> getSourceConfigs() {
 		return sourceConfigs;
 	}
@@ -509,7 +502,7 @@ public class ManagePersonAuthenticationAction
 		addLdapConfig(this.getSourceConfigs());
 	}
 	
-	//@Override
+	@Override
 	public void addLdapConfig(List<GluuLdapConfiguration> ldapConfigList) {
 		GluuLdapConfiguration ldapConfiguration = new GluuLdapConfiguration();
 		ldapConfiguration.setBindPassword("");

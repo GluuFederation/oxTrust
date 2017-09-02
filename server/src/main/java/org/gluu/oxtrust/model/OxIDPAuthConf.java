@@ -24,23 +24,13 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 @XmlRootElement(name = "oxIDPAuthConf")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "name", "level", "priority", "enabled", "version", "fields", "config", "bindPassword" })
-@JsonPropertyOrder({ "type", "name", "level", "priority", "enabled", "version", "fields", "config", "bindPassword" })
+@XmlType(propOrder = { "type", "name", "level", "priority", "enabled", "version", "fields", "config" })
+@JsonPropertyOrder({ "type", "name", "level", "priority", "enabled", "version", "fields", "config" })
 public class OxIDPAuthConf {
 	private String type;
 	private String name;
 	private int level;
 	private int priority;
-
-	private String bindPassword;
-
-	public String getBindPassword() {
-		return bindPassword;
-	}
-
-	public void setBindPassword(String bindPassword) {
-		this.bindPassword = bindPassword;
-	}
 
 	private boolean enabled;
 	private int version;
