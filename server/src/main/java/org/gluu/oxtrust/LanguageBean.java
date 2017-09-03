@@ -1,20 +1,19 @@
 package org.gluu.oxtrust;
 
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
+import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.model.GluuCustomAttribute;
+import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.security.Identity;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuCustomAttribute;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.security.Identity;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by eugeniuparvan on 3/6/17.
@@ -36,7 +35,6 @@ public class LanguageBean implements Serializable {
 	static {
 		countries = new LinkedHashMap<String, Object>();
 		countries.put("English", Locale.ENGLISH); // label, value
-		countries.put("French", Locale.FRENCH);
 		countries.put("Russian", new Locale("ru"));
 	}
 
