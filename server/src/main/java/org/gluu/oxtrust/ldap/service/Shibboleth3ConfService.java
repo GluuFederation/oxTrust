@@ -1537,4 +1537,4 @@ public class Shibboleth3ConfService implements Serializable {
 	    //TODO: optimize this method. should not take so long
 		return isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	}
-}	
+}
