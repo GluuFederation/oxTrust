@@ -159,7 +159,8 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		String rfp = UUID.randomUUID().toString();
 		String jti = UUID.randomUUID().toString();
 		
-		String additionalClaims = "{relyingPartyId: 'relyingPartyId'}";
+		String relyingPartyId = edu.internet2.middleware.shibboleth.idp.util.HttpServletHelper.getLoginContext(request).getRelyingPartyId();
+		String additionalClaims = String.format("{relyingPartyId: '%s'}", relyingPartyId);
 
 		OxAuthCryptoProvider cryptoProvider = new OxAuthCryptoProvider();
 		JwtState jwtState = new JwtState(SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
