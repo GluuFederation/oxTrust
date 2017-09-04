@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,8 +46,6 @@ import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.slf4j.Logger;
@@ -168,10 +165,6 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private TrustService trustService;
-	
-	@Inject
-	@Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
-	private Instance<LdapEntryManager> ldapEntryManagerInstance;
 
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
@@ -540,7 +533,7 @@ public class Shibboleth3ConfService implements Serializable {
     	VelocityContext context = this.prepareVelocityContext(null, attributeResolverParams, null, getIdpMetadataDir());
     	String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
     	result = templateService.writeConfFile(getIdpConfDir() + SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, attributeResolver);
-    	conf.setAttributeResolverConfig(attributeResolver);
+    	//conf.setAttributeResolverConfig(attributeResolver);
     	return result;
     }
 

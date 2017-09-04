@@ -24,9 +24,12 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.config.oxtrust.AttributeResolverConfiguration;
+import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.service.security.Secure;
+import org.xdi.util.StringHelper;
 
 @ConversationScoped
 @Named("attributeResolverAction")
@@ -46,16 +49,12 @@ public class AttributeResolverAction implements Serializable {
 	
 	@Inject
 	private ConversationService conversationService;
-
-	@Inject @Named("casService")
-	private CASService casService;
 	
 	@Inject
 	private AppConfiguration applicationConfiguration;
-	
-	@Inject
-	@Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
-	private Instance<LdapEntryManager> ldapEntryManagerInstance;
+
+    @Inject
+    private LdapEntryManager ldapEntryManager;
 	
 	@Inject
 	private TrustService trustService;
@@ -65,16 +64,15 @@ public class AttributeResolverAction implements Serializable {
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
-
 	
 	private List<GluuAttribute> attributes;
 	
 	private String attributeName;
-	
 	private String nameIdType;
-	
 	private boolean enable;
 	private String base;
+
+	private boolean initialized;
 	
 	public boolean isEnable() {
 		return enable;
@@ -110,8 +108,29 @@ public class AttributeResolverAction implements Serializable {
 	public void setNameIdType(String nameIdType) {
 		this.nameIdType = nameIdType;
 	}
-	public void init() {
+	public String init() {
+		if (initialized) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
+
 		this.attributes = attributeService.getAllAttributes();
+
+		AttributeResolverConfiguration attributeResolverConfiguration = loadAttributeResolverConfiguration("oxTrustConfAttributeResolver");
+		if (attributeResolverConfiguration != null) {
+			this.base = attributeResolverConfiguration.getBase();
+			this.nameIdType = attributeResolverConfiguration.getNameIdType();
+			this.enable = attributeResolverConfiguration.isEnabled();
+			
+			String attributeName = attributeResolverConfiguration.getAttributeName();
+			GluuAttribute foundAttribute = attributeService.getAttributeByName(attributeName, this.attributes);
+			if (foundAttribute != null) {
+				this.attributeName = foundAttribute.getName();
+			}
+		}
+
+		this.initialized = true;
+
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String saveCustomAttributetoResolveImpl(){
@@ -127,15 +146,31 @@ public class AttributeResolverAction implements Serializable {
 	}
 
 	public String saveCustomAttributetoResolve(){
+		AttributeResolverConfiguration attributeResolverConfiguration = new AttributeResolverConfiguration();
+		attributeResolverConfiguration.setBase(base);
+		attributeResolverConfiguration.setAttributeName(attributeName);
+		attributeResolverConfiguration.setNameIdType(nameIdType);
+		attributeResolverConfiguration.setEnabled(enable);
+		try {
+			final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
+			conf.setAttributeResolverConfig(attributeResolverConfiguration);
+			conf.setRevision(conf.getRevision() + 1);
+			ldapEntryManager.merge(conf);
+		} catch (Exception ex) {
+			log.error("Failed to save Attribute Resolver configuration configuration", ex);
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
 		if(!enable){
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
+
+		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
 		GluuAttribute attribute = attributeService.getAttributeByName(this.attributeName);
 		
 		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
 		if (updateShib3Configuration) {    
-		List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
+			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
 			if(!shibboleth3ConfService.updateAttributeResolver(conf, attribute)){ 
 				log.error("Unable to update attribute-resolver.xml.vm");
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");
@@ -152,17 +187,13 @@ public class AttributeResolverAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
-	private LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
-		final LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
-		final String configurationDn = configurationFactory.getConfigurationDn();
-		try {
-			final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn,
-					returnAttributes);
-			return conf;
-		} catch (LdapMappingException ex) {
-			log.error("Failed to load configuration from LDAP", ex);
+	private AttributeResolverConfiguration loadAttributeResolverConfiguration(String... returnAttributes) {
+		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap("oxTrustConfAttributeResolver");
+		if (conf == null) {
+			return null;
 		}
-		return null;
+		
+		return conf.getAttributeResolverConfig();
 	}
 	
 }
