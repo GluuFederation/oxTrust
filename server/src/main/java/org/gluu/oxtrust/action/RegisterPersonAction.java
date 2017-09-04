@@ -239,7 +239,6 @@ public class RegisterPersonAction implements Serializable {
 				this.person.setDn(dn);
 			}
 
-log.debug("1");
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
 				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
@@ -249,7 +248,6 @@ log.debug("1");
 			} else {
 				this.person.setCommonName(this.person.getCommonName());
 			}
-log.debug("2");
 			// save password
 			this.person.setUserPassword(password);
 			this.person.setCreationDate(new Date());
@@ -258,10 +256,10 @@ log.debug("2");
 			try {
 				// Set default message
 				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
+
 				boolean result = false;
-log.debug("3");
-				this.person = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
-				if (this.person == null) {
+				result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
+				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
 				}
