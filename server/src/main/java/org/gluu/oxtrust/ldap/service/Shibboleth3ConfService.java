@@ -5,7 +5,6 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,6 +47,7 @@ import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.slf4j.Logger;
@@ -165,6 +166,10 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private TrustService trustService;
+	
+	@Inject
+	@Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
+	private Instance<LdapEntryManager> ldapEntryManagerInstance;
 
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
@@ -197,6 +202,7 @@ public class Shibboleth3ConfService implements Serializable {
 		String metadataProviders = templateService.generateConfFile(SHIB3_IDP_METADATA_PROVIDERS_FILE, context);
 		// Generate attribute-resolver.xml
 		String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
+		
 		// Generate attribute-filter.xml
 		String attributeFilter = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_FILTER_FILE, context);
 		// Generate relying-party.xml
@@ -503,6 +509,62 @@ public class Shibboleth3ConfService implements Serializable {
                 }
 		return casParams;
         }
+        
+    public HashMap<String, Object> initAttributeResolverParamMap(String attributeResolverTemplate) {
+    	HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
+    	
+		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
+			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
+		}
+
+		String idpConfFolder      = getIdpConfDir();
+		String idpMetadataFolder  = getIdpMetadataDir();
+
+		// Prepare data for files
+		List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
+		initAttributes(trustRelationships);
+		HashMap<String, Object> trustParams = initTrustParamMap(trustRelationships);
+		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
+                HashMap<String, Object> casParams = initCASParamMap();
+
+		boolean result = (trustParams != null) && (attrParams != null);
+		if (!result) {
+			log.error("Error Loading attribute Parameters.");
+		}
+
+		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, idpMetadataFolder);
+		String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
+		Object[] keys = context.getKeys();
+		
+		@SuppressWarnings("unchecked")
+		HashMap<String, Object> aP= (HashMap<String, Object>)context.get("attrParams");
+		
+		@SuppressWarnings("unchecked")
+		List<GluuAttribute> attributes = (List<GluuAttribute>)aP.get("attributes");
+		
+		for(GluuAttribute attribute: attributes) {
+			System.out.println(attribute.getName());
+			
+		}
+		
+    	attributeResolverParams.put("attributes", attributes);
+    	attributeResolverParams.put("attributeResolver", attributeResolver);
+    	return attributeResolverParams;
+    }
+    
+    public boolean updateAttributeResolver(String attributeResolverTemplate, GluuAttribute attribute){
+    	boolean result = false;
+    	HashMap<String, Object> attributeResolverParams = this.initAttributeResolverParamMap(attributeResolverTemplate);
+    	
+    	@SuppressWarnings("unchecked")
+		List<GluuAttribute> attributes = (List<GluuAttribute>)attributeResolverParams.get("attributes");
+    	if(!attributes.contains(attribute)){
+    		attributes.add(attribute);
+    	}
+    	String attributeResolver = (String)attributeResolverParams.get("attributeResolver");
+    	result = templateService.writeConfFile(getIdpConfDir() + SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, attributeResolver);
+    	return result;
+    }
 
 	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams, HashMap<String, Object> casParams, String idpMetadataFolder) {
 
@@ -1478,5 +1540,4 @@ public class Shibboleth3ConfService implements Serializable {
 	    //TODO: optimize this method. should not take so long
 		return isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	}
-
 }
