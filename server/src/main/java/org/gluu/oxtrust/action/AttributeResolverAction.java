@@ -130,7 +130,7 @@ public class AttributeResolverAction implements Serializable {
 		if(!enable){
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
+		final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
 		GluuAttribute attribute = attributeService.getAttributeByName(this.attributeName);
 		
 		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
@@ -140,7 +140,7 @@ public class AttributeResolverAction implements Serializable {
 				log.error("Failed to update Shibboleth v3 configuration");    
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");    
 			}else{
-				if(!shibboleth3ConfService.updateAttributeResolver(conf.getAttributeResolverConfig(), attribute)){
+				if(!shibboleth3ConfService.updateAttributeResolver(conf, attribute)){
 					log.error("Unable to update attribute-resolver.xml.vm");
 				}
 			}

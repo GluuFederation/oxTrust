@@ -48,11 +48,13 @@ import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
@@ -534,7 +536,6 @@ public class Shibboleth3ConfService implements Serializable {
 
 		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, idpMetadataFolder);
 		String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
-		Object[] keys = context.getKeys();
 		
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> aP= (HashMap<String, Object>)context.get("attrParams");
@@ -542,19 +543,14 @@ public class Shibboleth3ConfService implements Serializable {
 		@SuppressWarnings("unchecked")
 		List<GluuAttribute> attributes = (List<GluuAttribute>)aP.get("attributes");
 		
-		for(GluuAttribute attribute: attributes) {
-			System.out.println(attribute.getName());
-			
-		}
-		
     	attributeResolverParams.put("attributes", attributes);
     	attributeResolverParams.put("attributeResolver", attributeResolver);
     	return attributeResolverParams;
     }
     
-    public boolean updateAttributeResolver(String attributeResolverTemplate, GluuAttribute attribute){
+    public boolean updateAttributeResolver(LdapOxTrustConfiguration conf, GluuAttribute attribute){
     	boolean result = false;
-    	HashMap<String, Object> attributeResolverParams = this.initAttributeResolverParamMap(attributeResolverTemplate);
+    	HashMap<String, Object> attributeResolverParams = this.initAttributeResolverParamMap(conf.getAttributeResolverConfig());
     	
     	@SuppressWarnings("unchecked")
 		List<GluuAttribute> attributes = (List<GluuAttribute>)attributeResolverParams.get("attributes");
@@ -563,6 +559,7 @@ public class Shibboleth3ConfService implements Serializable {
     	}
     	String attributeResolver = (String)attributeResolverParams.get("attributeResolver");
     	result = templateService.writeConfFile(getIdpConfDir() + SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, attributeResolver);
+    	conf.setAttributeResolverConfig(attributeResolver);
     	return result;
     }
 
@@ -1540,4 +1537,4 @@ public class Shibboleth3ConfService implements Serializable {
 	    //TODO: optimize this method. should not take so long
 		return isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	}
-}
+}	
