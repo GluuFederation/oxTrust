@@ -192,6 +192,7 @@ public class Shibboleth3ConfService implements Serializable {
 		HashMap<String, Object> trustParams = initTrustParamMap(trustRelationships);
 		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
                 HashMap<String, Object> casParams = initCASParamMap();
+        HashMap<String, Object> attrResolverParams = initAttributeParamMap(trustRelationships);
 
 		boolean result = (trustParams != null) && (attrParams != null);
 		if (!result) {
@@ -512,40 +513,32 @@ public class Shibboleth3ConfService implements Serializable {
 		return casParams;
         }
         
-    public HashMap<String, Object> initAttributeResolverParamMap(String attributeResolverTemplate) {
+    public HashMap<String, Object> initAttributeResolverParamMap(List<GluuSAMLTrustRelationship> trustRelationships) {
     	HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
     	
 		// Prepare data for files
-		List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 		initAttributes(trustRelationships);
-		HashMap<String, Object> trustParams = initTrustParamMap(trustRelationships);
 		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
-        HashMap<String, Object> casParams = initCASParamMap();
-
-		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, getIdpMetadataDir());
-		String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
 		
 		@SuppressWarnings("unchecked")
-		HashMap<String, Object> aP= (HashMap<String, Object>)context.get("attrParams");
-		
-		@SuppressWarnings("unchecked")
-		List<GluuAttribute> attributes = (List<GluuAttribute>)aP.get("attributes");
+		List<GluuAttribute> attributes = (List<GluuAttribute>)attrParams.get("attributes");
 		
     	attributeResolverParams.put("attributes", attributes);
-    	attributeResolverParams.put("attributeResolver", attributeResolver);
     	return attributeResolverParams;
     }
     
     public boolean updateAttributeResolver(LdapOxTrustConfiguration conf, GluuAttribute attribute){
     	boolean result = false;
-    	HashMap<String, Object> attributeResolverParams = this.initAttributeResolverParamMap(conf.getAttributeResolverConfig());
+    	HashMap<String, Object> attributeResolverParams = this.initAttributeResolverParamMap(trustService.getAllActiveTrustRelationships());
     	
     	@SuppressWarnings("unchecked")
 		List<GluuAttribute> attributes = (List<GluuAttribute>)attributeResolverParams.get("attributes");
     	if(!attributes.contains(attribute)){
     		attributes.add(attribute);
     	}
-    	String attributeResolver = (String)attributeResolverParams.get("attributeResolver");
+    	attributeResolverParams.put("attributes", attributes);
+    	VelocityContext context = this.prepareVelocityContext(null, attributeResolverParams, null, getIdpMetadataDir());
+    	String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
     	result = templateService.writeConfFile(getIdpConfDir() + SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, attributeResolver);
     	conf.setAttributeResolverConfig(attributeResolver);
     	return result;
