@@ -115,7 +115,8 @@ public class AttributeResolverAction implements Serializable {
 
 		this.attributes = attributeService.getAllAttributes();
 
-		AttributeResolverConfiguration attributeResolverConfiguration = loadAttributeResolverConfiguration("oxTrustConfAttributeResolver");
+		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap("oxTrustConfAttributeResolver");
+		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
 		if (attributeResolverConfiguration != null) {
 			this.base = attributeResolverConfiguration.getBase();
 			this.nameIdType = attributeResolverConfiguration.getNameIdType();
@@ -161,21 +162,19 @@ public class AttributeResolverAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		if(!enable){
+		if (!enable) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
-		GluuAttribute attribute = attributeService.getAttributeByName(this.attributeName);
 		
 		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
 		if (updateShib3Configuration) {    
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
-			if(!shibboleth3ConfService.updateAttributeResolver(conf, attribute)){ 
-				log.error("Unable to update attribute-resolver.xml.vm");
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");
-			}
+			if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
+				log.error("Failed to update Shibboleth v3 configuration");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");			}
 		}
+
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration updated successfully.");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -185,15 +184,6 @@ public class AttributeResolverAction implements Serializable {
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
-	}
-	
-	private AttributeResolverConfiguration loadAttributeResolverConfiguration(String... returnAttributes) {
-		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap("oxTrustConfAttributeResolver");
-		if (conf == null) {
-			return null;
-		}
-		
-		return conf.getAttributeResolverConfig();
 	}
 	
 }

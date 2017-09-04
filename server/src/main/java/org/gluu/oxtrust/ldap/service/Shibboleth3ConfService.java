@@ -51,6 +51,7 @@ import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.config.oxtrust.AttributeResolverConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -187,12 +188,13 @@ public class Shibboleth3ConfService implements Serializable {
                 HashMap<String, Object> casParams = initCASParamMap();
         HashMap<String, Object> attrResolverParams = initAttributeParamMap(trustRelationships);
 
-		boolean result = (trustParams != null) && (attrParams != null);
+		boolean result = (trustParams != null) && (attrParams != null) && (casParams != null) && (attrResolverParams != null);
 		if (!result) {
 			return result;
 		}
+		
 
-		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, idpMetadataFolder);
+		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, attrResolverParams, idpMetadataFolder);
 
 		// Generate metadata-providers.xml
 		String metadataProviders = templateService.generateConfFile(SHIB3_IDP_METADATA_PROVIDERS_FILE, context);
@@ -506,38 +508,21 @@ public class Shibboleth3ConfService implements Serializable {
 		return casParams;
         }
         
-    public HashMap<String, Object> initAttributeResolverParamMap(List<GluuSAMLTrustRelationship> trustRelationships) {
+    public HashMap<String, Object> initAttributeResolverParamMap() {
     	HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
-    	
-		// Prepare data for files
-		initAttributes(trustRelationships);
-		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
-		
-		@SuppressWarnings("unchecked")
-		List<GluuAttribute> attributes = (List<GluuAttribute>)attrParams.get("attributes");
-		
-    	attributeResolverParams.put("attributes", attributes);
-    	return attributeResolverParams;
-    }
-    
-    public boolean updateAttributeResolver(LdapOxTrustConfiguration conf, GluuAttribute attribute){
-    	boolean result = false;
-    	HashMap<String, Object> attributeResolverParams = this.initAttributeResolverParamMap(trustService.getAllActiveTrustRelationships());
-    	
-    	@SuppressWarnings("unchecked")
-		List<GluuAttribute> attributes = (List<GluuAttribute>)attributeResolverParams.get("attributes");
-    	if(!attributes.contains(attribute)){
-    		attributes.add(attribute);
-    	}
-    	attributeResolverParams.put("attributes", attributes);
-    	VelocityContext context = this.prepareVelocityContext(null, attributeResolverParams, null, getIdpMetadataDir());
-    	String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
-    	result = templateService.writeConfFile(getIdpConfDir() + SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, attributeResolver);
-    	//conf.setAttributeResolverConfig(attributeResolver);
-    	return result;
+
+    	final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
+		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
+		if ((attributeResolverConfiguration != null) && (StringHelper.isNotEmpty(attributeResolverConfiguration.getAttributeName()))) {
+			GluuAttribute attribute = attributeService.getAttributeByName(attributeResolverConfiguration.getAttributeName());
+			
+	    	attributeResolverParams.put("attribute", attribute);
+		}
+
+		return attributeResolverParams;
     }
 
-	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams, HashMap<String, Object> casParams, String idpMetadataFolder) {
+	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams, HashMap<String, Object> casParams, HashMap<String, Object> attrResolverParams, String idpMetadataFolder) {
 
 		VelocityContext context = new VelocityContext();
 
@@ -598,6 +583,14 @@ public class Shibboleth3ConfService implements Serializable {
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt idp.securityKeyPassword", e);
 			e.printStackTrace();
+		}
+		
+		if (attrResolverParams != null) {
+			List<GluuAttribute> attributes = (List<GluuAttribute>) attrParams.get("attributes");
+			GluuAttribute attribute = (GluuAttribute) attrResolverParams.get("attribute");
+			if ((attributes != null) && (attribute != null)) {
+				attributes.add(attribute);
+			}
 		}
 
 		return context;
@@ -795,7 +788,7 @@ public class Shibboleth3ConfService implements Serializable {
 			return null;
 		}
 
-		VelocityContext context = prepareVelocityContext(null, attrParams, null, null);
+		VelocityContext context = prepareVelocityContext(null, attrParams, null, null, null);
 		String spAttributeMap = templateService.generateConfFile(SHIB3_SP_ATTRIBUTE_MAP_FILE, context);
 
 		return spAttributeMap;
