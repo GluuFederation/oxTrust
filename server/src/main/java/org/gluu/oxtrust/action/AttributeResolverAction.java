@@ -135,14 +135,10 @@ public class AttributeResolverAction implements Serializable {
 		
 		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
 		if (updateShib3Configuration) {    
-			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
-			if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {     
-				log.error("Failed to update Shibboleth v3 configuration");    
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");    
-			}else{
-				if(!shibboleth3ConfService.updateAttributeResolver(conf, attribute)){ 
-					log.error("Unable to update attribute-resolver.xml.vm");
-				}
+		List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
+			if(!shibboleth3ConfService.updateAttributeResolver(conf, attribute)){ 
+				log.error("Unable to update attribute-resolver.xml.vm");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");
 			}
 		}
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration updated successfully.");
