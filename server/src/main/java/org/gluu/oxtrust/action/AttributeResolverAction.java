@@ -130,7 +130,7 @@ public class AttributeResolverAction implements Serializable {
 		if(!enable){
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
+		final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
 		GluuAttribute attribute = attributeService.getAttributeByName(this.attributeName);
 		
 		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
