@@ -515,26 +515,14 @@ public class Shibboleth3ConfService implements Serializable {
     public HashMap<String, Object> initAttributeResolverParamMap(String attributeResolverTemplate) {
     	HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
     	
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
-		}
-
-		String idpConfFolder      = getIdpConfDir();
-		String idpMetadataFolder  = getIdpMetadataDir();
-
 		// Prepare data for files
 		List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 		initAttributes(trustRelationships);
 		HashMap<String, Object> trustParams = initTrustParamMap(trustRelationships);
 		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
-                HashMap<String, Object> casParams = initCASParamMap();
+        HashMap<String, Object> casParams = initCASParamMap();
 
-		boolean result = (trustParams != null) && (attrParams != null);
-		if (!result) {
-			log.error("Error Loading attribute Parameters.");
-		}
-
-		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, idpMetadataFolder);
+		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, getIdpMetadataDir());
 		String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
 		
 		@SuppressWarnings("unchecked")
@@ -1537,4 +1525,4 @@ public class Shibboleth3ConfService implements Serializable {
 	    //TODO: optimize this method. should not take so long
 		return isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	}
-}	
+}

@@ -140,7 +140,7 @@ public class AttributeResolverAction implements Serializable {
 				log.error("Failed to update Shibboleth v3 configuration");    
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");    
 			}else{
-				if(!shibboleth3ConfService.updateAttributeResolver(conf, attribute)){
+				if(!shibboleth3ConfService.updateAttributeResolver(conf, attribute)){ 
 					log.error("Unable to update attribute-resolver.xml.vm");
 				}
 			}
