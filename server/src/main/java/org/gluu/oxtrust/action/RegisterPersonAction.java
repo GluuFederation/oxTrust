@@ -196,7 +196,10 @@ public class RegisterPersonAction implements Serializable {
 		String outcome = registerImpl();
 		
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "You successfully registered.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "You successfully registered.");
+			conversationService.endConversation();
+		} else if (OxTrustConstants.RESULT_DISABLED.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "You successfully registered. But your account is disabled.");
 			conversationService.endConversation();
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			log.error("Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
@@ -270,10 +273,14 @@ public class RegisterPersonAction implements Serializable {
 				}
 				
 				result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person, requestParameters);
-
+				
 				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
+				}
+				
+				if (GluuStatus.INACTIVE.equals(person.getStatus())) {
+					return OxTrustConstants.RESULT_DISABLED;
 				}
 			} catch (Exception ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
