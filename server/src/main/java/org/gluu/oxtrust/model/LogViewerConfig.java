@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.xdi.model.SimpleCustomProperty;
+import org.xdi.model.SimpleExtendedCustomProperty;
 
 /**
  * Log viewer configuration model
@@ -26,17 +27,17 @@ import org.xdi.model.SimpleCustomProperty;
 public class LogViewerConfig {
 
 	@JsonProperty("log_template")
-	private List<SimpleCustomProperty> logTemplates;
+	private List<SimpleExtendedCustomProperty> logTemplates;
 
 	public LogViewerConfig() {
-		this.logTemplates = new ArrayList<SimpleCustomProperty>();
+		this.logTemplates = new ArrayList<SimpleExtendedCustomProperty>();
 	}
 
-	public List<SimpleCustomProperty> getLogTemplates() {
+	public List<SimpleExtendedCustomProperty> getLogTemplates() {
 		return logTemplates;
 	}
 
-	public void setLogTemplates(List<SimpleCustomProperty> logTemplates) {
+	public void setLogTemplates(List<SimpleExtendedCustomProperty> logTemplates) {
 		this.logTemplates = logTemplates;
 	}
 
