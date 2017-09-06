@@ -5,6 +5,7 @@
                 
       <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
+        <f:viewAction action="#{attributeResolverAction.init}" onPostback="false"/>
     </f:metadata>
 
     <ui:define name="head">
@@ -14,7 +15,7 @@
     
     	    <section class="content-header">
 		<h1 style="color: #333;">
-            Custom Attribute Name Id<small><i class="fa fa-caret-right" style="color: #333 !important;"></i>Custom Attribute Name Id</small>
+            #{msg['leftmenu.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['leftmenu.nameId']}</small>
 		</h1>
 		<ol class="breadcrumb">
 <li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
@@ -42,7 +43,9 @@
         	<h:outputLabel value="Attribute Name" />
         	</div>
         	<div class="col-sm-10">
-        	<h:inputText value="#{attributeResolverAction.attribute.name}" styleClass="form-control"/>
+        	<h:selectOneMenu value="#{attributeResolverAction.attributeName}" styleClass="form-control">
+        	<f:selectItems var="_attribute" value="#{attributeResolverAction.attributes}" itemLabel="#{_attribute.displayName}" itemValue="#{_attribute.name}"/>
+        	</h:selectOneMenu>
         	</div>
         </div>
         
@@ -59,7 +62,7 @@
         	<h:outputLabel value="Attribute Type" />
         	</div>
         	<div class="col-sm-10">
-        	<h:selectOneMenu value="#{attributeResolverAction.attribute.nameIdType}"  styleClass="form-control">
+        	<h:selectOneMenu value="#{attributeResolverAction.nameIdType}"  styleClass="form-control">
         		<f:selectItem itemLabel="emailAddress" itemValue="emailAddress"/>
         		<f:selectItem itemLabel="unspecified" itemValue="unspecified"/>
         	</h:selectOneMenu>

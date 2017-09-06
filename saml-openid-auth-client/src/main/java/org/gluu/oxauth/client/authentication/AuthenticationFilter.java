@@ -9,7 +9,10 @@ package org.gluu.oxauth.client.authentication;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,12 +26,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.gluu.oxauth.client.session.AbstractOAuthFilter;
 import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
 import org.jboss.resteasy.client.ClientRequest;
+import org.xdi.oxauth.client.AuthorizationRequest;
+import org.xdi.oxauth.client.model.JwtState;
+import org.xdi.oxauth.model.common.ResponseType;
+import org.xdi.oxauth.model.crypto.OxAuthCryptoProvider;
+import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
+import org.xdi.oxauth.model.util.StringUtils;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
+import org.xdi.util.security.StringEncrypter;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 
 /**
@@ -125,38 +137,58 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	}
 
 	public String getOAuthRedirectUrl(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		String oAuthAuthorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
+		String authorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
+        String clientScopes = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, null);
 
-		String oAuthClientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
-		String oAuthClientScope = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, null);
-
-		ClientRequest clientRequest = new ClientRequest(oAuthAuthorizeUrl);
-		String responseType = "code+id_token";
-		String nonce = "nonce";
+		String clientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
+		String clientSecret = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, null);
+        if (clientSecret != null) {
+            try {
+            	clientSecret = StringEncrypter.defaultInstance().decrypt(clientSecret, Configuration.instance().getCryptoPropertyValue());
+            } catch (EncryptionException ex) {
+                log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
+            }
+        }
 
 		String redirectUri = constructRedirectUrl(request);
 
-		clientRequest.queryParameter("client_id", oAuthClientId);
-		clientRequest.queryParameter("scope", oAuthClientScope);
-		clientRequest.queryParameter("redirect_uri", redirectUri);
-		clientRequest.queryParameter("response_type", responseType);
-		clientRequest.queryParameter("nonce", nonce);
+		List<String> scopes = Arrays.asList(clientScopes.split(StringUtils.SPACE));
+		List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+		String nonce = UUID.randomUUID().toString();
+		String rfp = UUID.randomUUID().toString();
+		String jti = UUID.randomUUID().toString();
+		
+//		String relyingPartyId = edu.internet2.middleware.shibboleth.idp.util.HttpServletHelper.getLoginContext(request).getRelyingPartyId();
+		String relyingPartyId = "";
+		String additionalClaims = String.format("{relyingPartyId: '%s'}", relyingPartyId);
+
+		OxAuthCryptoProvider cryptoProvider = new OxAuthCryptoProvider();
+		JwtState jwtState = new JwtState(SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
+		jwtState.setRfp(rfp);
+		jwtState.setJti(jti);
+		jwtState.setAdditionalClaims(new JSONObject(additionalClaims));
+		String encodedState = jwtState.getEncodedJwt();
+
+		AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+		authorizationRequest.setState(encodedState);
 
 		Cookie currentShibstateCookie = getCurrentShibstateCookie(request);
 		if (currentShibstateCookie != null) {
 			String requestUri = decodeCookieValue(currentShibstateCookie.getValue());
 			log.debug("requestUri = \"" + requestUri + "\"");
-	
+
 			String authenticationMode = determineAuthenticationMode(requestUri);
-	
+
 			if (StringHelper.isNotEmpty(authenticationMode)) {
 				log.debug("acr_values = \"" + authenticationMode + "\"");
-				clientRequest.queryParameter(Configuration.OXAUTH_ACR_VALUES, authenticationMode);
-				updateShibstateCookie(response, currentShibstateCookie, requestUri, "/" + Configuration.OXAUTH_ACR_VALUES +"/" + authenticationMode);
+				authorizationRequest.setAcrValues(Arrays.asList(authenticationMode));
+				updateShibstateCookie(response, currentShibstateCookie, requestUri,
+						"/" + Configuration.OXAUTH_ACR_VALUES + "/" + authenticationMode);
 			}
 		}
 
-		return clientRequest.getUri().replaceAll("%2B", "+");
+		return authorizeUrl + "?" + authorizationRequest.getQueryString();
 	}
 
 	private Cookie getCurrentShibstateCookie(HttpServletRequest request) {

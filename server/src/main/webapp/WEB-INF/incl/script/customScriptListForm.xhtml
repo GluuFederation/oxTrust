@@ -90,7 +90,8 @@
 		                                </ui:fragment>
 
 		                                <ox:simpleCustomPropertiesList label="#{msg['customScript.customProperty']}" labelAdd="custom property"
-		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" />
+		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" hideValue="false" />
+		                
 		                
 		                                <h:panelGroup id="scriptAreaId">
 			                                <ox:decorate rendered="#{_customScript.locationType.value ne 'file'}" label="#{msg['customScript.script']}">

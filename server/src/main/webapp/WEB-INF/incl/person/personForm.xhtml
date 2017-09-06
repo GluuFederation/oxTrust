@@ -140,8 +140,7 @@
                                                     <ox:decorate label="#{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
                                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}">
 
-                                                        <div class="col-xs-10">
-                                                        
+														<div class="col-xs-10">
                                                             <rich:inplaceInput
                                                                     attribute="#{_custAttr.metadata}"
                                                                     value="#{_custAttr.values[_valueIdx]}"
@@ -166,6 +165,7 @@
                                                                         converterId="org.gluu.jsf2.converter.EnumConverter"/>
                                                             </h:selectOneMenu>
                                                         </div>
+                                                        
                                                         <h:outputText value="&#160;"/>                                                        
                                                         
                                                         <!-- <div class="col-xs-2"> -->

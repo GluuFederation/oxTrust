@@ -46,17 +46,17 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 		return false;
 	}
 
-	public GluuCustomPerson executeExternalPreRegistrationMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, Map<String, String[]> requestParameters) {
+	public boolean executeExternalPreRegistrationMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, Map<String, String[]> requestParameters) {
 		try {
 			log.debug("Executing python 'preRegistration' method");
 			UserRegistrationType externalType = (UserRegistrationType) customScriptConfiguration.getExternalType();
 			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
-			return (GluuCustomPerson)externalType.preRegistration(user, requestParameters, configurationAttributes);
+			return externalType.preRegistration(user, requestParameters, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
 
-		return null;
+		return false;
 	}
 
 	public boolean executeExternalPostRegistrationMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, Map<String, String[]> requestParameters) {
@@ -84,11 +84,11 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 		return result;
 	}
 
-	public GluuCustomPerson executeExternalPreRegistrationMethods(GluuCustomPerson user, Map<String, String[]> requestParameters) {
-		GluuCustomPerson result = null;
+	public boolean executeExternalPreRegistrationMethods(GluuCustomPerson user, Map<String, String[]> requestParameters) {
+		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
-			result = (GluuCustomPerson)executeExternalPreRegistrationMethod(customScriptConfiguration, user, requestParameters);
-			if (result != null) {
+			result &= executeExternalPreRegistrationMethod(customScriptConfiguration, user, requestParameters);
+			if (!result) {
 				return result;
 			}
 		}

@@ -21,10 +21,11 @@
             vertical-align: top;
         }
     </h:outputStylesheet>
+    
+<ox:changePasswordDialog id="bindPasswordDialogId" label="#{msg['manageAuthentication.changeBindPassword']}"
+									password="#{managePersonAuthenticationAction.activeLdapConfig.bindPassword}"
+									setPasswordMethod="#{managePersonAuthenticationAction.updateBindPassword}" />
 
-	<ox:changePasswordDialog id="bindPassword" label="#{msg['manageAuthentication.changeBindPassword']}"
-		password="#{managePersonAuthenticationAction.ldapConfig.bindPassword}"
-		setPasswordMethod="#{managePersonAuthenticationAction.updateLdapBindPassword}" />
 
 	<h:form id="customAuthenticationForm">
 		<div class="row">
@@ -50,22 +51,18 @@
 									displayBaseDn="true" displayAnonymousBind="false"
 									displayRemoveButton="false" displayPrimaryKey="true"
 									displayLocalPrimaryKey="true" displayEnable="false"
-									changePasswordDialogId="bindPassword:changePasswordModalPanel" />
+									changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" />		
+									
 									
 								 <a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_ldapConfig.setEnabled(true)}" rendered="#{not _ldapConfig.enabled}"
 							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"/>
 				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_ldapConfig.ldapConfig.setEnabled(false)}" rendered="#{_ldapConfig.enabled}"
 			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/>
-									<!-- 
-								 <a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_action.setExistLdapConfigIdpAuthConf(true)}" rendered="#{not _action.existLdapConfigIdpAuthConf}"
-							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"/>
-				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_action.setExistLdapConfigIdpAuthConf(false)}" rendered="#{_action.existLdapConfigIdpAuthConf}"
-			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/> -->
 			                    	
-								<h:commandButton styleClass="btn btn-success"
-									style="margin-left:4px" value="#{msg['manageAuthentication.testLDAPConnection']}"
-									action="#{_action.testLdapConnection}"
-									rendered="#{_action.existLdapConfigIdpAuthConf}" />
+								<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-success"
+									value="#{msg['manageAuthentication.testLDAPConnection']}"
+									rendered="#{_ldapConfig.enabled}"
+									action="#{_action.testLdapConnection(_ldapConfig)}"/>
 							</div>
 									
 							</rich:dataGrid>
@@ -170,13 +167,13 @@
                                                                             value="#{updateCASAction.casBaseURL}" size="100" />
                                                                 </ox:decorate>
 
-                                                                <ox:decorate
+<!--                                                                 <ox:decorate
                                                                         id="casProtocolToProxyPatternsEnabled" label="#{msg['manageAuthentication.enableProxyPatterns']}">
                                                                         <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enableToProxyPatterns}"
                                                                                 styleClass="form-control"
                                                                                 tabindex="0" >
                                                                         </h:selectBooleanCheckbox>
-                                                                </ox:decorate>
+                                                                </ox:decorate> -->
 
                                                                 <ox:decorate
                                                                         id="casProtocolAuthorizedToProxy" label="#{msg['manageAuthentication.authorizedProxyPattern']}">
@@ -213,16 +210,6 @@
 						<h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.cancel']}"
 							action="#{managePersonAuthenticationAction.cancel}"
 							immediate="true" style="margin-left:4px" />
-						<!-- <h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.activate']}"
-							action="#{_action.setExistLdapConfigIdpAuthConf(true)}"
-							rendered="#{not _action.existLdapConfigIdpAuthConf}"
-							render="ldapManagementGroupId" limitRender="true"
-							style="margin-left:4px" />
-						<h:commandButton styleClass="btn btn-primary" value="#{msg['manageAuthentication.deactivate']}"
-							action="#{_action.setExistLdapConfigIdpAuthConf(false)}"
-							rendered="#{_action.existLdapConfigIdpAuthConf}"
-							render="ldapManagementGroupId" limitRender="true"
-							immediate="true" style="margin-left:4px" /> -->
 
 					</div>
 

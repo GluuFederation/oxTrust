@@ -79,12 +79,6 @@ public class ManagePersonAuthenticationAction
 	private ConversationService conversationService;
 
 	@Inject
-	private ImageService imageService;
-
-	@Inject
-	private OrganizationService organizationService;
-
-	@Inject
 	private ApplianceService applianceService;
 
 	@Inject
@@ -99,10 +93,13 @@ public class ManagePersonAuthenticationAction
 	@Inject
 	private EncryptionService encryptionService;
 
-	private GluuLdapConfiguration ldapConfig;
 	private boolean existLdapConfigIdpAuthConf;
 
 	private List<CustomScript> customScripts;
+
+	private List<GluuLdapConfiguration> sourceConfigs;
+
+	private GluuLdapConfiguration activeLdapConfig;
 
 	private String authenticationMode = "auth_ldap_server";
 	private String oxTrustAuthenticationMode;
@@ -125,9 +122,6 @@ public class ManagePersonAuthenticationAction
 			List<PassportConfiguration> ldapPassportConfigurations) {
 		this.ldapPassportConfigurations = ldapPassportConfigurations;
 	}
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	public String modify() {
 		String outcome = modifyImpl();
@@ -163,13 +157,6 @@ public class ManagePersonAuthenticationAction
 					GluuLdapConfiguration oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
 					this.sourceConfigs.add(oxldapConfig);
 				}
-				
-			}
-
-			this.existLdapConfigIdpAuthConf = this.ldapConfig != null;
-
-			if (this.ldapConfig == null) {
-				this.ldapConfig = new GluuLdapConfiguration();
 			}
 
 			this.authenticationMode = appliance.getAuthenticationMode();
@@ -180,7 +167,6 @@ public class ManagePersonAuthenticationAction
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
 			this.ldapPassportConfigurations = ldapOxPassportConfiguration.getPassportConfigurations();
-			
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -341,18 +327,17 @@ public class ManagePersonAuthenticationAction
 		return this.customAuthenticationConfigNames;
 	}
 
-	public String testLdapConnection() {
-
+	public String testLdapConnection(GluuLdapConfiguration ldapConfig) {
 		try {
 			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
 			if (!configuration.isLoaded()) {
 				configuration = new FileConfiguration(ConfigurationFactory.LDAP_DEFAULT_PROPERTIES_FILE);
 			}
 			Properties properties = configuration.getProperties();
-			properties.setProperty("bindDN", this.ldapConfig.getBindDN());
-			properties.setProperty("bindPassword", this.ldapConfig.getBindPassword());
-			properties.setProperty("servers", buildServersString(this.ldapConfig.getServers()));
-			properties.setProperty("useSSL", Boolean.toString(this.ldapConfig.isUseSSL()));
+			properties.setProperty("bindDN", ldapConfig.getBindDN());
+			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
+			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
+			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
 			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(
 					PropertiesDecrypter.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
 			if (connectionProvider.isConnected()) {
@@ -394,41 +379,30 @@ public class ManagePersonAuthenticationAction
 		return sb.toString();
 	}
 
-	public void updateLdapBindPassword() {
+	public void updateLdapBindPassword(GluuLdapConfiguration ldapConfig) {
+		log.info("hello setting passoword" + ldapConfig.getPrimaryKey());
+		for (Iterator<GluuLdapConfiguration> iterator = sourceConfigs.iterator(); iterator.hasNext();) {
+			GluuLdapConfiguration ldapConfig1 = iterator.next();
+
+		}
+	}
+	
+	public String updateLdapBindPassword(String bindPassword) {
 		String encryptedLdapBindPassword = null;
 		try {
-			encryptedLdapBindPassword = encryptionService.encrypt(this.ldapConfig.getBindPassword());
+			encryptedLdapBindPassword = encryptionService.encrypt(bindPassword);
+			return encryptedLdapBindPassword;
 		} catch (EncryptionException ex) {
 			log.error("Failed to encrypt LDAP bind password", ex);
 		}
 
-		this.ldapConfig.setBindPassword(encryptedLdapBindPassword);
+		return null;
 	}
 
 	public boolean isExistLdapConfigIdpAuthConf() {
 		return existLdapConfigIdpAuthConf;
 	}
 
-	public void setExistLdapConfigIdpAuthConf(boolean existLdapConfigIdpAuthConf) {
-		this.existLdapConfigIdpAuthConf = existLdapConfigIdpAuthConf;
-		this.ldapConfig.setEnabled(true);
-	}
-
-	public GluuLdapConfiguration getLdapConfig() {
-		return ldapConfig;
-	}
-
-	@Override
-	public void setActiveLdapConfig(GluuLdapConfiguration activeLdapConfig) {
-	}
-
-	/*@Override
-	public void addLdapConfig(List<GluuLdapConfiguration> ldapConfigList) {
-	}*/
-
-	/*@Override
-	public void removeLdapConfig(List<GluuLdapConfiguration> ldapConfigList, GluuLdapConfiguration removeLdapConfig) {
-	}*/
 
 	@Override
 	public void addItemToSimpleProperties(List<SimpleProperty> simpleProperties) {
@@ -516,9 +490,6 @@ public class ManagePersonAuthenticationAction
 
 	}
 	
-
-	private List<GluuLdapConfiguration> sourceConfigs;
-	
 	public List<GluuLdapConfiguration> getSourceConfigs() {
 		return sourceConfigs;
 	}
@@ -531,10 +502,10 @@ public class ManagePersonAuthenticationAction
 		addLdapConfig(this.getSourceConfigs());
 	}
 	
-	//@Override
+	@Override
 	public void addLdapConfig(List<GluuLdapConfiguration> ldapConfigList) {
 		GluuLdapConfiguration ldapConfiguration = new GluuLdapConfiguration();
-		//ldapConfiguration.setBindPassword("");
+		ldapConfiguration.setBindPassword("");
 		ldapConfigList.add(ldapConfiguration);
 	}
 	
@@ -546,6 +517,27 @@ public class ManagePersonAuthenticationAction
 				return;
 			}
 		}
+	}
+	
+	public GluuLdapConfiguration getActiveLdapConfig() {
+		return activeLdapConfig;
+	}
+	
+	public void updateBindPassword() {
+		if (this.activeLdapConfig == null) {
+			return;
+		}
+
+		try {
+        	this.activeLdapConfig.setBindPassword(encryptionService.encrypt(this.activeLdapConfig.getBindPassword()));
+        } catch (EncryptionException ex) {
+            log.error("Failed to encrypt password", ex);
+        }
+	}
+
+	@Override
+	public void setActiveLdapConfig(GluuLdapConfiguration activeLdapConfig) {
+		this.activeLdapConfig = activeLdapConfig;
 	}
 
 }
