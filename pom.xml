@@ -105,7 +105,7 @@
 			<dependency>
 				<groupId>org.xdi</groupId>
 				<artifactId>oxtrust-scim</artifactId>
-				<version>${project.version}</version>
+				<version>3.0.2</version>
 			</dependency>
 			
 			<!-- Gluu -->
