@@ -113,7 +113,6 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         String oAuthHost = getOAuthHost(oAuthAuthorizeUrl);
 
         String oAuthTokenUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_TOKEN_URL, null);
-        String oAuthValidationUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_TOKEN_VALIDATION_URL, null);
         String oAuthUserInfoUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_USERINFO_URL, null);
 
         String oAuthClientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
@@ -142,43 +141,27 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         String accessToken = tokenResponse.getAccessToken();
         log.trace("accessToken : " + accessToken);
 
-        // 2. Validate the access token
-        log.trace("Validating access token ");
-        ValidateTokenClient validateTokenClient = new ValidateTokenClient(oAuthValidationUrl);
-        ValidateTokenResponse tokenValidationResponse = validateTokenClient.execValidateToken(accessToken);
-        log.trace(" response3.getStatus() : " + tokenValidationResponse.getStatus());
+        log.info("Session validation successful. User is logged in");
+        UserInfoClient userInfoClient = new UserInfoClient(oAuthUserInfoUrl);
+        UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
-        log.info("validate check session status:" + tokenValidationResponse.getStatus());
-        if (tokenValidationResponse.getErrorDescription() != null) {
-            log.error("validate token status message:" + tokenValidationResponse.getErrorDescription());
+        OAuthData oAuthData = new OAuthData();
+        oAuthData.setHost(oAuthHost);
+        // Determine uid
+        List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
+        if ((uidValues == null) || (uidValues.size() == 0)) {
+            log.error("User infor response doesn't contains uid claim");
+            return null;
         }
 
-        if (tokenValidationResponse.getStatus() == 200) {
-            log.info("Session validation successful. User is logged in");
-            UserInfoClient userInfoClient = new UserInfoClient(oAuthUserInfoUrl);
-            UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
+        oAuthData.setUserUid(uidValues.get(0));
+        oAuthData.setAccessToken(accessToken);
+        oAuthData.setAccessTokenExpirationInSeconds(tokenResponse.getExpiresIn());
+        oAuthData.setScopes(scopes);
+        oAuthData.setIdToken(idToken);
 
-            OAuthData oAuthData = new OAuthData();
-            oAuthData.setHost(oAuthHost);
-            // Determine uid
-            List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
-            if ((uidValues == null) || (uidValues.size() == 0)) {
-                log.error("User infor response doesn't contains uid claim");
-                return null;
-            }
-
-            oAuthData.setUserUid(uidValues.get(0));
-            oAuthData.setAccessToken(accessToken);
-            oAuthData.setAccessTokenExpirationInSeconds(tokenValidationResponse.getExpiresIn());
-            oAuthData.setScopes(scopes);
-            oAuthData.setIdToken(idToken);
-
-            log.trace("User uid: " + oAuthData.getUserUid());
-            return oAuthData;
-        }
-
-        log.error("Token validation failed. User is NOT logged in");
-        return null;
+        log.trace("User uid: " + oAuthData.getUserUid());
+        return oAuthData;
     }
 
     private String getOAuthHost(String oAuthAuthorizeUrl) {
