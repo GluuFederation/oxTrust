@@ -6,7 +6,7 @@
 	<groupId>org.xdi</groupId>
 	<artifactId>oxtrust</artifactId>
 	<packaging>pom</packaging>
-	<version>3.1.0.Final</version>
+	<version>3.1.1-SNAPSHOT</version>
 	<name>oxTrust</name>
 	<url>http://www.gluu.org</url>
 
@@ -14,9 +14,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.min-version>3.3.9</maven.min-version>
 
-		<oxcore.version>3.1.0.Final</oxcore.version>
-		<oxauth.version>3.1.0.Final</oxauth.version>
-		<oxasimba.version>3.1.0.Final</oxasimba.version>
+		<oxcore.version>3.1.1-SNAPSHOT</oxcore.version>
+		<oxauth.version>3.1.1-SNAPSHOT</oxauth.version>
+		<oxasimba.version>3.1.1-SNAPSHOT</oxasimba.version>
 
 		<jackson.version>1.9.11</jackson.version>
 		<jettison.version>1.3.2</jettison.version>
