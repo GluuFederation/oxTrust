@@ -20,6 +20,7 @@
     <cc:attribute name="requiredName" default="true" type="java.lang.Boolean" />
     <cc:attribute name="requiredValue" default="false" type="java.lang.Boolean" />
     <cc:attribute name="hideValue" default="false" type="java.lang.Boolean" />
+    <cc:attribute name="showRemoveDialogue" default="false" type="java.lang.Boolean" />
 </cc:interface>
 
 
@@ -56,8 +57,14 @@
                                 <h:message for="sInput" errorClass="invalid" rendered="#{cc.attrs.hideValue eq true}"/>
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
-    
-                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@region">
+    							
+    							<a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@region">
+                                   <!--  <h:graphicImage value="/img/remove.gif" /> -->
+                                    <f:param name="sv" value="1" />
+                                </a4j:commandLink>
+                                
+                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq true}"  style="float:left;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                  execute="@region">
                                    <!--  <h:graphicImage value="/img/remove.gif" /> -->
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink>
@@ -65,8 +72,12 @@
                                 <h:graphicImage value="/img/eye.png"  id="view" onclick="return viewValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
                                 <h:graphicImage value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
                                 </div>
-                            </h:panelGroup>
-                        </h:panelGrid>
+                            </h:panelGroup>                            
+                        
+            				<ox:acceptRemovalDialog deleteMethod="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" id="deleteConfirmation"
+                                     subject="#{cc.attrs.labelAdd}" render="customList"
+                                     value="#{_property.value1}"/>
+                        </h:panelGrid>                       
                         
                     </a4j:repeat>
                     
