@@ -11,7 +11,8 @@
             "type": "string",
             "enum": [
                 "IN_MEMORY",
-                "MEMCACHED"
+                "MEMCACHED",
+                "REDIS"
             ]
     },
     "memcachedConfiguration":{
