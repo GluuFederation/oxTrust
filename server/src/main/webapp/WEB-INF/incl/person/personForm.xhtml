@@ -50,6 +50,10 @@
 		    overflow: hidden;
 			text-overflow: ellipsis;
 		}
+		
+		span:focus {
+		    background:yellow;
+		}
     </h:outputStylesheet>
 
     <h:outputScript>
@@ -76,6 +80,21 @@
     		var $element = $(element);
     		$element[0].childNodes[0].innerHTML = newValue;
 		}
+		
+		$(document).ready(function(){ 
+			$("input.rf-ii-fld").each(function(index){ 
+				$(this).parent().parent().attr("tabIndex", index);
+			})
+			
+			$("span[tabindex='0']").focus();
+			$("span.rf-ii").focusout(function() {
+				var tabIdxStr = $(this).attr("tabindex");
+				if(tabIdxStr !== undefined){
+					var tabIdx = parseInt(tabIdxStr) + 1;
+					$("span[tabindex='"+tabIdx+"']").focus();
+				}
+			});
+		})
 		
     </h:outputScript>
     <section class="content-header">
@@ -145,7 +164,7 @@
                                                                     attribute="#{_custAttr.metadata}"
                                                                     value="#{_custAttr.values[_valueIdx]}"
                                                                     defaultLabel="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
-                                                                    id="custId"
+                                                                    id="custId_#{_custAttrIdx}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status') and (_custAttr.metadata.displayName ne 'Password')}" >
