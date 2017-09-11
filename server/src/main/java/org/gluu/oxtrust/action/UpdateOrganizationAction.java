@@ -6,31 +6,11 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.mail.AuthenticationFailedException;
-import javax.mail.MessagingException;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.ldap.service.AppInitializer;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.*;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -45,6 +25,22 @@ import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
+import java.io.IOException;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Action class for configuring application
@@ -87,6 +83,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 	@Inject
 	private AppInitializer appInitializer;
+
+	@Inject
+	private EncryptionService encryptionService;
 
 	private GluuOrganization organization;
 
@@ -228,15 +227,18 @@ public class UpdateOrganizationAction implements Serializable {
 		smtpConfiguration.setFromEmailAddress(appliance.getSmtpFromEmailAddress());
 		smtpConfiguration.setRequiresAuthentication(StringHelper.toBoolean(appliance.getSmtpRequiresAuthentication(), false));
 		smtpConfiguration.setUserName(appliance.getSmtpUserName());
+		smtpConfiguration.setPasswordDecrypted(appliance.getSmtpPassword());
+
+		setSmtpPassword(appliance.getSmtpPassword());
 		smtpConfiguration.setPassword(appliance.getSmtpPassword());
-		
+
 		appliance.setSmtpConfiguration(smtpConfiguration);
 	}
 
 	public String verifySmtpConfiguration() {
 		log.info("HostName: " + appliance.getSmtpHost() + " Port: " + appliance.getSmtpPort() + " RequireSSL: " + appliance.isRequiresSsl()
 				+ " RequireSSL: " + appliance.isRequiresAuthentication());
-		log.info("UserName: " + appliance.getSmtpUserName() + " Password: " + applianceService.getDecryptedSmtpPassword(appliance));
+		log.debug("UserName: " + appliance.getSmtpUserName() + " Password: " + applianceService.getDecryptedSmtpPassword(appliance));
 
 		try {
 			MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),

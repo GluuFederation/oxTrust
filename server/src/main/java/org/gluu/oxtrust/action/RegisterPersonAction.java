@@ -196,7 +196,10 @@ public class RegisterPersonAction implements Serializable {
 		String outcome = registerImpl();
 		
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "You successfully registered.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "You successfully registered.");
+			conversationService.endConversation();
+		} else if (OxTrustConstants.RESULT_DISABLED.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "You successfully registered. But your account is disabled.");
 			conversationService.endConversation();
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			log.error("Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
@@ -239,7 +242,6 @@ public class RegisterPersonAction implements Serializable {
 				this.person.setDn(dn);
 			}
 
-log.debug("1");
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
 				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
@@ -249,7 +251,6 @@ log.debug("1");
 			} else {
 				this.person.setCommonName(this.person.getCommonName());
 			}
-log.debug("2");
 			// save password
 			this.person.setUserPassword(password);
 			this.person.setCreationDate(new Date());
@@ -258,10 +259,10 @@ log.debug("2");
 			try {
 				// Set default message
 				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
+
 				boolean result = false;
-log.debug("3");
-				this.person = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
-				if (this.person == null) {
+				result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person, requestParameters);
+				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
 				}
@@ -272,10 +273,14 @@ log.debug("3");
 				}
 				
 				result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person, requestParameters);
-
+				
 				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
+				}
+				
+				if (GluuStatus.INACTIVE.equals(person.getStatus())) {
+					return OxTrustConstants.RESULT_DISABLED;
 				}
 			} catch (Exception ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);

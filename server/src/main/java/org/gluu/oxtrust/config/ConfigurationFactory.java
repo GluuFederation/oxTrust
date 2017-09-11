@@ -29,6 +29,7 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.config.oxtrust.AttributeResolverConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.config.oxtrust.Configuration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
@@ -113,8 +114,9 @@ public class ConfigurationFactory {
 	private FileConfiguration ldapCentralConfiguration;
 	private AppConfiguration appConfiguration;
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
-	private String cryptoConfigurationSalt;
 	private ImportPersonConfig importPersonConfig;
+	private AttributeResolverConfiguration attributeResolverConfiguration;
+	private String cryptoConfigurationSalt;
 
 	private AtomicBoolean isActive;
 
@@ -266,6 +268,12 @@ public class ConfigurationFactory {
 		return importPersonConfig;
 	}
 
+	@Produces
+	@ApplicationScoped
+	public AttributeResolverConfiguration getAttributeResolverConfiguration() {
+		return attributeResolverConfiguration;
+	}
+
 	public String getCryptoConfigurationSalt() {
 		return cryptoConfigurationSalt;
 	}
@@ -357,6 +365,7 @@ public class ConfigurationFactory {
 					destroy(AppConfiguration.class);
 					destroy(CacheRefreshConfiguration.class);
 					destroy(ImportPersonConfig.class);
+					destroy(AttributeResolverConfiguration.class);
 				}
 
 				this.loaded = true;
@@ -384,7 +393,7 @@ public class ConfigurationFactory {
 		configurationInstance.destroy(confInstance.get());
 	}
 
-	private LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
+	public LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
 		final LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
 		final String configurationDn = getConfigurationDn();
 		try {
@@ -403,6 +412,7 @@ public class ConfigurationFactory {
 		this.appConfiguration = conf.getApplication();
 		this.cacheRefreshConfiguration = conf.getCacheRefresh();
 		this.importPersonConfig = conf.getImportPersonConfig();
+		this.attributeResolverConfiguration = conf.getAttributeResolverConfig();
 		this.loadedRevision = conf.getRevision();
 	}
 

@@ -140,39 +140,7 @@
                                                     <ox:decorate label="#{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
                                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}">
 
-
-										<h:panelGroup rendered="#{_custAttr.metadata.displayName eq 'Email'}">
-															<div class="col-xs-10">
-                                                        
-                                                            <rich:inplaceInput
-                                                                    attribute="#{_custAttr.metadata}"
-                                                                    value="#{_custAttr.values[_valueIdx]}"
-                                                                    defaultLabel="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
-                                                                    id="custIdEmail"
-                                                                    required="#{_mustEnter and empty param['sv']}"
-                                                                    requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
-                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status') and (_custAttr.metadata.displayName ne 'Password')}" >
-                                                                    <rich:validator event="blur"/>
-																<f:validator validatorId="attributeValidator" />                                                              
-                                                            </rich:inplaceInput>                                                      
-
-                                                            <h:selectOneMenu styleClass="form-control"
-                                                                             value="#{updatePersonAction.gluuStatus}"
-                                                                             required="true"
-                                                                             id="statusIdEmail"
-                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'User Status')}">
-                                                                <f:selectItems
-                                                                        value="#{updatePersonAction.activeInactiveStatuses}"
-                                                                        var="_type" itemLabel="#{_type.displayName}"/>
-                                                                <f:converter
-                                                                        converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                                            </h:selectOneMenu>
-                                                        </div>
-														</h:panelGroup>
-														
-														<h:panelGroup rendered="#{_custAttr.metadata.displayName ne 'Email'}">
-															<div class="col-xs-10">
-                                                        
+														<div class="col-xs-10">
                                                             <rich:inplaceInput
                                                                     attribute="#{_custAttr.metadata}"
                                                                     value="#{_custAttr.values[_valueIdx]}"
@@ -181,6 +149,7 @@
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status') and (_custAttr.metadata.displayName ne 'Password')}" >
+																<rich:validator event="blur"/>
 																<f:validator validatorId="attributeValidator" />                                                              
                                                             </rich:inplaceInput>                                                      
 
@@ -196,7 +165,6 @@
                                                                         converterId="org.gluu.jsf2.converter.EnumConverter"/>
                                                             </h:selectOneMenu>
                                                         </div>
-														</h:panelGroup>
                                                         
                                                         <h:outputText value="&#160;"/>                                                        
                                                         

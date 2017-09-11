@@ -28,6 +28,13 @@
     </navigation-case>
 
     <navigation-case>
+      <from-action>#{registerPersonAction.register}</from-action>
+      <from-outcome>disabled</from-outcome>
+      <to-view-id>/login.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
       <from-action>#{registerPersonAction.cancel}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
