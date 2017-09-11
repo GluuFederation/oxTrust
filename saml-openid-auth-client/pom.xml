@@ -98,11 +98,5 @@
 			<artifactId>jaxrs-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
-		<dependency>
-			<groupId>edu.internet2.middleware</groupId>
-			<artifactId>shibboleth-identityprovider</artifactId>
-		</dependency>
-
     </dependencies>
 </project>
