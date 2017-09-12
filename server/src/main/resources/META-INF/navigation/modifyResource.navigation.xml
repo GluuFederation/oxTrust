@@ -34,7 +34,7 @@
       <redirect>
 		<view-param>
 			<name>resource</name>
-			<value>#{updateResourceAction.resourceInum}</value>
+			<value>#{updateResourceAction.oxId}</value>
 		</view-param>
       </redirect>
     </navigation-case>
