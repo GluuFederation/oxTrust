@@ -34,6 +34,7 @@ import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.model.ScriptLocationType;
 import org.xdi.model.SimpleCustomProperty;
+import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
@@ -106,7 +107,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 				}
 
 				if (typedCustomScript.getConfigurationProperties() == null) {
-					typedCustomScript.setConfigurationProperties(new ArrayList<SimpleCustomProperty>());
+					typedCustomScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
 				}
 				
 				if (typedCustomScript.getModuleProperties() == null) {
@@ -238,7 +239,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		customScript.setLocationType(ScriptLocationType.LDAP);
 		customScript.setScriptType(scriptType);
 		customScript.setProgrammingLanguage(ProgrammingLanguage.PYTHON);
-		customScript.setConfigurationProperties(new ArrayList<SimpleCustomProperty>());
+		customScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
 
 		customScriptsByType.add(customScript);
 	}
