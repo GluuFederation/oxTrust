@@ -621,6 +621,10 @@
                                                        id="oxRefreshTokenLifetimeId"/>
                                 </ox:decorate>
 
+                                <ox:decorate label="#{msg['clientForm.disabled']}">
+                                    <h:selectBooleanCheckbox value="#{_client.disabled}" styleClass="form-control"/>
+                                </ox:decorate>
+
                                 <ox:decorate id="clientsecretexpiry"
                                              rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
                                              label="#{msg['clientForm.clientSecretExpires']}">
