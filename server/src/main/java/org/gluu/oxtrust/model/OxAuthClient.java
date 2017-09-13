@@ -182,6 +182,9 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxAuthRequestURI")
     private String[] requestUris;
 
+    @LdapAttribute(name = "oxDisabled")
+    private boolean disabled;
+
     private String oxAuthClientSecret;
 
     public boolean isSelected() {
@@ -550,6 +553,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setRequestUris(String[] requestUris) {
         this.requestUris = requestUris;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
