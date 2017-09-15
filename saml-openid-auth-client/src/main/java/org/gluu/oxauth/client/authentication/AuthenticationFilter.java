@@ -9,7 +9,6 @@ package org.gluu.oxauth.client.authentication;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,11 +21,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import net.shibboleth.idp.authn.ExternalAuthentication;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
 import org.gluu.oxauth.client.session.AbstractOAuthFilter;
 import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
 import org.jboss.resteasy.client.ClientRequest;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
 
@@ -125,7 +127,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 	}
 
 	public String getOAuthRedirectUrl(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
 		String oAuthAuthorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
 
 		String oAuthClientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
@@ -136,6 +137,27 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		String nonce = "nonce";
 
 		String redirectUri = constructRedirectUrl(request);
+		
+                // Lookup for relying party ID
+                final String key = ExternalAuthentication.startExternalAuthentication(request);
+                ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, request);
+                
+                String relyingPartyId = "";
+                final RelyingPartyContext relyingPartyCtx = prc.getSubcontext(RelyingPartyContext.class);
+                if (relyingPartyCtx != null) {
+                    relyingPartyId = relyingPartyCtx.getRelyingPartyId();
+                    log.info("relyingPartyId found: " + relyingPartyId);
+                }
+                else
+                    log.warn("No RelyingPartyContext was available");
+
+
+                if (relyingPartyId != null && !"".equals(relyingPartyId)) {
+                    clientRequest.queryParameter("origin_headers", relyingPartyId);
+                    //String additionalClaims = String.format("{relyingPartyId: '%s'}", relyingPartyId);
+                    //jwtState.setAdditionalClaims(new JSONObject(additionalClaims));
+                } else 
+                    log.warn("No relyingPartyId was available");
 
 		clientRequest.queryParameter("client_id", oAuthClientId);
 		clientRequest.queryParameter("scope", oAuthClientScope);
