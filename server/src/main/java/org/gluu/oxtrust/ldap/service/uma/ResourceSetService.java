@@ -189,13 +189,13 @@ public class ResourceSetService implements Serializable {
 	/**
 	 * Build DN string for resource
 	 */
-	public String getDnForResource(String inum) {
+	public String getDnForResource(String oxId) {
 		String orgDn = organizationService.getDnForOrganization();
-		if (StringHelper.isEmpty(inum)) {
-			return String.format("ou=resource_sets,ou=uma,%s", orgDn);
+		if (StringHelper.isEmpty(oxId)) {
+			return String.format("ou=resources,ou=uma,%s", orgDn);
 		}
 
-		return String.format("inum=%s,ou=resource_sets,ou=uma,%s", inum, orgDn);
+		return String.format("oxId=%s,ou=resources,ou=uma,%s", oxId, orgDn);
 	}
 
 }

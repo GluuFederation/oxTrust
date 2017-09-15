@@ -74,8 +74,7 @@ public class UpdateResourceAction implements Serializable {
 	@Inject
 	private LookupService lookupService;
 
-	private String resourceInum;
-
+	private String oxId;
 	private UmaResource resource;
 	private List<DisplayNameEntry> scopes;
 	private List<DisplayNameEntry> clients;
@@ -96,7 +95,7 @@ public class UpdateResourceAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		this.update = StringHelper.isNotEmpty(this.resourceInum);
+		this.update = StringHelper.isNotEmpty(this.oxId);
 
 		try {
 			umaResourcesService.prepareResourceBranch();
@@ -131,12 +130,12 @@ public class UpdateResourceAction implements Serializable {
 	}
 
 	private String update() {
-		log.debug("Loading UMA resource set '{}'", this.resourceInum);
+		log.debug("Loading UMA resource set '{}'", this.oxId);
 		try {
-			String resourceDn = umaResourcesService.getDnForResource(this.resourceInum);
+			String resourceDn = umaResourcesService.getDnForResource(this.oxId);
 			this.resource = umaResourcesService.getResourceByDn(resourceDn);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find resource set '{}'", this.resourceInum, ex);
+			log.error("Failed to find resource set '{}'", this.oxId, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -192,11 +191,7 @@ public class UpdateResourceAction implements Serializable {
 		} else {
 			// Prepare resource set
 		    String id = String.valueOf(System.currentTimeMillis());
-			String inum = umaResourcesService.generateInumForNewResource();
-			String resourceSetDn = umaResourcesService.getDnForResource(inum);
-
-			this.resource.setId(id);
-			this.resource.setInum(inum);
+			String resourceSetDn = umaResourcesService.getDnForResource(id);
 			this.resource.setDn(resourceSetDn);
 			this.resource.setRev(String.valueOf(0));
 			this.resource.setCreator(currentPerson.getDn());
@@ -216,7 +211,7 @@ public class UpdateResourceAction implements Serializable {
 			conversationService.endConversation();
 
 			this.update = true;
-			this.resourceInum = inum;
+			this.oxId = id;
 			
 			return OxTrustConstants.RESULT_UPDATE;
 		}
@@ -490,14 +485,6 @@ public class UpdateResourceAction implements Serializable {
 		return update;
 	}
 
-	public String getResourceInum() {
-		return resourceInum;
-	}
-
-	public void setResourceInum(String resourceInum) {
-		this.resourceInum = resourceInum;
-	}
-
 	public UmaResource getResource() {
 		return resource;
 	}
@@ -544,6 +531,15 @@ public class UpdateResourceAction implements Serializable {
 
 	public List<String> getResources() {
 		return resources;
+	}	
+
+	public String getOxId() {
+		return oxId;
 	}
+
+	public void setOxId(String oxId) {
+		this.oxId = oxId;
+	}
+
 
 }
