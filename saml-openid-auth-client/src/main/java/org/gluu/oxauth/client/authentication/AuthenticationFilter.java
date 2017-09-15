@@ -161,7 +161,7 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		String jti = UUID.randomUUID().toString();
 		
                 // Lookup for relying party ID
-                final String key = ExternalAuthentication.startExternalAuthentication(request);
+                final String key = request.getParameter(ExternalAuthentication.CONVERSATION_KEY);//ExternalAuthentication.startExternalAuthentication(request);
                 ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, request);
                 
                 String relyingPartyId = "";
