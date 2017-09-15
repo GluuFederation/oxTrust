@@ -25,17 +25,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.shibboleth.idp.authn.ExternalAuthentication;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.gluu.oxauth.client.session.AbstractOAuthFilter;
 import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.webflow.execution.RequestContext;
 import org.xdi.oxauth.client.AuthorizationRequest;
 import org.xdi.oxauth.client.model.JwtState;
 import org.xdi.oxauth.model.common.ResponseType;
