@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -25,12 +24,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import net.shibboleth.idp.authn.ExternalAuthentication;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.gluu.oxauth.client.session.AbstractOAuthFilter;
 import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
-import org.jboss.resteasy.client.ClientRequest;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.xdi.oxauth.client.AuthorizationRequest;
 import org.xdi.oxauth.client.model.JwtState;
 import org.xdi.oxauth.model.common.ResponseType;
@@ -138,17 +139,17 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 
 	public String getOAuthRedirectUrl(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		String authorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
-        String clientScopes = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, null);
+		String clientScopes = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, null);
 
 		String clientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
 		String clientSecret = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, null);
-        if (clientSecret != null) {
-            try {
-            	clientSecret = StringEncrypter.defaultInstance().decrypt(clientSecret, Configuration.instance().getCryptoPropertyValue());
-            } catch (EncryptionException ex) {
-                log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
-            }
-        }
+		if (clientSecret != null) {
+		    try {
+		    	clientSecret = StringEncrypter.defaultInstance().decrypt(clientSecret, Configuration.instance().getCryptoPropertyValue());
+		    } catch (EncryptionException ex) {
+		    log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
+		    }
+		}
 
 		String redirectUri = constructRedirectUrl(request);
 
@@ -159,15 +160,29 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		String rfp = UUID.randomUUID().toString();
 		String jti = UUID.randomUUID().toString();
 		
-//		String relyingPartyId = edu.internet2.middleware.shibboleth.idp.util.HttpServletHelper.getLoginContext(request).getRelyingPartyId();
-		String relyingPartyId = "";
-		String additionalClaims = String.format("{relyingPartyId: '%s'}", relyingPartyId);
+                // Lookup for relying party ID
+                final String key = request.getParameter(ExternalAuthentication.CONVERSATION_KEY);//ExternalAuthentication.startExternalAuthentication(request);
+                ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, request);
+                
+                String relyingPartyId = "";
+                final RelyingPartyContext relyingPartyCtx = prc.getSubcontext(RelyingPartyContext.class);
+                if (relyingPartyCtx != null) {
+                    relyingPartyId = relyingPartyCtx.getRelyingPartyId();
+                    log.info("relyingPartyId found: " + relyingPartyId);
+                }
+                else
+                    log.warn("No RelyingPartyContext was available");
 
+                // JWT
 		OxAuthCryptoProvider cryptoProvider = new OxAuthCryptoProvider();
 		JwtState jwtState = new JwtState(SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
 		jwtState.setRfp(rfp);
 		jwtState.setJti(jti);
-		jwtState.setAdditionalClaims(new JSONObject(additionalClaims));
+                if (relyingPartyId != null && !"".equals(relyingPartyId)) {
+                    String additionalClaims = String.format("{relyingPartyId: '%s'}", relyingPartyId);
+                    jwtState.setAdditionalClaims(new JSONObject(additionalClaims));
+                } else 
+                    log.warn("No relyingPartyId was available");
 		String encodedState = jwtState.getEncodedJwt();
 
 		AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);

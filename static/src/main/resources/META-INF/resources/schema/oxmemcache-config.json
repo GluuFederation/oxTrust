@@ -11,7 +11,8 @@
             "type": "string",
             "enum": [
                 "IN_MEMORY",
-                "MEMCACHED"
+                "MEMCACHED",
+                "REDIS"
             ]
     },
     "memcachedConfiguration":{
@@ -91,35 +92,28 @@
            		}
 		},
       	"redisConfiguration": {
-      	 "type":"object",
-         "additionalProperties":false,
-         "properties":{
-			      	"host" : {
-						"id": "host",
-			            "description": "Host value",
-			            "type": "string"		            
-			            },
-			        "port" : {
-						"id": "port",
-			            "description": "port",
-			            "type": "integer",
-			            "multipleOf": 1,
-			            "maximum": 2147483647,
-			            "minimum": 1,
-			            "exclusiveMaximum": false,
-			            "exclusiveMinimum": false
-			            },
-			        "defaultPutExpiration" : {
-						"id": "defaultPutExpiration",
-			            "description": "defaultPutExpiration timeout value",
-			            "type": "integer",
-			            "multipleOf": 1,
-			            "maximum": 2147483647,
-			            "minimum": 1,
-			            "exclusiveMaximum": false,
-			            "exclusiveMinimum": false
-			            }
-           		}
+      	    "type":"object",
+            "additionalProperties":false,
+            "properties":{
+                "servers": {
+                    "id": "servers",
+                    "description": "server details separated by comma, e.g. 'server1:8080,server2:8081'",
+       	            "title": "servers",
+                    "type": "string",
+             	    "format": "url",
+             	    "minLength": 3
+                },
+			    "defaultPutExpiration" : {
+					"id": "defaultPutExpiration",
+			        "description": "defaultPutExpiration timeout value",
+			        "type": "integer",
+			        "multipleOf": 1,
+			        "maximum": 2147483647,
+			        "minimum": 1,
+			        "exclusiveMaximum": false,
+			        "exclusiveMinimum": false
+			    }
+            }
 		}
     }
 }

@@ -642,12 +642,17 @@
         },
         "umaAddScopesAutomatically": {
             "id": "umaAddScopesAutomatically",
-            "description": "",
+            "description": "Add UMA scopes automatically if it is not registered yet",
+            "type": "boolean"
+        },
+        "umaValidateClaimToken": {
+            "id": "umaValidateClaimToken",
+            "description": "Validate claim_token as id_token assuming it is issued by local idp.",
             "type": "boolean"
         },
         "umaKeepClientDuringResourceSetRegistration": {
             "id": "umaKeepClientDuringResourceSetRegistration",
-            "description": "",
+            "description": "Save client information during resource registration",
             "type": "boolean"
         },
         "umaRptAsJwt": {

@@ -20,20 +20,35 @@
     <cc:attribute name="requiredName" default="true" type="java.lang.Boolean" />
     <cc:attribute name="requiredValue" default="false" type="java.lang.Boolean" />
     <cc:attribute name="hideValue" default="false" type="java.lang.Boolean" />
+    <cc:attribute name="showRemoveDialogue" default="false" type="java.lang.Boolean" />
 </cc:interface>
 
 
 <cc:implementation>
 	<h:outputScript rendered="#{cc.attrs.hideValue eq true}">
+		$(document).ready(function(){
+			$(".togglefield").each(function(index){ 
+			var typeValue = $(this).attr("type");
+			    debugger;
+			    if(typeValue === "password") {
+			    	$(this).siblings("img[id$='view']").css({"display": "block"});
+			    } else {
+			    	$(this).siblings("img[id$='hide']").css({"display": "block"});
+			    }
+			});
+		});
+		
     	function viewValue(obj){
 			$(obj).css({"display":"none"});
 			$(obj).siblings("input.togglefield").attr("type","text");
+			$(obj).siblings("input[id$='hv']").val(false);
 			$(obj).siblings("img[id$='hide']").css({"display":"block"});
 		}
 				
 		function hideValue(obj){
 			$(obj).css({"display":"none"});
 			$(obj).siblings("input.togglefield").attr("type","password");
+			$(obj).siblings("input[id$='hv']").val(true);
 			$(obj).siblings("img[id$='view']").css({"display":"block"});
 		}
 
@@ -49,24 +64,36 @@
                                 <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}"/>
                                 <h:message for="fInput" errorClass="invalid"/>
 
-	                            <h:inputText id="sInput1" styleClass="col-md-4 form-control" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" rendered="#{cc.attrs.hideValue eq false}" />
+	                            <h:inputText id="sInput1" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" rendered="#{(_property.hideValue eq false) or (cc.attrs.hideValue eq false)}" />
 	                            <h:message for="sInput1" errorClass="invalid" rendered="#{cc.attrs.hideValue eq false}"/>
 	                            
-                                <h:inputSecret id="sInput" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" redisplay="true" rendered="#{cc.attrs.hideValue eq true}" />
+                                <h:inputSecret id="sInput" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" redisplay="true" rendered="#{(_property.hideValue eq true) and (cc.attrs.hideValue eq true)}" />
                                 <h:message for="sInput" errorClass="invalid" rendered="#{cc.attrs.hideValue eq true}"/>
+                                
+                                <h:inputHidden value="#{_property.hideValue}" id="hv" />
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
-    
-                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@region">
+    							
+    							<a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@region">
                                    <!--  <h:graphicImage value="/img/remove.gif" /> -->
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink>
                                 
-                                <h:graphicImage value="/img/eye.png"  id="view" onclick="return viewValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
+                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq true}"  style="float:left;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                  execute="@region">
+                                   <!--  <h:graphicImage value="/img/remove.gif" /> -->
+                                    <f:param name="sv" value="1" />
+                                </a4j:commandLink>
+                                
+                                <h:graphicImage value="/img/eye.png" style="display: none;"  id="view" onclick="return viewValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
                                 <h:graphicImage value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
                                 </div>
-                            </h:panelGroup>
-                        </h:panelGrid>
+                            </h:panelGroup>                            
+                        
+            				<ox:acceptRemovalDialog deleteMethod="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" id="deleteConfirmation"
+                                     subject="#{cc.attrs.labelAdd}" render="customList"
+                                     value="#{_property.value1}"/>
+                        </h:panelGrid>                       
                         
                     </a4j:repeat>
                     
