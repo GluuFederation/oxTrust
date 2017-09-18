@@ -78,11 +78,11 @@
 			<name>maven central</name>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
-		<repository>
-			<id>shibboleth.internet2.edu</id>
-			<name>Internet2</name>
-			<url>https://build.shibboleth.net/nexus/content/groups/public</url>
-		</repository>
+        <repository>
+            <id>build.shibboleth.net</id>
+            <name>shibboleth releases</name>
+            <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+        </repository>
 	</repositories>
 
 	<scm>
