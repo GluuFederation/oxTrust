@@ -37,7 +37,8 @@
                     <ui:param name="_organization" value="#{updateOrganizationAction.organization}"/>
                     <ui:param name="_appliance" value="#{updateOrganizationAction.appliance}"/>
                     <ui:param name="_organizationAction" value="#{updateOrganizationAction}"/>
-                    <ui:param name="_certificateAction" value="#{manageCertificateAction}"/>
+                    <ui:param name="_certificateAction" value="#{manageCertificateAction}"/>                    
+                    <ui:param name="_webKeySettings" value="#{_organizationAction.webKeysSettings}"/>
 
                     <ui:define name="controlButttons">
                         <div class="box-footer" style="margin-top:-16px !important;">
