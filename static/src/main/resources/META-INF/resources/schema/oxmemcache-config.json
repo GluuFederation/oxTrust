@@ -95,7 +95,17 @@
       	    "type":"object",
             "additionalProperties":false,
             "properties":{
-                "servers": {
+                "redisProviderType": {
+		           	"id": "redisProviderType",
+            		"description": "Type of connection.",
+            		"type": "string",
+            		"enum": [
+                		"STANDALONE",
+                		"CLUSTER",
+                		"SHARDED"
+            		]
+        		},
+        		"servers": {
                     "id": "servers",
                     "description": "server details separated by comma, e.g. 'server1:8080,server2:8081'",
        	            "title": "servers",
@@ -117,3 +127,4 @@
 		}
     }
 }
+
