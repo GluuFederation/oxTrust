@@ -558,7 +558,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
 		
 		if (simpleCustomProperties != null) {
-			simpleCustomProperties.add(new SimpleCustomProperty("", ""));
+			simpleCustomProperties.add(new SimpleExtendedCustomProperty("", ""));
 		}
 	}
 
