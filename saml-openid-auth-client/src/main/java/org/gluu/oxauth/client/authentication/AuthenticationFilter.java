@@ -60,6 +60,8 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  */
 public class AuthenticationFilter extends AbstractOAuthFilter {
 
+        public static final String SESSION_CONVERSATION_KEY = "saml_idp_conversation_key";
+        
 	/**
 	 * The URL to the OAuth Server authorization services
 	 */
@@ -162,6 +164,7 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		
                 // Lookup for relying party ID
                 final String key = request.getParameter(ExternalAuthentication.CONVERSATION_KEY);//ExternalAuthentication.startExternalAuthentication(request);
+                request.getSession().setAttribute(SESSION_CONVERSATION_KEY, key);
                 ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, request);
                 
                 String relyingPartyId = "";
