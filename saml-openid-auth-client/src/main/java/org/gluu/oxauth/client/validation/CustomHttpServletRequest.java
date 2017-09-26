@@ -19,7 +19,7 @@ public class CustomHttpServletRequest extends HttpServletRequestWrapper {
 	}
 
 	public void addCustomParameter(String name, String value) {
-		customParameters.put(name,	value);
+		customParameters.put(name, value);
 	}
 
 	@Override
