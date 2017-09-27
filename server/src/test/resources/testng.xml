@@ -44,11 +44,11 @@
         </classes>
     </test>
 
-    <!-- SCIM User Extension Service Test (embedded) -->
+    <!-- SCIM User Extension Service Test (embedded)
     <test name="SCIM User Extension Service Test (embedded)" enabled="true">
         <classes>
             <class name="org.gluu.oxtrust.service.test.UserExtensionsTest" />
         </classes>
-    </test>
+    </test> -->
 
 </suite>
