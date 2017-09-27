@@ -9,7 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Detail error types when a HTTP 400 response is served. See section 3.12 of RFC7644
+ *
  * @author Val Pecaoco
+ * Updated by jgomer on 2017-09-14.
  */
 public enum ErrorScimType {
 

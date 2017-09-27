@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * "HTTP Status and Error Response Handling" (see section 3.12 of RFC7644)
+ *
  * @author Val Pecaoco
+ * Updated by jgomer on 2017-09-14.
  */
 public class ErrorResponse implements Serializable {
 
