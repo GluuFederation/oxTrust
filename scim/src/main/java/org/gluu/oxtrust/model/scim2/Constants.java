@@ -8,6 +8,7 @@ package org.gluu.oxtrust.model.scim2;
 /**
  * Some needed Constants
  */
+//TODO: remove unneeded constants
 public interface Constants {
 
     String MEDIA_TYPE_SCIM_JSON = "application/scim+json";
@@ -43,9 +44,19 @@ public interface Constants {
 
     String ERROR_RESPONSE_URI = "urn:ietf:params:scim:api:messages:2.0:Error";
 
+    String UTF8_CHARSET_FRAGMENT="; charset=utf-8";
+
+    /**
+     * The HTTP query parameter used in a URI to select specific SCIM
+     * attributes.
+     */
+    String QUERY_PARAM_ATTRIBUTES = "attributes";
+    String QUERY_PARAM_EXCLUDED_ATTRS = "excludedAttributes";
+
     int DEFAULT_COUNT = 0;
     int MAX_COUNT = 200;
 
     int MAX_BULK_OPERATIONS = 30;
     int MAX_BULK_PAYLOAD_SIZE = 3072000;  // 3 MB
+
 }
