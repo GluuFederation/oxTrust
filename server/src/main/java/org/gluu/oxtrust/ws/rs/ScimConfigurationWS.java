@@ -15,14 +15,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.scim.ScimConfiguration;
+import org.gluu.oxtrust.ws.rs.scim2.UserWebService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.oxauth.model.uma.UmaConstants;
-import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.service.JsonService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -31,9 +31,11 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 /**
- * The endpoint at which the requester can obtain SCIM metadata configuration.
+ * This class implements the endpoint at which the requester can obtain SCIM metadata configuration. Similar to the SCIM
+ * /ServiceProviderConfig endpoint
  *
  * @author Yuriy Movchan Date: 11/06/2015
+ * Updated by jgomer on 2017-09-25.
  */
 @Named("scimConfigurationRestWebService")
 @Path("/scim-configuration")
@@ -52,8 +54,11 @@ public class ScimConfigurationWS {
     @Inject
     private JsonService jsonService;
 
+    @Inject
+    private UserWebService userService;
+
     @GET
-    @Produces({UmaConstants.JSON_MEDIA_TYPE})
+    @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(
             value = "Provides metadata as json document. It contains options and endpoints supported by the SCIM server.",
             response = ScimConfiguration.class
@@ -71,7 +76,8 @@ public class ScimConfigurationWS {
             final ScimConfiguration c2 = new ScimConfiguration();
             c2.setVersion("2.0");
             c2.setAuthorizationSupported(new String[]{"uma"});
-            c2.setUserEndpoint(baseEndpointUri + "/scim/v2/Users");
+            c2.setUserEndpoint(baseEndpointUri + userService.getEndpointUrl());
+            //TODO: update for the rest of endpoints
             c2.setUserSearchEndpoint(baseEndpointUri + "/scim/v2/Users/Search");
             c2.setGroupEndpoint(baseEndpointUri + "/scim/v2/Groups");
             c2.setBulkEndpoint(baseEndpointUri + "/scim/v2/Bulk");

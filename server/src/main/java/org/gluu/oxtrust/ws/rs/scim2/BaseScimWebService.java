@@ -1,321 +1,228 @@
-/*
- * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
- *
- * Copyright (c) 2014, Gluu
- */
-
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
-//import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor.getUserLdapAttributeName;
-import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor.getFidoDeviceLdapAttributeName;
-
-import java.util.*;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.model.scim2.ErrorResponse;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.annotations.Schema;
+import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.util.*;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.ldap.service.AppInitializer;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.ErrorResponse;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.model.scim2.User;
-import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
-import org.gluu.oxtrust.security.Identity;
-import org.gluu.oxtrust.service.OpenIdService;
-import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
-import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
-import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
-import org.gluu.oxtrust.exception.UmaProtectionException;
-import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
-import org.xdi.oxauth.client.ClientInfoClient;
-import org.xdi.oxauth.client.ClientInfoResponse;
-import org.xdi.oxauth.model.uma.wrapper.Token;
-import org.xdi.util.Pair;
-
-import com.unboundid.ldap.sdk.Filter;
+import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * Base methods for SCIM web services
- * 
+ *
  * @author Yuriy Movchan Date: 08/23/2013
+ * Updated by jgomer on 2017-09-14.
  */
 public class BaseScimWebService {
 
-	@Inject
-	private Logger log;
-
-	@Inject
-	private Identity identity;
-
-	@Inject
-	private AppConfiguration appConfiguration;
-
-	@Inject
-	private JsonConfigurationService jsonConfigurationService;
-
-	@Inject
-	private ApplianceService applianceService;
-
-	@Inject
-	private ScimUmaProtectionService scimUmaProtectionService;
-	
-	@Inject
-	private UmaPermissionService umaPermissionService;
-
-	@Inject
-	private OpenIdService openIdService;
-
-	@Inject
-	private LdapEntryManager ldapEntryManager;
-
-	@Inject
-	private ScimFilterParserService scimFilterParserService;
-
     @Inject
-    private AppInitializer appInitializer;
+    Logger log;
 
-	public int getMaxCount(){
-	    return Constants.MAX_COUNT;
-        //return appConfiguration.getScimProperties().getMaxCount() ;
-	}
+    String endpointUrl;
 
-    protected Response processTestModeAuthorization(String token) throws Exception {
+    private ObjectMapper mapper=new ObjectMapper();
 
-        Response response=null;
+    private Set<String> expandAttributesPaths(String attributes, String defaulSchemaUrn, List<String> schemas, SortedSet<String> attribs) {
 
-        try {
-            token=token.replaceFirst("Bearer\\s+","");
-            log.debug("Validating token {}", token);
+        Set<String> set=new HashSet<String>();
 
-            String clientInfoEndpoint=openIdService.getOpenIdConfiguration().getClientInfoEndpoint();
-            ClientInfoClient clientInfoClient = new ClientInfoClient(clientInfoEndpoint);
-            ClientInfoResponse clientInfoResponse = clientInfoClient.execClientInfo(token);
+        for (String attr : attributes.split(",")) {
+            String shorterName=attr.replaceAll("\\s", "");
 
-            if (clientInfoResponse.getErrorType()!=null) {
-                response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token "+ token);
-                log.debug("Error validating access token: {}", clientInfoResponse.getErrorDescription());
+            for (String urn : schemas){
+                if (shorterName.startsWith(urn + ":")) {
+                    if (urn.equals(defaulSchemaUrn))
+                        shorterName = shorterName.substring(urn.length()+1);
+                    else
+                        shorterName = shorterName.substring(0, urn.length()) + "." + shorterName.substring(urn.length()+1);
+                }
             }
+            set.add(shorterName);
         }
-        catch (Exception e) {
-            log.error("Failed to check test token", e);
-            response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token");
+
+        Set<String> extendedSet=new HashSet<String>();
+
+        //attribs is already sorted
+        for (String basicAttr : set){
+            extendedSet.add(basicAttr);
+
+            for (String elem : attribs.tailSet(basicAttr + "."))
+                if (elem.startsWith(basicAttr + "."))
+                    extendedSet.add(elem);
+                else
+                    break;
         }
-        return response;
+        //No need for this block: containsProperty method is smart enough
+        /*
+        //Remove redundancies
+        String attrArray[]=list.toArray(new String[]{});
+        Arrays.sort(attrArray);
+        list=new ArrayList<>();
+        int j=0;
+
+        for (int i=0; i<attrArray.length-1;){
+            String prevAttr=attrArray[i];
+            for (j=i+1;j<attrArray.length && attrArray[j].startsWith(prevAttr + ".");j++);
+            i=j;
+            list.add(prevAttr);
+        }
+           */
+        return extendedSet;
+    }
+
+    private void buildIncludeSet(SortedSet<String> include, Class<? extends BaseScimResource> resourceClass,
+                                 List<String> schemas, String attributes, String exclussions){
+
+        Set<String> tempSet;
+        Set<String> alwaysSet=IntrospectUtil.alwaysCoreAttrs.get(resourceClass).keySet();
+        Set<String> neverSet=IntrospectUtil.neverCoreAttrs.get(resourceClass).keySet();
+        Set<String> defaultSet=IntrospectUtil.defaultCoreAttrs.get(resourceClass).keySet();
+
+        String defaultSchema=resourceClass.getAnnotation(Schema.class).id();
+
+        if (attributes!=null) {
+            log.info("Processing attributes query param (excludedAttributes ignored)");
+
+            tempSet= expandAttributesPaths(attributes, defaultSchema, schemas, IntrospectUtil.allAttrs.get(resourceClass));
+            tempSet.removeAll(neverSet);
+            include.addAll(tempSet);
+        }
+        else
+        if (exclussions!=null){
+            log.info("Processing excludedAttributes query param)");
+
+            tempSet= defaultSet;
+            tempSet.removeAll(expandAttributesPaths(exclussions, defaultSchema, schemas, IntrospectUtil.allAttrs.get(resourceClass)));
+            include.addAll(tempSet);
+        }
+        else{
+            log.info("No attributes neither excludedAttributes query param were passed");
+            include.addAll(defaultSet);
+        }
+        include.addAll(alwaysSet);
 
     }
 
-	protected Response processAuthorization(String authorization) throws Exception {
-		if (!scimUmaProtectionService.isEnabled()) {
-			log.info("UMA SCIM authentication is disabled");
-			return getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "SCIM was disabled");
-		}
+    private boolean containsProperty(SortedSet<String> properties, String prefix, String key){
 
-		Token patToken;
-		try {
-			patToken = scimUmaProtectionService.getPatToken();
-		} catch (UmaProtectionException ex) {
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
-		}
-		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, scimUmaProtectionService.getUmaResourceId(), scimUmaProtectionService.getUmaScope());
-		if (rptTokenValidationResult.getFirst()) {
-			if (rptTokenValidationResult.getSecond() != null) {
-				return rptTokenValidationResult.getSecond();
-			}
-		} else {
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "nvalid GAT/RPT token");
-		}
+        String property = (prefix.length() == 0) ? key : prefix + "." + key;
+        Set<String> set=properties.tailSet(property);
 
-		return null;
-	}
+        boolean flag=set.contains(property);
+        if (!flag){
+            for (String prop : set)
+                if (prop.startsWith(property + ".")) {
+                    flag=true;
+                    break;
+                }
+        }
+        return flag;
 
-	public <T> List<T> search(String dn, Class<T> entryClass, String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String attributesArray) throws Exception {
+    }
 
-		log.info("----------");
-		log.info(" ### RAW PARAMS ###");
-		log.info(" filter string = " + filterString);
-		log.info(" startIndex = " + startIndex);
-		log.info(" count = " + count);
-		log.info(" sortBy = " + sortBy);
-		log.info(" sortOrder = " + sortOrder);
-		log.info(" attributes = " + attributesArray);
+    private String getNewPrefix(String prefix, String key){
+        return prefix + (prefix.length()==0 ? "" : ".") + key;
+    }
 
-		Filter filter;
-		if (filterString == null || (filterString != null && filterString.isEmpty())) {
-			if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
-				filter = Filter.create("oxId=*");
-			} else {
-				filter = Filter.create("inum=*");
-			}
-		} else {
-			Class clazz = null;
-			if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
-				clazz = User.class;
-			} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
-				clazz = Group.class;
-			} else if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
-				clazz = FidoDevice.class;
-			}
-			filter = scimFilterParserService.createFilter(filterString, clazz);
-		}
+    private Map<String, Object> smallerMap(String prefix, Map<String, Object> value, SortedSet<String> include){
+        LinkedHashMap<String, Object> smallMap = new LinkedHashMap<String, Object>();
+        traverse(prefix, value, smallMap, include);
+        return smallMap.size()==0 ? null : smallMap;
+    }
 
-		startIndex = (startIndex < 1) ? 1 : startIndex;
+    /**
+     * Section 2.5 of RFC 7643: When a resource is expressed in JSON format, unassigned attributes, although they are defined in
+     * schema, MAY be omitted for compactness
+     * @param prefix
+     * @param map
+     * @param destination
+     * @param include
+     */
+    private void traverse(String prefix, Map<String, Object> map, LinkedHashMap<String, Object> destination, SortedSet<String> include){
 
-		count = (count < 1) ? DEFAULT_COUNT : count;
-		count = (count >getMaxCount()) ? getMaxCount() : count;
+        for (String key : map.keySet()){
+            Object value=map.get(key);
+            log.debug("key {}", key);
+            if (value!=null && containsProperty(include, prefix, key)){
+                log.debug("true");
+                if (value instanceof Map)
+                    value = smallerMap(getNewPrefix(prefix, key), (Map<String, Object>) value, include);
+                else
+                if (IntrospectUtil.isCollection(value.getClass())){
+                    List list=new ArrayList();
+                    Map<String, Object> innerMap;
 
-		if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
-			sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "id";
-			sortBy = getFidoDeviceLdapAttributeName(sortBy);
-		} else {
-			sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : "displayName";
-			if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
-				sortBy = getUserLdapAttributeName(sortBy);
-			}  else if (entryClass.getName().equals(GluuGroup.class.getName())) {
-				sortBy = getGroupLdapAttributeName(sortBy);
-			}
-		}
+                    for (Object item : (Collection) value){
+                        if (item!=null)
+                            if (item instanceof Map) {
+                                innerMap=smallerMap(getNewPrefix(prefix, key), (Map<String, Object>) item, include);
+                                if (innerMap!=null)
+                                    list.add(innerMap);
+                            }
+                            else {
+                                list.add(item);
+                            }
+                    }
+                    value=list;
+                }
+                if (value!=null)
+                    destination.put(key, value);
+            }
+        }
 
-		SortOrder sortOrderEnum;
-		if (sortOrder != null && !sortOrder.isEmpty()) {
-			sortOrderEnum = SortOrder.getByValue(sortOrder);
-		} else if (sortBy != null && (sortOrder == null || (sortOrder != null && sortOrder.isEmpty()))) {
-			sortOrderEnum = SortOrder.ASCENDING;
-		} else {
-			sortOrderEnum = SortOrder.ASCENDING;
-		}
+    }
 
-		// String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? mapper.readValue(attributesArray, String[].class) : null;
-		String[] attributes = (attributesArray != null && !attributesArray.isEmpty()) ? attributesArray.split("\\,") : null;
-		if (attributes != null && attributes.length > 0) {
+    String serializeToJson(BaseScimResource resource, String attributes, String exclussions) throws Exception{
 
-			// Add the attributes which are returned by default
+        SortedSet<String> include =new TreeSet<String>();
+        Class<? extends BaseScimResource> resourceClass=resource.getClass();
+        buildIncludeSet(include, resourceClass, resource.getSchemas(), attributes, exclussions);
+        log.debug("incl {}", include);
+        //Do generic serialization. This works for any POJO (not only subclasses of BaseScimResource)
+        Map<String, Object> map = mapper.convertValue(resource, Map.class);
+        //Using LinkedHashMap allows recursive routines to visit submaps in the same order as fields appear in java classes
+        LinkedHashMap<String, Object> newMap=new LinkedHashMap<String, Object>();
+        traverse("", map, newMap, include);
 
-			List<String> attributesList = new ArrayList<String>(Arrays.asList(attributes));
-			Set<String> attributesSet = new LinkedHashSet<String>();
+        return mapper.writeValueAsString(newMap);
+    }
 
-			for (String attribute : attributesList) {
+    String serializeToJson(BaseScimResource resource) throws Exception{
+        return serializeToJson(resource, null, null);
+    }
 
-				if (attribute != null && !attribute.isEmpty()) {
+    public Response getErrorResponse(Response.Status status, String detail) {
+        return getErrorResponse(status.getStatusCode(), null, detail);
+    }
 
-					attribute = FilterUtil.stripScim2Schema(attribute);
-
-					if (entryClass.getName().equals(GluuCustomPerson.class.getName()) && attribute.toLowerCase().startsWith("name.")) {
-
-						if (!attributesSet.contains("name.familyName")) {
-							attributesSet.add("name.familyName");
-							attributesSet.add("name.middleName");
-							attributesSet.add("name.givenName");
-							attributesSet.add("name.honorificPrefix");
-							attributesSet.add("name.honorificSuffix");
-							attributesSet.add("name.formatted");
-						}
-
-					} else {
-						attributesSet.add(attribute);
-					}
-				}
-			}
-
-			attributesSet.add("id");
-			if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
-				attributesSet.add("userName");
-			}
-			if (entryClass.getName().equals(GluuGroup.class.getName())) {
-				attributesSet.add("displayName");
-			}
-			if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
-				attributesSet.add("creationDate");  // For meta.created
-				attributesSet.add("displayName");
-			}
-			attributesSet.add("meta.created");
-			attributesSet.add("meta.lastModified");
-			attributesSet.add("meta.location");
-			attributesSet.add("meta.version");
-
-			attributes = attributesSet.toArray(new String[attributesSet.size()]);
-
-			for (int i = 0; i < attributes.length; i++) {
-				if (attributes[i] != null && !attributes[i].isEmpty()) {
-					if (entryClass.getName().equals(GluuCustomPerson.class.getName())) {
-						attributes[i] = getUserLdapAttributeName(attributes[i].trim());
-					} else if (entryClass.getName().equals(GluuGroup.class.getName())) {
-						attributes[i] = getGroupLdapAttributeName(attributes[i].trim());
-					} else if (entryClass.getName().equals(GluuCustomFidoDevice.class.getName())) {
-						attributes[i] = getFidoDeviceLdapAttributeName(attributes[i].trim());
-					}
-				}
-			}
-		}
-
-		log.info(" ### CONVERTED PARAMS ###");
-		log.info(" parsed filter = " + filter.toString());
-		log.info(" startIndex = " + startIndex);
-		log.info(" count = " + count);
-		log.info(" sortBy = " + sortBy);
-		log.info(" sortOrder = " + sortOrderEnum.getValue());
-		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? new ObjectMapper().writeValueAsString(attributes) : null));
-
-		// List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
-		List<T> result = ldapEntryManager.findEntriesSearchSearchResult(dn, entryClass, filter, startIndex, count, getMaxCount(), sortBy, sortOrderEnum, vlvResponse, attributes);
-
-		log.info(" ### RESULTS INFO ###");
-		log.info(" totalResults = " + vlvResponse.getTotalResults());
-		log.info(" itemsPerPage = " + vlvResponse.getItemsPerPage());
-		log.info(" startIndex = " + vlvResponse.getStartIndex());
-		log.info("----------");
-
-		return result;
-	}
-
-	/*
-	protected Response getErrorResponse(String errMsg, int statusCode) {
-		Errors errors = new Errors();
-		Error error = new org.gluu.oxtrust.model.scim.Error(errMsg, statusCode, "");
-		errors.getErrors().add(error);
-		return Response.status(statusCode).entity(errors).build();
-	}
-	*/
-
-	protected Response getErrorResponse(Response.Status status, String detail) {
-		return getErrorResponse(status.getStatusCode(), null, detail);
-	}
-
-    protected Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
+    public Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
         return getErrorResponse(status.getStatusCode(), scimType, detail);
     }
 
-    protected Response getErrorResponse(int statusCode, String detail) {
+    public Response getErrorResponse(int statusCode, String detail) {
         return getErrorResponse(statusCode, null, detail);
     }
 
-	protected Response getErrorResponse(int statusCode, ErrorScimType scimType, String detail) {
+    public Response getErrorResponse(int statusCode, ErrorScimType scimType, String detail) {
 
-		ErrorResponse errorResponse = new ErrorResponse();
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setSchemas(Collections.singletonList(ERROR_RESPONSE_URI));
+        errorResponse.setStatus(String.valueOf(statusCode));
+        errorResponse.setScimType(scimType);
+        errorResponse.setDetail(detail);
 
-		List<String> schemas = new ArrayList<String>();
-		schemas.add(Constants.ERROR_RESPONSE_URI);
-		errorResponse.setSchemas(schemas);
+        return Response.status(statusCode).entity(errorResponse).build();
+    }
 
-		errorResponse.setStatus(String.valueOf(statusCode));
-		errorResponse.setScimType(scimType);
-		errorResponse.setDetail(detail);
+    public String getEndpointUrl() {
+        return endpointUrl;
+    }
 
-		return Response.status(statusCode).entity(errorResponse).build();
-	}
 }

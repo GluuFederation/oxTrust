@@ -1,197 +1,86 @@
-/*
- * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
- *
- * Copyright (c) 2014, Gluu
- */
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.Meta;
-import org.gluu.oxtrust.model.scim2.Resource;
+import com.wordnik.swagger.annotations.Api;
+import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
-import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
+import org.gluu.oxtrust.model.scim2.provider.SchemaExtensionHolder;
+import org.gluu.oxtrust.model.scim2.user.Meta;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.xdi.config.oxtrust.AppConfiguration;
 
-import com.wordnik.swagger.annotations.Api;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.gluu.oxtrust.model.scim2.Constants.*;
+
 /**
  * @author Rahat Ali Date: 05.08.2015
+ * Updated by jgomer on 2017-09-25.
  */
 @Named("resourceTypesWs")
 @Path("/scim/v2/ResourceTypes")
 @Api(value = "/v2/ResourceTypes", description = "SCIM 2.0 ResourceType Endpoint (https://tools.ietf.org/html/rfc7643#section-6)")
 public class ResourceTypeWS extends BaseScimWebService {
 
-	@Inject
-	private AppConfiguration appConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
 
-	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
-	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response listResources(@HeaderParam("Authorization") String authorization) throws Exception {
+    @Inject
+    private UserWebService userService;
 
-		ListResponse listResponse = new ListResponse();
+    private String location;
 
-		List<String> schemas = new ArrayList<String>();
-		schemas.add(Constants.LIST_RESPONSE_SCHEMA_ID);
-		listResponse.setSchemas(schemas);
+    private ResourceType getUserResourceType(){
 
-		// START: User
-		ResourceType userResourceType = new ResourceType();
-		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
-		userResourceType.setEndpoint("/v2/Users");
-		userResourceType.setName(Constants.USER_CORE_SCHEMA_NAME);
-		userResourceType.setId(Constants.USER_CORE_SCHEMA_NAME);
-		userResourceType.setSchema(Constants.USER_CORE_SCHEMA_ID);
+        ResourceType usrRT=new ResourceType();
+        usrRT.setSchemas(Collections.singletonList(RESOURCE_TYPE_SCHEMA_ID));
+        usrRT.setId(ResourceType.getType(UserResource.class));
+        usrRT.setName(ResourceType.getType(UserResource.class));
+        usrRT.setDescription(USER_CORE_SCHEMA_DESCRIPTION);
+        usrRT.setEndpoint(userService.getEndpointUrl());
+        usrRT.setSchema(UserResource.class.getAnnotation(Schema.class).id());
 
-		Meta userMeta = new Meta();
-		userMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
-		userMeta.setResourceType("ResourceType");
-		userResourceType.setMeta(userMeta);
+        SchemaExtensionHolder userExtensionSchema = new SchemaExtensionHolder();
+        userExtensionSchema.setSchema(USER_EXT_SCHEMA_ID);
+        userExtensionSchema.setRequired(false);
 
-		List<SchemaExtensionHolder> schemaExtensions = new ArrayList<SchemaExtensionHolder>();
-		SchemaExtensionHolder userExtensionSchema = new SchemaExtensionHolder();
-		userExtensionSchema.setSchema(Constants.USER_EXT_SCHEMA_ID);
-		userExtensionSchema.setRequired(false);
-		schemaExtensions.add(userExtensionSchema);
-		userResourceType.setSchemaExtensions(schemaExtensions);
+        usrRT.setSchemaExtensions(Collections.singletonList(userExtensionSchema));
 
-		// START: Group
-		ResourceType groupResourceType = new ResourceType();
-		groupResourceType.setDescription(Constants.GROUP_CORE_SCHEMA_DESCRIPTION);
-		groupResourceType.setEndpoint("/v2/Groups");
-		groupResourceType.setName(Constants.GROUP_CORE_SCHEMA_NAME);
-		groupResourceType.setId(Constants.GROUP_CORE_SCHEMA_NAME);
-		groupResourceType.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
+        Meta userMeta = new Meta();
+        userMeta.setLocation(location + "/User");
+        userMeta.setResourceType("ResourceType");
+        usrRT.setMeta(userMeta);
 
-		Meta groupMeta = new Meta();
-		groupMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
-		groupMeta.setResourceType("ResourceType");
-		groupResourceType.setMeta(groupMeta);
+        return usrRT;
+    }
 
-		// START: FidoDevice
-		ResourceType fidoDeviceResourceType = new ResourceType();
-		fidoDeviceResourceType.setDescription(Constants.FIDO_DEVICES_CORE_SCHEMA_DESCRIPTION);
-		fidoDeviceResourceType.setEndpoint("/v2/FidoDevices");
-		fidoDeviceResourceType.setName(Constants.FIDO_DEVICES_CORE_SCHEMA_NAME);
-		fidoDeviceResourceType.setId(Constants.FIDO_DEVICES_CORE_SCHEMA_NAME);
-		fidoDeviceResourceType.setSchema(Constants.FIDO_DEVICES_CORE_SCHEMA_ID);
+    @GET
+    @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    public Response serve() throws Exception {
+        ResourceType usrRT = getUserResourceType();
+        return Response.ok(Arrays.asList(usrRT)).location(new URI(location)).build();
+    }
 
-		Meta fidoDeviceMeta = new Meta();
-		fidoDeviceMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
-		fidoDeviceMeta.setResourceType("ResourceType");
-		fidoDeviceResourceType.setMeta(fidoDeviceMeta);
+    @Path("User")
+    @GET
+    @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    public Response userResourceType(@HeaderParam("Authorization") String authorization) throws Exception {
+        ResourceType usrRT = getUserResourceType();
+        return Response.ok(serializeToJson(usrRT)).build();
+    }
 
-		// ResourceType[] resourceTypes = new ResourceType[]{userResourceType, groupResourceType};
-		List<Resource> resourceTypes = new ArrayList<Resource>();
-		resourceTypes.add(userResourceType);
-		resourceTypes.add(groupResourceType);
-		resourceTypes.add(fidoDeviceResourceType);
+    @PostConstruct
+    public void setup(){
+        location=appConfiguration.getBaseEndpoint() + ResourceTypeWS.class.getAnnotation(Path.class).value();
+    }
 
-		listResponse.setResources(resourceTypes);
-
-		listResponse.setTotalResults(resourceTypes.size());
-		listResponse.setItemsPerPage(10);
-		listResponse.setStartIndex(1);
-
-		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes");
-
-		// return Response.ok(resourceTypes).location(location).build();
-		return Response.ok(listResponse).location(location).build();
-	}
-
-	@Path("User")
-	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
-	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response getResourceTypeUser(@HeaderParam("Authorization") String authorization) throws Exception {
-
-		ResourceType userResourceType = new ResourceType();
-		userResourceType.setDescription(Constants.USER_CORE_SCHEMA_DESCRIPTION);
-		userResourceType.setEndpoint("/v2/Users");
-		userResourceType.setName(Constants.USER_CORE_SCHEMA_NAME);
-		userResourceType.setId(Constants.USER_CORE_SCHEMA_NAME);
-		userResourceType.setSchema(Constants.USER_CORE_SCHEMA_ID);
-
-		Meta userMeta = new Meta();
-		userMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
-		userMeta.setResourceType("ResourceType");
-		userResourceType.setMeta(userMeta);
-
-		List<SchemaExtensionHolder> schemaExtensions = new ArrayList<SchemaExtensionHolder>();
-		SchemaExtensionHolder userExtensionSchema = new SchemaExtensionHolder();
-		userExtensionSchema.setSchema(Constants.USER_EXT_SCHEMA_ID);
-		userExtensionSchema.setRequired(false);
-		schemaExtensions.add(userExtensionSchema);
-		userResourceType.setSchemaExtensions(schemaExtensions);
-
-		// ResourceType[] resourceTypes = new ResourceType[]{userResourceType};
-
-		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/User");
-
-		// return Response.ok(resourceTypes).location(location).build();
-		return Response.ok(userResourceType).location(location).build();
-	}
-
-	@Path("Group")
-	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
-	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response getResourceTypeGroup(@HeaderParam("Authorization") String authorization) throws Exception {
-
-		ResourceType groupResourceType = new ResourceType();
-		groupResourceType.setDescription(Constants.GROUP_CORE_SCHEMA_DESCRIPTION);
-		groupResourceType.setEndpoint("/v2/Groups");
-		groupResourceType.setName(Constants.GROUP_CORE_SCHEMA_NAME);
-		groupResourceType.setId(Constants.GROUP_CORE_SCHEMA_NAME);
-		groupResourceType.setSchema(Constants.GROUP_CORE_SCHEMA_ID);
-
-		Meta groupMeta = new Meta();
-		groupMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
-		groupMeta.setResourceType("ResourceType");
-		groupResourceType.setMeta(groupMeta);
-
-		// ResourceType[] resourceTypes = new ResourceType[]{groupResourceType};
-
-		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/Group");
-
-		// return Response.ok(resourceTypes).location(location).build();
-		return Response.ok(groupResourceType).location(location).build();
-	}
-
-	@Path("FidoDevice")
-	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
-	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response getResourceTypeFidoDevice(@HeaderParam("Authorization") String authorization) throws Exception {
-
-		ResourceType fidoDeviceResourceType = new ResourceType();
-		fidoDeviceResourceType.setDescription(Constants.FIDO_DEVICES_CORE_SCHEMA_DESCRIPTION);
-		fidoDeviceResourceType.setEndpoint("/v2/FidoDevices");
-		fidoDeviceResourceType.setName(Constants.FIDO_DEVICES_CORE_SCHEMA_NAME);
-		fidoDeviceResourceType.setId(Constants.FIDO_DEVICES_CORE_SCHEMA_NAME);
-		fidoDeviceResourceType.setSchema(Constants.FIDO_DEVICES_CORE_SCHEMA_ID);
-
-		Meta fidoDeviceMeta = new Meta();
-		fidoDeviceMeta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
-		fidoDeviceMeta.setResourceType("ResourceType");
-		fidoDeviceResourceType.setMeta(fidoDeviceMeta);
-
-		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ResourceTypes/FidoDevice");
-
-		return Response.ok(fidoDeviceResourceType).location(location).build();
-	}
 }
