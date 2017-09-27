@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
@@ -74,8 +73,8 @@ public class GluuCustomPerson extends User
     private Date updatedAt;	
 
 	// Value object holders
-    private Set<String> schemas = new HashSet<String>();
-    private Map<String, Extension> extensions = new HashMap<String, Extension>();
+    //private Set<String> schemas = new HashSet<String>();
+    //private Map<String, Extension> extensions = new HashMap<String, Extension>();
 
     public String getIname() {
         return getAttribute("iname");
@@ -324,7 +323,7 @@ public class GluuCustomPerson extends User
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-
+/*
 	public Set<String> getSchemas() {
         return Collections.unmodifiableSet(schemas);
     }
@@ -366,7 +365,7 @@ public class GluuCustomPerson extends User
             }
         }
     }
-
+*/
 	/* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */

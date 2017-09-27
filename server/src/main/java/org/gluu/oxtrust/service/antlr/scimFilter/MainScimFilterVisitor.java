@@ -6,7 +6,7 @@
 package org.gluu.oxtrust.service.antlr.scimFilter;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.gluu.oxtrust.model.scim2.Name;
+import org.gluu.oxtrust.model.scim2.user.Name;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterBaseVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;

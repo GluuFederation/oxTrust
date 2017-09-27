@@ -23,11 +23,12 @@ import org.xdi.service.custom.script.ExternalScriptService;
  */
 @ApplicationScoped
 @Named
+//TODO: remainder - changes for issues: VI
 public class ExternalScimService extends ExternalScriptService {
 
     public ExternalScimService() {
         super(CustomScriptType.SCIM);
-        System.out.println(">>>>> Initializing ExternalScimService()...");
+        //System.out.println(">>>>> Initializing ExternalScimService()...");
     }
 
     public boolean executeScimCreateUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {

@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.model.scim2.Meta;
-import org.gluu.oxtrust.model.scim2.Resource;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.user.Meta;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
@@ -29,7 +29,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
 
     private Logger logger = LoggerFactory.getLogger(GroupFilterVisitor.class);
 
-    private static Class[] annotatedClasses = { Resource.class, Meta.class, Group.class };
+    private static Class[] annotatedClasses = { BaseScimResource.class, Meta.class, GroupResource.class };
 
     private static Map<String, String> declaredAnnotations = new HashMap<String, String>();
 

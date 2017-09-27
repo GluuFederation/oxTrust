@@ -5,10 +5,11 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.visitor;
 
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor;
-import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor;
 
 /**
  * @author Val Pecaoco
@@ -19,14 +20,17 @@ public class VisitorFactory {
 
         MainScimFilterVisitor visitor = null;
 
-        if (clazz.getName().equals(org.gluu.oxtrust.model.scim2.User.class.getName())) {
+        if (clazz.getName().equals(UserResource.class.getName())) {
             visitor = new UserFilterVisitor();
-        } else if (clazz.getName().equals(org.gluu.oxtrust.model.scim2.Group.class.getName())) {
+        } else if (clazz.getName().equals(GroupResource.class.getName())) {
             visitor = new GroupFilterVisitor();
-        } else if (clazz.getName().equals(org.gluu.oxtrust.model.scim2.fido.FidoDevice.class.getName())) {
+        }
+        //TODO: add ifo part
+        /*
+        else if (clazz.getName().equals(org.gluu.oxtrust.model.scim2.fido.FidoDevice.class.getName())) {
             visitor = new FidoDeviceFilterVisitor();
         }
-
+*/
         return visitor;
     }
 }
