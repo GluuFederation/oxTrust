@@ -51,6 +51,7 @@ import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.SimpleCustomProperty;
+import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
@@ -129,7 +130,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private List<SimpleProperty> keyAttributes;
 	private List<SimpleProperty> keyObjectClasses;
 	private List<SimpleProperty> sourceAttributes;
-	private List<SimpleCustomProperty> attributeMapping;
+	private List<SimpleExtendedCustomProperty> attributeMapping;
 
 	private boolean showInterceptorValidationDialog;
 	private String interceptorValidationMessage;
@@ -332,11 +333,11 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return result;
 	}
 
-	private List<SimpleCustomProperty> toSimpleCustomProperties(List<CacheRefreshAttributeMapping> attributeMappings) {
-		List<SimpleCustomProperty> result = new ArrayList<SimpleCustomProperty>();
+	private List<SimpleExtendedCustomProperty> toSimpleCustomProperties(List<CacheRefreshAttributeMapping> attributeMappings) {
+		List<SimpleExtendedCustomProperty> result = new ArrayList<SimpleExtendedCustomProperty>();
 
 		for (CacheRefreshAttributeMapping attributeMapping : attributeMappings) {
-			result.add(new SimpleCustomProperty(attributeMapping.getSource(), attributeMapping.getDestination()));
+			result.add(new SimpleExtendedCustomProperty(attributeMapping.getSource(), attributeMapping.getDestination()));
 		}
 
 		return result;
@@ -352,7 +353,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return result;
 	}
 
-	private List<CacheRefreshAttributeMapping> toAttributeMappingList(List<SimpleCustomProperty> simpleCustomProperties) {
+	private List<CacheRefreshAttributeMapping> toAttributeMappingList(List<SimpleExtendedCustomProperty> simpleCustomProperties) {
 		List<CacheRefreshAttributeMapping> result = new ArrayList<CacheRefreshAttributeMapping>();
 
 		for (SimpleCustomProperty simpleCustomProperty : simpleCustomProperties) {
@@ -558,7 +559,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
 		
 		if (simpleCustomProperties != null) {
-			simpleCustomProperties.add(new SimpleCustomProperty("", ""));
+			simpleCustomProperties.add(new SimpleExtendedCustomProperty("", ""));
 		}
 	}
 
@@ -654,7 +655,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return sourceAttributes;
 	}
 
-	public List<SimpleCustomProperty> getAttributeMapping() {
+	public List<SimpleExtendedCustomProperty> getAttributeMapping() {
 		return attributeMapping;
 	}
 	
