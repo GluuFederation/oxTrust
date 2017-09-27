@@ -5,13 +5,17 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
-import java.io.Serializable;
+import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
  * A complex type that specifies SORT configuration options.
  */
-public class SortConfig implements Serializable {
+public class SortConfig {
 
+    @Attribute(description = "A Boolean value specifying whether or not sorting is supported.",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private final boolean supported;
 
 	/**

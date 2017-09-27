@@ -5,15 +5,27 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
-import java.io.Serializable;
+import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
  * A complex type that specifies BULK configuration options.
  */
-public class BulkConfig implements Serializable {
+public class BulkConfig {
 
+    @Attribute(description = "A Boolean value specifying whether or not the operation is supported.",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private final boolean supported;
+
+    @Attribute(description = "An integer value specifying the maximum number of operations.",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private final long maxOperations;
+
+    @Attribute(description = " An integer value specifying the maximum payload size in bytes",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private final long maxPayloadSize;
 
 	/**
@@ -26,8 +38,7 @@ public class BulkConfig implements Serializable {
 	 * @param maxPayloadSize
 	 *            Specifies the maximum payload size in bytes.
 	 */
-	public BulkConfig(final boolean supported, final long maxOperations,
-			final long maxPayloadSize) {
+	public BulkConfig(final boolean supported, final long maxOperations, final long maxPayloadSize) {
 		this.supported = supported;
 		this.maxOperations = maxOperations;
 		this.maxPayloadSize = maxPayloadSize;
@@ -60,46 +71,4 @@ public class BulkConfig implements Serializable {
 		return maxPayloadSize;
 	}
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		final BulkConfig that = (BulkConfig) o;
-
-		if (maxOperations != that.maxOperations) {
-			return false;
-		}
-		if (maxPayloadSize != that.maxPayloadSize) {
-			return false;
-		}
-		if (supported != that.supported) {
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = (supported ? 1 : 0);
-		result = 31 * result + (int) (maxOperations ^ (maxOperations >>> 32));
-		result = 31 * result + (int) (maxPayloadSize ^ (maxPayloadSize >>> 32));
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append("BulkConfig");
-		sb.append("{supported=").append(supported);
-		sb.append(", maxOperations=").append(maxOperations);
-		sb.append(", maxPayloadSize=").append(maxPayloadSize);
-		sb.append('}');
-		return sb.toString();
-	}
 }

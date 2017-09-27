@@ -5,56 +5,88 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.Resource;
-import org.gluu.oxtrust.model.scim2.schema.SchemaExtensionHolder;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+import org.gluu.oxtrust.model.scim2.annotations.Schema;
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
 
-public class ResourceType extends Resource {
+import static org.gluu.oxtrust.model.scim2.Constants.*;
 
-	private String id;
+/**
+ * Created by jgomer on 2017-09-24.
+ *
+ * This class represents a ResourceType schema (specifies the metadata about a resource type). It's key for the
+ * implementation of the /ResourceTypes endpoint
+ * For more about this resource type see RFC 7643, section 6
+ */
+@Schema(id="urn:ietf:params:scim:schemas:core:2.0:ResourceType",
+        name="Resource Type",
+        description = "Specifies the metadata about a resource")
+public class ResourceType extends BaseScimResource {
+
+    @Attribute(description = "The resource type name.",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private String name;
+
+    @Attribute(description = "The resource type's human-readable description",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
+    private String description;
+
+    @Attribute(description = "The resource type's HTTP-addressable endpoint relative to the Base " +
+            "URL of the service provider, e.g., \"Users\".",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private String endpoint;
-	private String description;
+
+    @Attribute(description = "The resource type's primary/base schema URI, e.g., \"urn:ietf:params:scim:schemas:core:2.0:User\"." +
+            "This MUST be equal to the \"id\" attribute of the associated \"Schema\" resource",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private String schema;
-	private List<SchemaExtensionHolder> schemaExtensions = new ArrayList<SchemaExtensionHolder>();
+
+    @Attribute(description = "A list of URIs of the resource type's schema extensions.",
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            multiValueClass = SchemaExtensionHolder.class)
+	private List<SchemaExtensionHolder> schemaExtensions;
 	
 	public ResourceType(){
-    	Set<String> userSchemas = new HashSet<String>();
-    	userSchemas.add(Constants.RESOURCE_TYPE_SCHEMA_ID);
-		setSchemas(userSchemas);
+		setSchemas(Collections.singletonList(RESOURCE_TYPE_SCHEMA_ID));
 	}
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getEndpoint() {
 		return endpoint;
 	}
+
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public String getSchema() {
 		return schema;
 	}
+
 	public void setSchema(String schema) {
 		this.schema = schema;
 	}
@@ -66,4 +98,18 @@ public class ResourceType extends Resource {
 	public void setSchemaExtensions(List<SchemaExtensionHolder> schemaExtensions) {
 		this.schemaExtensions = schemaExtensions;
 	}
+
+	public static String getType(Class clazz){
+
+        //TODO: cross with /ResourceTypes, add fido device case
+        String type=null;
+        if (clazz.equals(UserResource.class))
+            type=USER_CORE_SCHEMA_NAME;
+        else
+        if (clazz.equals(GroupResource.class))
+            type=GROUP_CORE_SCHEMA_NAME;
+
+        return type;
+    }
+
 }

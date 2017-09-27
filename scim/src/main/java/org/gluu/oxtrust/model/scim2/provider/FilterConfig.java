@@ -5,14 +5,22 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
-import java.io.Serializable;
+import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
  * A complex type that specifies FILTER configuration options.
  */
-public class FilterConfig implements Serializable {
+public class FilterConfig {
 
+    @Attribute(description = "A Boolean value specifying whether or not the operation is supported",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private final boolean supported;
+
+    @Attribute(description = "An integer value specifying the maximum number of resources returned in a response.",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private final long maxResults;
 
 	/**

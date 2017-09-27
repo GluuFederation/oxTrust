@@ -5,11 +5,15 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
-import java.io.Serializable;
+import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
-public class PatchConfig implements Serializable {
+public class PatchConfig{
 
-  private final boolean supported;
+    @Attribute(description = "A Boolean value specifying whether or not the operation is supported.",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
+    private final boolean supported;
 
   /**
    * Create a <code>PatchConfig</code> instance.

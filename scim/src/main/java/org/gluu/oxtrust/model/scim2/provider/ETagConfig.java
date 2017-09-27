@@ -5,13 +5,17 @@
  */
 package org.gluu.oxtrust.model.scim2.provider;
 
-import java.io.Serializable;
+import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
  * A complex type that specifies ETag configuration options.
  */
-public class ETagConfig implements Serializable {
+public class ETagConfig {
 
+    @Attribute(description = "A Boolean value specifying whether or not the operation is supported.",
+            isRequired = true,
+            mutability = AttributeDefinition.Mutability.READ_ONLY)
 	private final boolean supported;
 
 	/**
