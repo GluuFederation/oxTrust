@@ -56,7 +56,6 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * <p>Please see AbstractOAuthFilter for additional properties</p>
  *
  * @author Yuriy Movchan
- * @version 0.1, 03/20/2013
  */
 public class AuthenticationFilter extends AbstractOAuthFilter {
 
