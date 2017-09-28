@@ -64,13 +64,15 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         
         CustomHttpServletRequest customRequest = new CustomHttpServletRequest(request);
         customRequest.addCustomParameter("conversation", conversation);
-
+        
         // TODO: check chain
         if (!preFilter(servletRequest, servletResponse, filterChain)) {
+            // unauthorized way
             filterChain.doFilter(customRequest, response);
             return;
         }
-
+        
+        // authorized way
         final String code = getParameter(request, Configuration.OAUTH_CODE);
         final String idToken = getParameter(request, Configuration.OAUTH_ID_TOKEN);
 
@@ -78,13 +80,15 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         try {
                 OAuthData oAuthData = getOAuthData(request, code, idToken);
                 session.setAttribute(Configuration.SESSION_OAUTH_DATA, oAuthData);
+                
+                customRequest.setRemoteUser(oAuthData.getUserUid());
         } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             log.warn("Failed to validate code and id_token", ex);
 
             throw new ServletException(ex);
         }
-
+                
         filterChain.doFilter(customRequest, response);
     }
 
