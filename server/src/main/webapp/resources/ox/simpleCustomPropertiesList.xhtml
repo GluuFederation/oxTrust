@@ -70,7 +70,7 @@
                                 <h:inputSecret id="sInput" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" redisplay="true" rendered="#{(cc.attrs.hideValue eq true) and (_property.hideValue eq true)}" />
                                 <h:message for="sInput" errorClass="invalid" rendered="#{cc.attrs.hideValue eq true}"/>
                                 
-                                <h:inputHidden value="#{_property.hideValue}" id="hv" />
+                   	            <h:inputHidden value="#{_property.hideValue eq true}" rendered="#{cc.attrs.hideValue eq true}" id="hv" />
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
     							
