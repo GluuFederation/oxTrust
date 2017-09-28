@@ -155,7 +155,7 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		String redirectUri = constructRedirectUrl(request);
 
 		List<String> scopes = Arrays.asList(clientScopes.split(StringUtils.SPACE));
-		List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN, ResponseType.CODE);
+		List<ResponseType> responseTypes = Arrays.asList(ResponseType.ID_TOKEN, ResponseType.CODE);
 
 		String nonce = UUID.randomUUID().toString();
 		String rfp = UUID.randomUUID().toString();
