@@ -65,7 +65,6 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         CustomHttpServletRequest customRequest = new CustomHttpServletRequest(request);
         customRequest.addCustomParameter("conversation", conversation);
         
-        // TODO: check chain
         if (!preFilter(servletRequest, servletResponse, filterChain)) {
             // unauthorized way
             filterChain.doFilter(customRequest, response);
