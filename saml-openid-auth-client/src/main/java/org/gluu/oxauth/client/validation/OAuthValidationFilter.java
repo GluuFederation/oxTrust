@@ -27,10 +27,11 @@ import java.util.List;
 import org.gluu.oxauth.client.authentication.AuthenticationFilter;
 
 /**
- * Validates grants recieved from OAuth server
+ * Validates grants recieved from OAuth server.
+ * 
+ * Add OAuth data to servlet session. Add remoteUser/Principal to servlet request for IDP.
  *
  * @author Yuriy Movchan
- * @version 0.1, 03/20/2013
  */
 public class OAuthValidationFilter extends AbstractOAuthFilter {
 
