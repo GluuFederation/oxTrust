@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
 import org.gluu.oxauth.client.authentication.AuthenticationFilter;
 
