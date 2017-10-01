@@ -216,7 +216,7 @@ public class ApplianceService implements Serializable {
 				CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.APPLICATION_SESSION, CustomScriptType.SCIM };
 	}
 
-	public String getDecryptedSmtpPassword(GluuAppliance appliance) {
+	public String getDecryptedSmtpPassword(GluuAppliance appliance, boolean allowUnencrypted) {
 		String password = appliance.getSmtpPassword();
 		if (StringHelper.isEmpty(password)) {
 			return null;
@@ -225,10 +225,18 @@ public class ApplianceService implements Serializable {
 		try {
 			return encryptionService.decrypt(password);
 		} catch (EncryptionException ex) {
-			log.error("Failed to decrypt SMTP password", ex);
+			if (allowUnencrypted) {
+				return password;
+			} else {
+				log.error("Failed to decrypt SMTP password", ex);
+			}
 		}
 		
 		return null;
+	}
+
+	public String getDecryptedSmtpPassword(GluuAppliance appliance) {
+		return getDecryptedSmtpPassword(appliance, false);
 	}
 
 	public void setEncryptedSmtpPassword(GluuAppliance appliance, String password) {
