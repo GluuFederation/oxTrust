@@ -93,12 +93,6 @@
             }
         }
 
-        $( document ).ready(function() {
-	        $('.checkbox1').on('ifChanged', function(event) {
-			  configureRelyingParty();
-			});
-        }); 
-    
     function changeEvent(element) {
     var val = $(element).find('option:selected').text();
     if(val === 'None') {
@@ -344,23 +338,21 @@
 						</h:panelGroup>
 						<ox:decorate
 							id="configureSpecific" label="#{msg['trustmanager.configureRelyingParty']}">
-							<a4j:region>
-								<h:panelGrid columns="2" width="100%">
-									<h:panelGrid columns="2">
-										<h:selectBooleanCheckbox id="checkbox1" styleClass="checkbox1" onchange="configureRelyingParty()"
-											value="#{_trustRelationship.specificRelyingPartyConfig}">
-										</h:selectBooleanCheckbox>
-										<a4j:jsFunction name="configureRelyingParty" render="RelyingPartyConfig" execute="@region" limitRender="true" />
-									</h:panelGrid>
-	
-									<h:panelGroup id="RelyingPartyConfig">
-										<a4j:commandLink id="TRConfig" value="#{msg['trustmanager.configureRelyingParty']}"
-											rendered="#{_trustRelationship.specificRelyingPartyConfig}"
-											onclick="#{rich:component('TRConfigPanel')}.show();"
-											execute="@this" />
-									</h:panelGroup>
+							<h:panelGrid columns="2" width="100%">
+								<h:panelGrid columns="2">
+									<h:selectBooleanCheckbox styleClass="checkbox1"
+										value="#{_trustRelationship.specificRelyingPartyConfig}">
+                                       	<a4j:ajax event="click" render="RelyingPartyConfig" execute="@this" limitRender="true"/>                                                                  
+									</h:selectBooleanCheckbox>
 								</h:panelGrid>
-							</a4j:region>
+
+								<h:panelGroup id="RelyingPartyConfig">
+									<a4j:commandLink id="TRConfig" value="#{msg['trustmanager.configureRelyingParty']}"
+										rendered="#{_trustRelationship.specificRelyingPartyConfig}"
+										onclick="#{rich:component('TRConfigPanel')}.show();"
+										execute="@this" />
+								</h:panelGroup>
+							</h:panelGrid>
 						</ox:decorate>
                                                 <h:panelGroup rendered="#{oxTrustConfiguration.applicationConfiguration.oxIncommonFlag  eq 'true'}" >
                                                 <!-- TODO: ox:decorate rendered -->
