@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 
 import javax.management.InvalidAttributeValueException;
 import java.lang.reflect.Field;
@@ -68,6 +70,30 @@ class traversalClass {
         }
     }
 
+    public void attachExtensionInfo(Map<String, Object> source, Map<String, Object> destination, List<Extension> extensions){
+
+        for (Extension extension : extensions){
+            String urn=extension.getUrn();
+            Object extendedAttrsObj=source.get(urn);
+
+            if (extendedAttrsObj!=null){
+
+                Map<String, Object> extendedAttrs=(Map<String, Object>) extendedAttrsObj;
+                Map<String, ExtensionField> fields=extension.getFields();
+
+                Map<String, Object> destMap = destination.get(urn)==null ? new HashMap<String, Object>() : (Map<String, Object>) destination.get(urn);
+
+                for (String attr : fields.keySet()){
+                    Object value=extendedAttrs.get(attr);
+
+                    if (value!=null)
+                        destMap.put(attr, value);
+                }
+                destination.put(urn, destMap);
+            }
+        }
+    }
+
 }
 
 /**
@@ -91,22 +117,24 @@ public class ScimResourceUtil {
      * @param origin Object with the information to be copied/replaced into the destination object
      * @param destination Object that receives the new information (only non-null attributes in the origin object) end up
      *                    being changed in this object
+     * @param extensions
      * @return A new object that contains the result: the final state of destination object
      * @throws Exception When recursive traversal fails or if the rule of immutable attribute was not fulfilled
      */
-    public static BaseScimResource transferToResource(BaseScimResource origin, final BaseScimResource destination) throws Exception{
+    public static BaseScimResource transferToResource(BaseScimResource origin, final BaseScimResource destination, List<Extension> extensions) throws Exception{
 
         Map<String, Object> fromMap = mapper.convertValue(origin, Map.class);
         Map<String, Object> toMap = mapper.convertValue(destination, Map.class);
 
         traversalClass tclass=new traversalClass(origin.getClass());
         tclass.traverse("", fromMap, toMap);
+        tclass.attachExtensionInfo(fromMap, toMap, extensions);
 
         if (tclass.errorAt==null)
             return mapper.convertValue(toMap, origin.getClass());
         else
             throw new InvalidAttributeValueException("Invalid value passed for immutable attribute " + tclass.errorAt);
-//TODO: transfer info in extension attributes
+
     }
 
 }
