@@ -3,6 +3,8 @@ package org.gluu.oxtrust.model.scim2.util;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
+import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
@@ -138,6 +140,15 @@ public class IntrospectUtil {
 
     public static boolean isCollection(Class clazz){
         return Collection.class.isAssignableFrom(clazz);    // clazz.equals(List.class);
+    }
+
+    public static List<String> getPathsInExtension(Extension extension){
+
+        List<String> list=new ArrayList<String>();
+        for (String attr : extension.getFields().keySet())
+            list.add(extension.getUrn() + "." + attr);
+        return list;
+
     }
 
     private static List<String> requiredAttrsNames;
@@ -287,6 +298,21 @@ public class IntrospectUtil {
 
             resetAttrNames();
             aClass = ServiceProviderConfig.class;
+            traverseClassForNames(aClass, "", basicFields);
+            requiredCoreAttrs.put(aClass, computeGettersMap(requiredAttrsNames, aClass));
+            defaultCoreAttrs.put(aClass, computeGettersMap(defaultAttrsNames, aClass));
+            alwaysCoreAttrs.put(aClass, computeGettersMap(alwaysAttrsNames, aClass));
+            neverCoreAttrs.put(aClass, computeGettersMap(neverAttrsNames, aClass));
+            validableCoreAttrs.put(aClass, computeGettersMap(validableAttrsNames, aClass));
+            canonicalCoreAttrs.put(aClass, computeGettersMap(canonicalizedAttrsNames, aClass));
+
+            allAttrs.put(aClass, new TreeSet<String>());
+            allAttrs.get(aClass).addAll(alwaysAttrsNames);
+            allAttrs.get(aClass).addAll(defaultAttrsNames);
+            allAttrs.get(aClass).addAll(neverAttrsNames);
+
+            resetAttrNames();
+            aClass = ResourceType.class;
             traverseClassForNames(aClass, "", basicFields);
             requiredCoreAttrs.put(aClass, computeGettersMap(requiredAttrsNames, aClass));
             defaultCoreAttrs.put(aClass, computeGettersMap(defaultAttrsNames, aClass));
