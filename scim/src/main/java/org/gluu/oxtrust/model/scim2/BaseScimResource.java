@@ -1,6 +1,9 @@
 package org.gluu.oxtrust.model.scim2;
 
+import org.codehaus.jackson.annotate.JsonAnyGetter;
+import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.user.Meta;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
@@ -42,6 +45,23 @@ public class BaseScimResource {
             mutability = AttributeDefinition.Mutability.READ_ONLY)
     private Meta meta;
 
+    public BaseScimResource(){
+        schemas=new ArrayList<String>();
+        schemas.add(getClass().getAnnotation(Schema.class).id());
+    }
+
+    private Map<String, Object> extendedAttrs=new HashMap<String, Object>();   //Never must be null
+
+    @JsonAnySetter
+    public void addExtendedAttributes(String extensionUrn, Map<String, Object> extension){
+        extendedAttrs.put(extensionUrn, extension);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getExtendedAttributes(){
+        return extendedAttrs;
+    }
+
     public String getId() {
         return id;
     }
@@ -72,6 +92,12 @@ public class BaseScimResource {
 
     public void setSchemas(List<String> schemas) {
         this.schemas = schemas;
+    }
+
+
+    public static String getType(Class<? extends BaseScimResource> cls){
+        Schema annot=cls.getAnnotation(Schema.class);
+        return annot==null ? null : annot.name();
     }
 
     /*
