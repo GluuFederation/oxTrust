@@ -1,10 +1,12 @@
 package org.gluu.oxtrust.service.scim2.interceptor;
 
+import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
-import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.user.Meta;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.UserService;
 import org.gluu.oxtrust.model.scim2.util.ResourceValidator;
@@ -18,7 +20,7 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 import javax.ws.rs.core.Response;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Aims at decorating SCIM service methods. Currently applies validations via ResourceValidator class
@@ -35,6 +37,12 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
     @Inject @Delegate @Any
     UserService userService;
 
+    @Inject
+    private IPersonService personService;
+
+    @Inject
+    private ExtensionService extService;
+
     private void assignMetaInformation(BaseScimResource resource){
 
         //Generate some meta information (this replaces the info client passed in the request)
@@ -42,7 +50,7 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
         String val= ISODateTimeFormat.dateTime().withZoneUTC().print(now);
 
         Meta meta=new Meta();
-        meta.setResourceType(ResourceType.getType(resource.getClass()));
+        meta.setResourceType(BaseScimResource.getType(resource.getClass()));
         meta.setCreated(val);
         meta.setLastModified(val);
         //For version attritute: Service provider support for this attribute is optional and subject to the service provider's support for versioning
@@ -55,17 +63,31 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
 
         String error=null;
         try {
-            ResourceValidator rv=new ResourceValidator(resource);
+            ResourceValidator rv=new ResourceValidator(resource, extService.getResourceExtensions(resource.getClass()));
             rv.validateRequiredAttributes();
-            rv.validateSchemaAttribute();
+            rv.validateSchemasAttribute();
             rv.validateValidableAttributes();
             //By section 7 of RFC 7643, we are not forced to constrain attribute values when they have a list of canonical values associated
             //rv.validateCanonicalizedAttributes();
+            rv.validateExtendedAttributes();
         }
         catch (SCIMException e){
             error=e.getMessage();
         }
         return error;
+
+    }
+
+    private Response validateExistenceOfUser(String id){
+
+        Response response=null;
+        GluuCustomPerson person = personService.getPersonByInum(id);
+
+        if (person==null) {
+            log.info("Person with inum {} not found", id);
+            response = getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+        }
+        return response;
 
     }
 
@@ -87,14 +109,14 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
 
     }
 
-    public Response updateUser(UserResource user, String attrsList, String excludedAttrsList, String id, String authorization) throws Exception {
+    public Response updateUser(UserResource user, String id, String attrsList, String excludedAttrsList, String authorization) throws Exception {
 
         Response response;
         String error=executeDefaultValidation(user);
 
         if (error==null) {
             //Proceed with actual implementation of updateUser method
-            response = userService.updateUser(user, attrsList, excludedAttrsList, id, authorization);
+            response = userService.updateUser(user, id, attrsList, excludedAttrsList, authorization);
         }
         else {
             log.error("Validation check at updateUser returned: {}", error);
@@ -103,12 +125,29 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
         return response;
 
     }
-/*
-    public Response updateUser(String authorization, String id, User user, final String attributesArray) throws Exception {
-        Response validationResponse=applyValidation(user);
-        log.info("Validation at updateUser returned {}", (validationResponse==null));
-        return (validationResponse==null) ? userService.updateUser(authorization, id, user, attributesArray) : validationResponse;
+
+    public Response deleteUser(String id, String authorization) throws Exception{
+
+        Response response=validateExistenceOfUser(id);
+        if (response==null)
+            //Proceed with actual implementation of deleteUser method
+            response=userService.deleteUser(id, authorization);
+
+        return response;
+
     }
+
+    public Response getUserById(String id, String attrsList, String excludedAttrsList, String authorization) throws Exception{
+
+        Response response=validateExistenceOfUser(id);
+        if (response==null)
+            //Proceed with actual implementation of getUserById method
+            response=userService.getUserById(id, attrsList, excludedAttrsList, authorization);
+
+        return response;
+
+    }
+/*
 
     public Response patchUser(String authorization, String id, ScimPatchUser user, final String attributesArray) throws Exception{
 
