@@ -23,7 +23,6 @@ import org.xdi.service.custom.script.ExternalScriptService;
  */
 @ApplicationScoped
 @Named
-//TODO: remainder - changes for issues: VI
 public class ExternalScimService extends ExternalScriptService {
 
     public ExternalScimService() {
