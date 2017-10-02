@@ -1,7 +1,5 @@
 package org.gluu.oxtrust.model.scim2.user;
 
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
@@ -10,9 +8,7 @@ import org.gluu.oxtrust.model.scim2.Validations;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by jgomer on 2017-09-04.
@@ -145,18 +141,6 @@ public class UserResource extends BaseScimResource {
     //This attribute is not present in SCIM spec... but see https://github.com/GluuFederation/SCIM-Client/issues/19
     @LdapAttribute(name = "oxPPID")
     private List<String> pairwiseIdentitifers;
-
-    private Map<String, Object> extensions=new HashMap<String, Object>();
-
-    @JsonAnySetter
-    public void addExtension(String extensionUrn, Map<String, Object> extension){
-        extensions.put(extensionUrn, extension);
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getExtensions(){
-        return extensions;
-    }
 
     public String getUserName() {
         return userName;
