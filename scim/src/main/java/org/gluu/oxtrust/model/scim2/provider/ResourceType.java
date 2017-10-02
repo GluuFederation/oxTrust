@@ -54,10 +54,6 @@ public class ResourceType extends BaseScimResource {
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             multiValueClass = SchemaExtensionHolder.class)
 	private List<SchemaExtensionHolder> schemaExtensions;
-	
-	public ResourceType(){
-		setSchemas(Collections.singletonList(RESOURCE_TYPE_SCHEMA_ID));
-	}
 
 	public String getName() {
 		return name;
@@ -98,18 +94,5 @@ public class ResourceType extends BaseScimResource {
 	public void setSchemaExtensions(List<SchemaExtensionHolder> schemaExtensions) {
 		this.schemaExtensions = schemaExtensions;
 	}
-
-	public static String getType(Class clazz){
-
-        //TODO: cross with /ResourceTypes, add fido device case
-        String type=null;
-        if (clazz.equals(UserResource.class))
-            type=USER_CORE_SCHEMA_NAME;
-        else
-        if (clazz.equals(GroupResource.class))
-            type=GROUP_CORE_SCHEMA_NAME;
-
-        return type;
-    }
 
 }
