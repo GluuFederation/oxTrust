@@ -132,19 +132,5 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 
 		return false;
 	}
-	
-	
-	public boolean executeExternalGetConfirmationPageMethod(CustomScriptConfiguration customScriptConfiguration, GluuCustomPerson user, Map<String, String[]> requestParameters) {
-		try {
-			log.debug("Executing python 'confirmRegistration' method");
-			UserRegistrationType externalType = (UserRegistrationType) customScriptConfiguration.getExternalType();
-			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
-			return externalType.getConfirmationPage(user, requestParameters, configurationAttributes);
-		} catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
-		}
-
-		return false;
-	}
 
 }

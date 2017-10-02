@@ -288,20 +288,20 @@ public class RegisterPersonAction implements Serializable {
 				this.person = archivedPerson;
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
+
 		return OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED;
 	}
 
-	public void confirm(){ 
+	public void confirm() { 
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String code = request.getParameter("code");
 		requestParameters.put("code", new String[]{code});
 		try {
 			boolean result = externalUserRegistrationService.executeExternalConfirmRegistrationMethods(this.person, requestParameters);
-		} catch (Exception e) {
-			log.error("Failed to confirm registration.", e);
+		} catch (Exception ex) {
+			log.error("Failed to confirm registration.", ex);
 		}
 	}
 
