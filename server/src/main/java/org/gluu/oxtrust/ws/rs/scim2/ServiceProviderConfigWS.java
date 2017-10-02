@@ -8,7 +8,6 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.util.*;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -19,9 +18,7 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
-import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.user.Meta;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
@@ -33,17 +30,12 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 @Path("/scim/v2/ServiceProviderConfig")
 public class ServiceProviderConfigWS extends BaseScimWebService {
 
-    @Inject
-    private AppConfiguration appConfiguration;
-
     @GET
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     public Response serve() throws Exception {
 
         ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
-        Schema annot=ServiceProviderConfig.class.getAnnotation(Schema.class);
-        serviceProviderConfig.setSchemas(Collections.singletonList(annot.id()));
 
         Meta meta = new Meta();
         meta.setLocation(appConfiguration.getBaseEndpoint() + getClass().getAnnotation(Path.class).value());
@@ -54,7 +46,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
         serviceProviderConfig.setAuthenticationSchemes(Arrays.asList(
                 AuthenticationScheme.createOAuth2(onTestMode), AuthenticationScheme.createUma(!onTestMode)));
 
-        return Response.ok(serializeToJson(serviceProviderConfig)).build();
+        return Response.ok(resourceSerializer.serialize(serviceProviderConfig)).build();
 
     }
 

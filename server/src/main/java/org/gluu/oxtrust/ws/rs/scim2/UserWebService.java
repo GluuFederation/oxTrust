@@ -2,9 +2,11 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.service.external.ExternalScimService;
+import org.gluu.oxtrust.service.scim2.serialization.ScimResourceSerializer;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.slf4j.Logger;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
@@ -25,6 +27,10 @@ import java.net.URI;
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
+ * Implementation of /User endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.UserServiceDecorator
+ * is used to apply pre-validations on data. Interceptor org.gluu.oxtrust.service.scim2.interceptor.ServiceInterceptor
+ * adds security to invocations
+ *
  * @author Rahat Ali Date: 05.08.2015
  * Updated by jgomer on 2017-09-12.
  */
@@ -33,7 +39,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 public class UserWebService extends BaseScimWebService implements UserService {
 
     @Inject
-    private Logger logger;
+    private IPersonService personService;
 
     @Inject
     private Scim2UserService scim2UserService;
@@ -64,11 +70,41 @@ public class UserWebService extends BaseScimWebService implements UserService {
             if (externalScimService.isEnabled())
                 externalScimService.executeScimCreateUserMethods(person);
 
-            String json=serializeToJson(user, attrsList, excludedAttrsList);
+            String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
             response=Response.created(new URI(user.getMeta().getLocation())).entity(json).build();
         }
         catch (Exception e){
             log.error("Failure at createUser method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
+
+    }
+
+    @Path("/scim/v2/Users/{id}")
+    @GET
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @Protected
+    @ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)"
+            , response = UserResource.class)
+    public Response getUserById(
+            @PathParam("id") String id,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
+            @HeaderParam("Authorization") String authorization) throws Exception {
+
+        Response response;
+        try {
+            UserResource user=new UserResource();
+            GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
+            scim2UserService.transferAttributesToUserResource(person, user);
+
+            String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
+            response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
+        }
+        catch (Exception e){
+            log.error("Failure at getUserById method", e);
             response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
         return response;
@@ -90,9 +126,9 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @ApiOperation(value = "Update user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = UserResource.class)
     public Response updateUser(
             @ApiParam(value = "User", required = true) UserResource user,
+            @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @PathParam("id") String id,
             @HeaderParam("Authorization") String authorization) throws Exception {
 
         Response response;
@@ -104,26 +140,57 @@ public class UserWebService extends BaseScimWebService implements UserService {
                 externalScimService.executeScimUpdateUserMethods(pair.getFirst());
             }
 
-            String json=serializeToJson(pair.getSecond(), attrsList, excludedAttrsList);
-            response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
+            UserResource updatedResource=pair.getSecond();
+            String json=resourceSerializer.serialize(updatedResource, attrsList, excludedAttrsList);
+            response=Response.ok(new URI(updatedResource.getMeta().getLocation())).entity(json).build();
         }
         catch (NotFoundException e){
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             response=getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, e.getMessage());
         }
         catch (InvalidAttributeValueException e){
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.MUTABILITY, e.getMessage());
         }
         catch (DuplicateEntryException e){
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
         }
         catch (Exception e){
-            logger.error("Failure at updateUser method", e);
+            log.error("Failure at updateUser method", e);
             response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
         return response;
+    }
+
+    @Path("/scim/v2/Users/{id}")
+    @DELETE
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @Protected
+    @ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
+    public Response deleteUser(
+            @PathParam("id") String id,
+            @HeaderParam("Authorization") String authorization) throws Exception{
+
+        Response response;
+        try {
+            GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
+
+            // For custom script: delete user. Execute before actual deletion
+            if (externalScimService.isEnabled()) {
+                externalScimService.executeScimDeleteUserMethods(person);
+            }
+
+            scim2UserService.deleteUser(person);
+            response=Response.noContent().build();
+        }
+        catch (Exception e){
+            log.error("Failure at deleteUser method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
+
     }
 
     @PostConstruct
