@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.util;
+package org.gluu.oxtrust.model.scim2.util;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -9,8 +9,8 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.util.regex.Pattern;
 
 /**
- * Created by jgomer on 2017-08-23.
  * Contains methods to encompass data between expected dates of xsd:dateTime type and LDAP generalized time type
+ * Created by jgomer on 2017-08-23.
  */
 public class DateUtil {
 
