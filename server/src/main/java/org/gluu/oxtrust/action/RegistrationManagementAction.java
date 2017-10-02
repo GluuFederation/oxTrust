@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SimpleCustomProperty;
-import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
 
 /**
