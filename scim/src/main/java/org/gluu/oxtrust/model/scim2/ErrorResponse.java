@@ -6,8 +6,10 @@
 package org.gluu.oxtrust.model.scim2;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static org.gluu.oxtrust.model.scim2.Constants.ERROR_RESPONSE_URI;
 
 /**
  * "HTTP Status and Error Response Handling" (see section 3.12 of RFC7644)
@@ -24,7 +26,7 @@ public class ErrorResponse implements Serializable {
     private String detail;
 
     public ErrorResponse() {
-        schemas = new ArrayList<String>();
+        schemas = Collections.singletonList(ERROR_RESPONSE_URI);
     }
 
     public List<String> getSchemas() {
