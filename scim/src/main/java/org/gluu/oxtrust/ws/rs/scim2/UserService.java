@@ -29,20 +29,37 @@ public interface UserService {
             @HeaderParam("Authorization") String authorization) throws Exception;
 
     @Path("/scim/v2/Users/{id}")
+    @GET
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    Response getUserById(
+            @PathParam("id") String id,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
+            @HeaderParam("Authorization") String authorization) throws Exception;
+
+    @Path("/scim/v2/Users/{id}")
     @PUT
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     Response updateUser(
             UserResource user,
+            @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
+            @HeaderParam("Authorization") String authorization) throws Exception;
+
+    @Path("/scim/v2/Users/{id}")
+    @DELETE
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    Response deleteUser(
             @PathParam("id") String id,
             @HeaderParam("Authorization") String authorization) throws Exception;
 
     /*
     Response patchUser(String authorization, String id, ScimPatchUser user,final String attributesArray) throws Exception;
-    Response deleteUser(String authorization, String id) throws Exception;
     Response getUserById(String authorization, String id, final String attributesArray) throws Exception;
     Response searchUsers(String authorization, final String filterString, final int startIndex, Integer count, final String sortBy, final String sortOrder, final String attributesArray) throws Exception;
     */
