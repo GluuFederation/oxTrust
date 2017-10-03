@@ -36,6 +36,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.MailService;
 import org.xdi.util.StringHelper;
 
 /**
@@ -73,6 +74,9 @@ public class PasswordReminderAction implements Serializable {
 
     @Inject
 	private ConversationService conversationService;
+
+    @Inject
+	private MailService mailService;
 
     /**
      * @return the MESSAGE_NOT_FOUND
@@ -170,10 +174,8 @@ public class PasswordReminderAction implements Serializable {
 				}while(ldapEntryManager.contains(request));
 
 				String subj = String.format("Password reset was requested at %1$s identity server", organizationService.getOrganization().getDisplayName());
-				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
-				
-				mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", email,
+
+				mailService.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", email,
 						subj, String.format(MESSAGE_FOUND, matchedPersons.get(0).getGivenName(),
 								organizationService.getOrganization().getDisplayName(), 
 								appConfiguration.getApplianceUrl() + httpServletRequest.getContextPath() + "/resetPassword/" + request.getOxGuid()));
