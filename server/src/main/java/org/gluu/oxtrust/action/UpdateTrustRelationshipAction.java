@@ -396,8 +396,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 			trustService.updateReleasedAttributes(this.trustRelationship);
 			
-			boolean federation = shibboleth3ConfService.isFederation(this.trustRelationship);
-			this.trustRelationship.setFederation(federation);
+			//because isFederation method is also called on metadatavalidator for other 2 opotions.
+			if(trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.GENERATE)  || (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FEDERATION))){
+				boolean federation = shibboleth3ConfService.isFederation(this.trustRelationship);
+				this.trustRelationship.setFederation(federation);
+			}
 
 			trustContactsAction.saveContacts();
 
