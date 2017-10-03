@@ -200,7 +200,7 @@ public class MetadataValidationTimer {
 						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
 						tr.setStatus(GluuStatus.INACTIVE);
 					} else {
-						tr.setSpMetaDataFN(metadataFN.replaceAll(".{4}\\..{4}$", ""));
+						tr.setSpMetaDataFN(target.getName());
 					}
 					boolean federation = shibboleth3ConfService.isFederation(tr);
 					tr.setFederation(federation);
@@ -244,7 +244,7 @@ public class MetadataValidationTimer {
 						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
 						tr.setStatus(GluuStatus.INACTIVE);
 					}else{
-						tr.setSpMetaDataFN(metadataFN.replaceAll("....$", ""));
+						tr.setSpMetaDataFN(target.getName());
 					}
 					boolean federation = shibboleth3ConfService.isFederation(tr);
 					tr.setFederation(federation);
