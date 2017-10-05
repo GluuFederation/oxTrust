@@ -213,8 +213,7 @@
 										var="_type"
 										itemLabel="#{_type.displayName}" />
 									<a4j:ajax event="change" 
-										render="MetadataOperations, spMetaDataUrlGroupId, FederationWizard,
-                                                FederationWizardEntitySelection, urlId" 
+										render="MetadataOperations, spMetaDataUrlGroupId, FederationWizard, FederationWizardEntitySelection, urlId" 
 										limitRender="true" execute="@this" />
 								</h:selectOneMenu>
 							</ox:decorate>	
@@ -265,7 +264,7 @@
 											<a4j:commandLink
 												value="#{empty _trustRelationship.entityId? 
                                                                          'Click to select entity Id' 
-                                                                       : _trustRelationship.entityId}"
+                                                                       : _trustRelationship.entityId += '    Click to change entity Id'}"
 												action="#{_trustRelationshipAction.isActive()}"
 												oncomplete="#{rich:component('entityIdSelector')}.show();">
 											</a4j:commandLink>
