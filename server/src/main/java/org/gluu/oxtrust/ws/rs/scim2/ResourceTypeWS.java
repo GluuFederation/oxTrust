@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.gluu.oxtrust.model.scim2.Constants.*;
-import static org.gluu.oxtrust.util.OxTrustConstants.QUERY_PARAMETER_FILTER;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
@@ -43,8 +42,6 @@ public class ResourceTypeWS extends BaseScimWebService {
 
     @Inject
     private ExtensionService extService;
-
-    private String location;
 
     private ResourceType getUserResourceType(){
 
@@ -71,7 +68,7 @@ public class ResourceTypeWS extends BaseScimWebService {
         usrRT.setSchemaExtensions(schemaExtensions);
 
         Meta userMeta = new Meta();
-        userMeta.setLocation(location + "/User");
+        userMeta.setLocation(endpointUrl + "/User");
         userMeta.setResourceType("ResourceType");
         usrRT.setMeta(userMeta);
 
@@ -82,20 +79,19 @@ public class ResourceTypeWS extends BaseScimWebService {
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @RejectFilterParam
-    public Response serve(@QueryParam(QUERY_PARAMETER_FILTER) String filter) throws Exception {
+    public Response serve(@QueryParam(QUERY_PARAM_FILTER) String filter) throws Exception {
 
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module=new SimpleModule("ListResponseModule", Version.unknownVersion());
-        //why not to inject the resource serializer inside the list response serializer? weld simply does not like it!
-        module.addSerializer(ListResponse.class, new ListResponseJsonSerializer(resourceSerializer));
-        mapper.registerModule(module);
-
-        ListResponse listResponse=new ListResponse(1,1);
+        ListResponse listResponse=new ListResponse(1,1, 1);
         listResponse.addResource(getUserResourceType());
         //TODO: add all other resource types
 
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module=new SimpleModule("ListResponseModule", Version.unknownVersion());
+        module.addSerializer(ListResponse.class, new ListResponseJsonSerializer(resourceSerializer));
+        mapper.registerModule(module);
+
         String json=mapper.writeValueAsString(listResponse);
-        return Response.ok(json).location(new URI(location)).build();
+        return Response.ok(json).location(new URI(endpointUrl)).build();
 
     }
 
@@ -104,7 +100,7 @@ public class ResourceTypeWS extends BaseScimWebService {
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @RejectFilterParam
-    public Response userResourceType(@QueryParam(QUERY_PARAMETER_FILTER) String filter) throws Exception {
+    public Response userResourceType(@QueryParam(QUERY_PARAM_FILTER) String filter) throws Exception {
         ResourceType usrRT = getUserResourceType();
         return Response.ok(resourceSerializer.serialize(usrRT)).build();
     }
@@ -112,7 +108,7 @@ public class ResourceTypeWS extends BaseScimWebService {
     @PostConstruct
     public void setup(){
         //weld makes you cry if using getClass() here
-        location=appConfiguration.getBaseEndpoint() + ResourceTypeWS.class.getAnnotation(Path.class).value();
+        endpointUrl=appConfiguration.getBaseEndpoint() + ResourceTypeWS.class.getAnnotation(Path.class).value();
     }
 
 }
