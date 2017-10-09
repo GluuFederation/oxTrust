@@ -45,6 +45,8 @@
 		            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
 		                <a4j:region>
 		                    <rich:dataGrid id="customScriptTypeId" columns="1" value="#{_customScripts}" var="_customScript" style="width: 100%;">            
+					        	<a href="##{_customScript.name}"  data-toggle="collapse">#{_customScript.name}</a>
+					        	<div id="#{_customScript.name}" class="accordion-body collapse"> 
 					        	<ui:param name="_customScriptId" value="#{_action.getId(_customScript)}" />
 		                        <h:panelGrid id="#{_customScriptId}" columns="2" columnClasses="alignLeft, removeConfig" width="100%" border="0" cellpadding="0" cellspacing="0">
 		                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" columnClasses="alignTop" style="margin-bottom:10px;">
@@ -117,6 +119,7 @@
 		                            </a4j:commandLink>
 		                            <ox:acceptRemovalDialog id="deleteConfirmation" subject="Script" value="#{_customScript.name}" deleteMethod="#{manageCustomScriptAction.removeCustomScript(_customScript)}" render="customScriptTypeId"/>
 		                        </h:panelGrid>
+		                        </div>
 		                    </rich:dataGrid>
 		    
 		                    <h:panelGroup layout="block" styleClass="addConfig">
