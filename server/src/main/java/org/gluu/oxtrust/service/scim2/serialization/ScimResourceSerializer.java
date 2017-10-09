@@ -2,7 +2,6 @@ package org.gluu.oxtrust.service.scim2.serialization;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
@@ -89,7 +88,7 @@ public class ScimResourceSerializer {
         for (Extension ext : extService.getResourceExtensions(resourceClass))
             defaultSet.addAll(IntrospectUtil.getPathsInExtension(ext));
 
-        String defaultSchema=resourceClass.getAnnotation(Schema.class).id();
+        String defaultSchema=extService.getDefaultSchema(resourceClass);
 
         if (attributes!=null) {
             log.info("buildIncludeSet. Processing attributes query param (excludedAttributes ignored)");
