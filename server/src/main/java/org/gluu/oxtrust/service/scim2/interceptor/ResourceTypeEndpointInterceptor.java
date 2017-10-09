@@ -11,7 +11,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
 
-import static org.gluu.oxtrust.util.OxTrustConstants.QUERY_PARAMETER_FILTER;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_FILTER;
 
 /**
  * Created by jgomer on 2017-09-28.
@@ -33,7 +33,7 @@ public class ResourceTypeEndpointInterceptor {
             for (Annotation annotation : annotations[i]) {
                 if (annotation.annotationType().equals(QueryParam.class)) {
                     //Verifies this is an authz header
-                    if (((QueryParam)annotation).value().equals(QUERY_PARAMETER_FILTER)) {
+                    if (((QueryParam)annotation).value().equals(QUERY_PARAM_FILTER)) {
                         j=i;
                         break;
                     }
