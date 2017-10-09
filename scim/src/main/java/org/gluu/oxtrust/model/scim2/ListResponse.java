@@ -15,8 +15,8 @@ public class ListResponse {
 
     private List<BaseScimResource> resources;
 
-    public ListResponse(int sindex, int ippage){
-        totalResults=0;
+    public ListResponse(int sindex, int ippage, int total){
+        totalResults=total;
         startIndex=sindex;
         itemsPerPage=ippage;
         resources =new ArrayList<BaseScimResource>();
@@ -24,7 +24,6 @@ public class ListResponse {
 
     public void addResource(BaseScimResource resource){
         resources.add(resource);
-        totalResults++;
     }
 
     public int getTotalResults() {
@@ -41,6 +40,10 @@ public class ListResponse {
 
     public List<BaseScimResource> getResources() {
         return resources;
+    }
+
+    public void setResources(List<BaseScimResource> resources) {
+        this.resources = resources;
     }
 
 }
