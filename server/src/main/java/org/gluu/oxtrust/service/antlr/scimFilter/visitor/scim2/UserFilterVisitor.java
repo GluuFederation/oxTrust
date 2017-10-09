@@ -5,86 +5,42 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.user.Meta;
-import org.gluu.oxtrust.model.scim2.user.Name;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author Val Pecaoco
+ * Updated by jgomer2001 on 2017-10-01
  */
 public class UserFilterVisitor extends MainScimFilterVisitor {
 
-    private Logger logger = LoggerFactory.getLogger(UserFilterVisitor.class);
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static Class[] annotatedClasses = { BaseScimResource.class, Meta.class, UserResource.class, Name.class };
-
-    private static Map<String, String> declaredAnnotations = new HashMap<String, String>();
-
-    static {
-
-        for (Class clazz : annotatedClasses) {
-
-            for (Field nameField : clazz.getDeclaredFields()) {
-
-                for (Annotation annotation : nameField.getDeclaredAnnotations()) {
-
-                    if (annotation instanceof LdapAttribute) {
-                        LdapAttribute ldapAttribute = (LdapAttribute)annotation;
-                        declaredAnnotations.put(nameField.getName(), ldapAttribute.name());
-                    }
-                }
-            }
-        }
-    }
+    private static Map<String, String> declaredAnnotations=IntrospectUtil.getPathsLdapAnnotationsMapping(UserResource.class);
 
     public static String getUserLdapAttributeName(String attrName) {
+        attrName = FilterUtil.stripScim2Schema(attrName);
+        String ldapAttributeName = null;
 
-        String ldapAttributeName = FilterUtil.stripScim2Schema(attrName);
-
-        String[] tokens = ldapAttributeName.split("\\.");
-
-        // This is already specific implementation. Currently only support up to second level.
-        ldapAttributeName = tokens[0];
-        if (tokens[0].equalsIgnoreCase(Name.class.getSimpleName())) {
-            if (tokens.length == 1) {
-                ldapAttributeName = "inum";
-            } else if (tokens.length == 2) {
-                ldapAttributeName = tokens[1];
-            }
-        } else if (tokens[0].equalsIgnoreCase(Meta.class.getSimpleName())) {
-            if (tokens.length == 1) {
-                ldapAttributeName = "meta";
-            } else if (tokens.length == 2) {
-                ldapAttributeName = tokens[1];
-            }
+        int i=1;
+        while (ldapAttributeName==null && i>0) {
+            ldapAttributeName = declaredAnnotations.get(attrName);
+            i=attrName.lastIndexOf(".");
+            if (i>0)
+                attrName=attrName.substring(0, i);
         }
+        //As in previous implementation, if no annotations maps to the attribute passed, the attribute itself is returned :(
+        return (ldapAttributeName == null) ? attrName : ldapAttributeName;
 
-        if (ldapAttributeName != null && !ldapAttributeName.isEmpty()) {
-
-            for (Map.Entry<String, String> entry : declaredAnnotations.entrySet()) {
-
-                if (ldapAttributeName.equalsIgnoreCase(entry.getKey())) {
-                    ldapAttributeName = entry.getValue();
-                    break;
-                }
-            }
-        }
-
-        return ldapAttributeName;
     }
 
     private String attrOperCriteriaResolver(String attrName, String operator, String criteria) {
