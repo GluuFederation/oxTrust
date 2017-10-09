@@ -23,8 +23,18 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
     private ScimResourceSerializer resourceSerializer;
     private ObjectMapper mapper = new ObjectMapper();
 
+    private String attributes;
+    private String excludeAttributes;
+
+    //why not to inject the resource serializer instead of passing it as parameter? weld simply does not like it!
     public ListResponseJsonSerializer(ScimResourceSerializer serializer){
         resourceSerializer=serializer;
+    }
+
+    public ListResponseJsonSerializer(ScimResourceSerializer serializer, String attributes, String excludeAttributes){
+        resourceSerializer=serializer;
+        this.attributes=attributes;
+        this.excludeAttributes=excludeAttributes;
     }
 
     @Override
@@ -32,8 +42,10 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
 
         jGen.writeStartObject();
         jGen.writeNumberField("totalResults", listResponse.getTotalResults());
-        jGen.writeNumberField("startIndex", listResponse.getStartIndex());
-        jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
+        if (listResponse.getTotalResults()>0) {
+            jGen.writeNumberField("startIndex", listResponse.getStartIndex());
+            jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
+        }
 
         jGen.writeArrayFieldStart("schemas");
         jGen.writeString(LIST_RESPONSE_SCHEMA_ID);
@@ -42,8 +54,7 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
         jGen.writeArrayFieldStart("Resources");
         for (BaseScimResource resource : listResponse.getResources()){
             try {
-                log.debug("oh margoth");
-                JsonNode jsonResource=mapper.readTree(resourceSerializer.serialize(resource));
+                JsonNode jsonResource=mapper.readTree(resourceSerializer.serialize(resource, attributes, excludeAttributes));
                 jGen.writeTree(jsonResource);
                 //jGen.writeString(resourceSerializer.serialize(resource));
             }
