@@ -2,16 +2,24 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.exception.SCIMException;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.service.external.ExternalScimService;
-import org.gluu.oxtrust.service.scim2.serialization.ScimResourceSerializer;
+import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.slf4j.Logger;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
+import org.xdi.ldap.model.SortOrder;
+import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
@@ -37,6 +46,8 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 @Named
 @Path("/scim/v2/Users")
 public class UserWebService extends BaseScimWebService implements UserService {
+
+    public static final String SEARCH_SUFFIX = ".search";
 
     @Inject
     private IPersonService personService;
@@ -60,7 +71,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
             @ApiParam(value = "User", required = true) UserResource user,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) throws Exception{
+            @HeaderParam("Authorization") String authorization){
 
         Response response;
         try {
@@ -81,7 +92,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
     }
 
-    @Path("/scim/v2/Users/{id}")
+    @Path("{id}")
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
@@ -92,7 +103,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) throws Exception {
+            @HeaderParam("Authorization") String authorization) {
 
         Response response;
         try {
@@ -129,7 +140,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) throws Exception {
+            @HeaderParam("Authorization") String authorization) {
 
         Response response;
         try {
@@ -163,7 +174,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
         return response;
     }
 
-    @Path("/scim/v2/Users/{id}")
+    @Path("{id}")
     @DELETE
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
@@ -171,7 +182,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
     public Response deleteUser(
             @PathParam("id") String id,
-            @HeaderParam("Authorization") String authorization) throws Exception{
+            @HeaderParam("Authorization") String authorization){
 
         Response response;
         try {
@@ -193,10 +204,79 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
     }
 
+    @GET
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @Protected
+    @ApiOperation(value = "Search users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
+    public Response searchUsers(
+            @QueryParam(QUERY_PARAM_FILTER) String filter,
+            @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
+            @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
+            @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
+            @QueryParam(QUERY_PARAM_COUNT) Integer count,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
+            @HeaderParam("Authorization") String authorization){
+
+        Response response;
+        try {
+            VirtualListViewResponse vlv = new VirtualListViewResponse();
+            List<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, vlv);
+
+            ListResponse listResponse = new ListResponse(vlv.getStartIndex(), vlv.getItemsPerPage(), vlv.getTotalResults());
+            listResponse.setResources(resources);
+
+            ObjectMapper mapper = new ObjectMapper();
+            SimpleModule module = new SimpleModule("ListResponseModule", Version.unknownVersion());
+            module.addSerializer(ListResponse.class, new ListResponseJsonSerializer(resourceSerializer, attrsList, excludedAttrsList));
+            mapper.registerModule(module);
+
+            String json = mapper.writeValueAsString(listResponse);
+            response=Response.ok(json).location(new URI(endpointUrl)).build();
+        }
+        catch (SCIMException e){
+            log.error(e.getMessage(), e);
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, e.getMessage());
+        }
+        catch (Exception e){
+            log.error("Failure at searchUsers method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
+
+    }
+
+    @Path(SEARCH_SUFFIX)
+    @POST
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @Protected
+    public Response searchUsersPost(
+            @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest,
+            @HeaderParam("Authorization") String authorization){
+
+        //Calling searchUsers here does not provoke that method's interceptor/decorator being called (only this one's)
+        URI uri=null;
+        Response response = searchUsers(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
+                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(),
+                searchRequest.getExcludedAttributes(), authorization);
+
+        try {
+            uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
+        return Response.fromResponse(response).location(uri).build();
+
+    }
+
     @PostConstruct
     public void setup(){
         //Do not use getClass() here... a typical weld issue...
-        endpointUrl=UserWebService.class.getAnnotation(Path.class).value();
+        endpointUrl=appConfiguration.getBaseEndpoint() + UserWebService.class.getAnnotation(Path.class).value();
     }
 
 }
