@@ -35,6 +35,7 @@ public class ExtensionField {
         Object value=null;
         switch (field.getType()){
             case STRING:
+            case PHOTO:
                 if (val instanceof String)
                     value = val;
                 break;
@@ -57,8 +58,8 @@ public class ExtensionField {
 
     /**
      * Does the same as valueOf, however, a String is supplied as value. Here no validations of data type consistence takes
-     * place (it is expected value passed reflects the type of the field). If the field is a DATE, a previous conversion
-     * to ISO format is done, nonetheless, DATE fields still remain being represented as Java strings
+     * place (it is expected value passed reflects the type of the field). If the field is a DATE, a conversion from ISO
+     * format is done, nonetheless, DATE fields still remain being represented as Java strings
      * @param field An ExtensionField
      * @param val A non-null String value
      * @return A value
@@ -68,6 +69,7 @@ public class ExtensionField {
         Object value=null;  //In practice value will never end up being null
         switch (field.getType()){
             case STRING:
+            case PHOTO:
                 value = val;
                 break;
             case DATE:
@@ -100,6 +102,7 @@ public class ExtensionField {
         switch (field.getType()) {
             case NUMERIC:
             case STRING:
+            case PHOTO:
                 value=val.toString();
                 break;
             case DATE:
