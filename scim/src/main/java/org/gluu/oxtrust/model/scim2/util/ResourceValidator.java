@@ -186,7 +186,7 @@ public class ResourceValidator {
         if (field==null)
             throw new SCIMException(String.format(ATTR_NOT_RECOGNIZED, attribute, extension.getUrn()));
         else{
-            log.debug("validateDataTypeExtendedAttr. Checking attribute '{}' for type '{}' with value '{}'", attribute, field.toString(), value.toString());
+            log.debug("validateDataTypeExtendedAttr. Checking attribute '{}' for type '{}' with value '{}'", attribute, field.getType().toString(), value.toString());
 
             //look up if the field in this extension is consistent with the value passed
             if (ExtensionField.valueOf(field, value)==null)
