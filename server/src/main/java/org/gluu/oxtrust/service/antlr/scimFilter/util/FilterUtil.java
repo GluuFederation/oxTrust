@@ -5,28 +5,49 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.util;
 
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.service.scim2.ExtensionService;
+import org.xdi.service.cdi.util.CdiUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Val Pecaoco
+ * Updated by jgomer on 2017-10-06.
  */
 public class FilterUtil {
 
-    //TODO: fix this
-    public static String stripScim2Schema(String uri) {
-/*
-        for (SchemaType schemaType : SchemaTypeMapping.getSchemaInstances()) {
+    private static List<String> urns;
 
-            String schema = schemaType.getId() + ":";
+    static {
+        urns = new ArrayList<String>();
+        ExtensionService extService= CdiUtil.bean(ExtensionService.class);
+        //TODO: add fido to list
+        List<Class<? extends BaseScimResource>> list = Arrays.asList(UserResource.class, GroupResource.class);
 
-            if (uri.startsWith(schema)) {
-
-                int index = uri.indexOf(schema) + schema.length();
-                uri = uri.substring(index);
-                break;
-            }
+        for (Class <? extends BaseScimResource> cls : list) {
+            for (Extension ext : extService.getResourceExtensions(cls))
+                urns.add(ext.getUrn());
+            urns.add(extService.getDefaultSchema(cls));
         }
 
-        return uri;
-        */
-return null;
     }
+
+    //TODO: there should be stripping depending on resource type - not general as in this case
+    public static String stripScim2Schema(String uri) {
+
+        for (String urn : urns)
+            if (uri.startsWith(urn + ":")) {
+                uri = uri.substring(urn.length()+1);
+                break;
+            }
+        return uri;
+
+    }
+
 }
