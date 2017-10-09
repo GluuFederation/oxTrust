@@ -76,9 +76,9 @@ public class ScimConfigurationWS {
             final ScimConfiguration c2 = new ScimConfiguration();
             c2.setVersion("2.0");
             c2.setAuthorizationSupported(new String[]{"uma"});
-            c2.setUserEndpoint(baseEndpointUri + userService.getEndpointUrl());
+            c2.setUserEndpoint(userService.getEndpointUrl());
             //TODO: update for the rest of endpoints
-            c2.setUserSearchEndpoint(baseEndpointUri + "/scim/v2/Users/Search");
+            c2.setUserSearchEndpoint(userService.getEndpointUrl() + "/" + userService.SEARCH_SUFFIX);
             c2.setGroupEndpoint(baseEndpointUri + "/scim/v2/Groups");
             c2.setBulkEndpoint(baseEndpointUri + "/scim/v2/Bulk");
             c2.setServiceProviderEndpoint(baseEndpointUri + "/scim/v2/ServiceProviderConfig");
