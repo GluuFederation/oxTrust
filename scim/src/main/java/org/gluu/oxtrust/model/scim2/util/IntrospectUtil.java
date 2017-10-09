@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 import javax.lang.model.type.NullType;
 import javax.ws.rs.HeaderParam;
@@ -151,6 +152,21 @@ public class IntrospectUtil {
 
     }
 
+    public static Map<String, String> getPathsLdapAnnotationsMapping(Class<? extends BaseScimResource> cls){
+
+        Map<String, String> map=new HashMap<String, String>();
+        for (String attrib: IntrospectUtil.allAttrs.get(cls)){
+            Field field=IntrospectUtil.findFieldFromPath(cls, attrib);
+            if (field!=null){
+                LdapAttribute ldapAnnot=field.getAnnotation(LdapAttribute.class);
+                if (ldapAnnot!=null)
+                    map.put(attrib, ldapAnnot.name());
+            }
+        }
+        return map;
+
+    }
+
     private static List<String> requiredAttrsNames;
     private static List<String> defaultAttrsNames;
     private static List<String> alwaysAttrsNames;
@@ -237,7 +253,6 @@ public class IntrospectUtil {
 
         Map<String, List<Method>> map=new HashMap<String, List<Method>>();
 
-//log.debug(requiredAttrsNames);
         for (String attrName : attrNames) {
             List<Method> list =new ArrayList<Method>();
             Class clazz=baseClass;
