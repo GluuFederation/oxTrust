@@ -1,7 +1,9 @@
 package org.gluu.oxtrust.service.scim2;
 
+import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
@@ -109,6 +111,45 @@ public class ExtensionService {
             }
         }
         return values;
+
+    }
+
+    public String getDefaultSchema(Class<? extends BaseScimResource> cls){
+        return cls.getAnnotation(Schema.class).id();
+    }
+
+    public String stripDefaultSchema(Class<? extends BaseScimResource> cls, String attribute){
+
+        String val=attribute;
+        String defaultSchema=getDefaultSchema(cls);
+        if (StringUtils.isNotEmpty(attribute) && StringUtils.isNotEmpty(defaultSchema)) {
+            if (attribute.startsWith(defaultSchema + ":"))
+                val = attribute.substring(defaultSchema.length() +1);
+        }
+        return val;
+
+    }
+
+    public Extension extensionOfAttribute(Class<? extends BaseScimResource> cls, String attribute){
+
+        List<Extension> extensions=getResourceExtensions(cls);
+        Extension belong=null;
+
+        try {
+            for (Extension ext : extensions) {
+                if (belong==null && attribute.startsWith(ext.getUrn() + ":")) {
+                    for (GluuAttribute custAttr : attrService.getSCIMRelatedAttributes())
+                        if (custAttr.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE) && attribute.equals(custAttr.getName())) {
+                            belong = ext;
+                            break;
+                        }
+                }
+            }
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
+        return belong;
 
     }
 
