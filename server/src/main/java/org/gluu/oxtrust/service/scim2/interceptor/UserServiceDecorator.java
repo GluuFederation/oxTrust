@@ -1,17 +1,21 @@
 package org.gluu.oxtrust.service.scim2.interceptor;
 
+import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.user.Meta;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.UserService;
 import org.gluu.oxtrust.model.scim2.util.ResourceValidator;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+import org.xdi.ldap.model.SortOrder;
 
 import javax.annotation.Priority;
 import javax.decorator.Decorator;
@@ -20,16 +24,20 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 import javax.ws.rs.core.Response;
+import java.lang.reflect.Field;
 import java.util.*;
 
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
+
 /**
- * Aims at decorating SCIM service methods. Currently applies validations via ResourceValidator class
+ * Aims at decorating SCIM service methods. Currently applies validations via ResourceValidator class or other custom
+ * validation logic
  *
  * Created by jgomer on 2017-09-01.
  */
 @Priority(Interceptor.Priority.APPLICATION)
 @Decorator
-public abstract class UserServiceDecorator extends BaseScimWebService implements UserService {
+public class UserServiceDecorator extends BaseScimWebService implements UserService {
 
     @Inject
     private Logger log;
@@ -91,7 +99,7 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
 
     }
 
-    public Response createUser(UserResource user, String attrsList, String excludedAttrsList, String authorization) throws Exception {
+    public Response createUser(UserResource user, String attrsList, String excludedAttrsList, String authorization) {
 
         Response response;
         String error=executeDefaultValidation(user);
@@ -109,7 +117,7 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
 
     }
 
-    public Response updateUser(UserResource user, String id, String attrsList, String excludedAttrsList, String authorization) throws Exception {
+    public Response updateUser(UserResource user, String id, String attrsList, String excludedAttrsList, String authorization) {
 
         Response response;
         String error=executeDefaultValidation(user);
@@ -126,7 +134,7 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
 
     }
 
-    public Response deleteUser(String id, String authorization) throws Exception{
+    public Response deleteUser(String id, String authorization){
 
         Response response=validateExistenceOfUser(id);
         if (response==null)
@@ -137,7 +145,7 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
 
     }
 
-    public Response getUserById(String id, String attrsList, String excludedAttrsList, String authorization) throws Exception{
+    public Response getUserById(String id, String attrsList, String excludedAttrsList, String authorization){
 
         Response response=validateExistenceOfUser(id);
         if (response==null)
@@ -147,19 +155,87 @@ public abstract class UserServiceDecorator extends BaseScimWebService implements
         return response;
 
     }
-/*
 
-    public Response patchUser(String authorization, String id, ScimPatchUser user, final String attributesArray) throws Exception{
+    private boolean isAttributeRecognized(Class<? extends BaseScimResource> cls, String attribute){
 
-        boolean validation=ResourceValidator.validate(user);
-        log.info("Validation at patchUser returned {}", validation);
-        if (validation) {
-            return userService.patchUser(authorization, id, user, attributesArray);
+        boolean valid;
+
+        Extension ext=extService.extensionOfAttribute(cls, attribute);
+        valid=ext!=null;
+
+        if (!valid) {
+            attribute = extService.stripDefaultSchema(cls, attribute);
+            Field f=IntrospectUtil.findFieldFromPath(cls, attribute);
+            valid= f!=null;
         }
-        else {
-            return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, ResourceValidator.FAIL_MESSAGE_USER);
-        }
+        return valid;
+
     }
-*/
+
+    private Response prepareSearchRequest(String filter, String sortBy, String sortOrder, Integer startIndex, Integer count,
+                                          String attrsList, String excludedAttrsList, SearchRequest request){
+
+        Response response;
+
+        count=count==null ? MAX_COUNT : count;
+        if (count>=0){
+            if (count <= MAX_COUNT) {
+
+                startIndex = (startIndex == null || startIndex < 1) ? 1 : startIndex;
+                sortBy = StringUtils.isEmpty(sortBy) ? "userName" : sortBy;
+
+                if (isAttributeRecognized(UserResource.class, sortBy)) {
+                    if (StringUtils.isEmpty(sortOrder) || !sortOrder.equals(SortOrder.DESCENDING.getValue()))
+                        sortOrder = SortOrder.ASCENDING.getValue();
+
+                    request.setAttributes(attrsList);
+                    request.setExcludedAttributes(excludedAttrsList);
+                    request.setFilter(filter);
+                    request.setSortBy(sortBy);
+                    request.setSortOrder(sortOrder);
+                    request.setStartIndex(startIndex);
+                    request.setCount(count);
+
+                    response=null;
+                }
+                else
+                    response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
+            }
+            else
+                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, "Maximum number of results per page is " + MAX_COUNT);
+        }
+        else
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, "count parameter must be non-negative");
+
+        return response;
+
+    }
+
+    public Response searchUsers(String filter, String sortBy, String sortOrder, Integer startIndex, Integer count,
+                                String attrsList, String excludedAttrsList, String authorization){
+
+        SearchRequest searchReq=new SearchRequest();
+        Response response=prepareSearchRequest(filter, sortBy, sortOrder, startIndex, count, attrsList, excludedAttrsList, searchReq);
+
+        if (response==null)
+            response = userService.searchUsers(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(),
+                                        searchReq.getStartIndex(), searchReq.getCount(), searchReq.getAttributes(),
+                                        searchReq.getExcludedAttributes(), authorization);
+        return response;
+
+    }
+
+    public Response searchUsersPost(SearchRequest searchRequest, String authorization){
+
+        SearchRequest searchReq=new SearchRequest();
+        Response response=prepareSearchRequest(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
+                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(), searchRequest.getExcludedAttributes(), searchReq);
+
+        if (response==null)
+            response = userService.searchUsersPost(searchReq, authorization);
+
+        return response;
+
+    }
 
 }
