@@ -13,27 +13,35 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.NotFoundException;
 
+import com.unboundid.ldap.sdk.Filter;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.*;
+import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
+import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.ldap.model.SortOrder;
+import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
 
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.xdi.ldap.model.GluuBoolean.*;
 
 /**
@@ -71,6 +79,12 @@ public class Scim2UserService implements Serializable {
 
     @Inject
     private ExtensionService extService;
+
+    @Inject
+    private ScimFilterParserService scimFilterParserService;
+
+    @Inject
+    private LdapEntryManager ldapEntryManager;
 
     private void checkUidExistence(String uid) throws Exception{
         if (personService.getPersonByUid(uid) != null)
@@ -223,7 +237,7 @@ public class Scim2UserService implements Serializable {
                         if (value != null) {
                             //Get properly formatted string representations for the value(s) associated to the attribute
                             List<String> values=extService.getStringAttributeValues(extension.getFields().get(attribute), value);
-                            log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values ", attribute, values.toString());
+                            log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values {}", attribute, values.toString());
                             person.setAttribute(attribute, values.toArray(new String[]{}));
                         }
                     }
@@ -240,7 +254,7 @@ public class Scim2UserService implements Serializable {
 
         //Set values in order of appearance in BaseScimResource class
         List<String> schemas=new ArrayList<String>();
-        schemas.add(res.getClass().getAnnotation(Schema.class).id());
+        schemas.add(extService.getDefaultSchema(res.getClass()));
         res.setSchemas(schemas);    //Further this list is fed if custom attributes are found
 
         res.setId(person.getInum());
@@ -295,7 +309,8 @@ public class Scim2UserService implements Serializable {
 
                 Group group = new Group();
                 group.setValue(gluuGroup.getInum());
-                String reference = String.format("%s/scim/v2/Groups/%s", appConfiguration.getBaseEndpoint(),gluuGroup.getInum());
+                //TODO: update using group's endpoint url?
+                String reference = String.format("%s/scim/v2/Groups/%s", appConfiguration.getBaseEndpoint(), gluuGroup.getInum());
                 group.setRef(reference);
                 group.setDisplay(gluuGroup.getDisplayName());
 
@@ -385,7 +400,6 @@ public class Scim2UserService implements Serializable {
         gluuPerson.setAttribute("oxTrustMetaLocation", location);
 
         log.info("Persisting user {}", userName);
-        //TODO: uncomment addperson
         personService.addCustomObjectClass(gluuPerson);
         personService.addPerson(gluuPerson);
 
@@ -414,7 +428,6 @@ public class Scim2UserService implements Serializable {
             gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
 
             personService.addCustomObjectClass(gluuPerson);
-            //TODO: uncomment update person
             personService.updatePerson(gluuPerson);
         }
         else{
@@ -432,42 +445,50 @@ public class Scim2UserService implements Serializable {
             serviceUtil.deleteUserFromGroup(gluuPerson, dn);
         }
         log.info("Removing user entry {}", dn);
-        //TODO: uncomment remove person
-        //memberService.removePerson(gluuPerson);
+
+        memberService.removePerson(gluuPerson);
+    }
+
+    private Filter getFilter(String filterString) throws SCIMException {
+
+        Filter filter;
+        try {
+            if (StringUtils.isEmpty(filterString))
+                filter = Filter.create("inum=*");
+            else
+                filter = scimFilterParserService.createFilter(filterString, UserResource.class);
+        }
+        catch (Exception e){
+            throw new SCIMException("An error occurred parsing the filter expression (" + e.getMessage() + ")", e);
+        }
+        return filter;
+
+    }
+
+    public List<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder,
+                                          int startIndex, int count, VirtualListViewResponse vlvResponse) throws Exception{
+
+        Filter ldapFilter=getFilter(filter);
+        //Transform scim attribute to LDAP attribute
+        sortBy = UserFilterVisitor.getUserLdapAttributeName(sortBy);
+
+        log.info("Executing search for users with parameters: filter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
+                ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
+
+        List<GluuCustomPerson> list=ldapEntryManager.findEntriesSearchSearchResult(personService.getDnForPerson(null),
+                GluuCustomPerson.class, ldapFilter, startIndex, count, MAX_COUNT, sortBy, sortOrder, vlvResponse, null);
+        List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
+
+        for (GluuCustomPerson person : list){
+            UserResource scimUsr=new UserResource();
+            transferAttributesToUserResource(person, scimUsr);
+            resources.add(scimUsr);
+        }
+        log.info ("Found {} matching entries - returning {}", vlvResponse.getTotalResults(), list.size());
+        return resources;
 
     }
 /*
-
-    public void deleteUser(String id) throws Exception {
-        GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-        if (gluuPerson == null) {
-
-            throw new EntryPersistenceException("Scim2UserService.deleteUser(): " + "Resource " + id + " not found");
-
-        } else {
-
-            // For custom script: delete user
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimDeleteUserMethods(gluuPerson);
-            }
-
-            log.info("person.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
-            if (gluuPerson.getMemberOf() != null) {
-
-                if (gluuPerson.getMemberOf().size() > 0) {
-
-                    String dn = personService.getDnForPerson(id);
-                    log.info("DN : " + dn);
-
-                    serviceUtil.deleteUserFromGroup(gluuPerson, dn);
-                }
-            }
-
-            memberService.removePerson(gluuPerson);
-        }
-    }
-
-
     public User patchUser(String id, ScimPatchUser patchUser) throws Exception {
 
     	for(Operation operation : patchUser.getOperatons()){
@@ -542,30 +563,6 @@ public class Scim2UserService implements Serializable {
 			}
 		}
 		return gluuPerson;
-
-	}
-
-	private void setMeta(GluuCustomPerson updatedGluuPerson) throws Exception{
-
-		DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC(); // Date should be in UTC format
-		Date dateLastModified = DateTime.now().toDate();
-		updatedGluuPerson.setAttribute("oxTrustMetaLastModified",dateTimeFormatter.print(dateLastModified.getTime()));
-		if (updatedGluuPerson.getAttribute("oxTrustMetaLocation") == null
-				|| (updatedGluuPerson.getAttribute("oxTrustMetaLocation") != null
-				&& updatedGluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
-
-			String relativeLocation = "/scim/v2/Users/" + updatedGluuPerson.getInum();
-			updatedGluuPerson.setAttribute("oxTrustMetaLocation",relativeLocation);
-		}
-		updatedGluuPerson = serviceUtil.syncEmailForward(updatedGluuPerson, true);
-
-		// For custom script: update user
-		if (externalScimService.isEnabled()) {
-			externalScimService.executeScimUpdateUserMethods(updatedGluuPerson);
-		}
-		personService.updatePerson(updatedGluuPerson);
-
-		log.debug(" person updated ");
 
 	}
 */
