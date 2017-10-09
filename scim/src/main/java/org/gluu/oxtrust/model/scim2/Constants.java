@@ -47,13 +47,39 @@ public interface Constants {
     String UTF8_CHARSET_FRAGMENT="; charset=utf-8";
 
     /**
+     * The HTTP query parameter used in a URI to provide a filter expression.
+     */
+    String QUERY_PARAM_FILTER = "filter";
+
+    /**
      * The HTTP query parameter used in a URI to select specific SCIM
      * attributes.
      */
     String QUERY_PARAM_ATTRIBUTES = "attributes";
     String QUERY_PARAM_EXCLUDED_ATTRS = "excludedAttributes";
 
-    int DEFAULT_COUNT = 0;
+    /**
+     * The HTTP query parameter used in a URI to sort by a SCIM attribute.
+     */
+    String QUERY_PARAM_SORT_BY = "sortBy";
+
+    /**
+     * The HTTP query parameter used in a URI to specify the sort order.
+     */
+    String QUERY_PARAM_SORT_ORDER = "sortOrder";
+
+    /**
+     * The HTTP query parameter used in a URI to specify the starting index for
+     * page results.
+     */
+    String QUERY_PARAM_START_INDEX = "startIndex";
+
+    /**
+     * The HTTP query parameter used in a URI to specify the maximum size of a
+     * page of results.
+     */
+    String QUERY_PARAM_COUNT = "count";
+
     int MAX_COUNT = 200;
 
     int MAX_BULK_OPERATIONS = 30;
