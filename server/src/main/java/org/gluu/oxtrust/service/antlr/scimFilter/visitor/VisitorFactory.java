@@ -13,6 +13,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor
 
 /**
  * @author Val Pecaoco
+ * Updated by jgomer on 2017-09-12.
  */
 public class VisitorFactory {
 
@@ -25,7 +26,7 @@ public class VisitorFactory {
         } else if (clazz.getName().equals(GroupResource.class.getName())) {
             visitor = new GroupFilterVisitor();
         }
-        //TODO: add ifo part
+        //TODO: add fido part
         /*
         else if (clazz.getName().equals(org.gluu.oxtrust.model.scim2.fido.FidoDevice.class.getName())) {
             visitor = new FidoDeviceFilterVisitor();
