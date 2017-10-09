@@ -29,9 +29,9 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
  * Likewise, it helps the Java client code to do the converse (sending a SCIM resource object to the service by applying
  * the Json conversion)
  */
-@Provider
-@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-@Produces({Constants.MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+//@Provider
+//@Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+//@Produces({Constants.MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
 public class ResourceEntityProvider implements MessageBodyReader<UserResource>, MessageBodyWriter<UserResource> {
 
     private Logger logger = LogManager.getLogger(getClass());
