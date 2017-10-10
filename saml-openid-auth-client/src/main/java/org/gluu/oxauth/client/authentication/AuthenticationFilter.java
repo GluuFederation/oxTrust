@@ -78,7 +78,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
         @Override
 	public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
 
-		// TODO: check chain
 		if (!preFilter(servletRequest, servletResponse, filterChain)) {
 			log.debug("Execute validation filter");
 			filterChain.doFilter(servletRequest, servletResponse);
