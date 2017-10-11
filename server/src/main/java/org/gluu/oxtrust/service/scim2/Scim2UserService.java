@@ -89,7 +89,7 @@ public class Scim2UserService implements Serializable {
         gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
 
         log.info("gluuPerson.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
-        if (user.getGroups().size() > 0) {
+        if (user.getGroups() != null && user.getGroups().size() > 0) {
             log.info(" jumping to groupMembersAdder ");
             log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
             serviceUtil.groupMembersAdder(gluuPerson, gluuPerson.getDn());
@@ -147,7 +147,7 @@ public class Scim2UserService implements Serializable {
 
         GluuCustomPerson updatedGluuPerson = copyUtils2.copy(user, gluuPerson, true);
 
-        if (user.getGroups().size() > 0) {
+        if (user.getGroups() != null && user.getGroups().size() > 0) {
             serviceUtil.groupMembersAdder(updatedGluuPerson, personService.getDnForPerson(id));
         }
 
