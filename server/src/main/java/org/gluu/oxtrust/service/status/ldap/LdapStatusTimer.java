@@ -78,16 +78,15 @@ public class LdapStatusTimer {
     }
 
     private void processInt() {
-    	logConnectionProviderStatistic(ldapEntryManager, "connectionProvider", "bindConnectionProvider");
+    	logConnectionProviderStatistic(ldapEntryManager, "connectionProvider");
     	
     	if (centralLdapService.isUseCentralServer() && (ldapCentralEntryManager.getLdapOperationService() != null)) {
-    		logConnectionProviderStatistic(ldapCentralEntryManager, "centralConnectionProvider", "centralBindConnectionProvider");
+    		logConnectionProviderStatistic(ldapCentralEntryManager, "centralConnectionProvider");
     	}
     }
 
-	public void logConnectionProviderStatistic(LdapEntryManager ldapEntryManager, String connectionProviderName, String bindConnectionProviderName) {
+	public void logConnectionProviderStatistic(LdapEntryManager ldapEntryManager, String connectionProviderName) {
 		LDAPConnectionProvider ldapConnectionProvider = ldapEntryManager.getLdapOperationService().getConnectionProvider();
-        LDAPConnectionProvider bindLdapConnectionProvider = ldapEntryManager.getLdapOperationService().getBindConnectionProvider();
         
         if (ldapConnectionProvider == null) {
         	log.error("{} is empty", connectionProviderName);
@@ -96,16 +95,6 @@ public class LdapStatusTimer {
             	log.error("{} is empty", connectionProviderName);
             } else {
             	log.info("{} statistics: {}", connectionProviderName, ldapConnectionProvider.getConnectionPool().getConnectionPoolStatistics());
-            }
-        }
-
-        if (bindLdapConnectionProvider == null) {
-        	log.error("{} is empty", bindConnectionProviderName);
-        } else {
-            if (bindLdapConnectionProvider.getConnectionPool() == null) {
-            	log.error("{} is empty", bindConnectionProviderName);
-            } else {
-            	log.info("{} statistics: {}", bindConnectionProviderName, bindLdapConnectionProvider.getConnectionPool().getConnectionPoolStatistics());
             }
         }
 	}

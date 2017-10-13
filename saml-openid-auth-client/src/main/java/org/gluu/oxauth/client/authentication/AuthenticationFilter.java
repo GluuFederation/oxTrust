@@ -56,10 +56,11 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * <p>Please see AbstractOAuthFilter for additional properties</p>
  *
  * @author Yuriy Movchan
- * @version 0.1, 03/20/2013
  */
 public class AuthenticationFilter extends AbstractOAuthFilter {
 
+        public static final String SESSION_CONVERSATION_KEY = "saml_idp_conversation_key";
+        
 	/**
 	 * The URL to the OAuth Server authorization services
 	 */
@@ -77,7 +78,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
         @Override
 	public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
 
-		// TODO: check chain
 		if (!preFilter(servletRequest, servletResponse, filterChain)) {
 			log.debug("Execute validation filter");
 			filterChain.doFilter(servletRequest, servletResponse);
@@ -154,7 +154,7 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		String redirectUri = constructRedirectUrl(request);
 
 		List<String> scopes = Arrays.asList(clientScopes.split(StringUtils.SPACE));
-		List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+		List<ResponseType> responseTypes = Arrays.asList(ResponseType.ID_TOKEN, ResponseType.CODE);
 
 		String nonce = UUID.randomUUID().toString();
 		String rfp = UUID.randomUUID().toString();
@@ -162,6 +162,7 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		
                 // Lookup for relying party ID
                 final String key = request.getParameter(ExternalAuthentication.CONVERSATION_KEY);//ExternalAuthentication.startExternalAuthentication(request);
+                request.getSession().setAttribute(SESSION_CONVERSATION_KEY, key);
                 ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, request);
                 
                 String relyingPartyId = "";

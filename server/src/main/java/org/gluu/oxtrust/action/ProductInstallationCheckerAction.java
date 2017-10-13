@@ -48,7 +48,7 @@ public class ProductInstallationCheckerAction implements Serializable {
     public void init() {        
         log.info("init() ProductInstallationCheckerAction call");
         
-        showSAMLMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled() || shibboleth3ConfService.isIdpInstalled();
+        showSAMLMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled() || (shibboleth3ConfService.isIdpInstalled() && ProductInstallationChecker.isShibbolethIDP3Installed());
         
         showAsimbaSubmenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled();
         

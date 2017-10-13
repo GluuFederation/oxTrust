@@ -1002,7 +1002,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 		String federationTag = null;
 		try {
-			federationTag = xPath.compile("count(/EntitiesDescriptor)").evaluate(xmlDocument);
+			federationTag = xPath.compile("count(//*[local-name() = 'EntitiesDescriptor'])").evaluate(xmlDocument);
 		} catch (XPathExpressionException ex) {
 			log.error("Failed to find IDP metadata file in relaying party file '{}'", spMetaDataFile.getAbsolutePath(), ex);
 			ex.printStackTrace();

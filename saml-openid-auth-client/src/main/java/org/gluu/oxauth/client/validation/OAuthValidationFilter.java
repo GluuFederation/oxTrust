@@ -23,14 +23,15 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
+import org.gluu.oxauth.client.authentication.AuthenticationFilter;
 
 /**
- * Validates grants recieved from OAuth server
+ * Validates grants recieved from OAuth server.
+ * 
+ * Add OAuth data to servlet session. Add remoteUser/Principal to servlet request for IDP.
  *
  * @author Yuriy Movchan
- * @version 0.1, 03/20/2013
  */
 public class OAuthValidationFilter extends AbstractOAuthFilter {
 
@@ -41,50 +42,53 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
     @Override
     public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
 
-		log.debug("Attempting to validate grants");
+        log.debug("Attempting to validate grants");
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
+        
+        final HttpSession session = request.getSession(false);
+        
+        String conversation = null;
+        if (session != null) {
 
-        // TODO: check chain
+                conversation = (String)session.getAttribute(AuthenticationFilter.SESSION_CONVERSATION_KEY);
+                if (conversation == null || conversation.isEmpty()) {
+                        throw new ServletException("IDP v3 conversation param is null or empty");
+                }
+
+                log.debug("########## SESSION conversation = " + conversation);
+
+        } else {
+                log.error("Session not created yet");
+        }
+        
+        CustomHttpServletRequest customRequest = new CustomHttpServletRequest(request);
+        customRequest.addCustomParameter("conversation", conversation);
+        
         if (!preFilter(servletRequest, servletResponse, filterChain)) {
-            filterChain.doFilter(request, response);
+            // unauthorized way
+            filterChain.doFilter(customRequest, response);
             return;
         }
-
-        final HttpSession session = request.getSession(false);
-
-		String conversation = null;
-		if (session != null) {
-
-			conversation = (String)session.getAttribute("conversation");
-			if (conversation == null || conversation.isEmpty()) {
-				throw new ServletException("IDP v3 conversation param is null or empty");
-			}
-
-			log.debug("########## SESSION conversation = " + conversation);
-
-		} else {
-			log.error("Session not created yet");
-		}
-
+        
+        // authorized way
         final String code = getParameter(request, Configuration.OAUTH_CODE);
         final String idToken = getParameter(request, Configuration.OAUTH_ID_TOKEN);
 
-		log.debug("Attempting to validate code: " + code + " and id_token: " + idToken);
-		try {
-			OAuthData oAuthData = getOAuthData(request, code, idToken);
-			session.setAttribute(Configuration.SESSION_OAUTH_DATA, oAuthData);
+        log.debug("Attempting to validate code: " + code + " and id_token: " + idToken);
+        try {
+                OAuthData oAuthData = getOAuthData(request, code, idToken);
+                session.setAttribute(Configuration.SESSION_OAUTH_DATA, oAuthData);
+                
+                customRequest.setRemoteUser(oAuthData.getUserUid());
         } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             log.warn("Failed to validate code and id_token", ex);
 
             throw new ServletException(ex);
         }
-
-		CustomHttpServletRequest customRequest = new CustomHttpServletRequest(request);
-		customRequest.addCustomParameter("conversation", conversation);
-
-		filterChain.doFilter(customRequest, response);
+                
+        filterChain.doFilter(customRequest, response);
     }
 
     /**

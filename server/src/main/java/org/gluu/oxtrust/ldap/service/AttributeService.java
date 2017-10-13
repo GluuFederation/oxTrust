@@ -269,7 +269,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return Attribute
 	 */
 	public GluuAttribute getAttributeByInum(String inum) {
-		return getAttributeByInum(inum, getAllAttributes());
+		return getAttributeByInum(inum, getAllAtributesImpl(getDnForAttribute(null)));
 	}
 
 	public GluuAttribute getAttributeByInum(String inum, List<GluuAttribute> attributes) {

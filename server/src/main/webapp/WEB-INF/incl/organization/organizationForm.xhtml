@@ -86,6 +86,7 @@
 						<li class="active"><a href="#sys-config" data-toggle="tab">#{msg['organizationForm.systemConfiguration']}</a></li>
 						<li><a href="#smtp-server" data-toggle="tab">#{msg['organizationForm.smtpServerConfiguration']}</a></li>
 						<li><a href="#ox-trust" data-toggle="tab">#{msg['organizationForm.oxTrustSettings']}</a></li>
+						<li><a href="#ox-auth" data-toggle="tab">#{msg['organizationForm.oxAuthSettings']}</a></li>
 					</ul>
 					<div class="tab-content">
 						<!-- System Configuration -->
@@ -186,6 +187,10 @@
 
 								<ox:decorate label="#{msg['organizationForm.requiresSSL']}">
 									<h:selectBooleanCheckbox value="#{_appliance.requiresSsl}" styleClass="form-control"/>
+								</ox:decorate>
+								
+								<ox:decorate label="#{msg['organizationForm.trustserver']}">
+									<h:selectBooleanCheckbox value="#{_appliance.serverTrust}" styleClass="form-control"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPort']}">
@@ -351,6 +356,16 @@
 								<!-- 							render="custThemeColorPanelId" limitRender="true" /> -->
 								<!-- 					</h:panelGrid> -->
 								<!-- 				</ox:decorate> -->
+
+							</h:panelGroup>
+						</div>
+						
+						<div class="tab-pane" id="ox-auth">
+							<h:panelGroup layout="block" style="width:80%;">
+
+								<ox:decorate label="#{msg['organizationForm.serverip']}">
+									<h:inputText value="#{_webKeySettings.serverIP}" styleClass="form-control"/>
+								</ox:decorate>
 
 							</h:panelGroup>
 						</div>

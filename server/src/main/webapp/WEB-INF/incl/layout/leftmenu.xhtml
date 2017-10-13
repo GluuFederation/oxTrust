@@ -321,7 +321,7 @@
 			$(document)
 					.ready(
 							function() {
-								$('input').iCheck({
+								$('input').icheck({
 									checkboxClass : 'icheckbox_square-blue',
 									radioClass : 'iradio_square-blue',
 									increaseArea : '20%' // optional
@@ -379,7 +379,7 @@
 									$('#subMenuConfiguration').css('display',
 											'block');
 									$('#menuConfiguration').addClass('active');
-									$('#subMenuLinkConfiguration7').addClass(
+									$('#subMenuLinkConfiguration6').addClass(
 											'active');
 								}
 
@@ -418,7 +418,15 @@
 									$('#subMenuLinkConfiguration11').addClass(
 											'active');
 								}
-                                                                
+
+								if (window.location.href
+										.indexOf("attribute/import") != -1) {
+									$('#subMenuConfiguration').css('display',
+											'block');
+									$('#menuConfiguration').addClass('active');
+									$('#subMenuLinkConfiguration12').addClass(
+											'active');
+								}                      
 								if(window.location.href.indexOf("configuration/certificateManagement") != -1 || window.location.href.indexOf("configuration/addCertificate") != -1){
 									$('#subMenuConfiguration').css('display', 'block');
 									$('#menuConfiguration').addClass('active');

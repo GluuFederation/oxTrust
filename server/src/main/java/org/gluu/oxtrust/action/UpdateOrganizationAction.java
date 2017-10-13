@@ -7,6 +7,8 @@
 package org.gluu.oxtrust.action;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
@@ -20,7 +22,9 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
+import org.xdi.config.oxauth.WebKeysSettings;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.security.Secure;
@@ -104,6 +108,10 @@ public class UpdateOrganizationAction implements Serializable {
 	private List<GluuAppliance> appliances;
 
 	private boolean initialized;
+	private WebKeysSettings webKeysSettings;
+
+	private LdapOxAuthConfiguration  ldapOxAuthConfiguration;
+
 
 	public String modify()  {
 		if (this.initialized) {
@@ -156,7 +164,7 @@ public class UpdateOrganizationAction implements Serializable {
 		this.loginPageCustomMessage = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_LOGIN_PAGE);
 		this.welcomePageCustomMessage = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_WELCOME_PAGE);
 		this.welcomeTitleText = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_TITLE_TEXT);
-
+		initOxAuthSetting();
 		appliances = new ArrayList<GluuAppliance>();
 		try {
 			appliances.addAll(applianceService.getAppliances());
@@ -167,6 +175,20 @@ public class UpdateOrganizationAction implements Serializable {
 		
 		
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private void initOxAuthSetting(){
+		String configurationDn = configurationFactory.getConfigurationDn();
+		try {
+			 ldapOxAuthConfiguration =  organizationService.getOxAuthSetting(configurationDn);
+			 this.webKeysSettings =  ldapOxAuthConfiguration.getOxWebKeysSettings() ;
+			 
+			 if(webKeysSettings == null){
+				 webKeysSettings = new WebKeysSettings(); 
+			 } 			 
+		} catch (LdapMappingException ex) {
+			log.error("Failed to load configuration from LDAP");
+		}
 	}
 
 	private void initLogoImage() {
@@ -194,6 +216,7 @@ public class UpdateOrganizationAction implements Serializable {
 			updateSmptConfiguration(this.appliance);
 			
 			applianceService.updateAppliance(this.appliance);
+			saveWebKeySettings();
 
 			/* Resolv.conf update */
 			// saveDnsInformation(); // This will be handled by puppet.
@@ -208,6 +231,17 @@ public class UpdateOrganizationAction implements Serializable {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Organization configuration updated successfully");
 
 		return modify();
+	}
+	
+	public void saveWebKeySettings() {
+		String configurationDn = configurationFactory.getConfigurationDn();
+		ldapOxAuthConfiguration = organizationService.getOxAuthSetting(configurationDn);
+		WebKeysSettings oldwebKeysSettings = ldapOxAuthConfiguration.getOxWebKeysSettings();
+		if ((oldwebKeysSettings != null) && !oldwebKeysSettings.equals(webKeysSettings)) {
+			webKeysSettings.setUpdateAt(new Date());
+			ldapOxAuthConfiguration.setOxWebKeysSettings(webKeysSettings);
+			organizationService.saveLdapOxAuthConfiguration(ldapOxAuthConfiguration);
+		}
 	}
 
 	public String getSmtpPassword() {
@@ -238,11 +272,11 @@ public class UpdateOrganizationAction implements Serializable {
 	public String verifySmtpConfiguration() {
 		log.info("HostName: " + appliance.getSmtpHost() + " Port: " + appliance.getSmtpPort() + " RequireSSL: " + appliance.isRequiresSsl()
 				+ " RequireSSL: " + appliance.isRequiresAuthentication());
-		log.debug("UserName: " + appliance.getSmtpUserName() + " Password: " + applianceService.getDecryptedSmtpPassword(appliance));
+		log.debug("UserName: " + appliance.getSmtpUserName() + " Password: " + applianceService.getDecryptedSmtpPassword(appliance, true));
 
 		try {
 			MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-					appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
+					appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance, true));
 			mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">",
 					appliance.getSmtpFromEmailAddress(), "SMTP Server Configuration Verification",
 					"SMTP Server Configuration Verification Successful.");
@@ -567,6 +601,14 @@ public class UpdateOrganizationAction implements Serializable {
 	 */
 	public void setAppliances(List<GluuAppliance> appliances) {
 		this.appliances = appliances;
+	}
+
+	public WebKeysSettings getWebKeysSettings() {
+		return webKeysSettings;
+	}
+
+	public void setWebKeysSettings(WebKeysSettings webKeysSettings) {
+		this.webKeysSettings = webKeysSettings;
 	}
 
 }

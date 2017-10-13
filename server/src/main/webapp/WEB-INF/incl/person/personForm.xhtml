@@ -84,17 +84,21 @@
 		$(document).ready(function(){ 
 			$("input.rf-ii-fld").each(function(index){ 
 				$(this).parent().parent().attr("tabIndex", index);
-			})
+			});
 			
 			$("span[tabindex='0']").focus();
-			$("span.rf-ii").focusout(function() {
-				var tabIdxStr = $(this).attr("tabindex");
-				if(tabIdxStr !== undefined){
-					var tabIdx = parseInt(tabIdxStr) + 1;
-					$("span[tabindex='"+tabIdx+"']").focus();
+			
+			$("span:focus").keyup(function(e) {
+				var keyCode = e.keyCode || e.which; 
+				if(keyCode === 9){ 
+					var currentTabIndex = $(e.currentTarget).attr("tabindex");
+					if(undefined !== currentTabIndex){
+						var currentTabIndex = parseInt(currentTabIndex) + 1;
+						$("span[tabindex='"+currentTabIndex+"']").focus();
+					}
 				}
 			});
-		})
+		});
 		
     </h:outputScript>
     <section class="content-header">
