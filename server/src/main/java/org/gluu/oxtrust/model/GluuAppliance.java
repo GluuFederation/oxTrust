@@ -184,6 +184,9 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "gluuSmtpRequiresSsl")
 	private String smtpRequiresSsl;
+	
+	@LdapAttribute(name = "gluuSmtpServerTrust")
+	private String smtpServerTrust;
 
 	@LdapAttribute(name = "gluuSmtpPort")
 	private String smtpPort;
@@ -754,4 +757,19 @@ public class GluuAppliance extends InumEntry implements Serializable {
    		this.cacheConfiguration = cacheConfiguration;
    	}
 
+   	public boolean isServerTrust() {
+		return Boolean.parseBoolean(smtpServerTrust);
+	}
+
+	public void setServerTrust(boolean serverTrust) {
+		this.smtpServerTrust = Boolean.toString(serverTrust);
+	}
+
+	public String getSmtpServerTrust() {
+		return smtpServerTrust;
+	}
+
+	public void setSmtpServerTrust(String smtpServerTrust) {
+		this.smtpServerTrust = smtpServerTrust;
+	}
 }

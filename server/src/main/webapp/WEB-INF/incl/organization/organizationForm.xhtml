@@ -188,6 +188,10 @@
 								<ox:decorate label="#{msg['organizationForm.requiresSSL']}">
 									<h:selectBooleanCheckbox value="#{_appliance.requiresSsl}" styleClass="form-control"/>
 								</ox:decorate>
+								
+								<ox:decorate label="#{msg['organizationForm.trustserver']}">
+									<h:selectBooleanCheckbox value="#{_appliance.serverTrust}" styleClass="form-control"/>
+								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPort']}">
 									<h:inputText value="#{_appliance.smtpPort}" styleClass="form-control"/>
