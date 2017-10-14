@@ -1,44 +1,33 @@
-/*
- * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
- *
- * Copyright (c) 2014, Gluu
- */
 package org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.group.GroupResource;
-import org.gluu.oxtrust.model.scim2.Meta;
-import org.gluu.oxtrust.model.scim2.user.Group;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Val Pecaoco
- */
-public class GroupFilterVisitor extends MainScimFilterVisitor {
+import java.util.Map;
 
-    private Logger logger = LoggerFactory.getLogger(GroupFilterVisitor.class);
+/**
+ * Based on former org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor of Val Pecaoco
+ * Created by jgomer on 2017-10-10.
+ */
+public class FidoFilterVisitor extends MainScimFilterVisitor {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private String attrOperCriteriaResolver(String attrName, String operator, String criteria) {
 
-        logger.info(" GroupFilterVisitor.attrOperCriteriaResolver() ");
+        logger.info(" FidoDeviceFilterVisitor.attrOperCriteriaResolver() ");
 
         attrName = FilterUtil.stripScim2Schema(attrName);
 
         String[] tokens = attrName.split("\\.");
 
-        String ldapAttributeName = getLdapAttributeName(attrName, GroupResource.class);
+        String ldapAttributeName = getLdapAttributeName(attrName, FidoDeviceResource.class);
 
         criteria = evaluateMultivaluedCriteria(criteria, operator, tokens);
 
@@ -61,7 +50,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_OPER_CRITERIA(ScimFilterParser.ATTR_OPER_CRITERIAContext ctx) {
 
-        logger.info(" GroupFilterVisitor.visitATTR_OPER_CRITERIA() ");
+        logger.info(" FidoDeviceFilterVisitor.visitATTR_OPER_CRITERIA() ");
 
         ParseTree parent = ctx.getParent();
         while (parent != null) {
@@ -92,7 +81,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_OPER_EXPR(ScimFilterParser.ATTR_OPER_EXPRContext ctx) {
 
-        logger.info(" GroupFilterVisitor.visitATTR_OPER_EXPR() ");
+        logger.info(" FidoDeviceFilterVisitor.visitATTR_OPER_EXPR() ");
 
         ParseTree parent = ctx.getParent();
         while (parent != null) {
@@ -123,7 +112,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
     @Override
     public String visitATTR_PR(ScimFilterParser.ATTR_PRContext ctx) {
 
-        logger.info(" GroupFilterVisitor.visitATTR_PR() ");
+        logger.info(" FidoDeviceFilterVisitor.visitATTR_PR() ");
 
         String attrName = ctx.ATTRNAME().getText();
 
@@ -145,7 +134,7 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
         attrName = FilterUtil.stripScim2Schema(attrName);
         String[] tokens = attrName.split("\\.");
 
-        String ldapAttributeName = getLdapAttributeName(attrName, GroupResource.class);
+        String ldapAttributeName = getLdapAttributeName(attrName, FidoDeviceResource.class);
 
         logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
 
@@ -154,4 +143,5 @@ public class GroupFilterVisitor extends MainScimFilterVisitor {
 
         return expr;
     }
+
 }

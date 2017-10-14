@@ -5,11 +5,8 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2;
 
-import java.util.Map;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
-import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.MainScimFilterVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
@@ -25,24 +22,6 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static Map<String, String> declaredAnnotations=IntrospectUtil.getPathsLdapAnnotationsMapping(UserResource.class);
-
-    public static String getUserLdapAttributeName(String attrName) {
-        attrName = FilterUtil.stripScim2Schema(attrName);
-        String ldapAttributeName = null;
-
-        int i=1;
-        while (ldapAttributeName==null && i>0) {
-            ldapAttributeName = declaredAnnotations.get(attrName);
-            i=attrName.lastIndexOf(".");
-            if (i>0)
-                attrName=attrName.substring(0, i);
-        }
-        //As in previous implementation, if no annotations maps to the attribute passed, the attribute itself is returned :(
-        return (ldapAttributeName == null) ? attrName : ldapAttributeName;
-
-    }
-
     private String attrOperCriteriaResolver(String attrName, String operator, String criteria) {
 
         logger.info(" UserFilterVisitor.attrOperCriteriaResolver() ");
@@ -51,7 +30,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
 
         String[] tokens = attrName.split("\\.");
 
-        String ldapAttributeName = getUserLdapAttributeName(attrName);
+        String ldapAttributeName = getLdapAttributeName(attrName, UserResource.class);
 
         criteria = evaluateMultivaluedCriteria(criteria, operator, tokens);
 
@@ -158,7 +137,7 @@ public class UserFilterVisitor extends MainScimFilterVisitor {
         attrName = FilterUtil.stripScim2Schema(attrName);
         String[] tokens = attrName.split("\\.");
 
-        String ldapAttributeName = getUserLdapAttributeName(attrName);
+        String ldapAttributeName = getLdapAttributeName(attrName, UserResource.class);
 
         logger.info(" ##### ATTRNAME = " + ctx.ATTRNAME().getText() + ", ldapAttributeName = " + ldapAttributeName);
 

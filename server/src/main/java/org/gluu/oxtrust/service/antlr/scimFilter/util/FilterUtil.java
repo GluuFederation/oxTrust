@@ -7,6 +7,7 @@ package org.gluu.oxtrust.service.antlr.scimFilter.util;
 
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
@@ -27,8 +28,8 @@ public class FilterUtil {
     static {
         urns = new ArrayList<String>();
         ExtensionService extService= CdiUtil.bean(ExtensionService.class);
-        //TODO: add fido to list
-        List<Class<? extends BaseScimResource>> list = Arrays.asList(UserResource.class, GroupResource.class);
+
+        List<Class<? extends BaseScimResource>> list = Arrays.asList(UserResource.class, GroupResource.class, FidoDeviceResource.class);
 
         for (Class <? extends BaseScimResource> cls : list) {
             for (Extension ext : extService.getResourceExtensions(cls))

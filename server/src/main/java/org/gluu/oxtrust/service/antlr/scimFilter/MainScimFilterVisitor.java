@@ -6,7 +6,9 @@
 package org.gluu.oxtrust.service.antlr.scimFilter;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.user.Name;
+import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterBaseVisitor;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
@@ -14,14 +16,35 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * Converts input filter to LDAP string filter format
  *
  * @author Val Pecaoco
+ * Updated by jgomer on 2017-10-10
  */
 public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
 
-    Logger logger = LoggerFactory.getLogger(MainScimFilterVisitor.class);
+    Logger logger = LoggerFactory.getLogger(getClass());
+
+    public static String getLdapAttributeName(String attrName, Class<? extends BaseScimResource> cls) {
+        attrName = FilterUtil.stripScim2Schema(attrName);
+        String ldapAttributeName = null;
+        Map<String, String> declaredAnnotations=IntrospectUtil.storeRefs.get(cls);
+
+        int i=1;
+        while (ldapAttributeName==null && i>0) {
+            ldapAttributeName = declaredAnnotations.get(attrName);
+            i=attrName.lastIndexOf(".");
+            if (i>0)
+                attrName=attrName.substring(0, i);
+        }
+        //As in previous SCIM implementation, if no annotations maps to the attribute passed, the attribute itself is returned :(
+        return (ldapAttributeName == null) ? attrName : ldapAttributeName;
+
+    }
+
 
     /**
      * {@InheritDoc}
