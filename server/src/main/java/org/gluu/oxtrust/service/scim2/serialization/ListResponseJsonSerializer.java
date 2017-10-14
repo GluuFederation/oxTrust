@@ -11,6 +11,7 @@ import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.gluu.oxtrust.model.scim2.Constants.LIST_RESPONSE_SCHEMA_ID;
 
@@ -25,6 +26,7 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
 
     private String attributes;
     private String excludeAttributes;
+    private List<String> jsonResources;
 
     //why not to inject the resource serializer instead of passing it as parameter? weld simply does not like it!
     public ListResponseJsonSerializer(ScimResourceSerializer serializer){
@@ -40,29 +42,31 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
     @Override
     public void serialize(ListResponse listResponse, JsonGenerator jGen, SerializerProvider provider) throws IOException {
 
-        jGen.writeStartObject();
-        jGen.writeNumberField("totalResults", listResponse.getTotalResults());
-        if (listResponse.getTotalResults()>0) {
-            jGen.writeNumberField("startIndex", listResponse.getStartIndex());
-            jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
-        }
-
-        jGen.writeArrayFieldStart("schemas");
-        jGen.writeString(LIST_RESPONSE_SCHEMA_ID);
-        jGen.writeEndArray();
-
-        jGen.writeArrayFieldStart("Resources");
-        for (BaseScimResource resource : listResponse.getResources()){
-            try {
-                JsonNode jsonResource=mapper.readTree(resourceSerializer.serialize(resource, attributes, excludeAttributes));
-                jGen.writeTree(jsonResource);
-                //jGen.writeString(resourceSerializer.serialize(resource));
+        try {
+            jGen.writeStartObject();
+            jGen.writeNumberField("totalResults", listResponse.getTotalResults());
+            if (listResponse.getTotalResults()>0) {
+                jGen.writeNumberField("startIndex", listResponse.getStartIndex());
+                jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
             }
-            catch (Exception e){
-                throw new IOException(e);
+
+            jGen.writeArrayFieldStart("schemas");
+            jGen.writeString(LIST_RESPONSE_SCHEMA_ID);
+            jGen.writeEndArray();
+
+            if (listResponse.getResources()!=null) {
+                jGen.writeArrayFieldStart("Resources");
+
+                for (BaseScimResource resource : listResponse.getResources()) {
+                    JsonNode jsonResource = mapper.readTree(resourceSerializer.serialize(resource, attributes, excludeAttributes));
+                    jGen.writeTree(jsonResource);
+                }
+                jGen.writeEndArray();
             }
         }
-        jGen.writeEndArray();
+        catch (Exception e) {
+            throw new IOException(e);
+        }
 
         jGen.writeEndObject();
 

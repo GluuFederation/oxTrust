@@ -1,7 +1,10 @@
 package org.gluu.oxtrust.service.scim2.serialization;
 
+import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
@@ -115,6 +118,7 @@ public class ScimResourceSerializer {
 
     private boolean containsProperty(SortedSet<String> properties, String prefix, String key){
 
+        key = key.startsWith("$") ? key.substring(1) : key;     //makes attributes like $ref to be accepted...
         String property = (prefix.length() == 0) ? key : prefix + "." + key;
         Set<String> set=properties.tailSet(property);
 
@@ -182,11 +186,11 @@ public class ScimResourceSerializer {
 
     }
 
-    public String serialize(BaseScimResource resource, String attributes, String exclussions) throws Exception{
+    public String serialize(BaseScimResource resource, String attributes, String exclusions) throws Exception{
 
         SortedSet<String> include =new TreeSet<String>();
         Class<? extends BaseScimResource> resourceClass=resource.getClass();
-        buildIncludeSet(include, resourceClass, resource.getSchemas(), attributes, exclussions);
+        buildIncludeSet(include, resourceClass, resource.getSchemas(), attributes, exclusions);
         log.debug("serialize. Attributes to include: {}", include);
         //Do generic serialization. This works for any POJO (not only subclasses of BaseScimResource)
         Map<String, Object> map = mapper.convertValue(resource, Map.class);
@@ -202,6 +206,16 @@ public class ScimResourceSerializer {
 
     public String serialize(BaseScimResource resource) throws Exception{
         return serialize(resource, null, null);
+    }
+
+    public ObjectMapper getListResponseMapper(){
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module=new SimpleModule("ListResponseModule", Version.unknownVersion());
+        module.addSerializer(ListResponse.class, new ListResponseJsonSerializer(this));
+        mapper.registerModule(module);
+
+        return mapper;
     }
 
 }
