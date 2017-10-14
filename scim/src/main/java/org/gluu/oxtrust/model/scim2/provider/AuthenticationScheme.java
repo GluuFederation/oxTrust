@@ -40,7 +40,8 @@ public class AuthenticationScheme {
 	private String documentationUri;
 
     @Attribute(description = "Whether it's the preferred authentication scheme for service usage",
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.BOOLEAN)
     private boolean primary;
 
 	/**

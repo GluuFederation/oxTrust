@@ -1,16 +1,20 @@
 package org.gluu.oxtrust.model.scim2.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
+import org.gluu.oxtrust.model.scim2.annotations.StoreReference;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.schema.SchemaResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 import javax.lang.model.type.NullType;
 import javax.ws.rs.HeaderParam;
@@ -44,7 +48,7 @@ public class IntrospectUtil {
         for (int i = 0; i<annotations.length && j<0; i++){
             //Iterate over annotations found at every parameter
             for (Annotation annotation : annotations[i]) {
-                if (annotation.annotationType().equals(HeaderParam.class)) {
+                if (annotation instanceof HeaderParam) {
                     //Verifies this is an authz header
                     if (((HeaderParam)annotation).value().equals("Authorization")) {
                         j=i;
@@ -66,7 +70,7 @@ public class IntrospectUtil {
      * @param fieldName the name of the field to find.
      * @return A Field object, or null if no field was found
      */
-    public static Field findField(final Class<?> cls, final String fieldName){
+    private static Field findField(final Class<?> cls, final String fieldName){
 
         Class<?> currentClass = cls;
 
@@ -152,21 +156,6 @@ public class IntrospectUtil {
 
     }
 
-    public static Map<String, String> getPathsLdapAnnotationsMapping(Class<? extends BaseScimResource> cls){
-
-        Map<String, String> map=new HashMap<String, String>();
-        for (String attrib: IntrospectUtil.allAttrs.get(cls)){
-            Field field=IntrospectUtil.findFieldFromPath(cls, attrib);
-            if (field!=null){
-                LdapAttribute ldapAnnot=field.getAnnotation(LdapAttribute.class);
-                if (ldapAnnot!=null)
-                    map.put(attrib, ldapAnnot.name());
-            }
-        }
-        return map;
-
-    }
-
     private static List<String> requiredAttrsNames;
     private static List<String> defaultAttrsNames;
     private static List<String> alwaysAttrsNames;
@@ -181,7 +170,8 @@ public class IntrospectUtil {
     public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> validableCoreAttrs;
     public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> canonicalCoreAttrs;
 
-    public static Map<Class <?extends BaseScimResource>, SortedSet<String>> allAttrs;
+    public static Map<Class <? extends BaseScimResource>, SortedSet<String>> allAttrs;
+    public static Map<Class <? extends BaseScimResource>, Map<String, String>> storeRefs;
 
     private static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> newEmptyMap(){
         return new HashMap<Class<? extends BaseScimResource>, Map<String, List<Method>>>();
@@ -205,9 +195,10 @@ public class IntrospectUtil {
         canonicalCoreAttrs=newEmptyMap();
 
         allAttrs=new HashMap<Class<? extends BaseScimResource>, SortedSet<String>>();
+        storeRefs=new HashMap<Class<? extends BaseScimResource>, Map<String,String>>();
     }
 
-    private static void traverseClassForNames(Class clazz, String prefix, List<Field> extraFields) throws Exception{
+    private static void traverseClassForNames(Class clazz, String prefix, List<Field> extraFields, boolean prune) throws Exception{
 
         List<Field> fields=new ArrayList<Field>();
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
@@ -243,8 +234,16 @@ public class IntrospectUtil {
                 if (vAnnot!=null)
                     validableAttrsNames.add(name);
 
-                Class cls=attrAnnot.multiValueClass();  //Use class parameter of Collection
-                traverseClassForNames(cls.equals(NullType.class) ? f.getType() : cls, name, new ArrayList<Field>());
+                if (!prune && attrAnnot.type().equals(AttributeDefinition.Type.COMPLEX)) {
+                    Class cls = attrAnnot.multiValueClass();  //Use <T> parameter of Collection if present
+                    if (cls.equals(NullType.class))
+                        cls=f.getType();
+
+                    if (clazz.equals(cls))  //Prevent infinite loop
+                        prune=true;
+
+                    traverseClassForNames(cls.equals(NullType.class) ? f.getType() : cls, name, new ArrayList<Field>(), prune);
+                }
             }
         }
     }
@@ -258,11 +257,11 @@ public class IntrospectUtil {
             Class clazz=baseClass;
 
             for (String prop : attrName.split("\\.")) {
-                Method method=IntrospectUtil.getGetter(prop, clazz);
+                Method method=getGetter(prop, clazz);
                 list.add(method);
 
                 if (isCollection(method.getReturnType())) {  //Use class of parameter in collection
-                    Field f=IntrospectUtil.findField(clazz, prop);
+                    Field f=findField(clazz, prop);
                     Attribute attrAnnot=f.getAnnotation(Attribute.class);
                     if (attrAnnot!=null)
                         clazz=attrAnnot.multiValueClass();
@@ -276,78 +275,57 @@ public class IntrospectUtil {
 
     }
 
-    static{
+    static {
         try {
             List<Field> basicFields=Arrays.asList(BaseScimResource.class.getDeclaredFields());
             resetMaps();
 
-            resetAttrNames();
-            Class aClass = UserResource.class;
-            traverseClassForNames(aClass, "", basicFields);
-            requiredCoreAttrs.put(aClass, computeGettersMap(requiredAttrsNames, aClass));
-            defaultCoreAttrs.put(aClass, computeGettersMap(defaultAttrsNames, aClass));
-            alwaysCoreAttrs.put(aClass, computeGettersMap(alwaysAttrsNames, aClass));
-            neverCoreAttrs.put(aClass, computeGettersMap(neverAttrsNames, aClass));
-            validableCoreAttrs.put(aClass, computeGettersMap(validableAttrsNames, aClass));
-            canonicalCoreAttrs.put(aClass, computeGettersMap(canonicalizedAttrsNames, aClass));
+            List<Class<? extends BaseScimResource>> resourceClasses=Arrays.asList(UserResource.class, GroupResource.class,
+                    FidoDeviceResource.class, ServiceProviderConfig.class, ResourceType.class, SchemaResource.class);
 
-            allAttrs.put(aClass, new TreeSet<String>());
-            allAttrs.get(aClass).addAll(alwaysAttrsNames);
-            allAttrs.get(aClass).addAll(defaultAttrsNames);
-            allAttrs.get(aClass).addAll(neverAttrsNames);
+            //Perform initializations needed for all resource types
+            for (Class aClass : resourceClasses){
+                resetAttrNames();
 
-            resetAttrNames();
-            aClass = GroupResource.class;
-            traverseClassForNames(aClass, "", basicFields);
-            requiredCoreAttrs.put(aClass, computeGettersMap(requiredAttrsNames, aClass));
-            defaultCoreAttrs.put(aClass, computeGettersMap(defaultAttrsNames, aClass));
-            alwaysCoreAttrs.put(aClass, computeGettersMap(alwaysAttrsNames, aClass));
-            neverCoreAttrs.put(aClass, computeGettersMap(neverAttrsNames, aClass));
-            validableCoreAttrs.put(aClass, computeGettersMap(validableAttrsNames, aClass));
-            canonicalCoreAttrs.put(aClass, computeGettersMap(canonicalizedAttrsNames, aClass));
+                traverseClassForNames(aClass, "", basicFields, false);
+                requiredCoreAttrs.put(aClass, computeGettersMap(requiredAttrsNames, aClass));
+                defaultCoreAttrs.put(aClass, computeGettersMap(defaultAttrsNames, aClass));
+                alwaysCoreAttrs.put(aClass, computeGettersMap(alwaysAttrsNames, aClass));
+                neverCoreAttrs.put(aClass, computeGettersMap(neverAttrsNames, aClass));
+                validableCoreAttrs.put(aClass, computeGettersMap(validableAttrsNames, aClass));
+                canonicalCoreAttrs.put(aClass, computeGettersMap(canonicalizedAttrsNames, aClass));
 
-            allAttrs.put(aClass, new TreeSet<String>());
-            allAttrs.get(aClass).addAll(alwaysAttrsNames);
-            allAttrs.get(aClass).addAll(defaultAttrsNames);
-            allAttrs.get(aClass).addAll(neverAttrsNames);
+                allAttrs.put(aClass, new TreeSet<String>());
+                allAttrs.get(aClass).addAll(alwaysAttrsNames);
+                allAttrs.get(aClass).addAll(defaultAttrsNames);
+                allAttrs.get(aClass).addAll(neverAttrsNames);
+            }
 
-            resetAttrNames();
-            aClass = ServiceProviderConfig.class;
-            traverseClassForNames(aClass, "", basicFields);
-            requiredCoreAttrs.put(aClass, computeGettersMap(requiredAttrsNames, aClass));
-            defaultCoreAttrs.put(aClass, computeGettersMap(defaultAttrsNames, aClass));
-            alwaysCoreAttrs.put(aClass, computeGettersMap(alwaysAttrsNames, aClass));
-            neverCoreAttrs.put(aClass, computeGettersMap(neverAttrsNames, aClass));
-            validableCoreAttrs.put(aClass, computeGettersMap(validableAttrsNames, aClass));
-            canonicalCoreAttrs.put(aClass, computeGettersMap(canonicalizedAttrsNames, aClass));
+            for (Class cls : resourceClasses) {
+                Map<String, String> map = new HashMap<String, String>();
 
-            allAttrs.put(aClass, new TreeSet<String>());
-            allAttrs.get(aClass).addAll(alwaysAttrsNames);
-            allAttrs.get(aClass).addAll(defaultAttrsNames);
-            allAttrs.get(aClass).addAll(neverAttrsNames);
-
-            resetAttrNames();
-            aClass = ResourceType.class;
-            traverseClassForNames(aClass, "", basicFields);
-            requiredCoreAttrs.put(aClass, computeGettersMap(requiredAttrsNames, aClass));
-            defaultCoreAttrs.put(aClass, computeGettersMap(defaultAttrsNames, aClass));
-            alwaysCoreAttrs.put(aClass, computeGettersMap(alwaysAttrsNames, aClass));
-            neverCoreAttrs.put(aClass, computeGettersMap(neverAttrsNames, aClass));
-            validableCoreAttrs.put(aClass, computeGettersMap(validableAttrsNames, aClass));
-            canonicalCoreAttrs.put(aClass, computeGettersMap(canonicalizedAttrsNames, aClass));
-
-            allAttrs.put(aClass, new TreeSet<String>());
-            allAttrs.get(aClass).addAll(alwaysAttrsNames);
-            allAttrs.get(aClass).addAll(defaultAttrsNames);
-            allAttrs.get(aClass).addAll(neverAttrsNames);
-
+                for (String attrib : allAttrs.get(cls)) {
+                    Field field = findFieldFromPath(cls, attrib);
+                    if (field != null) {
+                        StoreReference annotation = field.getAnnotation(StoreReference.class);
+                        if (annotation != null) {
+                            if (StringUtils.isNotEmpty(annotation.ref()))
+                                map.put(attrib, annotation.ref());
+                            else {
+                                List<Class<? extends BaseScimResource>> clsList = Arrays.asList(annotation.resourceType());
+                                int i = clsList.indexOf(cls);
+                                if (i>=0 && i<annotation.refs().length)
+                                    map.put(attrib, annotation.refs()[i]);
+                            }
+                        }
+                    }
+                }
+                storeRefs.put(cls, map);
+            }
 /*
             log.debug("requiredAttrsNames {}", requiredAttrsNames);
             log.debug("defaultAttrsNames {}", defaultAttrsNames);
-            log.debug("alwaysAttrsNames {}", alwaysAttrsNames);
-            log.debug("validableAttrsNames {}", validableAttrsNames);
-            log.debug("canonicalizedAttrsNames {}", canonicalizedAttrsNames);
-*/
+            log.debug("alwaysAttrsNames {}", alwaysAttrsNames);*/
         }
         catch (Exception e){
             log.error(e.getMessage(), e);

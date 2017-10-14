@@ -21,7 +21,8 @@ public class Role {
     private String type;
 
     @Attribute(description = "A Boolean value indicating the 'primary' or preferred attribute value for this attribute. " +
-            "The primary attribute value 'true' MUST appear no more than once.")
+            "The primary attribute value 'true' MUST appear no more than once.",
+            type = AttributeDefinition.Type.BOOLEAN)
     private boolean primary;
 
     public String getValue() {

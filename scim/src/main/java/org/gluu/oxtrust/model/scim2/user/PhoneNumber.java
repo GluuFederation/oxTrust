@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.model.scim2.user;
 
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.Validations;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
@@ -25,7 +26,8 @@ public class PhoneNumber {
 
     @Attribute(description = "A Boolean value indicating the 'primary'  or preferred attribute value for this attribute, " +
             "e.g., the  preferred phone number or primary phone number. The primary attribute value 'true' MUST appear no " +
-            "more than once.")
+            "more than once.",
+            type = AttributeDefinition.Type.BOOLEAN)
     private boolean primary;
 
     public String getValue() {

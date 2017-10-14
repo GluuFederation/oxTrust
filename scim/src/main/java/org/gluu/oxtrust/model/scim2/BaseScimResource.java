@@ -2,10 +2,9 @@ package org.gluu.oxtrust.model.scim2;
 
 import org.codehaus.jackson.annotate.JsonAnyGetter;
 import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.gluu.oxtrust.model.scim2.annotations.Attribute;
-import org.gluu.oxtrust.model.scim2.annotations.Schema;
-import org.gluu.oxtrust.model.scim2.user.Meta;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.gluu.oxtrust.model.scim2.annotations.*;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
 
 import java.util.*;
 
@@ -13,9 +12,11 @@ import java.util.*;
  * Created by jgomer on 2017-09-04.
  *
  * This class represents the root hierarchy of SCIM resources. All of them: user, group, etc. are subclasses of this class
- * Adapted from https://github.com/pingidentity/scim2/blob/master/scim2-sdk-common/src/main/java/com/unboundid/scim2/common/BaseScimResource.java
+ * Notes: Property names (member names) MUST match exactly as in the spec, so do not change!. Add a new item to the list
+ * found in the static block of code at org.gluu.oxtrust.model.scim2.util.IntrospectUtil when a new subclass (SCIM resource)
+ * is added. StoreReference annotations are used by FilterVisitor classes to convert SCIM filter queries into LDAP queries
  *
- * Do not remove LdapAttribute annotations. These are used by FilterVisitor classes to convert SCIM filter queries into LDAP queries
+ * Adapted from https://github.com/pingidentity/scim2/blob/master/scim2-sdk-common/src/main/java/com/unboundid/scim2/common/BaseScimResource.java
  */
 public class BaseScimResource {
 
@@ -23,7 +24,9 @@ public class BaseScimResource {
             "that are used to indicate the namespaces of the SCIM schemas that define the attributes present in the " +
             "current JSON structure",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            //mutability = AttributeDefinition.Mutability.READ_ONLY,
+            /* This should not be READ_ONLY as the spec says, ie. if upon creation only the default schema is provided and
+               then via an update a custom attribute is specified, the schemas attributes needs to be updated! */
             returned = AttributeDefinition.Returned.ALWAYS)
     private List<String> schemas;
 
@@ -33,16 +36,17 @@ public class BaseScimResource {
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             returned = AttributeDefinition.Returned.ALWAYS,
             uniqueness = AttributeDefinition.Uniqueness.SERVER) //?
-    @LdapAttribute(name = "inum")
+    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class}, refs = {"inum", "oxId"})
     private String id;
 
     @Attribute(description = "A String that is an identifier for the resource as defined by the provisioning client",
             isCaseExact = true)
-    @LdapAttribute(name = "oxTrustExternalId")
+    @StoreReference(ref = "oxTrustExternalId")
     private String externalId;
 
     @Attribute(description = "A complex attribute containing resource metadata",
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.COMPLEX)
     private Meta meta;
 
     public BaseScimResource(){
@@ -94,26 +98,9 @@ public class BaseScimResource {
         this.schemas = schemas;
     }
 
-
     public static String getType(Class<? extends BaseScimResource> cls){
         Schema annot=cls.getAnnotation(Schema.class);
         return annot==null ? null : annot.name();
     }
 
-    /*
-    public static Class <? extends BaseScimResource> getResourceClass(BaseScimResource bean){
-
-        Class<? extends BaseScimResource> origClass=bean.getClass();
-        List<Class<? extends BaseScimResource>> scimResouceSubClasses= Arrays.asList(UserResource.class, GroupResource.class);
-        for (Class subClass : scimResouceSubClasses)
-            try{
-                origClass.asSubclass(subClass);
-                return subClass;
-            }
-            catch (Exception e){
-                //left empty intentionally
-            }
-        return null;
-    }
-    */
 }

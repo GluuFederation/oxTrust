@@ -23,9 +23,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
  * implementation of the /ResourceTypes endpoint
  * For more about this resource type see RFC 7643, section 6
  */
-@Schema(id="urn:ietf:params:scim:schemas:core:2.0:ResourceType",
-        name="Resource Type",
-        description = "Specifies the metadata about a resource")
+@Schema(id="urn:ietf:params:scim:schemas:core:2.0:ResourceType", name="Resource Type", description = "Specifies the metadata about a resource")
 public class ResourceType extends BaseScimResource {
 
     @Attribute(description = "The resource type name.",
@@ -52,7 +50,8 @@ public class ResourceType extends BaseScimResource {
 
     @Attribute(description = "A list of URIs of the resource type's schema extensions.",
             mutability = AttributeDefinition.Mutability.READ_ONLY,
-            multiValueClass = SchemaExtensionHolder.class)
+            multiValueClass = SchemaExtensionHolder.class,
+            type = AttributeDefinition.Type.COMPLEX)
 	private List<SchemaExtensionHolder> schemaExtensions;
 
 	public String getName() {

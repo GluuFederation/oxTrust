@@ -15,7 +15,8 @@ public class ChangePasswordConfig {
 
     @Attribute(description = "A Boolean value specifying whether or not the operation is supported.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.BOOLEAN)
 	private final boolean supported;
 
 	/**

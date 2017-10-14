@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.model.scim2.user;
 
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.Validations;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
@@ -13,7 +14,8 @@ public class Photo {
 
     @Attribute(description = "URI of a photo of the User.",
             isRequired = true,  //specs says false but it doesn't make sense
-            referenceTypes = { "external" })
+            referenceTypes = { "external" },
+            type = AttributeDefinition.Type.REFERENCE)
     @Validator(value = Validations.PHOTO)
     private String value;
 
@@ -26,7 +28,8 @@ public class Photo {
 
     @Attribute(description = "A Boolean value indicating the 'primary'  or preferred attribute value for this attribute, " +
             "e.g., the preferred messenger or primary messenger. The primary attribute value 'true' MUST appear no more " +
-            "than once.")
+            "than once.",
+            type = AttributeDefinition.Type.BOOLEAN)
     private boolean primary;
 
     public String getValue() {

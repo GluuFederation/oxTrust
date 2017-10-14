@@ -22,9 +22,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_PAYLOAD_SIZE;
  * This class represents a ServiceProviderConfig. It's key for the implementation of the /ServiceProviderConfig endpoint
  * For more about this resource type see RFC 7643, section 5
  */
-@Schema(id="urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig",
-        name="Service Provider Config",
-        description = "SCIM 2.0 Service Provider Config Resource")
+@Schema(id="urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig", name="Service Provider Config", description = "SCIM 2.0 Service Provider Config Resource")
 public class ServiceProviderConfig extends BaseScimResource {
 
     @Attribute(description = "An HTTP-addressable URL pointing to the service provider's human-consumable help documentation.",
@@ -33,32 +31,38 @@ public class ServiceProviderConfig extends BaseScimResource {
 
     @Attribute(description = "A complex type that specifies PATCH configuration options.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.COMPLEX)
 	private PatchConfig patch = new PatchConfig(false);
 
     @Attribute(description = "A complex type that specifies bulk configuration options. See Section 3.7 of RFC7644",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.COMPLEX)
     private BulkConfig bulk = new BulkConfig(true, MAX_BULK_OPERATIONS, MAX_BULK_PAYLOAD_SIZE);
 
     @Attribute(description = "A complex type that specifies FILTER options.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.COMPLEX)
 	private FilterConfig filter = new FilterConfig(true, Constants.MAX_COUNT);
 
     @Attribute(description = "A complex type that specifies configuration options related to changing a password.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.COMPLEX)
     private ChangePasswordConfig changePassword = new ChangePasswordConfig(true);
 
     @Attribute(description = "A complex type that specifies Sort configuration options.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.COMPLEX)
 	private SortConfig sort = new SortConfig(true);
 
     @Attribute(description = "A complex type that specifies ETag configuration options.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.COMPLEX)
 	private ETagConfig etag = new ETagConfig(false);
 
     @Attribute(description = "A multi-valued complex type that specifies supported authentication scheme properties. " +
@@ -66,7 +70,8 @@ public class ServiceProviderConfig extends BaseScimResource {
             "security considerations, make the authenticationSchemes attribute publicly accessible without prior authentication.",
             isRequired = true,
             multiValueClass = AuthenticationScheme.class,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.COMPLEX)
 	private Collection<AuthenticationScheme> authenticationSchemes;
 
 	public String getDocumentationUri() {

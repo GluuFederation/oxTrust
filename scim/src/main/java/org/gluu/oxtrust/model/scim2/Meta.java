@@ -1,13 +1,11 @@
-package org.gluu.oxtrust.model.scim2.user;
+package org.gluu.oxtrust.model.scim2;
 
-import org.gluu.oxtrust.model.scim2.AttributeDefinition;
-import org.gluu.oxtrust.model.scim2.annotations.Attribute;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.gluu.oxtrust.model.scim2.annotations.*;
 
 /**
  * Created by jgomer on 2017-09-04.
  *
- * Do not remove LdapAttribute annotations. These are used by FilterVisitor classes to convert SCIM filter queries into LDAP queries
+ * StoreReference annotations are used by FilterVisitor classes to convert SCIM filter queries into LDAP queries
  */
 public class Meta {
 
@@ -17,24 +15,26 @@ public class Meta {
     private String resourceType;
 
     @Attribute(description = "Date and time the resource was created",
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
-    @LdapAttribute(name = "oxTrustMetaCreated")
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.DATETIME)
+    @StoreReference(ref = "oxTrustMetaCreated")
     private String created;
 
     @Attribute(description = "Date and time the resource was last modified",
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
-    @LdapAttribute(name = "oxTrustMetaLastModified")
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.DATETIME)
+    @StoreReference(ref = "oxTrustMetaLastModified")
     private String lastModified;
 
     @Attribute(description = "The location (URI) of the resource",
             mutability = AttributeDefinition.Mutability.READ_ONLY)
-    @LdapAttribute(name = "oxTrustMetaLocation")
+    @StoreReference(ref = "oxTrustMetaLocation")
     private String location;
 
     @Attribute(description = "The version of the resource",
             isCaseExact = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY)
-    @LdapAttribute(name = "oxTrustMetaVersion")
+    @StoreReference(ref = "oxTrustMetaVersion")
     private String version;
 
     public String getResourceType() {

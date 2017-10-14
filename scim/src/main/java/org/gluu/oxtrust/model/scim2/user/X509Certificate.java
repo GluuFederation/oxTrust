@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.model.scim2.user;
 
+import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.Validations;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
@@ -12,7 +13,8 @@ import org.gluu.oxtrust.model.scim2.annotations.Validator;
 public class X509Certificate {
 
     @Attribute(description = "The value of a X509 certificate.",
-            isRequired = true)  //specs says false but it doesn't make sense
+            isRequired = true,  //specs says false but it doesn't make sense
+            type = AttributeDefinition.Type.BINARY)
     @Validator(value = Validations.X509)
     private String value;
 
@@ -23,7 +25,8 @@ public class X509Certificate {
     private String type;
 
     @Attribute(description = "A Boolean value indicating the 'primary' or preferred attribute value for this attribute. " +
-            "The primary attribute value 'true' MUST appear no more than once.")
+            "The primary attribute value 'true' MUST appear no more than once.",
+            type = AttributeDefinition.Type.BOOLEAN)
     private boolean primary;
 
     public String getValue() {

@@ -2,11 +2,8 @@ package org.gluu.oxtrust.model.scim2.user;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.annotations.Attribute;
-import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.Validations;
-import org.gluu.oxtrust.model.scim2.annotations.Validator;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.gluu.oxtrust.model.scim2.annotations.*;
 
 import java.util.List;
 
@@ -14,10 +11,9 @@ import java.util.List;
  * Created by jgomer on 2017-09-04.
  *
  * Core schema user resource.
- * Property names (member names) MUST match exactly as in the spec. Edit carefully! Many other classes are depending on
- * this one via reflection. Annotations applied at every member follow what the spec states
- * Do not remove LdapAttribute annotations. These are used by FilterVisitor classes to convert SCIM filter queries into
- * LDAP queries
+ * Notes: Property names (member names) MUST match exactly as in the spec, so do not change!. Other classes may depend on
+ * this one via reflection. Do not add members whose names are already at org.gluu.oxtrust.model.scim2.BaseScimResource.
+ * Annotations applied at every member resemble what the spec states
  */
 @Schema(id="urn:ietf:params:scim:schemas:core:2.0:User", name="User", description = "User Account")
 public class UserResource extends BaseScimResource {
@@ -26,112 +22,124 @@ public class UserResource extends BaseScimResource {
             "service provider.",
             isRequired = true,
             uniqueness = AttributeDefinition.Uniqueness.SERVER)
-    @LdapAttribute(name = "uid")
+    @StoreReference(ref = "uid")
     private String userName;
 
-    @Attribute(description = "The components of the user's real name.")
+    @Attribute(description = "The components of the user's real name.",
+            type = AttributeDefinition.Type.COMPLEX)
     private Name name;
 
     @Attribute(description = "The name of the User, suitable for display to end-users. The name SHOULD be the full name " +
             "of the User being described if known.")
-    @LdapAttribute(name = "displayName")
+    @StoreReference(ref = "displayName")
     private String displayName;
 
     @Attribute(description = "The casual way to address the user in real life, e.g.'Bob' or 'Bobby' instead of 'Robert'." +
             "This attribute SHOULD NOT be used to represent a User's username (e.g., bjensen or mpepperidge)")
-    @LdapAttribute(name = "nickName")
+    @StoreReference(ref = "nickName")
     private String nickName;
 
     @Attribute(description = "A fully qualified URL to a page representing the User's online profile",
-            referenceTypes = { "external" })
-    @LdapAttribute(name = "oxTrustProfileURL")
+            referenceTypes = { "external" },
+            type = AttributeDefinition.Type.REFERENCE)
+    @StoreReference(ref = "oxTrustProfileURL")
     private String profileUrl;
 
     @Attribute(description = "The user's title, such as 'Vice President'.")
-    @LdapAttribute(name = "oxTrustTitle")
+    @StoreReference(ref = "oxTrustTitle")
     private String title;
 
     @Attribute(description = "Used to identify the organization to user relationship. Typical values used might be " +
             "'Contractor', 'Employee', 'Intern', 'Temp', 'External', and 'Unknown' but any value may be used.")
-    @LdapAttribute(name = "oxTrustUserType")
+    @StoreReference(ref = "oxTrustUserType")
     private String userType;
 
     @Attribute(description = "Indicates the User's preferred written or spoken language.  Generally used for selecting a " +
             "localized User interface. e.g., 'en_US' specifies the language English and country US.")
-    @LdapAttribute(name = "preferredLanguage")
+    @StoreReference(ref = "preferredLanguage")
     private String preferredLanguage;
 
     @Attribute(description = "Used to indicate the User's default  location for purposes of localizing items such as " +
             "currency, date time format, numerical representations, etc.")
-    @LdapAttribute(name = "locale")
+    @StoreReference(ref = "locale")
     @Validator(value = Validations.LOCALE)
     private String locale;
 
     @Attribute(description = "The User's time zone in the 'Olson' timezone database format; e.g.,'America/Los_Angeles'")
-    @LdapAttribute(name = "timezone")
+    @StoreReference(ref = "timezone")
     @Validator(value = Validations.TIMEZONE)
     private String timezone;
 
-    @Attribute(description = "A Boolean value indicating the User's administrative status.")
-    @LdapAttribute(name = "oxTrustActive")
+    @Attribute(description = "A Boolean value indicating the User's administrative status.",
+            type = AttributeDefinition.Type.BOOLEAN)
+    @StoreReference(ref = "oxTrustActive")
     private boolean active;
 
     @Attribute(description = "The User's clear text password. This attribute is intended to be used as a means to specify" +
             " an initial password when creating a new User or to reset an existing User's password.",
             mutability = AttributeDefinition.Mutability.WRITE_ONLY,
             returned = AttributeDefinition.Returned.NEVER)
-    @LdapAttribute(name = "password")
+    @StoreReference(ref = "password")
     private String password;
 
     @Attribute(description = "E-mail addresses for the user. The value SHOULD be canonicalized by the Service Provider, " +
             "e.g., bjensen@example.com instead of bjensen@EXAMPLE.COM. Canonical Type values of work, home, and other.",
-            multiValueClass = Email.class)
-    @LdapAttribute(name = "oxTrustEmail")
+            multiValueClass = Email.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "oxTrustEmail")
     private List<Email> emails;
 
     @Attribute(description = "Phone numbers for the User.  The value SHOULD be canonicalized by the Service Provider " +
             "according to format in RFC3966 e.g., 'tel:+1-201-555-0123'.  Canonical Type values of work, home, mobile, " +
             "fax, pager and other.",
-            multiValueClass = PhoneNumber.class)
-    @LdapAttribute(name = "oxTrustPhoneValue")
+            multiValueClass = PhoneNumber.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "oxTrustPhoneValue")
     private List<PhoneNumber> phoneNumbers;
 
     @Attribute(description = "Instant messaging addresses for the User.",
-            multiValueClass = InstantMessagingAddress.class)
-    @LdapAttribute(name = "oxTrustImsValue")
+            multiValueClass = InstantMessagingAddress.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "oxTrustImsValue")
     private List<InstantMessagingAddress> ims;
 
     @Attribute(description = "URIs of photos of the User.",
-            multiValueClass = Photo.class)
-    @LdapAttribute(name = "oxTrustPhotos")
+            multiValueClass = Photo.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "oxTrustPhotos")
     private List<Photo> photos;
 
     @Attribute(description = "Physical mailing addresses for this User.",
-            multiValueClass = Address.class)
-    @LdapAttribute(name = "oxTrustAddresses")
+            multiValueClass = Address.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "oxTrustAddresses")
     private List<Address> addresses;
 
     @Attribute(description = "A list of groups that the user belongs to, either thorough direct membership, nested groups, " +
             "or dynamically calculated.",
             mutability = AttributeDefinition.Mutability.READ_ONLY,
-            multiValueClass = Group.class)
-    @LdapAttribute(name = "memberOf")
+            multiValueClass = Group.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "memberOf")
     private List<Group> groups;
 
     @Attribute(description = "A list of entitlements for the User that represent a thing the User has.",
-            multiValueClass = Entitlement.class)
-    @LdapAttribute(name = "oxTrustEntitlements")
+            multiValueClass = Entitlement.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "oxTrustEntitlements")
     private List<Entitlement> entitlements;
 
     @Attribute(description = "A list of roles for the User that collectively represent who the User is; e.g., 'Student'," +
             " 'Faculty'.",
-            multiValueClass = Role.class)
-    @LdapAttribute(name = "oxTrustRole")
+            multiValueClass = Role.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "oxTrustRole")
     private List<Role> roles;
 
     @Attribute(description = "A list of certificates issued to the User.",
-            multiValueClass = X509Certificate.class)
-    @LdapAttribute(name = "oxTrustx509Certificate")
+            multiValueClass = X509Certificate.class,
+            type = AttributeDefinition.Type.COMPLEX)
+    @StoreReference(ref = "oxTrustx509Certificate")
     private List<X509Certificate> x509Certificates;
 
     @Attribute(description = "Pairwise IDs",
@@ -139,7 +147,7 @@ public class UserResource extends BaseScimResource {
             returned = AttributeDefinition.Returned.REQUEST,
             multiValueClass = String.class)
     //This attribute is not present in SCIM spec... but see https://github.com/GluuFederation/SCIM-Client/issues/19
-    @LdapAttribute(name = "oxPPID")
+    @StoreReference(ref = "oxPPID")
     private List<String> pairwiseIdentitifers;
 
     public String getUserName() {

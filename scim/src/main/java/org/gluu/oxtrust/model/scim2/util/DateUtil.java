@@ -39,9 +39,18 @@ public class DateUtil {
     }
 
     public static String generalizedToISOStringDate(String strDate){
-        DateTimeFormatter fmt = DateTimeFormat.forPattern(GENERALIZED_TIME_FORMAT);
-        DateTime dt=fmt.parseDateTime(strDate);
-        return ISODateTimeFormat.dateTime().print(dt);
+
+        String isoFormatted;
+        try {
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(GENERALIZED_TIME_FORMAT);
+            DateTime dt = fmt.parseDateTime(strDate);
+            isoFormatted = ISODateTimeFormat.dateTime().print(dt);
+        }
+        catch (Exception e){
+            isoFormatted = null;
+        }
+        return isoFormatted;
+
     }
 
 }

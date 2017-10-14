@@ -25,7 +25,8 @@ public class SchemaExtensionHolder {
 
     @Attribute(description = "A Boolean value that specifies whether or not the schema extension is required for the resource type.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.BOOLEAN)
     private boolean required;
 
     public String getSchema() {

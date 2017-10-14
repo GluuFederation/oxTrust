@@ -15,17 +15,20 @@ public class BulkConfig {
 
     @Attribute(description = "A Boolean value specifying whether or not the operation is supported.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.BOOLEAN)
 	private final boolean supported;
 
     @Attribute(description = "An integer value specifying the maximum number of operations.",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.INTEGER)
 	private final long maxOperations;
 
     @Attribute(description = " An integer value specifying the maximum payload size in bytes",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.READ_ONLY)
+            mutability = AttributeDefinition.Mutability.READ_ONLY,
+            type = AttributeDefinition.Type.INTEGER)
 	private final long maxPayloadSize;
 
 	/**

@@ -121,7 +121,8 @@ public class ScimResourceUtil {
      * @return A new object that contains the result: the final state of destination object
      * @throws Exception When recursive traversal fails or if the rule of immutable attribute was not fulfilled
      */
-    public static BaseScimResource transferToResource(BaseScimResource origin, final BaseScimResource destination, List<Extension> extensions) throws Exception{
+    public static BaseScimResource transferToResource(BaseScimResource origin, final BaseScimResource destination,
+                                                      List<Extension> extensions) throws InvalidAttributeValueException{
 
         Map<String, Object> fromMap = mapper.convertValue(origin, Map.class);
         Map<String, Object> toMap = mapper.convertValue(destination, Map.class);
