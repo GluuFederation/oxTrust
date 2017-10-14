@@ -23,6 +23,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.*;
@@ -31,6 +32,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
@@ -70,6 +72,9 @@ public class Scim2UserService implements Serializable {
 
     @Inject
     private IGroupService groupService;
+
+    @Inject
+    private GroupWebService groupWS;
 
     @Inject
     private ExternalScimService externalScimService;
@@ -151,15 +156,14 @@ public class Scim2UserService implements Serializable {
 
     private void transferAttributesToPerson(UserResource res, GluuCustomPerson person) {
 
-        //Set values in order of appearance in BaseScimResource class
+        //Set values trying to follow the order found in BaseScimResource class
         person.setAttribute("oxTrustExternalId", res.getExternalId());
-        //setSchemas does not have effect
-        //person.setSchemas(new HashSet<String>(res.getSchemas()));
         person.setAttribute("oxTrustMetaCreated", res.getMeta().getCreated());
         person.setAttribute("oxTrustMetaLastModified", res.getMeta().getLastModified());
-        //location will be set when we have an inum
+        //When creating user, location will be set again when having an inum
+        person.setAttribute("oxTrustMetaLocation", res.getMeta().getLocation());
 
-        //Set values in order of appearance in UserResource class
+        //Set values trying to follow the order found in UserResource class
         person.setUid(res.getUserName());
 
         if (res.getName()!=null){
@@ -250,7 +254,7 @@ public class Scim2UserService implements Serializable {
 
     }
 
-    public void transferAttributesToUserResource(GluuCustomPerson person, UserResource res) {
+    public void transferAttributesToUserResource(GluuCustomPerson person, UserResource res, String url) {
 
         //Set values in order of appearance in BaseScimResource class
         List<String> schemas=new ArrayList<String>();
@@ -265,6 +269,8 @@ public class Scim2UserService implements Serializable {
         meta.setCreated(person.getAttribute("oxTrustMetaCreated"));
         meta.setLastModified(person.getAttribute("oxTrustMetaLastModified"));
         meta.setLocation(person.getAttribute("oxTrustMetaLocation"));
+        if (meta.getLocation()==null)
+            meta.setLocation(url + "/" + person.getInum());
 
         res.setMeta(meta);
 
@@ -309,8 +315,7 @@ public class Scim2UserService implements Serializable {
 
                 Group group = new Group();
                 group.setValue(gluuGroup.getInum());
-                //TODO: update using group's endpoint url?
-                String reference = String.format("%s/scim/v2/Groups/%s", appConfiguration.getBaseEndpoint(), gluuGroup.getInum());
+                String reference = groupWS.getEndpointUrl() + "/" + gluuGroup.getInum();
                 group.setRef(reference);
                 group.setDisplay(gluuGroup.getDisplayName());
 
@@ -409,7 +414,7 @@ public class Scim2UserService implements Serializable {
         return gluuPerson;
     }
 
-    public Pair<GluuCustomPerson, UserResource> updateUser(String id, UserResource user) throws Exception {
+    public Pair<GluuCustomPerson, UserResource> updateUser(String id, UserResource user, String url) throws Exception {
 
         GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
         UserResource tmpUser=new UserResource();
@@ -417,7 +422,7 @@ public class Scim2UserService implements Serializable {
         if (gluuPerson!=null){
             checkUidExistence(user.getUserName(), id);
 
-            transferAttributesToUserResource(gluuPerson, tmpUser);
+            transferAttributesToUserResource(gluuPerson, tmpUser, url);
 
             long now=new Date().getTime();
             tmpUser.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
@@ -465,14 +470,14 @@ public class Scim2UserService implements Serializable {
 
     }
 
-    public List<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder,
-                                          int startIndex, int count, VirtualListViewResponse vlvResponse) throws Exception{
+    public List<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex,
+                                              int count, VirtualListViewResponse vlvResponse, String url) throws Exception{
 
         Filter ldapFilter=getFilter(filter);
         //Transform scim attribute to LDAP attribute
-        sortBy = UserFilterVisitor.getUserLdapAttributeName(sortBy);
+        sortBy = UserFilterVisitor.getLdapAttributeName(sortBy, UserResource.class);
 
-        log.info("Executing search for users with parameters: filter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
+        log.info("Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
         List<GluuCustomPerson> list=ldapEntryManager.findEntriesSearchSearchResult(personService.getDnForPerson(null),
@@ -481,7 +486,7 @@ public class Scim2UserService implements Serializable {
 
         for (GluuCustomPerson person : list){
             UserResource scimUsr=new UserResource();
-            transferAttributesToUserResource(person, scimUsr);
+            transferAttributesToUserResource(person, scimUsr, url);
             resources.add(scimUsr);
         }
         log.info ("Found {} matching entries - returning {}", vlvResponse.getTotalResults(), list.size());

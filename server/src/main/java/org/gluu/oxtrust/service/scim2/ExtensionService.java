@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.*;
 
-import static org.gluu.oxtrust.model.scim2.Constants.USER_EXT_SCHEMA_ID;
+import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * Created by jgomer on 2017-09-29.
@@ -45,12 +45,21 @@ public class ExtensionService {
                     if (attribute.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE)) {
                         //first non-null check is needed because certain entries do not have the multivalue attribute set
                         boolean multi=attribute.getOxMultivaluedAttribute()!=null && attribute.getOxMultivaluedAttribute().equals(OxMultivalued.TRUE);
-                        fields.put(attribute.getName(), new ExtensionField(attribute.getDataType(), multi));
+
+                        ExtensionField field=new ExtensionField();
+                        field.setDescription(attribute.getDescription());
+                        field.setType(attribute.getDataType());
+                        field.setMultiValued(multi);
+                        field.setName(attribute.getName());
+
+                        fields.put(attribute.getName(), field);
                     }
                 }
 
                 Extension ext=new Extension(USER_EXT_SCHEMA_ID);
                 ext.setFields(fields);
+                ext.setName(USER_EXT_SCHEMA_NAME);
+                ext.setDescription(USER_EXT_SCHEMA_DESCRIPTION);
 
                 list.add(ext);
             }
