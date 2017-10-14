@@ -9,6 +9,8 @@ import java.util.Map;
 public class Extension {
 
     private String urn;
+    private String name;
+    private String description;
     private Map<String, ExtensionField> fields=new HashMap<String, ExtensionField>();
 
     public Extension(String urn){
@@ -27,4 +29,19 @@ public class Extension {
         this.fields = fields;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

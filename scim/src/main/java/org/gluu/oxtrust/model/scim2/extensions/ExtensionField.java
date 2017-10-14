@@ -12,17 +12,10 @@ public class ExtensionField {
 
     private static final String XSD_DATE_TIME_PATTERN="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*$";
 
+    private String name;
     private boolean multiValued;
     private GluuAttributeDataType type;
-
-    public ExtensionField(GluuAttributeDataType type){
-        new ExtensionField(type, false);
-    }
-
-    public ExtensionField(GluuAttributeDataType type, boolean multiValued){
-        this.type=type;
-        this.multiValued=multiValued;
-    }
+    private String description;
 
     /**
      * Tries parsing the value passed according to the data type associated to the field
@@ -113,12 +106,36 @@ public class ExtensionField {
 
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public boolean isMultiValued() {
         return multiValued;
     }
 
     public GluuAttributeDataType getType() {
         return type;
+    }
+
+    public void setMultiValued(boolean multiValued) {
+        this.multiValued = multiValued;
+    }
+
+    public void setType(GluuAttributeDataType type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }
