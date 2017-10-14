@@ -1,10 +1,9 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
+import com.wordnik.swagger.annotations.Authorization;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
@@ -13,7 +12,7 @@ import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.service.external.ExternalScimService;
-import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
+import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
@@ -38,16 +37,16 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 /**
  * Implementation of /User endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.UserServiceDecorator
  * is used to apply pre-validations on data. Interceptor org.gluu.oxtrust.service.scim2.interceptor.ServiceInterceptor
- * adds security to invocations
+ * secures invocations
  *
  * @author Rahat Ali Date: 05.08.2015
  * Updated by jgomer on 2017-09-12.
  */
 @Named
 @Path("/scim/v2/Users")
+@Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)",
+        authorizations = {@Authorization(value = "Authorization", type = "uma")})
 public class UserWebService extends BaseScimWebService implements UserService {
-
-    public static final String SEARCH_SUFFIX = ".search";
 
     @Inject
     private IPersonService personService;
@@ -65,7 +64,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected
+    @Protected @RefAdjusted
     @ApiOperation(value = "Create user", notes = "https://tools.ietf.org/html/rfc7644#section-3.3", response = UserResource.class)
     public Response createUser(
             @ApiParam(value = "User", required = true) UserResource user,
@@ -96,7 +95,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected
+    @Protected @RefAdjusted
     @ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)"
             , response = UserResource.class)
     public Response getUserById(
@@ -109,7 +108,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
         try {
             UserResource user=new UserResource();
             GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
-            scim2UserService.transferAttributesToUserResource(person, user);
+            scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
 
             String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
             response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
@@ -133,7 +132,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected
+    @Protected @RefAdjusted
     @ApiOperation(value = "Update user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = UserResource.class)
     public Response updateUser(
             @ApiParam(value = "User", required = true) UserResource user,
@@ -144,7 +143,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
         Response response;
         try {
-            Pair<GluuCustomPerson, UserResource> pair=scim2UserService.updateUser(id, user);
+            Pair<GluuCustomPerson, UserResource> pair=scim2UserService.updateUser(id, user, endpointUrl);
 
             // For custom script: update user
             if (externalScimService.isEnabled()) {
@@ -207,7 +206,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected
+    @Protected @RefAdjusted
     @ApiOperation(value = "Search users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
     public Response searchUsers(
             @QueryParam(QUERY_PARAM_FILTER) String filter,
@@ -222,17 +221,10 @@ public class UserWebService extends BaseScimWebService implements UserService {
         Response response;
         try {
             VirtualListViewResponse vlv = new VirtualListViewResponse();
-            List<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, vlv);
+            List<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder),
+                    startIndex, count, vlv, endpointUrl);
 
-            ListResponse listResponse = new ListResponse(vlv.getStartIndex(), vlv.getItemsPerPage(), vlv.getTotalResults());
-            listResponse.setResources(resources);
-
-            ObjectMapper mapper = new ObjectMapper();
-            SimpleModule module = new SimpleModule("ListResponseModule", Version.unknownVersion());
-            module.addSerializer(ListResponse.class, new ListResponseJsonSerializer(resourceSerializer, attrsList, excludedAttrsList));
-            mapper.registerModule(module);
-
-            String json = mapper.writeValueAsString(listResponse);
+            String json = getListResponseSerialized(vlv, resources, attrsList, excludedAttrsList);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
         }
         catch (SCIMException e){
@@ -252,7 +244,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected
+    @Protected @RefAdjusted
     public Response searchUsersPost(
             @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest,
             @HeaderParam("Authorization") String authorization){

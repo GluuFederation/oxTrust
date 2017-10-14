@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.util.*;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -18,7 +19,7 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
-import org.gluu.oxtrust.model.scim2.user.Meta;
+import org.gluu.oxtrust.model.scim2.Meta;
 
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
@@ -33,21 +34,33 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
     @GET
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    public Response serve() throws Exception {
+    public Response serve(){
 
-        ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
+        try {
+            ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
 
-        Meta meta = new Meta();
-        meta.setLocation(appConfiguration.getBaseEndpoint() + getClass().getAnnotation(Path.class).value());
-        meta.setResourceType("ServiceProviderConfig");
-        serviceProviderConfig.setMeta(meta);
+            Meta meta = new Meta();
+            meta.setLocation(endpointUrl);
+            meta.setResourceType("ServiceProviderConfig");
+            serviceProviderConfig.setMeta(meta);
 
-        boolean onTestMode=appConfiguration.isScimTestMode();
-        serviceProviderConfig.setAuthenticationSchemes(Arrays.asList(
-                AuthenticationScheme.createOAuth2(onTestMode), AuthenticationScheme.createUma(!onTestMode)));
+            boolean onTestMode = appConfiguration.isScimTestMode();
+            serviceProviderConfig.setAuthenticationSchemes(Arrays.asList(
+                    AuthenticationScheme.createOAuth2(onTestMode), AuthenticationScheme.createUma(!onTestMode)));
 
-        return Response.ok(resourceSerializer.serialize(serviceProviderConfig)).build();
+            return Response.ok(resourceSerializer.serialize(serviceProviderConfig)).build();
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
 
+    }
+
+    @PostConstruct
+    public void setup(){
+        //Do not use getClass() here... a typical weld issue...
+        endpointUrl=appConfiguration.getBaseEndpoint() + ServiceProviderConfigWS.class.getAnnotation(Path.class).value();
     }
 
 }
