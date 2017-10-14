@@ -30,11 +30,10 @@ public class ServiceInterceptor {
     private JsonConfigurationService jsonConfigurationService;
 
     /**
-     * It's here where interception takes place. This methods searches for a parameter of type String and annotated with
-     * HeaderParam.
-     * If parameter is found, the respective processing authorization method is called (test mode or UMA protection) and
-     * if successful, the request follows to its destination service object.
-     * If not found a Response object is returned immediately signaling the authorization error
+     * Does some pre-processing of parameters:
+     * Searches for a parameter of type String and annotated with HeaderParam. If found, the respective processing
+     * authorization method is called (test mode or UMA protection) and  if successful, the request follows to its
+     * destination service object. If not found a Response object is returned immediately signaling the authorization error
      * @param ctx InvocationContext of current call
      * @return An object (usually the result of calling ctx.proceed()
      */
