@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class SearchRequest {
 
-    //private List<String> schemas;
+    private List<String> schemas;
     private String attributes;
     private String excludedAttributes;
     private String filter;
@@ -20,10 +20,10 @@ public class SearchRequest {
     private Integer startIndex;
     private Integer count;
 
-    //No need for these block of methods: schemas is never used in practice
-    /*
-    public SearchRequest(){
-        schemas= Collections.singletonList(Constants.SEARCH_REQUEST_SCHEMA_ID);
+    public SearchRequest(){}
+
+    public SearchRequest(String schema){
+        schemas=Collections.singletonList(schema);
     }
 
     public List<String> getSchemas() {
@@ -33,7 +33,6 @@ public class SearchRequest {
     public void setSchemas(List<String> schemas) {
         this.schemas = schemas;
     }
-    */
 
     public String getAttributes() {
         return attributes;
