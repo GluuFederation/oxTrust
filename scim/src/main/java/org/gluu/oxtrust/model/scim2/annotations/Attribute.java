@@ -54,16 +54,14 @@ public @interface Attribute {
      *
      * @return The return constraint for the attribute.
      */
-    AttributeDefinition.Returned returned()
-            default AttributeDefinition.Returned.DEFAULT;
+    AttributeDefinition.Returned returned() default AttributeDefinition.Returned.DEFAULT;
 
     /**
      * The uniqueness constraint for the attribute.
      *
      * @return The uniqueness constraint for the attribute.
      */
-    AttributeDefinition.Uniqueness uniqueness()
-            default AttributeDefinition.Uniqueness.NONE;
+    AttributeDefinition.Uniqueness uniqueness() default AttributeDefinition.Uniqueness.NONE;
 
     /**
      * The reference types for the attribute.
@@ -77,8 +75,7 @@ public @interface Attribute {
      *
      * @return The mutability constraint for the attribute.
      */
-    AttributeDefinition.Mutability mutability() default
-            AttributeDefinition.Mutability.READ_WRITE;
+    AttributeDefinition.Mutability mutability() default AttributeDefinition.Mutability.READ_WRITE;
 
     /**
      * If the attribute is multi-value, this holds the type of the
@@ -87,5 +84,7 @@ public @interface Attribute {
      * @return For a multi-valued attribute, the type of the child object.
      */
     Class multiValueClass() default NullType.class;
+
+    AttributeDefinition.Type type() default AttributeDefinition.Type.STRING;
 
 }
