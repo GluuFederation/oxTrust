@@ -135,6 +135,13 @@
 							</includes>
 						</resource>
 						<resource>
+							<directory>src/main/resources</directory>
+							<filtering>true</filtering>
+							<includes>
+								<include>META-INF/beans.xml</include>
+							</includes>
+						</resource>
+						<resource>
 							<directory>src/main/webapp</directory>
 							<filtering>false</filtering>
 							<includes>
