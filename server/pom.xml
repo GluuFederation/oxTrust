@@ -44,6 +44,7 @@
 					<include>**/*.gif</include>
 					<include>**/*.ico</include>
 					<include>META-INF/navigation/*.navigation.xml</include>
+					<include>META-INF/beans.xml</include>
 				</includes>
 			</resource>
 		</resources>
@@ -132,13 +133,6 @@
 							<includes>
 								<include>**/*.xml</include>
 								<include>**/*.properties</include>
-							</includes>
-						</resource>
-						<resource>
-							<directory>src/main/resources</directory>
-							<filtering>true</filtering>
-							<includes>
-								<include>META-INF/beans.xml</include>
 							</includes>
 						</resource>
 						<resource>
