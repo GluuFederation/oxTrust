@@ -6,9 +6,22 @@
 
 package org.gluu.oxtrust.util;
 
+import java.io.IOException;
 import java.io.Serializable;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 /**
  * Constants with current build info
  * 
@@ -19,6 +32,8 @@ public class BuildVersion implements Serializable {
 
 	private static final long serialVersionUID = 3790281266924133197L;
 
+	@Inject
+	private Logger log;
 	private String revisionVersion;
 	private String revisionDate;
 	private String buildDate;
@@ -54,6 +69,74 @@ public class BuildVersion implements Serializable {
 
 	public void setBuildNumber(String buildNumber) {
 		this.buildNumber = buildNumber;
+	}
+	
+	@PostConstruct
+	public void initalize() {
+
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = factory.newDocumentBuilder();
+			Document doc = dBuilder.parse((getClass().getResourceAsStream("/META-INF/beans.xml")));
+			doc.getDocumentElement().normalize();
+			log.info("Root element :" + doc.getDocumentElement().getNodeName());
+			NodeList nList = doc.getElementsByTagName("bean");
+
+			if (doc.hasChildNodes()) {
+				printNote(nList);
+			}
+		} catch (ParserConfigurationException e) {			
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private  void printNote(NodeList nodeList) {
+
+		for (int count = 0; count < nodeList.getLength(); count++) {
+			Node tempNode = nodeList.item(count);
+
+			// make sure it's element node.
+			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
+
+				if (tempNode.hasAttributes()) {
+					// get attributes names and values
+					NamedNodeMap nodeMap = tempNode.getAttributes();
+
+					for (int i = 0; i < nodeMap.getLength(); i++) {
+						Node node = nodeMap.item(i);
+						String nodeValue = node.getNodeValue();
+						//nodeValue.equalsIgnoreCase("buildNumber") ? this.: "";
+						if(nodeValue.equalsIgnoreCase("buildNumber")){
+							this.setBuildNumber(tempNode.getTextContent());
+							continue;
+						}
+						if(nodeValue.equalsIgnoreCase("buildDate")){
+							this.setBuildDate(tempNode.getTextContent());
+							continue;
+						}
+						if(nodeValue.equalsIgnoreCase("revisionDate")){
+							this.setRevisionDate(tempNode.getTextContent());
+							continue;
+						}
+						if(nodeValue.equalsIgnoreCase("revisionVersion")){
+							this.setRevisionVersion(tempNode.getTextContent());
+							continue;
+						}
+					}
+				}
+
+				if (tempNode.hasChildNodes()) {
+					// loop again if has child nodes
+					printNote(tempNode.getChildNodes());
+
+				}
+			}
+		}
 	}
 
 }

@@ -4,4 +4,12 @@
    xsi:schemaLocation="
       http://xmlns.jcp.org/xml/ns/javaee 
       http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd">
+
+	<bean id="buildVersion" class="org.gluu.oxtrust.util.BuildVersion">
+		<property name="revisionVersion">${buildNumber}</property>
+		<property name="revisionDate">${git.commit.time}</property>
+		<property name="buildDate">${buildDate}</property>
+		<property name="buildNumber">${env.BUILD_NUMBER}</property>
+	</bean>
+
 </beans>

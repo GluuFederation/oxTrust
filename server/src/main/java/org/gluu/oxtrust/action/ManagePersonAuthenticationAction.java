@@ -348,7 +348,9 @@ public class ManagePersonAuthenticationAction
 				return OxTrustConstants.RESULT_SUCCESS;
 
 			}
-			connectionProvider.closeConnectionPool();
+			if (connectionProvider.getConnectionPool() != null) {
+				connectionProvider.closeConnectionPool();
+			}
 		} catch (Exception ex) {
 			log.error("Could not connect to LDAP", ex);
 		}
