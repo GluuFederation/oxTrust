@@ -90,11 +90,11 @@
                                                 </h:link>
                                             </rich:column>
                                             <rich:column sortBy="#{prs.mail}">
-                                                <f:facet name="header">#{msg['person.status']}</f:facet>
+                                                <f:facet name="header">#{msg['person.email']}</f:facet>
                                                 <h:outputText value="#{prs.mail}"/>
                                             </rich:column>
                                             <rich:column sortBy="#{prs.status.value}">
-                                                <f:facet name="header">Status</f:facet>
+                                                <f:facet name="header">#{msg['person.status']}</f:facet>
                                                 <h:outputText value="#{prs.status.value}"/>
                                             </rich:column>
                                             <f:facet name="footer">
