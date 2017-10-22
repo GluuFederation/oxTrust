@@ -35,7 +35,7 @@ import java.util.List;
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
- * Implementation of /User endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.UserServiceDecorator
+ * Implementation of /Users endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.UserServiceDecorator
  * is used to apply pre-validations on data. Interceptor org.gluu.oxtrust.service.scim2.interceptor.ServiceInterceptor
  * secures invocations
  *
@@ -53,9 +53,6 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
     @Inject
     private Scim2UserService scim2UserService;
-
-    @Inject
-    private ExternalScimService externalScimService;
 
     /**
      *
@@ -96,8 +93,8 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected @RefAdjusted
-    @ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)"
-            , response = UserResource.class)
+    @ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)",
+            response = UserResource.class)
     public Response getUserById(
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
@@ -107,7 +104,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
         Response response;
         try {
             UserResource user=new UserResource();
-            GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
+            GluuCustomPerson person=personService.getPersonByInum(id);  //person is not null (check associated decorator method)
             scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
 
             String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
@@ -171,6 +168,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
             response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
         return response;
+
     }
 
     @Path("{id}")

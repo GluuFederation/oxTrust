@@ -98,7 +98,7 @@ public class Scim2UserService implements Serializable {
 
     private void checkUidExistence(String uid, String id) throws Exception{
 
-        // Validate if there is an attempt to supply a userName already in use by a different user than current
+        // Validate if there is an attempt to supply a userName already in use by a user other than current
         List<GluuCustomPerson> list=personService.findPersonsByUids(Collections.singletonList(uid), new String[]{"inum"});
         if (list!=null && list.size()>0){
             for (GluuCustomPerson p : list)
@@ -256,11 +256,6 @@ public class Scim2UserService implements Serializable {
 
     public void transferAttributesToUserResource(GluuCustomPerson person, UserResource res, String url) {
 
-        //Set values in order of appearance in BaseScimResource class
-        List<String> schemas=new ArrayList<String>();
-        schemas.add(extService.getDefaultSchema(res.getClass()));
-        res.setSchemas(schemas);    //Further this list is fed if custom attributes are found
-
         res.setId(person.getInum());
         res.setExternalId(person.getAttribute("oxTrustExternalId"));
 
@@ -371,6 +366,13 @@ public class Scim2UserService implements Serializable {
 
     }
 
+    private void writeCommonName(GluuCustomPerson person){
+
+        if (StringUtils.isNotEmpty(person.getGivenName()) && StringUtils.isNotEmpty(person.getSurname()))
+            person.setCommonName(person.getGivenName() + " " + person.getSurname());
+
+    }
+
     private void assignComputedAttributesToPerson(GluuCustomPerson person){
 
         String inum = personService.generateInumForNewPerson();
@@ -379,7 +381,7 @@ public class Scim2UserService implements Serializable {
         person.setInum(inum);
         person.setDn(dn);
         person.setIname(personService.generateInameForNewPerson(person.getUid()));
-        person.setCommonName(person.getGivenName() + " " + person.getSurname());
+        writeCommonName(person);
 
     }
 
@@ -388,7 +390,7 @@ public class Scim2UserService implements Serializable {
      * There is no need to check attributes mutability in this case as there are no original attributes (the resource does
      * not exist yet)
      * @param user A UserResource object with all info as received by the web service
-     * @return New created user
+     * @return The new created user
      * @throws Exception
      */
     public GluuCustomPerson createUser(UserResource user, String url) throws Exception {
@@ -409,6 +411,7 @@ public class Scim2UserService implements Serializable {
         personService.addPerson(gluuPerson);
 
         user.getMeta().setLocation(location);
+        //We are ignoring the id value received (user.getId())
         user.setId(gluuPerson.getInum());
 
         return gluuPerson;
@@ -430,14 +433,14 @@ public class Scim2UserService implements Serializable {
             tmpUser=(UserResource) ScimResourceUtil.transferToResource(user, tmpUser, extService.getResourceExtensions(user.getClass()));
 
             transferAttributesToPerson(tmpUser, gluuPerson);
-            gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
+            writeCommonName(gluuPerson);
 
             personService.addCustomObjectClass(gluuPerson);
             personService.updatePerson(gluuPerson);
         }
-        else{
+        else
             throw new NotFoundException("User resource with " + id + " not found");
-        }
+
         return new Pair<GluuCustomPerson, UserResource>(gluuPerson, tmpUser);
 
     }
@@ -450,8 +453,8 @@ public class Scim2UserService implements Serializable {
             serviceUtil.deleteUserFromGroup(gluuPerson, dn);
         }
         log.info("Removing user entry {}", dn);
+        personService.removePerson(gluuPerson);
 
-        memberService.removePerson(gluuPerson);
     }
 
     private Filter getFilter(String filterString) throws SCIMException {
@@ -470,8 +473,8 @@ public class Scim2UserService implements Serializable {
 
     }
 
-    public List<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex,
-                                              int count, VirtualListViewResponse vlvResponse, String url) throws Exception{
+    public List<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
+                                              VirtualListViewResponse vlvResponse, String url) throws Exception{
 
         Filter ldapFilter=getFilter(filter);
         //Transform scim attribute to LDAP attribute
@@ -543,32 +546,5 @@ public class Scim2UserService implements Serializable {
 		setMeta(updatedGluuPerson);
 	}
 
-	private GluuCustomPerson validUsernameByInum(User user,String id) throws DuplicateEntryException{
-		GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-		if (gluuPerson == null) {
-
-			throw new EntryPersistenceException("Scim2UserService.updateUser(): " + "Resource " + id + " not found");
-
-		} else {
-
-			// Validate if attempting to update userName of a different id
-			if (user.getUserName() != null) {
-
-				GluuCustomPerson personToFind = new GluuCustomPerson();
-				personToFind.setUid(user.getUserName());
-
-				List<GluuCustomPerson> foundPersons = personService	.findPersons(personToFind, 2);
-				if (foundPersons != null && foundPersons.size() > 0) {
-					for (GluuCustomPerson foundPerson : foundPersons) {
-						if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(gluuPerson.getInum())) {
-							throw new DuplicateEntryException("Cannot update userName of a different id: "+ user.getUserName());
-						}
-					}
-				}
-			}
-		}
-		return gluuPerson;
-
-	}
 */
 }

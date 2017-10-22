@@ -131,7 +131,6 @@ public class SchemaWebService extends BaseScimWebService {
             meta.setLocation(endpointUrl + "/" + annotation.id());
 
             resource=new SchemaResource();
-            resource.setSchemas(Collections.singletonList(extService.getDefaultSchema(schemaCls)));
             resource.setId(annotation.id());
             resource.setName(annotation.name());
             resource.setDescription(annotation.description());
@@ -200,7 +199,6 @@ public class SchemaWebService extends BaseScimWebService {
                     meta.setLocation(endpointUrl + "/" + urn);
 
                     resource = new SchemaResource();
-                    resource.setSchemas(Collections.singletonList(extService.getDefaultSchema(schemaCls)));
                     resource.setId(urn);
                     resource.setName(extension.getName());
                     resource.setDescription(extension.getDescription());

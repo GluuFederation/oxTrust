@@ -17,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.gluu.oxtrust.model.scim2.Meta;
@@ -41,7 +42,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 
             Meta meta = new Meta();
             meta.setLocation(endpointUrl);
-            meta.setResourceType("ServiceProviderConfig");
+            meta.setResourceType(BaseScimResource.getType(serviceProviderConfig.getClass()));
             serviceProviderConfig.setMeta(meta);
 
             boolean onTestMode = appConfiguration.isScimTestMode();

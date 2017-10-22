@@ -218,7 +218,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
             response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, e.getMessage());
         }
         catch (Exception e){
-            log.error("Failure at searchUsers method", e);
+            log.error("Failure at searchDevices method", e);
             response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
         return response;
@@ -253,13 +253,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
 
     private void transferAttributesToFidoResource(GluuCustomFidoDevice fidoDevice, FidoDeviceResource res, String url, String userId) {
 
-        //Set values in order of appearance in BaseScimResource class
-        List<String> schemas=new ArrayList<String>();
-        schemas.add(extService.getDefaultSchema(res.getClass()));
-        res.setSchemas(schemas);
-
         res.setId(fidoDevice.getId());
-        res.setExternalId(null);
 
         Meta meta=new Meta();
         meta.setResourceType(BaseScimResource.getType(res.getClass()));
@@ -321,7 +315,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
 
     private String getUserInumFromDN(String deviceDn){
         String baseDn=personService.getDnForPerson(null).replaceAll("\\s*","");
-        deviceDn=deviceDn.replaceAll("\\s*","").replaceAll(baseDn, "");
+        deviceDn=deviceDn.replaceAll("\\s*","").replaceAll("," + baseDn, "");
         return deviceDn.substring(deviceDn.indexOf("inum=")+5);
     }
 
