@@ -5,8 +5,6 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
@@ -24,6 +23,7 @@ import com.unboundid.ldap.sdk.Filter;
 
 /**
  * @author Val Pecaoco
+ * Updated by jgomer on 2017-10-22
  */
 @Stateless
 @Named
@@ -58,11 +58,17 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 		GluuCustomFidoDevice gluuCustomFidoDevice = null;
 
 		try {
-
-			Filter filter = Filter.create("oxId=" + id);
-			gluuCustomFidoDevice = searchFidoDevice(filter, userId, id);
-
-		} catch (Exception e) {
+		    String dn=getDnForFidoDevice(userId, id);
+		    if (StringUtils.isNotEmpty(userId))
+                gluuCustomFidoDevice = ldapEntryManager.find(GluuCustomFidoDevice.class, dn);
+		    else{
+		        Filter filter=Filter.createEqualityFilter("oxId", id);
+		        gluuCustomFidoDevice = ldapEntryManager.findEntries(dn, GluuCustomFidoDevice.class, filter).get(0);
+            }
+			//Filter filter = Filter.create("oxId=" + id);
+			//gluuCustomFidoDevice = searchFidoDevice(filter, userId, id);
+		}
+		catch (Exception e) {
 			log.error("Failed to find device by id " + id, e);
 		}
 
