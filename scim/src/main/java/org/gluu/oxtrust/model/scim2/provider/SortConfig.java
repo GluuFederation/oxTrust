@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
  * A complex type that specifies SORT configuration options.
+ * Updated by jgomer on 2017-10-21
  */
 public class SortConfig {
 
@@ -17,7 +18,9 @@ public class SortConfig {
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.BOOLEAN)
-	private final boolean supported;
+	private boolean supported;
+
+    public SortConfig(){ }
 
 	/**
 	 * Create a <code>SortConfig</code> instance.
@@ -25,7 +28,7 @@ public class SortConfig {
 	 * @param supported
 	 *            Specifies whether sorting is supported.
 	 */
-	public SortConfig(final boolean supported) {
+	public SortConfig(boolean supported) {
 		this.supported = supported;
 	}
 
@@ -37,4 +40,9 @@ public class SortConfig {
 	public boolean isSupported() {
 		return supported;
 	}
+
+    public void setSupported(boolean supported) {
+        this.supported = supported;
+    }
+
 }

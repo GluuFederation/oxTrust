@@ -10,8 +10,8 @@ import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
- * This class represents the AuthenticationSchemes complex attribute in the
- * Service Provider Config.
+ * This class represents the AuthenticationSchemes complex attribute in the Service Provider Config.
+ * Updated by jgomer on 2017-10-21
  */
 public class AuthenticationScheme {
 
@@ -44,6 +44,8 @@ public class AuthenticationScheme {
             type = AttributeDefinition.Type.BOOLEAN)
     private boolean primary;
 
+    public AuthenticationScheme(){}
+
 	/**
 	 * Create a value of the SCIM AuthenticationSchemes attribute.
 	 *
@@ -61,8 +63,8 @@ public class AuthenticationScheme {
 	 *            The type of Authentication Scheme.
      * @param primary
 	 */
-	public AuthenticationScheme(final String name, final String description, final String specUri,
-                                final String documentationUri, final String type, final boolean primary) {
+	public AuthenticationScheme(String name, String description, String specUri,
+                                String documentationUri, String type, boolean primary) {
 		this.name = name;
 		this.description = description;
 		this.specUri = specUri;
@@ -122,6 +124,30 @@ public class AuthenticationScheme {
 
     public boolean isPrimary() {
         return primary;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setSpecUri(String specUri) {
+        this.specUri = specUri;
+    }
+
+    public void setDocumentationUri(String documentationUri) {
+        this.documentationUri = documentationUri;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
     }
 
     /**

@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
  * A complex type that specifies Change Password configuration options.
+ * Updated by jgomer on 2017-10-21
  */
 public class ChangePasswordConfig {
 
@@ -17,7 +18,9 @@ public class ChangePasswordConfig {
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.BOOLEAN)
-	private final boolean supported;
+	private boolean supported;
+
+    public ChangePasswordConfig(){}
 
 	/**
 	 * Create a <code>ChangePasswordConfig</code> instance.
@@ -25,7 +28,7 @@ public class ChangePasswordConfig {
 	 * @param supported
 	 *            Specifies whether the Change Password operation is supported.
 	 */
-	public ChangePasswordConfig(final boolean supported) {
+	public ChangePasswordConfig(boolean supported) {
 		this.supported = supported;
 	}
 
@@ -37,5 +40,9 @@ public class ChangePasswordConfig {
 	public boolean isSupported() {
 		return supported;
 	}
+
+    public void setSupported(boolean supported) {
+        this.supported = supported;
+    }
 
 }

@@ -8,31 +8,40 @@ package org.gluu.oxtrust.model.scim2.provider;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
+/**
+ * Updated by jgomer on 2017-10-21
+ */
 public class PatchConfig{
 
     @Attribute(description = "A Boolean value specifying whether or not the operation is supported.",
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.BOOLEAN)
-    private final boolean supported;
+    private boolean supported;
 
-  /**
-   * Create a <code>PatchConfig</code> instance.
-   *
-   * @param supported  Specifies whether the PATCH operation is supported.
-   */
-  public PatchConfig(final boolean supported)
-  {
+    public PatchConfig(){}
+
+    /**
+    * Create a <code>PatchConfig</code> instance.
+    *
+    * @param supported  Specifies whether the PATCH operation is supported.
+    */
+    public PatchConfig(boolean supported)
+    {
     this.supported = supported;
-  }
+    }
 
-  /**
-   * Indicates whether the PATCH operation is supported.
-   * @return  {@code true} if the PATCH operation is supported.
-   */
-  public boolean isSupported()
-  {
+    /**
+    * Indicates whether the PATCH operation is supported.
+    * @return  {@code true} if the PATCH operation is supported.
+    */
+    public boolean isSupported()
+    {
     return supported;
-  }
+    }
+
+    public void setSupported(boolean supported) {
+        this.supported = supported;
+    }
 
 }

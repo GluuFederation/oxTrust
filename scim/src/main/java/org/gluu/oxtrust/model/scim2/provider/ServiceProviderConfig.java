@@ -22,7 +22,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_PAYLOAD_SIZE;
  * This class represents a ServiceProviderConfig. It's key for the implementation of the /ServiceProviderConfig endpoint
  * For more about this resource type see RFC 7643, section 5
  */
-@Schema(id="urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig", name="Service Provider Config", description = "SCIM 2.0 Service Provider Config Resource")
+@Schema(id="urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig", name="ServiceProviderConfig", description = "SCIM 2.0 Service Provider Config Resource")
 public class ServiceProviderConfig extends BaseScimResource {
 
     @Attribute(description = "An HTTP-addressable URL pointing to the service provider's human-consumable help documentation.",

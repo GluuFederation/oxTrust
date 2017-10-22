@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
  * A complex type that specifies BULK configuration options.
+ * Updated by jgomer on 2017-10-21
  */
 public class BulkConfig {
 
@@ -17,20 +18,21 @@ public class BulkConfig {
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.BOOLEAN)
-	private final boolean supported;
+	private boolean supported;
 
     @Attribute(description = "An integer value specifying the maximum number of operations.",
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.INTEGER)
-	private final long maxOperations;
+	private long maxOperations;
 
     @Attribute(description = " An integer value specifying the maximum payload size in bytes",
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.INTEGER)
-	private final long maxPayloadSize;
+	private long maxPayloadSize;
 
+    public BulkConfig(){ }
 	/**
 	 * Create a <code>BulkConfig</code> instance.
 	 *
@@ -41,7 +43,7 @@ public class BulkConfig {
 	 * @param maxPayloadSize
 	 *            Specifies the maximum payload size in bytes.
 	 */
-	public BulkConfig(final boolean supported, final long maxOperations, final long maxPayloadSize) {
+	public BulkConfig(boolean supported, long maxOperations, long maxPayloadSize) {
 		this.supported = supported;
 		this.maxOperations = maxOperations;
 		this.maxPayloadSize = maxPayloadSize;
@@ -73,5 +75,17 @@ public class BulkConfig {
 	public long getMaxPayloadSize() {
 		return maxPayloadSize;
 	}
+
+    public void setSupported(boolean supported) {
+        this.supported = supported;
+    }
+
+    public void setMaxOperations(long maxOperations) {
+        this.maxOperations = maxOperations;
+    }
+
+    public void setMaxPayloadSize(long maxPayloadSize) {
+        this.maxPayloadSize = maxPayloadSize;
+    }
 
 }
