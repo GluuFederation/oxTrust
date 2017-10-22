@@ -6,7 +6,7 @@
 
 package org.gluu.oxtrust.service;
 
-import org.gluu.oxtrust.ws.rs.scim2.UserWebService;
+import org.gluu.oxtrust.ws.rs.scim2.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,13 +27,12 @@ public class TestResteasyInitializer extends Application {
     public Set<Class<?>> getClasses() {
         HashSet<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(UserWebService.class);
-        /*
         classes.add(GroupWebService.class);
         classes.add(BulkWebService.class);
         classes.add(ResourceTypeWS.class);
         classes.add(SchemaWebService.class);
         classes.add(ServiceProviderConfigWS.class);
-*/
+
         return classes;
     }
 
