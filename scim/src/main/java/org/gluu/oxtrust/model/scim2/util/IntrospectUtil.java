@@ -109,33 +109,7 @@ public class IntrospectUtil {
 
     }
 
-    public static Attribute getAttrAnnotationForField(String fieldName, Class<?> clazz){
-
-        Attribute attr=null;
-        try {/*
-            PropertyDescriptor[] props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-            FeatureDescriptor match=null;
-            for (FeatureDescriptor fd : props)
-                if (fd.getName().equals(fieldName))
-                    match=fd;
-            if (match!=null){
-            }
-            */
-            Field field=findField(clazz, fieldName);
-            if (field==null){
-                log.warn("No field with name {} found in class {}", fieldName, clazz.getName());
-            }
-            else{
-                attr=field.getAnnotation(Attribute.class);
-            }
-        }
-        catch (Exception e){
-            log.error(e.getMessage(), e);
-        }
-        return attr;
-    }
-
-    public static Method getGetter(String fieldName, Class clazz) throws Exception{
+    private static Method getGetter(String fieldName, Class clazz) throws Exception{
         PropertyDescriptor[] props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
         for (PropertyDescriptor p : props)
             if (p.getName().equals(fieldName))
@@ -284,7 +258,7 @@ public class IntrospectUtil {
                     FidoDeviceResource.class, ServiceProviderConfig.class, ResourceType.class, SchemaResource.class);
 
             //Perform initializations needed for all resource types
-            for (Class aClass : resourceClasses){
+            for (Class<? extends BaseScimResource> aClass : resourceClasses){
                 resetAttrNames();
 
                 traverseClassForNames(aClass, "", basicFields, false);
@@ -301,7 +275,7 @@ public class IntrospectUtil {
                 allAttrs.get(aClass).addAll(neverAttrsNames);
             }
 
-            for (Class cls : resourceClasses) {
+            for (Class<? extends BaseScimResource> cls : resourceClasses) {
                 Map<String, String> map = new HashMap<String, String>();
 
                 for (String attrib : allAttrs.get(cls)) {
@@ -322,10 +296,6 @@ public class IntrospectUtil {
                 }
                 storeRefs.put(cls, map);
             }
-/*
-            log.debug("requiredAttrsNames {}", requiredAttrsNames);
-            log.debug("defaultAttrsNames {}", defaultAttrsNames);
-            log.debug("alwaysAttrsNames {}", alwaysAttrsNames);*/
         }
         catch (Exception e){
             log.error(e.getMessage(), e);

@@ -4,7 +4,7 @@
  * They are a common "contract" so when a new service method is added or changes signature, there is no need to update
  * both projects. Just recompile...
  * Client code uses the Resteasy Proxy Framework and thus, we are sharing an interface between client and server
- * Do not use @Inject in these classes (the client is not a weld project)
+ * Important: do not use @Inject in these classes (the client is not a weld project)
  */
 
 package org.gluu.oxtrust.ws.rs.scim2;

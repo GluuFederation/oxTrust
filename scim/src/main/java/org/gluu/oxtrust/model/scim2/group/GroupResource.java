@@ -16,7 +16,7 @@ import java.util.Set;
  * this one via reflection. Do not add members whose names are already at org.gluu.oxtrust.model.scim2.BaseScimResource.
  * Annotations applied at every member resemble what the spec states
  */
-@Schema(id="urn:ietf:params:scim:schemas:core:2.0:Group", name="Group", description = "Group")
+@Schema(id="urn:ietf:params:scim:schemas:core:2.0:Group", name="Group", description="Group")
 public class GroupResource extends BaseScimResource {
 
     @Attribute(description = "A human-readable name for the Group",

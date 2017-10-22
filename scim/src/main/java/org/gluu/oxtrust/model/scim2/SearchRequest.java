@@ -3,6 +3,8 @@ package org.gluu.oxtrust.model.scim2;
 import java.util.Collections;
 import java.util.List;
 
+import static org.gluu.oxtrust.model.scim2.Constants.SEARCH_REQUEST_SCHEMA_ID;
+
 /**
  * @author Val Pecaoco
  * Updated by jgomer on 2017-10-08.
@@ -20,10 +22,8 @@ public class SearchRequest {
     private Integer startIndex;
     private Integer count;
 
-    public SearchRequest(){}
-
-    public SearchRequest(String schema){
-        schemas=Collections.singletonList(schema);
+    public SearchRequest(){
+        schemas=Collections.singletonList(SEARCH_REQUEST_SCHEMA_ID);
     }
 
     public List<String> getSchemas() {

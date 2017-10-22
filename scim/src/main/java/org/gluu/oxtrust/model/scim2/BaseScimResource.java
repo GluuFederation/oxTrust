@@ -31,11 +31,11 @@ public class BaseScimResource {
     private List<String> schemas;
 
     @Attribute(description = "A unique identifier for a SCIM resource as defined by the service provider",
-            isRequired = false,     //e.g. clients don't need to pass it
+            isRequired = false,     //Notice that clients don't need to pass it really
             isCaseExact = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             returned = AttributeDefinition.Returned.ALWAYS,
-            uniqueness = AttributeDefinition.Uniqueness.SERVER) //?
+            uniqueness = AttributeDefinition.Uniqueness.SERVER)
     @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class}, refs = {"inum", "oxId"})
     private String id;
 
@@ -49,11 +49,6 @@ public class BaseScimResource {
             type = AttributeDefinition.Type.COMPLEX)
     private Meta meta;
 
-    public BaseScimResource(){
-        schemas=new ArrayList<String>();
-        schemas.add(getClass().getAnnotation(Schema.class).id());
-    }
-
     private Map<String, Object> extendedAttrs=new HashMap<String, Object>();   //Never must be null
 
     @JsonAnySetter
@@ -64,6 +59,15 @@ public class BaseScimResource {
     @JsonAnyGetter
     public Map<String, Object> getExtendedAttributes(){
         return extendedAttrs;
+    }
+
+    public BaseScimResource(){
+
+        Schema schema=getClass().getAnnotation(Schema.class);
+        schemas=new ArrayList<String>();
+
+        if (schema!=null)
+            schemas.add(schema.id());
     }
 
     public String getId() {
