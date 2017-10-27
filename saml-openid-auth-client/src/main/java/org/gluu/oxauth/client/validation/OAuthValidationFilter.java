@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import net.shibboleth.idp.authn.ExternalAuthentication;
 import org.gluu.oxauth.client.authentication.AuthenticationFilter;
 
 /**
@@ -46,10 +47,10 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
         
+        String conversation = request.getHeader(ExternalAuthentication.CONVERSATION_KEY);
+
         final HttpSession session = request.getSession(false);
-        
-        String conversation = null;
-        if (session != null) {
+        if (session != null && (conversation == null || conversation.isEmpty())) {
 
                 conversation = (String)session.getAttribute(AuthenticationFilter.SESSION_CONVERSATION_KEY);
                 if (conversation == null || conversation.isEmpty()) {
@@ -63,7 +64,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         }
         
         CustomHttpServletRequest customRequest = new CustomHttpServletRequest(request);
-        customRequest.addCustomParameter("conversation", conversation);
+        customRequest.addCustomParameter(ExternalAuthentication.CONVERSATION_KEY, conversation);
         
         if (!preFilter(servletRequest, servletResponse, filterChain)) {
             // unauthorized way
