@@ -34,12 +34,10 @@ $idpEncryptionCertificate
                                    Location="$idpHost/idp/profile/SAML2/SOAP/ArtifactResolution"
                                    index="1"/>
         
-        <!--
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="$idpHost/idp/profile/SAML2/Redirect/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="$idpHost/idp/profile/SAML2/POST/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="$idpHost/idp/profile/SAML2/POST-SimpleSign/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="$idpHost/idp/profile/SAML2/SOAP/SLO"/>
-        -->
         
         <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
