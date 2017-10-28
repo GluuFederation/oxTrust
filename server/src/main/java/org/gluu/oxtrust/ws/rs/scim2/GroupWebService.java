@@ -229,7 +229,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
             List<BaseScimResource> resources = scim2GroupService.searchGroups(filter, sortBy, SortOrder.getByValue(sortOrder),
                     startIndex, count, vlv, endpointUrl, userWebService.getEndpointUrl());
 
-            String json = getListResponseSerialized(vlv, resources, attrsList, excludedAttrsList);
+            String json = getListResponseSerialized(vlv.getTotalResults(), startIndex, resources, attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
         }
         catch (SCIMException e){
@@ -250,6 +250,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected @RefAdjusted
+    @ApiOperation(value = "Search group POST /.search", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
     public Response searchGroupsPost(
             @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest,
             @HeaderParam("Authorization") String authorization){

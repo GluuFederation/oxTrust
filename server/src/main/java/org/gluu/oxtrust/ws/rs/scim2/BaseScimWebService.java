@@ -111,27 +111,27 @@ public class BaseScimWebService {
 
         if (schemas!=null && schemas.size()==1 && schemas.get(0).equals(SEARCH_REQUEST_SCHEMA_ID)) {
             count = count == null ? MAX_COUNT : count;
-            if (count >= 0) {
-                if (count <= MAX_COUNT) {
-                    startIndex = (startIndex == null || startIndex < 1) ? 1 : startIndex;
+            //Per spec, a negative value SHALL be interpreted as "0" for count
+            if (count<0)
+                count=0;
 
-                    if (StringUtils.isEmpty(sortOrder) || !sortOrder.equals(SortOrder.DESCENDING.getValue()))
-                        sortOrder = SortOrder.ASCENDING.getValue();
+            if (count <= MAX_COUNT) {
+                startIndex = (startIndex == null || startIndex < 1) ? 1 : startIndex;
 
-                    request.setSchemas(schemas);
-                    request.setAttributes(attrsList);
-                    request.setExcludedAttributes(excludedAttrsList);
-                    request.setFilter(filter);
-                    request.setSortBy(StringUtils.isEmpty(sortBy) ? sortByDefault : sortBy);
-                    request.setSortOrder(sortOrder);
-                    request.setStartIndex(startIndex);
-                    request.setCount(count);
-                }
-                else
-                    response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, "Maximum number of results per page is " + MAX_COUNT);
+                if (StringUtils.isEmpty(sortOrder) || !sortOrder.equals(SortOrder.DESCENDING.getValue()))
+                    sortOrder = SortOrder.ASCENDING.getValue();
+
+                request.setSchemas(schemas);
+                request.setAttributes(attrsList);
+                request.setExcludedAttributes(excludedAttrsList);
+                request.setFilter(filter);
+                request.setSortBy(StringUtils.isEmpty(sortBy) ? sortByDefault : sortBy);
+                request.setSortOrder(sortOrder);
+                request.setStartIndex(startIndex);
+                request.setCount(count);
             }
             else
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, "count parameter must be non-negative");
+                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, "Maximum number of results per page is " + MAX_COUNT);
         }
         else
             response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Wrong schema(s) supplied in Search Request");
@@ -140,14 +140,15 @@ public class BaseScimWebService {
 
     }
 
-    public String getListResponseSerialized(VirtualListViewResponse vlv, List<BaseScimResource> resources, String attrsList, String excludedAttrsList) throws IOException{
+    public String getListResponseSerialized(int total, int startIndex, List<BaseScimResource> resources, String attrsList,
+                                            String excludedAttrsList, boolean ignoreResults) throws IOException{
 
-        ListResponse listResponse = new ListResponse(vlv.getStartIndex(), vlv.getItemsPerPage(), vlv.getTotalResults());
+        ListResponse listResponse = new ListResponse(startIndex, resources.size(), total);
         listResponse.setResources(resources);
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule("ListResponseModule", Version.unknownVersion());
-        module.addSerializer(ListResponse.class, new ListResponseJsonSerializer(resourceSerializer, attrsList, excludedAttrsList));
+        module.addSerializer(ListResponse.class, new ListResponseJsonSerializer(resourceSerializer, attrsList, excludedAttrsList, ignoreResults));
         mapper.registerModule(module);
 
         return mapper.writeValueAsString(listResponse);

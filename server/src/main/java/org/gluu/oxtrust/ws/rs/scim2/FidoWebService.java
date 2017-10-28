@@ -210,7 +210,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
             VirtualListViewResponse vlv = new VirtualListViewResponse();
             List<BaseScimResource> resources = searchDevices(filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, vlv, endpointUrl);
 
-            String json = getListResponseSerialized(vlv, resources, attrsList, excludedAttrsList);
+            String json = getListResponseSerialized(vlv.getTotalResults(), startIndex, resources, attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
         }
         catch (SCIMException e){
@@ -231,7 +231,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected @RefAdjusted
-    @ApiOperation(value = "Search devices using POST", response = ListResponse.class)
+    @ApiOperation(value = "Search devices POST /.search", notes = "Returns a list of fido devices", response = ListResponse.class)
     public Response searchDevicesPost(
             SearchRequest searchRequest,
             @HeaderParam("Authorization") String authorization){
@@ -335,7 +335,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
 
     }
 
-    private List<BaseScimResource> searchDevices(String filter, String sortBy, SortOrder sortOrder, int startIndex,
+    public List<BaseScimResource> searchDevices(String filter, String sortBy, SortOrder sortOrder, int startIndex,
                                                     int count, VirtualListViewResponse vlvResponse, String url) throws Exception {
         Filter ldapFilter=getFilter(filter);
         //Transform scim attribute to LDAP attribute

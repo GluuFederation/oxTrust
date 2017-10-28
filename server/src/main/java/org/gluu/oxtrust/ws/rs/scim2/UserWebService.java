@@ -11,7 +11,6 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
-import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
@@ -222,7 +221,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
             List<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder),
                     startIndex, count, vlv, endpointUrl);
 
-            String json = getListResponseSerialized(vlv, resources, attrsList, excludedAttrsList);
+            String json = getListResponseSerialized(vlv.getTotalResults(), startIndex, resources, attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
         }
         catch (SCIMException e){
@@ -243,6 +242,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected @RefAdjusted
+    @ApiOperation(value = "Search users POST /.search", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
     public Response searchUsersPost(
             @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest,
             @HeaderParam("Authorization") String authorization){

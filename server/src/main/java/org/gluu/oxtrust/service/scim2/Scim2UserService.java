@@ -172,6 +172,7 @@ public class Scim2UserService implements Serializable {
             person.setAttribute("middleName", res.getName().getMiddleName());
             person.setAttribute("oxTrusthonorificPrefix", res.getName().getHonorificPrefix());
             person.setAttribute("oxTrusthonorificSuffix", res.getName().getHonorificSuffix());
+            person.setAttribute("oxTrustNameFormatted", Name.computeFormattedName(res.getName()));
         }
         person.setDisplayName(res.getDisplayName());
 
@@ -302,7 +303,7 @@ public class Scim2UserService implements Serializable {
         res.setAddresses(getAttributeListValue(person, Address.class, "oxTrustAddresses"));
 
         List<String> listOfGroups = person.getMemberOf();
-        if (listOfGroups!= null) {
+        if (listOfGroups!= null && listOfGroups.size()>0) {
             List<Group> groupList = new ArrayList<Group>();
 
             for (String groupDN : listOfGroups) {

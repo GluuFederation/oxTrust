@@ -51,7 +51,7 @@ public class AttributePathInterceptor {
                 }
             }
             if (params[i]!=null && params[i] instanceof SearchRequest){
-                log.debug("Removing '$' char (if any) from {} SearchRequest object");
+                log.debug("Removing '$' char (if any) from SearchRequest object");
                 SearchRequest sr=(SearchRequest) params[i];
                 sr.setAttributes(dropDollar(sr.getAttributes()));
                 sr.setExcludedAttributes(dropDollar(sr.getExcludedAttributes()));

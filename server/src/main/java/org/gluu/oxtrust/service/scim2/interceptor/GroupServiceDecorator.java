@@ -126,6 +126,7 @@ public class GroupServiceDecorator extends BaseScimWebService implements GroupSe
                             attrsList, excludedAttrsList, searchReq, "displayName");
 
         if (response==null) {
+            //searchReq.getSortBy() is not null since we are providing userName as default
             if (!isAttributeRecognized(GroupResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
@@ -145,6 +146,7 @@ public class GroupServiceDecorator extends BaseScimWebService implements GroupSe
                 searchRequest.getAttributes(), searchRequest.getExcludedAttributes(), searchReq, "displayName");
 
         if (response==null) {
+            //searchReq.getSortBy() is not null since we are providing userName as default
             if (!isAttributeRecognized(GroupResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else

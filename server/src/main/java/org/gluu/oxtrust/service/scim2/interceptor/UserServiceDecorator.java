@@ -120,6 +120,7 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
                                 attrsList, excludedAttrsList, searchReq, "userName");
 
         if (response==null) {
+            //searchReq.getSortBy() is not null since we are providing userName as default
             if (!isAttributeRecognized(UserResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
@@ -139,6 +140,7 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
                             searchRequest.getAttributes(), searchRequest.getExcludedAttributes(), searchReq, "userName");
 
         if (response==null) {
+            //searchReq.getSortBy() is not null since we are providing userName as default
             if (!isAttributeRecognized(UserResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else

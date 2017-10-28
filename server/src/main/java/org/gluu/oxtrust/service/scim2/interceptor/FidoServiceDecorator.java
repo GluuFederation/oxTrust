@@ -101,6 +101,7 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
                                 attrsList, excludedAttrsList, searchReq, "id");
 
         if (response==null) {
+            //searchReq.getSortBy() is not null since we are providing userName as default
             if (!isAttributeRecognized(FidoDeviceResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
@@ -120,6 +121,7 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
                                 searchRequest.getAttributes(), searchRequest.getExcludedAttributes(), searchReq, "id");
 
         if (response==null) {
+            //searchReq.getSortBy() is not null since we are providing userName as default
             if (!isAttributeRecognized(FidoDeviceResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else

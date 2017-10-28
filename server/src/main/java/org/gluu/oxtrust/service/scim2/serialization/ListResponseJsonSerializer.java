@@ -13,8 +13,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.List;
 
-import static org.gluu.oxtrust.model.scim2.Constants.LIST_RESPONSE_SCHEMA_ID;
-
 /**
  * Created by jgomer on 2017-10-01.
  */
@@ -26,17 +24,24 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
 
     private String attributes;
     private String excludeAttributes;
-    private List<String> jsonResources;
+    private boolean skipResults;
+
+    private List<JsonNode> jsonResources;
 
     //why not to inject the resource serializer instead of passing it as parameter? weld simply does not like it!
     public ListResponseJsonSerializer(ScimResourceSerializer serializer){
         resourceSerializer=serializer;
     }
 
-    public ListResponseJsonSerializer(ScimResourceSerializer serializer, String attributes, String excludeAttributes){
+    public ListResponseJsonSerializer(ScimResourceSerializer serializer, String attributes, String excludeAttributes, boolean skipResults){
         resourceSerializer=serializer;
         this.attributes=attributes;
         this.excludeAttributes=excludeAttributes;
+        this.skipResults=skipResults;
+    }
+
+    public void setJsonResources(List<JsonNode> resources){
+        this.jsonResources=resources;
     }
 
     @Override
@@ -44,31 +49,38 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
 
         try {
             jGen.writeStartObject();
-            jGen.writeNumberField("totalResults", listResponse.getTotalResults());
-            if (listResponse.getTotalResults()>0) {
-                jGen.writeNumberField("startIndex", listResponse.getStartIndex());
-                jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
-            }
 
             jGen.writeArrayFieldStart("schemas");
-            jGen.writeString(LIST_RESPONSE_SCHEMA_ID);
+            for (String schema : listResponse.getSchemas())
+                jGen.writeString(schema);
             jGen.writeEndArray();
 
-            if (listResponse.getResources()!=null) {
+            jGen.writeNumberField("totalResults", listResponse.getTotalResults());
+
+            if (!skipResults && listResponse.getItemsPerPage()>0) {
+                jGen.writeNumberField("startIndex", listResponse.getStartIndex());
+                jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
+
                 jGen.writeArrayFieldStart("Resources");
 
-                for (BaseScimResource resource : listResponse.getResources()) {
-                    JsonNode jsonResource = mapper.readTree(resourceSerializer.serialize(resource, attributes, excludeAttributes));
-                    jGen.writeTree(jsonResource);
-                }
+                if (listResponse.getResources().size()>0)
+                    for (BaseScimResource resource : listResponse.getResources()) {
+                        JsonNode jsonResource = mapper.readTree(resourceSerializer.serialize(resource, attributes, excludeAttributes));
+                        jGen.writeTree(jsonResource);
+                    }
+                else
+                if (jsonResources != null)
+                    for (JsonNode node : jsonResources)
+                        jGen.writeTree(node);
+
                 jGen.writeEndArray();
             }
+
+            jGen.writeEndObject();
         }
         catch (Exception e) {
             throw new IOException(e);
         }
-
-        jGen.writeEndObject();
 
     }
 
