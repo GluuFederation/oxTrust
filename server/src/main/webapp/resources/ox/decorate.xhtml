@@ -4,6 +4,7 @@
 				xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 				xmlns:h="http://xmlns.jcp.org/jsf/html"
 				xmlns:rich="http://richfaces.org/rich"
+                xmlns:gluufn="http://www.gluu.org/jsf/functions"
 				xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 	<cc:interface componentType="org.gluu.oxtrust.util.jsf.InputContainer">
@@ -22,9 +23,10 @@
 				rendered="#{not cc.attrs.hideLabel}">
 
 				<span class="name #{cc.attrs.invalid ? 'errors' : 'new-label'}">
-					<h:outputLabel id="label" value="#{cc.attrs.label}:" rendered="#{not cc.attrs.labelAsText}">
-						<h:panelGroup styleClass="required" rendered="#{cc.attrs.required}">*</h:panelGroup>
+					<h:outputLabel id="reqlabel"  style="display: block;word-wrap:break-word;" value="#{gluufn:trim(cc.attrs.label)}&nbsp;:*" rendered="#{(not cc.attrs.labelAsText)  and (cc.attrs.required)}">
 					</h:outputLabel>
+					<h:outputLabel id="label" value="#{cc.attrs.label}:" rendered="#{(not cc.attrs.labelAsText)  and (not cc.attrs.required)}"/>
+					
 					<h:outputText value="#{cc.attrs.label}:" rendered="#{cc.attrs.labelAsText}">
 						<h:panelGroup styleClass="required" rendered="#{cc.attrs.required}">*</h:panelGroup>
 					</h:outputText>
