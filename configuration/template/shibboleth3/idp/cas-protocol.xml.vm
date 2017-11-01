@@ -29,7 +29,7 @@
                 <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
                       c:regex="http://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
                       p:group="non-proxying-services"
-                      p:authorizedToProxy="false" /
+                      p:authorizedToProxy="false" />
                 -->
             </list>
         </property>
