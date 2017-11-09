@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -102,7 +103,18 @@ public class UpdatePersonAction implements Serializable {
 	private GluuStatus gluuStatus;
 
 	private String password;
+	
 	private String confirmPassword;
+
+	private List<String> u2fCustomAttributes;
+
+	public List<String> getU2fCustomAttributes() { 
+				return this.u2fCustomAttributes;
+	}
+
+	public void setU2fCustomAttributes(List<String> u2fCustomAttributes) {
+		this.u2fCustomAttributes = u2fCustomAttributes;
+	}
 
 	public GluuStatus getGluuStatus() {
 		return gluuStatus;
@@ -163,6 +175,14 @@ public class UpdatePersonAction implements Serializable {
 
 		initAttributes();
 		this.gluuStatus = this.person.getStatus();
+		List <String> oxexternal = this.person.getOxExternalUid();
+		u2fCustomAttributes = new ArrayList<String>();
+		if(oxexternal != null && oxexternal.size()>0){
+			for(String oxexternalStr : oxexternal){
+				String [] args = oxexternalStr.split(":");
+				u2fCustomAttributes.add(args[0]);							
+			}			
+		}
 
 		userPasswordAction.setPerson(this.person);
 
@@ -406,6 +426,23 @@ public class UpdatePersonAction implements Serializable {
 					"Password and Confirm Password should be same!");
 			context.addMessage(comp.getClientId(context), message);
 		}
+	}
+	
+	public void removeU2fCustomAttribute(String removeAttribute){
+		Iterator<String> itrList = u2fCustomAttributes.iterator();		
+		while(itrList.hasNext()){			
+			if( itrList.next().contains(removeAttribute) ){
+				itrList.remove();
+			}				
+		}
+		List <String> list = new ArrayList<String>(this.person.getOxExternalUid());
+		Iterator<String> itrList1 = list.iterator();		
+		while(itrList1.hasNext()){			
+			if( itrList1.next().contains(removeAttribute) ){
+				itrList1.remove();
+			}				
+		}
+		this.person.setOxExternalUid(list);
 	}
 
 }
