@@ -344,7 +344,7 @@ public class ServiceUtil implements Serializable {
 
         GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
 
-        if (oxTrustEmail != null && oxTrustEmail.getValues().length > 0) {
+        if (oxTrustEmail != null && oxTrustEmail.getValues()!=null && oxTrustEmail.getValues().length > 0) {
 
             String[] oxTrustEmails = oxTrustEmail.getValues();  // JSON array in element 0
             String[] newMails = new String[oxTrustEmails.length];
