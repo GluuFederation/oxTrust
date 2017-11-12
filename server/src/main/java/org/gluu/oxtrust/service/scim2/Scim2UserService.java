@@ -156,6 +156,8 @@ public class Scim2UserService implements Serializable {
 
     private void transferAttributesToPerson(UserResource res, GluuCustomPerson person) {
 
+        log.debug("transferAttributesToPerson");
+
         //Set values trying to follow the order found in BaseScimResource class
         person.setAttribute("oxTrustExternalId", res.getExternalId());
         person.setAttribute("oxTrustMetaCreated", res.getMeta().getCreated());
@@ -186,8 +188,9 @@ public class Scim2UserService implements Serializable {
         person.setTimezone(res.getTimezone());
 
         //TODO: are both attrs used for active?
-        person.setAttribute("oxTrustActive", new Boolean(res.isActive()).toString());
-        person.setAttribute("gluuStatus", res.isActive() ? ACTIVE.getValue() : INACTIVE.getValue());
+        Boolean active=res.getActive()==null ? false : res.getActive();
+        person.setAttribute("oxTrustActive", active.toString());
+        person.setAttribute("gluuStatus", active ? ACTIVE.getValue() : INACTIVE.getValue());
         person.setUserPassword(res.getPassword());
 
         person.setAttribute("oxTrustEmail", getComplexMultivaluedAsArray(res.getEmails()));
@@ -257,11 +260,13 @@ public class Scim2UserService implements Serializable {
 
     public void transferAttributesToUserResource(GluuCustomPerson person, UserResource res, String url) {
 
+        log.debug("transferAttributesToUserResource");
+
         res.setId(person.getInum());
         res.setExternalId(person.getAttribute("oxTrustExternalId"));
 
         Meta meta=new Meta();
-        meta.setResourceType(BaseScimResource.getType(res.getClass()));
+        meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
         meta.setCreated(person.getAttribute("oxTrustMetaCreated"));
         meta.setLastModified(person.getAttribute("oxTrustMetaLastModified"));
         meta.setLocation(person.getAttribute("oxTrustMetaLocation"));
@@ -330,6 +335,8 @@ public class Scim2UserService implements Serializable {
     }
 
     private void transferExtendedAttributesToResource(GluuCustomPerson person, BaseScimResource resource){
+
+        log.debug("transferExtendedAttributesToResource of type {}", ScimResourceUtil.getType(resource.getClass()));
 
         //Gets the list of extensions associated to the resource passed. In practice, this will be at most a singleton list
         List<Extension> extensions=extService.getResourceExtensions(resource.getClass());
@@ -431,18 +438,24 @@ public class Scim2UserService implements Serializable {
             long now=new Date().getTime();
             tmpUser.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
-            tmpUser=(UserResource) ScimResourceUtil.transferToResource(user, tmpUser, extService.getResourceExtensions(user.getClass()));
-
-            transferAttributesToPerson(tmpUser, gluuPerson);
-            writeCommonName(gluuPerson);
-
-            personService.addCustomObjectClass(gluuPerson);
-            personService.updatePerson(gluuPerson);
+            tmpUser=(UserResource) ScimResourceUtil.transferToResourceReplace(user, tmpUser, extService.getResourceExtensions(user.getClass()));
+            replacePersonInfo(gluuPerson, tmpUser);
         }
         else
             throw new NotFoundException("User resource with " + id + " not found");
 
         return new Pair<GluuCustomPerson, UserResource>(gluuPerson, tmpUser);
+
+    }
+
+    public void replacePersonInfo(GluuCustomPerson gluuPerson, UserResource user){
+
+        transferAttributesToPerson(user, gluuPerson);
+        writeCommonName(gluuPerson);
+
+        log.debug("replacePersonInfo. Updating person info in LDAP");
+        personService.addCustomObjectClass(gluuPerson);
+        personService.updatePerson(gluuPerson);
 
     }
 
@@ -497,55 +510,5 @@ public class Scim2UserService implements Serializable {
         return resources;
 
     }
-/*
-    public User patchUser(String id, ScimPatchUser patchUser) throws Exception {
 
-    	for(Operation operation : patchUser.getOperatons()){
-    		String val = operation.getOperationName();
-
-    		if(val.equalsIgnoreCase("replace")){
-    			replaceUserPatch(operation,id);
-    		}
-
-    		if(val.equalsIgnoreCase("remove")){
-    			removeUserPatch(operation,id);
-    		}
-
-    		if(val.equalsIgnoreCase("add")){
-    			addUserPatch(operation,id);
-    		}
-
-    	}
-
-    	GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-    	User updatedUser = copyUtils2.copy(gluuPerson, null);
-
-		return updatedUser;
-    }
-
-   private void removeUserPatch(Operation operation,String id) throws Exception{
-	   User user = operation.getValue();
-
-		GluuCustomPerson updatedGluuPerson = patchUtil.removePatch(user, validUsernameByInum(user, id));
-		log.info(" Setting meta: removeUserPatch update user ");
-		setMeta(updatedGluuPerson);
-    }
-
-	private void replaceUserPatch(Operation operation, String id) throws Exception {
-		User user = operation.getValue();
-
-		GluuCustomPerson updatedGluuPerson = patchUtil.replacePatch(user, validUsernameByInum(user, id));
-		log.info(" Setting meta: replaceUserPatch update user ");
-		setMeta(updatedGluuPerson);
-	}
-
-	private void addUserPatch(Operation operation, String id) throws Exception {
-		User user = operation.getValue();
-
-		GluuCustomPerson updatedGluuPerson = patchUtil.addPatch(user, validUsernameByInum(user, id));
-		log.info(" Setting meta: addUserPatch update user ");
-		setMeta(updatedGluuPerson);
-	}
-
-*/
 }

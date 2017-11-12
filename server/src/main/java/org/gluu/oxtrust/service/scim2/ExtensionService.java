@@ -1,9 +1,7 @@
 package org.gluu.oxtrust.service.scim2;
 
-import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
@@ -72,6 +70,16 @@ public class ExtensionService {
 
     }
 
+    public List<String> getUrnsOfExtensions(Class<? extends BaseScimResource> cls){
+
+        List<String> list=new ArrayList<String>();
+        for (Extension ext : getResourceExtensions(cls))
+            list.add(ext.getUrn());
+
+        return list;
+
+    }
+
     /**
      * Builds up a list of strings with the values associated to the field passed. The strings are created according to
      * the type asociated to the field: for STRING the value is left as is; for DATE the value is converted to a String
@@ -123,22 +131,6 @@ public class ExtensionService {
 
     }
 
-    public String getDefaultSchema(Class<? extends BaseScimResource> cls){
-        return cls.getAnnotation(Schema.class).id();
-    }
-
-    public String stripDefaultSchema(Class<? extends BaseScimResource> cls, String attribute){
-
-        String val=attribute;
-        String defaultSchema=getDefaultSchema(cls);
-        if (StringUtils.isNotEmpty(attribute) && StringUtils.isNotEmpty(defaultSchema)) {
-            if (attribute.startsWith(defaultSchema + ":"))
-                val = attribute.substring(defaultSchema.length() +1);
-        }
-        return val;
-
-    }
-
     public Extension extensionOfAttribute(Class<? extends BaseScimResource> cls, String attribute){
 
         List<Extension> extensions=getResourceExtensions(cls);
@@ -146,9 +138,11 @@ public class ExtensionService {
 
         try {
             for (Extension ext : extensions) {
-                if (belong==null && attribute.startsWith(ext.getUrn() + ":")) {
-                    for (GluuAttribute custAttr : attrService.getSCIMRelatedAttributes())
-                        if (custAttr.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE) && attribute.equals(custAttr.getName())) {
+                if (attribute.startsWith(ext.getUrn() + ":")){
+                    attribute=attribute.substring(ext.getUrn().length()+1);
+
+                    for (String fieldName : ext.getFields().keySet())
+                        if (attribute.equals(fieldName)) {
                             belong = ext;
                             break;
                         }
@@ -160,6 +154,30 @@ public class ExtensionService {
         }
         return belong;
 
+    }
+
+    public ExtensionField getFieldOfExtendedAttribute(Class<? extends BaseScimResource> cls, String attribute){
+
+        List<Extension> extensions=getResourceExtensions(cls);
+        ExtensionField field=null;
+
+        try {
+            for (Extension ext : extensions) {
+                if (attribute.startsWith(ext.getUrn() + ":")){
+                    attribute=attribute.substring(ext.getUrn().length()+1);
+
+                    for (ExtensionField f : ext.getFields().values())
+                        if (attribute.equals(f.getName())) {
+                            field = f;
+                            break;
+                        }
+                }
+            }
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
+        return field;
     }
 
 }

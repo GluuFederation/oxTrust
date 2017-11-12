@@ -150,4 +150,17 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
 
     }
 
+    public Response patchUser(PatchRequest request, String id, String attrsList, String excludedAttrsList, String authorization){
+
+        Response response=inspectPatchRequest(request, UserResource.class);
+        if (response==null) {
+            response=validateExistenceOfUser(id);
+
+            if (response==null)
+                response = service.patchUser(request, id, attrsList, excludedAttrsList, authorization);
+        }
+        return response;
+
+    }
+
 }

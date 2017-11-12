@@ -92,7 +92,7 @@ public class Scim2GroupService implements Serializable {
                 else{
                     member.setDisplay(person.getDisplayName());
                     member.setRef(usersUrl + "/" + inum);
-                    member.setType(BaseScimResource.getType(res.getClass()));
+                    member.setType(ScimResourceUtil.getType(res.getClass()));
 
                     listMembers.add(person.getDn());
                 }
@@ -132,7 +132,7 @@ public class Scim2GroupService implements Serializable {
         res.setId(gluuGroup.getInum());
 
         Meta meta=new Meta();
-        meta.setResourceType(BaseScimResource.getType(res.getClass()));
+        meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
         meta.setCreated(gluuGroup.getAttribute("oxTrustMetaCreated"));
         meta.setLastModified(gluuGroup.getAttribute("oxTrustMetaLastModified"));
         meta.setLocation(gluuGroup.getAttribute("oxTrustMetaLocation"));
@@ -158,7 +158,7 @@ public class Scim2GroupService implements Serializable {
                     Member aMember=new Member();
                     aMember.setValue(person.getInum());
                     aMember.setRef(usersUrl + "/" + person.getInum());
-                    aMember.setType(BaseScimResource.getType(res.getClass()));
+                    aMember.setType(ScimResourceUtil.getType(res.getClass()));
                     aMember.setDisplay(person.getDisplayName());
 
                     members.add(aMember);
@@ -219,7 +219,7 @@ public class Scim2GroupService implements Serializable {
             long now=new Date().getTime();
             tmpGroup.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
-            tmpGroup=(GroupResource) ScimResourceUtil.transferToResource(group, tmpGroup, extService.getResourceExtensions(group.getClass()));
+            tmpGroup=(GroupResource) ScimResourceUtil.transferToResourceReplace(group, tmpGroup, extService.getResourceExtensions(group.getClass()));
 
             transferAttributesToGroup(tmpGroup, gluuGroup, usersUrl);
 

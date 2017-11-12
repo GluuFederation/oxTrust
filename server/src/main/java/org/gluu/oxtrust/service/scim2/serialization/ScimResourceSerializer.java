@@ -7,6 +7,7 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.slf4j.Logger;
 
@@ -36,16 +37,7 @@ public class ScimResourceSerializer {
 
         for (String attr : attributes.split(",")) {
             String shorterName=attr.replaceAll("\\s", "");
-
-            for (String urn : schemas){
-                if (shorterName.startsWith(urn + ":")) {
-                    if (urn.equals(defaulSchemaUrn))
-                        shorterName = shorterName.substring(urn.length()+1);
-                    else
-                        shorterName = shorterName.substring(0, urn.length()) + "." + shorterName.substring(urn.length()+1);
-                }
-            }
-            set.add(shorterName);
+            set.add(ScimResourceUtil.adjustNotationInPath(shorterName, defaulSchemaUrn, schemas));
         }
 
         Set<String> extendedSet=new HashSet<String>();
@@ -91,7 +83,7 @@ public class ScimResourceSerializer {
         for (Extension ext : extService.getResourceExtensions(resourceClass))
             defaultSet.addAll(IntrospectUtil.getPathsInExtension(ext));
 
-        String defaultSchema=extService.getDefaultSchema(resourceClass);
+        String defaultSchema=ScimResourceUtil.getDefaultSchemaUrn(resourceClass);
 
         if (attributes!=null) {
             log.info("buildIncludeSet. Processing attributes query param (excludedAttributes ignored)");

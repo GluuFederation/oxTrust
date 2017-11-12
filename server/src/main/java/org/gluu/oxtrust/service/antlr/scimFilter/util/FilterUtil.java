@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.xdi.service.cdi.util.CdiUtil;
 
@@ -34,7 +35,7 @@ public class FilterUtil {
         for (Class <? extends BaseScimResource> cls : list) {
             for (Extension ext : extService.getResourceExtensions(cls))
                 urns.add(ext.getUrn());
-            urns.add(extService.getDefaultSchema(cls));
+            urns.add(ScimResourceUtil.getDefaultSchemaUrn(cls));
         }
 
     }
