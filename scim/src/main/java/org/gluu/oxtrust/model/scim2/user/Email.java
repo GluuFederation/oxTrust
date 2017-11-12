@@ -29,7 +29,7 @@ public class Email {
                 "e.g., the  preferred mailing address or primary e-mail address. The primary  attribute value 'true' MUST " +
                 "appear no more than once.",
             type = AttributeDefinition.Type.BOOLEAN)
-    private boolean primary;
+    private Boolean primary;
 
     public String getValue() {
         return value;
@@ -55,11 +55,11 @@ public class Email {
         this.type = type;
     }
 
-    public boolean getPrimary() {
+    public Boolean getPrimary() {
         return primary;
     }
 
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
 }

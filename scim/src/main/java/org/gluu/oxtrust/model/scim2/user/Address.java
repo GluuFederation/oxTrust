@@ -41,7 +41,7 @@ public class Address {
     @Attribute(description = "A Boolean value indicating the 'primary'  or preferred attribute value for this attribute," +
             " e.g., the  preferred address. The primary attribute value 'true' MUST appear no more than once.",
             type = AttributeDefinition.Type.BOOLEAN)
-    private boolean primary;
+    private Boolean primary;
 
     public String getFormatted() {
         return formatted;
@@ -99,11 +99,11 @@ public class Address {
         this.type = type;
     }
 
-    public boolean getPrimary() {
+    public Boolean getPrimary() {
         return primary;
     }
 
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
 }

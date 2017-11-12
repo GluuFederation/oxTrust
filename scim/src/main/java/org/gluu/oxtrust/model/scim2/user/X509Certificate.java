@@ -27,7 +27,7 @@ public class X509Certificate {
     @Attribute(description = "A Boolean value indicating the 'primary' or preferred attribute value for this attribute. " +
             "The primary attribute value 'true' MUST appear no more than once.",
             type = AttributeDefinition.Type.BOOLEAN)
-    private boolean primary;
+    private Boolean primary;
 
     public String getValue() {
         return value;
@@ -53,11 +53,11 @@ public class X509Certificate {
         this.type = type;
     }
 
-    public boolean isPrimary() {
+    public Boolean getPrimary() {
         return primary;
     }
 
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
 }

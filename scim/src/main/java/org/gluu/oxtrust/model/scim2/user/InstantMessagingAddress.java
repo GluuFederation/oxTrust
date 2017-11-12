@@ -25,7 +25,7 @@ public class InstantMessagingAddress {
             "e.g., the  preferred messenger or primary messenger. The primary attribute  value 'true' MUST appear no " +
             "more than once.",
             type= AttributeDefinition.Type.BOOLEAN)
-    private boolean primary;
+    private Boolean primary;
 
     public String getValue() {
         return value;
@@ -51,11 +51,11 @@ public class InstantMessagingAddress {
         this.type = type;
     }
 
-    public boolean getPrimary() {
+    public Boolean getPrimary() {
         return primary;
     }
 
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
 }

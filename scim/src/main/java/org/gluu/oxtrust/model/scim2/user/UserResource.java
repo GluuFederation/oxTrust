@@ -73,7 +73,7 @@ public class UserResource extends BaseScimResource {
     @Attribute(description = "A Boolean value indicating the User's administrative status.",
             type = AttributeDefinition.Type.BOOLEAN)
     @StoreReference(ref = "oxTrustActive")
-    private boolean active;
+    private Boolean active;
 
     @Attribute(description = "The User's clear text password. This attribute is intended to be used as a means to specify" +
             " an initial password when creating a new User or to reset an existing User's password.",
@@ -230,11 +230,11 @@ public class UserResource extends BaseScimResource {
         this.timezone = timezone;
     }
 
-    public boolean isActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
