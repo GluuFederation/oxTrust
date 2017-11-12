@@ -6,9 +6,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ResourceValidator;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
@@ -17,23 +19,21 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 
 import javax.inject.Inject;
+import javax.lang.model.type.NullType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
-import static org.gluu.oxtrust.model.scim2.Constants.SEARCH_REQUEST_SCHEMA_ID;
+import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * Base methods for SCIM web services
  *
  * @author Yuriy Movchan Date: 08/23/2013
- * Updated by jgomer on 2017-09-14.
+ * Re-engineered by jgomer on 2017-09-14.
  */
 public class BaseScimWebService {
 
@@ -60,7 +60,29 @@ public class BaseScimWebService {
         return endpointUrl;
     }
 
-    public boolean isAttributeRecognized(Class<? extends BaseScimResource> cls, String attribute){
+    public static Response getErrorResponse(Response.Status status, String detail) {
+        return getErrorResponse(status.getStatusCode(), null, detail);
+    }
+
+    public static Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
+        return getErrorResponse(status.getStatusCode(), scimType, detail);
+    }
+/*
+    public Response getErrorResponse(int statusCode, String detail) {
+        return getErrorResponse(statusCode, null, detail);
+    }
+*/
+    public static Response getErrorResponse(int statusCode, ErrorScimType scimType, String detail) {
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setStatus(String.valueOf(statusCode));
+        errorResponse.setScimType(scimType);
+        errorResponse.setDetail(detail);
+
+        return Response.status(statusCode).entity(errorResponse).build();
+    }
+
+    protected boolean isAttributeRecognized(Class<? extends BaseScimResource> cls, String attribute){
 
         boolean valid;
 
@@ -68,7 +90,7 @@ public class BaseScimWebService {
         valid=ext!=null;
 
         if (!valid) {
-            attribute = extService.stripDefaultSchema(cls, attribute);
+            attribute = ScimResourceUtil.stripDefaultSchema(cls, attribute);
             Field f= IntrospectUtil.findFieldFromPath(cls, attribute);
             valid= f!=null;
         }
@@ -83,11 +105,11 @@ public class BaseScimWebService {
         String val= ISODateTimeFormat.dateTime().withZoneUTC().print(now);
 
         Meta meta=new Meta();
-        meta.setResourceType(BaseScimResource.getType(resource.getClass()));
+        meta.setResourceType(ScimResourceUtil.getType(resource.getClass()));
         meta.setCreated(val);
         meta.setLastModified(val);
         //For version attritute: Service provider support for this attribute is optional and subject to the service provider's support for versioning
-        //For location attribute: this will be set after current user creation at LDAP
+        //For location attribute: this will be set after current user creation in LDAP
         resource.setMeta(meta);
 
     }
@@ -140,8 +162,8 @@ public class BaseScimWebService {
 
     }
 
-    public String getListResponseSerialized(int total, int startIndex, List<BaseScimResource> resources, String attrsList,
-                                            String excludedAttrsList, boolean ignoreResults) throws IOException{
+    String getListResponseSerialized(int total, int startIndex, List<BaseScimResource> resources, String attrsList,
+                                     String excludedAttrsList, boolean ignoreResults) throws IOException{
 
         ListResponse listResponse = new ListResponse(startIndex, resources.size(), total);
         listResponse.setResources(resources);
@@ -155,26 +177,132 @@ public class BaseScimWebService {
 
     }
 
-    public Response getErrorResponse(Response.Status status, String detail) {
-        return getErrorResponse(status.getStatusCode(), null, detail);
+    protected Response inspectPatchRequest(PatchRequest patch, Class<? extends BaseScimResource> cls){
+
+        Response response=null;
+        List<String> schemas=patch.getSchemas();
+
+        if (schemas!=null && schemas.size()==1 && schemas.get(0).equals(PATCH_REQUEST_SCHEMA_ID)) {
+            List<PatchOperation> ops = patch.getOperations();
+
+            if (ops != null) {
+                //Adjust paths if they came prefixed
+
+                String defSchema=ScimResourceUtil.getDefaultSchemaUrn(cls);
+                List<String> urns=extService.getUrnsOfExtensions(cls);
+                urns.add(defSchema);
+
+                for (PatchOperation op : ops){
+                    if (op.getPath()!=null)
+                        op.setPath(ScimResourceUtil.adjustNotationInPath(op.getPath(), defSchema, urns));
+                }
+
+                for (PatchOperation op : ops) {
+
+                    if (op.getType() == null)
+                        response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Operation '" + op.getOperation() + "' not recognized");
+                    else {
+                        String path = op.getPath();
+
+                        if (StringUtils.isEmpty(path) && op.getType().equals(PatchOperationType.REMOVE))
+                            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.NO_TARGET, "Path attribute is required for remove operation");
+                        else
+                        if (op.getValue() == null && !op.getType().equals(PatchOperationType.REMOVE))
+                            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Value attribute is required for operations other than remove");
+                        else
+                        if (StringUtils.isNotEmpty(path) && path.contains("["))
+                            response = getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Path '" + path + "' not recognized or unsupported. Filter notation is not supported by current implementation");
+                    }
+                    if (response != null)
+                        break;
+                }
+            }
+            else
+                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Patch request MUST contain the attribute 'Operations'");
+        }
+        else
+            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Wrong schema(s) supplied in Search Request");
+
+        log.info("inspectPatchRequest. Preprocessing of patch request {}", response==null ? "passed" : "failed");
+        return response;
+
     }
 
-    public Response getErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
-        return getErrorResponse(status.getStatusCode(), scimType, detail);
-    }
+    BaseScimResource applyPatchOperation(BaseScimResource resource, PatchOperation operation) throws Exception{
 
-    public Response getErrorResponse(int statusCode, String detail) {
-        return getErrorResponse(statusCode, null, detail);
-    }
+        BaseScimResource result=null;
+        Map<String, Object> genericMap=null;
+        PatchOperationType opType=operation.getType();
+        Class<? extends BaseScimResource> clazz=resource.getClass();
 
-    public Response getErrorResponse(int statusCode, ErrorScimType scimType, String detail) {
+        log.debug("applyPatchOperation of type {}", opType);
 
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setStatus(String.valueOf(statusCode));
-        errorResponse.setScimType(scimType);
-        errorResponse.setDetail(detail);
+        if (!opType.equals(PatchOperationType.REMOVE)) {
+            Object value = operation.getValue();
+            String path = operation.getPath();
+            List<String> extensionUrns=extService.getUrnsOfExtensions(clazz);
 
-        return Response.status(statusCode).entity(errorResponse).build();
+            if (value instanceof Map)
+                genericMap = (Map<String, Object>) value;
+            else{
+                //It's an atomic value or an array
+                if (StringUtils.isEmpty(path))
+                    throw new SCIMException("Value(s) supplied for resource not parseable");
+
+                //Create a simple map and trim the last part of path
+                String subPaths[] = ScimResourceUtil.splitPath(path, extensionUrns);
+                genericMap = Collections.singletonMap(subPaths[subPaths.length - 1], value);
+
+                if (subPaths.length == 1)
+                    path = "";
+                else
+                    path = path.substring(0, path.lastIndexOf("."));
+            }
+
+            if (StringUtils.isNotEmpty(path)){
+                //Visit backwards creating a composite map
+                String subPaths[] = ScimResourceUtil.splitPath(path, extensionUrns);
+                for (int i = subPaths.length - 1; i >= 0; i--) {
+
+                    StringBuilder sb=new StringBuilder();
+                    for (int j=0;j<=i;j++)
+                        sb.append(subPaths[j]).append(".");
+
+                    boolean multivalued=false;
+                    Field f=IntrospectUtil.findFieldFromPath(clazz, sb.substring(0, sb.length()-1));
+
+                    if (f!=null){
+                        Attribute annot = f.getAnnotation(Attribute.class);
+                        multivalued=!(annot==null || annot.multiValueClass().equals(NullType.class));
+                    }
+
+                    Map<String, Object> genericBiggerMap = new HashMap<String, Object>();
+                    genericBiggerMap.put(subPaths[i], multivalued ? Collections.singletonList(genericMap) : genericMap);
+                    genericMap = genericBiggerMap;
+                }
+            }
+
+            log.debug("applyPatchOperation. Generating a ScimResource from generic map: {}", genericMap.toString());
+        }
+
+        //Try parse genericMap as an instance of the resource
+        ObjectMapper mapper = new ObjectMapper();
+        BaseScimResource alter=opType.equals(PatchOperationType.REMOVE) ? resource : mapper.convertValue(genericMap, clazz);
+        List<Extension> extensions=extService.getResourceExtensions(clazz);
+
+        switch (operation.getType()){
+            case REPLACE:
+                result=ScimResourceUtil.transferToResourceReplace(alter, resource, extensions);
+                break;
+            case ADD:
+                result=ScimResourceUtil.transferToResourceAdd(alter, resource, extensions);
+                break;
+            case REMOVE:
+                result=ScimResourceUtil.deleteFromResource(alter, operation.getPath(), extensions);
+                break;
+        }
+        return result;
+
     }
 
 }

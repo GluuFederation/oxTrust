@@ -11,6 +11,7 @@ import org.gluu.oxtrust.model.scim2.provider.ResourceType;
 import org.gluu.oxtrust.model.scim2.provider.SchemaExtensionHolder;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.oxtrust.service.scim2.interceptor.RejectFilterParam;
 
@@ -163,20 +164,20 @@ public class ResourceTypeWS extends BaseScimWebService {
         }
 
         ResourceType usrRT=new ResourceType();
-        fillResourceType(usrRT, cls.getAnnotation(Schema.class), userService.getEndpointUrl(), getResourceLocation(USER_SUFFIX), schemaExtensions);
+        fillResourceType(usrRT, ScimResourceUtil.getSchemaAnnotation(cls), userService.getEndpointUrl(), getResourceLocation(USER_SUFFIX), schemaExtensions);
         return usrRT;
 
     }
 
     private ResourceType getGroupResourceType(){
         ResourceType grRT=new ResourceType();
-        fillResourceType(grRT, GroupResource.class.getAnnotation(Schema.class), groupService.getEndpointUrl(), getResourceLocation(GROUP_SUFFIX), null);
+        fillResourceType(grRT, ScimResourceUtil.getSchemaAnnotation(GroupResource.class), groupService.getEndpointUrl(), getResourceLocation(GROUP_SUFFIX), null);
         return grRT;
     }
 
     private ResourceType getFidoDeviceResourceType(){
         ResourceType fidoRT =new ResourceType();
-        fillResourceType(fidoRT, FidoDeviceResource.class.getAnnotation(Schema.class), fidoService.getEndpointUrl(), getResourceLocation(FIDO_SUFFIX),null);
+        fillResourceType(fidoRT, ScimResourceUtil.getSchemaAnnotation(FidoDeviceResource.class), fidoService.getEndpointUrl(), getResourceLocation(FIDO_SUFFIX),null);
         return fidoRT;
     }
 

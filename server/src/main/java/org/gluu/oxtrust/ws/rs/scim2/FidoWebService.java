@@ -70,7 +70,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
     @Protected
     @ApiOperation(value = "Create device", response = FidoDeviceResource.class)
     public Response createDevice() {
-        return getErrorResponse(501, "Not implemented; device registration only happens via the FIDO API.");
+        return getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Not implemented; device registration only happens via the FIDO API.");
     }
 
     @Path("{id}")
@@ -137,7 +137,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
             long now=new Date().getTime();
             updatedResource.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
-            updatedResource=(FidoDeviceResource) ScimResourceUtil.transferToResource(fidoDeviceResource, updatedResource, extService.getResourceExtensions(updatedResource.getClass()));
+            updatedResource=(FidoDeviceResource) ScimResourceUtil.transferToResourceReplace(fidoDeviceResource, updatedResource, extService.getResourceExtensions(updatedResource.getClass()));
             transferAttributesToDevice(updatedResource, device);
 
             fidoDeviceService.updateGluuCustomFidoDevice(device);
@@ -256,7 +256,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
         res.setId(fidoDevice.getId());
 
         Meta meta=new Meta();
-        meta.setResourceType(BaseScimResource.getType(res.getClass()));
+        meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
         meta.setCreated(DateUtil.generalizedToISOStringDate(fidoDevice.getCreationDate()));
         meta.setLastModified(DateUtil.generalizedToISOStringDate(fidoDevice.getMetaLastModified()));
         meta.setLocation(fidoDevice.getMetaLocation());

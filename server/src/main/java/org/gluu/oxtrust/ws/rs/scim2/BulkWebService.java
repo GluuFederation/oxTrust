@@ -23,7 +23,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_ATTRIBUTES;
  * SCIM Bulk Endpoint Implementation
  * 
  * @author Rahat ALi Date: 05.08.2015
- * Updated by jgomer on 2017-09-27.
+ * Re-engineered by jgomer on 2017-11-27.
  */
 @Named("scim2BulkEndpoint")
 @Path("/scim/v2/Bulk")
@@ -35,13 +35,6 @@ public class BulkWebService extends BaseScimWebService {
     @Inject
     UserWebService userWebService;
 
-    @GET
-    @RefAdjusted
-    public Response dummy(@QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList){
-        log.debug("atrrs {}", attrsList);
-        //return userWebService.deleteUser(null, null);
-        return null;
-    }
 
     @PostConstruct
     public void setup(){

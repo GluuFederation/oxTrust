@@ -27,6 +27,7 @@ import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.gluu.oxtrust.model.scim2.schema.SchemaAttribute;
 import org.gluu.oxtrust.model.scim2.schema.SchemaResource;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -110,7 +111,7 @@ public class SchemaWebService extends BaseScimWebService {
         //Fill map with urn vs. resource
         for (Class<? extends BaseScimResource> cls : IntrospectUtil.allAttrs.keySet()){
             if (!excludedResources.contains(cls)) {
-                resourceSchemas.put(extService.getDefaultSchema(cls), cls);
+                resourceSchemas.put(ScimResourceUtil.getDefaultSchemaUrn(cls), cls);
 
                 for (Extension extension : extService.getResourceExtensions(cls))
                     resourceSchemas.put(extension.getUrn(), cls);
@@ -123,11 +124,11 @@ public class SchemaWebService extends BaseScimWebService {
 
         SchemaResource resource;
         Class<? extends BaseScimResource> schemaCls=SchemaResource.class;
-        Schema annotation=clazz.getAnnotation(Schema.class);
+        Schema annotation=ScimResourceUtil.getSchemaAnnotation(clazz);
         if (!clazz.equals(schemaCls) && annotation!=null){
 
             Meta meta=new Meta();
-            meta.setResourceType(BaseScimResource.getType(schemaCls));
+            meta.setResourceType(ScimResourceUtil.getType(schemaCls));
             meta.setLocation(endpointUrl + "/" + annotation.id());
 
             resource=new SchemaResource();
@@ -183,7 +184,7 @@ public class SchemaWebService extends BaseScimWebService {
 
     public SchemaResource getSchemaInstance(Class<? extends BaseScimResource> clazz, String urn) throws Exception{
 
-        if (extService.getDefaultSchema(clazz).equals(urn))
+        if (ScimResourceUtil.getDefaultSchemaUrn(clazz).equals(urn))
             return getSchemaInstance(clazz);    //Process core attributes
         else{   //process extension attributes
             SchemaResource resource=null;
@@ -195,7 +196,7 @@ public class SchemaWebService extends BaseScimWebService {
                 if (extension.getUrn().equals(urn)) {
 
                     Meta meta = new Meta();
-                    meta.setResourceType(BaseScimResource.getType(schemaCls));
+                    meta.setResourceType(ScimResourceUtil.getType(schemaCls));
                     meta.setLocation(endpointUrl + "/" + urn);
 
                     resource = new SchemaResource();
