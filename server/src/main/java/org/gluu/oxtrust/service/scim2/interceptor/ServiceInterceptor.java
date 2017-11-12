@@ -1,15 +1,28 @@
 package org.gluu.oxtrust.service.scim2.interceptor;
 
+import org.apache.commons.lang.StringUtils;
+import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
+import org.gluu.oxtrust.service.OpenIdService;
+import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
+import org.gluu.oxtrust.service.uma.UmaPermissionService;
+import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.slf4j.Logger;
+import org.xdi.oxauth.client.ClientInfoClient;
+import org.xdi.oxauth.client.ClientInfoResponse;
+import org.xdi.oxauth.model.uma.wrapper.Token;
+import org.xdi.util.Pair;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
+
+import static javax.ws.rs.core.Response.Status;
 
 /**
  * This class checks whether authorization header is present and is valid before current scim service methods are
@@ -29,6 +42,15 @@ public class ServiceInterceptor {
     @Inject
     private JsonConfigurationService jsonConfigurationService;
 
+    @Inject
+    private OpenIdService openIdService;
+
+    @Inject
+    private ScimUmaProtectionService scimUmaProtectionService;
+
+    @Inject
+    private UmaPermissionService umaPermissionService;
+
     /**
      * Does some pre-processing of parameters:
      * Searches for a parameter of type String and annotated with HeaderParam. If found, the respective processing
@@ -39,33 +61,33 @@ public class ServiceInterceptor {
      */
     @AroundInvoke
     public Object manage(InvocationContext ctx) throws Exception {
-        log.warn("Bypassing protection TEMPORARILY");
+/*       log.warn("Bypassing protection TEMPORARILY");
         return ctx.proceed();
-/*
-        log.debug("SCIM Service call intercepted");
+*/
+        Response authorizationResponse;
+
+        log.info("==== SCIM Service call intercepted ====");
         String authorization=getAuthzHeaderValue(ctx);
-        Response authorizationResponse=null;
+        log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
 
-        if (authorization==null) {
-            log.info("Request missing authorization header");
-            authorizationResponse= BaseScimWebService.getErrorResponse(Response.Status.FORBIDDEN, "No authorization header found");
+        try {
+            if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
+                log.info("SCIM Test Mode is ACTIVE");
+                authorizationResponse = processTestModeAuthorization(authorization);
+            }
+            else
+            if (scimUmaProtectionService.isEnabled()){
+                log.info("SCIM is protected by UMA");
+                authorizationResponse = processUmaAuthorization(authorization);
+            }
+            else{
+                log.info("Please activate UMA or test mode to protect your SCIM endpoints. Read the Gluu SCIM docs to learn more");
+                authorizationResponse= BaseScimWebService.getErrorResponse(Status.SERVICE_UNAVAILABLE, "SCIM API not protected");
+            }
         }
-        else{
-            log.info("Found authorization header");
-
-            try {
-                if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-                    log.info(" ##### SCIM Test Mode is ACTIVE");
-                    authorizationResponse = processTestModeAuthorization(authorization);
-                }
-                else {
-                    authorizationResponse = processAuthorization(authorization);
-                }
-            }
-            catch (Exception e){
-                log.error(e.getMessage(), e);
-                authorizationResponse=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
-            }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+            authorizationResponse=BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
         if (authorizationResponse == null) {
@@ -73,10 +95,58 @@ public class ServiceInterceptor {
             //If authorization passed, proceed with actual processing of request
             return ctx.proceed();
         }
-        else{
+        else
             return authorizationResponse;
+
+    }
+
+    private Response processTestModeAuthorization(String token) throws Exception {
+
+        Response response = null;
+
+        if (StringUtils.isNotEmpty(token)) {
+            token=token.replaceFirst("Bearer\\s+","");
+            log.debug("Validating token {}", token);
+
+            String clientInfoEndpoint=openIdService.getOpenIdConfiguration().getClientInfoEndpoint();
+            ClientInfoClient clientInfoClient = new ClientInfoClient(clientInfoEndpoint);
+            ClientInfoResponse clientInfoResponse = clientInfoClient.execClientInfo(token);
+
+            if (clientInfoResponse.getErrorType()!=null) {
+                response=BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED, "Invalid token "+ token);
+                log.debug("Error validating access token: {}", clientInfoResponse.getErrorDescription());
+            }
         }
-*/
+        else{
+            log.info("Request is missing authorization header");
+            //see section 3.12 RFC 7644
+            response = BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED, "No authorization header found");
+        }
+        return response;
+
+    }
+
+    private Response processUmaAuthorization(String authorization) throws Exception {
+
+        Token patToken;
+        try {
+            patToken = scimUmaProtectionService.getPatToken();
+        }
+        catch (UmaProtectionException ex) {
+            return BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
+        }
+
+        Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, scimUmaProtectionService.getUmaResourceId(), scimUmaProtectionService.getUmaScope());
+        if (rptTokenValidationResult.getFirst()) {
+            if (rptTokenValidationResult.getSecond() != null) {
+                return rptTokenValidationResult.getSecond();
+            }
+        }
+        else {
+            return BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR, "Invalid GAT/RPT token");
+        }
+        return null;
+
     }
 
     private String getAuthzHeaderValue(InvocationContext ctx){
