@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.ws.rs;
+package org.gluu.oxtrust.ws.rs.scim2;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
