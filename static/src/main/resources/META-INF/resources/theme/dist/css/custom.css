@@ -594,12 +594,12 @@ td.selectscopedailoguefourthcolumn {
 	  font-weight: 500 !important;
 }
 
-}
-
 .login-box,.register-box{margin:7% auto}
 @media (max-width:768px){
     .login-box,.register-box{width:90%; max-width:100%; margin-top:20px}
 }
 
-
-
+.break-word {
+    display: block;
+    word-wrap: break-word;
+}
