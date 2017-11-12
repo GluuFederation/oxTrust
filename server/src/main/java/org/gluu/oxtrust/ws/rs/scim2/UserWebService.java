@@ -7,15 +7,13 @@ import com.wordnik.swagger.annotations.Authorization;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
-import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.SearchRequest;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
+import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
@@ -29,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 import static org.gluu.oxtrust.model.scim2.Constants.*;
@@ -260,6 +259,63 @@ public class UserWebService extends BaseScimWebService implements UserService {
             log.error(e.getMessage(), e);
         }
         return Response.fromResponse(response).location(uri).build();
+
+    }
+
+    @Path("{id}")
+    @PATCH
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @Protected @RefAdjusted
+    @ApiOperation(value = "PATCH operation", notes = "https://tools.ietf.org/html/rfc7644#section-3.5.2", response = UserResource.class)
+    public Response patchUser(
+            PatchRequest request,
+            @PathParam("id") String id,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
+            @HeaderParam("Authorization") String authorization){
+
+        Response response;
+        try{
+            UserResource user=new UserResource();
+            GluuCustomPerson person=personService.getPersonByInum(id);  //person is not null (check associated decorator method)
+
+            //Fill user instance with all info from person
+            scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
+
+            //Apply patches one by one in sequence
+            for (PatchOperation po : request.getOperations())
+                user=(UserResource) applyPatchOperation(user, po);
+
+            //Throws exception if final representation does not pass overall validation
+            log.debug("patchUser. Revising final resource still passes validations");
+            executeDefaultValidation(user);
+
+            //Update timestamp
+            long now=new Date().getTime();
+            user.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
+
+            //Replaces the information found in person with the contents of user
+            scim2UserService.replacePersonInfo(person, user);
+
+            // For custom script: update user
+            if (externalScimService.isEnabled()) {
+                externalScimService.executeScimUpdateUserMethods(person);
+            }
+
+            String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
+            response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
+        }
+        catch (InvalidAttributeValueException e){
+            log.error(e.getMessage(), e);
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
+        }
+        catch (Exception e){
+            log.error("Failure at patchUser method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
 
     }
 
