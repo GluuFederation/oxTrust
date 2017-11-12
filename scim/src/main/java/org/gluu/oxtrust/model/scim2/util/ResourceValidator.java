@@ -6,7 +6,6 @@ import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Validations;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
-import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
@@ -160,12 +159,15 @@ public class ResourceValidator {
     //This validation should be called after a successful call to validateRequiredAttributes
     public void validateSchemasAttribute() throws SCIMException {
 
+        Set<String> schemaList = new HashSet<String>(resource.getSchemas());
+        if (schemaList.size()==0)
+            throw new SCIMException(WRONG_SCHEMAS_ATTR);
+
         Set<String> allSchemas=new HashSet<String>();
-        allSchemas.add(resourceClass.getAnnotation(Schema.class).id());
+        allSchemas.add(ScimResourceUtil.getDefaultSchemaUrn(resourceClass));
         for (Extension ext : extensions)
             allSchemas.add(ext.getUrn());
 
-        Set<String> schemaList = new HashSet<String>(resource.getSchemas());
         schemaList.removeAll(allSchemas);
 
         if (schemaList.size()>0)    //means that some wrong extension urn is there
@@ -233,6 +235,7 @@ public class ResourceValidator {
                             Class cls = value.getClass();
                             boolean isCollection=IntrospectUtil.isCollection(cls);
 
+                            //If the attribute coming is unknown, NPE will be thrown and we are covered
                             log.debug("validateExtendedAttributes. Got value(s) for attribute '{}'", attr);
                             //Check if the multivalued custom attribute is consistent with the nature of the value itself
                             if (isCollection == extension.getFields().get(attr).isMultiValued()){

@@ -5,6 +5,7 @@ import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.gluu.oxtrust.model.scim2.annotations.*;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 
 import java.util.*;
 
@@ -62,12 +63,10 @@ public class BaseScimResource {
     }
 
     public BaseScimResource(){
-
-        Schema schema=getClass().getAnnotation(Schema.class);
         schemas=new ArrayList<String>();
-
-        if (schema!=null)
-            schemas.add(schema.id());
+        String defSchema= ScimResourceUtil.getDefaultSchemaUrn(getClass());
+        if (defSchema!=null)
+            schemas.add(defSchema);
     }
 
     public String getId() {
@@ -100,11 +99,6 @@ public class BaseScimResource {
 
     public void setSchemas(List<String> schemas) {
         this.schemas = schemas;
-    }
-
-    public static String getType(Class<? extends BaseScimResource> cls){
-        Schema annot=cls.getAnnotation(Schema.class);
-        return annot==null ? null : annot.name();
     }
 
 }

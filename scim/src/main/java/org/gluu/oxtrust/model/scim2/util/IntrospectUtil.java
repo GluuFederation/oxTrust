@@ -118,7 +118,7 @@ public class IntrospectUtil {
     }
 
     public static boolean isCollection(Class clazz){
-        return Collection.class.isAssignableFrom(clazz);    // clazz.equals(List.class);
+        return Collection.class.isAssignableFrom(clazz);
     }
 
     public static List<String> getPathsInExtension(Extension extension){
@@ -276,6 +276,7 @@ public class IntrospectUtil {
             }
 
             for (Class<? extends BaseScimResource> cls : resourceClasses) {
+                //This is a map from attributes to storage references (e.g. LDAP attributes)
                 Map<String, String> map = new HashMap<String, String>();
 
                 for (String attrib : allAttrs.get(cls)) {
