@@ -29,7 +29,7 @@ public class ServiceProviderConfig implements Serializable {
 
 	private String documentationUrl = "http://www.gluu.org/docs/";
 	private PatchConfig patch = new PatchConfig(false);
-	private FilterConfig filter = new FilterConfig(true, Constants.MAX_COUNT);
+	private FilterConfig filter = new FilterConfig(true);
 	private BulkConfig bulk = new BulkConfig(true, MAX_BULK_OPERATIONS, MAX_BULK_PAYLOAD_SIZE);
 	private SortConfig sort = new SortConfig(true);
 	private ChangePasswordConfig changePassword = new ChangePasswordConfig(true);

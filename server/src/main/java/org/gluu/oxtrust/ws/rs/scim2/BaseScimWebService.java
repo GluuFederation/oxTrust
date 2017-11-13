@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import static org.gluu.oxtrust.model.scim2.Constants.DEFAULT_COUNT;
-//import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor.getGroupLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor.getUserLdapAttributeName;
 import static org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.fido.FidoDeviceFilterVisitor.getFidoDeviceLdapAttributeName;
@@ -17,7 +16,6 @@ import java.util.*;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
@@ -91,8 +89,8 @@ public class BaseScimWebService {
     private AppInitializer appInitializer;
 
 	public int getMaxCount(){
-	    return Constants.MAX_COUNT;
-        //return appConfiguration.getScimProperties().getMaxCount() ;
+	    //return Constants.MAX_COUNT;
+	    return appConfiguration.getScimProperties().getMaxCount();
 	}
 
     protected Response processTestModeAuthorization(String token) throws Exception {
