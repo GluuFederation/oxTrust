@@ -61,9 +61,9 @@ public class ServiceInterceptor {
      */
     @AroundInvoke
     public Object manage(InvocationContext ctx) throws Exception {
-/*       log.warn("Bypassing protection TEMPORARILY");
+       log.warn("Bypassing protection TEMPORARILY");
         return ctx.proceed();
-*/
+/*
         Response authorizationResponse;
 
         log.info("==== SCIM Service call intercepted ====");
@@ -97,7 +97,7 @@ public class ServiceInterceptor {
         }
         else
             return authorizationResponse;
-
+*/
     }
 
     private Response processTestModeAuthorization(String token) throws Exception {
