@@ -1031,6 +1031,11 @@
             "description": "Boolean value to specify support for front channel logout session.",
             "type": "boolean"
         },
+        "useCacheForAllImplicitFlowObjects": {
+            "id": "useCacheForAllImplicitFlowObjects",
+            "description": "Boolean value to specify whether to persist all objects into cache during Implicit Flow.",
+            "type": "boolean"
+        },
         "updateUserLastLogonTime": {
         	"id": "updateUserLastLogonTime",
             "description": "Boolean value to specify if application should update oxLastLogonTime attribute on user authentication.",
