@@ -31,24 +31,24 @@ public class ScimResourceSerializer {
 
     private ObjectMapper mapper=new ObjectMapper();
 
-    private Set<String> expandAttributesPaths(String attributes, String defaulSchemaUrn, List<String> schemas, SortedSet<String> attribs) {
+    private Set<String> expandAttributesPaths(String attributes, String defaultSchemaUrn, List<String> schemas, SortedSet<String> attribs) {
 
         Set<String> set=new HashSet<String>();
 
         for (String attr : attributes.split(",")) {
             String shorterName=attr.replaceAll("\\s", "");
-            set.add(ScimResourceUtil.adjustNotationInPath(shorterName, defaulSchemaUrn, schemas));
+            set.add(ScimResourceUtil.adjustNotationInPath(shorterName, defaultSchemaUrn, schemas));
         }
 
-        Set<String> extendedSet=new HashSet<String>();
+        Set<String> enlargedSet =new HashSet<String>();
 
         //attribs is already sorted
         for (String basicAttr : set){
-            extendedSet.add(basicAttr);
+            enlargedSet.add(basicAttr);
 
             for (String elem : attribs.tailSet(basicAttr + "."))
                 if (elem.startsWith(basicAttr + "."))
-                    extendedSet.add(elem);
+                    enlargedSet.add(elem);
                 else
                     break;
         }
@@ -67,7 +67,7 @@ public class ScimResourceSerializer {
             list.add(prevAttr);
         }
            */
-        return extendedSet;
+        return enlargedSet;
     }
 
     private void buildIncludeSet(SortedSet<String> include, Class<? extends BaseScimResource> resourceClass,
@@ -78,26 +78,33 @@ public class ScimResourceSerializer {
         Set<String> neverSet=IntrospectUtil.neverCoreAttrs.get(resourceClass).keySet();
         Set<String> defaultSet=new HashSet<String>();
 
-        defaultSet.addAll(IntrospectUtil.defaultCoreAttrs.get(resourceClass).keySet());
         //Here we assume all attributes part of extensions have returnability="default"...
-        for (Extension ext : extService.getResourceExtensions(resourceClass))
-            defaultSet.addAll(IntrospectUtil.getPathsInExtension(ext));
+        SortedSet<String> extendedSet=new TreeSet<String>();
+        for (Extension ext : extService.getResourceExtensions(resourceClass)) {
+            extendedSet.add(ext.getUrn());
+            extendedSet.addAll(IntrospectUtil.getPathsInExtension(ext));
+        }
+
+        defaultSet.addAll(IntrospectUtil.defaultCoreAttrs.get(resourceClass).keySet());
+        defaultSet.addAll(extendedSet);
 
         String defaultSchema=ScimResourceUtil.getDefaultSchemaUrn(resourceClass);
 
         if (attributes!=null) {
             log.info("buildIncludeSet. Processing attributes query param (excludedAttributes ignored)");
 
-            tempSet= expandAttributesPaths(attributes, defaultSchema, schemas, IntrospectUtil.allAttrs.get(resourceClass));
+            extendedSet.addAll(IntrospectUtil.allAttrs.get(resourceClass));
+            tempSet= expandAttributesPaths(attributes, defaultSchema, schemas, extendedSet);
             tempSet.removeAll(neverSet);
             include.addAll(tempSet);
         }
         else
         if (exclussions!=null){
-            log.info("buildIncludeSet. Processing excludedAttributes query param)");
+            log.info("buildIncludeSet. Processing excludedAttributes query param");
 
+            extendedSet.addAll(IntrospectUtil.allAttrs.get(resourceClass));
             tempSet= defaultSet;
-            tempSet.removeAll(expandAttributesPaths(exclussions, defaultSchema, schemas, IntrospectUtil.allAttrs.get(resourceClass)));
+            tempSet.removeAll(expandAttributesPaths(exclussions, defaultSchema, schemas, extendedSet));
             include.addAll(tempSet);
         }
         else{
