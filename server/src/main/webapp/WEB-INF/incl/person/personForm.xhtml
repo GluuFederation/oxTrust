@@ -275,11 +275,22 @@
                                             </h:panelGroup>
                                         </a4j:repeat>
                                         
-                                        <a4j:repeat id="u2f" value="#{updatePersonAction.u2fCustomAttributes}" var="_u2fcustAttr">
-                                                     <ox:decorate label="#{_u2fcustAttr}">
+                                        <a4j:repeat id="externalAuth" value="#{updatePersonAction.externalAuthCustomAttributes}" var="_authExtCustAttr">
+                                                     <ox:decorate label="#{_authExtCustAttr}">
                                                      <div class="col-xs-10"/>   
                                                         <a4j:commandLink
-                                                                action="#{updatePersonAction.removeU2fCustomAttribute(_u2fcustAttr)}"
+                                                                action="#{updatePersonAction.removeU2fCustomAttribute(_authExtCustAttr)}"
+                                                                render="selectedCustomAttributesId"
+                                                                styleClass="glyphicon glyphicon-remove">
+                                                        </a4j:commandLink>
+                                                     </ox:decorate>                                            
+                                        </a4j:repeat>
+                                        
+                                        <a4j:repeat id="fidoDevices" value="#{updatePersonAction.deviceDataMap}" var="_devices">
+                                                     <ox:decorate label="#{_devices.name}">
+                                                     <div class="col-xs-10"/>   
+                                                        <a4j:commandLink
+                                                                action="#{updatePersonAction.removeDevice(_devices)}"
                                                                 render="selectedCustomAttributesId"
                                                                 styleClass="glyphicon glyphicon-remove">
                                                         </a4j:commandLink>

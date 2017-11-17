@@ -17,6 +17,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
+import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
@@ -37,6 +38,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
+	
 	@Override
 	public String getDnForFidoDevice(String userId, String id) {
 		String baseDn;
@@ -69,7 +71,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 		return gluuCustomFidoDevice;
 	}
 
-	private GluuCustomFidoDevice searchFidoDevice(Filter filter, String userId, String id) throws Exception {
+	GluuCustomFidoDevice searchFidoDevice(Filter filter, String userId, String id) throws Exception {
 		GluuCustomFidoDevice gluuCustomFidoDevice = null;
 
 		VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
@@ -92,4 +94,19 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	public void removeGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice) {
 		ldapEntryManager.removeWithSubtree(gluuCustomFidoDevice.getDn());
 	}
+	
+	@Override
+	public 	List<GluuCustomFidoDevice> searchFidoDevices(String userInum, String ... returnAttributes) {
+		
+		if(containsBranch(userInum)){	
+			String baseDnForU2fDevices = getDnForFidoDevice(userInum,null);	
+			return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuCustomFidoDevice.class, returnAttributes, null);
+		}
+		return null;
+	}
+	
+	private boolean containsBranch(final String userInum) {
+		return ldapEntryManager.contains(SimpleBranch.class, getDnForFidoDevice(userInum,null));
+	}
+
 }
