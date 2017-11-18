@@ -38,6 +38,7 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.Person;
 import org.gluu.oxtrust.model.PersonAttribute;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
+import org.gluu.oxtrust.model.helper.DateUtil;
 import org.gluu.oxtrust.model.scim2.Address;
 import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.Email;
@@ -890,7 +891,9 @@ public class CopyUtils2 implements Serializable {
                                 String value = ExtensionFieldType.STRING.fromString(customAttribute.getValue());
                                 extensionBuilder.setField(customAttribute.getName(), value);
                             } else if (scimCustomAttributeDataType.equals(GluuAttributeDataType.DATE)) {
-                                Date value = ExtensionFieldType.DATE_TIME.fromString(customAttribute.getValue());
+                                //When the info is coming from LDAP-based pojo, dates are in generalizedTime format
+                                String isoDateString=DateUtil.generalizedToISOStringDate(customAttribute.getValue());
+                                Date value = ExtensionFieldType.DATE_TIME.fromString(isoDateString);
                                 extensionBuilder.setField(customAttribute.getName(), value);
                             } else if (scimCustomAttributeDataType.equals(GluuAttributeDataType.NUMERIC)) {
                                 BigDecimal value = ExtensionFieldType.DECIMAL.fromString(customAttribute.getValue());
