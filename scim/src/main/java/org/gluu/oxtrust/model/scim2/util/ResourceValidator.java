@@ -49,56 +49,6 @@ public class ResourceValidator {
         this.extensions=extensions;
     }
 
-    /**
-     * Traverses the contents of a SCIM resource and applies a set of getter methods to collect a list of values.
-     * For example, if passing a UserResource object and list of getters such as [getAdresses(), getStreetAddress()],
-     * it will return a list with all street address that can be found in the associated addresses the user has
-     * @param bean A SCIM resource object
-     * @param getters A list of getters methods
-     * @return List of values. They are collected by scanning the getter list from beginning to end. If no values could
-     * be collected at all, an empty list is returned
-     */
-    public List<Object> getAttributeValues(BaseScimResource bean, final List<Method> getters){
-
-        final List<Object> results=new ArrayList<Object>();
-
-        class traversalClass{
-
-            void traverse(Object value, int index){
-
-                try {
-                    if (value!=null && index < getters.size()) {
-                        if (IntrospectUtil.isCollection(value.getClass())) {
-
-                            Collection collection=(Collection)value;
-                            if (collection.isEmpty())
-                                traverse(null, index);    //stops branching...
-                            else {
-                                for (Object val : collection)
-                                    traverse(val, index);
-                            }
-                        }
-                        else {
-                            Object val=getters.get(index).invoke(value);
-                            traverse(val, index+1);
-                        }
-                    }
-                    //Add result only if we are at the deepest level (tree tip)
-                    if (index==getters.size())
-                        results.add(value);
-                }
-                catch (Exception e){
-                    log.error(e.getMessage(), e);
-                }
-            }
-
-        }
-
-        new traversalClass().traverse(bean, 0);
-        return results;
-
-    }
-
     public void validateRequiredAttributes() throws SCIMException {
 
         Map<String, List<Method>> map=IntrospectUtil.requiredCoreAttrs.get(resourceClass);
@@ -106,7 +56,7 @@ public class ResourceValidator {
         for (String attributePath : map.keySet()){
             log.debug("Validating existence of required attribute '{}'", attributePath);
 
-            for (Object val : getAttributeValues(resource, map.get(attributePath)))
+            for (Object val : IntrospectUtil.getAttributeValues(resource, map.get(attributePath)))
                 if (val == null) {
                     log.error("Error getting value of required attribute '{}'", attributePath);
                     throw new SCIMException(String.format(REQUIRED_ATTR_NOTFOUND, attributePath));
@@ -126,7 +76,7 @@ public class ResourceValidator {
             Validations valToApply=f.getAnnotation(Validator.class).value();
             log.debug("Validating value(s) of attribute '{}'", attributePath);
 
-            for (Object val : getAttributeValues(resource, map.get(attributePath))) {
+            for (Object val : IntrospectUtil.getAttributeValues(resource, map.get(attributePath))) {
                 if (!Validations.apply(valToApply, val)) {
                     log.error("Error validating attribute '{}', wrong value supplied: '{}'", attributePath, val.toString());
                     throw new SCIMException(String.format(ATTR_VALIDATION_FAILED, attributePath));
@@ -147,7 +97,7 @@ public class ResourceValidator {
             List<String> canonicalVals=Arrays.asList(f.getAnnotation(Attribute.class).canonicalValues());
             log.debug("Validating values of canonical attribute '{}'", attributePath);
 
-            for (Object val : getAttributeValues(resource, map.get(attributePath))) {
+            for (Object val : IntrospectUtil.getAttributeValues(resource, map.get(attributePath))) {
                 if (!canonicalVals.contains(val.toString())) {
                     log.error("Error validating canonical attribute '{}', wrong value supplied: '{}'", attributePath, val.toString());
                     throw new SCIMException(String.format(ATTR_VALIDATION_FAILED, attributePath));

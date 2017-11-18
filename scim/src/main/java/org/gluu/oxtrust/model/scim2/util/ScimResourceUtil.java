@@ -13,6 +13,7 @@ import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 
 import javax.management.InvalidAttributeValueException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 
 import static org.gluu.oxtrust.model.scim2.AttributeDefinition.Mutability.*;
@@ -68,6 +69,7 @@ class traversalClass {
 
                             if (IntrospectUtil.isCollection(value.getClass())) {
                                 Collection col=(Collection) value;
+                                int size=col.size();
 
                                 if (!replacing) {    //we need to add to the existing collection
                                     if (destValue!=null) {
@@ -78,7 +80,8 @@ class traversalClass {
                                             col.addAll((Collection) destValue);
                                     }
                                 }
-                                value = col.size()==0 ? null : col;
+                                //Do the arrangement so that only one primary="true" can stay in data
+                                value = col.size()==0 ? null : adjustPrimarySubAttributes(col, size);
                             }
                             destination.put(key, value);
                         }
@@ -116,6 +119,36 @@ class traversalClass {
                 }
             }
 
+    }
+
+    private Collection adjustPrimarySubAttributes(Collection input, int nFreshEntries){
+
+        int i;
+        Object array[]=input.toArray();
+        for (i=0; i<nFreshEntries; i++){
+            Object item=array[i];
+            if (item!=null && item instanceof Map){
+                Map<String, Object> map=(Map<String, Object>) item;
+                Object primaryObj=map.get("primary");
+                if (primaryObj!=null && primaryObj.toString().equals("true"))
+                    break;
+            }
+            else    //Means this collection is not made up of complex attributes, so we can abort the operation
+                i=array.length;
+        }
+        //Set the remaining to primary="false"
+        for (i=i+1;i<array.length;i++){
+            Object item=array[i];
+            if (item!=null && item instanceof Map) {
+                Map<String, Object> map = (Map<String, Object>) item;
+                Object primaryObj = map.get("primary");
+                if (primaryObj != null && primaryObj.toString().equals("true")){
+                    map.put("primary", false);
+                    log.info("Setting primary = false for item whose associated value is {}", map.get("value"));
+                }
+            }
+        }
+        return Arrays.asList(array);
     }
 
 }
@@ -325,6 +358,66 @@ public class ScimResourceUtil {
         }
         else
             return path.split("\\.");
+
+    }
+
+    /**
+     * Takes an SCIM resource and "fixes" inconsistencies in "primary" subattribute: in a multivalued attribute setting,
+     * only one of the items in the collection can have "primary":true. Thus, for every collection involved (e.g. addresses,
+     * emails... in UserResource) it switches the 2nd, 3rd, and son on. subattributes where "primary" is true to false
+     * @param resource Resource object
+     */
+    public static void adjustPrimarySubAttributes(BaseScimResource resource){
+
+        String fragment=".primary";
+        Class<? extends BaseScimResource> cls=resource.getClass();
+
+        //parents will contain the parent path (and associated getter list) where there are primary subattrs, e.g. emails,
+        //ims... if we are talking about users
+        List<String> parents=new ArrayList<String>();
+        for (String path : IntrospectUtil.allAttrs.get(cls))
+            if (path.endsWith(fragment))
+                parents.add(path.substring(0, path.length() - fragment.length()));
+
+        List<Map<String,List<Method>>> niceList=Arrays.asList(IntrospectUtil.defaultCoreAttrs.get(cls),
+                IntrospectUtil.neverCoreAttrs.get(cls), IntrospectUtil.alwaysCoreAttrs.get(cls));
+
+        log.info("adjustPrimarySubAttributes. Revising \"primary\":true uniqueness constraints");
+        for (String path : parents){
+            //Searh path in the maps
+            for (Map<String,List<Method>> niceMap : niceList) {
+                try {
+                    if (niceMap.containsKey(path)) {
+                        //Here we will get a singleton list that contains the multivalued complex objects (or an empty one at least)
+                        List<Object> list = IntrospectUtil.getAttributeValues(resource, niceMap.get(path));
+                        if (list.size()>0){
+                            list=(List<Object>) list.get(0);
+
+                            if (list!=null && list.size()>1) {  //Ensure is not empty or singleton
+                                Class clz = list.get(0).getClass();     //All items are supposed to belong to the same class
+                                //Find getter and setter of "primary" property
+                                Method setter = IntrospectUtil.getSetter(fragment.substring(1), clz);
+                                Method getter = IntrospectUtil.getGetter(fragment.substring(1), clz);
+                                int trues = 0;
+
+                                for (Object item : list) {
+                                    Object primaryVal = getter.invoke(item);
+                                    trues += primaryVal != null && primaryVal.toString().equals("true") ? 1 : 0;
+                                    if (trues > 1) {  //Revert to false
+                                        setter.invoke(item, false);
+                                        log.info("adjustPrimarySubAttributes. Setting primary = false for an item (a previous one was already primary = true)");
+                                    }
+                                }
+                            }
+                        }
+                        break;  //skip the rest of nicemaps
+                    }
+                }
+                catch (Exception e){
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
 
     }
 

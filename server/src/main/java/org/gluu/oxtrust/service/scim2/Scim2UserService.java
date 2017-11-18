@@ -312,15 +312,20 @@ public class Scim2UserService implements Serializable {
             List<Group> groupList = new ArrayList<Group>();
 
             for (String groupDN : listOfGroups) {
-                GluuGroup gluuGroup = groupService.getGroupByDn(groupDN);
+                try {
+                    GluuGroup gluuGroup = groupService.getGroupByDn(groupDN);
 
-                Group group = new Group();
-                group.setValue(gluuGroup.getInum());
-                String reference = groupWS.getEndpointUrl() + "/" + gluuGroup.getInum();
-                group.setRef(reference);
-                group.setDisplay(gluuGroup.getDisplayName());
+                    Group group = new Group();
+                    group.setValue(gluuGroup.getInum());
+                    String reference = groupWS.getEndpointUrl() + "/" + gluuGroup.getInum();
+                    group.setRef(reference);
+                    group.setDisplay(gluuGroup.getDisplayName());
 
-                groupList.add(group);
+                    groupList.add(group);
+                }
+                catch (Exception e){
+                    log.warn("transferAttributesToUserResource. Group with dn {} could not be added to User Resource. {}", e.getMessage());
+                }
             }
             res.setGroups(groupList);
         }
@@ -395,8 +400,6 @@ public class Scim2UserService implements Serializable {
 
     /**
      * Inserts a new user in LDAP based on the SCIM Resource passed
-     * There is no need to check attributes mutability in this case as there are no original attributes (the resource does
-     * not exist yet)
      * @param user A UserResource object with all info as received by the web service
      * @return The new created user
      * @throws Exception
@@ -407,6 +410,8 @@ public class Scim2UserService implements Serializable {
         log.info("Preparing to create user {}", userName);
         checkUidExistence(userName);
 
+        //There is no need to check attributes mutability in this case as there are no original attributes
+        //(the resource does not exist yet)
         GluuCustomPerson gluuPerson=new GluuCustomPerson();
         transferAttributesToPerson(user, gluuPerson);
         assignComputedAttributesToPerson(gluuPerson);
@@ -435,7 +440,7 @@ public class Scim2UserService implements Serializable {
 
             transferAttributesToUserResource(gluuPerson, tmpUser, url);
 
-            long now=new Date().getTime();
+            long now=System.currentTimeMillis();
             tmpUser.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
             tmpUser=(UserResource) ScimResourceUtil.transferToResourceReplace(user, tmpUser, extService.getResourceExtensions(user.getClass()));

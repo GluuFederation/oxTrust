@@ -6,6 +6,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.UserService;
 import org.slf4j.Logger;
@@ -56,6 +57,7 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
         try {
             executeDefaultValidation(user);
             assignMetaInformation(user);
+            ScimResourceUtil.adjustPrimarySubAttributes(user);
             //Proceed with actual implementation of createUser method
             response = service.createUser(user, attrsList, excludedAttrsList, authorization);
         }

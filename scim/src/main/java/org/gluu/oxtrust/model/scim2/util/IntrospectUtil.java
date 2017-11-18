@@ -62,7 +62,7 @@ public class IntrospectUtil {
     }
 
     /**
-     * This method will find a java Field with a particular name.  If  needed, this method will search through
+     * This method will find a java Field with a particular name.  If needed, this method will search through
      * super classes.  The field does not need to be public.
      * Adapted from https://github.com/pingidentity/scim2/blob/master/scim2-sdk-common/src/main/java/com/unboundid/scim2/common/utils/SchemaUtils.java
      *
@@ -109,7 +109,65 @@ public class IntrospectUtil {
 
     }
 
-    private static Method getGetter(String fieldName, Class clazz) throws Exception{
+    /**
+     * Traverses the contents of a SCIM resource and applies a set of getter methods to collect a list of values.
+     * For example, if passing a UserResource object and list of getters such as [getAdresses(), getStreetAddress()],
+     * it will return a list with all "street addresses" that can be found inside user
+     * @param bean A SCIM resource object
+     * @param getters A list of getters methods
+     * @return List of values. They are collected by scanning the getter list from beginning to end. If no values could
+     * be collected at all, an empty list is returned
+     */
+    public static List<Object> getAttributeValues(BaseScimResource bean, final List<Method> getters){
+
+        final List<Object> results=new ArrayList<Object>();
+
+        class traversalClass{
+
+            void traverse(Object value, int index){
+
+                try {
+                    if (value!=null && index < getters.size()) {
+                        if (IntrospectUtil.isCollection(value.getClass())) {
+
+                            Collection collection=(Collection)value;
+                            if (collection.isEmpty())
+                                traverse(null, index);    //stops branching...
+                            else {
+                                for (Object val : collection)
+                                    traverse(val, index);
+                            }
+                        }
+                        else {
+                            Object val=getters.get(index).invoke(value);
+                            traverse(val, index+1);
+                        }
+                    }
+                    //Add result only if we are at the deepest level (tree tip)
+                    if (index==getters.size())
+                        results.add(value);
+                }
+                catch (Exception e){
+                    log.error(e.getMessage(), e);
+                }
+            }
+
+        }
+
+        new traversalClass().traverse(bean, 0);
+        return results;
+
+    }
+
+    public static Method getSetter(String fieldName, Class clazz) throws Exception{
+        PropertyDescriptor[] props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+        for (PropertyDescriptor p : props)
+            if (p.getName().equals(fieldName))
+                return p.getWriteMethod();
+        return null;
+    }
+
+    public static Method getGetter(String fieldName, Class clazz) throws Exception{
         PropertyDescriptor[] props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
         for (PropertyDescriptor p : props)
             if (p.getName().equals(fieldName))

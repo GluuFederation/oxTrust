@@ -120,7 +120,7 @@ public class SchemaWebService extends BaseScimWebService {
 
     }
 
-    public SchemaResource getSchemaInstance(Class<? extends BaseScimResource> clazz) throws Exception{
+    private SchemaResource getSchemaInstance(Class<? extends BaseScimResource> clazz) throws Exception{
 
         SchemaResource resource;
         Class<? extends BaseScimResource> schemaCls=SchemaResource.class;
@@ -182,7 +182,7 @@ public class SchemaWebService extends BaseScimWebService {
         return resource;
     }
 
-    public SchemaResource getSchemaInstance(Class<? extends BaseScimResource> clazz, String urn) throws Exception{
+    private SchemaResource getSchemaInstance(Class<? extends BaseScimResource> clazz, String urn) throws Exception{
 
         if (ScimResourceUtil.getDefaultSchemaUrn(clazz).equals(urn))
             return getSchemaInstance(clazz);    //Process core attributes
@@ -223,7 +223,7 @@ public class SchemaWebService extends BaseScimWebService {
                         schAttr.setReferenceTypes(null);
 
                         AttributeDefinition.Type type = null;
-                        switch (field.getType()) {
+                        switch (field.getType()) {  //Currently, attribute administration only support 4 types
                             case STRING:
                             case PHOTO:
                                 type = AttributeDefinition.Type.STRING;
@@ -235,7 +235,7 @@ public class SchemaWebService extends BaseScimWebService {
                                 type = AttributeDefinition.Type.INTEGER;
                         }
 
-                        schAttr.setType(type.getName());
+                        schAttr.setType(type==null ? null : type.getName());
                         schAttr.setSubAttributes(null);
 
                         attribs.add(schAttr);

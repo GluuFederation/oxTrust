@@ -27,7 +27,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 
 import static org.gluu.oxtrust.model.scim2.Constants.*;
@@ -289,12 +288,12 @@ public class UserWebService extends BaseScimWebService implements UserService {
                 user=(UserResource) applyPatchOperation(user, po);
 
             //Throws exception if final representation does not pass overall validation
-            log.debug("patchUser. Revising final resource still passes validations");
+            log.debug("patchUser. Revising final resource representation still passes validations");
             executeDefaultValidation(user);
 
             //Update timestamp
-            long now=new Date().getTime();
-            user.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
+            String now=ISODateTimeFormat.dateTime().withZoneUTC().print(System.currentTimeMillis());
+            user.getMeta().setLastModified(now);
 
             //Replaces the information found in person with the contents of user
             scim2UserService.replacePersonInfo(person, user);

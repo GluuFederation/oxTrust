@@ -53,4 +53,10 @@ public class DateUtil {
 
     }
 
+    //Useful for SCIM-client
+    public static String millisToISOString(long millis){
+        DateTime dt=new DateTime(millis);
+        return ISODateTimeFormat.dateTime().print(dt);
+    }
+
 }

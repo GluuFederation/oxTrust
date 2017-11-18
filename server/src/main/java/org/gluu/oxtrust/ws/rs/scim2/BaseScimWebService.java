@@ -264,6 +264,7 @@ public class BaseScimWebService {
                 String subPaths[] = ScimResourceUtil.splitPath(path, extensionUrns);
                 for (int i = subPaths.length - 1; i >= 0; i--) {
 
+                    //Create a string consisting of all subpaths until the i-th
                     StringBuilder sb=new StringBuilder();
                     for (int j=0;j<=i;j++)
                         sb.append(subPaths[j]).append(".");
