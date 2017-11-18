@@ -101,4 +101,10 @@ public class BaseScimResource {
         this.schemas = schemas;
     }
 
+    //Useful method for client-side
+    public Map<String, Object> getExtendedAttributes(String urn){
+        Object custAttrs=extendedAttrs.get(urn);
+        return (custAttrs==null) ? null : (Map<String, Object>) custAttrs;
+    }
+
 }
