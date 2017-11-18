@@ -5,7 +5,11 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.util.List;
+
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
+
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * @author Val Pecaoco
@@ -19,4 +23,6 @@ public interface IFidoDeviceService {
 	void updateGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice);
 
 	void removeGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice);
+
+	List<GluuCustomFidoDevice> searchFidoDevices(String userInum, String ... returnAttributes) throws Exception;
 }

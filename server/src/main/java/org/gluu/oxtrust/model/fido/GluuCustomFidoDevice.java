@@ -13,7 +13,7 @@ import org.xdi.ldap.model.Entry;
 /**
  * @author Val Pecaoco
  */
-@LdapEntry(sortBy = { "oxId" })
+@LdapEntry(sortBy = { "id" })
 @LdapObjectClass(values = { "top", "oxDeviceRegistration" })
 public class GluuCustomFidoDevice extends Entry {
 

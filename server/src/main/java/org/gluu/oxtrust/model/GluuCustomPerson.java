@@ -60,14 +60,9 @@ public class GluuCustomPerson extends User
     
     @LdapAttribute(name = "oxPPID")
     private List<String> oxPPID;
-
-    public List<String> getOxPPID() {
-		return oxPPID;
-	}
-
-	public void setOxPPID(List<String> oxPPID) {
-		this.oxPPID = oxPPID;
-	}
+    
+    @LdapAttribute(name = "oxExternalUid")
+    private List<String> oxExternalUid;
 
 	@LdapAttribute(name = "oxCreationTimestamp")
     private Date creationDate;	
@@ -342,6 +337,22 @@ public class GluuCustomPerson extends User
     public Map<String, Extension> fetchExtensions() {
         return extensions;
     }
+    
+    public List<String> getOxExternalUid() {
+		return oxExternalUid;
+	}
+
+	public void setOxExternalUid(List<String> oxExternalUid) {
+		this.oxExternalUid = oxExternalUid;
+	}
+
+	public List<String> getOxPPID() {
+		return oxPPID;
+	}
+
+	public void setOxPPID(List<String> oxPPID) {
+		this.oxPPID = oxPPID;
+	}
 
     public void setExtensions(Map<String, Extension> extensions) throws Exception {
 

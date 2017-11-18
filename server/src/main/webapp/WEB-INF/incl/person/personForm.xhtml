@@ -237,10 +237,10 @@
                                                             <h:graphicImage value="/img/remove.gif"/>
                                                             <f:param name="sv" value="1"/>
                                                         </a4j:commandLink>
-                                                        </ox:decorate>
+                                                 	</ox:decorate>
                                                         
                                                         
-                                                        <ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+                                                 	<ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 														<div class="col-xs-10">                                                                                           
                                                             
                                                             <rich:inplaceInput
@@ -255,7 +255,7 @@
                                                         </div>
                                                      </ox:decorate>               
                                                         
-                                                        <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+                                                     <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 														<div class="col-xs-10">                                                                                           
                                                             <rich:inplaceInput       
                                                                     defaultLabel="#{msg['person.confirmPassword']}"
@@ -273,6 +273,28 @@
                                                 </a4j:repeat>
                                             	
                                             </h:panelGroup>
+                                        </a4j:repeat>
+                                        
+                                        <a4j:repeat id="externalAuth" value="#{updatePersonAction.externalAuthCustomAttributes}" var="_authExtCustAttr">
+                                                     <ox:decorate label="#{_authExtCustAttr}">
+                                                     <div class="col-xs-10"/>   
+                                                        <a4j:commandLink
+                                                                action="#{updatePersonAction.removeU2fCustomAttribute(_authExtCustAttr)}"
+                                                                render="selectedCustomAttributesId"
+                                                                styleClass="glyphicon glyphicon-remove">
+                                                        </a4j:commandLink>
+                                                     </ox:decorate>                                            
+                                        </a4j:repeat>
+                                        
+                                        <a4j:repeat id="fidoDevices" value="#{updatePersonAction.deviceDataMap}" var="_devices">
+                                                     <ox:decorate label="#{_devices.name}">
+                                                     <div class="col-xs-10"/>   
+                                                        <a4j:commandLink
+                                                                action="#{updatePersonAction.removeDevice(_devices)}"
+                                                                render="selectedCustomAttributesId"
+                                                                styleClass="glyphicon glyphicon-remove">
+                                                        </a4j:commandLink>
+                                                     </ox:decorate>                                            
                                         </a4j:repeat>
                                     </h:panelGroup>
                                 </h:panelGrid>
