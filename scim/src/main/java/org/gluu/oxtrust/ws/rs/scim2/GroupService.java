@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import org.gluu.oxtrust.model.scim2.PatchRequest;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 
@@ -80,6 +81,18 @@ public interface GroupService {
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     Response searchGroupsPost(
             SearchRequest searchRequest,
+            @HeaderParam("Authorization") String authorization);
+
+    @Path("/scim/v2/Groups/{id}")
+    @PATCH
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    Response patchGroup(
+            PatchRequest request,
+            @PathParam("id") String id,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
             @HeaderParam("Authorization") String authorization);
 
 }
