@@ -7,12 +7,8 @@ import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.SearchRequest;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
-import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
@@ -335,7 +331,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
 
     }
 
-    public List<BaseScimResource> searchDevices(String filter, String sortBy, SortOrder sortOrder, int startIndex,
+    private List<BaseScimResource> searchDevices(String filter, String sortBy, SortOrder sortOrder, int startIndex,
                                                     int count, VirtualListViewResponse vlvResponse, String url) throws Exception {
         Filter ldapFilter=getFilter(filter);
         //Transform scim attribute to LDAP attribute
@@ -356,6 +352,23 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
         log.info ("Found {} matching entries - returning {}", vlvResponse.getTotalResults(), list.size());
         return resources;
 
+    }
+
+    @Path("{id}")
+    @PATCH
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @Protected @RefAdjusted
+    @ApiOperation(value = "PATCH operation", notes = "https://tools.ietf.org/html/rfc7644#section-3.5.2", response = FidoDeviceResource.class)
+    public Response patchDevice(
+            PatchRequest request,
+            @PathParam("id") String id,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
+            @HeaderParam("Authorization") String authorization){
+
+        return getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Patch operation not supported for FIDO devices");
     }
 
     @PostConstruct

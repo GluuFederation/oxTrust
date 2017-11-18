@@ -140,6 +140,7 @@ public class Scim2GroupService implements Serializable {
             meta.setLocation(groupsUrl + "/" + gluuGroup.getInum());
 
         res.setMeta(meta);
+        res.setDisplayName(gluuGroup.getDisplayName());
 
         //Transfer members from GluuGroup to GroupResource
         List<String> memberDNs =gluuGroup.getMembers();
@@ -216,21 +217,12 @@ public class Scim2GroupService implements Serializable {
             checkDisplayNameExistence(group.getDisplayName(), id);
             transferAttributesToGroupResource(gluuGroup, tmpGroup, groupsUrl, usersUrl);
 
-            long now=new Date().getTime();
+            long now=System.currentTimeMillis();
             tmpGroup.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
             tmpGroup=(GroupResource) ScimResourceUtil.transferToResourceReplace(group, tmpGroup, extService.getResourceExtensions(group.getClass()));
 
-            transferAttributesToGroup(tmpGroup, gluuGroup, usersUrl);
-
-            groupService.updateGroup(gluuGroup);
-            try{
-                if (gluuGroup.getMembers()!=null && gluuGroup.getMembers().size()>0)
-                    serviceUtil.personMembersAdder(gluuGroup, gluuGroup.getDn());
-            }
-            catch (Exception e){
-                log.error("Group created but couldn't update the memberOf attribute of some user entries");
-            }
+            replaceGroupInfo(gluuGroup, tmpGroup, usersUrl);
         }
         else
             throw new NotFoundException("Group resource with " + id + " not found");
@@ -239,6 +231,19 @@ public class Scim2GroupService implements Serializable {
 
     }
 
+    public void replaceGroupInfo(GluuGroup gluuGroup, GroupResource group, String usersUrl) throws Exception{
+
+        transferAttributesToGroup(group, gluuGroup, usersUrl);
+        log.debug("replaceGroupInfo. Updating group info in LDAP");
+        groupService.updateGroup(gluuGroup);
+        try{
+            if (gluuGroup.getMembers()!=null && gluuGroup.getMembers().size()>0)
+                serviceUtil.personMembersAdder(gluuGroup, gluuGroup.getDn());
+        }
+        catch (Exception e){
+            log.error("Group created but couldn't update the memberOf attribute of some user entries");
+        }
+    }
 
     private Filter getFilter(String filterString) throws SCIMException {
 

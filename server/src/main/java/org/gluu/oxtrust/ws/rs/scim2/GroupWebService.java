@@ -20,15 +20,13 @@ import com.wordnik.swagger.annotations.Authorization;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.exception.SCIMException;
-import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.SearchRequest;
+import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
+import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
@@ -268,6 +266,64 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
             log.error(e.getMessage(), e);
         }
         return Response.fromResponse(response).location(uri).build();
+
+    }
+
+    @Path("{id}")
+    @PATCH
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @Protected @RefAdjusted
+    @ApiOperation(value = "PATCH operation", notes = "https://tools.ietf.org/html/rfc7644#section-3.5.2", response = GroupResource.class)
+    public Response patchGroup(
+            PatchRequest request,
+            @PathParam("id") String id,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
+            @HeaderParam("Authorization") String authorization){
+
+        Response response;
+        try{
+            String usersUrl=userWebService.getEndpointUrl();
+            GroupResource group=new GroupResource();
+            GluuGroup gluuGroup=groupService.getGroupByInum(id);  //group is not null (check associated decorator method)
+
+            //Fill group instance with all info from gluuGroup
+            scim2GroupService.transferAttributesToGroupResource(gluuGroup, group, endpointUrl, usersUrl);
+
+            //Apply patches one by one in sequence
+            for (PatchOperation po : request.getOperations())
+                group=(GroupResource) applyPatchOperation(group, po);
+
+            //Throws exception if final representation does not pass overall validation
+            log.debug("patchGroup. Revising final resource representation still passes validations");
+            executeDefaultValidation(group);
+
+            //Update timestamp
+            String now=ISODateTimeFormat.dateTime().withZoneUTC().print(System.currentTimeMillis());
+            group.getMeta().setLastModified(now);
+
+            //Replaces the information found in person with the contents of user
+            scim2GroupService.replaceGroupInfo(gluuGroup, group, usersUrl);
+
+            // For custom script: update group
+            if (externalScimService.isEnabled()) {
+                externalScimService.executeScimUpdateGroupMethods(gluuGroup);
+            }
+
+            String json=resourceSerializer.serialize(group, attrsList, excludedAttrsList);
+            response=Response.ok(new URI(group.getMeta().getLocation())).entity(json).build();
+        }
+        catch (InvalidAttributeValueException e){
+            log.error(e.getMessage(), e);
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
+        }
+        catch (Exception e){
+            log.error("Failure at patchGroup method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
 
     }
 
