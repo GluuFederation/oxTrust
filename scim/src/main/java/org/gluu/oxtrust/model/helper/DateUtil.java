@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.util;
+package org.gluu.oxtrust.model.helper;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
