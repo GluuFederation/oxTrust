@@ -128,13 +128,6 @@ public class UpdatePersonAction implements Serializable {
 
 	private List<String> externalAuthCustomAttributes;
 
-	/*public List<String> getU2fCustomAttributes() { 
-				return this.u2fCustomAttributes;
-	}
-
-	public void setU2fCustomAttributes(List<String> u2fCustomAttributes) {
-		this.u2fCustomAttributes = u2fCustomAttributes;
-	}*/
 
 	public List<String> getExternalAuthCustomAttributes() {
 		return externalAuthCustomAttributes;
@@ -473,7 +466,7 @@ public class UpdatePersonAction implements Serializable {
 		}
 	}
 	
-	public void removeU2fCustomAttribute(String removeAttribute){
+	public void removeExternalAuthCustomAttribute(String removeAttribute){
 		Iterator<String> itrList = externalAuthCustomAttributes.iterator();		
 		while(itrList.hasNext()){			
 			if( itrList.next().contains(removeAttribute) ){
@@ -504,7 +497,7 @@ public class UpdatePersonAction implements Serializable {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			 log.error("Failed to remove device ", e);
 		}
 	}
 	
@@ -517,13 +510,13 @@ public class UpdatePersonAction implements Serializable {
 			obj = mapper.readValue(data, DeviceData.class);
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to convert device string to object JsonParseException", e);
 		} catch (JsonMappingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to convert device string to object JsonMappingException", e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to convert device string to object IOException", e);
 		}
 		return obj;
 	}

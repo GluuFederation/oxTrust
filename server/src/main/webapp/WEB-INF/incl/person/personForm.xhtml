@@ -54,6 +54,31 @@
 		span:focus {
 		    background:yellow;
 		}
+		
+				.form-group {
+		    margin-bottom: 15px;
+		    display: inline-block;
+		    width: 100%;
+		    position: relative;
+		    margin-left: 30px;
+		}
+
+		.form-group .right {
+		    float: right;
+		    width: 20%;
+		}
+		
+		.form-group .left {
+		    width: 30%;
+		    float: left;
+		    margin-right: 12px;
+		}
+		
+		.form-group .middle {
+		    width: 30%;
+		    float: left;
+		    margin-right: 12px;
+		}
     </h:outputStylesheet>
 
     <h:outputScript>
@@ -275,27 +300,41 @@
                                             </h:panelGroup>
                                         </a4j:repeat>
                                         
+                                        <ox:decorate label="Authentication Methods " />
                                         <a4j:repeat id="externalAuth" value="#{updatePersonAction.externalAuthCustomAttributes}" var="_authExtCustAttr">
                                                      <ox:decorate label="#{_authExtCustAttr}">
                                                      <div class="col-xs-10"/>   
                                                         <a4j:commandLink
-                                                                action="#{updatePersonAction.removeU2fCustomAttribute(_authExtCustAttr)}"
+                                                                action="#{updatePersonAction.removeExternalAuthCustomAttribute(_authExtCustAttr)}"
                                                                 render="selectedCustomAttributesId"
                                                                 styleClass="glyphicon glyphicon-remove">
                                                         </a4j:commandLink>
                                                      </ox:decorate>                                            
                                         </a4j:repeat>
                                         
+                                        <ox:decorate   label="Super Gluu Devices " /> 
                                         <a4j:repeat id="fidoDevices" value="#{updatePersonAction.deviceDataMap}" var="_devices">
-                                                     <ox:decorate label="#{_devices.name}">
-                                                     <div class="col-xs-10"/>   
-                                                        <a4j:commandLink
-                                                                action="#{updatePersonAction.removeDevice(_devices)}"
-                                                                render="selectedCustomAttributesId"
-                                                                styleClass="glyphicon glyphicon-remove">
-                                                        </a4j:commandLink>
-                                                     </ox:decorate>                                            
-                                        </a4j:repeat>
+										<div class="row">
+											<div class="form-group">
+
+												<div class="left">
+													<h:outputLabel value="#{_devices.name}  " />
+												</div>
+												<div class="middle">
+													<h:outputLabel value="#{_devices.platform} " />
+												</div>
+												<div class="right">
+													<h:outputLabel value="" />
+													<a4j:commandLink
+														action="#{updatePersonAction.removeDevice(_devices)}"
+														render="selectedCustomAttributesId"
+														styleClass="glyphicon glyphicon-remove">
+													</a4j:commandLink>
+												</div>
+
+											</div>
+										</div>
+									</a4j:repeat>
                                     </h:panelGroup>
                                 </h:panelGrid>
                             </h:panelGrid>
