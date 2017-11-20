@@ -56,7 +56,6 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
 	@Override
 	public GluuCustomFidoDevice getGluuCustomFidoDeviceById(String userId, String id) {
-
 		GluuCustomFidoDevice gluuCustomFidoDevice = null;
 
 		try {
@@ -71,7 +70,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 		return gluuCustomFidoDevice;
 	}
 
-	GluuCustomFidoDevice searchFidoDevice(Filter filter, String userId, String id) throws Exception {
+	public GluuCustomFidoDevice searchFidoDevice(Filter filter, String userId, String id) throws Exception {
 		GluuCustomFidoDevice gluuCustomFidoDevice = null;
 
 		VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
