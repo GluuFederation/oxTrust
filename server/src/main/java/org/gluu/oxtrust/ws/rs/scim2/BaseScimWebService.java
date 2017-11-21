@@ -136,7 +136,7 @@ public class BaseScimWebService {
 				return rptTokenValidationResult.getSecond();
 			}
 		} else {
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "nvalid GAT/RPT token");
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Invalid GAT/RPT token");
 		}
 
 		return null;
