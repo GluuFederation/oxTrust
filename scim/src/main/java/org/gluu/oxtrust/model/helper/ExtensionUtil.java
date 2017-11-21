@@ -13,9 +13,11 @@ import static org.gluu.oxtrust.model.scim2.ExtensionFieldType.*;
 /**
  * NOTE: this class is part of a temporary fix. This will not be needed for 3.2.0
  *
+ * <p>
  * A helper class intended to be used by SCIM-Client mainly for correctly deserialization of custom attributes.
- * The Class ExtensionDeserializer cannot be used there as it's oxTrust server && weld dependant
+ * The Class ExtensionDeserializer cannot be used there as it's oxTrust server & weld dependant
  * Created by jgomer on 2017-11-16.
+ * </p>
  */
 public class ExtensionUtil {
 
