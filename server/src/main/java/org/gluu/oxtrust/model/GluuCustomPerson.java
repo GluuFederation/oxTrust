@@ -20,7 +20,9 @@ import java.util.Set;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.model.helper.DateUtil;
 import org.gluu.oxtrust.model.scim2.Extension;
+import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
@@ -58,14 +60,9 @@ public class GluuCustomPerson extends User
     
     @LdapAttribute(name = "oxPPID")
     private List<String> oxPPID;
-
-    public List<String> getOxPPID() {
-		return oxPPID;
-	}
-
-	public void setOxPPID(List<String> oxPPID) {
-		this.oxPPID = oxPPID;
-	}
+    
+    @LdapAttribute(name = "oxExternalUid")
+    private List<String> oxExternalUid;
 
 	@LdapAttribute(name = "oxCreationTimestamp")
     private Date creationDate;	
@@ -340,6 +337,22 @@ public class GluuCustomPerson extends User
     public Map<String, Extension> fetchExtensions() {
         return extensions;
     }
+    
+    public List<String> getOxExternalUid() {
+		return oxExternalUid;
+	}
+
+	public void setOxExternalUid(List<String> oxExternalUid) {
+		this.oxExternalUid = oxExternalUid;
+	}
+
+	public List<String> getOxPPID() {
+		return oxPPID;
+	}
+
+	public void setOxPPID(List<String> oxPPID) {
+		this.oxPPID = oxPPID;
+	}
 
     public void setExtensions(Map<String, Extension> extensions) throws Exception {
 
@@ -350,18 +363,24 @@ public class GluuCustomPerson extends User
             Extension extension = extensionEntry.getValue();
 
             for (Map.Entry<String, Extension.Field> fieldEntry : extension.getFields().entrySet()) {
+                String value=fieldEntry.getValue().getValue();
 
-                if (fieldEntry.getValue().isMultiValued() && (fieldEntry.getValue().getValue() != null)) {
+                if (value != null) {
+                    if (fieldEntry.getValue().isMultiValued()) {
 
-                    ObjectMapper mapper = new ObjectMapper();
-                    mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+                        ObjectMapper mapper = new ObjectMapper();
+                        mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-                    String[] values = mapper.readValue(fieldEntry.getValue().getValue(), String[].class);
-
-                    setAttribute(fieldEntry.getKey(), values);
-
-                } else {
-                    setAttribute(fieldEntry.getKey(), fieldEntry.getValue().getValue());
+                        String[] values = mapper.readValue(value, String[].class);
+                        setAttribute(fieldEntry.getKey(), values);
+                    }
+                    else{
+                        if (fieldEntry.getValue().getType().equals(ExtensionFieldType.DATE_TIME)){
+                            //In the extension object, single valued dates are stored in ISO time, so convert to LDAP suitable format
+                            value=DateUtil.ISOToGeneralizedStringDate(value);
+                        }
+                        setAttribute(fieldEntry.getKey(), value);
+                    }
                 }
             }
         }

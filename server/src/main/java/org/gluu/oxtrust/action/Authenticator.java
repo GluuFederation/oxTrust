@@ -100,6 +100,7 @@ public class Authenticator implements Serializable {
 	@Inject
 	private EncryptionService encryptionService;
 
+	/*
 	public boolean preAuthenticate() throws IOException, Exception {
 		boolean result = true;
 		if (!identity.isLoggedIn()) {
@@ -108,6 +109,11 @@ public class Authenticator implements Serializable {
 
 		return result;
 	}
+	*/
+	public void preAuthenticate() throws Exception{
+	    if (!identity.isLoggedIn())
+	        oAuthLogin();
+    }
 
 	public boolean authenticate() {
 		String userName = null;

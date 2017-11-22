@@ -25,7 +25,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
-import org.gluu.oxtrust.util.DateUtil;
+import org.gluu.oxtrust.model.helper.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xdi.model.GluuAttribute;

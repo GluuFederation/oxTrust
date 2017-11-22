@@ -8,6 +8,7 @@ package org.gluu.oxtrust.model.scim2;
 
 import org.codehaus.jackson.annotate.JsonAnyGetter;
 import org.codehaus.jackson.annotate.JsonAnySetter;
+import org.gluu.oxtrust.model.helper.ExtensionUtil;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 
 import java.util.*;
@@ -544,6 +545,12 @@ public class User extends Resource {
 	}
 
     @JsonAnySetter
+    public void addExtension(String urn, Map<String, Object> map){
+        //What is done here is overwritten by ExtensionDeserializer if it takes place. This was coded for a Java client to
+        //be able to deserialize the extensions (a setting in which ExtensionDeserializer is not present), see SCIM-Client#55
+        addExtension(ExtensionUtil.fromMap(urn, map));
+    }
+
 	public void setExtensions(Map<String, Extension> extensions) {
 		this.extensions = extensions;
 	}
