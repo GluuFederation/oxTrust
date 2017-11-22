@@ -40,10 +40,10 @@
     <!-- ========================================== -->
 
     <resolver:DataConnector id="siteLDAP" xsi:type="dc:LDAPDirectory"
-                            ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
-                            baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
-                            principal="%{idp.attribute.resolver.LDAP.bindDN}"
-                            principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
+                            ldapURL="$ldapUrl"
+                            baseDN="o=gluu"
+                            principal="cn=Directory Manager,o=gluu"
+                            principalCredential="$ldapPass"
                             useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}">
 
         <dc:FilterTemplate>
