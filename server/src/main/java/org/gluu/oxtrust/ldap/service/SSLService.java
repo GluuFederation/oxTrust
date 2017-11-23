@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertPath;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -30,6 +31,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.oxtrust.util.ServiceUtil;
@@ -99,7 +102,7 @@ public class SSLService implements Serializable {
     public X509Certificate getPEMCertificate(InputStream certStream) {
         try {
             return getPEMCertificateStatic(certStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
         }
@@ -112,8 +115,7 @@ public class SSLService implements Serializable {
      * @param certStream
      * @return
      */
-    public static X509Certificate getPEMCertificateStatic(InputStream certStream) throws IOException {
-        X509Certificate cert = null;
+    public static X509Certificate getPEMCertificateStatic(InputStream certStream) throws Exception {
         Reader reader = null;
         PEMParser r = null;
 
@@ -124,14 +126,23 @@ public class SSLService implements Serializable {
                             return null;
                     }
             }*/);
+            
+            Object certObject = r.readObject();
 
-            cert = (X509Certificate) r.readObject();
+            if (certObject instanceof X509Certificate) {
+                return (X509Certificate) certObject;
+            } else if (certObject instanceof X509CertificateHolder) {
+                X509CertificateHolder certificateHolder = (X509CertificateHolder) certObject;
+                return new JcaX509CertificateConverter().setProvider( SECURITY_PROVIDER_BOUNCY_CASTLE ).getCertificate( certificateHolder );
+            }
+            else {
+                // unknown certificate type
+                throw new IOException("unknown certificate type");
+            }
         }  finally {
             IOUtils.closeQuietly(r);
             IOUtils.closeQuietly(reader);
         }
-
-        return cert;
     }
 
     /**
@@ -157,7 +168,7 @@ public class SSLService implements Serializable {
             // fix common input certificate problems by converting PEM/B64 to DER
             certsBytes = fixCommonInputCertProblems(certsBytes);
 
-            CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, SECURITY_PROVIDER_BOUNCY_CASTLE);
+            CertificateFactory cf = getCertificateFactoryInstance();
 
             Collection<? extends Certificate> certs = cf.generateCertificates(new ByteArrayInputStream(certsBytes));
 
@@ -187,7 +198,7 @@ public class SSLService implements Serializable {
 
     private static X509Certificate[] loadCertificatesAsPkiPathEncoded(InputStream is) throws Exception {
         try {
-            CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, SECURITY_PROVIDER_BOUNCY_CASTLE);
+            CertificateFactory cf = getCertificateFactoryInstance();
             CertPath certPath = cf.generateCertPath(is, PKI_PATH_ENCODING);
 
             List<? extends Certificate> certs = certPath.getCertificates();
@@ -275,7 +286,7 @@ public class SSLService implements Serializable {
      */
     public static X509CRL loadCRL(InputStream is) throws Exception {
         try {
-            CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
+            CertificateFactory cf = getCertificateFactoryInstance();
             X509CRL crl = (X509CRL) cf.generateCRL(is);
             return crl;
         } finally {
@@ -313,8 +324,18 @@ public class SSLService implements Serializable {
      * @throws Exception A problem occurred during the conversion
      */
     public static X509Certificate convertCertificate(Certificate cert) throws Exception {
-        CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, SECURITY_PROVIDER_BOUNCY_CASTLE);
+        CertificateFactory cf = getCertificateFactoryInstance();
         ByteArrayInputStream bais = new ByteArrayInputStream(cert.getEncoded());
         return (X509Certificate) cf.generateCertificate(bais);
+    }
+    
+    /**
+     * Get BOUNCY CASTLE CertificateFactory instance.
+     * @return
+     * @throws CertificateException
+     * @throws NoSuchProviderException 
+     */
+    public static CertificateFactory getCertificateFactoryInstance() throws CertificateException, NoSuchProviderException {
+        return CertificateFactory.getInstance(X509_CERT_TYPE, SECURITY_PROVIDER_BOUNCY_CASTLE);
     }
 }
