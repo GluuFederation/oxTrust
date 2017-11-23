@@ -141,9 +141,9 @@ public class PasswordReminderAction implements Serializable {
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,"Instructions letter was not sent.");
 		}
-		
+
 		conversationService.endConversation();
-		
+
 		return outcome;
 	}
 
@@ -160,20 +160,20 @@ public class PasswordReminderAction implements Serializable {
 			}
 
 			HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
-		
+
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
 			List<GluuCustomPerson> matchedPersons = personService.findPersons(person, 0);
 			if(matchedPersons != null && matchedPersons.size()>0){
 				GluuAppliance appliance = applianceService.getAppliance();
-				
+
 				OrganizationalUnit requests = new OrganizationalUnit();
 				requests.setOu("resetPasswordRequests");
 				requests.setDn("ou=resetPasswordRequests," + appliance.getDn());
 				if(! ldapEntryManager.contains(requests)){
 					ldapEntryManager.persist(requests);
 				}
-				
+
 				PasswordResetRequest request = new PasswordResetRequest();
 				do {
 					request.setCreationDate(Calendar.getInstance().getTime());
