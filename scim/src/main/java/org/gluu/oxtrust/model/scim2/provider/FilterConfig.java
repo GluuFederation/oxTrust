@@ -33,13 +33,9 @@ public class FilterConfig {
 	 *
 	 * @param supported
 	 *            Specifies whether the FILTER operation is supported.
-	 * @param maxResults
-	 *            Specifies the maximum number of resources returned in a
-	 *            response.
 	 */
-	public FilterConfig(boolean supported, long maxResults) {
+	public FilterConfig(boolean supported) {
 		this.supported = supported;
-		this.maxResults = maxResults;
 	}
 
 	/**

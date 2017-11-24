@@ -39,6 +39,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 
         try {
             ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
+            serviceProviderConfig.getFilter().setMaxResults(appConfiguration.getScimProperties().getMaxCount());
 
             Meta meta = new Meta();
             meta.setLocation(endpointUrl);

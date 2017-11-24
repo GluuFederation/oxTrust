@@ -82,6 +82,10 @@ public class BaseScimWebService {
         return Response.status(statusCode).entity(errorResponse).build();
     }
 
+    int getMaxCount(){
+        return appConfiguration.getScimProperties().getMaxCount();
+    }
+
     protected boolean isAttributeRecognized(Class<? extends BaseScimResource> cls, String attribute){
 
         boolean valid;
@@ -132,12 +136,12 @@ public class BaseScimWebService {
         Response response=null;
 
         if (schemas!=null && schemas.size()==1 && schemas.get(0).equals(SEARCH_REQUEST_SCHEMA_ID)) {
-            count = count == null ? MAX_COUNT : count;
+            count = count == null ? getMaxCount() : count;
             //Per spec, a negative value SHALL be interpreted as "0" for count
             if (count<0)
                 count=0;
 
-            if (count <= MAX_COUNT) {
+            if (count <= getMaxCount()) {
                 startIndex = (startIndex == null || startIndex < 1) ? 1 : startIndex;
 
                 if (StringUtils.isEmpty(sortOrder) || !sortOrder.equals(SortOrder.DESCENDING.getValue()))
@@ -153,7 +157,7 @@ public class BaseScimWebService {
                 request.setCount(count);
             }
             else
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, "Maximum number of results per page is " + MAX_COUNT);
+                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, "Maximum number of results per page is " + getMaxCount());
         }
         else
             response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Wrong schema(s) supplied in Search Request");

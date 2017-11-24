@@ -63,7 +63,7 @@ public interface Constants {
      */
     String QUERY_PARAM_COUNT = "count";
 
-    int MAX_COUNT = 200;
+    int MAX_COUNT = 200;    //Do not remove. This is used in SCIM-client project
 
     int MAX_BULK_OPERATIONS = 30;
     int MAX_BULK_PAYLOAD_SIZE = 3072000;  // 3 MB

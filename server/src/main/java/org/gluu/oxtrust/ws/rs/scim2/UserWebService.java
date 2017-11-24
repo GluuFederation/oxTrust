@@ -217,7 +217,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
         try {
             VirtualListViewResponse vlv = new VirtualListViewResponse();
             List<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder),
-                    startIndex, count, vlv, endpointUrl);
+                    startIndex, count, vlv, endpointUrl, getMaxCount());
 
             String json = getListResponseSerialized(vlv.getTotalResults(), startIndex, resources, attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();

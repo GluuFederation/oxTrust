@@ -340,7 +340,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
         List<GluuCustomFidoDevice> list=ldapEntryManager.findEntriesSearchSearchResult(fidoDeviceService.getDnForFidoDevice(null, null),
-                GluuCustomFidoDevice.class, ldapFilter, startIndex, count, MAX_COUNT, sortBy, sortOrder, vlvResponse, null);
+                GluuCustomFidoDevice.class, ldapFilter, startIndex, count, getMaxCount(), sortBy, sortOrder, vlvResponse, null);
 
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 

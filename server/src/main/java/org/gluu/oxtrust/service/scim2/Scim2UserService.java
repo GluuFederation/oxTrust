@@ -43,7 +43,6 @@ import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
 
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
 import static org.xdi.ldap.model.GluuBoolean.*;
 
 /**
@@ -493,7 +492,7 @@ public class Scim2UserService implements Serializable {
     }
 
     public List<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
-                                              VirtualListViewResponse vlvResponse, String url) throws Exception{
+                                              VirtualListViewResponse vlvResponse, String url, int maxCount) throws Exception{
 
         Filter ldapFilter=getFilter(filter);
         //Transform scim attribute to LDAP attribute
@@ -503,7 +502,7 @@ public class Scim2UserService implements Serializable {
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
         List<GluuCustomPerson> list=ldapEntryManager.findEntriesSearchSearchResult(personService.getDnForPerson(null),
-                GluuCustomPerson.class, ldapFilter, startIndex, count, MAX_COUNT, sortBy, sortOrder, vlvResponse, null);
+                GluuCustomPerson.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, vlvResponse, null);
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
         for (GluuCustomPerson person : list){

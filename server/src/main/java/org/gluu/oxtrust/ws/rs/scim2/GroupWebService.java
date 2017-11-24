@@ -225,7 +225,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
         try {
             VirtualListViewResponse vlv = new VirtualListViewResponse();
             List<BaseScimResource> resources = scim2GroupService.searchGroups(filter, sortBy, SortOrder.getByValue(sortOrder),
-                    startIndex, count, vlv, endpointUrl, userWebService.getEndpointUrl());
+                    startIndex, count, vlv, endpointUrl, userWebService.getEndpointUrl(), getMaxCount());
 
             String json = getListResponseSerialized(vlv.getTotalResults(), startIndex, resources, attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();

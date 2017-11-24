@@ -32,8 +32,6 @@ import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.util.*;
 
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_COUNT;
-
 /**
  * @author Val Pecaoco
  * Re-engineered by jgomer on 2017-10-18.
@@ -262,7 +260,7 @@ public class Scim2GroupService implements Serializable {
     }
 
     public List<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
-                                               VirtualListViewResponse vlvResponse, String groupsUrl, String usersUrl) throws Exception{
+                                               VirtualListViewResponse vlvResponse, String groupsUrl, String usersUrl, int maxCount) throws Exception{
 
         Filter ldapFilter=getFilter(filter);
         //Transform scim attribute to LDAP attribute
@@ -272,7 +270,7 @@ public class Scim2GroupService implements Serializable {
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
         List<GluuGroup> list=ldapEntryManager.findEntriesSearchSearchResult(groupService.getDnForGroup(null),
-                GluuGroup.class, ldapFilter, startIndex, count, MAX_COUNT, sortBy, sortOrder, vlvResponse, null);
+                GluuGroup.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, vlvResponse, null);
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
         for (GluuGroup group: list){

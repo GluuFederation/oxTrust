@@ -45,7 +45,7 @@ public class ServiceProviderConfig extends BaseScimResource {
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.COMPLEX)
-	private FilterConfig filter = new FilterConfig(true, Constants.MAX_COUNT);
+	private FilterConfig filter = new FilterConfig(true);
 
     @Attribute(description = "A complex type that specifies configuration options related to changing a password.",
             isRequired = true,
