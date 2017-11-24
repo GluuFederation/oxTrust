@@ -1146,6 +1146,18 @@
             "id": "logClientNameOnClientAuthentication",
             "description": "Boolean value to specify if application should log the Client Name on client authentication.",
             "type": "boolean"
+        },
+        "authorizationRequestCustomAllowedParameters": {
+            "id": "authorizationRequestCustomAllowedParameters",
+            "description": "Authorization Request Custom Allowed Parameters.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
         }
     },
     "required": [
@@ -1255,6 +1267,7 @@
         "loggingLevel",
         "corsConfigurationFilters",
         "logClientIdOnClientAuthentication",
-        "logClientNameOnClientAuthentication"
+        "logClientNameOnClientAuthentication",
+        "authorizationRequestCustomAllowedParameters"
     ]
 }
