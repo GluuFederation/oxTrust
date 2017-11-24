@@ -44,7 +44,6 @@ public class GluuCustomPerson extends User
 
     @LdapAttribute(name = "gluuWhitePagesListed")
     private String gluuAllowPublication;
-    
 
     @LdapAttribute(name = "oxGuid")
     private String guid;
@@ -58,23 +57,14 @@ public class GluuCustomPerson extends User
     @LdapAttribute(name = "oxPPID")
     private List<String> oxPPID;
 
-    public List<String> getOxPPID() {
-		return oxPPID;
-	}
+    @LdapAttribute(name = "oxExternalUid")
+    private List<String> oxExternalUid;
 
-	public void setOxPPID(List<String> oxPPID) {
-		this.oxPPID = oxPPID;
-	}
+    @LdapAttribute(name = "oxCreationTimestamp")
+    private Date creationDate;
 
-	@LdapAttribute(name = "oxCreationTimestamp")
-    private Date creationDate;	
-
-	@LdapAttribute
-    private Date updatedAt;	
-
-	// Value object holders
-    //private Set<String> schemas = new HashSet<String>();
-    //private Map<String, Extension> extensions = new HashMap<String, Extension>();
+    @LdapAttribute
+    private Date updatedAt;
 
     public String getIname() {
         return getAttribute("iname");
@@ -323,49 +313,23 @@ public class GluuCustomPerson extends User
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-/*
-	public Set<String> getSchemas() {
-        return Collections.unmodifiableSet(schemas);
+
+    public List<String> getOxExternalUid() {
+        return oxExternalUid;
     }
 
-    public void setSchemas(Set<String> schemas) {
-        this.schemas = schemas;
+    public void setOxExternalUid(List<String> oxExternalUid) {
+        this.oxExternalUid = oxExternalUid;
     }
 
-    public Map<String, Extension> getExtensions() {
-        return Collections.unmodifiableMap(extensions);
-    }
-    
-    public Map<String, Extension> fetchExtensions() {
-        return extensions;
+    public List<String> getOxPPID() {
+        return oxPPID;
     }
 
-    public void setExtensions(Map<String, Extension> extensions) throws Exception {
-
-        this.extensions = extensions;
-
-        for (Map.Entry<String, Extension> extensionEntry : extensions.entrySet()) {
-
-            Extension extension = extensionEntry.getValue();
-
-            for (Map.Entry<String, Extension.Field> fieldEntry : extension.getFields().entrySet()) {
-
-                if (fieldEntry.getValue().isMultiValued() && (fieldEntry.getValue().getValue() != null)) {
-
-                    ObjectMapper mapper = new ObjectMapper();
-                    mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-                    String[] values = mapper.readValue(fieldEntry.getValue().getValue(), String[].class);
-
-                    setAttribute(fieldEntry.getKey(), values);
-
-                } else {
-                    setAttribute(fieldEntry.getKey(), fieldEntry.getValue().getValue());
-                }
-            }
-        }
+    public void setOxPPID(List<String> oxPPID) {
+        this.oxPPID = oxPPID;
     }
-*/
+
 	/* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
