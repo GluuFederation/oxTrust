@@ -94,7 +94,7 @@ public class LdapStatusTimer {
             if (ldapConnectionProvider.getConnectionPool() == null) {
             	log.error("{} is empty", connectionProviderName);
             } else {
-            	log.info("{} statistics: {}", connectionProviderName, ldapConnectionProvider.getConnectionPool().getConnectionPoolStatistics());
+            	log.debug("{} statistics: {}", connectionProviderName, ldapConnectionProvider.getConnectionPool().getConnectionPoolStatistics());
             }
         }
 	}

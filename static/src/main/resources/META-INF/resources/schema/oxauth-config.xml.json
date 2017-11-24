@@ -1031,6 +1031,11 @@
             "description": "Boolean value to specify support for front channel logout session.",
             "type": "boolean"
         },
+        "useCacheForAllImplicitFlowObjects": {
+            "id": "useCacheForAllImplicitFlowObjects",
+            "description": "Boolean value to specify whether to persist all objects into cache during Implicit Flow.",
+            "type": "boolean"
+        },
         "updateUserLastLogonTime": {
         	"id": "updateUserLastLogonTime",
             "description": "Boolean value to specify if application should update oxLastLogonTime attribute on user authentication.",
@@ -1141,6 +1146,18 @@
             "id": "logClientNameOnClientAuthentication",
             "description": "Boolean value to specify if application should log the Client Name on client authentication.",
             "type": "boolean"
+        },
+        "authorizationRequestCustomAllowedParameters": {
+            "id": "authorizationRequestCustomAllowedParameters",
+            "description": "Authorization Request Custom Allowed Parameters.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
         }
     },
     "required": [
@@ -1250,6 +1267,7 @@
         "loggingLevel",
         "corsConfigurationFilters",
         "logClientIdOnClientAuthentication",
-        "logClientNameOnClientAuthentication"
+        "logClientNameOnClientAuthentication",
+        "authorizationRequestCustomAllowedParameters"
     ]
 }

@@ -8,7 +8,9 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -19,6 +21,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -28,7 +31,7 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.model.PasswordResetRequest;
-import org.gluu.oxtrust.util.MailUtils;
+import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.hibernate.validator.constraints.Email;
@@ -76,7 +79,13 @@ public class PasswordReminderAction implements Serializable {
 	private ConversationService conversationService;
 
     @Inject
+    private RenderParameters rendererParameters;
+
+    @Inject
 	private MailService mailService;
+
+    @Inject
+    private RenderService renderService;
 
     /**
      * @return the MESSAGE_NOT_FOUND
@@ -132,9 +141,9 @@ public class PasswordReminderAction implements Serializable {
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,"Instructions letter was not sent.");
 		}
-		
+
 		conversationService.endConversation();
-		
+
 		return outcome;
 	}
 
@@ -151,53 +160,68 @@ public class PasswordReminderAction implements Serializable {
 			}
 
 			HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
-		
+
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
 			List<GluuCustomPerson> matchedPersons = personService.findPersons(person, 0);
 			if(matchedPersons != null && matchedPersons.size()>0){
 				GluuAppliance appliance = applianceService.getAppliance();
-				
+
 				OrganizationalUnit requests = new OrganizationalUnit();
 				requests.setOu("resetPasswordRequests");
 				requests.setDn("ou=resetPasswordRequests," + appliance.getDn());
 				if(! ldapEntryManager.contains(requests)){
 					ldapEntryManager.persist(requests);
 				}
-				
+
 				PasswordResetRequest request = new PasswordResetRequest();
-				do{
+				do {
 					request.setCreationDate(Calendar.getInstance().getTime());
 					request.setPersonInum(matchedPersons.get(0).getInum());
 					request.setOxGuid(StringHelper.getRandomString(16));
-					request.setBaseDn("oxGuid=" + request.getOxGuid()+ ", ou=resetPasswordRequests," + appliance.getDn());
-				}while(ldapEntryManager.contains(request));
+					request.setBaseDn(
+							"oxGuid=" + request.getOxGuid() + ", ou=resetPasswordRequests," + appliance.getDn());
+				} while (ldapEntryManager.contains(request));
 
-				String subj = String.format("Password reset was requested at %1$s identity server", organizationService.getOrganization().getDisplayName());
+				rendererParameters.setParameter("givenName", matchedPersons.get(0).getGivenName());
+				rendererParameters.setParameter("organizationName", organizationService.getOrganization().getDisplayName());
+				rendererParameters.setParameter("resetLink", appConfiguration.getApplianceUrl() + httpServletRequest.getContextPath()
+						+ "/resetPassword/" + request.getOxGuid());
 
-				mailService.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", email,
-						subj, String.format(MESSAGE_FOUND, matchedPersons.get(0).getGivenName(),
-								organizationService.getOrganization().getDisplayName(), 
-								appConfiguration.getApplianceUrl() + httpServletRequest.getContextPath() + "/resetPassword/" + request.getOxGuid()));
+				String subj = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.subject']}");
+				String messagePlain = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.plain.body']}");
+				String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.html.body']}");
+
+//				rendererParameters.setParameter("mail_body", messageHtml);
+//				String mailHtml = renderService.renderView("/WEB-INF/mail/reset_password.xhtml");
+
+				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 
 				ldapEntryManager.persist(request);
 			}else{
 				GluuAppliance appliance = applianceService.getAppliance();
-				String subj = String.format("Password reset was requested at %1$s identity server", organizationService.getOrganization().getDisplayName());
-				MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-						appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
+
+				rendererParameters.setParameter("organizationName", organizationService.getOrganization().getDisplayName());
+
 				String fromName = appliance.getSmtpFromName();
 				if(fromName == null){
 					fromName = String.format("%1$s identity server" , organizationService.getOrganization().getDisplayName());
 				}
-				mail.sendMail(fromName + " <" + appliance.getSmtpFromEmailAddress() + ">", email,
-						subj, String.format(MESSAGE_NOT_FOUND, organizationService.getOrganization().getDisplayName()));
+
+				String subj = facesMessages.evalResourceAsString("#{msg['mail.reset.not_found.message.subject']}");
+				String messagePlain = facesMessages.evalResourceAsString("#{msg['mail.reset.not_found.message.plain.body']}");
+				String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.reset.not_found.message.html.body']}");
+
+//				rendererParameters.setParameter("mail_body", messageHtml);
+//				String mailHtml = renderService.renderView("/WEB-INF/mail/reset_password.xhtml");
+
+				mailService.sendMail(null, fromName, email, null, subj, messagePlain, messageHtml);
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		return OxTrustConstants.RESULT_FAILURE;
 	}
-	
+
 	public boolean enabled(){
 		GluuAppliance appliance = applianceService.getAppliance();
 		boolean valid =	appliance.getSmtpHost() != null 

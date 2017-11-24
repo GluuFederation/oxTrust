@@ -13,16 +13,16 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mail.AuthenticationFailedException;
-import javax.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OrganizationalUnit;
-import org.gluu.oxtrust.util.MailUtils;
+import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
@@ -31,6 +31,7 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.TrustContact;
+import org.xdi.service.MailService;
 import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -53,6 +54,9 @@ public class TrustService implements Serializable {
 	@Inject
 	private Logger log;
 
+    @Inject
+    private FacesMessages facesMessages;
+
 	@Inject
 	private LdapEntryManager ldapEntryManager;
 
@@ -64,11 +68,20 @@ public class TrustService implements Serializable {
 
 	@Inject
 	private XmlService xmlService;
-	
-	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
 	@Inject
 	private AppConfiguration appConfiguration;
+
+    @Inject
+	private MailService mailService;
+
+    @Inject
+    private RenderParameters rendererParameters;
+
+    @Inject
+    private RenderService renderService;
+
+	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
 	public void addTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
 		log.info("Creating TR " + trustRelationship.getInum());
@@ -271,38 +284,50 @@ public class TrustService implements Serializable {
 	public void updateReleasedAttributes(GluuSAMLTrustRelationship trustRelationship) {
 		List<String> releasedAttributes = new ArrayList<String>();
 
-		String mailMsg = "";
+		String mailMsgPlain = "";
+		String mailMsgHtml = "";
 		for (GluuCustomAttribute customAttribute : trustRelationship.getReleasedCustomAttributes()) {
 			if (customAttribute.isNew()) {
-				mailMsg += "\nAttribute name: " + customAttribute.getName() + " Display name: "
-						+ customAttribute.getMetadata().getDisplayName() + " Attribute value: " + customAttribute.getValue();
+				rendererParameters.setParameter("attributeName", customAttribute.getName());
+				rendererParameters.setParameter("attributeDisplayName", customAttribute.getMetadata().getDisplayName());
+				rendererParameters.setParameter("attributeValue", customAttribute.getValue());
+
+				mailMsgPlain += facesMessages.evalResourceAsString("#{msg['mail.trust.released.attribute.plain']}");
+				mailMsgHtml += facesMessages.evalResourceAsString("#{msg['mail.trust.released.attribute.html']}");
+				rendererParameters.reset();
+
 				customAttribute.setNew(false);
 			}
 			releasedAttributes.add(customAttribute.getMetadata().getDn());
 		}
 
                 // send email notification
-		if (!StringUtils.isEmpty(mailMsg)) {
+		if (!StringUtils.isEmpty(mailMsgPlain)) {
 			try {
 				GluuAppliance appliance = applianceService.getAppliance();
                                 
-                                if (appliance.getContactEmail() == null || appliance.getContactEmail().isEmpty()) 
-                                    log.warn("Failed to send the 'Attributes released' notification email: unconfigured contact email");
-                                else if (appliance.getSmtpHost() == null || appliance.getSmtpHost().isEmpty()) 
-                                    log.warn("Failed to send the 'Attributes released' notification email: unconfigured SMTP server");
-                                else {
-                                    String preMsg = "Trust RelationShip name: " + trustRelationship.getDisplayName() + " (inum:" + trustRelationship.getInum()
-                                                    + ")\n\n";
-                                    String subj = "Attributes with Privacy level 5 are released in a Trust Relationaship";
-                                    MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-                                                    appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance));
-                                    mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">", appliance.getContactEmail(),
-                                                    subj, preMsg + mailMsg);
-                                }
-			} catch (AuthenticationFailedException ex) {
-				log.error("SMTP Authentication Error: ", ex);
-			} catch (MessagingException ex) {
-				log.error("SMTP Host Connection Error", ex);
+                if (appliance.getContactEmail() == null || appliance.getContactEmail().isEmpty()) 
+                    log.warn("Failed to send the 'Attributes released' notification email: unconfigured contact email");
+                else if (appliance.getSmtpConfiguration() == null || StringHelper.isEmpty(appliance.getSmtpConfiguration().getHost())) 
+                    log.warn("Failed to send the 'Attributes released' notification email: unconfigured SMTP server");
+                else {
+                    String subj = facesMessages.evalResourceAsString("#{msg['mail.trust.released.subject']}");
+
+                    rendererParameters.setParameter("trustRelationshipName", trustRelationship.getDisplayName());
+                    rendererParameters.setParameter("trustRelationshipInum", trustRelationship.getInum());
+
+                    String preMsgPlain = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.plain']}");
+                    String preMsgHtml = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.html']}");
+
+//            		rendererParameters.setParameter("mail_body", preMsgHtml + mailMsgHtml);
+//            		String mailHtml = renderService.renderView("/WEB-INF/mail/trust_relationship.xhtml");
+                    
+    				boolean result = mailService.sendMail(appliance.getContactEmail(), null, subj, preMsgPlain + mailMsgPlain, preMsgHtml + mailMsgHtml);
+    				
+    				if (!result) {
+    					log.error("Failed to send the notification email");
+    				}
+                }
 			} catch (Exception ex) {
 				log.error("Failed to send the notification email: ", ex);
 			}
