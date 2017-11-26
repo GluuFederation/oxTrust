@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.model.scim2;
+package org.gluu.oxtrust.model.scim2.patch;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
