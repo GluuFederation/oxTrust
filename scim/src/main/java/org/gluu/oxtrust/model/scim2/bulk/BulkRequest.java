@@ -1,5 +1,7 @@
 package org.gluu.oxtrust.model.scim2.bulk;
 
+import org.gluu.oxtrust.model.scim2.Constants;
+
 import java.util.Collections;
 
 /**
@@ -12,8 +14,7 @@ public class BulkRequest extends BulkBase {
     private Integer failOnErrors;
 
     public BulkRequest(){
-        //TODO: fix this;
-        setSchemas(Collections.singletonList(null));
+        setSchemas(Collections.singletonList(Constants.BULK_REQUEST_SCHEMA_ID));
     }
 
     public Integer getFailOnErrors() {

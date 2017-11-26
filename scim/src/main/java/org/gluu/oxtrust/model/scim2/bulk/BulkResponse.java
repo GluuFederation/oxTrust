@@ -2,6 +2,8 @@ package org.gluu.oxtrust.model.scim2.bulk;
 
 import java.util.Collections;
 
+import static org.gluu.oxtrust.model.scim2.Constants.BULK_RESPONSE_SCHEMA_ID;
+
 /**
  * @author Rahat Ali Date: 05.08.2015
  *
@@ -10,7 +12,6 @@ import java.util.Collections;
 public class BulkResponse extends BulkBase {
 
     public BulkResponse(){
-        //TODO: fix this
-        setSchemas(Collections.singletonList(null));
+        setSchemas(Collections.singletonList(BULK_RESPONSE_SCHEMA_ID));
     }
 }

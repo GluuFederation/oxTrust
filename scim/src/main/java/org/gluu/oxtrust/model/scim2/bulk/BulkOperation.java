@@ -14,7 +14,7 @@ public class BulkOperation {
     private String data;
     private String location;
     private String response;
-    private int status; //TODO: nested "code" ?
+    private int status;
 
     public String getMethod() {
         return method;
