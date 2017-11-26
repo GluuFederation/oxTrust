@@ -28,6 +28,7 @@ import org.gluu.oxtrust.model.scim2.schema.SchemaAttribute;
 import org.gluu.oxtrust.model.scim2.schema.SchemaResource;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.scim2.interceptor.RejectFilterParam;
 
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -51,7 +52,8 @@ public class SchemaWebService extends BaseScimWebService {
     @GET
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    public Response serve(){
+    @RejectFilterParam
+    public Response serve(@QueryParam(QUERY_PARAM_FILTER) String filter){
 
         Response response;
         try {
@@ -60,8 +62,6 @@ public class SchemaWebService extends BaseScimWebService {
 
             for (String urn : resourceSchemas.keySet()){
                 listResponse.addResource(getSchemaInstance(resourceSchemas.get(urn), urn));
-
-                log.debug("serve. {} {}", urn, getSchemaInstance(resourceSchemas.get(urn), urn)==null);
             }
             String json=resourceSerializer.getListResponseMapper().writeValueAsString(listResponse);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
@@ -77,7 +77,8 @@ public class SchemaWebService extends BaseScimWebService {
     @Path("{schemaUrn}")
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    public Response getSchemaById(@PathParam("schemaUrn") String urn){
+    @RejectFilterParam
+    public Response getSchemaById(@PathParam("schemaUrn") String urn, @QueryParam(QUERY_PARAM_FILTER) String filter){
 
         Response response;
         try {

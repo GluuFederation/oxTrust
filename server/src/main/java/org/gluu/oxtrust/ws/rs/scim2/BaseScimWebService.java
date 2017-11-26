@@ -8,6 +8,9 @@ import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
+import org.gluu.oxtrust.model.scim2.patch.PatchOperationType;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ResourceValidator;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
@@ -22,11 +25,13 @@ import org.xdi.ldap.model.SortOrder;
 
 import javax.inject.Inject;
 import javax.lang.model.type.NullType;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static javax.ws.rs.core.Response.Status.*;
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
@@ -84,6 +89,11 @@ public class BaseScimWebService {
 
     int getMaxCount(){
         return appConfiguration.getScimProperties().getMaxCount();
+    }
+
+    String getValueFromHeaders(HttpHeaders headers, String name){
+        List<String> values=headers.getRequestHeaders().get(name);
+        return (values==null || values.size()==0) ? null : values.get(0);
     }
 
     protected boolean isAttributeRecognized(Class<? extends BaseScimResource> cls, String attribute){
@@ -157,10 +167,10 @@ public class BaseScimWebService {
                 request.setCount(count);
             }
             else
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, "Maximum number of results per page is " + getMaxCount());
+                response = getErrorResponse(BAD_REQUEST, ErrorScimType.TOO_MANY, "Maximum number of results per page is " + getMaxCount());
         }
         else
-            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Wrong schema(s) supplied in Search Request");
+            response = getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Wrong schema(s) supplied in Search Request");
 
         return response;
 
@@ -204,28 +214,28 @@ public class BaseScimWebService {
                 for (PatchOperation op : ops) {
 
                     if (op.getType() == null)
-                        response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Operation '" + op.getOperation() + "' not recognized");
+                        response = getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Operation '" + op.getOperation() + "' not recognized");
                     else {
                         String path = op.getPath();
 
                         if (StringUtils.isEmpty(path) && op.getType().equals(PatchOperationType.REMOVE))
-                            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.NO_TARGET, "Path attribute is required for remove operation");
+                            response = getErrorResponse(BAD_REQUEST, ErrorScimType.NO_TARGET, "Path attribute is required for remove operation");
                         else
                         if (op.getValue() == null && !op.getType().equals(PatchOperationType.REMOVE))
-                            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Value attribute is required for operations other than remove");
+                            response = getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Value attribute is required for operations other than remove");
                         else
                         if (StringUtils.isNotEmpty(path) && path.contains("["))
-                            response = getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Path '" + path + "' not recognized or unsupported. Filter notation is not supported by current implementation");
+                            response = getErrorResponse(NOT_IMPLEMENTED, "Path '" + path + "' not recognized or unsupported. Filter notation is not supported by current implementation");
                     }
                     if (response != null)
                         break;
                 }
             }
             else
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Patch request MUST contain the attribute 'Operations'");
+                response = getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Patch request MUST contain the attribute 'Operations'");
         }
         else
-            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Wrong schema(s) supplied in Search Request");
+            response = getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, "Wrong schema(s) supplied in Search Request");
 
         log.info("inspectPatchRequest. Preprocessing of patch request {}", response==null ? "passed" : "failed");
         return response;
