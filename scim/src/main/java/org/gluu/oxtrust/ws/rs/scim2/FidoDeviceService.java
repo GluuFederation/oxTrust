@@ -1,6 +1,6 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import org.gluu.oxtrust.model.scim2.PatchRequest;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 
@@ -26,8 +26,7 @@ public interface FidoDeviceService {
     Response getDeviceById(@PathParam("id") String id,
                               @QueryParam("userId") String userId,
                               @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-                              @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-                              @HeaderParam("Authorization") String authorization);
+                              @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
     @Path("/scim/v2/FidoDevices/{id}")
     @PUT
@@ -38,16 +37,13 @@ public interface FidoDeviceService {
             FidoDeviceResource fidoDeviceResource,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization);
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
     @Path("/scim/v2/FidoDevices/{id}")
     @DELETE
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response deleteDevice(
-            @PathParam("id") String id,
-            @HeaderParam("Authorization") String authorization);
+    Response deleteDevice(@PathParam("id") String id);
 
     @Path("/scim/v2/FidoDevices")
     @GET
@@ -60,17 +56,14 @@ public interface FidoDeviceService {
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization);
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
     @Path("/scim/v2/FidoDevices/.search")
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response searchDevicesPost(
-            SearchRequest searchRequest,
-            @HeaderParam("Authorization") String authorization);
+    Response searchDevicesPost(SearchRequest searchRequest);
 
     @Path("/scim/v2/FidoDevices/{id}")
     @PATCH
@@ -81,7 +74,6 @@ public interface FidoDeviceService {
             PatchRequest request,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization);
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
 }

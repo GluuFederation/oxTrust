@@ -1,40 +1,36 @@
-package org.gluu.oxtrust.service.scim2.interceptor;
+package org.gluu.oxtrust.ws.rs.scim2;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.OpenIdService;
+import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.slf4j.Logger;
 import org.xdi.oxauth.client.ClientInfoClient;
 import org.xdi.oxauth.client.ClientInfoResponse;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 
-import javax.annotation.Priority;
 import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
-import java.lang.annotation.Annotation;
+import javax.ws.rs.ext.Provider;
+import java.io.IOException;
 
 import static javax.ws.rs.core.Response.Status;
 
 /**
- * This class checks whether authorization header is present and is valid before current scim service methods are
- * actually called.
- * To protect methods with this interceptor just add the Protected annotation to them
+ * This class checks whether authorization header is present and is valid before scim service methods are actually called.
+ * To protect methods with this filter just add the Protected annotation to them
  *
- * Created by jgomer on 2017-08-31.
+ * Created by jgomer on 2017-11-25.
  */
+@Provider
 @Protected
-@Interceptor
-@Priority(Interceptor.Priority.APPLICATION)
-public class ServiceInterceptor {
+public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 
     @Inject
     private Logger log;
@@ -51,23 +47,27 @@ public class ServiceInterceptor {
     @Inject
     private UmaPermissionService umaPermissionService;
 
+    //TODO: fix doc here
+    /**
+     * Comment this method body if you want to skip the authorization check and proceed straight to use the service. This
+     * is useful under certain development circumstances
+     * @param requestContext The ContainerRequestContext associated to filter execution
+     * @throws IOException Whenever checking the authorization throws an exception as well
+     */
     /**
      * Does some pre-processing of parameters:
      * Searches for a parameter of type String and annotated with HeaderParam. If found, the respective processing
      * authorization method is called (test mode or UMA protection) and  if successful, the request follows to its
      * destination service object. If not found a Response object is returned immediately signaling the authorization error
-     * @param ctx InvocationContext of current call
-     * @return An object (usually the result of calling ctx.proceed()
      */
-    @AroundInvoke
-    public Object manage(InvocationContext ctx) throws Exception {
-       log.warn("Bypassing protection TEMPORARILY");
-        return ctx.proceed();
-/*
-        Response authorizationResponse;
+    @Override
+    public void filter(ContainerRequestContext requestContext) throws IOException {
 
+        //log.warn("Bypassing protection TEMPORARILY");
+/**/
+        Response authorizationResponse;
         log.info("==== SCIM Service call intercepted ====");
-        String authorization=getAuthzHeaderValue(ctx);
+        String authorization = requestContext.getHeaderString("Authorization");
         log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
 
         try {
@@ -90,14 +90,11 @@ public class ServiceInterceptor {
             authorizationResponse=BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
-        if (authorizationResponse == null) {
-            log.info("Authorization passed");
-            //If authorization passed, proceed with actual processing of request
-            return ctx.proceed();
-        }
+        if (authorizationResponse == null)
+            log.info("Authorization passed");   //If authorization passed, proceed with actual processing of request
         else
-            return authorizationResponse;
-*/
+            requestContext.abortWith(authorizationResponse);
+
     }
 
     private Response processTestModeAuthorization(String token) throws Exception {
@@ -148,16 +145,5 @@ public class ServiceInterceptor {
         return null;
 
     }
-
-    private String getAuthzHeaderValue(InvocationContext ctx){
-
-        Object[] params=ctx.getParameters();
-        Annotation[][] annotations=ctx.getMethod().getParameterAnnotations();
-
-        int i=IntrospectUtil.indexOfAuthzHeader(annotations);
-        return (i>=0 && params[i]!=null && params[i] instanceof String) ? params[i].toString() : null;
-
-    }
-
 
 }

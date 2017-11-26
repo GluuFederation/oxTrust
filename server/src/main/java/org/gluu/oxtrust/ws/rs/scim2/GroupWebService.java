@@ -22,6 +22,8 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
@@ -38,7 +40,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * Implementation of /Groups endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.GroupServiceDecorator
- * is used to apply pre-validations on data. Interceptor org.gluu.oxtrust.service.scim2.interceptor.ServiceInterceptor
+ * is used to apply pre-validations on data. Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter
  * secures invocations
  *
  * @author Rahat Ali Date: 05.08.2015
@@ -68,8 +70,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
     public Response createGroup(
             @ApiParam(value = "Group", required = true) GroupResource group,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) {
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
         Response response;
         try {
@@ -101,8 +102,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
     public Response getGroupById(
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) {
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
         Response response;
         try {
@@ -137,8 +137,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
             @ApiParam(value = "Group", required = true) GroupResource group,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) {
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
         Response response;
         try {
@@ -179,9 +178,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected
     @ApiOperation(value = "Delete group", notes = "Delete group (https://tools.ietf.org/html/rfc7644#section-3.6)")
-    public Response deleteGroup(
-            @PathParam("id") String id,
-            @HeaderParam("Authorization") String authorization){
+    public Response deleteGroup(@PathParam("id") String id){
 
         Response response;
         try {
@@ -218,8 +215,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) {
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
         Response response;
         try {
@@ -249,15 +245,12 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected @RefAdjusted
     @ApiOperation(value = "Search group POST /.search", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
-    public Response searchGroupsPost(
-            @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest,
-            @HeaderParam("Authorization") String authorization){
+    public Response searchGroupsPost(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest){
 
         //Calling searchGroups here does not provoke that method's interceptor/decorator being called (only this one's)
         URI uri=null;
         Response response = searchGroups(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
-                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(),
-                searchRequest.getExcludedAttributes(), authorization);
+                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(), searchRequest.getExcludedAttributes());
 
         try {
             uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
@@ -280,8 +273,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
             PatchRequest request,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try{

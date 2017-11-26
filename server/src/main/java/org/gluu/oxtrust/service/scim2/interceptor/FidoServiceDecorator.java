@@ -51,15 +51,15 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
 
     }
 
-    public Response getDeviceById(String id, String userId, String attrsList, String excludedAttrsList, String authorization){
+    public Response getDeviceById(String id, String userId, String attrsList, String excludedAttrsList){
         Response response=validateExistenceOfDevice(userId, id);
         if (response==null)
-            response=service.getDeviceById(id, userId, attrsList, excludedAttrsList, authorization);
+            response=service.getDeviceById(id, userId, attrsList, excludedAttrsList);
         return response;
 
     }
 
-    public Response updateDevice(FidoDeviceResource fidoDevice, String id, String attrsList, String excludedAttrsList, String authorization){
+    public Response updateDevice(FidoDeviceResource fidoDevice, String id, String attrsList, String excludedAttrsList){
 
         Response response;
         try {
@@ -73,7 +73,7 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
 
             if (response==null) {
                 executeDefaultValidation(fidoDevice);
-                response = service.updateDevice(fidoDevice, id, attrsList, excludedAttrsList, authorization);
+                response = service.updateDevice(fidoDevice, id, attrsList, excludedAttrsList);
             }
         }
         catch (SCIMException e){
@@ -84,17 +84,17 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
 
     }
 
-    public Response deleteDevice(String id, String authorization){
+    public Response deleteDevice(String id){
 
         Response response=validateExistenceOfDevice(null, id);
         if (response==null)
-            response=service.deleteDevice(id, authorization);
+            response=service.deleteDevice(id);
         return response;
 
     }
 
     public Response searchDevices(String filter, String sortBy, String sortOrder, Integer startIndex, Integer count,
-                                    String attrsList, String excludedAttrsList, String authorization) {
+                                    String attrsList, String excludedAttrsList) {
 
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
@@ -107,13 +107,13 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
             else
                 response = service.searchDevices(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(),
                         searchReq.getStartIndex(), searchReq.getCount(), searchReq.getAttributes(),
-                        searchReq.getExcludedAttributes(), authorization);
+                        searchReq.getExcludedAttributes());
         }
         return response;
 
     }
 
-    public Response searchDevicesPost(SearchRequest searchRequest, String authorization) {
+    public Response searchDevicesPost(SearchRequest searchRequest) {
 
         SearchRequest searchReq = new SearchRequest();
         Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
@@ -125,7 +125,7 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
             if (!isAttributeRecognized(FidoDeviceResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
-                response = service.searchDevicesPost(searchReq, authorization);
+                response = service.searchDevicesPost(searchReq);
         }
         return response;
     }

@@ -8,11 +8,13 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
+import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
-import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
@@ -33,7 +35,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * Implementation of /Users endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.UserServiceDecorator
- * is used to apply pre-validations on data. Interceptor org.gluu.oxtrust.service.scim2.interceptor.ServiceInterceptor
+ * is used to apply pre-validations on data. Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter
  * secures invocations
  *
  * @author Rahat Ali Date: 05.08.2015
@@ -63,8 +65,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     public Response createUser(
             @ApiParam(value = "User", required = true) UserResource user,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try {
@@ -95,8 +96,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     public Response getUserById(
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) {
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
         Response response;
         try {
@@ -132,8 +132,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
             @ApiParam(value = "User", required = true) UserResource user,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization) {
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
         Response response;
         try {
@@ -174,9 +173,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected
     @ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
-    public Response deleteUser(
-            @PathParam("id") String id,
-            @HeaderParam("Authorization") String authorization){
+    public Response deleteUser(@PathParam("id") String id){
 
         Response response;
         try {
@@ -210,8 +207,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try {
@@ -241,15 +237,12 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected @RefAdjusted
     @ApiOperation(value = "Search users POST /.search", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
-    public Response searchUsersPost(
-            @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest,
-            @HeaderParam("Authorization") String authorization){
+    public Response searchUsersPost(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest){
 
         //Calling searchUsers here does not provoke that method's interceptor/decorator being called (only this one's)
         URI uri=null;
         Response response = searchUsers(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
-                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(),
-                searchRequest.getExcludedAttributes(), authorization);
+                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(), searchRequest.getExcludedAttributes());
 
         try {
             uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
@@ -272,8 +265,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
             PatchRequest request,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try{

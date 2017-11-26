@@ -1,6 +1,6 @@
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import org.gluu.oxtrust.model.scim2.PatchRequest;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import javax.ws.rs.*;
@@ -26,8 +26,7 @@ public interface UserService {
     Response createUser(
             UserResource user,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization);
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
     @Path("/scim/v2/Users/{id}")
     @GET
@@ -36,8 +35,7 @@ public interface UserService {
     Response getUserById(
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization);
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
     @Path("/scim/v2/Users/{id}")
     @PUT
@@ -48,16 +46,13 @@ public interface UserService {
             UserResource user,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization);
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
     @Path("/scim/v2/Users/{id}")
     @DELETE
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response deleteUser(
-            @PathParam("id") String id,
-            @HeaderParam("Authorization") String authorization);
+    Response deleteUser(@PathParam("id") String id);
 
     @Path("/scim/v2/Users")
     @GET
@@ -70,17 +65,14 @@ public interface UserService {
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization);
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
     @Path("/scim/v2/Users/.search")
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response searchUsersPost(
-            SearchRequest searchRequest,
-            @HeaderParam("Authorization") String authorization);
+    Response searchUsersPost(SearchRequest searchRequest);
 
     @Path("/scim/v2/Users/{id}")
     @PATCH
@@ -91,7 +83,6 @@ public interface UserService {
                 PatchRequest request,
                 @PathParam("id") String id,
                 @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-                @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-                @HeaderParam("Authorization") String authorization);
+                @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
 }

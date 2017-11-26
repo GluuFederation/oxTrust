@@ -55,8 +55,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected @RefAdjusted
     @ApiOperation(value = "General search POST /.search", notes = "Returns a list of resources (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
-    public Response search(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest,
-                           @HeaderParam("Authorization") String authorization) {
+    public Response search(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) {
 
         SearchRequest searchReq = new SearchRequest();
         Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
@@ -72,7 +71,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
             */
             try {
                 List<JsonNode> resources = new ArrayList<JsonNode>();
-                Pair<Integer, Integer> totals = computeResults(searchReq, authorization, resources);
+                Pair<Integer, Integer> totals = computeResults(searchReq, resources);
 
                 ListResponseJsonSerializer custSerializer = new ListResponseJsonSerializer(resourceSerializer, searchReq.getAttributes(),
                         searchReq.getExcludedAttributes(), searchReq.getCount() == 0);
@@ -106,11 +105,10 @@ public class SearchResourcesWebService extends BaseScimWebService {
      * Result set as a whole will not be sorted by sortBy param but every group of resources (by resource type) will be
      * sorted as such
      * @param searchRequest
-     * @param authorization
      * @param resources
      * @return
      */
-    private Pair<Integer, Integer> computeResults(SearchRequest searchRequest, String authorization, List<JsonNode> resources) throws Exception{
+    private Pair<Integer, Integer> computeResults(SearchRequest searchRequest, List<JsonNode> resources) throws Exception{
 
         int i;
         int totalInPage=0, totalResults=0, skip=0;
@@ -123,7 +121,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
 
         //Move forward to skip the searches that might have no results and find the first one starting at index = searchRequest.getStartIndex()
         for (i=0; i<3 && !resultsAvailable; i++) {
-            tree=getListResponseTree(i, searchRequest, authorization);
+            tree=getListResponseTree(i, searchRequest);
 
             if (tree!=null) {
                 totalResults += tree.get("totalResults").asInt();
@@ -158,7 +156,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
             while (i<3 && totalInPage < searchRequest.getCount()){
 
                 resultsAvailable=false;
-                tree = getListResponseTree(i, searchRequest, authorization);
+                tree = getListResponseTree(i, searchRequest);
                 if (tree!=null) {
                     totalResults += tree.get("totalResults").asInt();
 
@@ -187,22 +185,21 @@ public class SearchResourcesWebService extends BaseScimWebService {
      * Returns a JsonNode with the response obtained from sending a POST to a search method given the SearchRequest passed
      * @param index Determines the concrete search method to be executed: (0 - user; 1 - group; 2 - fido device)
      * @param searchRequest
-     * @param authorization
      * @return
      */
-    private JsonNode getListResponseTree(int index, SearchRequest searchRequest, String authorization){
+    private JsonNode getListResponseTree(int index, SearchRequest searchRequest){
 
         try {
             Response r = null;
             switch (index) {
                 case 0:
-                    r = userWS.searchUsersPost(searchRequest, authorization);
+                    r = userWS.searchUsersPost(searchRequest);
                     break;
                 case 1:
-                    r = groupWS.searchGroupsPost(searchRequest, authorization);
+                    r = groupWS.searchGroupsPost(searchRequest);
                     break;
                 case 2:
-                    r = fidoWS.searchDevicesPost(searchRequest, authorization);
+                    r = fidoWS.searchDevicesPost(searchRequest);
                     break;
             }
 

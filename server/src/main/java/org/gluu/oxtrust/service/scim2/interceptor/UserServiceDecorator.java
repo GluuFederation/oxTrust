@@ -5,6 +5,7 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
@@ -51,7 +52,7 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
 
     }
 
-    public Response createUser(UserResource user, String attrsList, String excludedAttrsList, String authorization) {
+    public Response createUser(UserResource user, String attrsList, String excludedAttrsList) {
 
         Response response;
         try {
@@ -59,7 +60,7 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
             assignMetaInformation(user);
             ScimResourceUtil.adjustPrimarySubAttributes(user);
             //Proceed with actual implementation of createUser method
-            response = service.createUser(user, attrsList, excludedAttrsList, authorization);
+            response = service.createUser(user, attrsList, excludedAttrsList);
         }
         catch (SCIMException e){
             log.error("Validation check at createUser returned: {}", e.getMessage());
@@ -69,18 +70,18 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
 
     }
 
-    public Response getUserById(String id, String attrsList, String excludedAttrsList, String authorization){
+    public Response getUserById(String id, String attrsList, String excludedAttrsList){
 
         Response response=validateExistenceOfUser(id);
         if (response==null)
             //Proceed with actual implementation of getUserById method
-            response= service.getUserById(id, attrsList, excludedAttrsList, authorization);
+            response= service.getUserById(id, attrsList, excludedAttrsList);
 
         return response;
 
     }
 
-    public Response updateUser(UserResource user, String id, String attrsList, String excludedAttrsList, String authorization) {
+    public Response updateUser(UserResource user, String id, String attrsList, String excludedAttrsList) {
 
         Response response;
         try{
@@ -92,7 +93,7 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
             if (response==null) {
                 executeDefaultValidation(user);
                 //Proceed with actual implementation of updateUser method
-                response = service.updateUser(user, id, attrsList, excludedAttrsList, authorization);
+                response = service.updateUser(user, id, attrsList, excludedAttrsList);
             }
         }
         catch (SCIMException e){
@@ -103,19 +104,19 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
 
     }
 
-    public Response deleteUser(String id, String authorization){
+    public Response deleteUser(String id){
 
         Response response=validateExistenceOfUser(id);
         if (response==null)
             //Proceed with actual implementation of deleteUser method
-            response= service.deleteUser(id, authorization);
+            response= service.deleteUser(id);
 
         return response;
 
     }
 
     public Response searchUsers(String filter, String sortBy, String sortOrder, Integer startIndex, Integer count,
-                                String attrsList, String excludedAttrsList, String authorization){
+                                String attrsList, String excludedAttrsList){
 
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
@@ -128,13 +129,13 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
             else
                 response = service.searchUsers(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(),
                                             searchReq.getStartIndex(), searchReq.getCount(), searchReq.getAttributes(),
-                                            searchReq.getExcludedAttributes(), authorization);
+                                            searchReq.getExcludedAttributes());
         }
         return response;
 
     }
 
-    public Response searchUsersPost(SearchRequest searchRequest, String authorization){
+    public Response searchUsersPost(SearchRequest searchRequest){
 
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
@@ -146,20 +147,20 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
             if (!isAttributeRecognized(UserResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
-                response = service.searchUsersPost(searchReq, authorization);
+                response = service.searchUsersPost(searchReq);
         }
         return response;
 
     }
 
-    public Response patchUser(PatchRequest request, String id, String attrsList, String excludedAttrsList, String authorization){
+    public Response patchUser(PatchRequest request, String id, String attrsList, String excludedAttrsList){
 
         Response response=inspectPatchRequest(request, UserResource.class);
         if (response==null) {
             response=validateExistenceOfUser(id);
 
             if (response==null)
-                response = service.patchUser(request, id, attrsList, excludedAttrsList, authorization);
+                response = service.patchUser(request, id, attrsList, excludedAttrsList);
         }
         return response;
 

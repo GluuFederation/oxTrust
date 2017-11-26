@@ -9,6 +9,7 @@ import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
@@ -37,7 +38,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * Implementation of /FidoDevices endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.FidoServiceDecorator
- * is used to apply pre-validations on data. Interceptor org.gluu.oxtrust.service.scim2.interceptor.ServiceInterceptor
+ * is used to apply pre-validations on data. Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter
  * secures invocations
  *
  * @author Val Pecaoco
@@ -78,8 +79,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
     public Response getDeviceById(@PathParam("id") String id,
                            @QueryParam("userId") String userId,
                            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-                           @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-                           @HeaderParam("Authorization") String authorization){
+                           @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try{
@@ -117,8 +117,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
             FidoDeviceResource fidoDeviceResource,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try {
@@ -163,9 +162,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected
     @ApiOperation(value = "Delete device")
-    public Response deleteDevice(
-            @PathParam("id") String id,
-            @HeaderParam("Authorization") String authorization){
+    public Response deleteDevice(@PathParam("id") String id){
 
         Response response;
         try {
@@ -198,8 +195,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try {
@@ -228,14 +224,11 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @Protected @RefAdjusted
     @ApiOperation(value = "Search devices POST /.search", notes = "Returns a list of fido devices", response = ListResponse.class)
-    public Response searchDevicesPost(
-            SearchRequest searchRequest,
-            @HeaderParam("Authorization") String authorization){
+    public Response searchDevicesPost(SearchRequest searchRequest){
 
         URI uri=null;
         Response response = searchDevices(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
-                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(),
-                searchRequest.getExcludedAttributes(), authorization);
+                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(), searchRequest.getExcludedAttributes());
 
         try {
             uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
@@ -365,8 +358,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
             PatchRequest request,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList,
-            @HeaderParam("Authorization") String authorization){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         return getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Patch operation not supported for FIDO devices");
     }
