@@ -25,8 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
