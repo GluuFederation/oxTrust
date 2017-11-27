@@ -44,6 +44,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
 	public Response listGroups(@HeaderParam("Authorization") String authorization) throws Exception {
 
 		ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
+        serviceProviderConfig.getFilter().setMaxResults(appConfiguration.getScimProperties().getMaxCount());
 
 		Meta meta = new Meta();
 		meta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");

@@ -21,7 +21,7 @@
          "properties":{
 		        "servers": {
 		            "id": "servers",
-		            "description": "server details separated by commas",
+		            "description": "server details separated by spaces",
 		            "title": "servers",
 		            "type": "string",
 		            "format": "url",

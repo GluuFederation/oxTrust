@@ -13,20 +13,16 @@ import java.io.Serializable;
 public class FilterConfig implements Serializable {
 
 	private final boolean supported;
-	private final long maxResults;
+	private long maxResults;
 
 	/**
 	 * Create a <code>FilterConfig</code> instance.
 	 *
 	 * @param supported
 	 *            Specifies whether the FILTER operation is supported.
-	 * @param maxResults
-	 *            Specifies the maximum number of resources returned in a
-	 *            response.
 	 */
-	public FilterConfig(final boolean supported, final long maxResults) {
+	public FilterConfig(final boolean supported) {
 		this.supported = supported;
-		this.maxResults = maxResults;
 	}
 
 	/**
@@ -41,4 +37,14 @@ public class FilterConfig implements Serializable {
 	public long getMaxResults() {
 		return maxResults;
 	}
+
+    /**
+	 * @param maxResults
+	 *            Specifies the maximum number of resources returned in a
+	 *            response.
+     */
+    public void setMaxResults(long maxResults) {
+        this.maxResults = maxResults;
+    }
+
 }

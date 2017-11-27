@@ -13,6 +13,7 @@
 <cc:interface>
     <cc:attribute name="label" default="" type="java.lang.String" />
     <cc:attribute name="labelAdd" default="" type="java.lang.String" />
+    <cc:attribute name="hideLabel" default="false" type="java.lang.Boolean" />
     <cc:attribute name="inputWidth" default="24" required="false" type="java.lang.Integer" />
     <cc:attribute name="maxItems" type="java.lang.Integer" />
     <cc:attribute name="properties" rerquired="true" type="java.util.List" />
@@ -29,7 +30,6 @@
 		$(document).ready(function(){
 			$(".togglefield").each(function(index){ 
 			var typeValue = $(this).attr("type");
-			    debugger;
 			    if(typeValue === "password") {
 			    	$(this).siblings("img[id$='view']").css({"display": "block"});
 			    } else {
@@ -54,7 +54,7 @@
 
 	</h:outputScript>
     <a4j:region>
-        <ox:decorate label="#{cc.attrs.label}">
+        <ox:decorate label="#{cc.attrs.label}"  hideLabel="#{cc.attrs.hideLabel}">
             <h:panelGroup id="customList">
                 <a4j:region>
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">

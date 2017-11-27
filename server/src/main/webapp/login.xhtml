@@ -1,86 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:rich="http://richfaces.org/rich"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{authenticator.preAuthenticate}" onPostback="false"/>
     </f:metadata>
-
-    <ui:param name="isLogin" value="#{true}"/>
-    <ui:define name="body">
-        <h:form id="loginForm">
-            <rich:panel>
-                <div class="login-box">
-                    <div class="login-logo">
-                        <a href="#" style="font-size: 35px;">
-                            <img src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png"/>
-                        </a>
-                    </div>
-                    <!-- /.login-logo -->
-                    <div class="login-box-body">
-                        <p class="login-box-msg"
-                           style="font-size: 21px;  font-weight: 300;  font-family: 'Source Sans Pro',sans-serif;">Login</p>
-
-                        <div class="form-group has-feedback">
-                            <h:inputText autocomplete="off" id="username" style="width: 100%;" styleClass="form-control"
-                                         value="#{credentials.username}"/>
-                            <span class="glyphicon glyphicon-user form-control-feedback"/>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <h:inputSecret autocomplete="off" id="password" style="width: 100%;"
-                                           styleClass="form-control" value="#{credentials.password}"/>
-                            <span class="glyphicon glyphicon-lock form-control-feedback"/>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-4" style="margin-top: 8px !important;">
-                                <h:selectBooleanCheckbox id="rememberMe" value="#{rememberMe.enabled}"/>
-                                <span style="font-size: 13px;margin-left: 4px;">#{msg['login.rememberMe']}</span>
-
-                            </div>
-                            <!-- /.col -->
-
-                            <div class="col-xs-4">
-                                <h:link includeViewParams="false" outcome="/person/passwordReminder"
-                                        rendered="#{passwordReminderAction.enabled()}" style="font-size: 13px;"
-                                        styleClass="btn btn-link" value="#{msg['login.forgotPassword']}"/>
-                            </div>
-                            <!-- /.col -->
-
-                            <div class="col-xs-4">
-                                <h:commandButton action="#{identity.login}" id="submit"
-                                                 styleClass="btn btn-primary btn-block btn-flat"
-                                                 value="#{msg['login.login']}"/>
-                            </div>
-                            <!-- /.col -->
-
-
-                        </div>
-                        <div class="form-group has-feedback ">
-                            <h:messages errorClass="errormsg" globalOnly="true" id="messages" infoClass="infomsg"
-                                        rendered="#{showGlobalMessages != 'false'}" styleClass="message"
-                                        warnClass="warnmsg"/>
-                        </div>
-
-                    </div>
-                    <!-- /.login-box-body -->
-                </div>
-                <!-- /.login-box -->
-                <script type="text/javascript">
-
-                    $(document).ready(function () {
-                        $('input').icheck({
-                            checkboxClass: 'icheckbox_square-blue',
-                            radioClass: 'iradio_square-blue',
-                            increaseArea: '20%' // optional
-                        });
-                    });
-
-                </script>
-
-
-            </rich:panel>
-
-        </h:form>
-
-    </ui:define>
 </ui:composition>

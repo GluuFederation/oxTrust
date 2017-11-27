@@ -78,7 +78,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
         @Override
 	public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
 
-		// TODO: check chain
 		if (!preFilter(servletRequest, servletResponse, filterChain)) {
 			log.debug("Execute validation filter");
 			filterChain.doFilter(servletRequest, servletResponse);
@@ -89,12 +88,6 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 
 		final HttpServletRequest request = (HttpServletRequest) servletRequest;
 		final HttpServletResponse response = (HttpServletResponse) servletResponse;
-
-		String conversation = request.getParameter("conversation");
-		log.debug("########## PARAM conversation = " + conversation);
-
-		final HttpSession session = request.getSession(false);
-		session.setAttribute("conversation", conversation);
 
 		String urlToRedirectTo;
 		try {
@@ -162,7 +155,7 @@ public class AuthenticationFilter extends AbstractOAuthFilter {
 		String jti = UUID.randomUUID().toString();
 		
                 // Lookup for relying party ID
-                final String key = request.getParameter(ExternalAuthentication.CONVERSATION_KEY);//ExternalAuthentication.startExternalAuthentication(request);
+                final String key = request.getParameter(ExternalAuthentication.CONVERSATION_KEY);
                 request.getSession().setAttribute(SESSION_CONVERSATION_KEY, key);
                 ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, request);
                 

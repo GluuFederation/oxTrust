@@ -6,19 +6,44 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.ldap.service.*;
+import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.oxtrust.ldap.service.ImageService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
-import org.gluu.oxtrust.util.MailUtils;
+import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.omnifaces.util.Components;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -27,24 +52,9 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
+import org.xdi.service.MailService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
-
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.mail.AuthenticationFailedException;
-import javax.mail.MessagingException;
-import java.io.IOException;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Action class for configuring application
@@ -90,6 +100,18 @@ public class UpdateOrganizationAction implements Serializable {
 
 	@Inject
 	private EncryptionService encryptionService;
+	
+	@Inject
+	private FacesService facesService;
+
+    @Inject
+	private MailService mailService;
+
+    @Inject
+    private RenderParameters rendererParameters;
+
+    @Inject
+    private RenderService renderService;
 
 	private GluuOrganization organization;
 
@@ -253,6 +275,12 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	private void updateSmptConfiguration(GluuAppliance appliance) {
+		SmtpConfiguration smtpConfiguration = toSmtpConfiguration(appliance);
+
+		appliance.setSmtpConfiguration(smtpConfiguration);
+	}
+
+	private SmtpConfiguration toSmtpConfiguration(GluuAppliance appliance) {
 		SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
 		smtpConfiguration.setHost(appliance.getSmtpHost());
 		smtpConfiguration.setPort(StringHelper.toInteger(appliance.getSmtpPort(), 25));
@@ -261,12 +289,12 @@ public class UpdateOrganizationAction implements Serializable {
 		smtpConfiguration.setFromEmailAddress(appliance.getSmtpFromEmailAddress());
 		smtpConfiguration.setRequiresAuthentication(StringHelper.toBoolean(appliance.getSmtpRequiresAuthentication(), false));
 		smtpConfiguration.setUserName(appliance.getSmtpUserName());
-		smtpConfiguration.setPasswordDecrypted(appliance.getSmtpPassword());
+		smtpConfiguration.setPasswordDecrypted(applianceService.getDecryptedSmtpPassword(appliance));
 
-		setSmtpPassword(appliance.getSmtpPassword());
+//		setSmtpPassword(appliance.getSmtpPassword());
 		smtpConfiguration.setPassword(appliance.getSmtpPassword());
 
-		appliance.setSmtpConfiguration(smtpConfiguration);
+		return smtpConfiguration;
 	}
 
 	public String verifySmtpConfiguration() {
@@ -274,20 +302,23 @@ public class UpdateOrganizationAction implements Serializable {
 				+ " RequireSSL: " + appliance.isRequiresAuthentication());
 		log.debug("UserName: " + appliance.getSmtpUserName() + " Password: " + applianceService.getDecryptedSmtpPassword(appliance, true));
 
-		try {
-			MailUtils mail = new MailUtils(appliance.getSmtpHost(), appliance.getSmtpPort(), appliance.isRequiresSsl(),
-					appliance.isRequiresAuthentication(), appliance.getSmtpUserName(), applianceService.getDecryptedSmtpPassword(appliance, true));
-			mail.sendMail(appliance.getSmtpFromName() + " <" + appliance.getSmtpFromEmailAddress() + ">",
-					appliance.getSmtpFromEmailAddress(), "SMTP Server Configuration Verification",
-					"SMTP Server Configuration Verification Successful.");
-			log.info("Connection Successful");
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
+		SmtpConfiguration smtpConfiguration = toSmtpConfiguration(appliance);
 
-            return OxTrustConstants.RESULT_SUCCESS;
-		} catch (AuthenticationFailedException ex) {
-			log.error("SMTP Authentication Error: ", ex);
-		} catch (MessagingException ex) {
-			log.error("SMTP Host Connection Error", ex);
+		String messageSubject = facesMessages.evalResourceAsString("#{msg['mail.verify.message.subject']}");
+		String messagePlain = facesMessages.evalResourceAsString("#{msg['mail.verify.message.plain.body']}");
+		String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.verify.message.html.body']}");
+
+//		rendererParameters.setParameter("mail_body", messageHtml);
+//		String mailHtml = renderService.renderView("/WEB-INF/mail/verify_settings.xhtml");
+
+		boolean result = mailService.sendMail(smtpConfiguration, appliance.getSmtpFromEmailAddress(), appliance.getSmtpFromName(), appliance.getSmtpFromEmailAddress(), null,
+				messageSubject, messagePlain, messageHtml);
+
+		log.info("Connection Successful");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
+
+		if (result) {
+			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
 		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to connect to SMTP server");

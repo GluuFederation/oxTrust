@@ -23,7 +23,6 @@
 			if (window != window.top)
 				top.location.href = location.href;
 		</script>
-
 		<link rel="shortcut icon"
 			href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}" />
 		<link rel="icon"
@@ -124,6 +123,9 @@
 			type="text/javascript"></script>
 		<script
 			src="#{oxTrustConfigurationService.cssLocation}/../theme/plugins/iCheck/icheck.min.js"
+			type="text/javascript"></script>
+		<script 
+			src='#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/jquery-ui-1.12.1.min.js'
 			type="text/javascript"></script>
 
 		<rich:notifyMessages stayTime="5000" nonblocking="true" />

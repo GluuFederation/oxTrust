@@ -211,7 +211,7 @@ public class ApplianceService implements Serializable {
 	}
 
 	public CustomScriptType[] getCustomScriptTypes() {
-		return new CustomScriptType[] { CustomScriptType.PERSON_AUTHENTICATION, CustomScriptType.UPDATE_USER,
+		return new CustomScriptType[] { CustomScriptType.PERSON_AUTHENTICATION, CustomScriptType.CONSENT_GATHERING, CustomScriptType.UPDATE_USER,
 				CustomScriptType.USER_REGISTRATION, CustomScriptType.CLIENT_REGISTRATION, CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR,
 				CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.APPLICATION_SESSION, CustomScriptType.SCIM };
 	}
