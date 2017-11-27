@@ -53,7 +53,7 @@ public class SchemaWebService extends BaseScimWebService {
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @RejectFilterParam
-    public Response serve(@QueryParam(QUERY_PARAM_FILTER) String filter){
+    public Response serve(){
 
         Response response;
         try {
@@ -78,7 +78,7 @@ public class SchemaWebService extends BaseScimWebService {
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @RejectFilterParam
-    public Response getSchemaById(@PathParam("schemaUrn") String urn, @QueryParam(QUERY_PARAM_FILTER) String filter){
+    public Response getSchemaById(@PathParam("schemaUrn") String urn){
 
         Response response;
         try {

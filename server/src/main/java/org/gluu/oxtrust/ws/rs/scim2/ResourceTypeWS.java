@@ -57,7 +57,7 @@ public class ResourceTypeWS extends BaseScimWebService {
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @RejectFilterParam
-    public Response serve(@QueryParam(QUERY_PARAM_FILTER) String filter) {
+    public Response serve() {
 
         try {
             ListResponse listResponse = new ListResponse(1, 3, 3);
@@ -80,7 +80,7 @@ public class ResourceTypeWS extends BaseScimWebService {
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @RejectFilterParam
-    public Response userResourceType(@QueryParam(QUERY_PARAM_FILTER) String filter) {
+    public Response userResourceType() {
 
         try {
             URI uri=new URI(getResourceLocation(USER_SUFFIX));
@@ -98,7 +98,7 @@ public class ResourceTypeWS extends BaseScimWebService {
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @RejectFilterParam
-    public Response groupResourceType(@QueryParam(QUERY_PARAM_FILTER) String filter) {
+    public Response groupResourceType() {
 
         try {
             URI uri=new URI(getResourceLocation(GROUP_SUFFIX));
@@ -116,7 +116,7 @@ public class ResourceTypeWS extends BaseScimWebService {
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @RejectFilterParam
-    public Response fidoResourceType(@QueryParam(QUERY_PARAM_FILTER) String filter) {
+    public Response fidoResourceType() {
         try {
             URI uri=new URI(getResourceLocation(FIDO_SUFFIX));
             return Response.ok(resourceSerializer.serialize(getFidoDeviceResourceType())).location(uri).build();

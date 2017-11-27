@@ -21,6 +21,7 @@ import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
 import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.scim2.interceptor.RejectFilterParam;
 
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
@@ -35,6 +36,7 @@ public class ServiceProviderConfigWS extends BaseScimWebService {
     @GET
     @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @RejectFilterParam
     public Response serve(){
 
         try {
