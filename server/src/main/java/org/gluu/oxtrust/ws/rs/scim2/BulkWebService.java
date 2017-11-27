@@ -69,7 +69,7 @@ public class BulkWebService extends BaseScimWebService {
     private GroupWebService groupWS;
 
     @Inject
-    private FidoWebService fidoDeviceWS;
+    private FidoDeviceWebService fidoDeviceWS;
 
     @Context
     private HttpHeaders httpHeaders;

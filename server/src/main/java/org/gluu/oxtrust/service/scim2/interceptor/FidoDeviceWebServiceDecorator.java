@@ -8,7 +8,7 @@ import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
-import org.gluu.oxtrust.ws.rs.scim2.FidoDeviceService;
+import org.gluu.oxtrust.ws.rs.scim2.IFidoDeviceWebService;
 import org.slf4j.Logger;
 
 import javax.annotation.Priority;
@@ -27,13 +27,13 @@ import javax.ws.rs.core.Response;
  */
 @Priority(Interceptor.Priority.APPLICATION)
 @Decorator
-public abstract class FidoServiceDecorator extends BaseScimWebService implements FidoDeviceService {
+public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService implements IFidoDeviceWebService {
 
     @Inject
     private Logger log;
 
     @Inject @Delegate @Any
-    FidoDeviceService service;
+    IFidoDeviceWebService service;
 
     @Inject
     private IFidoDeviceService fidoDeviceService;
@@ -105,9 +105,8 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
             if (!isAttributeRecognized(FidoDeviceResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
-                response = service.searchDevices(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(),
-                        searchReq.getStartIndex(), searchReq.getCount(), searchReq.getAttributes(),
-                        searchReq.getExcludedAttributes());
+                response = service.searchDevices(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getStartIndex(),
+                        searchReq.getCount(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
 
@@ -118,7 +117,7 @@ public abstract class FidoServiceDecorator extends BaseScimWebService implements
         SearchRequest searchReq = new SearchRequest();
         Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
                                 searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                                searchRequest.getAttributes(), searchRequest.getExcludedAttributes(), searchReq, "id");
+                                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq, "id");
 
         if (response==null) {
             //searchReq.getSortBy() is not null since we are providing userName as default

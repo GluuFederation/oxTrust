@@ -34,9 +34,9 @@ import java.util.List;
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
- * Implementation of /Users endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.UserServiceDecorator
- * is used to apply pre-validations on data. Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter
- * secures invocations
+ * Implementation of /Users endpoint. Methods here are intercepted and/or decorated.
+ * Class org.gluu.oxtrust.service.scim2.interceptor.UserWebServiceDecorator is used to apply pre-validations on data.
+ * Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter secures invocations
  *
  * @author Rahat Ali Date: 05.08.2015
  * Updated by jgomer on 2017-09-12.
@@ -45,7 +45,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 @Path("/scim/v2/Users")
 @Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)",
         authorizations = {@Authorization(value = "Authorization", type = "uma")})
-public class UserWebService extends BaseScimWebService implements UserService {
+public class UserWebService extends BaseScimWebService implements IUserWebService {
 
     @Inject
     private IPersonService personService;
@@ -69,6 +69,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
         Response response;
         try {
+            log.debug("Executing web service method. createUser");
             GluuCustomPerson person = scim2UserService.createUser(user, endpointUrl);
 
             // For custom script: create user
@@ -100,6 +101,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
         Response response;
         try {
+            log.debug("Executing web service method. getUserById");
             UserResource user=new UserResource();
             GluuCustomPerson person=personService.getPersonByInum(id);  //person is not null (check associated decorator method)
             scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
@@ -136,6 +138,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
         Response response;
         try {
+            log.debug("Executing web service method. updateUser");
             Pair<GluuCustomPerson, UserResource> pair=scim2UserService.updateUser(id, user, endpointUrl);
 
             // For custom script: update user
@@ -177,6 +180,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
         Response response;
         try {
+            log.debug("Executing web service method. deleteUser");
             GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
 
             // For custom script: delete user. Execute before actual deletion
@@ -211,6 +215,8 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
         Response response;
         try {
+            log.debug("Executing web service method. searchUsers");
+
             VirtualListViewResponse vlv = new VirtualListViewResponse();
             List<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder),
                     startIndex, count, vlv, endpointUrl, getMaxCount());
@@ -239,10 +245,12 @@ public class UserWebService extends BaseScimWebService implements UserService {
     @ApiOperation(value = "Search users POST /.search", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
     public Response searchUsersPost(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest){
 
+        log.debug("Executing web service method. searchUsersPost");
+
         //Calling searchUsers here does not provoke that method's interceptor/decorator being called (only this one's)
         URI uri=null;
         Response response = searchUsers(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
-                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(), searchRequest.getExcludedAttributes());
+                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
             uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
@@ -269,6 +277,7 @@ public class UserWebService extends BaseScimWebService implements UserService {
 
         Response response;
         try{
+            log.debug("Executing web service method. patchUser");
             UserResource user=new UserResource();
             GluuCustomPerson person=personService.getPersonByInum(id);  //person is not null (check associated decorator method)
 

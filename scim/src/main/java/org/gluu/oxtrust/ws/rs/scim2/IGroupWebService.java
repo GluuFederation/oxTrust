@@ -2,7 +2,8 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
-import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -10,55 +11,55 @@ import javax.ws.rs.core.Response;
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
- * Created by jgomer on 2017-09-01.
+ * Created by jgomer on 2017-10-18.
  *
  * Shared (rest-easy) interface of the SCIM service.
  * Besides SCIM server code, this class is also used by SCIM java client, edit carefully.
- * The class org.gluu.oxtrust.service.scim2.interceptor.UserServiceDecorator uses this interface as well
+ * The class org.gluu.oxtrust.service.scim2.interceptor.GroupServiceDecorator uses this interface as well
  */
-public interface UserService {
+public interface IGroupWebService {
 
-    @Path("/scim/v2/Users")
+    @Path("/scim/v2/Groups")
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response createUser(
-            UserResource user,
+    Response createGroup(
+            GroupResource group,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
-    @Path("/scim/v2/Users/{id}")
+    @Path("/scim/v2/Groups/{id}")
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response getUserById(
+    Response getGroupById(
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
-    @Path("/scim/v2/Users/{id}")
+    @Path("/scim/v2/Groups/{id}")
     @PUT
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response updateUser(
-            UserResource user,
+    Response updateGroup(
+            GroupResource group,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
-    @Path("/scim/v2/Users/{id}")
+    @Path("/scim/v2/Groups/{id}")
     @DELETE
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response deleteUser(@PathParam("id") String id);
+    Response deleteGroup(@PathParam("id") String id);
 
-    @Path("/scim/v2/Users")
+    @Path("/scim/v2/Groups")
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response searchUsers(
+    Response searchGroups(
             @QueryParam(QUERY_PARAM_FILTER) String filter,
             @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
             @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
@@ -67,22 +68,22 @@ public interface UserService {
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
-    @Path("/scim/v2/Users/.search")
+    @Path("/scim/v2/Groups/.search")
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response searchUsersPost(SearchRequest searchRequest);
+    Response searchGroupsPost(SearchRequest searchRequest);
 
-    @Path("/scim/v2/Users/{id}")
+    @Path("/scim/v2/Groups/{id}")
     @PATCH
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response patchUser(
-                PatchRequest request,
-                @PathParam("id") String id,
-                @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-                @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
+    Response patchGroup(
+            PatchRequest request,
+            @PathParam("id") String id,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 
 }

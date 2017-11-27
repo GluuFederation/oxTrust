@@ -9,7 +9,7 @@ import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
-import org.gluu.oxtrust.ws.rs.scim2.UserService;
+import org.gluu.oxtrust.ws.rs.scim2.IUserWebService;
 import org.slf4j.Logger;
 
 import javax.annotation.Priority;
@@ -28,13 +28,13 @@ import javax.ws.rs.core.Response;
  */
 @Priority(Interceptor.Priority.APPLICATION)
 @Decorator
-public class UserServiceDecorator extends BaseScimWebService implements UserService {
+public class UserWebServiceDecorator extends BaseScimWebService implements IUserWebService {
 
     @Inject
     private Logger log;
 
     @Inject @Delegate @Any
-    UserService service;
+    IUserWebService service;
 
     @Inject
     private IPersonService personService;
@@ -127,9 +127,8 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
             if (!isAttributeRecognized(UserResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
-                response = service.searchUsers(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(),
-                                            searchReq.getStartIndex(), searchReq.getCount(), searchReq.getAttributes(),
-                                            searchReq.getExcludedAttributes());
+                response = service.searchUsers(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getStartIndex(),
+                        searchReq.getCount(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
 
@@ -140,7 +139,7 @@ public class UserServiceDecorator extends BaseScimWebService implements UserServ
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
                             searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                            searchRequest.getAttributes(), searchRequest.getExcludedAttributes(), searchReq, "userName");
+                            searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq, "userName");
 
         if (response==null) {
             //searchReq.getSortBy() is not null since we are providing userName as default

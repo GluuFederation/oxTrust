@@ -17,7 +17,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.UTF8_CHARSET_FRAGMENT;
  * Shared (rest-easy) interface of the SCIM service.
  * Besides SCIM server code, this class is also used by SCIM java client, edit carefully.
  */
-public interface FidoDeviceService {
+public interface IFidoDeviceWebService {
 
     @Path("/scim/v2/FidoDevices/{id}")
     @GET

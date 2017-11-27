@@ -48,7 +48,7 @@ public class ResourceTypeWS extends BaseScimWebService {
     private GroupWebService groupService;
 
     @Inject
-    private FidoWebService fidoService;
+    private FidoDeviceWebService fidoService;
 
     @Inject
     private ExtensionService extService;

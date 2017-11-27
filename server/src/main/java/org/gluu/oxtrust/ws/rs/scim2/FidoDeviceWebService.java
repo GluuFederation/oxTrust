@@ -37,16 +37,16 @@ import java.util.List;
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
- * Implementation of /FidoDevices endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.FidoServiceDecorator
- * is used to apply pre-validations on data. Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter
- * secures invocations
+ * Implementation of /FidoDevices endpoint. Methods here are intercepted and/or decorated.
+ * Class org.gluu.oxtrust.service.scim2.interceptor.FidoDeviceWebServiceDecorator is used to apply pre-validations on data.
+ * Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter secures invocations
  *
  * @author Val Pecaoco
  * Updated by jgomer on 2017-10-09.
  */
 @Named("scim2FidoDeviceEndpoint")
 @Path("/scim/v2/FidoDevices")
-public class FidoWebService extends BaseScimWebService implements FidoDeviceService {
+public class FidoDeviceWebService extends BaseScimWebService implements IFidoDeviceWebService {
 
     @Inject
     private IFidoDeviceService fidoDeviceService;
@@ -67,6 +67,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
     @Protected
     @ApiOperation(value = "Create device", response = FidoDeviceResource.class)
     public Response createDevice() {
+        log.debug("Executing web service method. createDevice");
         return getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Not implemented; device registration only happens via the FIDO API.");
     }
 
@@ -83,6 +84,7 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
 
         Response response;
         try{
+            log.debug("Executing web service method. getDeviceById");
             FidoDeviceResource fidoResource=new FidoDeviceResource();
 
             GluuCustomFidoDevice device=fidoDeviceService.getGluuCustomFidoDeviceById(userId, id);
@@ -121,6 +123,8 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
 
         Response response;
         try {
+            log.debug("Executing web service method. updateDevice");
+
             String userId=fidoDeviceResource.getUserId();
             GluuCustomFidoDevice device = fidoDeviceService.getGluuCustomFidoDeviceById(userId, id);
             if (device == null)
@@ -166,7 +170,9 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
 
         Response response;
         try {
-            //No need to check id being non-null. FidoDeviceService will give null if null is provided
+            log.debug("Executing web service method. deleteDevice");
+
+            //No need to check id being non-null. fidoDeviceService will give null if null is provided
             GluuCustomFidoDevice device = fidoDeviceService.getGluuCustomFidoDeviceById(null, id);
             if (device != null) {
                 fidoDeviceService.removeGluuCustomFidoDevice(device);
@@ -199,6 +205,8 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
 
         Response response;
         try {
+            log.debug("Executing web service method. searchDevices");
+
             VirtualListViewResponse vlv = new VirtualListViewResponse();
             List<BaseScimResource> resources = searchDevices(filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, vlv, endpointUrl);
 
@@ -226,9 +234,11 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
     @ApiOperation(value = "Search devices POST /.search", notes = "Returns a list of fido devices", response = ListResponse.class)
     public Response searchDevicesPost(SearchRequest searchRequest){
 
+        log.debug("Executing web service method. searchDevicesPost");
+
         URI uri=null;
         Response response = searchDevices(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
-                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(), searchRequest.getExcludedAttributes());
+                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
             uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
@@ -360,13 +370,14 @@ public class FidoWebService extends BaseScimWebService implements FidoDeviceServ
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
+        log.debug("Executing web service method. patchDevice");
         return getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Patch operation not supported for FIDO devices");
     }
 
     @PostConstruct
     public void setup(){
         //Do not use getClass() here... a typical weld issue...
-        endpointUrl=appConfiguration.getBaseEndpoint() + FidoWebService.class.getAnnotation(Path.class).value();
+        endpointUrl=appConfiguration.getBaseEndpoint() + FidoDeviceWebService.class.getAnnotation(Path.class).value();
     }
 
 }

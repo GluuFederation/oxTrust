@@ -39,9 +39,9 @@ import java.util.List;
 import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
- * Implementation of /Groups endpoint. Methods here are intercepted and/or decorated. Class org.gluu.oxtrust.service.scim2.interceptor.GroupServiceDecorator
- * is used to apply pre-validations on data. Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter
- * secures invocations
+ * Implementation of /Groups endpoint. Methods here are intercepted and/or decorated.
+ * Class org.gluu.oxtrust.service.scim2.interceptor.GroupWebServiceDecorator is used to apply pre-validations on data.
+ * Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter secures invocations
  *
  * @author Rahat Ali Date: 05.08.2015
  * Updated by jgomer on 2017-10-18
@@ -50,7 +50,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 @Path("/scim/v2/Groups")
 @Api(value = "/v2/Groups", description = "SCIM 2.0 Group Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)",
         authorizations = {@Authorization(value = "Authorization", type = "uma")})
-public class GroupWebService extends BaseScimWebService implements GroupService {
+public class GroupWebService extends BaseScimWebService implements IGroupWebService {
 
     @Inject
     private UserWebService userWebService;
@@ -74,6 +74,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
 
         Response response;
         try {
+            log.debug("Executing web service method. createGroup");
             GluuGroup gluuGroup=scim2GroupService.createGroup(group, endpointUrl, userWebService.getEndpointUrl());
 
             // For custom script: create group
@@ -106,6 +107,8 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
 
         Response response;
         try {
+            log.debug("Executing web service method. getGroupById");
+
             GroupResource group=new GroupResource();
             GluuGroup gluuGroup=groupService.getGroupByInum(id);  //gluuGroup is not null (check associated decorator method)
             scim2GroupService.transferAttributesToGroupResource(gluuGroup, group, endpointUrl, userWebService.getEndpointUrl());
@@ -141,6 +144,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
 
         Response response;
         try {
+            log.debug("Executing web service method. updateGroup");
             Pair<GluuGroup, GroupResource> pair=scim2GroupService.updateGroup(id, group, endpointUrl, userWebService.getEndpointUrl());
 
             // For custom script: update group
@@ -182,6 +186,7 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
 
         Response response;
         try {
+            log.debug("Executing web service method. deleteGroup");
             GluuGroup group=groupService.getGroupByInum(id);  //group cannot be null (check associated decorator method)
 
             // For custom script: delete group. Execute before actual deletion
@@ -219,6 +224,8 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
 
         Response response;
         try {
+            log.debug("Executing web service method. searchGroups");
+
             VirtualListViewResponse vlv = new VirtualListViewResponse();
             List<BaseScimResource> resources = scim2GroupService.searchGroups(filter, sortBy, SortOrder.getByValue(sortOrder),
                     startIndex, count, vlv, endpointUrl, userWebService.getEndpointUrl(), getMaxCount());
@@ -247,10 +254,12 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
     @ApiOperation(value = "Search group POST /.search", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
     public Response searchGroupsPost(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest){
 
+        log.debug("Executing web service method. searchGroupsPost");
+
         //Calling searchGroups here does not provoke that method's interceptor/decorator being called (only this one's)
         URI uri=null;
         Response response = searchGroups(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
-                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributes(), searchRequest.getExcludedAttributes());
+                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
             uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
@@ -277,6 +286,8 @@ public class GroupWebService extends BaseScimWebService implements GroupService 
 
         Response response;
         try{
+            log.debug("Executing web service method. patchGroup");
+
             String usersUrl=userWebService.getEndpointUrl();
             GroupResource group=new GroupResource();
             GluuGroup gluuGroup=groupService.getGroupByInum(id);  //group is not null (check associated decorator method)

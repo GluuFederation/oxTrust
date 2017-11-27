@@ -9,7 +9,7 @@ import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
-import org.gluu.oxtrust.ws.rs.scim2.GroupService;
+import org.gluu.oxtrust.ws.rs.scim2.IGroupWebService;
 import org.slf4j.Logger;
 
 import javax.annotation.Priority;
@@ -28,13 +28,13 @@ import javax.ws.rs.core.Response;
  */
 @Priority(Interceptor.Priority.APPLICATION)
 @Decorator
-public class GroupServiceDecorator extends BaseScimWebService implements GroupService {
+public class GroupWebServiceDecorator extends BaseScimWebService implements IGroupWebService {
 
     @Inject
     private Logger log;
 
     @Inject @Delegate @Any
-    GroupService service;
+    IGroupWebService service;
 
     @Inject
     private IGroupService groupService;
@@ -131,9 +131,8 @@ public class GroupServiceDecorator extends BaseScimWebService implements GroupSe
             if (!isAttributeRecognized(GroupResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
-                response = service.searchGroups(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(),
-                        searchReq.getStartIndex(), searchReq.getCount(), searchReq.getAttributes(),
-                        searchReq.getExcludedAttributes());
+                response = service.searchGroups(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getStartIndex(),
+                        searchReq.getCount(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
 
@@ -144,7 +143,7 @@ public class GroupServiceDecorator extends BaseScimWebService implements GroupSe
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
                 searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                searchRequest.getAttributes(), searchRequest.getExcludedAttributes(), searchReq, "displayName");
+                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq, "displayName");
 
         if (response==null) {
             //searchReq.getSortBy() is not null since we are providing userName as default

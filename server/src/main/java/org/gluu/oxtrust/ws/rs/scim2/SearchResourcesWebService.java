@@ -45,7 +45,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
     private GroupWebService groupWS;
 
     @Inject
-    private FidoWebService fidoWS;
+    private FidoDeviceWebService fidoWS;
 
     private ObjectMapper mapper=null;
 
@@ -60,7 +60,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
         SearchRequest searchReq = new SearchRequest();
         Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
                 searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                searchRequest.getAttributes(), searchRequest.getExcludedAttributes(), searchReq, null);
+                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq, null);
 
         if (response == null) {
             /*
@@ -73,8 +73,8 @@ public class SearchResourcesWebService extends BaseScimWebService {
                 List<JsonNode> resources = new ArrayList<JsonNode>();
                 Pair<Integer, Integer> totals = computeResults(searchReq, resources);
 
-                ListResponseJsonSerializer custSerializer = new ListResponseJsonSerializer(resourceSerializer, searchReq.getAttributes(),
-                        searchReq.getExcludedAttributes(), searchReq.getCount() == 0);
+                ListResponseJsonSerializer custSerializer = new ListResponseJsonSerializer(resourceSerializer, searchReq.getAttributesStr(),
+                        searchReq.getExcludedAttributesStr(), searchReq.getCount() == 0);
                 if (resources.size() > 0)
                     custSerializer.setJsonResources(resources);
 
