@@ -21,7 +21,7 @@ public interface Constants {
 
     String LIST_RESPONSE_SCHEMA_ID = "urn:ietf:params:scim:api:messages:2.0:ListResponse";
 
-    String SEARCH_REQUEST_SCHEMA_ID = "urn:ietf:params:scim:schemas:core:2.0:SearchRequest";
+    String SEARCH_REQUEST_SCHEMA_ID = "urn:ietf:params:scim:api:messages:2.0:SearchRequest";
 
     String PATCH_REQUEST_SCHEMA_ID = "urn:ietf:params:scim:api:messages:2.0:PatchOp";
 
