@@ -1158,6 +1158,11 @@
                 "type": "string",
                 "minLength": 1
             }
+        },
+        "legacyDynamicRegistrationScopeParam": {
+            "id": "legacyDynamicRegistrationScopeParam",
+            "description": "Legacy Dynamic Registration Scopes JSON Array Param.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1268,6 +1273,7 @@
         "corsConfigurationFilters",
         "logClientIdOnClientAuthentication",
         "logClientNameOnClientAuthentication",
-        "authorizationRequestCustomAllowedParameters"
+        "authorizationRequestCustomAllowedParameters",
+        "legacyDynamicRegistrationScopeParam"
     ]
 }
