@@ -83,9 +83,10 @@
                                                                  rendered="#{updateScopeDescriptionAction.iconExist}"
                                                                  width="100%">
                                                         <h:panelGroup layout="block">
-                                                            <h:graphicImage
+                                                            <!-- <h:graphicImage
                                                                     fileName="#{updateScopeDescriptionAction.iconImageSourceName}"
-                                                                    value="#{updateScopeDescriptionAction.iconImageThumbData}"/>
+                                                                    value="#{updateScopeDescriptionAction.iconImageThumbData}"/> -->
+                                                           <img src="#{request.contextPath}/servlet/umalogo?inum=#{updateScopeDescriptionAction.scopeInum}" />
                                                         </h:panelGroup>
 
                                                         <richext:spacer height="8"/>
