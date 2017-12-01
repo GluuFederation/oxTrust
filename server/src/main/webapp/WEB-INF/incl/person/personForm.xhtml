@@ -196,22 +196,32 @@
                                                                     id="custId_#{_custAttrIdx}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
-                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'User Status') and (_custAttr.metadata.displayName ne 'Password')}" >
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value ne 'boolean') and (_custAttr.metadata.displayName ne 'Password') and (_custAttr.metadata.dataType.value ne 'certificate')}" >
 																<rich:validator event="blur"/>
 																<f:validator validatorId="attributeValidator" />                                                              
-                                                            </rich:inplaceInput>                                                      
+                                                            </rich:inplaceInput>
 
                                                             <h:selectOneMenu styleClass="form-control"
                                                                              value="#{updatePersonAction.gluuStatus}"
                                                                              required="true"
                                                                              id="statusId"
-                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'User Status')}">
+                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean')}">
                                                                 <f:selectItems
                                                                         value="#{updatePersonAction.activeInactiveStatuses}"
                                                                         var="_type" itemLabel="#{_type.displayName}"/>
                                                                 <f:converter
                                                                         converterId="org.gluu.jsf2.converter.EnumConverter"/>
                                                             </h:selectOneMenu>
+                                                            
+                                                            <h:inputTextarea cols="40" rows="3"
+                                                            		styleClass="form-control"
+                                                                    value="#{_custAttr.values[_valueIdx]}"
+                                                                    required="#{_mustEnter and empty param['sv']}"
+                                                                    requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'certificate')}" >
+																<rich:validator event="blur"/>
+																<f:validator validatorId="attributeValidator" />                                                              
+                                                            </h:inputTextarea>
                                                         </div>
                                                         
                                                         <h:outputText value="&#160;"/>                                                        
