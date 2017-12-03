@@ -287,7 +287,7 @@ public class UpdateOrganizationAction implements Serializable {
 		smtpConfiguration.setFromEmailAddress(appliance.getSmtpFromEmailAddress());
 		smtpConfiguration.setRequiresAuthentication(StringHelper.toBoolean(appliance.getSmtpRequiresAuthentication(), false));
 		smtpConfiguration.setUserName(appliance.getSmtpUserName());
-		smtpConfiguration.setPasswordDecrypted(applianceService.getDecryptedSmtpPassword(appliance));
+		smtpConfiguration.setPasswordDecrypted(applianceService.getDecryptedSmtpPassword(appliance, true));
 
 //		setSmtpPassword(appliance.getSmtpPassword());
 		smtpConfiguration.setPassword(appliance.getSmtpPassword());
@@ -312,10 +312,9 @@ public class UpdateOrganizationAction implements Serializable {
 		boolean result = mailService.sendMail(smtpConfiguration, appliance.getSmtpFromEmailAddress(), appliance.getSmtpFromName(), appliance.getSmtpFromEmailAddress(), null,
 				messageSubject, messagePlain, messageHtml);
 
-		log.info("Connection Successful");
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
-
 		if (result) {
+			log.info("Connection Successful");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
