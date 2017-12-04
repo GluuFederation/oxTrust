@@ -15,12 +15,6 @@
 
     <navigation-case>
       <from-action>#{authenticator.preAuthenticate}</from-action>
-      <from-outcome>true</from-outcome>
-      <to-view-id>/home.xhtml</to-view-id>
-    </navigation-case>
-
-    <navigation-case>
-      <from-action>#{authenticator.preAuthenticate}</from-action>
       <from-outcome>false</from-outcome>
       <to-view-id>/error.xhtml</to-view-id>
       <redirect/>
