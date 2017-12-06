@@ -166,7 +166,7 @@ public class UpdatePersonAction implements Serializable {
 		this.update = false;
 		this.person = new GluuCustomPerson();
 
-		initAttributes();
+		initAttributes(true);
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -194,7 +194,7 @@ public class UpdatePersonAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		initAttributes();
+		initAttributes(false);
 		this.gluuStatus = this.person.getStatus();
 		List <String> oxexternal = this.person.getOxExternalUid();
 		externalAuthCustomAttributes = new ArrayList<String>();
@@ -385,8 +385,8 @@ public class UpdatePersonAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	private void initAttributes() {
-		if (externalUpdateUserService.isEnabled()) {
+	private void initAttributes(boolean add) {
+		if (add && externalUpdateUserService.isEnabled()) {
 			externalUpdateUserService.executeExternalNewUserMethods(this.person);
 		}
 
