@@ -9,6 +9,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+#if ($casParams.enabled)
     <!--
        | The CAS service registry defines verified relying parties by endpoint URI.
        | The default implementation treats the ID of each entry as a regular expression defining a logical group of
@@ -20,21 +21,19 @@
           class="%{idp.cas.serviceRegistryClass:net.shibboleth.idp.cas.service.PatternServiceRegistry}">
         <property name="definitions">
             <list>
-                <!--
                 <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
-                      c:regex="https://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
+                      c:regex="$casParams.authorizedToProxyPattern"
                       p:group="proxying-services"
                       p:authorizedToProxy="true"
                       p:singleLogoutParticipant="true" />
                 <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
-                      c:regex="http://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
+                      c:regex="$casParams.unauthorizedToProxyPattern"
                       p:group="non-proxying-services"
                       p:authorizedToProxy="false" />
-                -->
             </list>
         </property>
     </bean>
-
+#end
     <!--
        | Advanced CAS configuration.
        |
