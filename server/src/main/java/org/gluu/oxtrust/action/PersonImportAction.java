@@ -559,10 +559,16 @@ public class PersonImportAction implements Serializable {
 			}
 
 			try {
-				if (externalUpdateUserService.isEnabled()) {
+				boolean runScript = externalUpdateUserService.isEnabled();
+				if (runScript) {
 					externalUpdateUserService.executeExternalAddUserMethods(this.person);
                 }
+
 				personService.addPerson(this.person);
+
+				if (runScript) {
+					externalUpdateUserService.executeExternalPostAddUserMethods(this.person);
+                }
 			} catch (Exception ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
 
