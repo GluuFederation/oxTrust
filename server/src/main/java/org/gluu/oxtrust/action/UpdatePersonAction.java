@@ -268,12 +268,16 @@ public class UpdatePersonAction implements Serializable {
 		// Sync email, in reverse ("oxTrustEmail" <- "mail")
 		this.person = ServiceUtil.syncEmailReverse(this.person, true);
 
+		boolean runScript = externalUpdateUserService.isEnabled();
 		if (update) {
 			try {
-				if (externalUpdateUserService.isEnabled()) {
+				if (runScript) {
 					externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 				}
 				personService.updatePerson(this.person);
+				if (runScript) {
+					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
+				}
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update person {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update person '#{updatePersonAction.person.displayName}'");
@@ -309,10 +313,13 @@ public class UpdatePersonAction implements Serializable {
 			}
 
 			try {
-				if (externalUpdateUserService.isEnabled()) {
+				if (runScript) {
 					externalUpdateUserService.executeExternalAddUserMethods(this.person);
 				}
 				personService.addPerson(this.person);
+				if (runScript) {
+					externalUpdateUserService.executeExternalPostAddUserMethods(this.person);
+				}
 			} catch (Exception ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person'");
@@ -355,10 +362,14 @@ public class UpdatePersonAction implements Serializable {
 		if (update) {
 			// Remove person
 			try {
-				if (externalUpdateUserService.isEnabled()) {
+				boolean runScript = externalUpdateUserService.isEnabled();
+				if (runScript) {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
 				}
 				memberService.removePerson(this.person);
+				if (runScript) {
+					externalUpdateUserService.executeExternalPostDeleteUserMethods(this.person);
+				}
 
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Person '#{updatePersonAction.person.displayName}' removed successfully");
 				conversationService.endConversation();
