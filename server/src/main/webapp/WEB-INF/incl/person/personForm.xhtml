@@ -129,7 +129,7 @@
     <section class="content-header">
         <h1 style="color: #333;">
             #{msg['person.users']}
-            <small><i class="fa fa-caret-right" style="color: #333 !important;"></i>#{msg['person.updateUser']}</small>
+            <small><i class="fa fa-caret-right" style="color: #333 !important;"></i>  #{(updatePersonAction.update) ? msg['person.updateUser'] : msg['person.addUser'] }</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
