@@ -16,13 +16,14 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 /**
  * This class checks if filter, attributes or excludedAttributes query param contains resource references ($ref) and if so
  * drops the dollar sign of occurrences. This is required for introspection utilities to make their work more accurately.
- * Ideally this could have been implemented with a decorator, but pollutes the code a lot, so this way is more concise
+ * This could have been implemented with a decorator, but pollutes the code a lot, so this way is more concise. Using a
+ * resteasy filter is not convenient since it is not called if he call is internal (not an HTTP one)
  * Created by jgomer on 2017-10-10.
  */
 @RefAdjusted
 @Interceptor
 @Priority(Interceptor.Priority.APPLICATION+1)
-public class AttributePathInterceptor {
+public class ReferenceURIInterceptor {
 
     @Inject
     private Logger log;

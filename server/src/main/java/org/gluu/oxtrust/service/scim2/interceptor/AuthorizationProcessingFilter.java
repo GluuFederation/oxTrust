@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.ws.rs.scim2;
+package org.gluu.oxtrust.service.scim2.interceptor;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.exception.UmaProtectionException;
@@ -7,6 +7,7 @@ import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
+import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.slf4j.Logger;
 import org.xdi.oxauth.client.ClientInfoClient;
 import org.xdi.oxauth.client.ClientInfoResponse;
