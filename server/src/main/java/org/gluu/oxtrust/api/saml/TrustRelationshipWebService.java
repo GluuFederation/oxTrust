@@ -6,6 +6,7 @@
 package org.gluu.oxtrust.api.saml;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,11 +23,12 @@ import org.gluu.oxtrust.util.OxTrustConstants;
  * @author Dmitry Ognyannikov
  */
 @Path("/saml/tr")
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 public class TrustRelationshipWebService {
     //TODO
     
     @GET
-    @Path("/read/{inum}/")
+    @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
     public String read(@PathParam("inum") String inum) {
         String result = null;
@@ -44,7 +46,7 @@ public class TrustRelationshipWebService {
     }
     
     @PUT
-    @Path("/update/{inum}/")
+    @Path("/update/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
     public String update(@PathParam("inum") String inum) {
         //TODO
@@ -52,7 +54,7 @@ public class TrustRelationshipWebService {
     }
     
     @DELETE
-    @Path("/delete/{inum}/")
+    @Path("/delete/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
     public String delete(@PathParam("inum") String inum) {
         //TODO
@@ -60,7 +62,7 @@ public class TrustRelationshipWebService {
     }
     
     @GET
-    @Path("/list/")
+    @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
     public String list() {
         String list = null;
