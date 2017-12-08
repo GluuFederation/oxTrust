@@ -8,6 +8,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
@@ -48,6 +52,10 @@ public class SearchResourcesWebService extends BaseScimWebService {
     private FidoDeviceWebService fidoWS;
 
     private ObjectMapper mapper=null;
+
+    private int NUM_RESOURCE_TYPES;
+
+    private Class resourceClasses[];
 
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
@@ -120,7 +128,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
         //THIS ALGORITHM IS CONTRIVED, IF YOU CHANGE IT ENSURE TEST CASES STILL PASS...
 
         //Move forward to skip the searches that might have no results and find the first one starting at index = searchRequest.getStartIndex()
-        for (i=0; i<3 && !resultsAvailable; i++) {
+        for (i=0; i< NUM_RESOURCE_TYPES && !resultsAvailable; i++) {
             tree=getListResponseTree(i, searchRequest);
 
             if (tree!=null) {
@@ -139,7 +147,9 @@ public class SearchResourcesWebService extends BaseScimWebService {
             }
         }
 
-        if (resultsAvailable){  //Accumulate till we have searchRequest.getCount() results or exhaust data
+        if (resultsAvailable){
+
+            //Accumulate till we have searchRequest.getCount() results or exhaust data
 
             Iterator<JsonNode> iterator = tree.get("Resources").getElements();
             while (iterator.hasNext() && totalInPage < searchRequest.getCount()){
@@ -153,7 +163,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
                 }
             }
 
-            while (i<3 && totalInPage < searchRequest.getCount()){
+            while (i< NUM_RESOURCE_TYPES && totalInPage < searchRequest.getCount()){
 
                 resultsAvailable=false;
                 tree = getListResponseTree(i, searchRequest);
@@ -173,6 +183,14 @@ public class SearchResourcesWebService extends BaseScimWebService {
 
                 i++;
             }
+
+            //Continue the remainder of searches to just compute final value for totalResults
+            while (i< NUM_RESOURCE_TYPES){
+                tree = getListResponseTree(i, searchRequest);
+                if (tree!=null)
+                    totalResults += tree.get("totalResults").asInt();
+                i++;
+            }
         }
 
         //Revert startIndex to original
@@ -190,6 +208,8 @@ public class SearchResourcesWebService extends BaseScimWebService {
     private JsonNode getListResponseTree(int index, SearchRequest searchRequest){
 
         try {
+            log.debug("getListResponseTree. Resource type is: {}", ScimResourceUtil.getType(resourceClasses[index]));
+
             Response r = null;
             switch (index) {
                 case 0:
@@ -202,9 +222,6 @@ public class SearchResourcesWebService extends BaseScimWebService {
                     r = fidoWS.searchDevicesPost(searchRequest);
                     break;
             }
-
-            String type[] = {"User", "Group", "FidoDevice"};
-            log.debug("getListResponseTree. Resource type is: {}", type[index]);
 
             if (r.getStatus()!=OK.getStatusCode())
                 throw new Exception("Intermediate POST search returned " + r.getStatus());
@@ -226,6 +243,10 @@ public class SearchResourcesWebService extends BaseScimWebService {
         //Do not use getClass() here... a typical weld issue...
         endpointUrl=appConfiguration.getBaseEndpoint() + SearchResourcesWebService.class.getAnnotation(Path.class).value();
         mapper=new ObjectMapper();
+
+        //Do not alter the order of appearance
+        resourceClasses=new Class[]{UserResource.class, GroupResource.class, FidoDeviceResource.class};
+        NUM_RESOURCE_TYPES =resourceClasses.length;
     }
 
 }
