@@ -446,7 +446,10 @@ public class PersonImportAction implements Serializable {
 		if (GluuAttributeDataType.STRING.equals(attribute.getDataType())) {
 			return value;
 		} else if (GluuAttributeDataType.BOOLEAN.equals(attribute.getDataType())) {
-			return GluuBoolean.getByValue(value).toString();
+			GluuBoolean gluuBoolean = GluuBoolean.getByValue(value);
+			if (gluuBoolean != null) {
+				return GluuBoolean.getByValue(value).toString();
+			}
 		}
 		
 		return null;
