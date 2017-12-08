@@ -65,11 +65,7 @@ public class ApplicationFactory {
 
 		String password = smtpConfiguration.getPassword();
 		if (StringHelper.isNotEmpty(password)) {
-			try {
-				smtpConfiguration.setPasswordDecrypted(encryptionService.decrypt(password));
-			} catch (EncryptionException ex) {
-				log.error("Failed to decript SMTP user password", ex);
-			}
+			smtpConfiguration.setPasswordDecrypted(applianceService.getDecryptedSmtpPassword(appliance, true));
 		}
 		
 		return smtpConfiguration;
