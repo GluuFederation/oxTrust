@@ -6,11 +6,15 @@
 package org.gluu.oxtrust.api.saml;
 
 import javax.inject.Inject;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.gluu.oxtrust.util.OxTrustConstants;
 
 /**
  * WS endpoint for TrustRelationship actions.
@@ -21,24 +25,47 @@ import javax.ws.rs.core.MediaType;
 public class TrustRelationshipWebService {
     //TODO
     
-    public void read() {
+    @GET
+    @Path("/read/{inum}/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String read(@PathParam("inum") String inum) {
+        String result = null;
         //TODO
+        return result;
     }
     
-    public void create() {
+    @POST
+    @Path("/create")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String create() {
+        String inum = null;
         //TODO
+        return inum;
     }
     
-    public void update() {
+    @PUT
+    @Path("/update/{inum}/")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String update(@PathParam("inum") String inum) {
         //TODO
+        return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    public void delete() {
+    @DELETE
+    @Path("/delete/{inum}/")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String delete(@PathParam("inum") String inum) {
         //TODO
+        return OxTrustConstants.RESULT_SUCCESS;
     }
     
-    public void list() {
+    @GET
+    @Path("/list/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String list() {
+        String list = null;
         //TODO
+        return list;
     }
     
     
