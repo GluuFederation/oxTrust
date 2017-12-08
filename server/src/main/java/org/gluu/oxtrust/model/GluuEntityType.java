@@ -10,6 +10,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapEnum;
  * 
  * @author Shekhar Laad Date: 25.08.2016
  */
+
 public enum GluuEntityType implements LdapEnum {
 
 	SingleSP("Single SP", "Single SP"), FederationAggregate("Federation/Aggregate", "Federation/Aggregate");

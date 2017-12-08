@@ -18,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 
@@ -54,7 +55,7 @@ public class TrustRelationshipWebService {
     @POST
     @Path("/create")
     @Produces(MediaType.TEXT_PLAIN)
-    public String create(String trustRelationship, @Context HttpServletResponse response) {
+    public String create(GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         try {
             String inum = null;
             //TODO
@@ -69,7 +70,7 @@ public class TrustRelationshipWebService {
     @PUT
     @Path("/update/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String update(@PathParam("inum") String inum, String trustRelationship, @Context HttpServletResponse response) {
+    public String update(@PathParam("inum") String inum, GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         try {
             //TODO
             return OxTrustConstants.RESULT_SUCCESS;
