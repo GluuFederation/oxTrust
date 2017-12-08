@@ -45,6 +45,7 @@ import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
@@ -444,6 +445,11 @@ public class PersonImportAction implements Serializable {
 	private String getTypedValue(GluuAttribute attribute, String value) {
 		if (GluuAttributeDataType.STRING.equals(attribute.getDataType())) {
 			return value;
+		} else if (GluuAttributeDataType.BOOLEAN.equals(attribute.getDataType())) {
+			GluuBoolean gluuBoolean = GluuBoolean.getByValue(value);
+			if (gluuBoolean != null) {
+				return GluuBoolean.getByValue(value).toString();
+			}
 		}
 		
 		return null;

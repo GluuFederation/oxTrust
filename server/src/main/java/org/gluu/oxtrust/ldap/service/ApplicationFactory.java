@@ -17,7 +17,6 @@ import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
 import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Holds factory methods to create services
@@ -29,13 +28,10 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 public class ApplicationFactory {
 
     @Inject
-    private ApplianceService applianceService;
+    private Logger log;
 
     @Inject
-    private Logger log;
-    
-    @Inject
-    private EncryptionService encryptionService;
+    private ApplianceService applianceService;
 
     @Produces @ApplicationScoped
    	public CacheConfiguration getCacheConfiguration() {
@@ -65,11 +61,7 @@ public class ApplicationFactory {
 
 		String password = smtpConfiguration.getPassword();
 		if (StringHelper.isNotEmpty(password)) {
-			try {
-				smtpConfiguration.setPasswordDecrypted(encryptionService.decrypt(password));
-			} catch (EncryptionException ex) {
-				log.error("Failed to decript SMTP user password", ex);
-			}
+			smtpConfiguration.setPasswordDecrypted(applianceService.getDecryptedSmtpPassword(appliance, true));
 		}
 		
 		return smtpConfiguration;
