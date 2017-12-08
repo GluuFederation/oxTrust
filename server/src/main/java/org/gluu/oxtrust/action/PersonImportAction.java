@@ -450,7 +450,6 @@ public class PersonImportAction implements Serializable {
 			if (gluuBoolean != null) {
 				return GluuBoolean.getByValue(value).toString();
 			}
-			return GluuBoolean.getByValue(value).toString();
 		}
 		
 		return null;
