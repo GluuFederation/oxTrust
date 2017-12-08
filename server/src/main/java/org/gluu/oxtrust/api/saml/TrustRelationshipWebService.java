@@ -20,4 +20,26 @@ import javax.ws.rs.core.MediaType;
 @Path("/saml/tr")
 public class TrustRelationshipWebService {
     //TODO
+    
+    public void read() {
+        //TODO
+    }
+    
+    public void create() {
+        //TODO
+    }
+    
+    public void update() {
+        //TODO
+    }
+    
+    public void delete() {
+        //TODO
+    }
+    
+    public void list() {
+        //TODO
+    }
+    
+    
 }
