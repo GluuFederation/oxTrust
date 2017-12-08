@@ -26,6 +26,7 @@ import org.gluu.oxtrust.ldap.service.ImapDataService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -89,6 +90,9 @@ public class UserProfileAction implements Serializable {
 
 	@Inject
 	private Identity identity;
+
+	@Inject
+	private ExternalUpdateUserService externalUpdateUserService;
 
 	private GluuCustomPerson person;
 
@@ -159,7 +163,15 @@ public class UserProfileAction implements Serializable {
 			GluuCustomPerson person = this.person;
 			// TODO: Reffactor
 			person.setGluuOptOuts(optOuts.size() == 0 ? null : optOuts);
-			personService.updatePerson(person);
+
+			boolean runScript = externalUpdateUserService.isEnabled();
+			if (runScript) {
+				externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
+			}
+			personService.updatePerson(this.person);
+			if (runScript) {
+				externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
+			}
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update profile {}", person.getInum(), ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update profile '#{userProfileAction.person.displayName}'");
