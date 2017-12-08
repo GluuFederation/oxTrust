@@ -16,7 +16,6 @@ import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor;
 import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -28,7 +27,6 @@ import org.xdi.util.Pair;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -107,21 +105,6 @@ public class Scim2GroupService implements Serializable {
         gluuGroup.setInum(inum);
         gluuGroup.setDn(dn);
         gluuGroup.setIname(groupService.generateInameForNewGroup(gluuGroup.getDisplayName().replaceAll(" ", "")));
-
-    }
-
-    private void checkDisplayNameExistence(String displayName, String id) throws Exception{
-        //Validate if there is an attempt to supply a displayName already in use by a group other than current
-
-        GluuGroup groupToFind = new GluuGroup();
-        groupToFind.setDisplayName(displayName);
-
-        List<GluuGroup> list=groupService.findGroups(groupToFind,2 );
-        if (list!=null && list.size()>0){
-            for (GluuGroup g : list)
-                if (!g.getInum().equals(id))
-                    throw new DuplicateEntryException("Duplicate displayName value: " + displayName);
-        }
 
     }
 
@@ -208,22 +191,15 @@ public class Scim2GroupService implements Serializable {
 
     public Pair<GluuGroup, GroupResource> updateGroup(String id, GroupResource group, String groupsUrl, String usersUrl) throws Exception {
 
-        GluuGroup gluuGroup = groupService.getGroupByInum(id);
+        GluuGroup gluuGroup = groupService.getGroupByInum(id);    //This is never null (see decorator involved)
         GroupResource tmpGroup=new GroupResource();
+        transferAttributesToGroupResource(gluuGroup, tmpGroup, groupsUrl, usersUrl);
 
-        if (gluuGroup!=null){
-            checkDisplayNameExistence(group.getDisplayName(), id);
-            transferAttributesToGroupResource(gluuGroup, tmpGroup, groupsUrl, usersUrl);
+        long now=System.currentTimeMillis();
+        tmpGroup.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
-            long now=System.currentTimeMillis();
-            tmpGroup.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
-
-            tmpGroup=(GroupResource) ScimResourceUtil.transferToResourceReplace(group, tmpGroup, extService.getResourceExtensions(group.getClass()));
-
-            replaceGroupInfo(gluuGroup, tmpGroup, usersUrl);
-        }
-        else
-            throw new NotFoundException("Group resource with " + id + " not found");
+        tmpGroup=(GroupResource) ScimResourceUtil.transferToResourceReplace(group, tmpGroup, extService.getResourceExtensions(group.getClass()));
+        replaceGroupInfo(gluuGroup, tmpGroup, usersUrl);
 
         return new Pair<GluuGroup, GroupResource>(gluuGroup, tmpGroup);
 

@@ -93,8 +93,8 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
 
     }
 
-    public Response searchDevices(String filter, String sortBy, String sortOrder, Integer startIndex, Integer count,
-                                    String attrsList, String excludedAttrsList) {
+    public Response searchDevices(String filter, Integer startIndex, Integer count, String sortBy, String sortOrder,
+                                  String attrsList, String excludedAttrsList) {
 
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
@@ -105,8 +105,8 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
             if (!isAttributeRecognized(FidoDeviceResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
-                response = service.searchDevices(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getStartIndex(),
-                        searchReq.getCount(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
+                response = service.searchDevices(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+                        searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
 

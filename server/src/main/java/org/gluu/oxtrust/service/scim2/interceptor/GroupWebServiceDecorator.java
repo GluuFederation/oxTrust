@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.IGroupWebService;
+import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.slf4j.Logger;
 
 import javax.annotation.Priority;
@@ -19,6 +20,7 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Aims at decorating SCIM group service methods. Currently applies validations via ResourceValidator class or other custom
@@ -52,6 +54,35 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
 
     }
 
+    private void checkDisplayNameExistence(String displayName) throws DuplicateEntryException{
+
+        boolean flag=false;
+        try {
+            flag=groupService.getGroupByDisplayName(displayName) != null;
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
+        if (flag)
+            throw new DuplicateEntryException("Duplicate group displayName value: " + displayName);
+
+    }
+
+    private void checkDisplayNameExistence(String displayName, String id) throws DuplicateEntryException{
+        //Validate if there is an attempt to supply a displayName already in use by a group other than current
+
+        GluuGroup groupToFind = new GluuGroup();
+        groupToFind.setDisplayName(displayName);
+
+        List<GluuGroup> list=groupService.findGroups(groupToFind,2 );
+        if (list!=null && list.size()>0){
+            for (GluuGroup g : list)
+                if (!g.getInum().equals(id))
+                    throw new DuplicateEntryException("Duplicate group displayName value: " + displayName);
+        }
+
+    }
+
     public Response createGroup(GroupResource group, String attrsList, String excludedAttrsList){
 
         Response response;
@@ -60,9 +91,14 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
             group.setExternalId(null);
 
             executeDefaultValidation(group);
+            checkDisplayNameExistence(group.getDisplayName());
             assignMetaInformation(group);
             //Proceed with actual implementation of createGroup method
             response=service.createGroup(group, attrsList, excludedAttrsList);
+        }
+        catch (DuplicateEntryException e){
+            log.error(e.getMessage());
+            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
         }
         catch (SCIMException e){
             log.error("Validation check at createGroup returned: {}", e.getMessage());
@@ -97,9 +133,15 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
             response=validateExistenceOfGroup(id);
             if (response==null) {
                 executeDefaultValidation(group);
+                checkDisplayNameExistence(group.getDisplayName(), id);
+
                 //Proceed with actual implementation of updateGroup method
                 response = service.updateGroup(group, id, attrsList, excludedAttrsList);
             }
+        }
+        catch (DuplicateEntryException e){
+            log.error(e.getMessage());
+            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
         }
         catch (SCIMException e){
             log.error("Validation check at updateGroup returned: {}", e.getMessage());
@@ -119,7 +161,7 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
 
     }
 
-    public Response searchGroups(String filter, String sortBy, String sortOrder, Integer startIndex, Integer count,
+    public Response searchGroups(String filter, Integer startIndex, Integer count, String sortBy, String sortOrder,
                                  String attrsList, String excludedAttrsList){
 
         SearchRequest searchReq=new SearchRequest();
@@ -131,8 +173,8 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
             if (!isAttributeRecognized(GroupResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
-                response = service.searchGroups(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getStartIndex(),
-                        searchReq.getCount(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
+                response = service.searchGroups(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+                        searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
 

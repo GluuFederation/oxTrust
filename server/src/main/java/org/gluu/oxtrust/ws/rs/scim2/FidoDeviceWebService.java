@@ -196,10 +196,10 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @ApiOperation(value = "Search devices", notes = "Returns a list of devices", response = ListResponse.class)
     public Response searchDevices(
             @QueryParam(QUERY_PARAM_FILTER) String filter,
-            @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
-            @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
+            @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
+            @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
@@ -237,8 +237,8 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         log.debug("Executing web service method. searchDevicesPost");
 
         URI uri=null;
-        Response response = searchDevices(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
-                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
+        Response response = searchDevices(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
+                searchRequest.getSortBy(), searchRequest.getSortOrder(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
             uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);

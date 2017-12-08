@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.IUserWebService;
+import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.slf4j.Logger;
 
 import javax.annotation.Priority;
@@ -19,6 +20,8 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Aims at decorating SCIM user service methods. Currently applies validations via ResourceValidator class or other custom
@@ -52,15 +55,44 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
 
     }
 
+    private void checkUidExistence(String uid) throws DuplicateEntryException{
+        if (personService.getPersonByUid(uid) != null)
+            throw new DuplicateEntryException("Duplicate UID value: " + uid);
+    }
+
+    private void checkUidExistence(String uid, String id) throws DuplicateEntryException{
+
+        // Validate if there is an attempt to supply a userName already in use by a user other than current
+        List<GluuCustomPerson> list=null;
+        try{
+            list=personService.findPersonsByUids(Collections.singletonList(uid), new String[]{"inum"});
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
+        if (list!=null && list.size()>0){
+            for (GluuCustomPerson p : list)
+                if (!p.getInum().equals(id))
+                    throw new DuplicateEntryException("Duplicate UID value: " + uid);
+        }
+
+    }
+
     public Response createUser(UserResource user, String attrsList, String excludedAttrsList) {
 
         Response response;
         try {
             executeDefaultValidation(user);
+            checkUidExistence(user.getUserName());
+
             assignMetaInformation(user);
             ScimResourceUtil.adjustPrimarySubAttributes(user);
             //Proceed with actual implementation of createUser method
             response = service.createUser(user, attrsList, excludedAttrsList);
+        }
+        catch (DuplicateEntryException e){
+            log.error(e.getMessage());
+            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
         }
         catch (SCIMException e){
             log.error("Validation check at createUser returned: {}", e.getMessage());
@@ -92,9 +124,15 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
             response=validateExistenceOfUser(id);
             if (response==null) {
                 executeDefaultValidation(user);
+                checkUidExistence(user.getUserName(), id);
+
                 //Proceed with actual implementation of updateUser method
                 response = service.updateUser(user, id, attrsList, excludedAttrsList);
             }
+        }
+        catch (DuplicateEntryException e){
+            log.error(e.getMessage());
+            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
         }
         catch (SCIMException e){
             log.error("Validation check at updateUser returned: {}", e.getMessage());
@@ -115,7 +153,7 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
 
     }
 
-    public Response searchUsers(String filter, String sortBy, String sortOrder, Integer startIndex, Integer count,
+    public Response searchUsers(String filter, Integer startIndex, Integer count, String sortBy, String sortOrder,
                                 String attrsList, String excludedAttrsList){
 
         SearchRequest searchReq=new SearchRequest();
@@ -127,8 +165,8 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
             if (!isAttributeRecognized(UserResource.class, searchReq.getSortBy()))
                 response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
             else
-                response = service.searchUsers(searchReq.getFilter(), searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getStartIndex(),
-                        searchReq.getCount(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
+                response = service.searchUsers(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+                        searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
 

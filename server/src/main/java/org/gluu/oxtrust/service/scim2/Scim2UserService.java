@@ -11,7 +11,7 @@ import java.util.*;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.NotFoundException;
+import javax.management.InvalidAttributeValueException;
 
 import com.unboundid.ldap.sdk.Filter;
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +33,6 @@ import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -89,23 +88,6 @@ public class Scim2UserService implements Serializable {
 
     @Inject
     private LdapEntryManager ldapEntryManager;
-
-    private void checkUidExistence(String uid) throws Exception{
-        if (personService.getPersonByUid(uid) != null)
-            throw new DuplicateEntryException("Duplicate UID value: " + uid);
-    }
-
-    private void checkUidExistence(String uid, String id) throws Exception{
-
-        // Validate if there is an attempt to supply a userName already in use by a user other than current
-        List<GluuCustomPerson> list=personService.findPersonsByUids(Collections.singletonList(uid), new String[]{"inum"});
-        if (list!=null && list.size()>0){
-            for (GluuCustomPerson p : list)
-                if (!p.getInum().equals(id))
-                    throw new DuplicateEntryException("Duplicate UID value: " + uid);
-        }
-
-    }
 
     private String[] getComplexMultivaluedAsArray(List items){
 
@@ -407,7 +389,6 @@ public class Scim2UserService implements Serializable {
 
         String userName=user.getUserName();
         log.info("Preparing to create user {}", userName);
-        checkUidExistence(userName);
 
         //There is no need to check attributes mutability in this case as there are no original attributes
         //(the resource does not exist yet)
@@ -429,24 +410,18 @@ public class Scim2UserService implements Serializable {
         return gluuPerson;
     }
 
-    public Pair<GluuCustomPerson, UserResource> updateUser(String id, UserResource user, String url) throws Exception {
+    public Pair<GluuCustomPerson, UserResource> updateUser(String id, UserResource user, String url) throws InvalidAttributeValueException {
 
-        GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
+        GluuCustomPerson gluuPerson = personService.getPersonByInum(id);    //This is never null (see decorator involved)
         UserResource tmpUser=new UserResource();
 
-        if (gluuPerson!=null){
-            checkUidExistence(user.getUserName(), id);
+        transferAttributesToUserResource(gluuPerson, tmpUser, url);
 
-            transferAttributesToUserResource(gluuPerson, tmpUser, url);
+        long now=System.currentTimeMillis();
+        tmpUser.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
-            long now=System.currentTimeMillis();
-            tmpUser.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
-
-            tmpUser=(UserResource) ScimResourceUtil.transferToResourceReplace(user, tmpUser, extService.getResourceExtensions(user.getClass()));
-            replacePersonInfo(gluuPerson, tmpUser);
-        }
-        else
-            throw new NotFoundException("User resource with " + id + " not found");
+        tmpUser=(UserResource) ScimResourceUtil.transferToResourceReplace(user, tmpUser, extService.getResourceExtensions(user.getClass()));
+        replacePersonInfo(gluuPerson, tmpUser);
 
         return new Pair<GluuCustomPerson, UserResource>(gluuPerson, tmpUser);
 

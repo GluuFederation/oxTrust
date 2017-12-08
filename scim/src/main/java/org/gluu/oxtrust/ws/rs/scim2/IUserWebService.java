@@ -60,10 +60,10 @@ public interface IUserWebService {
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     Response searchUsers(
             @QueryParam(QUERY_PARAM_FILTER) String filter,
-            @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
-            @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
+            @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
+            @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
 

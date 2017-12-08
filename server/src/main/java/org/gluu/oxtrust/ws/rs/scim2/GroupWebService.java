@@ -27,7 +27,6 @@ import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
 import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
@@ -41,7 +40,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
 /**
  * Implementation of /Groups endpoint. Methods here are intercepted and/or decorated.
  * Class org.gluu.oxtrust.service.scim2.interceptor.GroupWebServiceDecorator is used to apply pre-validations on data.
- * Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter secures invocations
+ * Filter org.gluu.oxtrust.service.scim2.interceptor.AuthorizationProcessingFilter secures invocations
  *
  * @author Rahat Ali Date: 05.08.2015
  * Updated by jgomer on 2017-10-18
@@ -156,17 +155,9 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
             String json=resourceSerializer.serialize(updatedResource, attrsList, excludedAttrsList);
             response=Response.ok(new URI(updatedResource.getMeta().getLocation())).entity(json).build();
         }
-        catch (NotFoundException e){
-            log.error(e.getMessage());
-            response=getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, e.getMessage());
-        }
         catch (InvalidAttributeValueException e){
             log.error(e.getMessage());
             response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.MUTABILITY, e.getMessage());
-        }
-        catch (DuplicateEntryException e){
-            log.error(e.getMessage());
-            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
         }
         catch (Exception e){
             log.error("Failure at updateGroup method", e);
@@ -215,10 +206,10 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
     @ApiOperation(value = "Search groups", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
     public Response searchGroups(
             @QueryParam(QUERY_PARAM_FILTER) String filter,
-            @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
-            @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
+            @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
+            @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
@@ -258,8 +249,8 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
 
         //Calling searchGroups here does not provoke that method's interceptor/decorator being called (only this one's)
         URI uri=null;
-        Response response = searchGroups(searchRequest.getFilter(), searchRequest.getSortBy(), searchRequest.getSortOrder(),
-                searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
+        Response response = searchGroups(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
+                searchRequest.getSortBy(), searchRequest.getSortOrder(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
             uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
