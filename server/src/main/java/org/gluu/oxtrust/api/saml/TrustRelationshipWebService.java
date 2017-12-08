@@ -6,6 +6,7 @@
 package org.gluu.oxtrust.api.saml;
 
 import javax.inject.Inject;
+import javax.annotation.security.DeclareRoles;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -16,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.slf4j.Logger;
 
 /**
  * WS endpoint for TrustRelationship actions.
@@ -24,50 +26,80 @@ import org.gluu.oxtrust.util.OxTrustConstants;
  */
 @Path("/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+@DeclareRoles("administrator")
 public class TrustRelationshipWebService {
+    
+    @Inject
+    private Logger logger;
+    
     //TODO
     
     @GET
     @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
     public String read(@PathParam("inum") String inum) {
-        String result = null;
-        //TODO
-        return result;
+        try {
+            String result = null;
+            //TODO
+            return result;
+        } catch (Exception e) {
+            logger.error("read() Exception", e);
+            return null;
+        }
     }
     
     @POST
     @Path("/create")
     @Produces(MediaType.TEXT_PLAIN)
     public String create() {
-        String inum = null;
-        //TODO
-        return inum;
+        try {
+            String inum = null;
+            //TODO
+            return inum;
+        } catch (Exception e) {
+            logger.error("create() Exception", e);
+            return null;
+        }
     }
     
     @PUT
     @Path("/update/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
     public String update(@PathParam("inum") String inum) {
-        //TODO
-        return OxTrustConstants.RESULT_SUCCESS;
+        try {
+            //TODO
+            return OxTrustConstants.RESULT_SUCCESS;
+        } catch (Exception e) {
+            logger.error("update() Exception", e);
+            return OxTrustConstants.RESULT_FAILURE;
+        }
     }
     
     @DELETE
     @Path("/delete/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
     public String delete(@PathParam("inum") String inum) {
-        //TODO
-        return OxTrustConstants.RESULT_SUCCESS;
+        try {
+            //TODO
+            return OxTrustConstants.RESULT_SUCCESS;
+        } catch (Exception e) {
+            logger.error("delete() Exception", e);
+            return OxTrustConstants.RESULT_FAILURE;
+        }
     }
     
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
     public String list() {
-        String list = null;
-        //TODO
-        return list;
+        try {
+            String list = null;
+            //TODO
+            return list;
+        } catch (Exception e) {
+            logger.error("delete() Exception", e);
+            return OxTrustConstants.RESULT_FAILURE;
+        }
     }
     
     
