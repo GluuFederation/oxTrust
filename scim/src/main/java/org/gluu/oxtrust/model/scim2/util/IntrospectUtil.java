@@ -36,32 +36,6 @@ public class IntrospectUtil {
     private static Logger log = LogManager.getLogger(IntrospectUtil.class);
 
     /**
-     * From a bidimensional Array of Annotations (usually obtained by a call to a Method's getParameterAnnotations), it
-     * searches for an annotation pertaining to class HeaderParam and whose value equals "Authorization"
-     * @param annotations A two-dimensional array of annotations
-     * @return The index (on the first dimension) where the annotation is found if any, otherwise returns -1
-     */
-    public static int indexOfAuthzHeader(Annotation annotations[][]){
-
-        int j=-1;
-
-        for (int i = 0; i<annotations.length && j<0; i++){
-            //Iterate over annotations found at every parameter
-            for (Annotation annotation : annotations[i]) {
-                if (annotation instanceof HeaderParam) {
-                    //Verifies this is an authz header
-                    if (((HeaderParam)annotation).value().equals("Authorization")) {
-                        j=i;
-                        break;
-                    }
-                }
-            }
-        }
-        return j;
-
-    }
-
-    /**
      * This method will find a java Field with a particular name.  If needed, this method will search through
      * super classes.  The field does not need to be public.
      * Adapted from https://github.com/pingidentity/scim2/blob/master/scim2-sdk-common/src/main/java/com/unboundid/scim2/common/utils/SchemaUtils.java
