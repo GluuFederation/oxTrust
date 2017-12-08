@@ -50,7 +50,7 @@ import static org.gluu.oxtrust.ws.rs.scim2.BulkWebService.Verb.*;
         authorizations = {@Authorization(value = "Authorization", type = "uma") })
 public class BulkWebService extends BaseScimWebService {
 
-    enum Verb {POST, PUT, PATCH, DELETE}
+    enum Verb {POST, PUT, PATCH, DELETE}    //HTTP methods involved in bulk requests
 
     private final Pattern bulkIdPattern= Pattern.compile("bulkId:(\\w+)\"");
 
@@ -82,10 +82,9 @@ public class BulkWebService extends BaseScimWebService {
     @ApiOperation(value = "Bulk Operations", notes = "Bulk Operations (https://tools.ietf.org/html/rfc7644#section-3.7)", response = BulkResponse.class)
     public Response processBulkOperations(@ApiParam(value = "BulkRequest", required = true) BulkRequest request){
 
-        int contentLength=Integer.valueOf(getValueFromHeaders(httpHeaders, "Content-Length"));
-        
-        Response response=prepareRequest(request, contentLength);
-        if (response!=null) {
+        Response response=prepareRequest(request, getValueFromHeaders(httpHeaders, "Content-Length"));
+        if (response==null) {
+            log.debug("Executing web service method. processBulkOperations");
 
             int i, errors=0;
             List<BulkOperation> operations=request.getOperations();
@@ -103,7 +102,7 @@ public class BulkWebService extends BaseScimWebService {
                 try {
                     String path=operation.getPath();
                     BaseScimWebService service=getWSForPath(path);
-                    String fragment=getFragment(path, service);
+                    String fragment=getFragment(path, service, processedBulkIds);
                     Verb verb = Verb.valueOf(method);
 
                     String data=operation.getData();
@@ -117,27 +116,28 @@ public class BulkWebService extends BaseScimWebService {
 
                     if (familyOf(status).equals(SUCCESSFUL)) {
                         if (!verb.equals(DELETE)) {
+                            if (verb.equals(POST)) {  //Update bulkIds
+                                processedBulkIds.put(bulkId, idCreated);
+                                fragment=idCreated;
+                            }
                             String loc=service.getEndpointUrl() + "/" + fragment;
                             operationResponse.setLocation(loc);
                         }
-                        subResponse.close();
-
-                        if (verb.equals(POST))  //Update bulkIds
-                            processedBulkIds.put(bulkId, idCreated);
                     }
                     else {
-                        operationResponse.setResponse(subResponse.readEntity(String.class));
+                        operationResponse.setResponse(subResponse.getEntity());
                         errors+= familyOf(status).equals(CLIENT_ERROR) || familyOf(status).equals(SERVER_ERROR) ? 1 : 0;
                     }
 
-                    operationResponse.setStatus(status);
+                    subResponse.close();
+                    operationResponse.setStatus(Integer.toString(status));
                 }
                 catch (Exception e) {
                     log.error(e.getMessage(), e);
                     subResponse=getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, e.getMessage());
 
-                    operationResponse.setStatus(BAD_REQUEST.getStatusCode());
-                    operationResponse.setResponse(subResponse.readEntity(String.class));
+                    operationResponse.setStatus(Integer.toString(BAD_REQUEST.getStatusCode()));
+                    operationResponse.setResponse(subResponse.getEntity());
                     errors++;
                 }
 
@@ -145,6 +145,8 @@ public class BulkWebService extends BaseScimWebService {
                 operationResponse.setMethod(method);
 
                 responseOperations.add(operationResponse);
+
+                log.debug("Operation {} processed with status {}. Method {}, Accumulated errors {}", i+1, operationResponse.getStatus(), method, errors);
             }
 
             try {
@@ -163,7 +165,7 @@ public class BulkWebService extends BaseScimWebService {
 
     }
 
-    private Response prepareRequest(BulkRequest request, int contentLength){
+    private Response prepareRequest(BulkRequest request, String contentLength){
 
         Response response=null;
 
@@ -175,7 +177,17 @@ public class BulkWebService extends BaseScimWebService {
         if (operations==null || operations.size()==0)
             response=getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_VALUE, "No operations supplied");
         else {
-            boolean payloadExceeded=contentLength > MAX_BULK_PAYLOAD_SIZE;
+
+            int contentLen;
+            try{
+//log.debug("CONT LEN {}", contentLength);
+                contentLen=Integer.valueOf(contentLength);
+            }
+            catch (Exception e){
+                contentLen=MAX_BULK_PAYLOAD_SIZE;
+            }
+
+            boolean payloadExceeded=contentLen > MAX_BULK_PAYLOAD_SIZE;
             boolean operationsExceeded=operations.size() > MAX_BULK_OPERATIONS;
             StringBuilder sb=new StringBuilder();
 
@@ -266,9 +278,10 @@ public class BulkWebService extends BaseScimWebService {
         return path.startsWith(commonWsEndpointPrefix) ? path : commonWsEndpointPrefix + path;
     }
 
-    private String getFragment(String path, BaseScimWebService service){
+    private String getFragment(String path, BaseScimWebService service, Map<String, String> idsMap) throws Exception{
         int endpointLen=service.getEndpointUrl().length()+1;
-        return (path.length() > endpointLen) ? path.substring(endpointLen) : "";
+        String frag=(path.length() > endpointLen) ? path.substring(endpointLen) : "";
+        return replaceBulkIds(frag, idsMap);
     }
 
     private String replaceBulkIds(String str, Map<String, String> idsMap) throws Exception{
@@ -277,17 +290,17 @@ public class BulkWebService extends BaseScimWebService {
         StringBuffer sb = new StringBuffer();
 
         while (m.find()){
-            String id=m.group();
+            String id=m.group(1);
             //See if the id supplied is known
             String realId=idsMap.get(id);
             if (realId==null)
                 throw new Exception("bulkId '" + id + "' not recognized");
 
-            m.appendReplacement(sb, realId + "\"");
+            m.appendReplacement(sb, realId + "\"");     //Add a '"' since the regex contains a double quote as well
         }
         m.appendTail(sb);
 
-        return m.toString();
+        return sb.toString();
 
     }
 
@@ -313,8 +326,10 @@ public class BulkWebService extends BaseScimWebService {
                     case POST:
                         user=mapper.readValue(data, UserResource.class);
                         response=userWS.createUser(user, "id", null);
-                        user=response.readEntity(UserResource.class);
-                        idCreated=user.getId();
+                        if (CREATED.getStatusCode()==response.getStatus()) {
+                            user = mapper.readValue(response.getEntity().toString(), UserResource.class);
+                            idCreated = user.getId();
+                        }
                         break;
                 }
 
@@ -335,8 +350,10 @@ public class BulkWebService extends BaseScimWebService {
                     case POST:
                         group=mapper.readValue(data, GroupResource.class);
                         response=groupWS.createGroup(group, "id", null);
-                        group=response.readEntity(GroupResource.class);
-                        idCreated=group.getId();
+                        if (CREATED.getStatusCode()==response.getStatus()) {
+                            group = mapper.readValue(response.getEntity().toString(), GroupResource.class);
+                            idCreated = group.getId();
+                        }
                         break;
                 }
 

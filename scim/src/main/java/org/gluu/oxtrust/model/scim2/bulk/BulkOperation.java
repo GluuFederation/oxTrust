@@ -1,5 +1,10 @@
 package org.gluu.oxtrust.model.scim2.bulk;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import java.util.Map;
+
 /**
  * @author Rahat Ali Date: 05.08.2015
  *
@@ -7,14 +12,16 @@ package org.gluu.oxtrust.model.scim2.bulk;
  */
 public class BulkOperation {
 
+    private static ObjectMapper mapper=new ObjectMapper();
+
     private String method;
     private String bulkId;
     //private String version;
     private String path;
     private String data;
     private String location;
-    private String response;
-    private int status;
+    private Object response;
+    private String status;
 
     public String getMethod() {
         return method;
@@ -41,6 +48,7 @@ public class BulkOperation {
     }
 */
 
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_EMPTY)
     public String getPath() {
         return path;
     }
@@ -49,15 +57,23 @@ public class BulkOperation {
         this.path = path;
     }
 
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_EMPTY)
     public String getData() {
         return data;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setData(Map<String, Object> map) {
+
+        try {
+            data = mapper.writeValueAsString(map);
+        }
+        catch (Exception e){
+            data=null;
+        }
+
     }
 
-
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_EMPTY)
     public String getLocation() {
         return location;
     }
@@ -66,19 +82,20 @@ public class BulkOperation {
         this.location = location;
     }
 
-    public String getResponse() {
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_EMPTY)
+    public Object getResponse() {
         return response;
     }
 
-    public void setResponse(String response) {
+    public void setResponse(Object response) {
         this.response = response;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -1,5 +1,7 @@
 package org.gluu.oxtrust.model.scim2.bulk;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,9 @@ import java.util.List;
 public class BulkBase {
 
     private List<String> schemas;
-    private List<BulkOperation> Operations;
+
+    @JsonProperty("Operations")
+    private List<BulkOperation> operations;
 
     public BulkBase(){}
 
@@ -21,11 +25,11 @@ public class BulkBase {
     }
 
     public List<BulkOperation> getOperations() {
-        return Operations;
+        return operations;
     }
 
     public void setOperations(List<BulkOperation> operations) {
-        Operations = operations;
+        this.operations = operations;
     }
 
 }
