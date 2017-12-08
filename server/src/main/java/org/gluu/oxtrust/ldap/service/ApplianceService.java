@@ -217,7 +217,11 @@ public class ApplianceService implements Serializable {
 	}
 
 	public String getDecryptedSmtpPassword(GluuAppliance appliance, boolean allowUnencrypted) {
-		String password = appliance.getSmtpPassword();
+		if (appliance.getSmtpConfiguration() == null) {
+			return null;
+		}
+
+		String password = appliance.getSmtpConfiguration().getPassword();
 		if (StringHelper.isEmpty(password)) {
 			return null;
 		}
