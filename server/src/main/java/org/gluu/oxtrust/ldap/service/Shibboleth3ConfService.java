@@ -185,8 +185,8 @@ public class Shibboleth3ConfService implements Serializable {
 		initAttributes(trustRelationships);
 		HashMap<String, Object> trustParams = initTrustParamMap(trustRelationships);
 		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
-                HashMap<String, Object> casParams = initCASParamMap();
-        HashMap<String, Object> attrResolverParams = initAttributeParamMap(trustRelationships);
+        HashMap<String, Object> casParams = initCASParamMap();
+        HashMap<String, Object> attrResolverParams = initAttributeResolverParamMap();
 
 		boolean result = (trustParams != null) && (attrParams != null) && (casParams != null) && (attrResolverParams != null);
 		if (!result) {
@@ -516,7 +516,8 @@ public class Shibboleth3ConfService implements Serializable {
 		if ((attributeResolverConfiguration != null) && (StringHelper.isNotEmpty(attributeResolverConfiguration.getAttributeName()))) {
 			GluuAttribute attribute = attributeService.getAttributeByName(attributeResolverConfiguration.getAttributeName());
 			
-	    	attributeResolverParams.put("attribute", attribute);
+	    	attributeResolverParams.put("name_id_conf", attributeResolverConfiguration);
+	    	attributeResolverParams.put("name_id_attr", attribute);
 		}
 
 		return attributeResolverParams;
@@ -531,6 +532,7 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("trustParams", trustParams);
 		context.put("attrParams", attrParams);
 		context.put("casParams", casParams);
+		context.put("resovlerParams", attrResolverParams);
 		context.put("medataFolder", idpMetadataFolder);
 		context.put("applianceInum", StringHelper.removePunctuation(applianceService.getApplianceInum()));
 		context.put("orgInum", StringHelper.removePunctuation(organizationService.getOrganizationInum()));
@@ -583,14 +585,6 @@ public class Shibboleth3ConfService implements Serializable {
 		} catch (EncryptionException e) {
 			log.error("Failed to decrypt idp.securityKeyPassword", e);
 			e.printStackTrace();
-		}
-		
-		if (attrResolverParams != null) {
-			List<GluuAttribute> attributes = (List<GluuAttribute>) attrParams.get("attributes");
-			GluuAttribute attribute = (GluuAttribute) attrResolverParams.get("attribute");
-			if ((attributes != null) && (attribute != null)) {
-				attributes.add(attribute);
-			}
 		}
 
 		return context;
