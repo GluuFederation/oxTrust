@@ -40,10 +40,10 @@
         </div>
         <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
         	<div class="col-sm-2">
-        	<h:outputLabel value="Attribute Name" />
+        	<h:outputLabel value="Attribute Base" />
         	</div>
         	<div class="col-sm-10">
-        	<h:selectOneMenu value="#{attributeResolverAction.attributeName}" styleClass="form-control">
+        	<h:selectOneMenu value="#{attributeResolverAction.attributeBase}" styleClass="form-control">
         	<f:selectItems var="_attribute" value="#{attributeResolverAction.attributes}" itemLabel="#{_attribute.displayName}" itemValue="#{_attribute.name}"/>
         	</h:selectOneMenu>
         	</div>
@@ -51,10 +51,10 @@
         
         <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
         	<div class="col-sm-2">
-        	<h:outputLabel value="Attribute Base" />
+        	<h:outputLabel value="Attribute Name" />
         	</div>
         	<div class="col-sm-10">
-        	<h:inputText value="#{attributeResolverAction.base}"  styleClass="form-control"/>
+        	<h:inputText value="#{attributeResolverAction.attributeName}"  styleClass="form-control"/>
         	</div>
         </div>
         <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
