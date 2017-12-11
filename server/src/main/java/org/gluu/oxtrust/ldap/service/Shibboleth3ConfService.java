@@ -513,11 +513,11 @@ public class Shibboleth3ConfService implements Serializable {
 
     	final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
-		if ((attributeResolverConfiguration != null) && (StringHelper.isNotEmpty(attributeResolverConfiguration.getAttributeName()))) {
-			GluuAttribute attribute = attributeService.getAttributeByName(attributeResolverConfiguration.getAttributeName());
+		if ((attributeResolverConfiguration != null) && (StringHelper.isNotEmpty(attributeResolverConfiguration.getAttributeBase()))) {
+			GluuAttribute attribute = attributeService.getAttributeByName(attributeResolverConfiguration.getAttributeBase());
 			
 	    	attributeResolverParams.put("name_id_conf", attributeResolverConfiguration);
-	    	attributeResolverParams.put("name_id_attr", attribute);
+	    	attributeResolverParams.put("name_id_attr_base", attribute);
 		}
 
 		return attributeResolverParams;

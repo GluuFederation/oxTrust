@@ -61,10 +61,10 @@ public class AttributeResolverAction implements Serializable {
 	
 	private List<GluuAttribute> attributes;
 	
+	private String attributeBase;
 	private String attributeName;
 	private String nameIdType;
 	private boolean enable;
-	private String base;
 
 	private boolean initialized;
 	
@@ -75,23 +75,18 @@ public class AttributeResolverAction implements Serializable {
 		this.enable = enable;
 	}
 	
-	public String getBase() {
-		return base;
+	public String getAttributeBase() {
+		return attributeBase;
 	}
 
-	public void setBase(String base) {
-		this.base = base;
+	public void setAttributeBase(String attributeBase) {
+		this.attributeBase = attributeBase;
 	}
-	
-	public List<GluuAttribute> getAttributes() {
-		return attributes;
-	}
-	public void setAttributes(List<GluuAttribute> attributes) {
-		this.attributes = attributes;
-	}
+
 	public String getAttributeName() {
 		return attributeName;
 	}
+
 	public void setAttributeName(String attributeName) {
 		this.attributeName = attributeName;
 	}
@@ -99,9 +94,15 @@ public class AttributeResolverAction implements Serializable {
 	public String getNameIdType() {
 		return nameIdType;
 	}
+
 	public void setNameIdType(String nameIdType) {
 		this.nameIdType = nameIdType;
 	}
+
+	public List<GluuAttribute> getAttributes() {
+		return attributes;
+	}
+
 	public String init() {
 		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -112,14 +113,14 @@ public class AttributeResolverAction implements Serializable {
 		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap("oxTrustConfAttributeResolver");
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
 		if (attributeResolverConfiguration != null) {
-			this.base = attributeResolverConfiguration.getBase();
+			this.attributeName = attributeResolverConfiguration.getAttributeName();
 			this.nameIdType = attributeResolverConfiguration.getNameIdType();
 			this.enable = attributeResolverConfiguration.isEnabled();
 			
-			String attributeName = attributeResolverConfiguration.getAttributeName();
-			GluuAttribute foundAttribute = attributeService.getAttributeByName(attributeName, this.attributes);
+			String attributeBase = attributeResolverConfiguration.getAttributeBase();
+			GluuAttribute foundAttribute = attributeService.getAttributeByName(attributeBase, this.attributes);
 			if (foundAttribute != null) {
-				this.attributeName = foundAttribute.getName();
+				this.attributeBase = foundAttribute.getName();
 			}
 		}
 
@@ -142,7 +143,7 @@ public class AttributeResolverAction implements Serializable {
 
 	public String saveCustomAttributetoResolve(){
 		AttributeResolverConfiguration attributeResolverConfiguration = new AttributeResolverConfiguration();
-		attributeResolverConfiguration.setBase(base);
+		attributeResolverConfiguration.setAttributeBase(attributeBase);
 		attributeResolverConfiguration.setAttributeName(attributeName);
 		attributeResolverConfiguration.setNameIdType(nameIdType);
 		attributeResolverConfiguration.setEnabled(enable);
