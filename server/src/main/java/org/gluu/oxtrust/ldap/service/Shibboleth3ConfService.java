@@ -1262,7 +1262,6 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	public boolean saveMetadataFile(String spMetaDataURL, String metadataFileName) {
-
 		if (StringHelper.isEmpty(spMetaDataURL)) {
 			return false;
 		}
