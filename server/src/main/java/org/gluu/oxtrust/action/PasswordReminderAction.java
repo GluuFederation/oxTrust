@@ -8,9 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -39,6 +37,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.MailService;
 import org.xdi.util.StringHelper;
 
@@ -200,10 +199,11 @@ public class PasswordReminderAction implements Serializable {
 				ldapEntryManager.persist(request);
 			}else{
 				GluuAppliance appliance = applianceService.getAppliance();
+				SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
 
 				rendererParameters.setParameter("organizationName", organizationService.getOrganization().getDisplayName());
 
-				String fromName = appliance.getSmtpFromName();
+				String fromName = smtpConfiguration.getFromName();
 				if(fromName == null){
 					fromName = String.format("%1$s identity server" , organizationService.getOrganization().getDisplayName());
 				}
@@ -224,11 +224,14 @@ public class PasswordReminderAction implements Serializable {
 
 	public boolean enabled(){
 		GluuAppliance appliance = applianceService.getAppliance();
-		boolean valid =	appliance.getSmtpHost() != null 
-					&& appliance.getSmtpPort() != null 
-					&&((! appliance.isRequiresAuthentication()) 
-							|| (appliance.getSmtpUserName() != null 
-								&& applianceService.getDecryptedSmtpPassword(appliance) != null))
+		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
+
+		boolean valid =	smtpConfiguration != null
+					&& smtpConfiguration.getHost() != null 
+					&& smtpConfiguration.getPort() != 0 
+					&&((! smtpConfiguration.isRequiresAuthentication()) 
+							|| (smtpConfiguration.getUserName() != null 
+								&& smtpConfiguration.getPassword() != null))
 					&& appliance.getPasswordResetAllowed()!=null 
 					&& appliance.getPasswordResetAllowed().isBooleanValue();
 		if(valid){
