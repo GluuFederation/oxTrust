@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -17,6 +18,7 @@ import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
 import org.xdi.util.StringHelper;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Holds factory methods to create services
@@ -50,20 +52,17 @@ public class ApplicationFactory {
    		return cacheConfiguration;
    	}
 
-	@Produces @ApplicationScoped
+	@Produces @RequestScoped
 	public SmtpConfiguration getSmtpConfiguration() {
 		GluuAppliance appliance = applianceService.getAppliance();
 		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
 		
 		if (smtpConfiguration == null) {
-			return null;
+			return new SmtpConfiguration();
 		}
 
-		String password = smtpConfiguration.getPassword();
-		if (StringHelper.isNotEmpty(password)) {
-			smtpConfiguration.setPasswordDecrypted(applianceService.getDecryptedSmtpPassword(appliance, true));
-		}
-		
+		applianceService.decryptSmtpPassword(smtpConfiguration);
+
 		return smtpConfiguration;
 	}
 

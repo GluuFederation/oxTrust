@@ -6,6 +6,12 @@
 
 package org.gluu.oxtrust.model;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.constraints.Min;
+
 import org.apache.log4j.Logger;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
@@ -18,11 +24,6 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
-
-import javax.validation.constraints.Min;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * GluuAppliance
@@ -164,33 +165,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "oxTrustEmail")
 	private String contactEmail;
 
-	@LdapAttribute(name = "gluuSmtpHost")
-	private String smtpHost;
-
-	@LdapAttribute(name = "gluuSmtpFromName")
-	private String smtpFromName;
-
-	@LdapAttribute(name = "gluuSmtpFromEmailAddress")
-	private String smtpFromEmailAddress;
-
-	@LdapAttribute(name = "gluuSmtpRequiresAuthentication")
-	private String smtpRequiresAuthentication;
-
-	@LdapAttribute(name = "gluuSmtpUserName")
-	private String smtpUserName;
-
-	@LdapAttribute(name = "gluuSmtpPassword")
-	private String smtpPassword;
-
-	@LdapAttribute(name = "gluuSmtpRequiresSsl")
-	private String smtpRequiresSsl;
-	
-	@LdapAttribute(name = "gluuSmtpServerTrust")
-	private String smtpServerTrust;
-
-	@LdapAttribute(name = "gluuSmtpPort")
-	private String smtpPort;
-
 	@LdapAttribute(name = "oxSmtpConfiguration")
 	@LdapJsonObject
 	private SmtpConfiguration smtpConfiguration;
@@ -236,30 +210,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
    	@LdapJsonObject
    	private CacheConfiguration cacheConfiguration;
 
-	public boolean isRequiresAuthentication() {
-		return Boolean.parseBoolean(smtpRequiresAuthentication);
-	}
-
-	public void setRequiresAuthentication(boolean requiresAuthentication) {
-		this.smtpRequiresAuthentication = Boolean.toString(requiresAuthentication);
-	}
-
-	public String getSmtpPassword() {
-		return smtpPassword;
-	}
-
-	public void setSmtpPassword(String smtpPassword) {
-		this.smtpPassword = smtpPassword;
-	}
-
-	public boolean isRequiresSsl() {
-		return Boolean.parseBoolean(smtpRequiresSsl);
-	}
-
-	public void setRequiresSsl(boolean requiresSsl) {
-		this.smtpRequiresSsl = Boolean.toString(requiresSsl);
-	}
-
     public String getApplianceDnsServer() {
         return applianceDnsServer;
     }
@@ -268,7 +218,15 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.applianceDnsServer = applianceDnsServer;
     }
 
-    public String getAuthenticationMode() {
+    public final SmtpConfiguration getSmtpConfiguration() {
+		return smtpConfiguration;
+	}
+
+	public final void setSmtpConfiguration(SmtpConfiguration smtpConfiguration) {
+		this.smtpConfiguration = smtpConfiguration;
+	}
+
+	public String getAuthenticationMode() {
         return authenticationMode;
     }
 
@@ -581,70 +539,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
         this.shibSuccessfulAuths = shibSuccessfulAuths;
     }
 
-    public SmtpConfiguration getSmtpConfiguration() {
-        return smtpConfiguration;
-    }
-
-    public void setSmtpConfiguration(SmtpConfiguration smtpConfiguration) {
-        this.smtpConfiguration = smtpConfiguration;
-    }
-
-    public String getSmtpFromEmailAddress() {
-        return smtpFromEmailAddress;
-    }
-
-    public void setSmtpFromEmailAddress(String smtpFromEmailAddress) {
-        this.smtpFromEmailAddress = smtpFromEmailAddress;
-    }
-
-    public String getSmtpFromName() {
-        return smtpFromName;
-    }
-
-    public void setSmtpFromName(String smtpFromName) {
-        this.smtpFromName = smtpFromName;
-    }
-
-    public String getSmtpHost() {
-        return smtpHost;
-    }
-
-    public void setSmtpHost(String smtpHost) {
-        this.smtpHost = smtpHost;
-    }
-
-    public String getSmtpPort() {
-        return smtpPort;
-    }
-
-    public void setSmtpPort(String smtpPort) {
-        this.smtpPort = smtpPort;
-    }
-
-    public String getSmtpRequiresAuthentication() {
-        return smtpRequiresAuthentication;
-    }
-
-    public void setSmtpRequiresAuthentication(String smtpRequiresAuthentication) {
-        this.smtpRequiresAuthentication = smtpRequiresAuthentication;
-    }
-
-    public String getSmtpRequiresSsl() {
-        return smtpRequiresSsl;
-    }
-
-    public void setSmtpRequiresSsl(String smtpRequiresSsl) {
-        this.smtpRequiresSsl = smtpRequiresSsl;
-    }
-
-    public String getSmtpUserName() {
-        return smtpUserName;
-    }
-
-    public void setSmtpUserName(String smtpUserName) {
-        this.smtpUserName = smtpUserName;
-    }
-
     public String getSslExpiry() {
         return sslExpiry;
     }
@@ -757,19 +651,4 @@ public class GluuAppliance extends InumEntry implements Serializable {
    		this.cacheConfiguration = cacheConfiguration;
    	}
 
-   	public boolean isServerTrust() {
-		return Boolean.parseBoolean(smtpServerTrust);
-	}
-
-	public void setServerTrust(boolean serverTrust) {
-		this.smtpServerTrust = Boolean.toString(serverTrust);
-	}
-
-	public String getSmtpServerTrust() {
-		return smtpServerTrust;
-	}
-
-	public void setSmtpServerTrust(String smtpServerTrust) {
-		this.smtpServerTrust = smtpServerTrust;
-	}
 }

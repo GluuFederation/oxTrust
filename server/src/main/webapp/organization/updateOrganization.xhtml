@@ -36,6 +36,7 @@
                 <ui:decorate template="/WEB-INF/incl/organization/organizationForm.xhtml">
                     <ui:param name="_organization" value="#{updateOrganizationAction.organization}"/>
                     <ui:param name="_appliance" value="#{updateOrganizationAction.appliance}"/>
+                    <ui:param name="_smtp" value="#{updateOrganizationAction.smtpConfiguration}"/>
                     <ui:param name="_organizationAction" value="#{updateOrganizationAction}"/>
                     <ui:param name="_certificateAction" value="#{manageCertificateAction}"/>                    
                     <ui:param name="_webKeySettings" value="#{_organizationAction.webKeysSettings}"/>
