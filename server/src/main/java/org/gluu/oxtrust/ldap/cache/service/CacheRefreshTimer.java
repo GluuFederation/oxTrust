@@ -73,7 +73,7 @@ import org.xdi.util.ArrayHelper;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * Check periodically if source servers contains updates and trigger target

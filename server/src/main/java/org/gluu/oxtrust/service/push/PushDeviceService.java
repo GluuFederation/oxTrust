@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with oxPush devices

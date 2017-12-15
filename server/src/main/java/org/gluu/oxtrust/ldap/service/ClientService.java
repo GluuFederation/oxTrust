@@ -29,7 +29,7 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with clients

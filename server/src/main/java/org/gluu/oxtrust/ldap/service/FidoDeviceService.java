@@ -21,7 +21,7 @@ import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * @author Val Pecaoco

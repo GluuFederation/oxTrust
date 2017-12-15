@@ -46,7 +46,7 @@ import org.xdi.oxauth.client.ClientInfoResponse;
 import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * Base methods for SCIM web services

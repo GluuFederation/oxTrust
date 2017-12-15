@@ -86,7 +86,6 @@ public class UpdateOrganizationAction implements Serializable {
 	@Inject
 	private AppInitializer appInitializer;
 
-
     @Inject
 	private MailService mailService;
 
@@ -118,7 +117,6 @@ public class UpdateOrganizationAction implements Serializable {
 	private LdapOxAuthConfiguration  ldapOxAuthConfiguration;
 
 	private SmtpConfiguration smtpConfiguration;
-
 
 	public String modify()  {
 		if (this.initialized) {

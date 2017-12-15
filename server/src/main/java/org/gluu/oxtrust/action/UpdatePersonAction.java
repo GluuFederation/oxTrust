@@ -219,8 +219,6 @@ public class UpdatePersonAction implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 
 		userPasswordAction.setPerson(this.person);
 
@@ -259,7 +257,6 @@ public class UpdatePersonAction implements Serializable {
 			if (customAttribute.getName().equalsIgnoreCase("gluuStatus")) {
 				customAttribute.setValue(gluuStatus.getValue());
 			}
-
 		}
 
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());

@@ -20,7 +20,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.exception.ScimFilterErrorHandle
 import org.gluu.oxtrust.service.antlr.scimFilter.visitor.VisitorFactory;
 import org.slf4j.Logger;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * @author Val Pecaoco
