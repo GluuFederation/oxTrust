@@ -4,6 +4,7 @@ import org.codehaus.jackson.annotate.JsonAnyGetter;
 import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.gluu.oxtrust.model.scim2.annotations.*;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 
@@ -37,7 +38,8 @@ public class BaseScimResource {
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             returned = AttributeDefinition.Returned.ALWAYS,
             uniqueness = AttributeDefinition.Uniqueness.SERVER)
-    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class}, refs = {"inum", "oxId"})
+    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class, GroupResource.class},
+            refs = {"inum", "oxId", "inum"})
     private String id;
 
     @Attribute(description = "A String that is an identifier for the resource as defined by the provisioning client",

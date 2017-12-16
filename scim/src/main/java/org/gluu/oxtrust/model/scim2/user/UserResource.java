@@ -79,7 +79,7 @@ public class UserResource extends BaseScimResource {
             " an initial password when creating a new User or to reset an existing User's password.",
             mutability = AttributeDefinition.Mutability.WRITE_ONLY,
             returned = AttributeDefinition.Returned.NEVER)
-    @StoreReference(ref = "password")
+    //@StoreReference(ref = "password")     we'd better not annotate this field (prevents end-users issuing password-based searches)
     private String password;
 
     @Attribute(description = "E-mail addresses for the user. The value SHOULD be canonicalized by the Service Provider, " +

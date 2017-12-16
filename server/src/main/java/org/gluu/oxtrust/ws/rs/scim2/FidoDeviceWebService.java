@@ -266,6 +266,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
 
         //Set values in order of appearance in FidoDeviceResource class
         res.setUserId(userId);
+        res.setCreationDate(fidoDevice.getCreationDate());
         res.setApplication(fidoDevice.getApplication());
         res.setCounter(fidoDevice.getCounter());
 

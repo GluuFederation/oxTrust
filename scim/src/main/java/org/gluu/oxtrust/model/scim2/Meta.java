@@ -1,6 +1,8 @@
 package org.gluu.oxtrust.model.scim2;
 
 import org.gluu.oxtrust.model.scim2.annotations.*;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
 
 /**
  * Created by jgomer on 2017-09-04.
@@ -17,13 +19,16 @@ public class Meta {
     @Attribute(description = "Date and time the resource was created",
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.DATETIME)
-    @StoreReference(ref = "oxTrustMetaCreated")
+    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class},
+            refs = {"oxCreationTimestamp", "creationDate"})
+    //For effects of filters we don't use "oxTrustMetaCreated" but "oxCreationTimestamp" which has generalizedTime data type)
     private String created;
 
     @Attribute(description = "Date and time the resource was last modified",
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.DATETIME)
-    @StoreReference(ref = "oxTrustMetaLastModified")
+    @StoreReference(resourceType = {UserResource.class}, refs={"updatedAt"})
+    //For effects of filters we don't use "oxTrustMetaLastModified" but "updatedAt" which has generalizedTime data type)
     private String lastModified;
 
     @Attribute(description = "The location (URI) of the resource",

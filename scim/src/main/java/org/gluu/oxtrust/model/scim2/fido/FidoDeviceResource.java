@@ -20,14 +20,13 @@ public class FidoDeviceResource extends BaseScimResource {
             mutability = AttributeDefinition.Mutability.IMMUTABLE)
     private String userId;
 
-    /*
-    //This is commented: the aim is the same as Meta.created
     @Attribute(description = "Date of enrollment",
             isRequired = true,
-            mutability = AttributeDefinition.Mutability.IMMUTABLE)
+            mutability = AttributeDefinition.Mutability.IMMUTABLE,
+            type = AttributeDefinition.Type.DATETIME)
     @StoreReference(ref = "creationDate")
     private String creationDate;
-       */
+
     @Attribute(description = "Application ID that enrolled the device",
             isRequired = true,
             mutability = AttributeDefinition.Mutability.IMMUTABLE)
@@ -95,8 +94,7 @@ public class FidoDeviceResource extends BaseScimResource {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-/*
-    //See comment above on creationDate member
+
     public String getCreationDate() {
         return creationDate;
     }
@@ -104,7 +102,7 @@ public class FidoDeviceResource extends BaseScimResource {
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
-*/
+
     public String getApplication() {
         return application;
     }
