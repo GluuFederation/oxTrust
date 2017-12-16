@@ -26,7 +26,6 @@
     </resolver:AttributeDefinition>
 
 #else
-
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="$attribute.name" sourceAttributeID="$attribute.name">
         <resolver:Dependency ref="siteLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="$attrParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" />
@@ -34,16 +33,25 @@
 #end
 #end
 #end
+#if( $resovlerParams.size() > 0 )
+    #set( $attribute = $resovlerParams.get("name_id_attr_base") )
+    #set( $name_id_conf = $resovlerParams.get("name_id_conf") )
+
+    <resolver:AttributeDefinition xsi:type="ad:Simple" id="$name_id_conf.attributeName" sourceAttributeID="$attribute.name">
+        <resolver:Dependency ref="siteLDAP" />
+        <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:$name_id_conf.nameIdType" />
+    </resolver:AttributeDefinition>
+#end
 
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
 
     <resolver:DataConnector id="siteLDAP" xsi:type="dc:LDAPDirectory"
-                            ldapURL="$ldapUrl"
-                            baseDN="o=gluu"
-                            principal="cn=Directory Manager,o=gluu"
-                            principalCredential="$ldapPass"
+                            ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+                            baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
+                            principal="%{idp.attribute.resolver.LDAP.bindDN}"
+                            principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
                             useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS}">
 
         <dc:FilterTemplate>

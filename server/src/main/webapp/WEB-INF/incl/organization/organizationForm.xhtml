@@ -160,41 +160,41 @@
 							<h:panelGroup layout="block" style="width:80%;">
 
 								<ox:decorate label="#{msg['organizationForm.smtpHost']}">
-									<h:inputText value="#{_appliance.smtpHost}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.host}" styleClass="form-control"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.fromName']}">
-									<h:inputText value="#{_appliance.smtpFromName}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.fromName}" styleClass="form-control"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.fromEmailAddress']}">
-									<h:inputText value="#{_appliance.smtpFromEmailAddress}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.fromEmailAddress}" styleClass="form-control"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.requiresAuthentication']}">
 									<h:selectBooleanCheckbox styleClass="form-control"
-										value="#{_appliance.requiresAuthentication}" />
+										value="#{_smtp.requiresAuthentication}" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpUserName']}">
-									<h:inputText value="#{_appliance.smtpUserName}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.userName}" styleClass="form-control"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPassword']}">
-									<h:inputSecret value="#{_appliance.smtpPassword}" styleClass="form-control"
+									<h:inputSecret value="#{_smtp.passwordDecrypted}" styleClass="form-control"
 										redisplay="true" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.requiresSSL']}">
-									<h:selectBooleanCheckbox value="#{_appliance.requiresSsl}" styleClass="form-control"/>
+									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}" styleClass="form-control"/>
 								</ox:decorate>
 								
 								<ox:decorate label="#{msg['organizationForm.trustserver']}">
-									<h:selectBooleanCheckbox value="#{_appliance.serverTrust}" styleClass="form-control"/>
+									<h:selectBooleanCheckbox value="#{_smtp.serverTrust}" styleClass="form-control"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPort']}">
-									<h:inputText value="#{_appliance.smtpPort}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.port}" styleClass="form-control"/>
 								</ox:decorate>
 								<h:commandButton value="#{msg['organizationForm.testConfiguration']}" styleClass="btn btn-success"
 									action="#{updateOrganizationAction.verifySmtpConfiguration}"/>

@@ -13,14 +13,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -28,11 +25,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -41,12 +36,10 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.omnifaces.util.Components;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxauth.WebKeysSettings;
-import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.model.GluuImage;
 import org.xdi.model.SmtpConfiguration;
@@ -91,16 +84,8 @@ public class UpdateOrganizationAction implements Serializable {
 	private ConfigurationFactory configurationFactory;
 
 	@Inject
-	private AppConfiguration appConfiguration;
-
-	@Inject
 	private AppInitializer appInitializer;
 
-	@Inject
-	private EncryptionService encryptionService;
-	
-	@Inject
-	private FacesService facesService;
 
     @Inject
 	private MailService mailService;
@@ -131,6 +116,8 @@ public class UpdateOrganizationAction implements Serializable {
 	private WebKeysSettings webKeysSettings;
 
 	private LdapOxAuthConfiguration  ldapOxAuthConfiguration;
+
+	private SmtpConfiguration smtpConfiguration;
 
 
 	public String modify()  {
@@ -232,8 +219,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 			setCustomMessages();
 			organizationService.updateOrganization(this.organization);
-			
-			updateSmptConfiguration(this.appliance);
+
+			// Encrypt password and prepare SMTP configuration
+			applianceService.encryptedSmtpPassword(smtpConfiguration);
 			
 			applianceService.updateAppliance(this.appliance);
 			saveWebKeySettings();
@@ -264,43 +252,11 @@ public class UpdateOrganizationAction implements Serializable {
 		}
 	}
 
-	public String getSmtpPassword() {
-		return applianceService.getDecryptedSmtpPassword(appliance);		
-	}
-
-	public void setSmtpPassword(String smptPassword) {
-		applianceService.setEncryptedSmtpPassword(appliance, smptPassword);		
-	}
-
-	private void updateSmptConfiguration(GluuAppliance appliance) {
-		SmtpConfiguration smtpConfiguration = toSmtpConfiguration(appliance);
-
-		appliance.setSmtpConfiguration(smtpConfiguration);
-	}
-
-	private SmtpConfiguration toSmtpConfiguration(GluuAppliance appliance) {
-		SmtpConfiguration smtpConfiguration = new SmtpConfiguration();
-		smtpConfiguration.setHost(appliance.getSmtpHost());
-		smtpConfiguration.setPort(StringHelper.toInteger(appliance.getSmtpPort(), 25));
-		smtpConfiguration.setRequiresSsl(StringHelper.toBoolean(appliance.getSmtpRequiresSsl(), false));
-		smtpConfiguration.setFromName(appliance.getSmtpFromName());
-		smtpConfiguration.setFromEmailAddress(appliance.getSmtpFromEmailAddress());
-		smtpConfiguration.setRequiresAuthentication(StringHelper.toBoolean(appliance.getSmtpRequiresAuthentication(), false));
-		smtpConfiguration.setUserName(appliance.getSmtpUserName());
-		smtpConfiguration.setPasswordDecrypted(applianceService.getDecryptedSmtpPassword(appliance, true));
-
-//		setSmtpPassword(appliance.getSmtpPassword());
-		smtpConfiguration.setPassword(appliance.getSmtpPassword());
-
-		return smtpConfiguration;
-	}
-
 	public String verifySmtpConfiguration() {
-		log.info("HostName: " + appliance.getSmtpHost() + " Port: " + appliance.getSmtpPort() + " RequireSSL: " + appliance.isRequiresSsl()
-				+ " RequireSSL: " + appliance.isRequiresAuthentication());
-		log.debug("UserName: " + appliance.getSmtpUserName() + " Password: " + applianceService.getDecryptedSmtpPassword(appliance, true));
+		log.info("HostName: " + smtpConfiguration.getHost() + " Port: " + smtpConfiguration.getPort() + " RequireSSL: " + smtpConfiguration.isRequiresSsl()
+				+ " RequireSSL: " + smtpConfiguration.isRequiresAuthentication());
+		log.debug("UserName: " + smtpConfiguration.getUserName() + " Password: " + smtpConfiguration.getPasswordDecrypted());
 
-		SmtpConfiguration smtpConfiguration = toSmtpConfiguration(appliance);
 
 		String messageSubject = facesMessages.evalResourceAsString("#{msg['mail.verify.message.subject']}");
 		String messagePlain = facesMessages.evalResourceAsString("#{msg['mail.verify.message.plain.body']}");
@@ -309,7 +265,7 @@ public class UpdateOrganizationAction implements Serializable {
 //		rendererParameters.setParameter("mail_body", messageHtml);
 //		String mailHtml = renderService.renderView("/WEB-INF/mail/verify_settings.xhtml");
 
-		boolean result = mailService.sendMail(smtpConfiguration, appliance.getSmtpFromEmailAddress(), appliance.getSmtpFromName(), appliance.getSmtpFromEmailAddress(), null,
+		boolean result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(), smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
 				messageSubject, messagePlain, messageHtml);
 
 		if (result) {
@@ -332,6 +288,13 @@ public class UpdateOrganizationAction implements Serializable {
 			if (this.appliance == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+			this.smtpConfiguration = this.appliance.getSmtpConfiguration(); 
+			if (this.smtpConfiguration == null) {
+				this.smtpConfiguration = new SmtpConfiguration();
+				this.appliance.setSmtpConfiguration(smtpConfiguration);
+			}
+			
+			applianceService.decryptSmtpPassword(smtpConfiguration);
  
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
@@ -637,6 +600,10 @@ public class UpdateOrganizationAction implements Serializable {
 
 	public void setWebKeysSettings(WebKeysSettings webKeysSettings) {
 		this.webKeysSettings = webKeysSettings;
+	}
+
+	public SmtpConfiguration getSmtpConfiguration() {
+		return smtpConfiguration;
 	}
 
 }
