@@ -248,6 +248,12 @@ public class UpdatePersonAction implements Serializable {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+		
+		if(!update){
+			if(!validatePerson(this.person)){
+				return OxTrustConstants.RESULT_FAILURE;
+			}			
+		}
 
 		updateCustomObjectClasses();
 
@@ -530,6 +536,25 @@ public class UpdatePersonAction implements Serializable {
 			log.error("Failed to convert device string to object IOException", e);
 		}
 		return obj;
+	}
+	
+	private boolean validatePerson(GluuCustomPerson person) throws Exception {
+	
+		GluuCustomPerson  gluuCustomPerson  = personService.getPersonByUid(person.getUid());
+		if (gluuCustomPerson != null){
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Uid already exist: %s",
+					gluuCustomPerson.getUid());
+			return false;
+		}
+		
+		gluuCustomPerson  = personService.getPersonByEmail(person.getMail());
+		if (gluuCustomPerson != null){
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Mail id already exist: %s",
+					gluuCustomPerson.getMail());
+			return false;
+		}	
+		
+		return true;
 	}
 
 }
