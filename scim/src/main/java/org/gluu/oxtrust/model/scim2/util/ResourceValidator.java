@@ -93,8 +93,8 @@ public class ResourceValidator {
 
         for (String attributePath : map.keySet()) {
 
-            Field f=IntrospectUtil.findFieldFromPath(resourceClass, attributePath);
-            List<String> canonicalVals=Arrays.asList(f.getAnnotation(Attribute.class).canonicalValues());
+            Attribute attrAnnot=IntrospectUtil.getFieldAnnotation(attributePath, resourceClass, Attribute.class);
+            List<String> canonicalVals=Arrays.asList(attrAnnot.canonicalValues());
             log.debug("Validating values of canonical attribute '{}'", attributePath);
 
             for (Object val : IntrospectUtil.getAttributeValues(resource, map.get(attributePath))) {

@@ -83,6 +83,11 @@ public class IntrospectUtil {
 
     }
 
+    public static <T extends Annotation> T getFieldAnnotation(String path, Class <? extends BaseScimResource> resourceClass, Class<T> annotationClass){
+        Field f=findFieldFromPath(resourceClass, path);
+        return f==null ? null : f.getAnnotation(annotationClass);
+    }
+
     /**
      * Traverses the contents of a SCIM resource and applies a set of getter methods to collect a list of values.
      * For example, if passing a UserResource object and list of getters such as [getAdresses(), getStreetAddress()],

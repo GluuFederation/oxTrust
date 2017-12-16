@@ -283,13 +283,8 @@ public class BaseScimWebService {
                     for (int j=0;j<=i;j++)
                         sb.append(subPaths[j]).append(".");
 
-                    boolean multivalued=false;
-                    Field f=IntrospectUtil.findFieldFromPath(clazz, sb.substring(0, sb.length()-1));
-
-                    if (f!=null){
-                        Attribute annot = f.getAnnotation(Attribute.class);
-                        multivalued=!(annot==null || annot.multiValueClass().equals(NullType.class));
-                    }
+                    Attribute annot = IntrospectUtil.getFieldAnnotation(sb.substring(0, sb.length()-1), clazz, Attribute.class);
+                    boolean multivalued=!(annot==null || annot.multiValueClass().equals(NullType.class));
 
                     Map<String, Object> genericBiggerMap = new HashMap<String, Object>();
                     genericBiggerMap.put(subPaths[i], multivalued ? Collections.singletonList(genericMap) : genericMap);
