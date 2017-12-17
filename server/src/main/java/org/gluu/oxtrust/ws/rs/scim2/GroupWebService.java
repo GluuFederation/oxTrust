@@ -25,6 +25,7 @@ import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
+import org.gluu.oxtrust.service.scim2.Scim2PatchService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.joda.time.format.ISODateTimeFormat;
@@ -59,6 +60,9 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
 
     @Inject
     private IGroupService groupService;
+
+    @Inject
+    private Scim2PatchService scim2PatchService;
 
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
@@ -288,7 +292,7 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
 
             //Apply patches one by one in sequence
             for (PatchOperation po : request.getOperations())
-                group=(GroupResource) applyPatchOperation(group, po);
+                group=(GroupResource) scim2PatchService.applyPatchOperation(group, po);
 
             //Throws exception if final representation does not pass overall validation
             log.debug("patchGroup. Revising final resource representation still passes validations");
@@ -312,6 +316,9 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         catch (InvalidAttributeValueException e){
             log.error(e.getMessage(), e);
             response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
+        }
+        catch (SCIMException e){
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, e.getMessage());
         }
         catch (Exception e){
             log.error("Failure at patchGroup method", e);

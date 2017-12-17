@@ -10,6 +10,7 @@ import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
+import org.gluu.oxtrust.service.scim2.Scim2PatchService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
@@ -51,6 +52,9 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
 
     @Inject
     private Scim2UserService scim2UserService;
+
+    @Inject
+    private Scim2PatchService scim2PatchService;
 
     /**
      *
@@ -277,7 +281,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
 
             //Apply patches one by one in sequence
             for (PatchOperation po : request.getOperations())
-                user=(UserResource) applyPatchOperation(user, po);
+                user=(UserResource) scim2PatchService.applyPatchOperation(user, po);
 
             //Throws exception if final representation does not pass overall validation
             log.debug("patchUser. Revising final resource representation still passes validations");
@@ -301,6 +305,9 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         catch (InvalidAttributeValueException e){
             log.error(e.getMessage(), e);
             response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
+        }
+        catch (SCIMException e){
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, e.getMessage());
         }
         catch (Exception e){
             log.error("Failure at patchUser method", e);
