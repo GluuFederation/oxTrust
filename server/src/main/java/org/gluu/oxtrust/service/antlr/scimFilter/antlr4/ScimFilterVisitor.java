@@ -35,19 +35,19 @@ public interface ScimFilterVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAttrexp(ScimFilterParser.AttrexpContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code simpleExpr}
+	 * labeled alternative in {@link ScimFilterParser#filter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimpleExpr(ScimFilterParser.SimpleExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code andFilter}
 	 * labeled alternative in {@link ScimFilterParser#filter}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitAndFilter(ScimFilterParser.AndFilterContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code simpleFilter}
-	 * labeled alternative in {@link ScimFilterParser#filter}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSimpleFilter(ScimFilterParser.SimpleFilterContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code negatedFilter}
 	 * labeled alternative in {@link ScimFilterParser#filter}.

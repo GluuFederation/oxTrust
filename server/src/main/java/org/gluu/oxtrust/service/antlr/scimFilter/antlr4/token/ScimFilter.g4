@@ -1,12 +1,9 @@
-/** 
- * ScimFilter.g4 
- * Created by jgomer on 2017-12-11.
- */
+/** ScimFilter.g4 */
 
 grammar ScimFilter;
 
 /*
- * Parser Rules. Edit only if you really know what you are doing :)
+ * Parser Rules. Edit only if you really know what you are doing 8-|
  */
 
 attrpath : ATTRNAME SUBATTR? ;
@@ -21,12 +18,12 @@ attrexp : attrpath 'pr'
 filter : 'not'? '(' filter ')'	#negatedFilter
        | filter 'and' filter 	#andFilter
        | filter 'or' filter	#orFilter
-       | attrexp 		#simpleFilter
+       | attrexp 		#simpleExpr
        ;
 
  
 /*
- * Lexer Rules. Edit only if you really know what you are doing :)
+ * Lexer Rules. Edit only if you really know what you are doing 8-|
  */
 fragment DIGIT : [0-9] ;
 fragment LOWERCASE : [a-z] ;
@@ -36,7 +33,7 @@ WHITESPACE : [\t ]+ -> skip ;
 
 ALPHA : LOWERCASE | UPPERCASE ;
 
-NUMBER : DIGIT+ ([\.] DIGIT+)? ;
+NUMBER : '-'? DIGIT+ ([\.] DIGIT+)? ;
 
 BOOLEAN : 'false' | 'true' ;
 
@@ -44,7 +41,9 @@ NULL : 'null' ;
 
 NAMECHAR : '-' | '_' | DIGIT | ALPHA ;
 
-ATTRNAME : ALPHA NAMECHAR* ;
+URI : ALPHA (NAMECHAR | ':' | '.')* ALPHA ':' ;
+
+ATTRNAME : URI? ALPHA NAMECHAR* ;
 
 SUBATTR : '.' ATTRNAME ;
 

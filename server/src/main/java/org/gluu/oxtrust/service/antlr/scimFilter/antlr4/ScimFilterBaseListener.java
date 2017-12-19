@@ -64,6 +64,18 @@ public class ScimFilterBaseListener implements ScimFilterListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSimpleExpr(ScimFilterParser.SimpleExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSimpleExpr(ScimFilterParser.SimpleExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAndFilter(ScimFilterParser.AndFilterContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -71,18 +83,6 @@ public class ScimFilterBaseListener implements ScimFilterListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAndFilter(ScimFilterParser.AndFilterContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSimpleFilter(ScimFilterParser.SimpleFilterContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSimpleFilter(ScimFilterParser.SimpleFilterContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

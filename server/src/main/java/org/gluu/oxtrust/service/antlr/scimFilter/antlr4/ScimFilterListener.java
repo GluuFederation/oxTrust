@@ -48,6 +48,18 @@ public interface ScimFilterListener extends ParseTreeListener {
 	 */
 	void exitAttrexp(ScimFilterParser.AttrexpContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code simpleExpr}
+	 * labeled alternative in {@link ScimFilterParser#filter}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimpleExpr(ScimFilterParser.SimpleExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code simpleExpr}
+	 * labeled alternative in {@link ScimFilterParser#filter}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimpleExpr(ScimFilterParser.SimpleExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code andFilter}
 	 * labeled alternative in {@link ScimFilterParser#filter}.
 	 * @param ctx the parse tree
@@ -59,18 +71,6 @@ public interface ScimFilterListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAndFilter(ScimFilterParser.AndFilterContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code simpleFilter}
-	 * labeled alternative in {@link ScimFilterParser#filter}.
-	 * @param ctx the parse tree
-	 */
-	void enterSimpleFilter(ScimFilterParser.SimpleFilterContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code simpleFilter}
-	 * labeled alternative in {@link ScimFilterParser#filter}.
-	 * @param ctx the parse tree
-	 */
-	void exitSimpleFilter(ScimFilterParser.SimpleFilterContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code negatedFilter}
 	 * labeled alternative in {@link ScimFilterParser#filter}.

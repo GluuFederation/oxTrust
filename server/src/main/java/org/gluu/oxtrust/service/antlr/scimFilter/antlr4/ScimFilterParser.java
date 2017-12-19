@@ -19,8 +19,8 @@ public class ScimFilterParser extends Parser {
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, WHITESPACE=16, 
-		ALPHA=17, NUMBER=18, BOOLEAN=19, NULL=20, NAMECHAR=21, ATTRNAME=22, SUBATTR=23, 
-		STRING=24;
+		ALPHA=17, NUMBER=18, BOOLEAN=19, NULL=20, NAMECHAR=21, URI=22, ATTRNAME=23, 
+		SUBATTR=24, STRING=25;
 	public static final int
 		RULE_attrpath = 0, RULE_compareop = 1, RULE_compvalue = 2, RULE_attrexp = 3, 
 		RULE_filter = 4;
@@ -36,7 +36,7 @@ public class ScimFilterParser extends Parser {
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, "WHITESPACE", "ALPHA", "NUMBER", "BOOLEAN", "NULL", 
-		"NAMECHAR", "ATTRNAME", "SUBATTR", "STRING"
+		"NAMECHAR", "URI", "ATTRNAME", "SUBATTR", "STRING"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -318,6 +318,25 @@ public class ScimFilterParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class SimpleExprContext extends FilterContext {
+		public AttrexpContext attrexp() {
+			return getRuleContext(AttrexpContext.class,0);
+		}
+		public SimpleExprContext(FilterContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ScimFilterListener ) ((ScimFilterListener)listener).enterSimpleExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ScimFilterListener ) ((ScimFilterListener)listener).exitSimpleExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ScimFilterVisitor ) return ((ScimFilterVisitor<? extends T>)visitor).visitSimpleExpr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class AndFilterContext extends FilterContext {
 		public List<FilterContext> filter() {
 			return getRuleContexts(FilterContext.class);
@@ -337,25 +356,6 @@ public class ScimFilterParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof ScimFilterVisitor ) return ((ScimFilterVisitor<? extends T>)visitor).visitAndFilter(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class SimpleFilterContext extends FilterContext {
-		public AttrexpContext attrexp() {
-			return getRuleContext(AttrexpContext.class,0);
-		}
-		public SimpleFilterContext(FilterContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ScimFilterListener ) ((ScimFilterListener)listener).enterSimpleFilter(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ScimFilterListener ) ((ScimFilterListener)listener).exitSimpleFilter(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ScimFilterVisitor ) return ((ScimFilterVisitor<? extends T>)visitor).visitSimpleFilter(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -445,7 +445,7 @@ public class ScimFilterParser extends Parser {
 				break;
 			case ATTRNAME:
 				{
-				_localctx = new SimpleFilterContext(_localctx);
+				_localctx = new SimpleExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(35);
@@ -529,12 +529,12 @@ public class ScimFilterParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\32\64\4\2\t\2\4\3"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\33\64\4\2\t\2\4\3"+
 		"\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\5\2\17\n\2\3\3\3\3\3\4\3\4\3\5\3"+
 		"\5\3\5\3\5\3\5\3\5\3\5\5\5\34\n\5\3\6\3\6\5\6 \n\6\3\6\3\6\3\6\3\6\3\6"+
 		"\5\6\'\n\6\3\6\3\6\3\6\3\6\3\6\3\6\7\6/\n\6\f\6\16\6\62\13\6\3\6\2\3\n"+
-		"\7\2\4\6\b\n\2\4\3\2\3\13\4\2\24\26\32\32\64\2\f\3\2\2\2\4\20\3\2\2\2"+
-		"\6\22\3\2\2\2\b\33\3\2\2\2\n&\3\2\2\2\f\16\7\30\2\2\r\17\7\31\2\2\16\r"+
+		"\7\2\4\6\b\n\2\4\3\2\3\13\4\2\24\26\33\33\64\2\f\3\2\2\2\4\20\3\2\2\2"+
+		"\6\22\3\2\2\2\b\33\3\2\2\2\n&\3\2\2\2\f\16\7\31\2\2\r\17\7\32\2\2\16\r"+
 		"\3\2\2\2\16\17\3\2\2\2\17\3\3\2\2\2\20\21\t\2\2\2\21\5\3\2\2\2\22\23\t"+
 		"\3\2\2\23\7\3\2\2\2\24\25\5\2\2\2\25\26\7\f\2\2\26\34\3\2\2\2\27\30\5"+
 		"\2\2\2\30\31\5\4\3\2\31\32\5\6\4\2\32\34\3\2\2\2\33\24\3\2\2\2\33\27\3"+
