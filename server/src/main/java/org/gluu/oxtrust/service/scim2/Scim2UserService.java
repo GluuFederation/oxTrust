@@ -21,14 +21,13 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.*;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
-import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.UserFilterVisitor;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
@@ -450,28 +449,12 @@ public class Scim2UserService implements Serializable {
 
     }
 
-    private Filter getFilter(String filterString) throws SCIMException {
-
-        Filter filter;
-        try {
-            if (StringUtils.isEmpty(filterString))
-                filter = Filter.create("inum=*");
-            else
-                filter = scimFilterParserService.createFilter(filterString, UserResource.class);
-        }
-        catch (Exception e){
-            throw new SCIMException("An error occurred parsing the filter expression (" + e.getMessage() + ")", e);
-        }
-        return filter;
-
-    }
-
     public List<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
                                               VirtualListViewResponse vlvResponse, String url, int maxCount) throws Exception{
 
-        Filter ldapFilter=getFilter(filter);
+        Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", UserResource.class);
         //Transform scim attribute to LDAP attribute
-        sortBy = UserFilterVisitor.getLdapAttributeName(sortBy, UserResource.class);
+        sortBy = FilterUtil.getLdapAttributeOfResourceAttribute(sortBy, UserResource.class).getFirst();
 
         log.info("Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);

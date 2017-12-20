@@ -223,19 +223,7 @@ public class SchemaWebService extends BaseScimWebService {
                         schAttr.setUniqueness(AttributeDefinition.Uniqueness.NONE.getName());
                         schAttr.setReferenceTypes(null);
 
-                        AttributeDefinition.Type type = null;
-                        switch (field.getType()) {  //Currently, attribute administration only support 4 types
-                            case STRING:
-                            case PHOTO:
-                                type = AttributeDefinition.Type.STRING;
-                                break;
-                            case DATE:
-                                type = AttributeDefinition.Type.DATETIME;
-                                break;
-                            case NUMERIC:
-                                type = AttributeDefinition.Type.INTEGER;
-                        }
-
+                        AttributeDefinition.Type type = field.getAttributeDefinitionType();
                         schAttr.setType(type==null ? null : type.getName());
                         schAttr.setSubAttributes(null);
 

@@ -11,6 +11,7 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterBaseListener;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterLexer;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.slf4j.Logger;
 
 import javax.ejb.Stateless;
@@ -79,10 +80,11 @@ public class ScimFilterParserService {
                 ldapFilter=Filter.create(defaultStr);
             else {
                 LdapFilterListener ldapFilterListener = new LdapFilterListener(clazz);
-                walkTree(filter, ldapFilterListener);
+                walkTree(FilterUtil.preprocess(filter, clazz), ldapFilterListener);
                 ldapFilter = ldapFilterListener.getFilter();
+
                 if (ldapFilter == null)
-                    log.error("An error occurred when building LDAP filter: {}", ldapFilterListener.getError());
+                    throw new Exception("An error occurred when building LDAP filter: " + ldapFilterListener.getError());
             }
 
             return ldapFilter;

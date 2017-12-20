@@ -159,7 +159,7 @@ public class Scim2PatchService {
             log.info("applyPatchOperationWithValueFilter. List of values for {} is empty. Operation has no effect", attribute);
         else{
             try {
-                valSelFilter = FilterUtil.preprocess(valSelFilter, cls, extService.getUrnsOfExtensions(cls));
+                valSelFilter = FilterUtil.preprocess(valSelFilter, cls);
                 ParseTree parseTree = filterService.getParseTree(valSelFilter);
 
                 List<Integer> matchingIndexes=new ArrayList<Integer>();

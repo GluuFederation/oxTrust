@@ -2,7 +2,6 @@ package org.gluu.oxtrust.ws.rs.scim2;
 
 import com.unboundid.ldap.sdk.Filter;
 import com.wordnik.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.exception.SCIMException;
@@ -13,7 +12,7 @@ import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
-import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.FidoFilterVisitor;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -319,27 +318,12 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         return deviceDn.substring(deviceDn.indexOf("inum=")+5);
     }
 
-    private Filter getFilter(String filterString) throws SCIMException {
-
-        Filter filter;
-        try {
-            if (StringUtils.isEmpty(filterString))
-                filter = Filter.create("oxId=*");
-            else
-                filter = scimFilterParserService.createFilter(filterString, FidoDeviceResource.class);
-        }
-        catch (Exception e){
-            throw new SCIMException("An error occurred parsing the filter expression (" + e.getMessage() + ")", e);
-        }
-        return filter;
-
-    }
-
     private List<BaseScimResource> searchDevices(String filter, String sortBy, SortOrder sortOrder, int startIndex,
                                                     int count, VirtualListViewResponse vlvResponse, String url) throws Exception {
-        Filter ldapFilter=getFilter(filter);
+
+        Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "oxId=*", FidoDeviceResource.class);
         //Transform scim attribute to LDAP attribute
-        sortBy = FidoFilterVisitor.getLdapAttributeName(sortBy, FidoDeviceResource.class);
+        sortBy = FilterUtil.getLdapAttributeOfResourceAttribute(sortBy, FidoDeviceResource.class).getFirst();
 
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);

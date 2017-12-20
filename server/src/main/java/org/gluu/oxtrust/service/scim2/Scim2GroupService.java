@@ -1,20 +1,18 @@
 package org.gluu.oxtrust.service.scim2;
 
 import com.unboundid.ldap.sdk.Filter;
-import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.group.Member;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
-import org.gluu.oxtrust.service.antlr.scimFilter.visitor.scim2.GroupFilterVisitor;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
@@ -219,28 +217,12 @@ public class Scim2GroupService implements Serializable {
         }
     }
 
-    private Filter getFilter(String filterString) throws SCIMException {
-
-        Filter filter;
-        try {
-            if (StringUtils.isEmpty(filterString))
-                filter = Filter.create("inum=*");
-            else
-                filter = scimFilterParserService.createFilter(filterString, GroupResource.class);
-        }
-        catch (Exception e){
-            throw new SCIMException("An error occurred parsing the filter expression (" + e.getMessage() + ")", e);
-        }
-        return filter;
-
-    }
-
     public List<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
                                                VirtualListViewResponse vlvResponse, String groupsUrl, String usersUrl, int maxCount) throws Exception{
 
-        Filter ldapFilter=getFilter(filter);
+        Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", GroupResource.class);
         //Transform scim attribute to LDAP attribute
-        sortBy = GroupFilterVisitor.getLdapAttributeName(sortBy, GroupResource.class);
+        sortBy = FilterUtil.getLdapAttributeOfResourceAttribute(sortBy, GroupResource.class).getFirst();
 
         log.info("Executing search for groups using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
