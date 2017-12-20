@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
-import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.CompValueType;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
@@ -59,12 +59,12 @@ public class SimpleExpression {
         Attribute attrAnnot=getAttributeAnnotation();
         if (attrAnnot==null) {
             if (extService != null) {
-                Extension ext = extService.extensionOfAttribute(resourceClass, attribute);
+                ExtensionField field=extService.getFieldOfExtendedAttribute(resourceClass, attribute);
 
-                if (ext == null)
+                if (field == null)
                     log.error("SimpleExpression.evaluate. Attribute '{}' is not recognized in {}", attribute, msg);
                 else
-                    attrType = extService.getTypeOfCustomAttribute(ext, attribute);
+                    attrType = field.getAttributeDefinitionType();
             }
         }
         else

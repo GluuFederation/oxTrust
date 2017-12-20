@@ -11,8 +11,6 @@ import org.gluu.oxtrust.service.antlr.scimFilter.enums.CompValueType;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
 import org.xdi.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.regex.Pattern;
@@ -50,7 +48,7 @@ public class FilterUtil {
         boolean pass;
         String error=null;
 
-        if (Type.STRING.equals(attrType) || Type.REFERENCE.equals(attrType))
+        if (Type.STRING.equals(attrType) || Type.REFERENCE.equals(attrType) || Type.DATETIME.equals(attrType))
             pass=type.equals(CompValueType.STRING);   //Here STRING refers to ScimFilter.g4 rules
         else
         if (Type.INTEGER.equals(attrType) || Type.DECIMAL.equals(attrType))
@@ -58,9 +56,6 @@ public class FilterUtil {
         else
         if (Type.BOOLEAN.equals(attrType))
             pass=type.equals(CompValueType.BOOLEAN);   //Here BOOLEAN refers to ScimFilter.g4 rule
-        else
-        if (Type.DATETIME.equals(attrType))
-            pass=type.equals(CompValueType.STRING);
         else {
             error=String.format("Filtering over attributes of type '%s' is not supported", attrType);
             log.error("checkTypeConsistency. {}", error);
@@ -111,16 +106,9 @@ public class FilterUtil {
      * @param filther Non-empty string
      * @return
      */
-    public static String preprocess(String filther, Class<? extends BaseScimResource> clazz, List<String> additionalUris) throws Exception{
+    public static String preprocess(String filther, Class<? extends BaseScimResource> clazz) throws Exception{
 
-        //Remove uris
-        List<String> uris=new ArrayList<String>();
-        uris.add(ScimResourceUtil.getDefaultSchemaUrn(clazz));
-        uris.addAll(additionalUris);
-
-        for (String uri : uris)
-            filther = filther.replaceAll(uri + ":", "");
-
+        filther = filther.replaceAll(ScimResourceUtil.getDefaultSchemaUrn(clazz) + ":", "");
         filther = removeBrackets(filther, clazz);
         log.debug("Filter transformed to: {}", filther);
 

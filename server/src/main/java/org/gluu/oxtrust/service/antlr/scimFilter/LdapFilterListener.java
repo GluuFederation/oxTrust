@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
-import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterBaseListener;
@@ -16,12 +16,9 @@ import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.CompValueType;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
-import org.gluu.oxtrust.service.antlr.scimFilter.util.SimpleExpression;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.Pair;
-
-import javax.inject.Inject;
-import java.util.Map;
 
 import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.*;
 
@@ -30,16 +27,15 @@ import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate
  */
 public class LdapFilterListener extends ScimFilterBaseListener {
 
-    @Inject
-    private ExtensionService extService;
-
     private Logger log = LogManager.getLogger(getClass());
     private StringBuilder filter;
     private Class<? extends BaseScimResource> resourceClass;
     private String error;
+    private ExtensionService extService;
 
     public LdapFilterListener(Class<? extends BaseScimResource> resourceClass){
         filter=new StringBuilder();
+        extService=CdiUtil.bean(ExtensionService.class);
         this.resourceClass=resourceClass;
     }
 
@@ -63,7 +59,7 @@ public class LdapFilterListener extends ScimFilterBaseListener {
         //See section 4 of RFC 2254
         return string.replace("\\", "\\5c").replace("*", "\\2a")
                 .replace("(", "\\28").replace(")", "\\29")
-                .replace("\000", "\\00");
+                .replace("\0", "\\00");
     }
 
     private String getSubFilter(String subAttribute, String ldapAttribute, String compValue, Type attrType, CompValueType type, ScimOperator operator){
@@ -71,13 +67,16 @@ public class LdapFilterListener extends ScimFilterBaseListener {
         String filth=null;
 
         if (type.equals(CompValueType.NULL)){
-            if (subAttribute==null)
-                filth=NULL_NOT_EQUALS.get(ldapAttribute);
-            else
-                filth=NULL_NOT_EQUALS_INNER.get(ldapAttribute, subAttribute);
-
-            if (operator.equals(ScimOperator.EQUAL))
-                filth= "(!" + filth + ")";
+            if (subAttribute==null) {
+                filth = NULL_NOT_EQUALS.get(ldapAttribute);
+                if (operator.equals(ScimOperator.EQUAL))
+                    filth= "(!" + filth + ")";
+            }
+            else {
+                filth = NULL_EQUALS_INNER.get(ldapAttribute, subAttribute);
+                if (operator.equals(ScimOperator.NOT_EQUAL))
+                    filth= "(!" + filth + ")";
+            }
         }
         else
         if (Type.STRING.equals(attrType) || Type.REFERENCE.equals(attrType)){
@@ -301,16 +300,16 @@ public class LdapFilterListener extends ScimFilterBaseListener {
             Type attrType=null;
             Attribute attrAnnot = IntrospectUtil.getFieldAnnotation(path, resourceClass, Attribute.class);
             String ldapAttribute = null;
-            boolean isNested =false;
+            boolean isNested = false;
 
             if (attrAnnot==null) {
-                Extension ext=extService.extensionOfAttribute(resourceClass, path.substring(path.lastIndexOf(".")+1));
+                ExtensionField field=extService.getFieldOfExtendedAttribute(resourceClass, path);
 
-                if (ext==null)
+                if (field==null)
                     error=String.format("Attribute path '%s' is not recognized in %s", path, resourceClass.getSimpleName());
                 else {
-                    attrType = extService.getTypeOfCustomAttribute(ext, path);
-                    ldapAttribute = path;
+                    attrType = field.getAttributeDefinitionType();
+                    ldapAttribute = path.substring(path.lastIndexOf(":")+1);
                 }
             }
             else {
@@ -320,6 +319,9 @@ public class LdapFilterListener extends ScimFilterBaseListener {
                 isNested=pair.getSecond();
             }
 
+            if (error!=null)
+                ;   //Intentionally left empty
+            else
             if (attrType==null)
                 error=String.format("Could not determine type of attribute path '%s' in %s", path, resourceClass.getSimpleName());
             else

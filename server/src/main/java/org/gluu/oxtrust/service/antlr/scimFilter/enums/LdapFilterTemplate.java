@@ -5,7 +5,7 @@ package org.gluu.oxtrust.service.antlr.scimFilter.enums;
  */
 public enum LdapFilterTemplate {
     NULL_NOT_EQUALS("(%s=*)"),
-    NULL_NOT_EQUALS_INNER("(%s=*\"%s\":*)"),
+    NULL_EQUALS_INNER("(%s=*\"%s\":null*)"),
 
     STRING_EQUALS("(%s=%s)"),
     STRING_EQUALS_INNER("(%s=*\"%s\":\"%s\"*)"),

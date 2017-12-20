@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.model.scim2.extensions;
 
+import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.xdi.model.GluuAttributeDataType;
 
@@ -40,8 +41,12 @@ public class ExtensionField {
                         value=val;
                 }
                 break;
-            case NUMERIC:
+            case NUMERIC:   //For custom attributes, only integers are supported. Strings should be used to store floating-point numbers
                 if (val instanceof Integer)
+                    value = val;
+                break;
+            case BOOLEAN:
+                if (val instanceof Boolean)
                     value = val;
                 break;
         }
@@ -77,14 +82,18 @@ public class ExtensionField {
                     value=null;
                 }
                 break;
+            case BOOLEAN:
+                value=Boolean.valueOf(val);
+                break;
         }
         return value;
 
     }
 
     /**
-     * Takes an object and a field, and returns a String. For a field data type NUMERIC or STRING, a string representation
-     * is returned. When it's DATE, it is converted from ISO to generalized date time format.
+     * Takes an object and a field, and returns a String (suitable for storing in LDAP). For a field data type NUMERIC,
+     * BOOLEAN or STRING, a string representation is returned. When it's DATE, it is converted from ISO to generalized
+     * date time format.
      * @param field An instance of ExtensionField
      * @param val A value
      * @return String formated properly
@@ -101,8 +110,39 @@ public class ExtensionField {
             case DATE:
                 value=DateUtil.ISOToGeneralizedStringDate(val.toString());
                 break;
+            case BOOLEAN:
+                value=val.toString().toUpperCase(); //LDAP accepts TRUE or FALSE only
+                break;
         }
         return value;
+
+    }
+
+    /**
+     * Numeric support is limited to integer numbers for attributes part of extensions
+     * @return
+     */
+    public Type getAttributeDefinitionType(){
+
+        Type attrType=null;
+        switch (type) {
+            case PHOTO:
+                attrType = Type.REFERENCE;
+                break;
+            case STRING:
+                attrType = Type.STRING;
+                break;
+            case DATE:
+                attrType = Type.DATETIME;
+                break;
+            case NUMERIC:
+                attrType = Type.INTEGER;
+                break;
+            case BOOLEAN:
+                attrType = Type.BOOLEAN;
+                break;
+        }
+        return attrType;
 
     }
 
