@@ -264,6 +264,8 @@ public class UpdateAttributeAction implements Serializable {
 		// Save attribute metadata
 		this.attribute.setDn(dn);
 		this.attribute.setInum(inum);
+		this.attribute.setDisplayName(this.attribute.getDisplayName().trim());
+		this.attribute.setName(this.attribute.getName().trim());
 
 		try {
 			attributeService.addAttribute(this.attribute);
