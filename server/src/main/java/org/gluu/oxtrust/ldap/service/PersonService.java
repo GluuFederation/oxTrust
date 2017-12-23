@@ -231,6 +231,24 @@ public class PersonService implements Serializable, IPersonService {
 
         return result;
     }
+    
+    /* (non-Javadoc)
+     * @see org.gluu.oxtrust.ldap.service.IPersonService#findPersonsByMailds(java.util.List, java.lang.String[])
+     */
+    @Override
+    public List<GluuCustomPerson> findPersonsByMailids(List<String> mailids, String[] returnAttributes) throws Exception {
+        List<Filter> mailidFilters = new ArrayList<Filter>();
+        for (String mailid : mailids) {
+        	mailidFilters.add(Filter.createEqualityFilter(OxTrustConstants.mail, mailid));
+        }
+
+        Filter filter = Filter.createORFilter(mailidFilters);
+
+        List<GluuCustomPerson> result = ldapEntryManager
+                .findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, filter);
+
+        return result;
+    }
 
     /* (non-Javadoc)
      * @see org.gluu.oxtrust.ldap.service.IPersonService#findPersonByDn(java.lang.String, java.lang.String)
@@ -415,15 +433,33 @@ public class PersonService implements Serializable, IPersonService {
     }
 
     /* (non-Javadoc)
-     * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonString(java.util.List)
+     * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonUid(java.util.List)
      */
     @Override
-    public String getPersonString(List<GluuCustomPerson> persons) throws Exception {
+    public String getPersonUids(List<GluuCustomPerson> persons) throws Exception {
         StringBuilder sb = new StringBuilder();
 
         for (Iterator<GluuCustomPerson> iterator = persons.iterator(); iterator.hasNext();) {
             GluuCustomPerson call = iterator.next();
-            sb.append('\'').append(call.getDisplayName()).append('\'');
+            sb.append('\'').append(call.getUid()).append('\'');
+            if (iterator.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonMailid(java.util.List)
+     */
+    @Override
+    public String getPersonMailids(List<GluuCustomPerson> persons) throws Exception {
+        StringBuilder sb = new StringBuilder();
+
+        for (Iterator<GluuCustomPerson> iterator = persons.iterator(); iterator.hasNext();) {
+            GluuCustomPerson call = iterator.next();
+            sb.append('\'').append(call.getMail()).append('\'');
             if (iterator.hasNext()) {
                 sb.append(", ");
             }
