@@ -26,6 +26,7 @@ import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.*;
+import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.external.ExternalScimService;
@@ -216,7 +217,7 @@ public class Scim2UserService implements Serializable {
 
                 if (val!=null) {
                     //Obtains the attribute/value(s) pairs in the current extension
-                    Map<String, Object> attrsMap = (Map<String, Object>) val;
+                    Map<String, Object> attrsMap = IntrospectUtil.strObjMap(val);
 
                     for (String attribute : attrsMap.keySet()) {
                         Object value = attrsMap.get(attribute);

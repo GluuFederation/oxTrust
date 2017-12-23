@@ -38,11 +38,8 @@ public class ResourceValidator {
     /**
      * Construct a instance of this class base on a SCIM resource passed
      * @param resource SCIM resource object
+     * @param extensions List of extensions associated to this resource
      */
-    public ResourceValidator(BaseScimResource resource){
-        new ResourceValidator(resource, new ArrayList<Extension>());
-    }
-
     public ResourceValidator(BaseScimResource resource, List<Extension> extensions){
         this.resource=resource;
         resourceClass=resource.getClass();
@@ -171,7 +168,7 @@ public class ResourceValidator {
 
                 try {
                     //Obtains a generic map consisting of all name/value(s) pairs associated to this schema
-                    Map<String, Object> attrsMap = (Map<String, Object>) extendedAttributes.get(schema);
+                    Map<String, Object> attrsMap = IntrospectUtil.strObjMap(extendedAttributes.get(schema));
 
                     for (String attr : attrsMap.keySet()) {
                         Object value = attrsMap.get(attr);
@@ -180,7 +177,7 @@ public class ResourceValidator {
                              Gets the class associated to the value of current attribute. Since the value is coming
                              from Json content, it can only be: String, numeric (Integer or Double), boolean, Collection
                              (ArrayList), or Map (LinkedHashMap). For extended attributes, we should only see coming:
-                             String, Integer, and Collection. Different things will be rejected
+                             String, Integer, Double, boolean, and Collection. Different things will be rejected
                              */
                             Class cls = value.getClass();
                             boolean isCollection=IntrospectUtil.isCollection(cls);

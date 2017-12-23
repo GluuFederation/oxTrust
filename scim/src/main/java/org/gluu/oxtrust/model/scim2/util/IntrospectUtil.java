@@ -83,6 +83,10 @@ public class IntrospectUtil {
 
     }
 
+    public static Map<String, Object> strObjMap(Object obj){
+        return (Map<String, Object>) obj;
+    }
+
     public static <T extends Annotation> T getFieldAnnotation(String path, Class <? extends BaseScimResource> resourceClass, Class<T> annotationClass){
         Field f=findFieldFromPath(resourceClass, path);
         return f==null ? null : f.getAnnotation(annotationClass);

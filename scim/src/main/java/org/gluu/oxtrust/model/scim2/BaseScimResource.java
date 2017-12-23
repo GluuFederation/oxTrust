@@ -6,6 +6,7 @@ import org.gluu.oxtrust.model.scim2.annotations.*;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 
 import java.util.*;
@@ -106,7 +107,7 @@ public class BaseScimResource {
     //Useful method for client-side
     public Map<String, Object> getExtendedAttributes(String urn){
         Object custAttrs=extendedAttrs.get(urn);
-        return (custAttrs==null) ? null : (Map<String, Object>) custAttrs;
+        return (custAttrs==null) ? null : IntrospectUtil.strObjMap(custAttrs);
     }
 
 }

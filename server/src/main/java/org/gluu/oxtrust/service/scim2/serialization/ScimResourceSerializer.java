@@ -159,7 +159,7 @@ public class ScimResourceSerializer {
             if (value!=null && containsProperty(include, prefix, key)){
 
                 if (value instanceof Map)
-                    value = smallerMap(getNewPrefix(prefix, key), (Map<String, Object>) value, include);
+                    value = smallerMap(getNewPrefix(prefix, key), IntrospectUtil.strObjMap(value), include);
                 else
                 if (IntrospectUtil.isCollection(value.getClass())){
                     List list=new ArrayList();
@@ -168,7 +168,7 @@ public class ScimResourceSerializer {
                     for (Object item : (Collection) value){
                         if (item!=null)
                             if (item instanceof Map) {
-                                innerMap=smallerMap(getNewPrefix(prefix, key), (Map<String, Object>) item, include);
+                                innerMap=smallerMap(getNewPrefix(prefix, key), IntrospectUtil.strObjMap(item), include);
                                 if (innerMap!=null)
                                     list.add(innerMap);
                             }

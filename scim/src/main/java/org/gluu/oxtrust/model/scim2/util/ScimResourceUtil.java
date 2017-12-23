@@ -39,7 +39,7 @@ class traversalClass {
     }
 
     private Map<String, Object> smallerMap(String prefix, Map<String, Object> source, Object destination, boolean replacing){
-        Map<String, Object> smallMap = (destination==null) ? new HashMap<String, Object>() : (Map<String, Object>) destination;
+        Map<String, Object> smallMap = (destination==null) ? new HashMap<String, Object>() : IntrospectUtil.strObjMap(destination);
         traverse(prefix, source, smallMap, replacing);
         return smallMap.size()==0 ? null : smallMap;
     }
@@ -57,7 +57,7 @@ class traversalClass {
                     Attribute attrAnnot = f.getAnnotation(Attribute.class);
                     if (attrAnnot != null && !attrAnnot.mutability().equals(READ_ONLY)) {
                         if (value instanceof Map)
-                            value = smallerMap(getNewPrefix(prefix, key), (Map<String, Object>) value, destValue, replacing);
+                            value = smallerMap(getNewPrefix(prefix, key), IntrospectUtil.strObjMap(value), destValue, replacing);
                         else
                         if (attrAnnot.mutability().equals(IMMUTABLE) && destValue != null && !value.equals(destValue)) {
                             //provokes no more traversals
@@ -107,14 +107,14 @@ class traversalClass {
         if (value!=null)
             try {
                 //If it's a map we must recurse
-                traverseDelete((Map<String, Object>) value, path);
+                traverseDelete(IntrospectUtil.strObjMap(value), path);
             }
             catch (Exception e){
                 if (IntrospectUtil.isCollection(value.getClass())){
                     Collection col=(Collection) value;
                     for (Object item : col) {
                         if (item instanceof Map)
-                            traverseDelete((Map<String, Object>) item, path);
+                            traverseDelete(IntrospectUtil.strObjMap(item), path);
                     }
                 }
             }
@@ -140,7 +140,7 @@ class traversalClass {
         for (i=i+1;i<array.length;i++){
             Object item=array[i];
             if (item!=null && item instanceof Map) {
-                Map<String, Object> map = (Map<String, Object>) item;
+                Map<String, Object> map = IntrospectUtil.strObjMap(item);
                 Object primaryObj = map.get("primary");
                 if (primaryObj != null && primaryObj.toString().equals("true")){
                     map.put("primary", false);
@@ -174,10 +174,10 @@ public class ScimResourceUtil {
 
             if (extendedAttrsObj!=null){
 
-                Map<String, Object> extendedAttrs=(Map<String, Object>) extendedAttrsObj;
+                Map<String, Object> extendedAttrs=IntrospectUtil.strObjMap(extendedAttrsObj);
                 Map<String, ExtensionField> fields=extension.getFields();
 
-                Map<String, Object> destMap = destination.get(urn)==null ? new HashMap<String, Object>() : (Map<String, Object>) destination.get(urn);
+                Map<String, Object> destMap = destination.get(urn)==null ? new HashMap<String, Object>() : IntrospectUtil.strObjMap(destination.get(urn));
 
                 for (String attr : fields.keySet()){
                     Object value=extendedAttrs.get(attr);
@@ -220,7 +220,7 @@ public class ScimResourceUtil {
 
             for (Extension ext : extensions)
                 if (ext.getUrn().equals(path)){
-                    Map<String, Object> submap=(Map<String, Object>) source.get(path);
+                    Map<String, Object> submap=IntrospectUtil.strObjMap(source.get(path));
                     submap.remove(key);
                 }
 

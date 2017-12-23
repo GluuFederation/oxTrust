@@ -71,7 +71,7 @@ public class Scim2PatchService {
             List<String> extensionUrns=extService.getUrnsOfExtensions(clazz);
 
             if (value instanceof Map)
-                genericMap = (Map<String, Object>) value;
+                genericMap = IntrospectUtil.strObjMap(value);
             else{
                 //It's an atomic value or an array
                 if (StringUtils.isEmpty(path))
@@ -182,7 +182,7 @@ public class Scim2PatchService {
                     }
                     else{
                         if (subAttribute.length()==0)    //Updates all the item
-                            list.set(index, (Map<String, Object>) operation.getValue());
+                            list.set(index, IntrospectUtil.strObjMap(operation.getValue()));
                         else   //Updates a subattribute only
                             list.get(index).put(subAttribute, operation.getValue());
                     }

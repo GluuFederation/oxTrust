@@ -105,7 +105,7 @@ public class ExtensionService {
     /**
      * Builds a list of objects based on the supplied String values passed and the extension field passed. The strings are
      * converted according to the type asociated to the field: for STRING the value is left as is; for DATE the value is
-     * converted to a String following the ISO date format; for NUMERIC an Integer is created from the value supplied.
+     * converted to a String following the ISO date format; for NUMERIC an Integer/Double is created from the value supplied.
      * @param field An ExtensionField
      * @param strValues A non-empty String array with the values associated to the field passed. This values are coming
      *                  from LDAP

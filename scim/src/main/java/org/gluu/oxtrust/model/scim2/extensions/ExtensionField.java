@@ -41,8 +41,8 @@ public class ExtensionField {
                         value=val;
                 }
                 break;
-            case NUMERIC:   //For custom attributes, only integers are supported. Strings should be used to store floating-point numbers
-                if (val instanceof Integer)
+            case NUMERIC:
+                if (val instanceof Integer || val instanceof Double)
                     value = val;
                 break;
             case BOOLEAN:
@@ -79,7 +79,12 @@ public class ExtensionField {
                     value = new Integer(val);
                 }
                 catch (Exception e){
-                    value=null;
+                    try{
+                        value = new Double(val);
+                    }
+                    catch (Exception e2) {
+                        value = null;
+                    }
                 }
                 break;
             case BOOLEAN:
@@ -92,8 +97,8 @@ public class ExtensionField {
 
     /**
      * Takes an object and a field, and returns a String (suitable for storing in LDAP). For a field data type NUMERIC,
-     * BOOLEAN or STRING, a string representation is returned. When it's DATE, it is converted from ISO to generalized
-     * date time format.
+     * BOOLEAN or STRING, a straight string representation is returned. When it's DATE, it is converted from ISO to
+     * generalized date time format.
      * @param field An instance of ExtensionField
      * @param val A value
      * @return String formated properly
@@ -118,10 +123,6 @@ public class ExtensionField {
 
     }
 
-    /**
-     * Numeric support is limited to integer numbers for attributes part of extensions
-     * @return
-     */
     public Type getAttributeDefinitionType(){
 
         Type attrType=null;
@@ -136,7 +137,7 @@ public class ExtensionField {
                 attrType = Type.DATETIME;
                 break;
             case NUMERIC:
-                attrType = Type.INTEGER;
+                attrType = Type.DECIMAL; //Return the broader of DECIMAL or INTEGER;
                 break;
             case BOOLEAN:
                 attrType = Type.BOOLEAN;

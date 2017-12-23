@@ -45,15 +45,16 @@ public class Name {
     public static String computeFormattedName(Name name){
 
         if (StringUtils.isEmpty(name.formatted)) {
-            StringBuilder formattedName = new StringBuilder("");
+            String formattedName = "";
 
-            formattedName.append(StringUtils.isEmpty(name.honorificPrefix) ? "" : name.honorificPrefix + " ");
-            formattedName.append(StringUtils.isEmpty(name.givenName) ? "" : name.givenName + " ");
-            formattedName.append(StringUtils.isEmpty(name.middleName) ? "" : name.middleName + " ");
-            formattedName.append(StringUtils.isEmpty(name.familyName) ? "" : name.familyName + " ");
-            formattedName.append(StringUtils.isEmpty(name.honorificSuffix) ? "" : name.honorificSuffix);
+            formattedName+=StringUtils.isEmpty(name.honorificPrefix) ? "" : name.honorificPrefix + " ";
+            formattedName+=StringUtils.isEmpty(name.givenName) ? "" : name.givenName + " ";
+            formattedName+=StringUtils.isEmpty(name.middleName) ? "" : name.middleName + " ";
+            formattedName+=StringUtils.isEmpty(name.familyName) ? "" : name.familyName + " ";
+            formattedName+=StringUtils.isEmpty(name.honorificSuffix) ? "" : name.honorificSuffix;
+            formattedName=formattedName.trim();
 
-            name.formatted=formattedName.toString().trim();
+            name.formatted=formattedName.length()==0 ? null : formattedName;
         }
         return name.formatted;
 
