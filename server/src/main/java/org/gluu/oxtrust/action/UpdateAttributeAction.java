@@ -144,7 +144,7 @@ public class UpdateAttributeAction implements Serializable {
 			this.attribute.setSaml1Uri(String.format("urn:%s:dir:attribute-def:%s", namespace, attribute.getName()));
 		}
 
-		if (StringHelper.isEmpty(this.attribute.getSaml2Uri()) || (this.attribute.getSaml2Uri() != null)) {
+		if (StringHelper.isEmpty(this.attribute.getSaml2Uri())) {
 			this.attribute.setSaml2Uri(attributeService.getDefaultSaml2Uri(attribute.getName()));
 		}
 
