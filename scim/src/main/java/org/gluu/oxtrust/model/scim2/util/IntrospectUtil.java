@@ -87,7 +87,7 @@ public class IntrospectUtil {
         return (Map<String, Object>) obj;
     }
 
-    public static <T extends Annotation> T getFieldAnnotation(String path, Class <? extends BaseScimResource> resourceClass, Class<T> annotationClass){
+    public static <T extends Annotation> T getFieldAnnotation(String path, Class resourceClass, Class<T> annotationClass){
         Field f=findFieldFromPath(resourceClass, path);
         return f==null ? null : f.getAnnotation(annotationClass);
     }
@@ -178,10 +178,10 @@ public class IntrospectUtil {
     private static List<String> validableAttrsNames;
     private static List<String> canonicalizedAttrsNames;
 
-    public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> requiredCoreAttrs;
     public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> defaultCoreAttrs;
     public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> alwaysCoreAttrs;
     public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> neverCoreAttrs;
+    public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> requiredCoreAttrs;
     public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> validableCoreAttrs;
     public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> canonicalCoreAttrs;
 
@@ -211,6 +211,18 @@ public class IntrospectUtil {
 
         allAttrs=new HashMap<Class<? extends BaseScimResource>, SortedSet<String>>();
         storeRefs=new HashMap<Class<? extends BaseScimResource>, Map<String,String>>();
+    }
+
+    private static void freezeMaps(){
+        requiredCoreAttrs=Collections.unmodifiableMap(requiredCoreAttrs);
+        defaultCoreAttrs=Collections.unmodifiableMap(defaultCoreAttrs);
+        alwaysCoreAttrs=Collections.unmodifiableMap(alwaysCoreAttrs);
+        neverCoreAttrs=Collections.unmodifiableMap(neverCoreAttrs);
+        validableCoreAttrs=Collections.unmodifiableMap(validableCoreAttrs);
+        canonicalCoreAttrs=Collections.unmodifiableMap(canonicalCoreAttrs);
+
+        allAttrs=Collections.unmodifiableMap(allAttrs);
+        storeRefs=Collections.unmodifiableMap(storeRefs);
     }
 
     private static void traverseClassForNames(Class clazz, String prefix, List<Field> extraFields, boolean prune) throws Exception{
@@ -338,9 +350,11 @@ public class IntrospectUtil {
                 }
                 storeRefs.put(cls, map);
             }
+            //Make them all unmodifiable
+            freezeMaps();
         }
         catch (Exception e){
-            log.error(e.getMessage(), e);
+            log.fatal(e.getMessage(), e);
         }
     }
 

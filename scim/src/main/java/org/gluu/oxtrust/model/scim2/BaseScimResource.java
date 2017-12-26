@@ -31,7 +31,7 @@ public class BaseScimResource {
             /* This should not be READ_ONLY as the spec says, ie. if upon creation only the default schema is provided and
                then via an update a custom attribute is specified, the schemas attributes needs to be updated! */
             returned = AttributeDefinition.Returned.ALWAYS)
-    private List<String> schemas;
+    private Set<String> schemas;
 
     @Attribute(description = "A unique identifier for a SCIM resource as defined by the service provider",
             isRequired = false,     //Notice that clients don't need to pass it really
@@ -66,7 +66,7 @@ public class BaseScimResource {
     }
 
     public BaseScimResource(){
-        schemas=new ArrayList<String>();
+        schemas=new HashSet<String>();
         String defSchema= ScimResourceUtil.getDefaultSchemaUrn(getClass());
         if (defSchema!=null)
             schemas.add(defSchema);
@@ -96,11 +96,11 @@ public class BaseScimResource {
         this.meta = meta;
     }
 
-    public List<String> getSchemas() {
+    public Set<String> getSchemas() {
         return schemas;
     }
 
-    public void setSchemas(List<String> schemas) {
+    public void setSchemas(Set<String> schemas) {
         this.schemas = schemas;
     }
 

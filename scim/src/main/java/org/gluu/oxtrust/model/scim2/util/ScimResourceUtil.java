@@ -51,40 +51,38 @@ class traversalClass {
             Object destValue = destination.get(key);
 
             if (value!=null && error==null) {
-                Field f = IntrospectUtil.findFieldFromPath(base, getNewPrefix(prefix, key));
+                //Atributes related to extensions evaluate null here
+                Attribute attrAnnot=IntrospectUtil.getFieldAnnotation(getNewPrefix(prefix, key), base, Attribute.class);
 
-                if (f!=null) {  //Atributes related to extensions evaluate null here
-                    Attribute attrAnnot = f.getAnnotation(Attribute.class);
-                    if (attrAnnot != null && !attrAnnot.mutability().equals(READ_ONLY)) {
-                        if (value instanceof Map)
-                            value = smallerMap(getNewPrefix(prefix, key), IntrospectUtil.strObjMap(value), destValue, replacing);
-                        else
-                        if (attrAnnot.mutability().equals(IMMUTABLE) && destValue != null && !value.equals(destValue)) {
-                            //provokes no more traversals
-                            error = "Invalid value passed for immutable attribute " + key;
-                            value = null;
-                        }
+                if (attrAnnot != null && !attrAnnot.mutability().equals(READ_ONLY)) {
+                    if (value instanceof Map)
+                        value = smallerMap(getNewPrefix(prefix, key), IntrospectUtil.strObjMap(value), destValue, replacing);
+                    else
+                    if (attrAnnot.mutability().equals(IMMUTABLE) && destValue != null && !value.equals(destValue)) {
+                        //provokes no more traversals
+                        error = "Invalid value passed for immutable attribute " + key;
+                        value = null;
+                    }
 
-                        if (value != null) {
+                    if (value != null) {
 
-                            if (IntrospectUtil.isCollection(value.getClass())) {
-                                Collection col=(Collection) value;
-                                int size=col.size();
+                        if (IntrospectUtil.isCollection(value.getClass())) {
+                            Collection col=(Collection) value;
+                            int size=col.size();
 
-                                if (!replacing) {    //we need to add to the existing collection
-                                    if (destValue!=null) {
+                            if (!replacing) {    //we need to add to the existing collection
+                                if (destValue!=null) {
 
-                                        if (!IntrospectUtil.isCollection(destValue.getClass()))
-                                            log.warn("Value {} was expected to be a collection", destValue);
-                                        else
-                                            col.addAll((Collection) destValue);
-                                    }
+                                    if (!IntrospectUtil.isCollection(destValue.getClass()))
+                                        log.warn("Value {} was expected to be a collection", destValue);
+                                    else
+                                        col.addAll((Collection) destValue);
                                 }
-                                //Do the arrangement so that only one primary="true" can stay in data
-                                value = col.size()==0 ? null : adjustPrimarySubAttributes(col, size);
                             }
-                            destination.put(key, value);
+                            //Do the arrangement so that only one primary="true" can stay in data
+                            value = col.size()==0 ? null : adjustPrimarySubAttributes(col, size);
                         }
+                        destination.put(key, value);
                     }
                 }
             }
@@ -273,13 +271,13 @@ public class ScimResourceUtil {
         return transferToResource(origin, destination, extensions, false);
     }
 
-    public static BaseScimResource deleteFromResource(BaseScimResource origin, String path, List<Extension> extensions) throws InvalidAttributeValueException{
+    public static BaseScimResource deleteFromResource(BaseScimResource origin, String path, List<Extension> extensions) throws InvalidAttributeValueException {
 
         Field f=IntrospectUtil.findFieldFromPath(origin.getClass(), path);
         if (f!=null){
             Attribute attrAnnot = f.getAnnotation(Attribute.class);
             if (attrAnnot != null && (attrAnnot.mutability().equals(READ_ONLY) || attrAnnot.isRequired()))
-                throw new InvalidAttributeValueException("Cannot remove read-only or required attribute from resource");
+                throw new InvalidAttributeValueException("Cannot remove read-only or required attribute " + path);
         }
 
         Map<String, Object> map = mapper.convertValue(origin, new TypeReference<Map<String,Object>>(){});
