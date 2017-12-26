@@ -33,7 +33,7 @@ public class ServiceProviderConfig extends BaseScimResource {
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.COMPLEX)
-	private PatchConfig patch = new PatchConfig(false);
+	private PatchConfig patch = new PatchConfig(true);
 
     @Attribute(description = "A complex type that specifies bulk configuration options. See Section 3.7 of RFC7644",
             isRequired = true,
