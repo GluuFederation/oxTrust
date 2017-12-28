@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
 package org.gluu.oxtrust.service.scim2;
 
 import com.unboundid.ldap.sdk.Filter;
@@ -13,7 +18,6 @@ import org.gluu.oxtrust.model.scim2.group.Member;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
-import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -49,9 +53,6 @@ public class Scim2GroupService implements Serializable {
     private OrganizationService organizationService;
 
     @Inject
-    private ServiceUtil serviceUtil;
-
-    @Inject
     private ExtensionService extService;
 
     @Inject
@@ -78,7 +79,7 @@ public class Scim2GroupService implements Serializable {
             List<String> listMembers = new ArrayList<String>();
 
             for (Member member : members){
-                String inum=member.getValue(); //it's not null as it's required in GroupResource
+                String inum=member.getValue();  //it's not null as it is required in GroupResource
                 GluuCustomPerson person=personService.getPersonByInum(inum);
 
                 if (person==null)
@@ -174,14 +175,7 @@ public class Scim2GroupService implements Serializable {
         group.getMeta().setLocation(location);
         //We are ignoring the id value received (group.getId())
         group.setId(gluuGroup.getInum());
-
-        try{
-            if (gluuGroup.getMembers()!=null && gluuGroup.getMembers().size()>0)
-                serviceUtil.personMembersAdder(gluuGroup, gluuGroup.getDn());
-        }
-        catch (Exception e){
-            log.error("Group created but couldn't update the memberOf attribute of some user entries");
-        }
+        syncMemberAttributeInPerson(gluuGroup.getDn(), null, gluuGroup.getMembers());
 
         return gluuGroup;
 
@@ -205,16 +199,15 @@ public class Scim2GroupService implements Serializable {
 
     public void replaceGroupInfo(GluuGroup gluuGroup, GroupResource group, String usersUrl) throws Exception{
 
+        List<String> olderMembers=new ArrayList<String>();
+        if (gluuGroup.getMembers()!=null)
+            olderMembers.addAll(gluuGroup.getMembers());
+
         transferAttributesToGroup(group, gluuGroup, usersUrl);
         log.debug("replaceGroupInfo. Updating group info in LDAP");
         groupService.updateGroup(gluuGroup);
-        try{
-            if (gluuGroup.getMembers()!=null && gluuGroup.getMembers().size()>0)
-                serviceUtil.personMembersAdder(gluuGroup, gluuGroup.getDn());
-        }
-        catch (Exception e){
-            log.error("Group created but couldn't update the memberOf attribute of some user entries");
-        }
+        syncMemberAttributeInPerson(gluuGroup.getDn(), olderMembers, gluuGroup.getMembers());
+
     }
 
     public List<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
@@ -238,6 +231,64 @@ public class Scim2GroupService implements Serializable {
         }
         log.info ("Found {} matching entries - returning {}", vlvResponse.getTotalResults(), list.size());
         return resources;
+
+    }
+
+    private void syncMemberAttributeInPerson(String groupDn, List<String> beforeMemberDns, List<String> afterMemberDns){
+
+        log.debug("syncMemberAttributeInPerson. Updating memberOf attribute in user LDAP entries");
+        log.trace("Before member dns {}; After member dns {}", beforeMemberDns, afterMemberDns);
+
+        //Build 2 sets of DNs
+        Set<String> before=new HashSet<String>();
+        if (beforeMemberDns!=null)
+            before.addAll(beforeMemberDns);
+
+        Set<String> after=new HashSet<String>();
+        if (afterMemberDns!=null)
+            after.addAll(afterMemberDns);
+
+        //Do removals
+        for (String dn : before){
+            if (!after.contains(dn)){
+                try{
+                    GluuCustomPerson gluuPerson = personService.getPersonByDn(dn);
+
+                    List<String> memberOf=new ArrayList<String>();
+                    memberOf.addAll(gluuPerson.getMemberOf());
+                    memberOf.remove(groupDn);
+
+                    gluuPerson.setMemberOf(memberOf);
+                    personService.updatePerson(gluuPerson);
+                }
+                catch (Exception e){
+                    log.error("An error occurred while removing user {} from group {}", dn, groupDn);
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        //Do insertions
+        for (String dn : after){
+            if (!before.contains(dn)){
+                try{
+                    GluuCustomPerson gluuPerson = personService.getPersonByDn(dn);
+
+                    List<String> memberOf=new ArrayList<String>();
+                    memberOf.add(groupDn);
+
+                    if (gluuPerson.getMemberOf()!=null)
+                        memberOf.addAll(gluuPerson.getMemberOf());
+
+                    gluuPerson.setMemberOf(memberOf);
+                    personService.updatePerson(gluuPerson);
+                }
+                catch (Exception e){
+                    log.error("An error occurred while adding user {} to group {}", dn, groupDn);
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
 
     }
 
