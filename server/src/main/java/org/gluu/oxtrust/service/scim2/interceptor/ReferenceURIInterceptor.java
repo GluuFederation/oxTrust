@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.service.scim2.interceptor;
 
 import org.gluu.oxtrust.model.scim2.SearchRequest;
@@ -17,7 +22,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.*;
  * This class checks if filter, attributes or excludedAttributes query param contains resource references ($ref) and if so
  * drops the dollar sign of occurrences. This is required for introspection utilities to make their work more accurately.
  * This could have been implemented with a decorator, but pollutes the code a lot, so this way is more concise. Using a
- * resteasy filter is not convenient since it is not called if he call is internal (not an HTTP one)
+ * resteasy filter is not convenient since it does not get invoked if the call is internal (not an HTTP one)
  * Created by jgomer on 2017-10-10.
  */
 @RefAdjusted

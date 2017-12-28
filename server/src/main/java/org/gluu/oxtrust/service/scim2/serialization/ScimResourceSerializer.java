@@ -1,8 +1,14 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.service.scim2.serialization;
 
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
+import org.codehaus.jackson.type.TypeReference;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
@@ -189,10 +195,11 @@ public class ScimResourceSerializer {
 
         SortedSet<String> include =new TreeSet<String>();
         Class<? extends BaseScimResource> resourceClass=resource.getClass();
-        buildIncludeSet(include, resourceClass, resource.getSchemas(), attributes, exclusions);
+        buildIncludeSet(include, resourceClass, new ArrayList<String>(resource.getSchemas()), attributes, exclusions);
         log.debug("serialize. Attributes to include: {}", include);
+
         //Do generic serialization. This works for any POJO (not only subclasses of BaseScimResource)
-        Map<String, Object> map = mapper.convertValue(resource, Map.class);
+        Map<String, Object> map = mapper.convertValue(resource, new TypeReference<Map<String, Object>>(){});
         //Using LinkedHashMap allows recursive routines to visit submaps in the same order as fields appear in java classes
         LinkedHashMap<String, Object> newMap=new LinkedHashMap<String, Object>();
         traverse("", map, newMap, include);

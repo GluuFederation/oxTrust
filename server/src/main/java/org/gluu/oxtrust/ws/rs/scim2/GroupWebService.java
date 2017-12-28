@@ -190,7 +190,6 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
             }
 
             log.info("Removing group and updating user's entries");
-            //TODO: check if removal updates user entries
             groupService.removeGroup(group);
 
             response=Response.noContent().build();
@@ -302,7 +301,7 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
             String now=ISODateTimeFormat.dateTime().withZoneUTC().print(System.currentTimeMillis());
             group.getMeta().setLastModified(now);
 
-            //Replaces the information found in person with the contents of user
+            //Replaces the information found in gluuGroup with the contents of group
             scim2GroupService.replaceGroupInfo(gluuGroup, group, usersUrl);
 
             // For custom script: update group

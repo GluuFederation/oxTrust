@@ -17,8 +17,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
-import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
+import org.gluu.oxtrust.model.scim2.provider.config.AuthenticationScheme;
+import org.gluu.oxtrust.model.scim2.provider.config.ServiceProviderConfig;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.interceptor.RejectFilterParam;

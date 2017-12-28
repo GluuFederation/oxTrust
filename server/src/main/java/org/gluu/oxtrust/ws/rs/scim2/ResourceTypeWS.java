@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2015, Gluu
+ */
 package org.gluu.oxtrust.ws.rs.scim2;
 
 import com.wordnik.swagger.annotations.Api;
@@ -7,8 +12,8 @@ import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
-import org.gluu.oxtrust.model.scim2.provider.ResourceType;
-import org.gluu.oxtrust.model.scim2.provider.SchemaExtensionHolder;
+import org.gluu.oxtrust.model.scim2.provider.resourcetypes.ResourceType;
+import org.gluu.oxtrust.model.scim2.provider.resourcetypes.SchemaExtensionHolder;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
