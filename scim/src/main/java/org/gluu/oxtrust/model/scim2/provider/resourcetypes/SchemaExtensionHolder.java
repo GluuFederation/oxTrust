@@ -4,16 +4,18 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.model.scim2.provider;
+package org.gluu.oxtrust.model.scim2.provider.resourcetypes;
 
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
- * Holds the mapping of the schema extension characteristics for the resource type representation.
- *
+ * A class that represents the <code>schemaExtensions</code> complex attribute of ResourceType Schema (see section 6 of
+ * RFC 7643).
  * @author Val Pecaoco
- * updated by jgomer2001 on 2017-09-23
+ */
+/*
+ * Updated by jgomer2001 on 2017-09-23
  */
 public class SchemaExtensionHolder {
 
@@ -44,4 +46,5 @@ public class SchemaExtensionHolder {
     public void setRequired(boolean required) {
         this.required = required;
     }
+
 }

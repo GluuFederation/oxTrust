@@ -1,10 +1,17 @@
-/**
- * All classes residing in this package are shared between the server side code and the Java client code "SCIM-Client"
- * https://github.com/GluuFederation/SCIM-Client) in terms of Resteasy.
- * They are a common "contract" so when a new service method is added or changes signature, there is no need to update
- * both projects. Just recompile...
- * Client code uses the Resteasy Proxy Framework and thus, we are sharing an interface between client and server
- * Important: do not use @Inject in these classes (the client is not a weld project)
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
  */
 
+/**
+ * Interfaces and annotations shared by both the server side code and the Java client
+ * (<a href="https://github.com/GluuFederation/SCIM-Client">SCIM-Client</a>).
+ * Client code uses the Resteasy Proxy Framework and thus we are sharing the same interface for client and server.
+ */
+/*
+ * Interfaces found here are common "contracts" so if a service method is added or changes signature, both projects
+ * (oxtrust-server and scim-client) will consistently "see" the same contract.
+ * Important: do not use @Inject in these classes (the client is not a weld project)
+ */
 package org.gluu.oxtrust.ws.rs.scim2;

@@ -1,3 +1,8 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.user;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
@@ -6,9 +11,10 @@ import org.gluu.oxtrust.model.scim2.Validations;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
 
 /**
+ * Represents a physical mailing address for a user. See section 4.1.2 of RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-09-04.
- *
- * Address for the user.
  */
 public class Address {
 
@@ -106,4 +112,5 @@ public class Address {
     public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
+
 }

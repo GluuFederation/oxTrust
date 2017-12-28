@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.extensions;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
@@ -7,6 +12,26 @@ import org.xdi.model.GluuAttributeDataType;
 import java.util.regex.Pattern;
 
 /**
+ * Represents an attribute part of a SCIM resource extension.
+ * <p>These attributes, aka "extended attributes" or "custom attributes" have implicit characteristics equal to the
+ * defaults shown in section 2.2 of RFC 7643. In other words, all custom attributes have:</p>
+ * <ul>
+ *     <li>canonicalValues: <i>none assigned</i></li>
+ *     <li>required: <i>false</i></li>
+ *     <li>caseExact: <i>false</i></li>
+ *     <li>mutability: <i>readWrite</i></li>
+ *     <li>returned: <i>default</i></li>
+ *     <li>uniqueness: <i>none</i></li>
+ *     <li>referenceTypes: <i>none</i></li>
+ * </ul>
+ * <p>The only "configurable" characteristics supported are:</p>
+ * <ul>
+ *     <li>multivalued: true/false</li>
+ *     <li>type: reference, string, datetime, decimal, and boolean (only).</li>
+ * </ul>
+ * <p>These can be tweaked via oxTrust admin web console.</p>
+ */
+/*
  * Created by jgomer on 2017-09-29.
  */
 public class ExtensionField {
@@ -55,9 +80,10 @@ public class ExtensionField {
     }
 
     /**
-     * Does the same as valueOf, however, a String is supplied as value. Here no validations of data type consistence takes
-     * place (it is expected value passed reflects the type of the field). If the field is a DATE, a conversion from ISO
-     * format is done, nonetheless, DATE fields still remain being represented as Java strings
+     * Equivalent to {@link #valueOf(ExtensionField, Object) valueOf}, however, a String is supplied as value. Here no
+     * validations on data type consistence takes place (it is expected that value passed reflects the type of the field).
+     * If the field is a DATE, a conversion from ISO format is done, nonetheless, DATE fields still remain being represented
+     * as Java strings
      * @param field An ExtensionField
      * @param val A non-null String value
      * @return A value
@@ -96,9 +122,9 @@ public class ExtensionField {
     }
 
     /**
-     * Takes an object and a field, and returns a String (suitable for storing in LDAP). For a field data type NUMERIC,
-     * BOOLEAN or STRING, a straight string representation is returned. When it's DATE, it is converted from ISO to
-     * generalized date time format.
+     * Takes an object and a ExtensionField, and returns a String (suitable for storing in LDAP). For a field data type
+     * NUMERIC, BOOLEAN or STRING, a straight string representation is returned. When it's DATE, it is converted from ISO
+     * to generalized date time format.
      * @param field An instance of ExtensionField
      * @param val A value
      * @return String formated properly
@@ -123,6 +149,14 @@ public class ExtensionField {
 
     }
 
+    /**
+     * <p>Maps the org.xdi.model.GluuAttributeDataType associated to this ExtensionField (see {@link #getType() getType}) to
+     * a member of the enum {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type AttributeDefinition.Type}.</p>
+     * <p>The mapping is straightforward. Special cases are org.xdi.model.GluuAttributeDataType.PHOTO being mapped to
+     * {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type#REFERENCE Type.REFERENCE}, and org.xdi.model.GluuAttributeDataType.NUMERIC
+     * to {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type#DECIMAL Type.DECIMAL}.</p>
+     * @return An enum value of AttributeDefinition.Type
+     */
     public Type getAttributeDefinitionType(){
 
         Type attrType=null;

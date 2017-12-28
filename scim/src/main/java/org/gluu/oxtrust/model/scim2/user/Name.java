@@ -1,3 +1,8 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.user;
 
 import org.apache.commons.lang.StringUtils;
@@ -5,9 +10,10 @@ import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.annotations.StoreReference;
 
 /**
+ * A class that represents the components of a user's name. See section 4.1.1 of RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-09-04.
- *
- * The components of the user's full name.
  */
 public class Name {
 
@@ -42,6 +48,12 @@ public class Name {
     @StoreReference(ref = "oxTrustNameFormatted")
     private String formatted;
 
+    /**
+     * From a Name instance, it builds a string depicting a full name including all middle names, titles, and suffixes
+     * as appropriate for display if the {@link #getFormatted() formatted} field of the object passed is null or empty
+     * @param name A <code>Name</code> instance
+     * @return A string representing a full name
+     */
     public static String computeFormattedName(Name name){
 
         if (StringUtils.isEmpty(name.formatted)) {
@@ -107,4 +119,5 @@ public class Name {
     public void setHonorificSuffix(String honorificSuffix) {
         this.honorificSuffix = honorificSuffix;
     }
+
 }

@@ -3,24 +3,25 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.model.scim2.provider;
+package org.gluu.oxtrust.model.scim2.provider.config;
 
 import java.util.Collection;
 
-import org.gluu.oxtrust.model.scim2.Constants;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
+import org.gluu.oxtrust.model.scim2.provider.config.*;
 
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_OPERATIONS;
 import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_PAYLOAD_SIZE;
 
 /**
+ * This class represents a ServiceProviderConfig SCIM resource. It's key for the implementation of the
+ * <code>/ServiceProviderConfig</code> endpoint. For more about this resource type see RFC 7643, section 5
+ */
+/*
  * Created by jgomer on 2017-09-23.
- *
- * This class represents a ServiceProviderConfig. It's key for the implementation of the /ServiceProviderConfig endpoint
- * For more about this resource type see RFC 7643, section 5
  */
 @Schema(id="urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig", name="ServiceProviderConfig", description = "SCIM 2.0 Service Provider Config Resource")
 public class ServiceProviderConfig extends BaseScimResource {

@@ -1,4 +1,9 @@
-package org.gluu.oxtrust.model.scim2.schema;
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
+package org.gluu.oxtrust.model.scim2.provider.schema;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -8,6 +13,10 @@ import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import java.util.List;
 
 /**
+ * A class used to represent a schema (that a given SCIM resource type adheres to). Unlike other core resources, this one
+ * contains complex objects within a sub-attribute. See section 7 of RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-10-13.
  */
 @Schema(id="urn:ietf:params:scim:schemas:core:2.0:Schema", name="Schema", description = "See section 7 RFC 7643")

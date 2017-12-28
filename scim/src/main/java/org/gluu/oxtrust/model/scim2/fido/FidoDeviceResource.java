@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.fido;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
@@ -5,10 +10,13 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.*;
 
 /**
+ * Fido device SCIM resource. An object of this class is used to represent a device like an U2F security key or a
+ * Super Gluu device. See the <i>oxDeviceRegistration</i> objectclass of your Gluu's LDAP.
+ */
+/*
  * Created by jgomer on 2017-10-09.
- * Based on former org.gluu.oxtrust.model.scim2.fido.FidoDevice from Val Pecaoco
+ * Based on former Val Pecaoco's org.gluu.oxtrust.model.scim2.fido.FidoDevice
  *
- * Fido device resource.
  * Notes: Other classes may depend on this one via reflection. Do not add members whose names are already at parent
  * org.gluu.oxtrust.model.scim2.BaseScimResource
  */
@@ -69,21 +77,20 @@ public class FidoDeviceResource extends BaseScimResource {
     @StoreReference(ref = "oxLastAccessTime")
     private String lastAccessTime;
 
-    @Attribute(description = "",
-            isRequired = true,
+    @Attribute(isRequired = true,
             canonicalValues = {"active", "compromised"})
     @StoreReference(ref = "oxStatus")
     private String status;
 
-    @Attribute(description = "")
+    @Attribute
     @StoreReference(ref = "displayName")
     private String displayName;
 
-    @Attribute(description = "")
+    @Attribute
     @StoreReference(ref = "description")
     private String description;
 
-    @Attribute(description = "")
+    @Attribute
     @StoreReference(ref = "oxNickName")
     private String nickname;
 

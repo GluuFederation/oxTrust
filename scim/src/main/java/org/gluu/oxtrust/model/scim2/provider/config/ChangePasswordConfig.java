@@ -3,13 +3,15 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.model.scim2.provider;
+package org.gluu.oxtrust.model.scim2.provider.config;
 
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
- * A complex type that specifies Change Password configuration options.
+ * A class used to specify Change Password configuration options for SCIM service (see section 5 of RFC 7643).
+ */
+/*
  * Updated by jgomer on 2017-10-21
  */
 public class ChangePasswordConfig {
@@ -20,13 +22,14 @@ public class ChangePasswordConfig {
             type = AttributeDefinition.Type.BOOLEAN)
 	private boolean supported;
 
+    /**
+     * Creates an instance of ChangePasswordConfig with all its fields unassigned.
+     */
     public ChangePasswordConfig(){}
 
 	/**
-	 * Create a <code>ChangePasswordConfig</code> instance.
-	 *
-	 * @param supported
-	 *            Specifies whether the Change Password operation is supported.
+     * Creates an instance of ChangePasswordConfig using the parameter values passed.
+	 * @param supported Specifies whether the Change Password operation is supported.
 	 */
 	public ChangePasswordConfig(boolean supported) {
 		this.supported = supported;
@@ -34,8 +37,7 @@ public class ChangePasswordConfig {
 
 	/**
 	 * Indicates whether the Change Password operation is supported.
-	 * 
-	 * @return {@code true} if the Change Password operation is supported.
+	 * @return A boolean value
 	 */
 	public boolean isSupported() {
 		return supported;

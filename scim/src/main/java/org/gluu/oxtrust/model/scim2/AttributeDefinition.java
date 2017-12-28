@@ -1,58 +1,48 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2;
 
 /**
+ * Represents SCIM attribute characteristics which are worth to model using Java enums: mutability, returned, type and
+ * uniqueness. See section 2.2 of RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-09-04.
- *
- * Represents the typical SCIM attribute characteristics: required, canonicalValues, caseExact, etc. according to
- * section 2.2 of RFC7643
  * Adapted from https://github.com/pingidentity/scim2/blob/master/scim2-sdk-common/src/main/java/com/unboundid/scim2/common/types/AttributeDefinition.java
  */
 public class AttributeDefinition {
 
     /**
-     * An enumeration of the data types for values.
+     * An enumeration of the data types for attributes or subattributes.
      */
     public enum Type {
+
         STRING("string"),
-        /**
-         * Boolean datatype.
-         */
         BOOLEAN("boolean"),
-        /**
-         * Decimal datatype.
-         */
         DECIMAL("decimal"),
-        /**
-         * Integer datatype.
-         */
         INTEGER("integer"),
-        /**
-         * Datetime datatype.
-         */
         DATETIME("dateTime"),
-        /**
-         * Binary datatype.
-         */
         BINARY("binary"),
-        /**
-         * Reference datatype.
-         */
         REFERENCE("reference"),
-        /**
-         * Complex datatype.
-         */
         COMPLEX("complex");
 
         private String name;
 
         /**
-         * Constructs an attribute type object.
-         * @param name the name (used in SCIM schemas) of the object.
+         * Constructs an <code>Type</code> object.
+         * @param name The SCIM schema type, see section 2.3 and 7 of RFC7643.
          */
         Type(final String name){
             this.name = name;
         }
 
+        /**
+         * Returns the type name as in section 7 of RFC7643.
+         * @return A string value
+         */
         public String getName()
         {
             return name;
@@ -61,7 +51,7 @@ public class AttributeDefinition {
     }
 
     /**
-     * This enum is used to describe the mutability of an attribute.
+     * An enum used to describe the mutability of an attribute.
      */
     public enum Mutability{
         /**
@@ -74,12 +64,12 @@ public class AttributeDefinition {
         READ_WRITE("readWrite"),
         /**
          * The attribute can be read, and cannot be set after
-         * object creation.  It can be set during object creation.
+         * object creation (unless it was not provided in that moment).
          */
         IMMUTABLE("immutable"),
         /**
          * The attribute can only be written, and not read.  This
-         * might be used for password hashes for example.
+         * might be used for passwords for example.
          */
         WRITE_ONLY("writeOnly");
 
@@ -90,13 +80,16 @@ public class AttributeDefinition {
 
         /**
          * Mutability enum private constructor.
-         *
-         * @param name the name of the mutability constraint.
+         * @param name The name of the mutability constraint.
          */
         Mutability(final String name){
             this.name = name;
         }
 
+        /**
+         * Returns the mutability value (readOnly, readWrite, etc.) as appears in section 7 of RFC7643.
+         * @return A string value
+         */
         public String getName()
         {
             return name;
@@ -105,8 +98,7 @@ public class AttributeDefinition {
     }
 
     /**
-     * This enum is used to describe the when an attribute is returned
-     * from scim methods.
+     * This enum is used to describe when/if an attribute should be returned in response to SCIM method invocations.
      */
     public enum Returned{
         /**
@@ -133,13 +125,16 @@ public class AttributeDefinition {
 
         /**
          * Returned enum private constructor.
-         *
          * @param name the name of the return constraint.
          */
         Returned(final String name){
             this.name = name;
         }
 
+        /**
+         * Returns the keyword for the returned characteristic as in section 7 of RFC7643.
+         * @return A string value
+         */
         public String getName()
         {
             return name;
@@ -147,6 +142,9 @@ public class AttributeDefinition {
 
     }
 
+    /**
+     * This enum is used to describe how the service provider enforces uniqueness of attribute values.
+     */
     public enum Uniqueness{
         /**
          * Indicates that this attribute's value need not be unique.
@@ -165,13 +163,16 @@ public class AttributeDefinition {
 
         /**
          * Uniqueness enum private constructor.
-         *
          * @param name the name of the uniqueness constraint.
          */
         Uniqueness(final String name){
             this.name = name;
         }
 
+        /**
+         * Returns the keyword for the uniqueness characteristic as in section 7 of RFC7643.
+         * @return A String value
+         */
         public String getName()
         {
             return name;

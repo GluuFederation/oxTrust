@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.patch;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -8,6 +13,9 @@ import java.util.List;
 import static org.gluu.oxtrust.model.scim2.Constants.PATCH_REQUEST_SCHEMA_ID;
 
 /**
+ * A class used to represent a request for a SCIM PATCH. See section 3.5.2 of RFC 7644.
+ */
+/*
  * Created by jgomer on 2017-10-28.
  */
 public class PatchRequest {
@@ -17,6 +25,9 @@ public class PatchRequest {
     @JsonProperty("Operations")
     private List<PatchOperation> operations;
 
+    /**
+     * Constructs an empty PatchRequest initializing its {@link #getSchemas() schemas} field properly.
+     */
     public PatchRequest() {
         this.schemas = Collections.singletonList(PATCH_REQUEST_SCHEMA_ID);
     }

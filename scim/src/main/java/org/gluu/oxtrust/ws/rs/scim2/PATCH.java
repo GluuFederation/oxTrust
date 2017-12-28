@@ -14,13 +14,11 @@ import java.lang.annotation.Target;
 import javax.ws.rs.HttpMethod;
 
 /**
- * PATCH custom Annotation
- * 
+ * An annotation to be used by methods that handle HTTP requests using the PATCH verb.
  * @author Reda Zerrad Date: 04.18.2012
  */
 
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @HttpMethod("PATCH")
-public @interface PATCH {
-}
+public @interface PATCH { }

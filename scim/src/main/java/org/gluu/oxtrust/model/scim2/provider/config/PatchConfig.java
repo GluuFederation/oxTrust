@@ -3,12 +3,15 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.model.scim2.provider;
+package org.gluu.oxtrust.model.scim2.provider.config;
 
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
+ * This class represents the <code>patch</code> complex attribute in the Service Provider Config (see section 5 of RFC 7643).
+ */
+/*
  * Updated by jgomer on 2017-10-21
  */
 public class PatchConfig{
@@ -19,12 +22,14 @@ public class PatchConfig{
             type = AttributeDefinition.Type.BOOLEAN)
     private boolean supported;
 
+    /**
+     * Creates an instance of PatchConfig with all its fields unassigned.
+     */
     public PatchConfig(){}
 
     /**
-    * Create a <code>PatchConfig</code> instance.
-    *
-    * @param supported  Specifies whether the PATCH operation is supported.
+     * Creates an instance of PatchConfig using the parameter values passed.
+     * @param supported Specifies whether the PATCH operation is supported.
     */
     public PatchConfig(boolean supported)
     {
@@ -33,7 +38,7 @@ public class PatchConfig{
 
     /**
     * Indicates whether the PATCH operation is supported.
-    * @return  {@code true} if the PATCH operation is supported.
+    * @return A boolean value
     */
     public boolean isSupported()
     {

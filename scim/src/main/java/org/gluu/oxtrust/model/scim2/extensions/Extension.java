@@ -1,10 +1,18 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2015, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.extensions;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by jgomer on 2017-09-29.
+ * A class used to represent a extension applicable to a SCIM resource. See section 3.3 of RFC 7643.
+ */
+/*
+ * Updated by jgomer on 2017-09-29.
  */
 public class Extension {
 
@@ -13,6 +21,11 @@ public class Extension {
     private String description;
     private Map<String, ExtensionField> fields=new HashMap<String, ExtensionField>();
 
+    /**
+     * Constructs an instance of Extension associated to the URN passed with an empty collection of fields and unassigned
+     * name and description.
+     * @param urn A string representing the urn that identifies uniquely this extension
+     */
     public Extension(String urn){
         this.urn=urn;
     }

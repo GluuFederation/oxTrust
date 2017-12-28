@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.util;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,10 +20,11 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
+ * This class provides static methods to validate whether a (SCIM) resource instance fulfills certain characteristics -
+ * regarded to formatting, mutability, uniqueness, etc. This allows to adhere more closely to SCIM spec
+ */
+/*
  * Created by jgomer on 2017-08-17.
- *
- * This class contains methods to validate whether a resource instance fulfills certain characteristics - regarded to
- * formatting, mutability, uniqueness, etc. - in order to adhere more closely to SCIM spec
  */
 public class ResourceValidator {
 
@@ -36,8 +42,8 @@ public class ResourceValidator {
     private List<Extension> extensions;
 
     /**
-     * Construct a instance of this class base on a SCIM resource passed
-     * @param resource SCIM resource object
+     * Construct a instance of this class
+     * @param resource A SCIM resource object (the target of validation)
      * @param extensions List of extensions associated to this resource
      */
     public ResourceValidator(BaseScimResource resource, List<Extension> extensions){
@@ -46,6 +52,13 @@ public class ResourceValidator {
         this.extensions=extensions;
     }
 
+    /**
+     * Inspects the resource passed in the constructor and determines if the attributes annotated as {@link Attribute#isRequired()
+     * required} in the <code>Class</code> of the resource were all provided (not null).
+     * <p>If an attribute was marked as "required" and is part of a multi-valued complex attribute, no validation takes
+     * place if the involved list is null or empty.</p>
+     * @throws SCIMException When a validation does not pass (there is a missing value in a required attribute)
+     */
     public void validateRequiredAttributes() throws SCIMException {
 
         Map<String, List<Method>> map=IntrospectUtil.requiredCoreAttrs.get(resourceClass);
@@ -62,7 +75,13 @@ public class ResourceValidator {
 
     }
 
-    //This validation should be called after a successful call to validateRequiredAttributes
+    /**
+     * Inspects the resource passed in the constructor and applies validations for every attribute annotated with
+     * {@link Validator}. Validations are of different nature as seen{@link Validations here}.
+     * <p>This method should be called after a successful call to {@link #validateRequiredAttributes()}.</p>
+     * @throws SCIMException When a validation does not pass (the {@link Validations#apply(Validations, Object) apply}
+     * method returns false)
+     */
     public void validateValidableAttributes() throws SCIMException{
 
         Map<String, List<Method>> map=IntrospectUtil.validableCoreAttrs.get(resourceClass);
@@ -83,7 +102,13 @@ public class ResourceValidator {
 
     }
 
-    //This validation should be called after a successful call to validateRequiredAttributes
+    /**
+     * Inspects the resource passed in the constructor and for every attribute annotated with a non-empty collection of
+     * {@link Attribute#canonicalValues() canonical values}, it checks whether the attribute value matches any of the
+     * canonical values supplied.
+     * <p>This method should be called after a successful call to {@link #validateRequiredAttributes()}.</p>
+     * @throws SCIMException When a validation does not pass (there is no match for any of the attributes inspected)
+     */
     public void validateCanonicalizedAttributes() throws SCIMException{
 
         Map<String, List<Method>> map=IntrospectUtil.canonicalCoreAttrs.get(resourceClass);
@@ -103,7 +128,15 @@ public class ResourceValidator {
         }
     }
 
-    //This validation should be called after a successful call to validateRequiredAttributes
+    /**
+     * Inspects the {@link BaseScimResource#getSchemas() schemas} attribute of the resource passed in the constructor and
+     * checks the default schema <code>urn</code> associated to the resource type is present in the list. If some of the
+     * <code>urn</code>s part of the <code>Extension</code>s passed in the constructor are contained in the list, the validation is also
+     * successful.
+     * <p>This method should be called after a successful call to {@link #validateRequiredAttributes()}.</p>
+     * @throws SCIMException If there is no {@link BaseScimResource#getSchemas() schemas} in this resource or if some of
+     * the <code>urn</code>s there are not known.
+     */
     public void validateSchemasAttribute() throws SCIMException {
 
         Set<String> schemaList = new HashSet<String>(resource.getSchemas());
@@ -123,11 +156,12 @@ public class ResourceValidator {
     }
 
     /**
-     * Validates if an attribute part of an extension is consistent with an arbitrary value passed
+     * Validates if an attribute part of an extension is consistent with an arbitrary value passed.
      * @param extension Extension where the attribute exists
-     * @param attribute The name of the attribute inside the extensin passed
+     * @param attribute The name of the attribute inside the extension
      * @param value The value to be checked (never null)
-     * @throws SCIMException When the value is inconsistent, or the attribute is not part of the extension
+     * @throws SCIMException When the value is inconsistent, or the attribute does not belong to the extension. As an
+     * example, consider an attribute whose type is "NUMERIC": if the value passed was "Hi", this is clearly an error.
      */
     private void validateDataTypeExtendedAttr(Extension extension, String attribute, Object value) throws SCIMException{
 
@@ -144,7 +178,16 @@ public class ResourceValidator {
 
     }
 
-    //This validation should be called after a successful call to validateSchemasAttribute
+    /**
+     * Inspects the resource passed in the constructor and for every extended attribute (see {@link BaseScimResource#getExtendedAttributes()},
+     * the attribute's value is checked to see if it complies with the data type it is supposed to belong to. This
+     * information is obtained from the list of <code>Extension</code>s passed in the constructor (every {@link ExtensionField}
+     * has an associated {@link ExtensionField#getType() type}.
+     * <p>When an attribute is {@link ExtensionField#isMultiValued() multi-valued}, every single item inside the collection
+     * is validated.</p>
+     * <p>This method should be called after a successful call to {@link #validateRequiredAttributes()}.</p>
+     * @throws SCIMException When any of the validations do not pass or an attribute seems not to be part of a known schema.
+     */
     public void validateExtendedAttributes() throws SCIMException{
 
         //Note: throughout this method, we always ignore presence of nulls
@@ -174,10 +217,9 @@ public class ResourceValidator {
                         Object value = attrsMap.get(attr);
                         if (value != null) {
                             /*
-                             Gets the class associated to the value of current attribute. Since the value is coming
-                             from Json content, it can only be: String, numeric (Integer or Double), boolean, Collection
-                             (ArrayList), or Map (LinkedHashMap). For extended attributes, we should only see coming:
-                             String, Integer, Double, boolean, and Collection. Different things will be rejected
+                             Gets the class associated to the value of current attribute. For extended attributes, we
+                             should only see coming: String, Integer, Double, boolean, and Collection.
+                             Different things will be rejected
                              */
                             Class cls = value.getClass();
                             boolean isCollection=IntrospectUtil.isCollection(cls);

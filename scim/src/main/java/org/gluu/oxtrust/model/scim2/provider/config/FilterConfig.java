@@ -3,13 +3,15 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.model.scim2.provider;
+package org.gluu.oxtrust.model.scim2.provider.config;
 
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
- * A complex type that specifies FILTER configuration options.
+ * This class represents the <code>filter</code> complex attribute in the Service Provider Config (see section 5 of RFC 7643).
+ */
+/*
  * Updated by jgomer on 2017-10-21
  */
 public class FilterConfig {
@@ -26,27 +28,31 @@ public class FilterConfig {
             type = AttributeDefinition.Type.INTEGER)
 	private long maxResults;
 
+    /**
+     * Creates an instance of FilterConfig with all its fields unassigned.
+     */
     public FilterConfig(){ }
 
 	/**
-	 * Create a <code>FilterConfig</code> instance.
-	 *
-	 * @param supported
-	 *            Specifies whether the FILTER operation is supported.
+     * Creates an instance of FilterConfig using the parameter values passed.
+	 * @param supported Specifies whether the filters are supported in searches.
 	 */
 	public FilterConfig(boolean supported) {
 		this.supported = supported;
 	}
 
 	/**
-	 * Indicates whether the FILTER operation is supported.
-	 * 
-	 * @return {@code true} if the FILTER operation is supported.
+	 * Indicates whether filters are supported in searches or not
+	 * @return A boolean value.
 	 */
 	public boolean isSupported() {
 		return supported;
 	}
 
+    /**
+     * Returns the maximum number of results that may be returned as a response when sending queries to search endpoints.
+     * @return A numeric value
+     */
 	public long getMaxResults() {
 		return maxResults;
 	}

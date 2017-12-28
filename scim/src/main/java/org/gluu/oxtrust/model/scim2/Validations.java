@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2;
 
 import java.net.URI;
@@ -5,11 +10,10 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
+ * An enumeration of all possible (formatting) validations applicable to attributes of SCIM resources.
+ */
+/*
  * Created by jgomer on 2017-09-15.
- *
- * An enumeration of all possible (formatting) validations applicable to attributes of SCIM resources. It also contains
- * the implementation of validations themselves in static methods. These methods receive the validation "type" to apply
- * and the object upon which to perform the validation. They return a boolean (true/false) for success/failed validation.
  */
 public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
 
@@ -24,6 +28,12 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
         validTimeZones=new HashSet<String>(Arrays.asList(TimeZone.getAvailableIDs()));
     }
 
+    /**
+     * This method receives a validation "type" and the object upon which to perform the validation.
+     * @param validation An {@link Validations enum constant} that specifies which validation should be applied
+     * @param value An object target of validation
+     * @return A boolean value (true/false) for success/failed validation.
+     */
     public static boolean apply(Validations validation, Object value){
 
         boolean pass=false;
@@ -73,7 +83,7 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
 
     }
 
-    public static boolean validateEmail(Object val){
+    private static boolean validateEmail(Object val){
 
         boolean valid=true;
         if (isString(val))
@@ -82,7 +92,7 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
         return valid;
     }
 
-    public static boolean validateCountry(Object val){
+    private static boolean validateCountry(Object val){
 
         boolean valid=true;
         if (isString(val))
@@ -91,7 +101,7 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
         return valid;
     }
 
-    public static boolean validateTimezone(Object val){
+    private static boolean validateTimezone(Object val){
 
         boolean valid=true;
         if (isString(val))
@@ -100,7 +110,7 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
         return valid;
     }
 
-    public static boolean validateURI(Object val){
+    private static boolean validateURI(Object val){
 
         boolean valid=true;
         try {

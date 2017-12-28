@@ -3,7 +3,6 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.model.exception;
 
 public class SCIMException extends RuntimeException {

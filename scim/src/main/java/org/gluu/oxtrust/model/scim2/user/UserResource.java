@@ -1,3 +1,8 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.user;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
@@ -8,9 +13,11 @@ import org.gluu.oxtrust.model.scim2.annotations.*;
 import java.util.List;
 
 /**
+ * An instance of this class represents a User resource as explained in section 4.1 of RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-09-04.
  *
- * Core schema user resource.
  * Notes: Property names (member names) MUST match exactly as in the spec, so do not change!. Other classes may depend on
  * this one via reflection. Do not add members whose names are already at org.gluu.oxtrust.model.scim2.BaseScimResource.
  * Annotations applied at every member resemble what the spec states
@@ -120,7 +127,6 @@ public class UserResource extends BaseScimResource {
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             multiValueClass = Group.class,
             type = AttributeDefinition.Type.COMPLEX)
-    @StoreReference(ref = "memberOf")
     private List<Group> groups;
 
     @Attribute(description = "A list of entitlements for the User that represent a thing the User has.",

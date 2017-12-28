@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.group;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
@@ -9,9 +14,11 @@ import org.gluu.oxtrust.model.scim2.annotations.StoreReference;
 import java.util.Set;
 
 /**
+ * Group SCIM resource. See section 4.2 in RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-09-12.
  *
- * Core schema group resource.
  * Notes: Property names (member names) MUST match exactly as in the spec, so do not change!. Other classes may depend on
  * this one via reflection. Do not add members whose names are already at org.gluu.oxtrust.model.scim2.BaseScimResource.
  * Annotations applied at every member resemble what the spec states

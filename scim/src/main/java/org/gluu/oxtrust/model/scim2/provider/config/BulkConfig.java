@@ -3,13 +3,15 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.model.scim2.provider;
+package org.gluu.oxtrust.model.scim2.provider.config;
 
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
- * A complex type that specifies BULK configuration options.
+ * A class that holds values representing the configuration options for SCIM BULK operation (see section 5 of RFC 7643).
+ */
+/*
  * Updated by jgomer on 2017-10-21
  */
 public class BulkConfig {
@@ -32,16 +34,16 @@ public class BulkConfig {
             type = AttributeDefinition.Type.INTEGER)
 	private long maxPayloadSize;
 
+    /**
+     * Creates an instance of BulkConfig with all its fields unassigned.
+     */
     public BulkConfig(){ }
+
 	/**
-	 * Create a <code>BulkConfig</code> instance.
-	 *
-	 * @param supported
-	 *            Specifies whether the BULK operation is supported.
-	 * @param maxOperations
-	 *            Specifies the maximum number of operations.
-	 * @param maxPayloadSize
-	 *            Specifies the maximum payload size in bytes.
+	 * Creates a BulkConfig instance based on parameters supplied.
+	 * @param supported Specifies whether the bulk operation is supported.
+	 * @param maxOperations Specifies the maximum number of operations supported per bulk.
+	 * @param maxPayloadSize Specifies the maximum payload size in bytes supported per bulk.
 	 */
 	public BulkConfig(boolean supported, long maxOperations, long maxPayloadSize) {
 		this.supported = supported;
@@ -51,16 +53,14 @@ public class BulkConfig {
 
 	/**
 	 * Indicates whether the PATCH operation is supported.
-	 * 
-	 * @return {@code true} if the PATCH operation is supported.
+	 * @return A boolean value
 	 */
 	public boolean isSupported() {
 		return supported;
 	}
 
 	/**
-	 * Retrieves the maximum number of operations.
-	 * 
+	 * Retrieves the maximum number of operations supported in a bulk.
 	 * @return The maximum number of operations.
 	 */
 	public long getMaxOperations() {
@@ -68,8 +68,7 @@ public class BulkConfig {
 	}
 
 	/**
-	 * Retrieves the maximum payload size in bytes.
-	 * 
+	 * Retrieves the maximum payload size allowed in a bulk.
 	 * @return The maximum payload size in bytes.
 	 */
 	public long getMaxPayloadSize() {

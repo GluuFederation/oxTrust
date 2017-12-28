@@ -1,12 +1,18 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.user;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 
 /**
+ * Represents a role for a user. See section 4.1.2 of RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-09-12.
- *
- * Role for the user.
  */
 public class Role {
 

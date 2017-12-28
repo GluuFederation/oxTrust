@@ -12,9 +12,11 @@ import java.util.List;
 import static org.gluu.oxtrust.model.scim2.Constants.ERROR_RESPONSE_URI;
 
 /**
- * "HTTP Status and Error Response Handling" (see section 3.12 of RFC7644)
+ * A class that models data of an error response. See section 3.12 of RFC7644.
  *
  * @author Val Pecaoco
+ */
+/*
  * Updated by jgomer on 2017-09-14.
  */
 public class ErrorResponse implements Serializable {
@@ -37,6 +39,10 @@ public class ErrorResponse implements Serializable {
         this.schemas = schemas;
     }
 
+    /**
+     * Retrieves the HTTP status code of the error. E.g. "500"
+     * @return A string value
+     */
     public String getStatus() {
         return status;
     }
@@ -45,6 +51,10 @@ public class ErrorResponse implements Serializable {
         this.status = status;
     }
 
+    /**
+     * Retrieves the error type. E.g. "invalidFilter"
+     * @return A string value
+     */
     public String getScimType() {
         if (scimType != null) {
             return scimType.getValue();
@@ -61,6 +71,10 @@ public class ErrorResponse implements Serializable {
         this.scimType = scimType;
     }
 
+    /**
+     * Retrieves a description of the error
+     * @return A string value
+     */
     public String getDetail() {
         return detail;
     }
@@ -68,4 +82,5 @@ public class ErrorResponse implements Serializable {
     public void setDetail(String detail) {
         this.detail = detail;
     }
+
 }

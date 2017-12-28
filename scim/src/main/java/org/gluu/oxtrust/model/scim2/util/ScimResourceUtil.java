@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.util;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,9 +24,10 @@ import java.util.*;
 import static org.gluu.oxtrust.model.scim2.AttributeDefinition.Mutability.*;
 
 /**
+ * Helper class to traverse a SCIM resource object recursively.
+ */
+/*
  * Created by jgomer on 2017-09-25.
- *
- * Helper class to traverse a SCIM resource object recursively
  */
 class traversalClass {
 
@@ -152,15 +158,19 @@ class traversalClass {
 }
 
 /**
+ * This class contains methods to facilitate transformation, and manipulation of data inside SCIM resource objects, as
+ * well as some miscelaneous routines.
+ */
+/*
  * Created by jgomer on 2017-09-25.
- *
- * This class contains methods to facilitate transformation, and manipulation of data inside SCIM resource objects
  */
 public class ScimResourceUtil {
 
     private static Logger log = LogManager.getLogger(ScimResourceUtil.class);
 
     private static ObjectMapper mapper=new ObjectMapper();
+
+    private ScimResourceUtil() {}
 
     private static void attachExtensionInfo(Map<String, Object> source, Map<String, Object> destination, List<Extension> extensions, boolean replacing){
 
@@ -246,32 +256,71 @@ public class ScimResourceUtil {
     }
 
     /**
-     * Incorporates the information from an origin into a destination object doing replacement (suitable for the replace
-     * operation via PUT, for instance, or for a PATCH with op="replace"), following these rules:
-     * - Ignores changes in readonly attrs
-     * - Ignores null values (for single-valued attrs)
-     * - Nullifies multi-valued attribute when empty array is passed
-     * - Immutable attrs must match in origin and destination or else exception is thrown
-     * - When a multi-valued attribute is passed in the origin object, no existing data in the destination object is retained,
-     *   that is, the replacement is not partial but thorough: it's not an item-by-item replacement
-     * @param origin Object with the information to be copied/replaced into the destination object
-     * @param destination Object that receives the new information (only non-null attributes in the origin object) end up
-     *                    being changed in this object
-     * @param extensions
-     * @return A new object that contains the result: the final state of destination object
-     * @throws InvalidAttributeValueException When recursive traversal fails or if the rule of immutable attribute was not fulfilled
+     * Returns an object which is the result of incorporating the information found in the <code>replacementDataSource</code>
+     * parameter to the information existing in <code>originalDataSource</code> object by doing replacements.
+     * The transference of data follows these rules:
+     * <ul>
+     * <li>Ignores changes in readonly attributes</li>
+     * <li>Ignores null values (for single-valued attributes) in <code>replacementDataSource</code></li>
+     * <li>Nullifies multi-valued attributes when empty array is passed in <code>replacementDataSource</code></li>
+     * <li>Immutable attributes must match in both input objects or else exception is thrown. However, if the value in
+     * <code>originalDataSource</code> is missing (null), the value coming from <code>replacementDataSource</code> is kept</li>
+     * <li>When a multi-valued attribute is passed in <code>replacementDataSource</code>, no existing data in the
+     * <code>originalDataSource</code> is retained, that is, the replacement is not partial but thorough: it's not an
+     * item-by-item replacement</li>
+     * </ul>
+     * @param replacementDataSource Object with the information to be incorporated. Only non-null attributes of this o
+     *                                bject end up being transfered to the result
+     * @param originalDataSource Object (SCIM resource) that provides the original data
+     * @param extensions A list of <code>Extensions</code> associated to parameter <code>originalDataSource</code>.
+     *                   This helps to manipulate the transference of custom attributes values.
+     * @return A new object that contains the result of data transference. Neither <code>replacementDataSource</code>
+     * nor <code>originalDataSource</code> are changed after a call to this method
+     * @throws InvalidAttributeValueException When recursive traversal of <code>replacementDataSource</code> fails or
+     * if the rule of immutable attribute was not fulfilled
      */
-    public static BaseScimResource transferToResourceReplace(BaseScimResource origin, final BaseScimResource destination,
+    public static BaseScimResource transferToResourceReplace(BaseScimResource replacementDataSource, BaseScimResource originalDataSource,
                                                             List<Extension> extensions) throws InvalidAttributeValueException{
-        return transferToResource(origin, destination, extensions, true);
+        //This method is suitable for the replace operation via PUT, or for a PATCH with op="replace" and no "value selection" filter
+        return transferToResource(replacementDataSource, originalDataSource, extensions, true);
     }
 
-    public static BaseScimResource transferToResourceAdd(BaseScimResource origin, final BaseScimResource destination,
+    /**
+     * This method applies the same copying rules of {@link #transferToResourceReplace(BaseScimResource, BaseScimResource, List)
+     * transferToResourceReplace} except for the following:
+     * <ul>
+     * <li>When a multi-valued attribute is passed in <code>replacementDataSource</code>, the existing data in the
+     * <code>originalDataSource</code> object is retained, and the items in the former object are prepended to the
+     * existing collection.</li>
+     * </ul>
+     * @param replacementDataSource Object with the information to be incorporated. Only non-null attributes of this
+     *                                object end up being transfered to the result
+     * @param originalDataSource Object (SCIM resource) that provides the original data
+     * @param extensions A list of <code>Extensions</code> associated to parameter <code>originalDataSource</code>.
+     *                   This helps to manipulate the transference of custom attributes values.
+     * @return A new object that contains the result of data transference. Neither <code>replacementDataSource</code>
+     * nor <code>originalDataSource</code> are changed after a call to this method
+     * @throws InvalidAttributeValueException When recursive traversal of <code>replacementDataSource</code> fails or
+     * if the rule of immutable attribute was not fulfilled
+     */
+    public static BaseScimResource transferToResourceAdd(BaseScimResource replacementDataSource, BaseScimResource originalDataSource,
                                                             List<Extension> extensions) throws InvalidAttributeValueException{
-        return transferToResource(origin, destination, extensions, false);
+        return transferToResource(replacementDataSource, originalDataSource, extensions, false);
     }
 
-    public static BaseScimResource deleteFromResource(BaseScimResource origin, String path, List<Extension> extensions) throws InvalidAttributeValueException {
+    /**
+     * Returns a SCIM resource with the same data found in <code>origin</code> object, except for the attribute referenced
+     * by <code>path</code> being removed from the output. In other words, this method nullifies an attribute.
+     * @param origin The resource having the the original data
+     * @param path An attribute path (in dot notation). Examples could be: <code>displayName, emails.type, addresses,
+     *             meta.lastModified</code>.
+     * @param extensions A list of <code>Extension</code>s associated to <code>origin</code> Object
+     * @return The resulting object: data in origin without the attribute referenced by <code>path</code>
+     * @throws InvalidAttributeValueException If there is an attempt to remove an attribute annotated as {@link Attribute#isRequired()
+     * required} or {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Mutability#READ_ONLY read-only}
+     */
+    public static BaseScimResource deleteFromResource(BaseScimResource origin, String path, List<Extension> extensions)
+            throws InvalidAttributeValueException {
 
         Field f=IntrospectUtil.findFieldFromPath(origin.getClass(), path);
         if (f!=null){
@@ -292,15 +341,35 @@ public class ScimResourceUtil {
 
     }
 
+    /**
+     * Returns the <code>Schema</code> annotation found in the class passed as parameter.
+     * @param cls A class representing a SCIM resource
+     * @return The annotation found or null if there is no such
+     */
     public static Schema getSchemaAnnotation(Class<? extends BaseScimResource> cls){
         return cls.getAnnotation(Schema.class);
     }
 
+    /**
+     * Returns the <code>urn</code> associated to the default schema of the SCIM resource whose class is passed as parameter.
+     * @param cls A class representing a SCIM resource
+     * @return The urn (obtained by calling {@link Schema#id()} on the appropriate <code>Schema</code> annotation) or null
+     * if there is no such annotation in the class <code>cls</code>
+     */
     public static String getDefaultSchemaUrn(Class<? extends BaseScimResource> cls){
         Schema schema=getSchemaAnnotation(cls);
         return schema==null ? null : schema.id();
     }
 
+    /**
+     * Removes from an attribute path the schema <code>urn</code> that might prefix such path. The <code>urn</code> to
+     * remove will correspond to the default schema urn of a SCIM resource type whose class is passed as parameter.
+     * @param cls A class that represents a SCIM resource type
+     * @param attribute An attribute path (potentially prefixed by a <code>urn</code>)
+     * @return The attribute with no prefix. As an example, <code>attribute_name</code> is returned if
+     * <code>urn:attribute_name</code> is the value of attribute parameter (as long as urn represent the default urn for
+     * this resource)
+     */
     public static String stripDefaultSchema(Class<? extends BaseScimResource> cls, String attribute){
 
         String val=attribute;
@@ -313,6 +382,12 @@ public class ScimResourceUtil {
 
     }
 
+    /**
+     * Returns the (human-readable) type of a SCIM resource based on its class. In practice this will be something like
+     * "User" or "Group". The type is obtained by calling {@link Schema#name()} of the respective class annotation.
+     * @param cls A class that represents a SCIM resource type
+     * @return A string with the proper value, or null if there is no {@link Schema} annotation found
+     */
     public static String getType(Class<? extends BaseScimResource> cls){
         Schema annot=ScimResourceUtil.getSchemaAnnotation(cls);
         return annot==null ? null : annot.name();
@@ -361,9 +436,10 @@ public class ScimResourceUtil {
 
     /**
      * Takes an SCIM resource and "fixes" inconsistencies in "primary" subattribute: in a multivalued attribute setting,
-     * only one of the items in the collection can have "primary":true. Thus, for every collection involved (e.g. addresses,
-     * emails... in UserResource) it switches the 2nd, 3rd, and son on. subattributes where "primary" is true to false
-     * @param resource Resource object
+     * only one of the items in the collection can have <i><code>"primary" : true</code></i>. Thus, for every collection
+     * involved (e.g. addresses, emails... in {@link org.gluu.oxtrust.model.scim2.user.UserResource}), it switches all
+     * occurrences where "primary" is currently <code>true</code> to <code>false</code>, except for the first found.
+     * @param resource SCIM resource object
      */
     public static void adjustPrimarySubAttributes(BaseScimResource resource){
 

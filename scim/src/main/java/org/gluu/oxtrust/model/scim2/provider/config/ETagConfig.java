@@ -3,39 +3,41 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.model.scim2.provider;
+package org.gluu.oxtrust.model.scim2.provider.config;
 
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
- * A complex type that specifies SORT configuration options.
+ * A class used to specify ETag configuration options (see section 5 of RFC 7643).
+ */
+/*
  * Updated by jgomer on 2017-10-21
  */
-public class SortConfig {
+public class ETagConfig {
 
-    @Attribute(description = "A Boolean value specifying whether or not sorting is supported.",
+    @Attribute(description = "A Boolean value specifying whether or not the operation is supported.",
             isRequired = true,
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.BOOLEAN)
 	private boolean supported;
 
-    public SortConfig(){ }
+    /**
+     * Creates an instance of ETagConfig with all its fields unassigned.
+     */
+    public ETagConfig(){}
 
 	/**
-	 * Create a <code>SortConfig</code> instance.
-	 *
-	 * @param supported
-	 *            Specifies whether sorting is supported.
+     * Creates an instance of ETagConfig using the parameter values passed.
+	 * @param supported Whether the ETags are supported in the implementation.
 	 */
-	public SortConfig(boolean supported) {
+	public ETagConfig(boolean supported) {
 		this.supported = supported;
 	}
 
 	/**
-	 * Indicates whether sorting is supported.
-	 * 
-	 * @return {@code true} if sorting is supported.
+	 * Indicates whether the ETags are supported.
+	 * @return A boolean value.
 	 */
 	public boolean isSupported() {
 		return supported;

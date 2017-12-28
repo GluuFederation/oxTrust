@@ -1,4 +1,9 @@
-package org.gluu.oxtrust.model.scim2.schema;
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
+package org.gluu.oxtrust.model.scim2.provider.schema;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
@@ -6,6 +11,9 @@ import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import java.util.List;
 
 /**
+ * Represents a SCIM resource attribute and its subattributes if any.
+ */
+/*
  * Created by jgomer on 2017-10-13.
  */
 public class SchemaAttribute {
@@ -64,8 +72,15 @@ public class SchemaAttribute {
             mutability = AttributeDefinition.Mutability.READ_ONLY)
     private List<String> referenceTypes;
 
+    /**
+     * Default no args constructor.
+     */
     public SchemaAttribute(){ }
 
+    /**
+     * Creates a SchemaAttribute with the name passed as param.
+     * @param name The name of the attribute being modeled
+     */
     public SchemaAttribute(String name){
         setName(name);
     }
@@ -166,6 +181,11 @@ public class SchemaAttribute {
         this.referenceTypes = referenceTypes;
     }
 
+    /**
+     * Indicates whether another SchemaAttribute object is equal to this one
+     * @param other An object to compare this one against
+     * @return True if <code>other</code> is a SchemaAttribute whose {@link #getName() name} is the same as this instance name
+     */
     @Override
     public boolean equals(Object other){
         boolean eq=false;
@@ -174,4 +194,5 @@ public class SchemaAttribute {
 
         return eq;
     }
+
 }

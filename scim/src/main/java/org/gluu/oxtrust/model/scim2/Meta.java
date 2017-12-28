@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2;
 
 import org.gluu.oxtrust.model.scim2.annotations.*;
@@ -5,9 +10,13 @@ import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 
 /**
+ * This class represents the common resource attribute "meta" that contains metadata about the resource being described.
+ * See section 3.1 of RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-09-04.
  *
- * StoreReference annotations are used by FilterVisitor classes to convert SCIM filter queries into LDAP queries
+ * Note: StoreReference annotations are used by FilterVisitor classes to convert SCIM filter queries into LDAP queries
  */
 public class Meta {
 
@@ -42,6 +51,10 @@ public class Meta {
     @StoreReference(ref = "oxTrustMetaVersion")
     private String version;
 
+    /**
+     * Retrieves the meta "resourceType" sub-attribute
+     * @return A string value
+     */
     public String getResourceType() {
         return resourceType;
     }
@@ -50,6 +63,10 @@ public class Meta {
         this.resourceType = resourceType;
     }
 
+    /**
+     * Retrieves the meta "created" sub-attribute
+     * @return A string value
+     */
     public String getCreated() {
         return created;
     }
@@ -58,6 +75,10 @@ public class Meta {
         this.created = created;
     }
 
+    /**
+     * Retrieves the meta "lastModified" sub-attribute
+     * @return A string value
+     */
     public String getLastModified() {
         return lastModified;
     }
@@ -66,6 +87,10 @@ public class Meta {
         this.lastModified = lastModified;
     }
 
+    /**
+     * Retrieves the meta "location" sub-attribute
+     * @return A string value
+     */
     public String getLocation() {
         return location;
     }
@@ -74,6 +99,10 @@ public class Meta {
         this.location = location;
     }
 
+    /**
+     * Returns the version of the resource being represented.
+     * @return A string value (null if no version information is available).
+     */
     public String getVersion() {
         return version;
     }
@@ -81,4 +110,5 @@ public class Meta {
     public void setVersion(String version) {
         this.version = version;
     }
+
 }

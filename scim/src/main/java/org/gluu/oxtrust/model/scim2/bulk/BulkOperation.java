@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2015, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.bulk;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -6,8 +11,10 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import java.util.Map;
 
 /**
+ * A class representing the components of a SCIM Bulk operation as per section 3.7 of RFC 7644.
  * @author Rahat Ali Date: 05.08.2015
- *
+ */
+/*
  * Updated by jgomer on 2017-11-21.
  */
 public class BulkOperation {

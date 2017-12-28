@@ -1,9 +1,17 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.patch;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
+ * Represents a patch operation as per section 4 of RFC 6902. See also {@link PatchRequest PatchRequest}.
+ */
+/*
  * Created by jgomer on 2017-10-28.
  */
 public class PatchOperation {

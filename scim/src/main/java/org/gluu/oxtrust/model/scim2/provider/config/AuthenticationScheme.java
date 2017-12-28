@@ -3,21 +3,23 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.model.scim2.provider;
-
+package org.gluu.oxtrust.model.scim2.provider.config;
 
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 
 /**
- * This class represents the AuthenticationSchemes complex attribute in the Service Provider Config.
+ * This class represents the <code>authenticationSchemes</code> complex attribute in the Service Provider Config
+ * (see section 5 of RFC 7643).
+ */
+/*
  * Updated by jgomer on 2017-10-21
  */
 public class AuthenticationScheme {
 
     @Attribute(description = "The authentication scheme.",
             isRequired = true,
-            canonicalValues = {"oauth", "oauth2", "oauthbearertoken", "httpbasic", "httpdigest"},
+            canonicalValues = {"oauth", "oauth2", "oauthbearertoken", "httpbasic", "httpdigest", "uma"},
             mutability = AttributeDefinition.Mutability.READ_ONLY)
     private String type;
 
@@ -44,24 +46,19 @@ public class AuthenticationScheme {
             type = AttributeDefinition.Type.BOOLEAN)
     private boolean primary;
 
+    /**
+     * Creates an instance of AuthenticationScheme with all its fields unassigned.
+     */
     public AuthenticationScheme(){}
 
 	/**
-	 * Create a value of the SCIM AuthenticationSchemes attribute.
-	 *
-	 * @param name
-	 *            The name of the Authentication Scheme.
-	 * @param description
-	 *            The description of the Authentication Scheme.
-	 * @param specUri
-	 *            A HTTP addressable URL pointing to the Authentication Scheme's
-	 *            specification.
-	 * @param documentationUri
-	 *            A HTTP addressable URL pointing to the Authentication Scheme's
-	 *            usage documentation.
-	 * @param type
-	 *            The type of Authentication Scheme.
-     * @param primary
+	 * Creates an instance of AuthenticationScheme using the parameter values passed.
+	 * @param name The common authentication scheme name.
+	 * @param description The description of the authentication scheme.
+	 * @param specUri An HTTP addressable URL pointing to the authentication scheme's specification.
+	 * @param documentationUri An HTTP addressable URL pointing to the authentication scheme's usage documentation.
+	 * @param type The type of authentication scheme, e.g. "oauthbearertoken", "httpbasic", etc.
+     * @param primary A boolean value specifying if current scheme is the preference
 	 */
 	public AuthenticationScheme(String name, String description, String specUri,
                                 String documentationUri, String type, boolean primary) {
@@ -74,17 +71,15 @@ public class AuthenticationScheme {
 	}
 
 	/**
-	 * Retrieves the name of the Authentication Scheme.
-	 *
-	 * @return The name of the Authentication Scheme.
+	 * Retrieves the name of the authentication scheme.
+	 * @return The name of the authentication scheme.
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Retrieves the description of the Authentication Scheme.
-	 *
+	 * Retrieves the description of the authentication scheme.
 	 * @return The description of the Authentication Scheme.
 	 */
 	public String getDescription() {
@@ -92,36 +87,33 @@ public class AuthenticationScheme {
 	}
 
 	/**
-	 * Retrieves the HTTP addressable URL pointing to the Authentication
-	 * Scheme's specification.
-	 *
-	 * @return The the HTTP addressable URL pointing to the Authentication
-	 *         Scheme's specification, or {@code null} if there is none.
+	 * Retrieves the HTTP URL of the authentication scheme's specification.
+	 * @return A string representing a URL
 	 */
 	public String getSpecUri() {
 		return specUri;
 	}
 
 	/**
-	 * Retrieves the HTTP addressable URL pointing to the Authentication
-	 * Scheme's usage documentation.
-	 * 
-	 * @return The HTTP addressable URL pointing to the Authentication Scheme's
-	 *         usage documentation.
+	 * Retrieves the HTTP URL pointing of the authentication scheme's usage documentation.
+     * @return A string representing a URL
 	 */
 	public String getDocumentationUri() {
 		return documentationUri;
 	}
 
 	/**
-	 * Retrieves the type of Authentication Scheme.
-	 *
-	 * @return The type of Authentication Scheme.
+	 * Retrieves the type of authentication scheme.
+	 * @return The type of authentication scheme.
 	 */
 	public String getType() {
 		return type;
 	}
 
+    /**
+     * Whether this AuthenticationScheme is the preferred authentication scheme for service usage
+     * @return A boolean value
+     */
     public boolean isPrimary() {
         return primary;
     }
@@ -151,9 +143,9 @@ public class AuthenticationScheme {
     }
 
     /**
-	 * Convenience method that creates a new AuthenticationScheme instances for
-	 * HTTP BASIC.
-	 * @return A new AuthenticationScheme instances for HTTP BASIC.
+	 * Convenience method that creates a new AuthenticationScheme instance of type HTTP BASIC.
+     * @param primary A boolean value for the "primary" field of object
+	 * @return An AuthenticationScheme object
 	 */
 	public static AuthenticationScheme createBasic(boolean primary) {
 		return new AuthenticationScheme(
@@ -169,10 +161,9 @@ public class AuthenticationScheme {
 	}
 
 	/**
-	 * Convenience method that creates a new AuthenticationScheme instances for
-	 * OAuth 2.
-	 *
-	 * @return A new AuthenticationScheme instances for OAuth 2.
+	 * Convenience method that creates a new AuthenticationScheme instances of type OAuth 2.
+     * @param primary A boolean value for the "primary" field of object
+     * @return An AuthenticationScheme object
 	 */
 	public static AuthenticationScheme createOAuth2(boolean primary) {
 		return new AuthenticationScheme(
@@ -195,6 +186,11 @@ public class AuthenticationScheme {
 	}
 	*/
 
+    /**
+     * Convenience method that creates a new AuthenticationScheme instances of type UMA 2.
+     * @param primary A boolean value for the "primary" field of object
+     * @return An AuthenticationScheme object
+     */
 	public static AuthenticationScheme createUma(boolean primary) {
 		return new AuthenticationScheme(
 				"UMA 2.0", "UMA Authentication Scheme",

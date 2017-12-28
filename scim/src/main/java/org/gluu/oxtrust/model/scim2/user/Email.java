@@ -1,14 +1,21 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.user;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.Validations;
+import org.gluu.oxtrust.model.scim2.annotations.StoreReference;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
 
 /**
+ * Represents an e-mail address for a user. See section 4.1.2 of RFC 7643.
+ */
+/*
  * Created by jgomer on 2017-09-04.
- *
- * email address for the user.
  */
 public class Email {
 
@@ -16,6 +23,7 @@ public class Email {
             "e.g.  bjensen@example.com instead of bjensen@EXAMPLE.COM.",
             isRequired = true)  //specs says false but it doesn't make sense
     @Validator(value = Validations.EMAIL)
+    @StoreReference(ref="mail")    //Take advantage that oxTrustEmail's value is synced with mail attribute
     private String value;
 
     @Attribute(description = "A human readable name, primarily used for  display purposes.")
@@ -62,4 +70,5 @@ public class Email {
     public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
+
 }

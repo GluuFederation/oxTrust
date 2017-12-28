@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2;
 
 import org.codehaus.jackson.annotate.JsonAnyGetter;
@@ -12,14 +17,16 @@ import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import java.util.*;
 
 /**
+ * This class represents the root hierarchy of SCIM resources. All of them: user, group, etc. are subclasses of this class.
+ */
+/*
  * Created by jgomer on 2017-09-04.
  *
- * This class represents the root hierarchy of SCIM resources. All of them: user, group, etc. are subclasses of this class
  * Notes: Property names (member names) MUST match exactly as in the spec, so do not change!. Add a new item to the list
  * found in the static block of code at org.gluu.oxtrust.model.scim2.util.IntrospectUtil when a new subclass (SCIM resource)
- * is added. StoreReference annotations are used by FilterVisitor classes to convert SCIM filter queries into LDAP queries
- *
+ * is added. StoreReference annotations are used by LdapFilterListener to convert SCIM filter queries into LDAP queries
  * Adapted from https://github.com/pingidentity/scim2/blob/master/scim2-sdk-common/src/main/java/com/unboundid/scim2/common/BaseScimResource.java
+ * Based on former org.gluu.oxtrust.model.scim2.Resource class
  */
 public class BaseScimResource {
 
@@ -53,18 +60,35 @@ public class BaseScimResource {
             type = AttributeDefinition.Type.COMPLEX)
     private Meta meta;
 
-    private Map<String, Object> extendedAttrs=new HashMap<String, Object>();   //Never must be null
+    private Map<String, Object> extendedAttrs=new HashMap<String, Object>();   //must never be null
 
+    /**
+     * Replaces the custom attributes belonging to the extension identified by the <code>urn</code> passed as parameter
+     * with the attribute/value pairs supplied in the <code>Map</code>.
+     * <p>Note that this method does not apply any sort of validation. Whether the <code>urn</code> and attributes are
+     * recognized or the values are consistent with data types, is something that is performed only when the resource is
+     * passed in a service method invocation.</p>
+     * @param extensionUrn Urn that identifies an extension
+     * @param extension A Map holding attribute names (Strings) and values (Objects).
+     */
     @JsonAnySetter
     public void addExtendedAttributes(String extensionUrn, Map<String, Object> extension){
         extendedAttrs.put(extensionUrn, extension);
     }
 
+    /**
+     * Retrieves all custom attributes found in this resource object. The attributes are structured hierarchically in a
+     * <code>Map</code> where they can be looked up using the <code>urn</code> to which the attributes belong to.
+     * @return A Map with all custom attributes
+     */
     @JsonAnyGetter
     public Map<String, Object> getExtendedAttributes(){
         return extendedAttrs;
     }
 
+    /**
+     * Constructs a basic SCIM resource with all its attributes unassigned
+     */
     public BaseScimResource(){
         schemas=new HashSet<String>();
         String defSchema= ScimResourceUtil.getDefaultSchemaUrn(getClass());
@@ -104,8 +128,14 @@ public class BaseScimResource {
         this.schemas = schemas;
     }
 
-    //Useful method for client-side
+    /**
+     * Returns the custom attributes of this resource that belong to the extension identified by the <code>urn</code>
+     * passed as parameter.
+     * @param urn Identifier of the extension
+     * @return A Map that holds name/value pairs of the attributes
+     */
     public Map<String, Object> getExtendedAttributes(String urn){
+        //This method is useful for client-side, do not remove
         Object custAttrs=extendedAttrs.get(urn);
         return (custAttrs==null) ? null : IntrospectUtil.strObjMap(custAttrs);
     }

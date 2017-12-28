@@ -1,9 +1,9 @@
 /*
  * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
  *
- * Copyright (c) 2014, Gluu
+ * Copyright (c) 2017, Gluu
  */
-package org.gluu.oxtrust.model.scim2.provider;
+package org.gluu.oxtrust.model.scim2.provider.resourcetypes;
 
 import java.util.*;
 
@@ -11,17 +11,13 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
-import org.gluu.oxtrust.model.scim2.group.GroupResource;
-import org.gluu.oxtrust.model.scim2.user.UserResource;
-
-import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
+ * This class is used to specify metadata about a resource type. It's the key class for representing the output of the
+ * <code>/ResourceTypes</code> endpoint. For more about this resource type see RFC 7643, section 6.
+ */
+/*
  * Created by jgomer on 2017-09-24.
- *
- * This class represents a ResourceType schema (specifies the metadata about a resource type). It's key for the
- * implementation of the /ResourceTypes endpoint
- * For more about this resource type see RFC 7643, section 6
  */
 @Schema(id="urn:ietf:params:scim:schemas:core:2.0:ResourceType", name="Resource Type", description = "Specifies the metadata about a resource")
 public class ResourceType extends BaseScimResource {

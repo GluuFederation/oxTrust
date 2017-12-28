@@ -1,3 +1,8 @@
+/*
+ * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.model.scim2.bulk;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -5,6 +10,10 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import java.util.List;
 
 /**
+ * A class that abstracts the common properties of a {@link BulkRequest BulkRequest} or {@link BulkResponse BulkResponse}.
+ * See section 3.7 of RFC 7644.
+ */
+/*
  * Created by jgomer on 2017-11-21.
  */
 public class BulkBase {
@@ -14,7 +23,7 @@ public class BulkBase {
     @JsonProperty("Operations")
     private List<BulkOperation> operations;
 
-    public BulkBase(){}
+    BulkBase(){}
 
     public List<String> getSchemas() {
         return schemas;
