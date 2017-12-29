@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.api.saml;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.annotation.security.DeclareRoles;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
@@ -35,13 +37,17 @@ public class TrustRelationshipWebService {
     @Inject
     private Logger logger;
     
-    //TODO
+    @Inject
+    private TrustService trustService;
+    
     
     @GET
     @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
     public String read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         try {
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
+            //convert to JSON
             String result = null;
             //TODO
             return result;
@@ -57,8 +63,9 @@ public class TrustRelationshipWebService {
     @Produces(MediaType.TEXT_PLAIN)
     public String create(GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         try {
-            String inum = null;
-            //TODO
+            String inum = trustService.generateInumForNewTrustRelationship();
+            trustRelationship.setInum(inum);
+            trustService.addTrustRelationship(trustRelationship);
             return inum;
         } catch (Exception e) {
             logger.error("create() Exception", e);
@@ -72,7 +79,10 @@ public class TrustRelationshipWebService {
     @Produces(MediaType.TEXT_PLAIN)
     public String update(@PathParam("inum") String inum, GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         try {
-            //TODO
+            String dn = trustService.getDnForTrustRelationShip(inum);
+            trustRelationship.setDn(dn);
+            trustService.updateTrustRelationship(trustRelationship);
+            
             return OxTrustConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             logger.error("update() Exception", e);
@@ -86,7 +96,9 @@ public class TrustRelationshipWebService {
     @Produces(MediaType.TEXT_PLAIN)
     public String delete(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         try {
-            //TODO
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
+            trustService.removeTrustRelationship(trustRelationship);
+            
             return OxTrustConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             logger.error("delete() Exception", e);
@@ -100,11 +112,66 @@ public class TrustRelationshipWebService {
     @Produces(MediaType.APPLICATION_JSON)
     public String list(@Context HttpServletResponse response) {
         try {
+            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllTrustRelationships();
             String list = null;
-            //TODO
+            //TODO: convert to string
             return list;
         } catch (Exception e) {
-            logger.error("delete() Exception", e);
+            logger.error("list() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
+    
+    
+    @POST
+    @Path("/create")
+    @Produces(MediaType.TEXT_PLAIN)
+    public void addMetadata(String trustRelationshipInum, String metdata, @Context HttpServletResponse response) {
+        try {
+            //TODO
+        } catch (Exception e) {
+            logger.error("addMetadata() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+        }
+    }
+    
+    @GET
+    @Path("/generate_inum_for_new_trust_relationship")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String generateInumForNewTrustRelationship(@Context HttpServletResponse response) {
+        try {
+            return trustService.generateInumForNewTrustRelationship();
+        } catch (Exception e) {
+            logger.error("generateInumForNewTrustRelationship() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
+    @POST
+    @Path("/add_certificate")
+    @Produces(MediaType.TEXT_PLAIN)
+    public void addCertificate(@PathParam("inum") String inum, String certificate, @Context HttpServletResponse response) {
+        try {
+            //TODO
+        } catch (Exception e) {
+            logger.error("addCertificate() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+        }
+    }
+    
+    @GET
+    @Path("/get_cert_for_generated_sp")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getCertForGeneratedSP(@Context HttpServletResponse response) {
+        try {
+            String cert = "";
+            //TODO
+            return cert;
+        } catch (Exception e) {
+            logger.error("getCertForGeneratedSP() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
             return OxTrustConstants.RESULT_FAILURE;
         }
