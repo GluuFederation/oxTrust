@@ -179,7 +179,7 @@ public class ResourceValidator {
     }
 
     /**
-     * Inspects the resource passed in the constructor and for every extended attribute (see {@link BaseScimResource#getExtendedAttributes()},
+     * Inspects the resource passed in the constructor and for every extended attribute (see {@link BaseScimResource#getCustomAttributes()},
      * the attribute's value is checked to see if it complies with the data type it is supposed to belong to. This
      * information is obtained from the list of <code>Extension</code>s passed in the constructor (every {@link ExtensionField}
      * has an associated {@link ExtensionField#getType() type}.
@@ -193,7 +193,7 @@ public class ResourceValidator {
         //Note: throughout this method, we always ignore presence of nulls
 
         //Gets all extended attributes (see the @JsonAnySetter annotation in BaseScimResource)
-        Map<String, Object> extendedAttributes=resource.getExtendedAttributes();
+        Map<String, Object> extendedAttributes=resource.getCustomAttributes();
 
         //Iterate over every extension of the resource object (in practice it will be just one at most)
         for (String schema : extendedAttributes.keySet()) {

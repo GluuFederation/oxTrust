@@ -9,7 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A class used to represent a extension applicable to a SCIM resource. See section 3.3 of RFC 7643.
+ * A class used to represent an extension applicable to a SCIM resource. See section 3.3 of RFC 7643.
+ * <p>To actually set or get custom attribute values for a resource, use
+ * {@link org.gluu.oxtrust.model.scim2.BaseScimResource#addCustomAttributes(org.gluu.oxtrust.model.scim2.CustomAttributes) BaseScimResource#addCustomAttributes}
+ * and {@link org.gluu.oxtrust.model.scim2.BaseScimResource#getCustomAttributes(String) BaseScimResource#getCustomAttributes}
+ * respectively in conjunction with the {@link org.gluu.oxtrust.model.scim2.CustomAttributes CustomAttributes} class.</p>
  */
 /*
  * Updated by jgomer on 2017-09-29.
@@ -57,4 +61,5 @@ public class Extension {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

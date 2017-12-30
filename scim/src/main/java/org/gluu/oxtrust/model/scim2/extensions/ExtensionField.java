@@ -12,9 +12,9 @@ import org.xdi.model.GluuAttributeDataType;
 import java.util.regex.Pattern;
 
 /**
- * Represents an attribute part of a SCIM resource extension.
- * <p>These attributes, aka "extended attributes" or "custom attributes" have implicit characteristics equal to the
- * defaults shown in section 2.2 of RFC 7643. In other words, all custom attributes have:</p>
+ * Represents the metadata of an attribute that belongs to a SCIM resource extension.
+ * <p>Attributes part of extensions, aka "extended attributes" or "custom attributes" have implicit characteristics equal
+ * to the defaults shown in section 2.2 of RFC 7643. In other words, all custom attributes have:</p>
  * <ul>
  *     <li>canonicalValues: <i>none assigned</i></li>
  *     <li>required: <i>false</i></li>
@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
  *     <li>type: reference, string, datetime, decimal, and boolean (only).</li>
  * </ul>
  * <p>These can be tweaked via oxTrust admin web console.</p>
+ *
+ * <p>See also: {@link Extension} class.</p>
  */
 /*
  * Created by jgomer on 2017-09-29.
