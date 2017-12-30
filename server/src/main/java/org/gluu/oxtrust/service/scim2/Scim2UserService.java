@@ -168,8 +168,8 @@ public class Scim2UserService implements Serializable {
         person.setAttribute("locale", res.getLocale());
         person.setTimezone(res.getTimezone());
 
-        //TODO: are both attrs used for active?
-        Boolean active=res.getActive()==null ? false : res.getActive();
+        //Why are both gluuStatus and oxTrustActive used for active? it's for active being used in filter queries?
+        Boolean active=res.getActive()!=null && res.getActive();
         person.setAttribute("oxTrustActive", active.toString());
         person.setAttribute("gluuStatus", active ? ACTIVE.getValue() : INACTIVE.getValue());
         person.setUserPassword(res.getPassword());
@@ -209,7 +209,7 @@ public class Scim2UserService implements Serializable {
 
         try {
             //Gets all the extended attributes for this resource
-            Map<String, Object> extendedAttrs= resource.getExtendedAttributes();
+            Map<String, Object> extendedAttrs= resource.getCustomAttributes();
             
             //Iterates over all extensions this type of resource might have
             for (Extension extension : extService.getResourceExtensions(resource.getClass())){
@@ -305,10 +305,12 @@ public class Scim2UserService implements Serializable {
                     groupList.add(group);
                 }
                 catch (Exception e){
-                    log.warn("transferAttributesToUserResource. Group with dn {} could not be added to User Resource. {}", e.getMessage());
+                    log.warn("transferAttributesToUserResource. Group with dn {} could not be added to User Resource. {}", groupDN, person.getUid());
+                    log.error(e.getMessage(), e);
                 }
             }
-            res.setGroups(groupList);
+            if (groupList.size()>0)
+                res.setGroups(groupList);
         }
 
         res.setEntitlements(getAttributeListValue(person, Entitlement.class, "oxTrustEntitlements"));
@@ -352,10 +354,10 @@ public class Scim2UserService implements Serializable {
             }
             //Stores all extended attributes (with their values) in the resource object
             if (map.size()>0) {
-                resource.addExtendedAttributes(extension.getUrn(), map);
+                resource.addCustomAttributes(extension.getUrn(), map);
             }
         }
-        for (String urn : resource.getExtendedAttributes().keySet())
+        for (String urn : resource.getCustomAttributes().keySet())
             resource.getSchemas().add(urn);
 
     }

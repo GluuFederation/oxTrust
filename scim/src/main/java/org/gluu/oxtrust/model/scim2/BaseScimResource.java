@@ -63,27 +63,54 @@ public class BaseScimResource {
     private Map<String, Object> extendedAttrs=new HashMap<String, Object>();   //must never be null
 
     /**
-     * Replaces the custom attributes belonging to the extension identified by the <code>urn</code> passed as parameter
-     * with the attribute/value pairs supplied in the <code>Map</code>.
-     * <p>Note that this method does not apply any sort of validation. Whether the <code>urn</code> and attributes are
-     * recognized or the values are consistent with data types, is something that is performed only when the resource is
-     * passed in a service method invocation.</p>
-     * @param extensionUrn Urn that identifies an extension
-     * @param extension A Map holding attribute names (Strings) and values (Objects).
+     * Replaces the custom attributes belonging to the resource extension identified by the <code>uri</code> passed as
+     * parameter with the attribute/value pairs supplied in the <code>Map</code>. Developers are highly encouraged not
+     * to use this method but {@link #addCustomAttributes(CustomAttributes)} instead which adds type-safety.
+     * <p>Note that this method does not apply any sort of validation. Whether the <code>uri</code> and attributes are
+     * recognized or the values are consistent with data types registered in Gluu Server, is something that is performed
+     * only when the resource is passed in a service method invocation.</p>
+     * @param uri A string with URI that identifies an extension
+     * @param map A Map holding attribute names (Strings) and values (Objects).
      */
     @JsonAnySetter
-    public void addExtendedAttributes(String extensionUrn, Map<String, Object> extension){
-        extendedAttrs.put(extensionUrn, extension);
+    public void addCustomAttributes(String uri, Map<String, Object> map){
+        extendedAttrs.put(uri, map);
+    }
+
+    /**
+     * Adds the custom attributes contained in the {@link CustomAttributes} instance passed to this method. All previously
+     * added attributes are replaced if they are linked to the same <code>uri</code> that <code>customAttributes</code>
+     * parameter is associated to.
+     * <p>Note that this method does not apply any sort of validation. Whether the <code>uri</code> and attributes are
+     * recognized or the values are consistent with data types registered in Gluu Server, is something that is performed
+     * only when the resource is passed in a service method invocation.</p>
+     * @param customAttributes An object that comprised of attribute/value pairs
+     */
+    public void addCustomAttributes(CustomAttributes customAttributes){
+        addCustomAttributes(customAttributes.getUri(), customAttributes.getAttributeMap());
     }
 
     /**
      * Retrieves all custom attributes found in this resource object. The attributes are structured hierarchically in a
-     * <code>Map</code> where they can be looked up using the <code>urn</code> to which the attributes belong to.
+     * <code>Map</code> where they can be looked up using the <code>uri</code> to which the attributes belong to.
+     * <p>Developers are highly encouraged not to use this method but {@link #getCustomAttributes(String)} instead
+     * which adds type-safety.</p>
      * @return A Map with all custom attributes
      */
     @JsonAnyGetter
-    public Map<String, Object> getExtendedAttributes(){
+    public Map<String, Object> getCustomAttributes(){
         return extendedAttrs;
+    }
+
+    /**
+     * Retrieves the custom attributes found in this resource object associated to the <code>uri</code> supplied.
+     * @param uri A String value representing a URI
+     * @return A {@link CustomAttributes} instance that allows developers to inspect attributes and values in a type-safe manner.
+     */
+    public CustomAttributes getCustomAttributes(String uri){
+        if (extendedAttrs.get(uri)==null)
+            return null;
+        return new CustomAttributes(uri, IntrospectUtil.strObjMap(extendedAttrs.get(uri)));
     }
 
     /**
@@ -126,18 +153,6 @@ public class BaseScimResource {
 
     public void setSchemas(Set<String> schemas) {
         this.schemas = schemas;
-    }
-
-    /**
-     * Returns the custom attributes of this resource that belong to the extension identified by the <code>urn</code>
-     * passed as parameter.
-     * @param urn Identifier of the extension
-     * @return A Map that holds name/value pairs of the attributes
-     */
-    public Map<String, Object> getExtendedAttributes(String urn){
-        //This method is useful for client-side, do not remove
-        Object custAttrs=extendedAttrs.get(urn);
-        return (custAttrs==null) ? null : IntrospectUtil.strObjMap(custAttrs);
     }
 
 }
