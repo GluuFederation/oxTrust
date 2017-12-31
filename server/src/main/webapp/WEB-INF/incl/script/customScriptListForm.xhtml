@@ -132,24 +132,28 @@
 
 		                                <ox:simpleCustomPropertiesList  labelAdd="custom property" hideLabel="true"  showRemoveDialogue="true"
 		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" hideValue="true" />
-		                
-		                                <h:panelGroup layout="block" styleClass="form-group" id="scripttextid" rendered="#{_customScript.locationType.value ne 'file'}">
-		                               		<h:outputLabel  value="#{msg['customScript.script']}">
-												<span data-toggle="tooltip" data-original-title="#{msg['customScript.script']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-											</h:outputLabel>
-			                                <ox:decorate hideLabel="true" rendered="#{_customScript.locationType.value ne 'file'}" label="#{msg['customScript.script']}">
-			                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
-			                                </ox:decorate>
+		                                    
+		                                <h:panelGroup id="scriptAreaId">
+			                                <h:panelGroup layout="block" styleClass="form-group" rendered="#{_customScript.locationType.value ne 'file'}">
+			                               		<h:outputLabel  value="#{msg['customScript.script']}">
+													<span data-toggle="tooltip" data-original-title="#{msg['customScript.script']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+												</h:outputLabel>
+				                                <ox:decorate hideLabel="true" rendered="#{_customScript.locationType.value ne 'file'}" label="#{msg['customScript.script']}">
+				                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
+				                                </ox:decorate>
+				                            </h:panelGroup>
 			                            </h:panelGroup>
 		                
-		                                <h:panelGroup layout="block" styleClass="form-group" id="scriptLocationid" rendered="#{_customScript.locationType.value eq 'file'}">
-			                                <h:outputLabel  value="#{msg['customScript.scriptPath']}">
-												<span data-toggle="tooltip" data-original-title="#{msg['customScript.scriptPath']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-											</h:outputLabel>
-			                                <ox:decorate hideLabel="true" rendered="#{_customScript.locationType.value eq 'file'}" label="#{msg['customScript.scriptPath']}">
-			                                    <h:inputText value="#{_customScript.locationPath}" size="90" styleClass="form-control" />
-			                                </ox:decorate>
-			                            </h:panelGroup>
+		                                <h:panelGroup id="scriptPathId">
+			                                <h:panelGroup layout="block" styleClass="form-group" rendered="#{_customScript.locationType.value eq 'file'}">
+				                                <h:outputLabel  value="#{msg['customScript.scriptPath']}">
+													<span data-toggle="tooltip" data-original-title="#{msg['customScript.scriptPath']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+												</h:outputLabel>
+				                                <ox:decorate hideLabel="true" rendered="#{_customScript.locationType.value eq 'file'}" label="#{msg['customScript.scriptPath']}">
+				                                    <h:inputText value="#{_customScript.locationPath}" size="90" styleClass="form-control" />
+				                                </ox:decorate>
+				                            </h:panelGroup>
+				                        </h:panelGroup>
 		                
 		                				<h:panelGroup layout="block" styleClass="form-group" id="scriptEnableid">
 		                				<h:outputLabel  value="#{msg['customScript.enabled']}">

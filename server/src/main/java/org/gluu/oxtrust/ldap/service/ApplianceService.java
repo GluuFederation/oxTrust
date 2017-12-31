@@ -13,6 +13,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.model.ScriptLocationType;
+import org.xdi.model.SmtpConfiguration;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
@@ -216,40 +217,34 @@ public class ApplianceService implements Serializable {
 				CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.APPLICATION_SESSION, CustomScriptType.SCIM };
 	}
 
-	public String getDecryptedSmtpPassword(GluuAppliance appliance, boolean allowUnencrypted) {
-		String password = appliance.getSmtpPassword();
-		if (StringHelper.isEmpty(password)) {
-			return null;
-		}
-
-		try {
-			return encryptionService.decrypt(password);
-		} catch (EncryptionException ex) {
-			if (allowUnencrypted) {
-				return password;
-			} else {
-				log.error("Failed to decrypt SMTP password", ex);
-			}
-		}
-		
-		return null;
-	}
-
-	public String getDecryptedSmtpPassword(GluuAppliance appliance) {
-		return getDecryptedSmtpPassword(appliance, false);
-	}
-
-	public void setEncryptedSmtpPassword(GluuAppliance appliance, String password) {
-		if (StringHelper.isEmpty(password)) {
+	public void encryptedSmtpPassword(SmtpConfiguration smtpConfiguration) {
+		if (smtpConfiguration == null) {
 			return;
 		}
 
-		String encryptedPassword;
-		try {
-			encryptedPassword = encryptionService.encrypt(password);
-			appliance.setSmtpPassword(encryptedPassword);
-		} catch (EncryptionException ex) {
-			log.error("Failed to encrypt SMTP password", ex);
+		String password = smtpConfiguration.getPasswordDecrypted();
+		if (StringHelper.isNotEmpty(password)) {
+			try {
+				String encryptedPassword = encryptionService.encrypt(password);
+				smtpConfiguration.setPassword(encryptedPassword);
+			} catch (EncryptionException ex) {
+				log.error("Failed to encrypt SMTP password", ex);
+			}
+		}
+	}
+
+	public void decryptSmtpPassword(SmtpConfiguration smtpConfiguration) {
+		if (smtpConfiguration == null) {
+			return;
+		}
+
+		String password = smtpConfiguration.getPassword();
+		if (StringHelper.isNotEmpty(password)) {
+			try {
+				smtpConfiguration.setPasswordDecrypted(encryptionService.decrypt(password));
+			} catch (EncryptionException ex) {
+				log.error("Failed to decrypt SMTP password", ex);
+			}
 		}
 	}
 

@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,13 +30,10 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 public class ApplicationFactory {
 
     @Inject
-    private ApplianceService applianceService;
+    private Logger log;
 
     @Inject
-    private Logger log;
-    
-    @Inject
-    private EncryptionService encryptionService;
+    private ApplianceService applianceService;
 
     @Produces @ApplicationScoped
    	public CacheConfiguration getCacheConfiguration() {
@@ -54,24 +52,17 @@ public class ApplicationFactory {
    		return cacheConfiguration;
    	}
 
-	@Produces @ApplicationScoped
+	@Produces @RequestScoped
 	public SmtpConfiguration getSmtpConfiguration() {
 		GluuAppliance appliance = applianceService.getAppliance();
 		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
 		
 		if (smtpConfiguration == null) {
-			return null;
+			return new SmtpConfiguration();
 		}
 
-		String password = smtpConfiguration.getPassword();
-		if (StringHelper.isNotEmpty(password)) {
-			try {
-				smtpConfiguration.setPasswordDecrypted(encryptionService.decrypt(password));
-			} catch (EncryptionException ex) {
-				log.error("Failed to decript SMTP user password", ex);
-			}
-		}
-		
+		applianceService.decryptSmtpPassword(smtpConfiguration);
+
 		return smtpConfiguration;
 	}
 

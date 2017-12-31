@@ -56,7 +56,7 @@
 									
 								 <a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_ldapConfig.setEnabled(true)}" rendered="#{not _ldapConfig.enabled}"
 							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"/>
-				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_ldapConfig.ldapConfig.setEnabled(false)}" rendered="#{_ldapConfig.enabled}"
+				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_ldapConfig.setEnabled(false)}" rendered="#{_ldapConfig.enabled}"
 			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/>
 			                    	
 								<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-success"

@@ -45,6 +45,7 @@ import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
@@ -64,7 +65,7 @@ public class PersonImportAction implements Serializable {
 
 	private static final long serialVersionUID = -1270460481895022468L;
 
-	private static final String[] PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES = { "uid", "displayName" };
+	private static final String[] PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES = { "uid", "displayName","mail" };
 	public static final String PERSON_PASSWORD_ATTRIBUTE = "userPassword";
 
 	@Inject
@@ -345,12 +346,19 @@ public class PersonImportAction implements Serializable {
 
 	private boolean validatePersons(List<GluuCustomPerson> persons) throws Exception {
 		Set<String> uids = new HashSet<String>();
+		Set<String> mails = new HashSet<String>();
 		for (GluuCustomPerson person : persons) {
 			uids.add(person.getUid());
+			mails.add(person.getMail());
 		}
 
 		if (uids.size() != persons.size()) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. There are persons with simular uid(s) in input file");
+			return false;
+		}
+		
+		if (mails.size() != persons.size()) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. There are persons with simular mail(s) in input file");
 			return false;
 		}
 
@@ -358,7 +366,15 @@ public class PersonImportAction implements Serializable {
 				PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES);
 		if (existPersons.size() > 0) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. There are persons with existing uid(s): %s",
-					personService.getPersonString(existPersons));
+					personService.getPersonUids(existPersons));
+			return false;
+		}
+		
+		List<GluuCustomPerson> existEmailPersons = personService.findPersonsByMailids(new ArrayList<String>(mails),
+				PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES);
+		if (existEmailPersons.size() > 0) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Import failed. There are persons with existing mailid(s): %s",
+					personService.getPersonMailids(existEmailPersons));
 			return false;
 		}
 
@@ -444,6 +460,11 @@ public class PersonImportAction implements Serializable {
 	private String getTypedValue(GluuAttribute attribute, String value) {
 		if (GluuAttributeDataType.STRING.equals(attribute.getDataType())) {
 			return value;
+		} else if (GluuAttributeDataType.BOOLEAN.equals(attribute.getDataType())) {
+			GluuBoolean gluuBoolean = GluuBoolean.getByValue(value);
+			if (gluuBoolean != null) {
+				return GluuBoolean.getByValue(value).toString();
+			}
 		}
 		
 		return null;

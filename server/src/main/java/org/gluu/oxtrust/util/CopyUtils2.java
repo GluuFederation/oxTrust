@@ -1402,6 +1402,8 @@ public class CopyUtils2 implements Serializable {
             } else {
                 setGluuStatus(destination, GluuBoolean.INACTIVE.getValue());
             }
+        } else {
+            setGluuStatus(destination, GluuBoolean.INACTIVE.getValue());
         }
     }
 
