@@ -21,7 +21,7 @@ public class X509Certificate {
     @Attribute(description = "The value of a X509 certificate.",
             isRequired = true,  //specs says false but it doesn't make sense
             type = AttributeDefinition.Type.BINARY)
-    @Validator(value = Validations.X509)
+    //@Validator(value = Validations.X509)
     private String value;
 
     @Attribute(description = "A human readable name, primarily used for display purposes.")

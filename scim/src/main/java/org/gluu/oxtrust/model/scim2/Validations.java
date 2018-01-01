@@ -15,7 +15,8 @@ import java.util.regex.Pattern;
 /*
  * Created by jgomer on 2017-09-15.
  */
-public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
+public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, LOCALE, TIMEZONE;
+    //Supporting X.509 validation would add unnecessary overhead...
 
     private static final Pattern EmailPattern = Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@" +
             "[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
@@ -31,7 +32,7 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
     /**
      * This method receives a validation "type" and the object upon which to perform the validation.
      * @param validation An {@link Validations enum constant} that specifies which validation should be applied
-     * @param value An object target of validation
+     * @param value A non-null object target of validation
      * @return A boolean value (true/false) for success/failed validation.
      */
     public static boolean apply(Validations validation, Object value){
@@ -39,7 +40,7 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
         boolean pass=false;
         switch (validation){
             case EMAIL:
-                pass=validateEmail(value);
+                pass=validateEmail(value.toString());
                 //From spec: The value SHOULD be specified according to [RFC5321].
                 break;
             case PHONE:
@@ -51,28 +52,28 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
                  */
                 break;
             case PHOTO:
-                pass=validateURI(value);
+                pass=validateURI(value.toString());
                 //From spec: A URI that is a uniform resource locator (as defined in Section 1.1.3 of [RFC3986])
                 break;
             case COUNTRY:
-                pass=validateCountry(value);
+                pass=validateCountry(value.toString());
                 //From spec: When specified, the value MUST be in ISO 3166-1 "alpha-2" code format [ISO3166]
                 break;
+            /*
             case X509:
                 pass=true;
-                //TODO: implement X.509 validation
                 //From spec: Each value contains exactly one DER-encoded X.509 certificate (see Section 4 of [RFC5280])
                 break;
+                */
             case LOCALE:
-                pass=true;
-                //TODO: implement locale validation
+                pass=validateLocale(value.toString());
                 /*
-                From spec: A valid value is a language tag as defined in [RFC5646].  Computer languages are explicitly
+                From spec: A valid value is a language tag as defined in [RFC5646]. Computer languages are explicitly
                 excluded.
                  */
                 break;
             case TIMEZONE:
-                pass=validateTimezone(value);
+                pass=validateTimezone(value.toString());
                 /*
                 From spec:  The User's time zone, in IANA Time Zone database format [RFC6557], also known as the "Olson"
                 time zone database format [Olson-TZ] (e.g., "America/Los_Angeles").
@@ -83,39 +84,23 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
 
     }
 
-    private static boolean validateEmail(Object val){
-
-        boolean valid=true;
-        if (isString(val))
-            valid=EmailPattern.matcher(val.toString()).matches();
-
-        return valid;
+    private static boolean validateEmail(String val){
+        return EmailPattern.matcher(val).matches();
     }
 
-    private static boolean validateCountry(Object val){
-
-        boolean valid=true;
-        if (isString(val))
-            valid=validCountries.contains(val.toString().toUpperCase());
-
-        return valid;
+    private static boolean validateCountry(String val){
+        return validCountries.contains(val.toUpperCase());
     }
 
-    private static boolean validateTimezone(Object val){
-
-        boolean valid=true;
-        if (isString(val))
-            valid=validTimeZones.contains(val.toString());
-
-        return valid;
+    private static boolean validateTimezone(String val){
+        return validTimeZones.contains(val);
     }
 
-    private static boolean validateURI(Object val){
+    private static boolean validateURI(String val){
 
         boolean valid=true;
         try {
-            if (isString(val))
-                new URI(val.toString());
+            new URI(val);
         }
         catch (Exception e){
             valid=false;
@@ -124,8 +109,24 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, X509, LOCALE, TIMEZONE;
 
     }
 
-    private static boolean isString(Object val){
-        return val instanceof String;
+    private static boolean validateLocale(String val){
+
+        val=val.replaceAll("_", "-");
+        //TODO: Uncomment the following try/catch when supporting java 1.7 or higher and delete the rest
+        /*
+        try{
+            new Locale.Builder().setLanguageTag(str);
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
+        */
+
+        //This is an approximate regex only (not very accurate), the official check is above
+        Pattern p=Pattern.compile("[a-z]{1,3}(-([A-Z]{2}|([A-z][a-z]{3})))?(-\\w{1,5})?");
+        return p.matcher(val).matches();
+
     }
 
 }

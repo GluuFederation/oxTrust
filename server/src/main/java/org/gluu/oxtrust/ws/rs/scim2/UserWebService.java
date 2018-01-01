@@ -15,6 +15,7 @@ import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.Scim2PatchService;
 import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
@@ -291,6 +292,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
             //Throws exception if final representation does not pass overall validation
             log.debug("patchUser. Revising final resource representation still passes validations");
             executeDefaultValidation(user);
+            ScimResourceUtil.adjustPrimarySubAttributes(user);
 
             //Update timestamp
             String now=ISODateTimeFormat.dateTime().withZoneUTC().print(System.currentTimeMillis());

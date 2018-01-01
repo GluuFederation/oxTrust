@@ -78,7 +78,6 @@ public class ResourceValidator {
     /**
      * Inspects the resource passed in the constructor and applies validations for every attribute annotated with
      * {@link Validator}. Validations are of different nature as seen{@link Validations here}.
-     * <p>This method should be called after a successful call to {@link #validateRequiredAttributes()}.</p>
      * @throws SCIMException When a validation does not pass (the {@link Validations#apply(Validations, Object) apply}
      * method returns false)
      */
@@ -93,7 +92,7 @@ public class ResourceValidator {
             log.debug("Validating value(s) of attribute '{}'", attributePath);
 
             for (Object val : IntrospectUtil.getAttributeValues(resource, map.get(attributePath))) {
-                if (!Validations.apply(valToApply, val)) {
+                if (val!=null && !Validations.apply(valToApply, val)) {
                     log.error("Error validating attribute '{}', wrong value supplied: '{}'", attributePath, val.toString());
                     throw new SCIMException(String.format(ATTR_VALIDATION_FAILED, attributePath));
                 }
@@ -185,7 +184,6 @@ public class ResourceValidator {
      * has an associated {@link ExtensionField#getType() type}.
      * <p>When an attribute is {@link ExtensionField#isMultiValued() multi-valued}, every single item inside the collection
      * is validated.</p>
-     * <p>This method should be called after a successful call to {@link #validateRequiredAttributes()}.</p>
      * @throws SCIMException When any of the validations do not pass or an attribute seems not to be part of a known schema.
      */
     public void validateExtendedAttributes() throws SCIMException{

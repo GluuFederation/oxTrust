@@ -130,6 +130,7 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
             if (response==null) {
                 executeDefaultValidation(user);
                 checkUidExistence(user.getUserName(), id);
+                ScimResourceUtil.adjustPrimarySubAttributes(user);
 
                 //Proceed with actual implementation of updateUser method
                 response = service.updateUser(user, id, attrsList, excludedAttrsList);
