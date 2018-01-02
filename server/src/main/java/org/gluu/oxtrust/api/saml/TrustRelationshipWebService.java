@@ -5,6 +5,9 @@
  */
 package org.gluu.oxtrust.api.saml;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import java.io.StringWriter;
 import java.util.List;
 import javax.inject.Inject;
 import javax.annotation.security.DeclareRoles;
@@ -48,9 +51,11 @@ public class TrustRelationshipWebService {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
             //convert to JSON
-            String result = null;
-            //TODO
-            return result;
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            StringWriter result = new StringWriter();
+            objectMapper.writeValue(result, trustRelationship);
+            return result.toString();
         } catch (Exception e) {
             logger.error("read() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
@@ -113,9 +118,12 @@ public class TrustRelationshipWebService {
     public String list(@Context HttpServletResponse response) {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllTrustRelationships();
-            String list = null;
-            //TODO: convert to string
-            return list;
+            //convert to JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            StringWriter result = new StringWriter();
+            objectMapper.writeValue(result, trustRelationships);
+            return result.toString();
         } catch (Exception e) {
             logger.error("list() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
@@ -128,8 +136,21 @@ public class TrustRelationshipWebService {
     @POST
     @Path("/create")
     @Produces(MediaType.TEXT_PLAIN)
-    public void addMetadata(String trustRelationshipInum, String metdata, @Context HttpServletResponse response) {
+    public void addMetadata(String trustRelationshipInum, String metadata, @Context HttpServletResponse response) {
         try {
+            //TODO
+        } catch (Exception e) {
+            logger.error("addMetadata() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+        }
+    }
+    
+    @POST
+    @Path("/create")
+    @Produces(MediaType.TEXT_PLAIN)
+    public void addAttribute(String trustRelationshipInum, String metdata, @Context HttpServletResponse response) {
+        try {
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
             //TODO
         } catch (Exception e) {
             logger.error("addMetadata() Exception", e);
