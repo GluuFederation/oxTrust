@@ -26,6 +26,7 @@ import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.model.TrustContact;
 
 /**
  * WS endpoint for TrustRelationship actions.
@@ -134,9 +135,9 @@ public class TrustRelationshipWebService {
     
     
     @POST
-    @Path("/create")
+    @Path("/add_metadata")
     @Produces(MediaType.TEXT_PLAIN)
-    public void addMetadata(String trustRelationshipInum, String metadata, @Context HttpServletResponse response) {
+    public void addMetadata(@PathParam("inum") String trustRelationshipInum, String metadata, @Context HttpServletResponse response) {
         try {
             //TODO
         } catch (Exception e) {
@@ -146,9 +147,9 @@ public class TrustRelationshipWebService {
     }
     
     @POST
-    @Path("/create")
+    @Path("/add_attribute")
     @Produces(MediaType.TEXT_PLAIN)
-    public void addAttribute(String trustRelationshipInum, String metdata, @Context HttpServletResponse response) {
+    public void addAttribute(@PathParam("inum") String trustRelationshipInum, String attribute, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
             //TODO
@@ -166,6 +167,26 @@ public class TrustRelationshipWebService {
             return trustService.generateInumForNewTrustRelationship();
         } catch (Exception e) {
             logger.error("generateInumForNewTrustRelationship() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
+    @GET
+    @Path("/get_contacts")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getContacts(@PathParam("inum") String trustRelationshipInum, @Context HttpServletResponse response) {
+        try {
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
+            List<TrustContact> list = trustService.getContacts(trustRelationship);
+            //convert to JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            StringWriter result = new StringWriter();
+            objectMapper.writeValue(result, list);
+            return result.toString();
+        } catch (Exception e) {
+            logger.error("getContacts() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
             return OxTrustConstants.RESULT_FAILURE;
         }
