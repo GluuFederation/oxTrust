@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.Validations;
@@ -16,6 +17,7 @@ import org.gluu.oxtrust.model.scim2.annotations.Validator;
 /*
  * Created by jgomer on 2017-09-04.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Photo {
 
     @Attribute(description = "URI of a photo of the User.",

@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.Validations;
@@ -17,6 +18,7 @@ import org.gluu.oxtrust.model.scim2.annotations.Validator;
 /*
  * Created by jgomer on 2017-09-04.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Email {
 
     @Attribute(description = "E-mail addresses for the user. The value SHOULD be canonicalized by the Service Provider, " +

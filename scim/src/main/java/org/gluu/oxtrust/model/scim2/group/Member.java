@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.model.scim2.group;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -22,6 +23,7 @@ import org.gluu.oxtrust.model.scim2.annotations.Attribute;
  * "required" attribute characteristic of a sub-attribute of the "members" attribute in the "Group" resource schema.".
  * This is the case here
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Member {
 
     @Attribute(description = "The value of an 'id' attribute of a SCIM resource",

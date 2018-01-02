@@ -5,10 +5,9 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
-import org.gluu.oxtrust.model.scim2.Validations;
-import org.gluu.oxtrust.model.scim2.annotations.Validator;
 
 /**
  * Represents a DER-encoded X.509 certificate associated to a User. See section 4.1.2 of RFC 7643.
@@ -16,6 +15,7 @@ import org.gluu.oxtrust.model.scim2.annotations.Validator;
 /*
  * Created by jgomer on 2017-09-12.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class X509Certificate {
 
     @Attribute(description = "The value of a X509 certificate.",

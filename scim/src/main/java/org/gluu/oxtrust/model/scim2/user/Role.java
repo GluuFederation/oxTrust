@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 
@@ -14,6 +15,7 @@ import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 /*
  * Created by jgomer on 2017-09-12.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Role {
 
     @Attribute(description = "The value of a role.",

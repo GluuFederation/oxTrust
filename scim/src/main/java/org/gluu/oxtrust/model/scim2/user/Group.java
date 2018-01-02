@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
@@ -16,6 +17,7 @@ import org.gluu.oxtrust.model.scim2.annotations.StoreReference;
 /*
  * Created by jgomer on 2017-09-12.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Group {
 
     @Attribute(description = "The identifier of the User's group.",
