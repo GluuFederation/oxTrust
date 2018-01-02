@@ -73,6 +73,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 /**
  * Provides operations with attributes
@@ -1496,5 +1498,87 @@ public class Shibboleth3ConfService implements Serializable {
 	public boolean isFederation(GluuSAMLTrustRelationship trustRelationship) {
 	    //TODO: optimize this method. should not take so long
 		return isFederationMetadata(trustRelationship.getSpMetaDataFN());
+	}
+        
+        /**
+	 * @param trustRelationship
+	 * @param certificate
+	 */
+	public void saveCert(GluuSAMLTrustRelationship trustRelationship,
+			String certificate) {
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
+				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
+				+ File.separator;
+		File sslDir = new File(sslDirFN);
+		if (!sslDir.exists()) {
+			log.debug("creating directory: " + sslDirFN);
+			boolean result = sslDir.mkdir();
+			if (result) {
+				log.debug("DIR created");
+
+			}
+		}
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(
+			            new FileWriter(
+			                       sslDirFN	
+			                       + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".crt")));
+			writer.write(Shibboleth3ConfService.PUBLIC_CERTIFICATE_START_LINE + "\n" 
+						+ certificate
+						+ Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE);
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (IOException e) {
+			}
+		}
+
+	}
+
+	/**
+	 * @param trustRelationship
+	 * @param key
+	 */
+	public void saveKey(GluuSAMLTrustRelationship trustRelationship,
+			String key) {
+		
+		
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
+				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
+				+ File.separator;
+		File sslDir = new File(sslDirFN);
+		if (!sslDir.exists()) {
+			log.debug("creating directory: " + sslDirFN);
+			boolean result = sslDir.mkdir();
+			if (result) {
+				log.debug("DIR created");
+
+			}
+		}
+		if(key != null){
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".key")));
+			writer.write(key);
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (IOException e) {
+			}
+		}
+		}else{
+			File keyFile = new File(sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".key"));
+			if(keyFile.exists()){
+				keyFile.delete();
+			}
+		}
+
 	}
 }
