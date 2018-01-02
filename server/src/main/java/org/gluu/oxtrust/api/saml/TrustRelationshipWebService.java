@@ -22,6 +22,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -33,9 +34,9 @@ import org.xdi.model.TrustContact;
  * 
  * @author Dmitry Ognyannikov
  */
-@Path("/saml/tr")
+@Path("/apis/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-@DeclareRoles("administrator")
+//@DeclareRoles("administrator")
 public class TrustRelationshipWebService {
     
     @Inject
@@ -43,6 +44,9 @@ public class TrustRelationshipWebService {
     
     @Inject
     private TrustService trustService;
+
+    @Inject
+    private Shibboleth3ConfService shibboleth3ConfService;
     
     
     @GET
@@ -193,11 +197,14 @@ public class TrustRelationshipWebService {
     }
     
     @POST
-    @Path("/add_certificate")
+    @Path("/set_certificate")
     @Produces(MediaType.TEXT_PLAIN)
-    public void addCertificate(@PathParam("inum") String inum, String certificate, @Context HttpServletResponse response) {
+    public void setCertificate(@PathParam("inum") String trustRelationshipInum, String certificate, @Context HttpServletResponse response) {
         try {
-            //TODO
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
+            
+            shibboleth3ConfService.saveCert(trustRelationship, certificate);
+            shibboleth3ConfService.saveKey(trustRelationship, null);
         } catch (Exception e) {
             logger.error("addCertificate() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
