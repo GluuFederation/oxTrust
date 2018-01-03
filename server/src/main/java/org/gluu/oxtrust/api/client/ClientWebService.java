@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * WS endpoint for Group actions.
+ * WS endpoint for Client actions.
  * 
  * @author Shekhar L.
  */
