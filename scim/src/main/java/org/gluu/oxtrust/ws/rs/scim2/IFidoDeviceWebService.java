@@ -78,8 +78,7 @@ public interface IFidoDeviceWebService {
      * ScimResourceUtil#transferToResourceReplace}.</p>
      * @param fidoDeviceResource An object that contains the data to update on a destination resource. There is no need
      *                           to supply a full resource, just provide one with the attributes which are intended to
-     *                           be replaced in the destination including the attributes marked as required in the resource
-     *                           schema
+     *                           be replaced in the destination
      * @param id The "id" attribute of the resource to update (destination)
      * @param attrsList See notes about <a href="#attrsList">attributes</a> query param
      * @param excludedAttrsList See notes about <a href="#attrsList">excludedAttributes</a> query param
