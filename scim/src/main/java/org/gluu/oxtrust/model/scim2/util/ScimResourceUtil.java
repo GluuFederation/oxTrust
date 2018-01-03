@@ -435,10 +435,10 @@ public class ScimResourceUtil {
     }
 
     /**
-     * Takes an SCIM resource and "fixes" inconsistencies in "primary" subattribute: in a multivalued attribute setting,
+     * Takes a SCIM resource and "fixes" inconsistencies in "primary" subattribute: in a multivalued attribute setting,
      * only one of the items in the collection can have <i><code>"primary" : true</code></i>. Thus, for every collection
      * involved (e.g. addresses, emails... in {@link org.gluu.oxtrust.model.scim2.user.UserResource}), it switches all
-     * occurrences where "primary" is currently <code>true</code> to <code>false</code>, except for the first found.
+     * occurrences where "primary" is currently <code>true</code> to <code>false</code>, except for the first one found.
      * @param resource SCIM resource object
      */
     public static void adjustPrimarySubAttributes(BaseScimResource resource){

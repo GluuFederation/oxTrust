@@ -53,18 +53,17 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
     @Inject
     private UmaPermissionService umaPermissionService;
 
-    //TODO: fix doc here
     /**
-     * Comment this method body if you want to skip the authorization check and proceed straight to use the service. This
-     * is useful under certain development circumstances
+     * This method performs the protection check of SCIM invocations: it searches for the "Authorization" Header param
+     * and does the respective processing by calling test mode or UMA validation token logic. If successful, the request
+     * follows to its destination service object. If not, a Response object is returned immediately signaling an
+     * authorization error
      * @param requestContext The ContainerRequestContext associated to filter execution
      * @throws IOException Whenever checking the authorization throws an exception as well
      */
-    /**
-     * Does some pre-processing of parameters:
-     * Searches for a parameter of type String and annotated with HeaderParam. If found, the respective processing
-     * authorization method is called (test mode or UMA protection) and  if successful, the request follows to its
-     * destination service object. If not found a Response object is returned immediately signaling the authorization error
+    /*
+     * Comment this method body if you want to skip the authorization check and proceed straight to use the service. This
+     * is useful under certain development circumstances
      */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
