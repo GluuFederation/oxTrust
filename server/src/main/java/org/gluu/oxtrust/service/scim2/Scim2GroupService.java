@@ -227,6 +227,10 @@ public class Scim2GroupService implements Serializable {
         for (GluuGroup group: list){
             GroupResource scimGroup=new GroupResource();
             transferAttributesToGroupResource(group, scimGroup, groupsUrl, usersUrl);
+            //TODO: Delete this IF in the future - added for backwards compatibility with SCIM-Client <= 3.1.2.
+            if (scimGroup.getMembers()==null)
+                scimGroup.setMembers(new HashSet<Member>());
+
             resources.add(scimGroup);
         }
         log.info ("Found {} matching entries - returning {}", vlvResponse.getTotalResults(), list.size());

@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.model.scim2.bulk;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 /*
  * Updated by jgomer on 2017-11-21.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BulkOperation {
 
     private static ObjectMapper mapper=new ObjectMapper();

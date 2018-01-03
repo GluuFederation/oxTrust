@@ -41,4 +41,10 @@ public class BulkBase {
         this.operations = operations;
     }
 
+    //TODO: Delete this method in the future - added for backwards compatibility with SCIM-Client <= 3.1.2.
+    @JsonProperty("operations")
+    public void setOperations2(List<BulkOperation> misSpelledOperations) {
+        setOperations(misSpelledOperations);
+    }
+
 }

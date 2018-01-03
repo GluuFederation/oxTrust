@@ -7,6 +7,7 @@ package org.gluu.oxtrust.model.scim2;
 
 import com.google.common.base.Joiner;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import static org.gluu.oxtrust.model.scim2.Constants.SEARCH_REQUEST_SCHEMA_ID;
 /*
  * Updated by jgomer on 2017-10-08.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchRequest {
 
     private List<String> schemas;
@@ -54,6 +56,10 @@ public class SearchRequest {
     }
 
     public void setSchemas(List<String> schemas) {
+        //TODO: Delete this IF lines in the future - added for backwards compatibility with SCIM-Client <= 3.1.2.
+        if (schemas.remove("urn:ietf:params:scim:schemas:core:2.0:SearchRequest"))
+            schemas.add(SEARCH_REQUEST_SCHEMA_ID);
+
         this.schemas = schemas;
     }
 
