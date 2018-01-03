@@ -56,15 +56,7 @@ public class ErrorResponse implements Serializable {
      * @return A string value
      */
     public String getScimType() {
-        if (scimType != null) {
-            return scimType.getValue();
-        } else {
-            return "";
-        }
-    }
-
-    protected ErrorScimType getScimTypeEnum() {
-        return scimType;
+        return scimType == null ? "" : scimType.getValue();
     }
 
     public void setScimType(ErrorScimType scimType) {

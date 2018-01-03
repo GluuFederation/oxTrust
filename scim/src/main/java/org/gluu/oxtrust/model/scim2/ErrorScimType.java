@@ -61,10 +61,6 @@ public enum ErrorScimType {
         return mapByValues.get(value);
     }
 
-    public ErrorScimType resolveByValue(String value) {
-        return getByValue(value);
-    }
-
     @Override
     public String toString() {
         return getValue();
