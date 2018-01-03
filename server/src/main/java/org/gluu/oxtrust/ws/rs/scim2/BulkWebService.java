@@ -52,7 +52,7 @@ public class BulkWebService extends BaseScimWebService {
 
     enum Verb {POST, PUT, PATCH, DELETE}    //HTTP methods involved in bulk requests
 
-    private final Pattern bulkIdPattern= Pattern.compile("bulkId:(\\w+)\"");
+    private final Pattern bulkIdPattern= Pattern.compile("bulkId:(\\w+)");
 
     private List<Verb> availableMethods;
     private ObjectMapper mapper=new ObjectMapper();
@@ -296,7 +296,7 @@ public class BulkWebService extends BaseScimWebService {
             if (realId==null)
                 throw new Exception("bulkId '" + id + "' not recognized");
 
-            m.appendReplacement(sb, realId + "\"");     //Add a '"' since the regex contains a double quote as well
+            m.appendReplacement(sb, realId);
         }
         m.appendTail(sb);
 

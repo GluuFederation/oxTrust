@@ -232,7 +232,7 @@ public class LdapFilterListener extends ScimFilterBaseListener {
                 subfilter=BOOLEAN_EQUALS.get(ldapAttribute, value.toUpperCase());
             else
                 //When it's inside json, the underlying attribute is not a boolean LDAP but a string so no conversion is needed
-                subfilter=BOOLEAN_EQUALS_INNER.get(ldapAttribute, value);
+                subfilter=BOOLEAN_EQUALS_INNER.get(ldapAttribute, subAttribute, value);
 
             if (operator.equals(ScimOperator.NOT_EQUAL))
                 subfilter= "!(" + subfilter + ")";
