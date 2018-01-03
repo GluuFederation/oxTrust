@@ -77,7 +77,7 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
             response=validateExistenceOfDevice(fidoDevice.getUserId(), id);
 
             if (response==null) {
-                executeDefaultValidation(fidoDevice);
+                executeValidation(fidoDevice, true);
                 response = service.updateDevice(fidoDevice, id, attrsList, excludedAttrsList);
             }
         }

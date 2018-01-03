@@ -137,7 +137,7 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
 
             response=validateExistenceOfGroup(id);
             if (response==null) {
-                executeDefaultValidation(group);
+                executeValidation(group, true);
                 checkDisplayNameExistence(group.getDisplayName(), id);
 
                 //Proceed with actual implementation of updateGroup method
