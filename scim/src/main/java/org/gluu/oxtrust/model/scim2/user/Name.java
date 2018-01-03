@@ -49,26 +49,25 @@ public class Name {
     private String formatted;
 
     /**
-     * From a Name instance, it builds a string depicting a full name including all middle names, titles, and suffixes
-     * as appropriate for display if the {@link #getFormatted() formatted} field of the object passed is null or empty
-     * @param name A <code>Name</code> instance
-     * @return A string representing a full name
+     * From this Name instance, it builds a string depicting a full name including all middle names, titles, and suffixes
+     * as appropriate for display if the {@link #getFormatted() formatted} field of this object is null or empty
+     * @return A string representing a full name. The formatted field will be set to this value
      */
-    public static String computeFormattedName(Name name){
+    public String computeFormattedName(){
 
-        if (StringUtils.isEmpty(name.formatted)) {
+        if (StringUtils.isEmpty(formatted)) {
             String formattedName = "";
 
-            formattedName+=StringUtils.isEmpty(name.honorificPrefix) ? "" : name.honorificPrefix + " ";
-            formattedName+=StringUtils.isEmpty(name.givenName) ? "" : name.givenName + " ";
-            formattedName+=StringUtils.isEmpty(name.middleName) ? "" : name.middleName + " ";
-            formattedName+=StringUtils.isEmpty(name.familyName) ? "" : name.familyName + " ";
-            formattedName+=StringUtils.isEmpty(name.honorificSuffix) ? "" : name.honorificSuffix;
+            formattedName+=StringUtils.isEmpty(honorificPrefix) ? "" : honorificPrefix + " ";
+            formattedName+=StringUtils.isEmpty(givenName) ? "" : givenName + " ";
+            formattedName+=StringUtils.isEmpty(middleName) ? "" : middleName + " ";
+            formattedName+=StringUtils.isEmpty(familyName) ? "" : familyName + " ";
+            formattedName+=StringUtils.isEmpty(honorificSuffix) ? "" : honorificSuffix;
             formattedName=formattedName.trim();
 
-            name.formatted=formattedName.length()==0 ? null : formattedName;
+            formatted=formattedName.length()==0 ? null : formattedName;
         }
-        return name.formatted;
+        return formatted;
 
     }
 

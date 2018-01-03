@@ -155,7 +155,7 @@ public class Scim2UserService implements Serializable {
             person.setAttribute("middleName", res.getName().getMiddleName());
             person.setAttribute("oxTrusthonorificPrefix", res.getName().getHonorificPrefix());
             person.setAttribute("oxTrusthonorificSuffix", res.getName().getHonorificSuffix());
-            person.setAttribute("oxTrustNameFormatted", Name.computeFormattedName(res.getName()));
+            person.setAttribute("oxTrustNameFormatted", res.getName().computeFormattedName());
         }
         person.setDisplayName(res.getDisplayName());
 
@@ -265,6 +265,12 @@ public class Scim2UserService implements Serializable {
         name.setMiddleName(person.getAttribute("middleName"));
         name.setHonorificPrefix(person.getAttribute("oxTrusthonorificPrefix"));
         name.setHonorificSuffix(person.getAttribute("oxTrusthonorificSuffix"));
+
+        String formatted=person.getAttribute("oxTrustNameFormatted");
+        if (formatted==null)    //recomputes the formatted name if absent in LDAP
+            name.computeFormattedName();
+        else
+            name.setFormatted(formatted);
 
         res.setName(name);
         res.setDisplayName(person.getDisplayName());
