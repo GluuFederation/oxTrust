@@ -9,7 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Detail error types when a HTTP 400 response is served. See section 3.12 of RFC7644.
  * @author Val Pecaoco
+ */
+/*
+ * Updated by jgomer on 2017-09-14.
  */
 public enum ErrorScimType {
 
@@ -38,28 +42,28 @@ public enum ErrorScimType {
         this.value = value;
     }
 
+    /**
+     * Returns the <code>scimType</code> as it should be included in a json error response, e.g. "mutability" or
+     * "sensitive"
+     * @return A string value
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Returns an instance of <code>ErrorScimType</code> based on a string value corresponding to the <code>scimType</code>
+     * property of a json error response. This is the reverse of {@link #getValue()} method.
+     * @param value A string corresponding to <code>scimType</code>
+     * @return A <code>ErrorScimType</code> instance or null if the value passed is unknown
+     */
     public static ErrorScimType getByValue(String value) {
         return mapByValues.get(value);
     }
 
-    public ErrorScimType resolveByValue(String value) {
-        return getByValue(value);
-    }
-
-    /**
-     * Returns the name of this enum constant, as contained in the
-     * declaration.  This method may be overridden, though it typically
-     * isn't necessary or desirable.  An enum type should override this
-     * method when a more "programmer-friendly" string form exists.
-     *
-     * @return the name of this enum constant
-     */
     @Override
     public String toString() {
         return getValue();
     }
+
 }

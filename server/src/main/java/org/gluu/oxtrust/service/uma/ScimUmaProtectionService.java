@@ -64,9 +64,9 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 
 	private boolean isScimEnabled() {
 		GluuAppliance appliance = applianceService.getAppliance();
-		GluuBoolean scimEnbaled = appliance.getScimEnabled();
+		GluuBoolean scimEnabled = appliance.getScimEnabled();
 		
-		return GluuBoolean.ENABLED.equals(scimEnbaled) || GluuBoolean.TRUE.equals(scimEnbaled);
+		return GluuBoolean.ENABLED.equals(scimEnabled) || GluuBoolean.TRUE.equals(scimEnabled);
 	}
 
 }

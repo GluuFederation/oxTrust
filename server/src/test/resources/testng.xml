@@ -30,25 +30,11 @@
         </classes>
     </test>
 
-    <!-- CopyUtils2 Create Test (embedded) -->
-    <test name="CopyUtils Create Test (embedded)" enabled="true">
-        <classes>
-            <class name="org.gluu.oxtrust.util.test.CopyUtils2TestCreate" />
-        </classes>
-    </test>
-
-    <!-- CopyUtils Update Test (embedded) -->
-    <test name="CopyUtils Update Test (embedded)" enabled="true">
-        <classes>
-            <class name="org.gluu.oxtrust.util.test.CopyUtils2TestUpdate" />
-        </classes>
-    </test>
-
-    <!-- SCIM User Extension Service Test (embedded) -->
+    <!-- SCIM User Extension Service Test (embedded)
     <test name="SCIM User Extension Service Test (embedded)" enabled="true">
         <classes>
             <class name="org.gluu.oxtrust.service.test.UserExtensionsTest" />
         </classes>
-    </test>
+    </test> -->
 
 </suite>

@@ -6,10 +6,9 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import java.net.URI;
-import java.util.ArrayList;
+import java.util.*;
 
-import javax.inject.Inject;
+import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -18,50 +17,54 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.model.scim2.Constants;
+import org.gluu.oxtrust.model.scim2.provider.config.AuthenticationScheme;
+import org.gluu.oxtrust.model.scim2.provider.config.ServiceProviderConfig;
 import org.gluu.oxtrust.model.scim2.Meta;
-import org.gluu.oxtrust.model.scim2.provider.AuthenticationScheme;
-import org.gluu.oxtrust.model.scim2.provider.ServiceProviderConfig;
-import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.scim2.interceptor.RejectFilterParam;
+
+import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * @author Rahat Ali Date: 05.08.2015
+ * Updated by jgomer2001 on 2017-09-23
  */
 @Named("serviceProviderConfig")
 @Path("/scim/v2/ServiceProviderConfig")
 public class ServiceProviderConfigWS extends BaseScimWebService {
 
-	@Inject
-	private Logger log;
+    @GET
+    @Produces(MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT)
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @RejectFilterParam
+    public Response serve(){
 
-	@Inject
-	private AppConfiguration appConfiguration;
+        try {
+            ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
+            serviceProviderConfig.getFilter().setMaxResults(appConfiguration.getScimProperties().getMaxCount());
 
-	@GET
-	@Produces(Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8")
-	@HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	public Response listGroups(@HeaderParam("Authorization") String authorization) throws Exception {
+            Meta meta = new Meta();
+            meta.setLocation(endpointUrl);
+            meta.setResourceType(ScimResourceUtil.getType(serviceProviderConfig.getClass()));
+            serviceProviderConfig.setMeta(meta);
 
-		ServiceProviderConfig serviceProviderConfig = new ServiceProviderConfig();
-        serviceProviderConfig.getFilter().setMaxResults(appConfiguration.getScimProperties().getMaxCount());
+            boolean onTestMode = appConfiguration.isScimTestMode();
+            serviceProviderConfig.setAuthenticationSchemes(Arrays.asList(
+                    AuthenticationScheme.createOAuth2(onTestMode), AuthenticationScheme.createUma(!onTestMode)));
 
-		Meta meta = new Meta();
-		meta.setLocation(appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
-		meta.setResourceType("ServiceProviderConfig");
-		serviceProviderConfig.setMeta(meta);
+            return Response.ok(resourceSerializer.serialize(serviceProviderConfig)).build();
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
 
-		ArrayList<AuthenticationScheme> authenticationSchemes = new ArrayList<AuthenticationScheme>();
-		if (appConfiguration.isScimTestMode()) {
-			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authenticationSchemes.add(AuthenticationScheme.createOAuth2(true));
-		} else {
-			authenticationSchemes.add(AuthenticationScheme.createUma(true));
-		}
-		serviceProviderConfig.setAuthenticationSchemes(authenticationSchemes);
+    }
 
-		URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/ServiceProviderConfig");
+    @PostConstruct
+    public void setup(){
+        //Do not use getClass() here... a typical weld issue...
+        endpointUrl=appConfiguration.getBaseEndpoint() + ServiceProviderConfigWS.class.getAnnotation(Path.class).value();
+    }
 
-		return Response.ok(serviceProviderConfig).location(location).build();
-	}
 }
