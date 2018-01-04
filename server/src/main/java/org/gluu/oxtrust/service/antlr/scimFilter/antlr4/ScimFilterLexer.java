@@ -1,5 +1,5 @@
 /*
- * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
  *
  * Copyright (c) 2017, Gluu
  */
@@ -23,29 +23,29 @@ public class ScimFilterLexer extends Lexer {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, WHITESPACE=16, 
-		ALPHA=17, NUMBER=18, BOOLEAN=19, NULL=20, NAMECHAR=21, URI=22, ATTRNAME=23, 
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9,
+		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, WHITESPACE=16,
+		ALPHA=17, NUMBER=18, BOOLEAN=19, NULL=20, NAMECHAR=21, URI=22, ATTRNAME=23,
 		SUBATTR=24, STRING=25;
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
 	};
 
 	public static final String[] ruleNames = {
-		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
-		"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "DIGIT", "LOWERCASE", 
-		"UPPERCASE", "WHITESPACE", "ALPHA", "NUMBER", "BOOLEAN", "NULL", "NAMECHAR", 
+		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8",
+		"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "DIGIT", "LOWERCASE",
+		"UPPERCASE", "WHITESPACE", "ALPHA", "NUMBER", "BOOLEAN", "NULL", "NAMECHAR",
 		"URI", "ATTRNAME", "SUBATTR", "STRING"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
-		null, "'eq'", "'ne'", "'co'", "'sw'", "'ew'", "'gt'", "'lt'", "'ge'", 
-		"'le'", "'pr'", "'not'", "'('", "')'", "'and'", "'or'", null, null, null, 
+		null, "'eq'", "'ne'", "'co'", "'sw'", "'ew'", "'gt'", "'lt'", "'ge'",
+		"'le'", "'pr'", "'not'", "'('", "')'", "'and'", "'or'", null, null, null,
 		null, "'null'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, "WHITESPACE", "ALPHA", "NUMBER", "BOOLEAN", "NULL", 
+		null, null, null, null, null, null, null, null, null, null, null, null,
+		null, null, null, null, "WHITESPACE", "ALPHA", "NUMBER", "BOOLEAN", "NULL",
 		"NAMECHAR", "URI", "ATTRNAME", "SUBATTR", "STRING"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
