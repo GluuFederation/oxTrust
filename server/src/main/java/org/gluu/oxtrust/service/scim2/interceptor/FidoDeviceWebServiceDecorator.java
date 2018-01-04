@@ -1,5 +1,5 @@
 /*
- * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
  *
  * Copyright (c) 2017, Gluu
  */
@@ -44,7 +44,7 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
     private IFidoDeviceService fidoDeviceService;
 
     private Response validateExistenceOfDevice(String userId, String id) {
-
+        //userId can be null here
         Response response=null;
 
         GluuCustomFidoDevice device = StringUtils.isEmpty(id) ? null : fidoDeviceService.getGluuCustomFidoDeviceById(userId, id);
@@ -68,7 +68,7 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
 
         Response response;
         try {
-            //empty externalId, no place to store it in LDAP
+            //remove externalId, no place to store it in LDAP
             fidoDevice.setExternalId(null);
 
             if (fidoDevice.getId()!=null && !fidoDevice.getId().equals(id))

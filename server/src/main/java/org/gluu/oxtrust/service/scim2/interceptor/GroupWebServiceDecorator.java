@@ -1,5 +1,5 @@
 /*
- * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
  *
  * Copyright (c) 2017, Gluu
  */
@@ -80,7 +80,7 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
         groupToFind.setDisplayName(displayName);
 
         List<GluuGroup> list=groupService.findGroups(groupToFind,2 );
-        if (list!=null && list.size()>0){
+        if (list!=null){
             for (GluuGroup g : list)
                 if (!g.getInum().equals(id))
                     throw new DuplicateEntryException("Duplicate group displayName value: " + displayName);
@@ -137,8 +137,10 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
 
             response=validateExistenceOfGroup(id);
             if (response==null) {
+
                 executeValidation(group, true);
-                checkDisplayNameExistence(group.getDisplayName(), id);
+                if (StringUtils.isNotEmpty(group.getDisplayName()))
+                    checkDisplayNameExistence(group.getDisplayName(), id);
 
                 //Proceed with actual implementation of updateGroup method
                 response = service.updateGroup(group, id, attrsList, excludedAttrsList);

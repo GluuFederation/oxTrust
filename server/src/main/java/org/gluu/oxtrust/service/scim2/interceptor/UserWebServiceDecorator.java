@@ -1,5 +1,5 @@
 /*
- * SCIM-Client is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
  *
  * Copyright (c) 2017, Gluu
  */
@@ -75,7 +75,7 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
         catch (Exception e){
             log.error(e.getMessage(), e);
         }
-        if (list!=null && list.size()>0){
+        if (list!=null){
             for (GluuCustomPerson p : list)
                 if (!p.getInum().equals(id))
                     throw new DuplicateEntryException("Duplicate UID value: " + uid);
@@ -128,10 +128,12 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
 
             response=validateExistenceOfUser(id);
             if (response==null) {
-                executeValidation(user, true);
-                checkUidExistence(user.getUserName(), id);
-                ScimResourceUtil.adjustPrimarySubAttributes(user);
 
+                executeValidation(user, true);
+                if (StringUtils.isNotEmpty(user.getUserName()))
+                    checkUidExistence(user.getUserName(), id);
+
+                ScimResourceUtil.adjustPrimarySubAttributes(user);
                 //Proceed with actual implementation of updateUser method
                 response = service.updateUser(user, id, attrsList, excludedAttrsList);
             }
