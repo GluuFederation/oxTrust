@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.model.scim2.bulk;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -27,10 +28,13 @@ public class BulkOperation {
     private String bulkId;
     //private String version;
     private String path;
-    private String data;
+    private Map<String, Object> data;
     private String location;
     private Object response;
     private String status;
+
+    @JsonIgnore
+    private String dataStr;
 
     public String getMethod() {
         return method;
@@ -66,18 +70,23 @@ public class BulkOperation {
         this.path = path;
     }
 
+    public String getDataStr() {
+        return dataStr;
+    }
+
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_EMPTY)
-    public String getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
     public void setData(Map<String, Object> map) {
 
         try {
-            data = mapper.writeValueAsString(map);
+            data=map;
+            dataStr = mapper.writeValueAsString(map);
         }
         catch (Exception e){
-            data=null;
+            dataStr=null;
         }
 
     }
