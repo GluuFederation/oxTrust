@@ -105,7 +105,7 @@ public class BulkWebService extends BaseScimWebService {
                     String fragment=getFragment(path, service, processedBulkIds);
                     Verb verb = Verb.valueOf(method);
 
-                    String data=operation.getData();
+                    String data=operation.getDataStr();
                     if (!verb.equals(DELETE))
                         data = replaceBulkIds(data, processedBulkIds);
 
@@ -247,7 +247,7 @@ public class BulkWebService extends BaseScimWebService {
                         throw new Exception("bulkId parameter is required for method " + method);
 
                     //Check if data must be present
-                    String data=operation.getData();
+                    String data=operation.getDataStr();
                     List<Verb> dataMethods=Arrays.asList(POST, PUT, PATCH);
                     if (dataMethods.contains(verb) && StringUtils.isEmpty(data))
                         throw new Exception("data parameter is required for method " + method);
