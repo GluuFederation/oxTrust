@@ -14,8 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,7 +28,6 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim.ScimPersonEmails;
 import org.gluu.oxtrust.model.scim2.user.Email;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -357,29 +355,8 @@ public class ServiceUtil implements Serializable {
                     newMails[i] = mapper.readValue(oxTrustEmails[i], Email.class).getValue();
                 }
 
-            } else {
-                //TODO: determine if this branch is useful at all. If not, can be dropped as well as ScimPersonEmails class
-				/*
-				ScimPersonEmails[] emails = mapper.readValue(oxTrustEmails[0], ScimPersonEmails[].class);
-				newMails = new String[emails.length];
-
-				for (int i = 0; i < emails.length; i++) {
-					newMails[i] = emails[i].getValue();
-				}
-				*/
-
-                for (int i = 0; i < oxTrustEmails.length; i++) {
-                    ScimPersonEmails email = mapper.readValue(oxTrustEmails[i], ScimPersonEmails.class);
-                    newMails[i] = email.getValue();
-                }
             }
-
             gluuCustomPerson.setAttribute("mail", newMails);
-
-		/* // Just do nothing if null, same as in UserWebService.updateUser()
-		} else {
-			gluuCustomPerson.setAttribute("mail", new String[0]);
-		*/
         }
 
         logger.info(" LEAVING Utils.syncEmailForward()...");
@@ -403,106 +380,58 @@ public class ServiceUtil implements Serializable {
         GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
         GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
 
-        if (mail != null && mail.getValues().length > 0) {
-
-            String[] mails = mail.getValues();  // String array
-
-            String[] oxTrustEmails = null;
-            if (oxTrustEmail != null) {
-                oxTrustEmails = oxTrustEmail.getValues();  // In the old format, JSON array is in element 0
-            }
-
+        if (mail == null) {
+            gluuCustomPerson.setAttribute("oxTrustEmail", new String[0]);
+        }
+        else{
             ObjectMapper mapper = getObjectMapper();
 
-            // Retain the switch just in case this will be useful in the future
-            // if (isScim2) {
+            Set<String> mailSet=new HashSet<String>();
+            if (mail.getValues()!=null)
+                mailSet.addAll(Arrays.asList(mail.getValues()));
 
-            List<String> newOxTrustEmails = new ArrayList<String>();
-            Email[] emails = null;
+            Set<String> mailSetCopy=new HashSet<String>(mailSet);
+            Set<String> oxTrustEmailSet =new HashSet<String>();
+            List<Email> oxTrustEmails=new ArrayList<Email>();
 
-            if (oxTrustEmails != null && oxTrustEmails.length > 0) {
+            if (oxTrustEmail!=null && oxTrustEmail.getValues()!=null){
+                for (String oxTrustEmailJson : oxTrustEmail.getValues())
+                    oxTrustEmails.add(mapper.readValue(oxTrustEmailJson, Email.class));
 
-                // emails = mapper.readValue(oxTrustEmails[0], Email[].class);
-                emails = new Email[oxTrustEmails.length];
+                for (Email email : oxTrustEmails)
+                    oxTrustEmailSet.add(email.getValue());
+            }
+            mailSetCopy.removeAll(oxTrustEmailSet); //Keep those in "mail" and not in oxTrustEmail
+            oxTrustEmailSet.removeAll(mailSet);     //Keep those in oxTrustEmail and not in "mail"
 
-                for (int i = 0; i < oxTrustEmails.length; i++) {
-                    Email email = mapper.readValue(oxTrustEmails[i], Email.class);
-                    emails[i] = email;
-                }
+            List<Integer> delIndexes=new ArrayList<Integer>();
+            //Build a list of indexes that should be removed in oxTrustEmails
+            for (int i=0;i<oxTrustEmails.size();i++) {
+                if (oxTrustEmailSet.contains(oxTrustEmails.get(i).getValue()))
+                    delIndexes.add(0, i);
+            }
+            //Delete unmatched oxTrustEmail entries from highest index to lowest
+            for (Integer idx : delIndexes)
+                oxTrustEmails.remove(idx.intValue());   //must not pass an Integer directly
+
+            List<String> newValues=new ArrayList<String>();
+            for (Email email : oxTrustEmails)
+                newValues.add(mapper.writeValueAsString(email));
+
+            for (String mailStr : mailSetCopy){
+                Email email = new Email();
+                email.setValue(mailStr);
+                newValues.add(mapper.writeValueAsString(email));
             }
 
-            for (int i = 0; i < mails.length; i++) {
+            gluuCustomPerson.setAttribute("oxTrustEmail", newValues.toArray(new String[0]));
 
-                if (emails != null && (i < emails.length) && (emails[i] != null)) {
-
-                    Email email = emails[i];
-                    email.setDisplay((email.getDisplay() != null && !email.getDisplay().equalsIgnoreCase(email.getValue())) ? email.getDisplay() : mails[i]);
-                    email.setValue(mails[i]);
-
-                    newOxTrustEmails.add(mapper.writeValueAsString(email));
-
-                } else {
-
-                    Email email = new Email();
-                    email.setValue(mails[i]);
-                    email.setPrimary(i == 0 ? true : false);
-                    email.setDisplay(mails[i]);
-                    email.setType("other");
-
-                    newOxTrustEmails.add(mapper.writeValueAsString(email));
-                }
-            }
-
-			    /*
-				StringWriter stringWriter = new StringWriter();
-				getObjectMapper().writeValue(stringWriter, newOxTrustEmails);
-				String newOxTrustEmail = stringWriter.toString();
-				*/
-
-            gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmails.toArray(new String[]{}));
-
-			/*
-			} else {
-
-				List<ScimPersonEmails> newOxTrustEmails = new ArrayList<ScimPersonEmails>();
-				ScimPersonEmails[] scimPersonEmails = new ScimPersonEmails[mails.length];
-
-				if (oxTrustEmails != null && oxTrustEmails.length > 0) {
-					scimPersonEmails = getObjectMapper().readValue(oxTrustEmails[0], ScimPersonEmails[].class);
-				}
-
-				for (int i = 0; i < mails.length; i++) {
-
-					if (i < scimPersonEmails.length && (scimPersonEmails[i] != null)) {
-
-						ScimPersonEmails scimPersonEmail = scimPersonEmails[i];
-						scimPersonEmail.setValue(mails[i]);
-
-						newOxTrustEmails.add(scimPersonEmail);
-
-					} else {
-
-						ScimPersonEmails scimPersonEmail = new ScimPersonEmails();
-						scimPersonEmail.setValue(mails[i]);
-						scimPersonEmail.setPrimary(i == 0 ? "true" : "false");
-						scimPersonEmail.setType(Email.Type.OTHER.getValue());
-
-						newOxTrustEmails.add(scimPersonEmail);
-					}
-				}
-
-				StringWriter stringWriter = new StringWriter();
-				getObjectMapper().writeValue(stringWriter, newOxTrustEmails);
-				String newOxTrustEmail = stringWriter.toString();
-
-				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmail);
-			}
-			*/
         }
 
         logger.info(" LEAVING Utils.syncEmailReverse()...");
 
         return gluuCustomPerson;
+
     }
 
     public static ObjectMapper getObjectMapper() {
