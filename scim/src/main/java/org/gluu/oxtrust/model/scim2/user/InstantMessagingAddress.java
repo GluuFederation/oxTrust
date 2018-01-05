@@ -6,6 +6,7 @@
 package org.gluu.oxtrust.model.scim2.user;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 
@@ -18,6 +19,8 @@ import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstantMessagingAddress {
 
+    public enum Type {AIM, GTALK, ICQ, XMPP, MSN, SKYPE, QQ, YAHOO, OTHER}
+
     @Attribute(description = "Instant messaging address for the User.",
             isRequired = true)  //specs says false but it doesn't make sense
     private String value;
@@ -26,7 +29,7 @@ public class InstantMessagingAddress {
     private String display;
 
     @Attribute(description = "A label indicating the attribute's function; e.g., 'aim', 'gtalk', 'mobile' etc.",
-            canonicalValues = { "aim", "gtalk", "icq", "xmpp", "msn", "skype", "qq", "yahoo" })
+            canonicalValues = { "aim", "gtalk", "icq", "xmpp", "msn", "skype", "qq", "yahoo", "other" })
     private String type;
 
     @Attribute(description = "A Boolean value indicating the 'primary' or preferred attribute value for this attribute," +
@@ -55,8 +58,13 @@ public class InstantMessagingAddress {
         return type;
     }
 
+    @JsonProperty
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setType(Type type){
+        setType(type.name().toLowerCase());
     }
 
     public Boolean getPrimary() {

@@ -20,6 +20,8 @@ import org.gluu.oxtrust.model.scim2.annotations.StoreReference;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Group {
 
+    public enum Type {DIRECT, INDIRECT}
+
     @Attribute(description = "The identifier of the User's group.",
             isRequired = true,  //Specs says the converse, but doesn't make sense
             mutability = AttributeDefinition.Mutability.READ_ONLY)
@@ -70,8 +72,13 @@ public class Group {
         return type;
     }
 
+    @JsonProperty
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setType(Type type){
+        setType(type.name().toLowerCase());
     }
 
 }

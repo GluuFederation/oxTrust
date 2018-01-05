@@ -6,6 +6,7 @@
 package org.gluu.oxtrust.model.scim2.user;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.Validations;
@@ -20,6 +21,8 @@ import org.gluu.oxtrust.model.scim2.annotations.Validator;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Email {
+
+    public enum Type {WORK, HOME, OTHER}
 
     @Attribute(description = "E-mail addresses for the user. The value SHOULD be canonicalized by the Service Provider, " +
             "e.g.  bjensen@example.com instead of bjensen@EXAMPLE.COM.",
@@ -61,8 +64,13 @@ public class Email {
         return type;
     }
 
+    @JsonProperty
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setType(Type type){
+        setType(type.name().toLowerCase());
     }
 
     public Boolean getPrimary() {
