@@ -79,6 +79,31 @@
 		    float: left;
 		    margin-right: 12px;
 		}
+		
+		
+		.order-table{
+	border-collapse:collapse;
+	width:90%;
+}
+
+.order-table-header{
+	text-align:center;
+	background:none repeat scroll 0 0 #E5E5E5;
+	border-bottom:1px solid #BBBBBB;
+	padding:16px;
+}
+
+.order-table-odd-row{
+	text-align:center;
+	background:none repeat scroll 0 0 #FFFFFFF;
+	border-top:1px solid #BBBBBB;
+}
+
+.order-table-even-row{
+	text-align:center;
+	background:none repeat scroll 0 0 #F9F9F9;
+	border-top:1px solid #BBBBBB;
+}
     </h:outputStylesheet>
 
     <h:outputScript>
@@ -106,7 +131,8 @@
     		$element[0].childNodes[0].innerHTML = newValue;
 		}
 		
-		$(document).ready(function(){ 
+		function addIndex(){ 
+			console.log("test index");
 			$("input.rf-ii-fld").each(function(index){ 
 				$(this).parent().parent().attr("tabIndex", index);
 			});
@@ -123,6 +149,11 @@
 					}
 				}
 			});
+		}
+		
+		
+		$(document).ready(function(){
+  			addIndex();
 		});
 		
     </h:outputScript>
@@ -174,7 +205,9 @@
 
                                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                                     <h:panelGroup id="selectedCustomAttributesId">
-										
+										<script type="text/javascript">         
+									        addIndex();
+									    </script>
                                         <a4j:repeat value="#{_customAttributeAction.customAttributes}" var="_custAttr"
                                                     rowKeyVar="_custAttrIdx">
                                             <h:panelGroup rendered="#{_custAttr.metadata != null}">
@@ -310,41 +343,39 @@
                                             </h:panelGroup>
                                         </a4j:repeat>
                                         
-                                        <ox:decorate label="Authentication Methods " />
-                                        <a4j:repeat id="externalAuth" value="#{updatePersonAction.externalAuthCustomAttributes}" var="_authExtCustAttr">
-                                                     <ox:decorate label="#{_authExtCustAttr}">
-                                                     <div class="col-xs-10"/>   
-                                                        <a4j:commandLink
-                                                                action="#{updatePersonAction.removeExternalAuthCustomAttribute(_authExtCustAttr)}"
-                                                                render="selectedCustomAttributesId"
-                                                                styleClass="glyphicon glyphicon-remove">
-                                                        </a4j:commandLink>
-                                                     </ox:decorate>                                            
-                                        </a4j:repeat>
-                                        
-                                        <ox:decorate   label="Super Gluu Devices " /> 
-                                        <a4j:repeat id="fidoDevices" value="#{updatePersonAction.deviceDataMap}" var="_devices">
-										<div class="row">
-											<div class="form-group">
-
-												<div class="left">
-													<h:outputLabel value="#{_devices.name}  " />
-												</div>
-												<div class="middle">
-													<h:outputLabel value="#{_devices.platform} " />
-												</div>
-												<div class="right">
-													<h:outputLabel value="" />
-													<a4j:commandLink
-														action="#{updatePersonAction.removeDevice(_devices)}"
+                                    <ox:decorate label="#{msg['person.u2fcredentials']}" />    
+									<h:dataTable value="#{updatePersonAction.deviceDataMap}" var="_value"
+						    			styleClass="order-table"
+						    			headerClass="order-table-header"
+						    			rowClasses="order-table-odd-row,order-table-even-row">
+						
+						    			<h:column>
+						    				<!-- column header -->
+						    				<f:facet name="header">Nickname</f:facet>
+						    				<!-- row record -->
+						    				#{_value.nickName}
+						    			</h:column>
+						
+						    			<h:column>
+						    				<f:facet name="header">Modality</f:facet>
+						    				#{_value.modality}
+						    			</h:column>
+						
+						    			<h:column>
+						    				<f:facet name="header">Date Added</f:facet>
+						    				#{_value.creationDate}
+						    			</h:column>
+						
+						    			<h:column>
+						    				<f:facet name="header">Remove</f:facet>
+						    				<a4j:commandLink
+														action="#{updatePersonAction.removeDevice(_value)}"
 														render="selectedCustomAttributesId"
 														styleClass="glyphicon glyphicon-remove">
-													</a4j:commandLink>
-												</div>
-
-											</div>
-										</div>
-									</a4j:repeat>
+											</a4j:commandLink>
+						    			</h:column>
+						
+						    		</h:dataTable>
                                     </h:panelGroup>
                                 </h:panelGrid>
                             </h:panelGrid>
