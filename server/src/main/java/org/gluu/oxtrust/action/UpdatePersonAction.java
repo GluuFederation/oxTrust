@@ -43,6 +43,7 @@ import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -109,6 +110,9 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private MemberService memberService;
+	
+	@Inject
+	private LdapEntryManager ldapEntryManager;
 	
 	@Inject
 	private FidoDeviceService fidoDeviceService;
@@ -215,7 +219,7 @@ public class UpdatePersonAction implements Serializable {
 			if(gluuCustomFidoDevices != null){
 				for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){					
 	                GluuDeviceDataBean gluuDeviceDataBean= new GluuDeviceDataBean();
-	                gluuDeviceDataBean.setCreationDate(parseLdapDate(gluuCustomFidoDevice.getCreationDate()).toGMTString());
+	                gluuDeviceDataBean.setCreationDate(ldapEntryManager.decodeGeneralizedTime(gluuCustomFidoDevice.getCreationDate()).toGMTString());
 	                gluuDeviceDataBean.setId(gluuCustomFidoDevice.getId());
 	                String devicedata = gluuCustomFidoDevice.getDeviceData();
 	                String modality = "";
@@ -579,18 +583,4 @@ public class UpdatePersonAction implements Serializable {
 		
 		return true;
 	}
-
-	private Date parseLdapDate(String ldapDate){
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-	    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-	    try {
-	        return sdf.parse(ldapDate);
-	    } catch (Exception e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-	    }
-	    return null;
-	}
-
 }
