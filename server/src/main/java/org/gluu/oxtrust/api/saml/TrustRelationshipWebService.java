@@ -132,6 +132,7 @@ public class TrustRelationshipWebService {
     
     @POST
     @Path("/create")
+    @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
     public String create(GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         logger.trace("Create Trust Relationship");
@@ -149,6 +150,7 @@ public class TrustRelationshipWebService {
     
     @PUT
     @Path("/update/{inum}")
+    @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
     public String update(@PathParam("inum") String inum, GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         logger.trace("Update Trust Relationship");
@@ -290,6 +292,7 @@ public class TrustRelationshipWebService {
     
     @POST
     @Path("/add_metadata")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     @Produces(MediaType.TEXT_PLAIN)
     public void addMetadata(@PathParam("inum") String trustRelationshipInum, String metadata, @Context HttpServletResponse response) {
         try {
@@ -302,6 +305,7 @@ public class TrustRelationshipWebService {
     
     @POST
     @Path("/add_attribute")
+    @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
     public void addAttribute(@PathParam("inum") String trustRelationshipInum, String attribute, @Context HttpServletResponse response) {
         try {
@@ -344,6 +348,7 @@ public class TrustRelationshipWebService {
     
     @POST
     @Path("/set_contacts")
+    @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
     public void setContacts(@PathParam("inum") String trustRelationshipInum, String contacts, @Context HttpServletResponse response) {
         try {
@@ -360,6 +365,7 @@ public class TrustRelationshipWebService {
     
     @POST
     @Path("/set_certificate")
+    @Consumes({MediaType.TEXT_PLAIN})
     @Produces(MediaType.TEXT_PLAIN)
     public void setCertificate(@PathParam("inum") String trustRelationshipInum, String certificate, @Context HttpServletResponse response) {
         try {
@@ -378,6 +384,7 @@ public class TrustRelationshipWebService {
     }
     
     /**
+     * Save SAML TrustRelationship.
      * 
      * @param trustRelationship
      * @param metadata - need for FILE type TR only
