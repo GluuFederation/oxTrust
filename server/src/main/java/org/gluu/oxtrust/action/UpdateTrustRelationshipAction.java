@@ -76,8 +76,6 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.richfaces.event.FileUploadEvent;
-import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
@@ -653,7 +651,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				}
 			}
 			trustService.updateTrustRelationship(this.trustRelationship);
-			
 
 			if(oxClientUpdateNeeded){
 				OxAuthClient client = clientService.getClientByInum(appConfiguration.getOxAuthClientId());
@@ -1482,7 +1479,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public GluuEntityType[] getEntityTypeList() {
 		return GluuEntityType.values();
 	}
-	
+
 	public boolean generateSp() throws IOException {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		try {

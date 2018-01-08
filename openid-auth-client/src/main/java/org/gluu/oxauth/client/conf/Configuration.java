@@ -11,7 +11,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.site.ldap.LDAPConnectionProvider;
+import org.gluu.site.ldap.LdapConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -195,7 +195,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		Properties connectionProperties = (Properties) this.ldapConfiguration.getProperties();
 		Properties decryptedConnectionProperties = PropertiesDecrypter.decryptProperties(connectionProperties, this.cryptoConfigurationSalt);
 
-		LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(decryptedConnectionProperties);
+		LdapConnectionProvider connectionProvider = new LdapConnectionProvider(decryptedConnectionProperties);
 		LdapEntryManager ldapEntryManager = new LdapEntryManager(new OperationsFacade(connectionProvider, null));
 
 		logger.debug("Created LdapEntryManager: {}", ldapEntryManager);

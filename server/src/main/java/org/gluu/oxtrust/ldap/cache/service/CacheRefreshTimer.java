@@ -51,7 +51,7 @@ import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;
-import org.gluu.site.ldap.LDAPConnectionProvider;
+import org.gluu.site.ldap.LdapConnectionProvider;
 import org.gluu.site.ldap.OperationsFacade;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
@@ -1062,7 +1062,7 @@ public class CacheRefreshTimer {
 
 		Properties ldapProperties = toLdapProperties(ldapConfiguration);
 
-		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(encryptionService.decryptProperties(ldapProperties));
+		LdapConnectionProvider ldapConnectionProvider = new LdapConnectionProvider(encryptionService.decryptProperties(ldapProperties));
 
 		if (!ldapConnectionProvider.isConnected()) {
 			log.error("Failed to connect to LDAP server using configuration {}", ldapConfig);
@@ -1124,11 +1124,11 @@ public class CacheRefreshTimer {
 
 	private class LdapServerConnection {
 		private String sourceServerName;
-		private LDAPConnectionProvider connectionProvider;
+		private LdapConnectionProvider connectionProvider;
 		private LdapEntryManager ldapEntryManager;
 		private String[] baseDns;
 
-		protected LdapServerConnection(String sourceServerName, LDAPConnectionProvider ldapConnectionProvider, String[] baseDns) {
+		protected LdapServerConnection(String sourceServerName, LdapConnectionProvider ldapConnectionProvider, String[] baseDns) {
 			this.sourceServerName = sourceServerName;
 			this.connectionProvider = ldapConnectionProvider;
 			this.ldapEntryManager = new LdapEntryManager(new OperationsFacade(connectionProvider));
@@ -1146,7 +1146,7 @@ public class CacheRefreshTimer {
 			return sourceServerName;
 		}
 
-		public final LDAPConnectionProvider getConnectionProvider() {
+		public final LdapConnectionProvider getConnectionProvider() {
 			return connectionProvider;
 		}
 

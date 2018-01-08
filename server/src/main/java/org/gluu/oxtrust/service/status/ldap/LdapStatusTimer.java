@@ -17,7 +17,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.CentralLdapService;
-import org.gluu.site.ldap.LDAPConnectionProvider;
+import org.gluu.site.ldap.LdapConnectionProvider;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.service.cdi.event.LdapStatusEvent;
@@ -86,7 +86,7 @@ public class LdapStatusTimer {
     }
 
 	public void logConnectionProviderStatistic(LdapEntryManager ldapEntryManager, String connectionProviderName) {
-		LDAPConnectionProvider ldapConnectionProvider = ldapEntryManager.getLdapOperationService().getConnectionProvider();
+		LdapConnectionProvider ldapConnectionProvider = ldapEntryManager.getLdapOperationService().getConnectionProvider();
         
         if (ldapConnectionProvider == null) {
         	log.error("{} is empty", connectionProviderName);

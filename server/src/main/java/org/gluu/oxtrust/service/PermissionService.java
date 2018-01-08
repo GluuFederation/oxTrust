@@ -91,7 +91,7 @@ public class PermissionService {
                 }
             }
         }
-        
+
         if (identity.hasRole(GluuUserRole.USER.getValue())) {
             for (String[] managerAction : managerActions) {
                 String targetString = (String) target;
