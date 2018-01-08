@@ -5,12 +5,26 @@
  */
 package org.gluu.oxtrust.api.saml;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.inject.Inject;
-import javax.annotation.security.DeclareRoles;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -22,12 +36,35 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.input.CharSequenceInputStream;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.util.encoders.Base64;
+import org.gluu.oxtrust.action.TrustContactsAction;
+import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
+import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
+import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TrustService;
+import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.saml.metadata.SAMLMetadataParser;
+import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.TrustContact;
+import org.xdi.util.StringHelper;
 
 /**
  * WS endpoint for TrustRelationship actions.
@@ -36,7 +73,7 @@ import org.xdi.model.TrustContact;
  */
 @Path("/apis/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-//@DeclareRoles("administrator")
+//@DeclareRoles("administrator") 
 public class TrustRelationshipWebService {
     
     @Inject
@@ -46,21 +83,46 @@ public class TrustRelationshipWebService {
     private TrustService trustService;
 
     @Inject
+    private Identity identity;
+	
+    @Inject
+    private ClientService clientService;
+
+    @Inject
+    private AppConfiguration appConfiguration;
+
+    @Inject
+    private SvnSyncTimer svnSyncTimer;
+	
+    @Inject
+    private MetadataValidationTimer metadataValidationTimer;
+	
+    @Inject
+    private SSLService sslService;
+
+    @Inject
+    private TrustContactsAction trustContactsAction;
+
+    @Inject
     private Shibboleth3ConfService shibboleth3ConfService;
     
+    ObjectMapper objectMapper;
+    
+    public TrustRelationshipWebService() {
+        // configure Jackson ObjectMapper
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+    }
     
     @GET
     @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
     public String read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+        logger.trace("Read Trust Relationship");
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
-            //convert to JSON
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-            StringWriter result = new StringWriter();
-            objectMapper.writeValue(result, trustRelationship);
-            return result.toString();
+            // convert to JSON
+            return objectMapper.writeValueAsString(trustRelationship);
         } catch (Exception e) {
             logger.error("read() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
@@ -72,6 +134,7 @@ public class TrustRelationshipWebService {
     @Path("/create")
     @Produces(MediaType.TEXT_PLAIN)
     public String create(GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
+        logger.trace("Create Trust Relationship");
         try {
             String inum = trustService.generateInumForNewTrustRelationship();
             trustRelationship.setInum(inum);
@@ -88,6 +151,7 @@ public class TrustRelationshipWebService {
     @Path("/update/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
     public String update(@PathParam("inum") String inum, GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
+        logger.trace("Update Trust Relationship");
         try {
             String dn = trustService.getDnForTrustRelationShip(inum);
             trustRelationship.setDn(dn);
@@ -105,6 +169,7 @@ public class TrustRelationshipWebService {
     @Path("/delete/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
     public String delete(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+        logger.trace("Delete Trust Relationship");
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
             trustService.removeTrustRelationship(trustRelationship);
@@ -124,11 +189,7 @@ public class TrustRelationshipWebService {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllTrustRelationships();
             //convert to JSON
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-            StringWriter result = new StringWriter();
-            objectMapper.writeValue(result, trustRelationships);
-            return result.toString();
+            return objectMapper.writeValueAsString(trustRelationships);
         } catch (Exception e) {
             logger.error("list() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
@@ -136,7 +197,96 @@ public class TrustRelationshipWebService {
         }
     }
     
+    @GET
+    @Path("/list_all_federations")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String listAllFederations(@Context HttpServletResponse response) {
+        try {
+            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllFederations();
+            //convert to JSON
+            return objectMapper.writeValueAsString(trustRelationships);
+        } catch (Exception e) {
+            logger.error("listAllFederations() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
     
+    @GET
+    @Path("/list_all_active_trust_relationships")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String listAllActiveTrustRelationships(@Context HttpServletResponse response) {
+        try {
+            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
+            //convert to JSON
+            return objectMapper.writeValueAsString(trustRelationships);
+        } catch (Exception e) {
+            logger.error("listAllActiveTrustRelationships() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
+    @GET
+    @Path("/list_all_other_federations")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String listAllOtherFederations(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+        try {
+            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllOtherFederations(inum);
+            //convert to JSON
+            return objectMapper.writeValueAsString(trustRelationships);
+        } catch (Exception e) {
+            logger.error("listAllOtherFederations() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
+    @GET
+    @Path("/search_trust_relationships")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String searchTrustRelationships(@PathParam("pattern") String pattern, @PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
+        try {
+            List<GluuSAMLTrustRelationship> trustRelationships = trustService.searchSAMLTrustRelationships(pattern, sizeLimit);
+            //convert to JSON
+            return objectMapper.writeValueAsString(trustRelationships);
+        } catch (Exception e) {
+            logger.error("searchTrustRelationships() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
+    @GET
+    @Path("/get_all_saml_trust_relationships")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String listAllSAMLTrustRelationships(@PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
+        try {
+            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllSAMLTrustRelationships(sizeLimit);
+            //convert to JSON
+            return objectMapper.writeValueAsString(trustRelationships);
+        } catch (Exception e) {
+            logger.error("listAllSAMLTrustRelationships() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
+    @GET
+    @Path("/list_deconstructed_trust_relationships")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String listDeconstructedTrustRelationships(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+        try {
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
+            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getDeconstructedTrustRelationships(trustRelationship);
+            //convert to JSON
+            return objectMapper.writeValueAsString(trustRelationships);
+        } catch (Exception e) {
+            logger.error("listAllActiveTrustRelationships() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
     
     @POST
     @Path("/add_metadata")
@@ -158,7 +308,7 @@ public class TrustRelationshipWebService {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
             //TODO
         } catch (Exception e) {
-            logger.error("addMetadata() Exception", e);
+            logger.error("addAttribute() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
         }
     }
@@ -184,15 +334,27 @@ public class TrustRelationshipWebService {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
             List<TrustContact> list = trustService.getContacts(trustRelationship);
             //convert to JSON
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-            StringWriter result = new StringWriter();
-            objectMapper.writeValue(result, list);
-            return result.toString();
+            return objectMapper.writeValueAsString(list);
         } catch (Exception e) {
             logger.error("getContacts() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
             return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
+    @POST
+    @Path("/set_contacts")
+    @Produces(MediaType.TEXT_PLAIN)
+    public void setContacts(@PathParam("inum") String trustRelationshipInum, String contacts, @Context HttpServletResponse response) {
+        try {
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
+            
+            List<TrustContact> contactsList = objectMapper.readValue(contacts, new TypeReference<List<TrustContact>>() {});
+
+            trustService.saveContacts(trustRelationship, contactsList);
+        } catch (Exception e) {
+            logger.error("setContacts() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
         }
     }
     
@@ -203,28 +365,413 @@ public class TrustRelationshipWebService {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
             
-            shibboleth3ConfService.saveCert(trustRelationship, certificate);
-            shibboleth3ConfService.saveKey(trustRelationship, null);
+            if (StringHelper.isEmpty(certificate)) {
+                logger.error("Failed to update TR certificate - certificate is empty");
+                return;
+            }
+            
+            updateTRCertificate(trustRelationship, certificate);
         } catch (Exception e) {
-            logger.error("addCertificate() Exception", e);
+            logger.error("Failed to update certificate", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
         }
     }
     
-    @GET
-    @Path("/get_cert_for_generated_sp")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getCertForGeneratedSP(@Context HttpServletResponse response) {
+    /**
+     * 
+     * @param trustRelationship
+     * @param metadata - need for FILE type TR only
+     * @param certificate - need for FILE type TR, optional for GENERATE type TR
+     * @return 
+     */
+    private String saveTR(GluuSAMLTrustRelationship trustRelationship, String metadata, String certificate) {
+        String inum;
+        boolean update = false;
+        synchronized (svnSyncTimer) {
+            if (StringHelper.isEmpty(trustRelationship.getInum())) {
+                inum = trustService.generateInumForNewTrustRelationship();
+                trustRelationship.setInum(inum);
+            } else {
+                inum = trustRelationship.getInum();
+                if(trustRelationship.getSpMetaDataFN() == null )
+                update=true;
+            }
+
+            boolean updateShib3Configuration = appConfiguration.isConfigGeneration();
+            switch (trustRelationship.getSpMetaDataSourceType()) {
+            case GENERATE:
+                try {
+                    if (StringHelper.isEmpty(certificate))
+                        certificate = generateCertForGeneratedSP(trustRelationship);
+                    GluuStatus status = StringHelper.isNotEmpty(certificate) ? GluuStatus.ACTIVE : GluuStatus.INACTIVE;
+                    trustRelationship.setStatus(status);
+                    if (generateSpMetaDataFile(trustRelationship, certificate)) {
+                        setEntityId(trustRelationship);
+                    } else {
+                        logger.error("Failed to generate SP meta-data file");
+                        return OxTrustConstants.RESULT_FAILURE;
+                    }
+                } catch (IOException ex) {
+                    logger.error("Failed to download SP certificate", ex);
+
+                    return OxTrustConstants.RESULT_FAILURE;
+                }
+
+                break;
+            case FILE:
+                try {
+                    if (saveSpMetaDataFileSourceTypeFile(trustRelationship, inum, metadata)) {
+                        //update = true;
+                        updateTRCertificate(trustRelationship, certificate);
+//					setEntityId();
+                        if(!update){
+                            trustRelationship.setStatus(GluuStatus.ACTIVE);
+                        }
+                    } else {
+                        logger.error("Failed to save SP metadata file {}", metadata);
+                        return OxTrustConstants.RESULT_FAILURE;
+                    }
+                } catch (IOException ex) {
+                    logger.error("Failed to download SP metadata", ex);
+                    //facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download SP metadata");
+
+                    return OxTrustConstants.RESULT_FAILURE;
+                }
+
+                break;
+            case URI:
+                try {
+                    //if (saveSpMetaDataFileSourceTypeURI()) {
+//						setEntityId();
+                    boolean result = shibboleth3ConfService.existsResourceUri(trustRelationship.getSpMetaDataURL());
+                    if(result){
+                        saveSpMetaDataFileSourceTypeURI(trustRelationship);
+                    }else{
+                        logger.info("There is no resource found Uri : {}", trustRelationship.getSpMetaDataURL());
+                    }
+                    if(!update){
+                        trustRelationship.setStatus(GluuStatus.ACTIVE);
+                    }
+                    /*} else {
+                            log.error("Failed to save SP meta-data file {}", fileWrapper);
+                            return OxTrustConstants.RESULT_FAILURE;
+                    }*/
+                } catch (Exception e) {
+                    //facesMessages.add(FacesMessage.SEVERITY_ERROR, "Unable to download metadata");
+                    return "unable_download_metadata";
+                }
+                break;
+            case FEDERATION:
+                if(!update){
+                    trustRelationship.setStatus(GluuStatus.ACTIVE);
+                }
+                if (trustRelationship.getEntityId() == null) {
+                    //facesMessages.add(FacesMessage.SEVERITY_ERROR, "EntityID must be set to a value");
+                    return "invalid_entity_id";
+                }
+
+                break;
+            default:
+
+                break;
+            }
+
+            trustService.updateReleasedAttributes(trustRelationship);
+
+            // We call it from TR validation timer
+            if (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.GENERATE)
+                            || (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FEDERATION))) {
+                boolean federation = shibboleth3ConfService.isFederation(trustRelationship);
+                trustRelationship.setFederation(federation);
+            }
+
+            trustContactsAction.saveContacts();
+
+            if (update) {
+                try {
+                    saveTR(trustRelationship, update);
+                } catch (LdapMappingException ex) {
+                    logger.error("Failed to update trust relationship {}", inum, ex);
+                    return OxTrustConstants.RESULT_FAILURE;
+                }
+            } else {
+                String dn = trustService.getDnForTrustRelationShip(inum);
+                // Save trustRelationship
+                trustRelationship.setDn(dn);
+                try {
+                        saveTR(trustRelationship, update);
+                } catch (LdapMappingException ex) {
+                        logger.error("Failed to add new trust relationship {}", trustRelationship.getInum(), ex);
+                        return OxTrustConstants.RESULT_FAILURE;
+                }
+
+                update = true;
+            }
+
+            if (updateShib3Configuration) {
+                List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
+                if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
+                    logger.error("Failed to update Shibboleth v3 configuration");
+                    return "Failed to update Shibboleth v3 configuration";
+                } else {
+                    logger.info("Shibboleth v3 configuration updated successfully");
+                    return "Shibboleth v3 configuration updated successfully";
+                }
+            }
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
+        
+        
+    private void saveTR(GluuSAMLTrustRelationship trustRelationship, boolean isUpdate) {
+        logger.trace("Saving Trust Relationship");
+        if (isUpdate) {
+            String oldLogoutRedirectUri = trustService.getRelationshipByDn(trustRelationship.getDn()).getSpLogoutURL();
+            String newLogoutRedirectUri = trustRelationship.getSpLogoutURL();
+            boolean oxClientUpdateNeeded = (oldLogoutRedirectUri != null) && (newLogoutRedirectUri != null) &&
+                    !newLogoutRedirectUri.equals(oldLogoutRedirectUri);
+
+            boolean parentInactive = trustRelationship.getStatus().equals(GluuStatus.INACTIVE);
+//            if(! federatedSites.isEmpty()){
+//                for (GluuSAMLTrustRelationship trust : federatedSites) {
+//                    if (parentInactive) {
+//                        trust.setStatus(GluuStatus.INACTIVE);
+//                    }
+//                    trustService.updateReleasedAttributes(trust);
+//                    trustService.updateTrustRelationship(trust);
+//                    svnSyncTimer.updateTrustRelationship(trust, identity.getCredentials().getUsername());
+//                }
+//            }
+            trustService.updateTrustRelationship(trustRelationship);
+
+
+            if(oxClientUpdateNeeded){
+                OxAuthClient client = clientService.getClientByInum(appConfiguration.getOxAuthClientId());
+                Set<String> updatedLogoutRedirectUris = new HashSet<String>();
+                List<GluuSAMLTrustRelationship> trs = trustService.getAllTrustRelationships();
+                if(trs != null && ! trs.isEmpty()){
+                    for(GluuSAMLTrustRelationship tr: trs){
+                        String logoutRedirectUri = tr.getSpLogoutURL();
+                        if(logoutRedirectUri != null && ! logoutRedirectUri.isEmpty()){
+                            updatedLogoutRedirectUris.add(logoutRedirectUri);
+                        }
+                    }
+
+                }
+                if(updatedLogoutRedirectUris.isEmpty()){
+                    client.setPostLogoutRedirectUris(null);
+                }else{
+                    client.setPostLogoutRedirectUris(updatedLogoutRedirectUris.toArray(new String[0]));
+                }
+                clientService.updateClient(client);
+            }
+
+            svnSyncTimer.updateTrustRelationship(trustRelationship, identity.getCredentials().getUsername());
+        } else {
+            trustService.addTrustRelationship(trustRelationship);
+            svnSyncTimer.addTrustRelationship(trustRelationship, identity.getCredentials().getUsername());
+        }
+    }
+    
+    /**
+     * Sets entityId according to metadatafile. Works for all TR which have own
+     * metadata file.
+     * 
+     * @author �Oleksiy Tataryn�
+     */
+    private void setEntityId(GluuSAMLTrustRelationship  trustRelationship) {
+        String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator	+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
+        File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
+
+        List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
+        Set<String> entityIdSet = new TreeSet<String>();
+
+        if(entityIdList != null && ! entityIdList.isEmpty()){
+            Set<String> duplicatesSet = new TreeSet<String>(); 
+            for (String entityId : entityIdList) {
+                if (!entityIdSet.add(entityId)) {
+                    duplicatesSet.add(entityId);
+                }
+            }
+        }
+
+        trustRelationship.setGluuEntityId(entityIdSet);
+    }
+    
+    public boolean saveSpMetaDataFileSourceTypeURI(GluuSAMLTrustRelationship  trustRelationship) throws IOException {
+        String spMetadataFileName = trustRelationship.getSpMetaDataFN();
+        boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
+
+        if (emptySpMetadataFileName) {
+                // Generate new file name
+                spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
+        }
+
+        String result = shibboleth3ConfService.saveSpMetadataFile(trustRelationship.getSpMetaDataURL(), spMetadataFileName);
+        if (StringHelper.isNotEmpty(result)) {
+                metadataValidationTimer.queue(result);
+        } else {
+                logger.error("Failed to download metadata");
+        }
+
+        return StringHelper.isNotEmpty(result);
+    }
+    
+    private boolean saveSpMetaDataFileSourceTypeFile(GluuSAMLTrustRelationship  trustRelationship, String inum, String metadata) throws IOException {
+        logger.trace("Saving metadata file source type: File");
+        String spMetadataFileName = trustRelationship.getSpMetaDataFN();
+        boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
+
+        if (StringHelper.isEmpty(metadata)) {
+            if (emptySpMetadataFileName) {
+                return false;
+            }
+
+            // Admin doesn't provide new file. Check if we already has this file
+            String filePath = shibboleth3ConfService.getSpMetadataFilePath(spMetadataFileName);
+            if (filePath == null) {
+                return false;
+            }
+
+            File file = new File(filePath);
+            if (!file.exists()) {
+                return false;
+            }
+
+            // File already exist
+            return true;
+        }
+
+        if (emptySpMetadataFileName) {
+            // Generate new file name
+            spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
+            trustRelationship.setSpMetaDataFN(spMetadataFileName);
+            if (trustRelationship.getDn() == null) {
+                String dn = trustService.getDnForTrustRelationShip(inum);
+                trustRelationship.setDn(dn);
+                trustService.addTrustRelationship(trustRelationship);
+            } else {
+                trustService.updateTrustRelationship(trustRelationship);
+            }
+        }
+        String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, new CharSequenceInputStream(metadata, StandardCharsets.UTF_8));
+        if (StringHelper.isNotEmpty(result)) {
+            metadataValidationTimer.queue(result);
+        } else {
+            //facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to save SP meta-data file. Please check if you provide correct file");
+        }
+
+        return StringHelper.isNotEmpty(result);
+
+    }
+    
+    
+    /**
+     * 
+     * @return certificate for generated SP
+     * @throws IOException 
+     * @throws CertificateEncodingException
+     */
+    public String generateCertForGeneratedSP(GluuSAMLTrustRelationship trustRelationship) throws IOException {
+        X509Certificate cert = null;
+
+        //facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+
         try {
-            String cert = "";
-            //TODO
-            return cert;
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", "BC"); 
+            keyPairGen.initialize(2048); 
+            KeyPair pair = keyPairGen.generateKeyPair(); 
+            StringWriter keyWriter = new StringWriter(); 
+            PEMWriter pemFormatWriter = new PEMWriter(keyWriter); 
+            pemFormatWriter.writeObject(pair.getPrivate()); 
+            pemFormatWriter.close(); 
+
+            String url = trustRelationship.getUrl().replaceFirst(".*//", "");
+
+            X509v3CertificateBuilder v3CertGen = new JcaX509v3CertificateBuilder(new X500Name("CN=" + url + ", OU=None, O=None L=None, C=None"),
+                BigInteger.valueOf(new SecureRandom().nextInt()),
+                new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30),
+                new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 365*10)),
+                new X500Name("CN=" + url + ", OU=None, O=None L=None, C=None"),
+                pair.getPublic());
+
+            cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(v3CertGen.build(new JcaContentSignerBuilder("MD5withRSA").setProvider("BC").build(pair.getPrivate())));
+            org.apache.commons.codec.binary.Base64 encoder = new org.apache.commons.codec.binary.Base64(64);
+            byte[] derCert = cert.getEncoded();
+            String pemCertPre = new String(encoder.encode(derCert));
+            logger.debug(Shibboleth3ConfService.PUBLIC_CERTIFICATE_START_LINE);
+            logger.debug(pemCertPre);
+            logger.debug(Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE);
+
+            shibboleth3ConfService.saveCert(trustRelationship, pemCertPre);
+            shibboleth3ConfService.saveKey(trustRelationship, keyWriter.toString());
+
         } catch (Exception e) {
-            logger.error("getCertForGeneratedSP() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
+            e.printStackTrace();
         }
+
+//			String certName = appConfiguration.getCertDir() + File.separator + StringHelper.removePunctuation(appConfiguration.getOrgInum())
+//					+ "-shib.crt";
+//			File certFile = new File(certName);
+//			if (certFile.exists()) {
+//				cert = SSLService.instance().getPEMCertificate(certName);
+//			}
+            
+
+        String certificate = null;
+
+        if (cert != null) {
+
+            try {
+                certificate = new String(Base64.encode(cert.getEncoded()));
+
+                logger.info("##### certificate = " + certificate);
+
+            } catch (CertificateEncodingException e) {
+                certificate = null;
+                //facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to encode provided certificate. Please notify Gluu support about this.");
+                logger.error("Failed to encode certificate to DER", e);
+            }
+
+        } else {
+            //facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+        }
+
+        return certificate;
     }
     
+    private boolean generateSpMetaDataFile(GluuSAMLTrustRelationship trustRelationship, String certificate) {
+        String spMetadataFileName = trustRelationship.getSpMetaDataFN();
+
+        if (StringHelper.isEmpty(spMetadataFileName)) {
+            // Generate new file name
+            spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
+            trustRelationship.setSpMetaDataFN(spMetadataFileName);
+        }
+
+        return shibboleth3ConfService.generateSpMetadataFile(trustRelationship, certificate);
+    }
     
+    private void updateTRCertificate(GluuSAMLTrustRelationship trustRelationship, String certificate) throws IOException {
+        if (StringHelper.isEmpty(certificate)) {
+            logger.error("Failed to update TR certificate - certificate is empty");
+            return;
+        }
+        // This regex defines certificate enclosed in X509Certificate tags
+        // regardless of namespace(as long as it is not more then 9 characters)
+        String certRegEx = "(?ms)(?<=<[^</>]{0,10}X509Certificate>).*(?=</[^</>]{0,10}?X509Certificate>)";
+
+        shibboleth3ConfService.saveCert(trustRelationship, certificate);
+        shibboleth3ConfService.saveKey(trustRelationship, null);
+
+        String metadataFileName = trustRelationship.getSpMetaDataFN();
+        File metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(metadataFileName));
+        String metadata = FileUtils.readFileToString(metadataFile);
+        String updatedMetadata = metadata.replaceFirst(certRegEx, certificate);
+        FileUtils.writeStringToFile(metadataFile, updatedMetadata);
+        trustRelationship.setStatus(GluuStatus.ACTIVE);
+    }
 }
