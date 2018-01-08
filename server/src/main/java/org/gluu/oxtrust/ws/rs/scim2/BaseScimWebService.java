@@ -106,13 +106,13 @@ public class BaseScimWebService {
             ClientInfoResponse clientInfoResponse = clientInfoClient.execClientInfo(token);
 
             if (clientInfoResponse.getErrorType()!=null) {
-                response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token "+ token);
+                response=getErrorResponse(Response.Status.UNAUTHORIZED, "Invalid token "+ token);
                 log.debug("Error validating access token: {}", clientInfoResponse.getErrorDescription());
             }
         }
         catch (Exception e) {
             log.error("Failed to check test token", e);
-            response=getErrorResponse(Response.Status.SERVICE_UNAVAILABLE, "Invalid token");
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Invalid token");
         }
         return response;
 
@@ -136,7 +136,7 @@ public class BaseScimWebService {
 				return rptTokenValidationResult.getSecond();
 			}
 		} else {
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Invalid GAT/RPT token");
+			return getErrorResponse(Response.Status.UNAUTHORIZED, "Invalid GAT/RPT token");
 		}
 
 		return null;
