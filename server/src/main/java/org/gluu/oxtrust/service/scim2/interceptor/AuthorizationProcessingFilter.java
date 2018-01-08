@@ -87,7 +87,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
             }
             else{
                 log.info("Please activate UMA or test mode to protect your SCIM endpoints. Read the Gluu SCIM docs to learn more");
-                authorizationResponse= BaseScimWebService.getErrorResponse(Status.SERVICE_UNAVAILABLE, "SCIM API not protected");
+                authorizationResponse= BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED, "SCIM API not protected");
             }
         }
         catch (Exception e){
@@ -122,7 +122,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
         else{
             log.info("Request is missing authorization header");
             //see section 3.12 RFC 7644
-            response = BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED, "No authorization header found");
+            response = BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR, "No authorization header found");
         }
         return response;
 
@@ -145,7 +145,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
             }
         }
         else {
-            return BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR, "Invalid GAT/RPT token");
+            return BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED, "Invalid GAT/RPT token");
         }
         return null;
 
