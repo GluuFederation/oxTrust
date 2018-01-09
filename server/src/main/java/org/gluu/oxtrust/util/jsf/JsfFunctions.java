@@ -152,7 +152,7 @@ public class JsfFunctions {
 			return str;
 		}
 
-		return str.substring(0, length) + "...";
+		return str.substring(0, maxLength) + "...";
 	}
 
 }
