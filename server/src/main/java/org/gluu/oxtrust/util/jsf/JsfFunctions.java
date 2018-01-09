@@ -134,12 +134,25 @@ public class JsfFunctions {
 	public static List<Map.Entry<?, ?>> toList(Map<?, ?> map) {
 		return map != null ? new ArrayList<Map.Entry<?, ?>>(map.entrySet()) : null;
 	}
-	
+
 	public static String trim(String str) {
 		if ((str == null) || (str.length() == 0)) {
 			return str;
 		}
-			return str.trim();
+		return str.trim();
+	}
+
+	public static String trimToLength(String str, int maxLength) {
+		if (str == null) {
+			return str;
 		}
+		
+		int length = str.length();
+		if (length <= maxLength) {
+			return str;
+		}
+
+		return str.substring(0, length) + "...";
+	}
 
 }
