@@ -343,11 +343,11 @@
                                             </h:panelGroup>
                                         </a4j:repeat>
                                         
-                                    <ox:decorate label="#{msg['person.u2fcredentials']}" />    
+                                    <ox:decorate label="#{msg['person.authenticationmethods']}" rendered="#{updatePersonAction.deviceDataMap.size() gt 0}" />    
 									<h:dataTable value="#{updatePersonAction.deviceDataMap}" var="_value"
 						    			styleClass="order-table"
 						    			headerClass="order-table-header"
-						    			rowClasses="order-table-odd-row,order-table-even-row">
+						    			rowClasses="order-table-odd-row,order-table-even-row" rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
 						
 						    			<h:column>
 						    				<!-- column header -->
