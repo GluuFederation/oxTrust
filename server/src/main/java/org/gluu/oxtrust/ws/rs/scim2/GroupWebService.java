@@ -26,7 +26,7 @@ import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.service.scim2.Scim2PatchService;
-import org.gluu.oxtrust.service.scim2.interceptor.Protected;
+import org.gluu.oxtrust.service.scim2.interceptor.ScimAuthorization;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.ldap.model.SortOrder;
@@ -68,7 +68,8 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected @RefAdjusted
+    @ScimAuthorization
+    @RefAdjusted
     @ApiOperation(value = "Create group", notes = "Create group (https://tools.ietf.org/html/rfc7644#section-3.3)", response = GroupResource.class)
     public Response createGroup(
             @ApiParam(value = "Group", required = true) GroupResource group,
@@ -100,7 +101,8 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected @RefAdjusted
+    @ScimAuthorization
+    @RefAdjusted
     @ApiOperation(value = "Find group by id", notes = "Returns a group by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.2.1)",
             response = GroupResource.class)
     public Response getGroupById(
@@ -137,7 +139,8 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected @RefAdjusted
+    @ScimAuthorization
+    @RefAdjusted
     @ApiOperation(value = "Update group", notes = "Update group (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = GroupResource.class)
     public Response updateGroup(
             @ApiParam(value = "Group", required = true) GroupResource group,
@@ -175,7 +178,7 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
     @DELETE
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected
+    @ScimAuthorization
     @ApiOperation(value = "Delete group", notes = "Delete group (https://tools.ietf.org/html/rfc7644#section-3.6)")
     public Response deleteGroup(@PathParam("id") String id){
 
@@ -205,7 +208,8 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected @RefAdjusted
+    @ScimAuthorization
+    @RefAdjusted
     @ApiOperation(value = "Search groups", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
     public Response searchGroups(
             @QueryParam(QUERY_PARAM_FILTER) String filter,
@@ -244,7 +248,8 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected @RefAdjusted
+    @ScimAuthorization
+    @RefAdjusted
     @ApiOperation(value = "Search group POST /.search", notes = "Returns a list of groups (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
     public Response searchGroupsPost(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest){
 
@@ -270,7 +275,8 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @Protected @RefAdjusted
+    @ScimAuthorization
+    @RefAdjusted
     @ApiOperation(value = "PATCH operation", notes = "https://tools.ietf.org/html/rfc7644#section-3.5.2", response = GroupResource.class)
     public Response patchGroup(
             PatchRequest request,

@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.OpenIdService;
-import org.gluu.oxtrust.service.scim2.interceptor.Protected;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
@@ -30,12 +29,12 @@ import static javax.ws.rs.core.Response.Status;
 
 /**
  * This class checks whether authorization header is present and is valid before scim service methods are actually called.
- * To protect methods with this filter just add the Protected annotation to them
+ * To protect methods with this filter just add the ScimAuthorization annotation to them
  *
  * Created by jgomer on 2017-11-25.
  */
 @Provider
-@Protected
+@ScimAuthorization
 public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 
     @Inject
