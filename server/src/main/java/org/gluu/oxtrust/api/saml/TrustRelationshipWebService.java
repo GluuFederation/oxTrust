@@ -8,6 +8,9 @@ package org.gluu.oxtrust.api.saml;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -63,6 +66,7 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.GluuAttribute;
 import org.xdi.model.TrustContact;
 import org.xdi.util.StringHelper;
 
@@ -71,9 +75,9 @@ import org.xdi.util.StringHelper;
  * 
  * @author Dmitry Ognyannikov
  */
-@Path("/apis/saml/tr")
+@Path("/restv1/apis/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-//@DeclareRoles("administrator") 
+@Api(value = "/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
 public class TrustRelationshipWebService {
     
     @Inject
@@ -117,6 +121,8 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
+    //@UmaSecure("#{umaPermissionService.hasScope('apis_saml', '/auth/oxtrust.allow-saml-config-all', '/auth/oxtrust.allow-saml-modify-all')}")
+    @ApiOperation(value = "read TrustRelationship", notes = "Returns a SAMLTrustRelationship", response = GluuSAMLTrustRelationship.class)
     public String read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         logger.trace("Read Trust Relationship");
         try {
@@ -196,8 +202,8 @@ public class TrustRelationshipWebService {
             logger.error("list() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
             return OxTrustConstants.RESULT_FAILURE;
-        }
-    }
+        } 
+   }
     
     @GET
     @Path("/list_all_federations")
@@ -381,6 +387,19 @@ public class TrustRelationshipWebService {
             logger.error("Failed to update certificate", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
         }
+    }
+        
+    @DELETE
+    @Path("/remove_attribute")
+    @Consumes({MediaType.TEXT_PLAIN})
+    @Produces(MediaType.TEXT_PLAIN)
+    public void removeAttribute(GluuAttribute attribute, @Context HttpServletResponse response) {
+        try {
+            trustService.removeAttribute(attribute);
+        } catch (Exception e) {
+            logger.error("Failed to remove attribute", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+        }        
     }
     
     /**
