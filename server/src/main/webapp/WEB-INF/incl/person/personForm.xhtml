@@ -226,21 +226,31 @@
                                                                     attribute="#{_custAttr.metadata}"
                                                                     value="#{_custAttr.values[_valueIdx]}"
                                                                     defaultLabel="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
-                                                                    id="custId_#{_custAttrIdx}"
+                                                                    id="custId_text_#{_custAttrIdx}"
                                                                     required="#{_mustEnter and empty param['sv']}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value ne 'boolean') and (_custAttr.metadata.displayName ne 'Password') and (_custAttr.metadata.dataType.value ne 'certificate')}" >
 																<rich:validator event="blur"/>
 																<f:validator validatorId="attributeValidator" />                                                              
                                                             </rich:inplaceInput>
-
                                                             <h:selectOneMenu styleClass="form-control"
                                                                              value="#{updatePersonAction.gluuStatus}"
                                                                              required="true"
                                                                              id="statusId"
-                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean')}">
+                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName eq 'User Status') }">
                                                                 <f:selectItems
                                                                         value="#{updatePersonAction.activeInactiveStatuses}"
+                                                                        var="_type" itemLabel="#{_type.displayName}"/>
+                                                                <f:converter
+                                                                        converterId="org.gluu.jsf2.converter.EnumConverter"/>
+                                                            </h:selectOneMenu>
+                                                            <h:selectOneMenu styleClass="form-control"
+                                                                             value="#{_custAttr.booleanValues[_valueIdx]}"
+                                                                             required="true"
+                                                                             id="custId_boolean#{_custAttrIdx}"
+                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName ne 'User Status') }">
+                                                                <f:selectItems
+                                                                        value="#{organizationService.javaBooleanSelectionTypes}"
                                                                         var="_type" itemLabel="#{_type.displayName}"/>
                                                                 <f:converter
                                                                         converterId="org.gluu.jsf2.converter.EnumConverter"/>

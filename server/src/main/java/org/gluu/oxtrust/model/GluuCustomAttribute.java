@@ -8,23 +8,16 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
-import javax.faces.context.FacesContext;
-
+import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuAttributeDataType;
 
 import com.unboundid.util.StaticUtils;
 
@@ -47,6 +40,9 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	private transient boolean mandatory = false;
 	
 	private transient boolean readonly = false;
+
+	private transient GluuBoolean[] booleanValues;
+	private transient boolean usedBooleanValues = false;
 
 	public GluuCustomAttribute() {
 	}
@@ -82,7 +78,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	// To avoid extra code in CR interceptor script
 	public GluuCustomAttribute(String name, Set<String> values) {
 		this.name = name;
-		this.values = values.toArray(new String[0]);;
+		this.values = values.toArray(new String[0]);
 	}
 
 	public String getValue() {
@@ -106,6 +102,29 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 			this.values = new String[1];
 		}
 		this.values[0] = value;
+	}
+
+	public GluuBoolean getBooleanValue() {
+		if (this.booleanValues == null) {
+			return null;
+		}
+
+		if (this.booleanValues.length > 0) {
+			return this.booleanValues[0];
+		}
+
+		return null;
+	}
+
+	public void setBooleanValue(GluuBoolean value) {
+		if (this.booleanValues == null) {
+			this.booleanValues = new GluuBoolean[0];
+		}
+
+		if (this.booleanValues.length != 1) {
+			this.booleanValues = new GluuBoolean[1];
+		}
+		this.booleanValues[0] = value;
 	}
 
 	public Date getDate() {
@@ -136,11 +155,29 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	}
 
 	public String[] getValues() {
+		if (this.metadata != null) {
+			if ((GluuAttributeDataType.BOOLEAN == this.metadata.getDataType()) && this.usedBooleanValues) {
+				this.values = toStringValuesFromBooleanValues(this.booleanValues);
+			}
+		}
+
 		return values;
 	}
 
 	public void setValues(String[] values) {
 		this.values = values;
+	}
+
+	public GluuBoolean[] getBooleanValues() {
+		this.usedBooleanValues = true; // Remove after adding separate type for status
+
+		return this.booleanValues;
+	}
+
+	public void setBooleanValues(GluuBoolean[] booleanValues) {
+		this.usedBooleanValues = true; // Remove after adding separate type for status
+
+		this.booleanValues = booleanValues;
 	}
 
 	public void setValues(Collection<String> values) {
@@ -224,6 +261,12 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 
 	public void setMetadata(GluuAttribute metadata) {
 		this.metadata = metadata;
+		
+		if (this.metadata != null) {
+			if (GluuAttributeDataType.BOOLEAN == this.metadata.getDataType()) {
+				this.booleanValues = toBooleanValuesFromStringValues(this.values);
+			}
+		}
 	}
 
 	public boolean isNewAttribute() {
@@ -282,5 +325,47 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	 * input field
 	 */
 	Map<String[], String> idComponentMap = new HashMap<String[], String>();
+
+	private GluuBoolean[] toBooleanValuesFromStringValues(String[] inputValues) {
+		if (inputValues == null) {
+			return null;
+		}
+
+		GluuBoolean[] resultValues = new GluuBoolean[inputValues.length];
+		for (int i = 0; i < inputValues.length; i++) {
+			resultValues[i] = toBooleanFromString(inputValues[i]);
+		}
+		
+		return resultValues;
+	}
+
+	private String[] toStringValuesFromBooleanValues(GluuBoolean[] inputValues) {
+		if (inputValues == null) {
+			return null;
+		}
+
+		String resultValues[] = new String[inputValues.length];
+		for (int i = 0; i < inputValues.length; i++) {
+			resultValues[i] = toStringFromBoolean(inputValues[i]);
+		}
+		
+		return resultValues;
+	}
+
+	protected GluuBoolean toBooleanFromString(String value) {
+		if (value == null) {
+			return null;
+		}
+
+		return GluuBoolean.getByValue(value);
+	}
+
+	protected String toStringFromBoolean(GluuBoolean value) {
+		if (value == null) {
+			return null;
+		}
+
+		return value.getValue();
+	}
 
 }
