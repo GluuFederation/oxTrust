@@ -30,6 +30,7 @@ import org.gluu.oxtrust.model.scim2.fido.FidoDevice;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Val Pecaoco
@@ -37,8 +38,7 @@ import org.slf4j.Logger;
 @Named("listResponseFidoDeviceSerializer")
 public class ListResponseFidoDeviceSerializer extends JsonSerializer<FidoDevice> {
 
-	@Inject
-	private Logger log;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
 	protected String attributesArray;
 	protected Set<String> attributes;
