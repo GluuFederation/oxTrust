@@ -75,7 +75,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
 		VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
 
-		List<GluuCustomFidoDevice> gluuCustomFidoDevices = ldapEntryManager.findEntriesVirtualListView(getDnForFidoDevice(userId, id), GluuCustomFidoDevice.class, filter, 1, 1, "oxId", SortOrder.ASCENDING, vlvResponse, null);
+		List<GluuCustomFidoDevice> gluuCustomFidoDevices = ldapEntryManager.findEntriesSearchSearchResult(getDnForFidoDevice(userId, id), GluuCustomFidoDevice.class, filter, 1, 1, 1, "oxId", SortOrder.ASCENDING, vlvResponse, null);
 
 		if (gluuCustomFidoDevices != null && !gluuCustomFidoDevices.isEmpty() && vlvResponse.getTotalResults() > 0) {
 			gluuCustomFidoDevice = gluuCustomFidoDevices.get(0);
