@@ -5,617 +5,395 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_OPERATIONS;
-import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_PAYLOAD_SIZE;
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-// import javax.servlet.http.HttpServletRequest;
-// import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-// import javax.ws.rs.core.Context;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.DeserializationConfig;
+import com.wordnik.swagger.annotations.*;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.module.SimpleModule;
-import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
-import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim2.BulkOperation;
-import org.gluu.oxtrust.model.scim2.BulkRequest;
-import org.gluu.oxtrust.model.scim2.BulkResponse;
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.ErrorResponse;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.model.scim2.User;
-import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerializer;
-import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
-import org.gluu.oxtrust.service.scim2.Scim2GroupService;
-import org.gluu.oxtrust.service.scim2.Scim2UserService;
-import org.gluu.oxtrust.service.scim2.jackson.custom.UserDeserializer;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.xdi.config.oxtrust.AppConfiguration;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
+import org.gluu.oxtrust.model.scim2.bulk.BulkOperation;
+import org.gluu.oxtrust.model.scim2.bulk.BulkRequest;
+import org.gluu.oxtrust.model.scim2.bulk.BulkResponse;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.service.scim2.interceptor.ScimAuthorization;
+import org.xdi.util.Pair;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.Authorization;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static javax.ws.rs.core.Response.Status.Family.*;
+import static javax.ws.rs.core.Response.Status.*;
+
+import static org.gluu.oxtrust.model.scim2.Constants.*;
+import static org.gluu.oxtrust.ws.rs.scim2.BulkWebService.Verb.*;
 
 /**
  * SCIM Bulk Endpoint Implementation
  * 
  * @author Rahat ALi Date: 05.08.2015
+ * Re-engineered by jgomer on 2017-11-23.
  */
 @Named("scim2BulkEndpoint")
 @Path("/scim/v2/Bulk")
-@Api(value = "/v2/Bulk", description = "SCIM 2.0 Bulk Endpoint (https://tools.ietf.org/html/rfc7644#section-3.7)", authorizations = {
-		@Authorization(value = "Authorization", type = "uma") })
+@Api(value = "/v2/Bulk", description = "SCIM 2.0 Bulk Endpoint (https://tools.ietf.org/html/rfc7644#section-3.7)",
+        authorizations = {@Authorization(value = "Authorization", type = "uma") })
 public class BulkWebService extends BaseScimWebService {
 
-	private static final Logger log = Logger.getLogger(BulkWebService.class);
+    enum Verb {POST, PUT, PATCH, DELETE}    //HTTP methods involved in bulk requests
+
+    private final Pattern bulkIdPattern= Pattern.compile("bulkId:(\\w+)");
+
+    private List<Verb> availableMethods;
+    private ObjectMapper mapper=new ObjectMapper();
+
+    private String usersEndpoint;
+    private String groupsEndpoint;
+    private String fidodevicesEndpoint;
+    private String commonWsEndpointPrefix;
+
+    @Inject
+    private UserWebService userWS;
+
+    @Inject
+    private GroupWebService groupWS;
+
+    @Inject
+    private FidoDeviceWebService fidoDeviceWS;
+
+    @Context
+    private HttpHeaders httpHeaders;
+
+    @javax.ws.rs.POST
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @ScimAuthorization
+    @ApiOperation(value = "Bulk Operations", notes = "Bulk Operations (https://tools.ietf.org/html/rfc7644#section-3.7)", response = BulkResponse.class)
+    public Response processBulkOperations(@ApiParam(value = "BulkRequest", required = true) BulkRequest request){
+
+        Response response=prepareRequest(request, getValueFromHeaders(httpHeaders, "Content-Length"));
+        if (response==null) {
+            log.debug("Executing web service method. processBulkOperations");
+
+            int i, errors=0;
+            List<BulkOperation> operations=request.getOperations();
+            List<BulkOperation> responseOperations=new ArrayList<BulkOperation>();
+            Map<String, String> processedBulkIds=new HashMap<String, String>();
+
+            for (i=0;i<operations.size() && errors<request.getFailOnErrors();i++){
+
+                BulkOperation operation=operations.get(i);
+                BulkOperation operationResponse=new BulkOperation();
+                Response subResponse;
+
+                String method=operation.getMethod();
+                String bulkId=operation.getBulkId();
+                try {
+                    String path=operation.getPath();
+                    BaseScimWebService service=getWSForPath(path);
+                    String fragment=getFragment(path, service, processedBulkIds);
+                    Verb verb = Verb.valueOf(method);
+
+                    String data=operation.getDataStr();
+                    if (!verb.equals(DELETE))
+                        data = replaceBulkIds(data, processedBulkIds);
+
+                    Pair<Response, String> pair=execute(verb, service, data, fragment);
+                    String idCreated=pair.getSecond();
+                    subResponse=pair.getFirst();
+                    int status=subResponse.getStatus();
+
+                    if (familyOf(status).equals(SUCCESSFUL)) {
+                        if (!verb.equals(DELETE)) {
+                            if (verb.equals(POST)) {  //Update bulkIds
+                                processedBulkIds.put(bulkId, idCreated);
+                                fragment=idCreated;
+                            }
+                            String loc=service.getEndpointUrl() + "/" + fragment;
+                            operationResponse.setLocation(loc);
+                        }
+                    }
+                    else {
+                        operationResponse.setResponse(subResponse.getEntity());
+                        errors+= familyOf(status).equals(CLIENT_ERROR) || familyOf(status).equals(SERVER_ERROR) ? 1 : 0;
+                    }
+
+                    subResponse.close();
+                    operationResponse.setStatus(Integer.toString(status));
+                }
+                catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                    subResponse=getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, e.getMessage());
+
+                    operationResponse.setStatus(Integer.toString(BAD_REQUEST.getStatusCode()));
+                    operationResponse.setResponse(subResponse.getEntity());
+                    errors++;
+                }
+
+                operationResponse.setBulkId(bulkId);
+                operationResponse.setMethod(method);
+
+                responseOperations.add(operationResponse);
+
+                log.debug("Operation {} processed with status {}. Method {}, Accumulated errors {}", i+1, operationResponse.getStatus(), method, errors);
+            }
+
+            try {
+                BulkResponse bulkResponse=new BulkResponse();
+                bulkResponse.setOperations(responseOperations);
+
+                String json = mapper.writeValueAsString(bulkResponse);
+                response=Response.ok(json).build();
+            }
+            catch (Exception e){
+                log.error(e.getMessage(), e);
+                response=getErrorResponse(INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+        }
+        return response;
+
+    }
+
+    private Response prepareRequest(BulkRequest request, String contentLength){
+
+        Response response=null;
+
+        if (request.getFailOnErrors()==null)
+            request.setFailOnErrors(MAX_BULK_OPERATIONS);
+
+        List<BulkOperation> operations=request.getOperations();
+
+        if (operations==null || operations.size()==0)
+            response=getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_VALUE, "No operations supplied");
+        else {
+
+            int contentLen;
+            try{
+//log.debug("CONT LEN {}", contentLength);
+                contentLen=Integer.valueOf(contentLength);
+            }
+            catch (Exception e){
+                contentLen=MAX_BULK_PAYLOAD_SIZE;
+            }
+
+            boolean payloadExceeded=contentLen > MAX_BULK_PAYLOAD_SIZE;
+            boolean operationsExceeded=operations.size() > MAX_BULK_OPERATIONS;
+            StringBuilder sb=new StringBuilder();
+
+            if (payloadExceeded)
+                sb.append("The size of the bulk operation exceeds the maxPayloadSize (").
+                        append(MAX_BULK_PAYLOAD_SIZE).append(" bytes). ");
+            if (operationsExceeded)
+                sb.append("The number of operations exceed the maxOperations value (").
+                        append(MAX_BULK_OPERATIONS).append("). ");
+
+            if (sb.length()>0)
+                response=getErrorResponse(REQUEST_ENTITY_TOO_LARGE, sb.toString());
+        }
+        if (response==null) {
+            try {
+
+                for (BulkOperation operation : operations) {
+
+                    if (operation==null)
+                        throw new Exception("An operation passed was found to be null");
+
+                    String path = operation.getPath();
+                    if (StringUtils.isEmpty(path))
+                        throw new Exception("path parameter is required");
+
+                    path=adjustPath(path);
+                    operation.setPath(path);
+
+                    String method = operation.getMethod();
+                    if (StringUtils.isNotEmpty(method)) {
+                        method = method.toUpperCase();
+                        operation.setMethod(method);
+                    }
+
+                    Verb verb = Verb.valueOf(method);
+                    if (!availableMethods.contains(verb))
+                        throw new Exception("method not recognized: " + method);
+
+                    //Check if path passed is consistent with respect to method:
+                    List<String> availableEndpoints=Arrays.asList(usersEndpoint, groupsEndpoint, fidodevicesEndpoint);
+                    boolean consistent = false;
+                    for (String endpoint : availableEndpoints) {
+                        if (verb.equals(POST))
+                            consistent = path.equals(endpoint);
+                        else   //Checks if there is something after the additional slash
+                            consistent = path.startsWith(endpoint + "/") && (path.length() > endpoint.length() + 1);
+
+                        if (consistent)
+                            break;
+                    }
+                    if (!consistent)
+                        throw new Exception("path parameter is not consistent with method " + method);
+
+                    //Check if bulkId must be present
+                    String bulkId = operation.getBulkId();
+                    if (StringUtils.isEmpty(bulkId) && verb.equals(POST))
+                        throw new Exception("bulkId parameter is required for method " + method);
+
+                    //Check if data must be present
+                    String data=operation.getDataStr();
+                    List<Verb> dataMethods=Arrays.asList(POST, PUT, PATCH);
+                    if (dataMethods.contains(verb) && StringUtils.isEmpty(data))
+                        throw new Exception("data parameter is required for method " + method);
+                }
+            }
+            catch (Exception e) {
+                response=getErrorResponse(BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, e.getMessage());
+            }
+        }
+        return response;
+
+    }
+
+    private BaseScimWebService getWSForPath(String path){
+        if (path.startsWith(usersEndpoint))
+            return userWS;
+        else
+        if (path.startsWith(groupsEndpoint))
+            return groupWS;
+        else
+        if (path.startsWith(fidodevicesEndpoint))
+            return fidoDeviceWS;
+        else
+            return null;
+    }
+
+    private String adjustPath(String path){
+        return path.startsWith(commonWsEndpointPrefix) ? path : commonWsEndpointPrefix + path;
+    }
+
+    private String getFragment(String path, BaseScimWebService service, Map<String, String> idsMap) throws Exception{
+        int endpointLen=service.getEndpointUrl().length()+1;
+        String frag=(path.length() > endpointLen) ? path.substring(endpointLen) : "";
+        return replaceBulkIds(frag, idsMap);
+    }
+
+    private String replaceBulkIds(String str, Map<String, String> idsMap) throws Exception{
+
+        Matcher m=bulkIdPattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+
+        while (m.find()){
+            String id=m.group(1);
+            //See if the id supplied is known
+            String realId=idsMap.get(id);
+            if (realId==null)
+                throw new Exception("bulkId '" + id + "' not recognized");
+
+            m.appendReplacement(sb, realId);
+        }
+        m.appendTail(sb);
+
+        return sb.toString();
+
+    }
+
+    private Pair<Response, String> execute(Verb verb, BaseScimWebService ws, String data, String fragment) {
+
+        Response response=null;
+        String idCreated=null;
+
+        try {
+            if (ws==userWS)
+                switch (verb){
+                    case PUT:
+                        UserResource user=mapper.readValue(data, UserResource.class);
+                        response=userWS.updateUser(user, fragment, "id", null);
+                        break;
+                    case DELETE:
+                        response=userWS.deleteUser(fragment);
+                        break;
+                    case PATCH:
+                        PatchRequest pr=mapper.readValue(data, PatchRequest.class);
+                        response=userWS.patchUser(pr, fragment, "id", null);
+                        break;
+                    case POST:
+                        user=mapper.readValue(data, UserResource.class);
+                        response=userWS.createUser(user, "id", null);
+                        if (CREATED.getStatusCode()==response.getStatus()) {
+                            user = mapper.readValue(response.getEntity().toString(), UserResource.class);
+                            idCreated = user.getId();
+                        }
+                        break;
+                }
+
+            else
+            if (ws==groupWS)
+                switch (verb){
+                    case PUT:
+                        GroupResource group=mapper.readValue(data, GroupResource.class);
+                        response=groupWS.updateGroup(group, fragment, "id", null);
+                        break;
+                    case DELETE:
+                        response=groupWS.deleteGroup(fragment);
+                        break;
+                    case PATCH:
+                        PatchRequest pr=mapper.readValue(data, PatchRequest.class);
+                        response=groupWS.patchGroup(pr, fragment, "id", null);
+                        break;
+                    case POST:
+                        group=mapper.readValue(data, GroupResource.class);
+                        response=groupWS.createGroup(group, "id", null);
+                        if (CREATED.getStatusCode()==response.getStatus()) {
+                            group = mapper.readValue(response.getEntity().toString(), GroupResource.class);
+                            idCreated = group.getId();
+                        }
+                        break;
+                }
+
+            else
+            if (ws==fidoDeviceWS)
+                switch (verb){
+                    case PUT:
+                        FidoDeviceResource dev=mapper.readValue(data, FidoDeviceResource.class);
+                        response=fidoDeviceWS.updateDevice(dev, fragment, "id", null);
+                        break;
+                    case DELETE:
+                        response=fidoDeviceWS.deleteDevice(fragment);
+                        break;
+                    case PATCH:
+                        PatchRequest pr=mapper.readValue(data, PatchRequest.class);
+                        response=fidoDeviceWS.patchDevice(pr, fragment, "id", null);
+                        break;
+                    case POST:
+                        response=fidoDeviceWS.createDevice();
+                        break;
+                }
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return new Pair<Response, String>(response, idCreated);
+
+    }
+
+    @PostConstruct
+    public void setup(){
+        //Do not use getClass() here... a typical weld issue...
+        endpointUrl=appConfiguration.getBaseEndpoint() + BulkWebService.class.getAnnotation(Path.class).value();
+        availableMethods= Arrays.asList(Verb.values());
+
+        usersEndpoint=userWS.getEndpointUrl();
+        groupsEndpoint=groupWS.getEndpointUrl();
+        fidodevicesEndpoint=fidoDeviceWS.getEndpointUrl();
+        commonWsEndpointPrefix=usersEndpoint.substring(0, usersEndpoint.lastIndexOf("/"));
+    }
 
-	@Inject
-	private AppConfiguration appConfiguration;
-
-	@Inject
-	private JsonConfigurationService jsonConfigurationService;
-
-	@Inject
-	private IPersonService personService;
-
-	@Inject
-	private IGroupService groupService;
-
-	@Inject
-	private Scim2UserService scim2UserService;
-
-	@Inject
-	private Scim2GroupService scim2GroupService;
-
-	@POST
-	@Consumes({ Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON })
-	@Produces({ Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8" })
-	@HeaderParam("Accept")
-	@DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-	@ApiOperation(value = "Bulk Operations", notes = "Bulk Operations (https://tools.ietf.org/html/rfc7644#section-3.7)", response = BulkResponse.class)
-	public Response processBulkOperations(
-			// @Context HttpServletRequest request,
-			// @Context HttpServletResponse response,
-			@HeaderParam("Authorization") String authorization, @HeaderParam("Content-Length") int contentLength,
-			@ApiParam(value = "BulkRequest", required = true) BulkRequest bulkRequest) throws Exception {
-
-		Response authorizationResponse;
-		if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-			log.info(" ##### SCIM Test Mode is ACTIVE");
-			authorizationResponse = processTestModeAuthorization(authorization);
-		} else {
-			authorizationResponse = processAuthorization(authorization);
-		}
-		if (authorizationResponse != null) {
-			return authorizationResponse;
-		}
-
-		try {
-
-			/*
-			 * J2EContext context = new J2EContext(request, response); int
-			 * removePathLength = "/Bulk".length(); String domain =
-			 * context.getFullRequestURL(); if (domain.endsWith("/")) {
-			 * removePathLength++; } domain = domain.substring(0,
-			 * domain.length() - removePathLength);
-			 */
-
-			log.info("##### Operation count = " + bulkRequest.getOperations().size());
-			log.info("##### Content-Length = " + contentLength);
-
-			if (bulkRequest.getOperations().size() > MAX_BULK_OPERATIONS || contentLength > MAX_BULK_PAYLOAD_SIZE) {
-
-				StringBuilder message = new StringBuilder("The size of the bulk operation exceeds the ");
-
-				if (bulkRequest.getOperations().size() > MAX_BULK_OPERATIONS
-						&& contentLength <= MAX_BULK_PAYLOAD_SIZE) {
-
-					message.append("maxOperations (").append(MAX_BULK_OPERATIONS).append(")");
-
-				} else if (bulkRequest.getOperations().size() <= MAX_BULK_OPERATIONS
-						&& contentLength > MAX_BULK_PAYLOAD_SIZE) {
-
-					message.append("maxPayloadSize (").append(MAX_BULK_PAYLOAD_SIZE).append(")");
-
-				} else if (bulkRequest.getOperations().size() > MAX_BULK_OPERATIONS
-						&& contentLength > MAX_BULK_PAYLOAD_SIZE) {
-
-					message.append("maxOperations (").append(MAX_BULK_OPERATIONS).append(") ");
-					message.append("and ");
-					message.append("maxPayloadSize (").append(MAX_BULK_PAYLOAD_SIZE).append(")");
-				}
-
-				log.info("Payload Too Large: " + message.toString());
-				return getErrorResponse(413, message.toString());
-			}
-
-			int failOnErrorsLimit = (bulkRequest.getFailOnErrors() != null) ? bulkRequest.getFailOnErrors() : 0;
-			int failOnErrorsCount = 0;
-
-			List<BulkOperation> bulkOperations = bulkRequest.getOperations();
-
-			BulkResponse bulkResponse = new BulkResponse();
-			Map<String, String> processedBulkIds = new LinkedHashMap<String, String>();
-
-			operationsLoop: for (BulkOperation operation : bulkOperations) {
-
-				log.info(" Checking operations... ");
-
-				if (operation.getPath().startsWith("/Users")) {
-
-					// operation = processUserOperation(operation, domain);
-					operation = processUserOperation(operation, processedBulkIds);
-
-				} else if (operation.getPath().startsWith("/Groups")) {
-
-					// operation = processGroupOperation(operation, domain);
-					operation = processGroupOperation(operation, processedBulkIds);
-				}
-
-				bulkResponse.getOperations().add(operation);
-
-				// Error handling
-				String okCode = String.valueOf(Response.Status.OK.getStatusCode());
-				String createdCode = String.valueOf(Response.Status.CREATED.getStatusCode());
-				if (!operation.getStatus().equalsIgnoreCase(okCode)
-						&& !operation.getStatus().equalsIgnoreCase(createdCode)) {
-					failOnErrorsCount++;
-					if ((failOnErrorsLimit > 0) && (failOnErrorsCount >= failOnErrorsLimit)) {
-						break operationsLoop;
-					}
-				}
-			}
-
-			URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Bulk");
-
-			// Serialize to JSON
-
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-
-			SimpleModule customBulkOperationsModule = new SimpleModule("CustomBulkOperationsModule",
-					new Version(1, 0, 0, ""));
-
-			// Custom serializers for both User and Group
-			ListResponseUserSerializer userSerializer = new ListResponseUserSerializer();
-			ListResponseGroupSerializer groupSerializer = new ListResponseGroupSerializer();
-			customBulkOperationsModule.addSerializer(User.class, userSerializer);
-			customBulkOperationsModule.addSerializer(Group.class, groupSerializer);
-
-			mapper.registerModule(customBulkOperationsModule);
-
-			String json = mapper.writeValueAsString(bulkResponse);
-
-			return Response.ok(json).location(location).build();
-
-		} catch (Exception ex) {
-
-			log.error("Error in processBulkOperations", ex);
-			ex.printStackTrace();
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
-		}
-	}
-
-	private BulkOperation processUserOperation(BulkOperation operation, Map<String, String> processedBulkIds)
-			throws Exception {
-
-		log.info(" Operation is for User ");
-
-		// Intercept bulkId
-		User user = null;
-		if (operation.getData() != null) { // Required in a request when
-											// "method" is "POST", "PUT", or
-											// "PATCH".
-
-			String serializedData = serialize(operation.getData());
-
-			for (Map.Entry<String, String> entry : processedBulkIds.entrySet()) {
-				String key = "bulkId:" + entry.getKey();
-				serializedData = serializedData.replaceAll(key, entry.getValue());
-			}
-
-			user = deserializeToUser(serializedData);
-		}
-
-		String userRootEndpoint = appConfiguration.getBaseEndpoint() + "/scim/v2/Users/";
-
-		if (operation.getMethod().equalsIgnoreCase(HttpMethod.POST)) {
-			log.info(" Method is POST ");
-
-			try {
-				user = scim2UserService.createUser(user);
-
-				GluuCustomPerson gluuPerson = personService.getPersonByUid(user.getUserName());
-				String inum = gluuPerson.getInum();
-
-				// String location = (new
-				// StringBuilder()).append(domain).append("/Users/").append(inum).toString();
-				String location = userRootEndpoint + inum;
-				operation.setLocation(location);
-
-				operation.setStatus(String.valueOf(Response.Status.CREATED.getStatusCode()));
-				operation.setResponse(user);
-
-				// Set aside successfully-processed bulkId
-				// bulkId is only required in POST
-				processedBulkIds.put(operation.getBulkId(), user.getId());
-			} catch (DuplicateEntryException ex) {
-				log.error("DuplicateEntryException", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.CONFLICT.getStatusCode()));
-				operation.setResponse(
-						createErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage()));
-			} catch (PersonRequiredFieldsException ex) {
-				log.error("PersonRequiredFieldsException: ", ex);
-				operation.setStatus(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
-				operation.setResponse(
-						createErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, ex.getMessage()));
-			} catch (Exception ex) {
-				log.error("Failed to create user", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-				operation.setResponse(createErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, null,
-						INTERNAL_SERVER_ERROR_MESSAGE));
-			}
-
-		} else if (operation.getMethod().equalsIgnoreCase(HttpMethod.PUT)) {
-
-			log.info(" Method is PUT ");
-
-			String path = operation.getPath();
-			String id = getId(path);
-
-			for (Map.Entry<String, String> entry : processedBulkIds.entrySet()) {
-				String key = "bulkId:" + entry.getKey();
-				if (id.equalsIgnoreCase(key)) {
-					id = id.replaceAll(key, entry.getValue());
-					break;
-				}
-			}
-
-			try {
-				user = scim2UserService.updateUser(id, user);
-
-				// String location = (new
-				// StringBuilder()).append(domain).append("/Users/").append(personiD).toString();
-				String location = userRootEndpoint + id;
-				operation.setLocation(location);
-
-				operation.setStatus(String.valueOf(Response.Status.OK.getStatusCode()));
-				operation.setResponse(user);
-
-				// Set aside successfully-processed bulkId
-				// bulkId is only required in POST
-				if (operation.getBulkId() != null) {
-					processedBulkIds.put(operation.getBulkId(), user.getId());
-				}
-
-			} catch (EntryPersistenceException ex) {
-				log.error("Failed to update user", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.NOT_FOUND.getStatusCode()));
-				operation.setResponse(createErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE,
-						"Resource " + id + " not found"));
-
-			} catch (DuplicateEntryException ex) {
-				log.error("DuplicateEntryException", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.CONFLICT.getStatusCode()));
-				operation.setResponse(
-						createErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage()));
-
-			} catch (Exception ex) {
-
-				log.error("Failed to update user", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-				operation.setResponse(createErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, null,
-						INTERNAL_SERVER_ERROR_MESSAGE));
-			}
-
-		} else if (operation.getMethod().equalsIgnoreCase(HttpMethod.DELETE)) {
-			log.info(" Method is DELETE ");
-
-			String path = operation.getPath();
-			String id = getId(path);
-
-			for (Map.Entry<String, String> entry : processedBulkIds.entrySet()) {
-				String key = "bulkId:" + entry.getKey();
-				if (id.equalsIgnoreCase(key)) {
-					id = id.replaceAll(key, entry.getValue());
-					break;
-				}
-			}
-
-			try {
-				scim2UserService.deleteUser(id);
-
-				// Location may be omitted on DELETE
-				operation.setStatus(String.valueOf(Response.Status.OK.getStatusCode()));
-				operation.setResponse("User " + id + " deleted");
-
-				// Set aside successfully-processed bulkId
-				// bulkId is only required in POST
-				if (operation.getBulkId() != null) {
-					processedBulkIds.put(operation.getBulkId(), id);
-				}
-
-			} catch (EntryPersistenceException ex) {
-				log.error("Failed to delete user", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.NOT_FOUND.getStatusCode()));
-				operation.setResponse(
-						createErrorResponse(Response.Status.NOT_FOUND, null, "Resource " + id + " not found"));
-			} catch (Exception ex) {
-				log.error("Failed to delete user", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-				operation.setResponse(createErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, null,
-						INTERNAL_SERVER_ERROR_MESSAGE));
-			}
-		}
-
-		return operation;
-	}
-
-	private BulkOperation processGroupOperation(BulkOperation operation, Map<String, String> processedBulkIds)
-			throws Exception {
-
-		log.info(" Operation is for Group ");
-
-		// Intercept bulkId
-		Group group = null;
-		if (operation.getData() != null) { // Required in a request when
-											// "method" is "POST", "PUT", or
-											// "PATCH".
-
-			String serializedData = serialize(operation.getData());
-
-			for (Map.Entry<String, String> entry : processedBulkIds.entrySet()) {
-				String key = "bulkId:" + entry.getKey();
-				serializedData = serializedData.replaceAll(key, entry.getValue());
-			}
-
-			group = deserializeToGroup(serializedData);
-		}
-
-		String groupRootEndpoint = appConfiguration.getBaseEndpoint() + "/scim/v2/Groups/";
-
-		if (operation.getMethod().equalsIgnoreCase(HttpMethod.POST)) {
-
-			log.info(" Method is POST ");
-
-			try {
-				group = scim2GroupService.createGroup(group);
-
-				GluuGroup gluuGroup = groupService.getGroupByDisplayName(group.getDisplayName());
-				String id = gluuGroup.getInum();
-
-				// String location = (new
-				// StringBuilder()).append(domain).append("/Groups/").append(id).toString();
-				String location = groupRootEndpoint + id;
-				operation.setLocation(location);
-
-				operation.setStatus(String.valueOf(Response.Status.CREATED.getStatusCode()));
-				operation.setResponse(group);
-
-				// Set aside successfully-processed bulkId
-				// bulkId is only required in POST
-				processedBulkIds.put(operation.getBulkId(), group.getId());
-
-			} catch (DuplicateEntryException ex) {
-
-				log.error("DuplicateEntryException", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.CONFLICT.getStatusCode()));
-				operation.setResponse(
-						createErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage()));
-
-			} catch (Exception ex) {
-
-				log.error("Failed to create group", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-				operation.setResponse(createErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, null,
-						INTERNAL_SERVER_ERROR_MESSAGE));
-			}
-
-		} else if (operation.getMethod().equalsIgnoreCase(HttpMethod.PUT)) {
-
-			log.info(" Method is PUT ");
-
-			String path = operation.getPath();
-			String id = getId(path);
-
-			for (Map.Entry<String, String> entry : processedBulkIds.entrySet()) {
-				String key = "bulkId:" + entry.getKey();
-				if (id.equalsIgnoreCase(key)) {
-					id = id.replaceAll(key, entry.getValue());
-					break;
-				}
-			}
-
-			try {
-
-				group = scim2GroupService.updateGroup(id, group);
-
-				// String location = (new
-				// StringBuilder()).append(domain).append("/Groups/").append(groupiD).toString();
-				String location = groupRootEndpoint + id;
-				operation.setLocation(location);
-
-				operation.setStatus(String.valueOf(Response.Status.OK.getStatusCode()));
-				operation.setResponse(group);
-
-				// Set aside successfully-processed bulkId
-				// bulkId is only required in POST
-				if (operation.getBulkId() != null) {
-					processedBulkIds.put(operation.getBulkId(), group.getId());
-				}
-
-			} catch (EntryPersistenceException ex) {
-
-				log.error("Failed to update group", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.NOT_FOUND.getStatusCode()));
-				operation.setResponse(createErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE,
-						"Resource " + id + " not found"));
-
-			} catch (DuplicateEntryException ex) {
-
-				log.error("DuplicateEntryException", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.CONFLICT.getStatusCode()));
-				operation.setResponse(
-						createErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage()));
-
-			} catch (Exception ex) {
-
-				log.error("Failed to update group", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-				operation.setResponse(createErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, null,
-						INTERNAL_SERVER_ERROR_MESSAGE));
-			}
-
-		} else if (operation.getMethod().equalsIgnoreCase(HttpMethod.DELETE)) {
-
-			log.info(" Method is DELETE ");
-
-			String path = operation.getPath();
-			String id = getId(path);
-
-			for (Map.Entry<String, String> entry : processedBulkIds.entrySet()) {
-				String key = "bulkId:" + entry.getKey();
-				if (id.equalsIgnoreCase(key)) {
-					id = id.replaceAll(key, entry.getValue());
-					break;
-				}
-			}
-
-			try {
-
-				scim2GroupService.deleteGroup(id);
-
-				// Location may be omitted on DELETE
-				operation.setStatus(String.valueOf(Response.Status.OK.getStatusCode()));
-				operation.setResponse("Group " + id + " deleted");
-
-				// Set aside successfully-processed bulkId
-				// bulkId is only required in POST
-				if (operation.getBulkId() != null) {
-					processedBulkIds.put(operation.getBulkId(), id);
-				}
-
-			} catch (EntryPersistenceException ex) {
-
-				log.error("Failed to delete group", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.NOT_FOUND.getStatusCode()));
-				operation.setResponse(
-						createErrorResponse(Response.Status.NOT_FOUND, null, "Resource " + id + " not found"));
-
-			} catch (Exception ex) {
-
-				log.error("Failed to delete group", ex);
-				ex.printStackTrace();
-				operation.setStatus(String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-				operation.setResponse(createErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, null,
-						INTERNAL_SERVER_ERROR_MESSAGE));
-			}
-		}
-
-		return operation;
-	}
-
-	private String getId(String path) {
-
-		String str[] = path.split("/");
-		return str[2];
-	}
-
-	private String serialize(Object object) throws Exception {
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-
-		return mapper.writeValueAsString(object);
-	}
-
-	private User deserializeToUser(String dataString) throws Exception {
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-		SimpleModule simpleModule = new SimpleModule("DeserializeToUserModule", new Version(1, 0, 0, ""));
-		simpleModule.addDeserializer(User.class, new UserDeserializer());
-		mapper.registerModule(simpleModule);
-
-		return mapper.readValue(dataString, User.class);
-	}
-
-	private Group deserializeToGroup(String dataString) throws Exception {
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-		return mapper.readValue(dataString, Group.class);
-	}
-
-	private ErrorResponse createErrorResponse(Response.Status status, ErrorScimType scimType, String detail) {
-
-		ErrorResponse errorResponse = new ErrorResponse();
-
-		List<String> schemas = new ArrayList<String>();
-		schemas.add(Constants.ERROR_RESPONSE_URI);
-		errorResponse.setSchemas(schemas);
-
-		errorResponse.setStatus(String.valueOf(status.getStatusCode()));
-		errorResponse.setScimType(scimType);
-		errorResponse.setDetail(detail);
-
-		return errorResponse;
-	}
-
-	/*
-	 * public static void main(String []args){ LinkedHashMap<Object, Object> map
-	 * = new LinkedHashMap<Object, Object>(); map.put("userName", "Rahat");
-	 * LinkedHashMap<Object, Object> name= new LinkedHashMap<Object, Object>();
-	 * name.put("formatted", "formatted"); map.put("name", name);
-	 */
-	/*
-	 * User user = convert(map); System.out.println(user.getUserName());
-	 * System.out.println(user.getName().getFormatted());
-	 *//*
-		 * }
-		 */
 }

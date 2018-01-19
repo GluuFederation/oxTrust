@@ -14,8 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,8 +28,7 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim.ScimPersonEmails;
-import org.gluu.oxtrust.model.scim2.Email;
+import org.gluu.oxtrust.model.scim2.user.Email;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,235 +40,235 @@ import org.xdi.config.oxtrust.AppConfiguration;
 @Named
 public class ServiceUtil implements Serializable {
 
-	private static Logger logger = LoggerFactory.getLogger(ServiceUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(ServiceUtil.class);
 
-	private static final long serialVersionUID = -2842459224631032594L;
-	
-	@Inject
-	private IPersonService personService;
-	
-	@Inject
-	private IGroupService groupService;
-	
-	@Inject
-	private AppConfiguration appConfiguration;
-    
-	private static final SecureRandom random = new SecureRandom();
+    private static final long serialVersionUID = -2842459224631032594L;
 
-	private static final ObjectMapper mapper = new ObjectMapper();
+    @Inject
+    private IPersonService personService;
 
-	static {
-		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-	}
+    @Inject
+    private IGroupService groupService;
 
-	/**
-	 * Delete a Group from a Person
-	 * 
-	 * @return void
-	 * @throws Exception
-	 */
-	public void deleteGroupFromPerson(GluuGroup group, String dn) throws Exception {
-		List<String> persons = group.getMembers();
-		for (String onePerson : persons) {
+    @Inject
+    private AppConfiguration appConfiguration;
 
-			GluuCustomPerson gluuPerson = personService.getPersonByDn(onePerson);
-			List<String> memberOflist = gluuPerson.getMemberOf();
+    private static final SecureRandom random = new SecureRandom();
 
-			List<String> tempMemberOf = new ArrayList<String>();
-			for (String aMemberOf : memberOflist) {
-				tempMemberOf.add(aMemberOf);
-			}
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-			for (String oneMemberOf : tempMemberOf) {
-				if (oneMemberOf.equalsIgnoreCase(dn)) {
-					tempMemberOf.remove(oneMemberOf);
-					break;
-				}
-			}
+    static {
+        mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+        mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+    }
 
-			List<String> cleanMemberOf = new ArrayList<String>();
+    /**
+     * Delete a Group from a Person
+     *
+     * @return void
+     * @throws Exception
+     */
+    public void deleteGroupFromPerson(GluuGroup group, String dn) throws Exception {
+        List<String> persons = group.getMembers();
+        for (String onePerson : persons) {
 
-			for (String aMemberOf : tempMemberOf) {
-				cleanMemberOf.add(aMemberOf);
-			}
+            GluuCustomPerson gluuPerson = personService.getPersonByDn(onePerson);
+            List<String> memberOflist = gluuPerson.getMemberOf();
 
-			gluuPerson.setMemberOf(cleanMemberOf);
-			personService.updatePerson(gluuPerson);
+            List<String> tempMemberOf = new ArrayList<String>();
+            for (String aMemberOf : memberOflist) {
+                tempMemberOf.add(aMemberOf);
+            }
 
-		}
+            for (String oneMemberOf : tempMemberOf) {
+                if (oneMemberOf.equalsIgnoreCase(dn)) {
+                    tempMemberOf.remove(oneMemberOf);
+                    break;
+                }
+            }
 
-	}
+            List<String> cleanMemberOf = new ArrayList<String>();
 
-	public String iterableToString(Iterable<?> list) {
-		if (list == null) {
-			return "";
-		}
+            for (String aMemberOf : tempMemberOf) {
+                cleanMemberOf.add(aMemberOf);
+            }
 
-		StringBuilder sb = new StringBuilder();
-		for (Object item : list) {
-			sb.append(item);
-			sb.append(",");
-		}
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length() - 1);
-		}
-		return sb.toString();
-	}
+            gluuPerson.setMemberOf(cleanMemberOf);
+            personService.updatePerson(gluuPerson);
 
-	/**
-	 * Delete a person from a group
-	 * 
-	 * @return void
-	 * @throws Exception
-	 */
-	public void deleteUserFromGroup(GluuCustomPerson person, String dn) throws Exception {
-		List<String> groups = person.getMemberOf();
-		for (String oneGroup : groups) {
+        }
 
-			GluuGroup aGroup = groupService.getGroupByDn(oneGroup);
-			List<String> groupMembers = aGroup.getMembers();
+    }
 
-			List<String> tempGroupMembers = new ArrayList<String>();
-			if (groupMembers != null && !groupMembers.isEmpty()) {
-				for (String aMember : groupMembers) {
-					tempGroupMembers.add(aMember);
-				}
-			}
+    public String iterableToString(Iterable<?> list) {
+        if (list == null) {
+            return "";
+        }
 
-			for (String oneMember : tempGroupMembers) {
+        StringBuilder sb = new StringBuilder();
+        for (Object item : list) {
+            sb.append(item);
+            sb.append(",");
+        }
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
+    }
 
-				if (oneMember.equalsIgnoreCase(dn)) {
+    /**
+     * Delete a person from a group
+     *
+     * @return void
+     * @throws Exception
+     */
+    public void deleteUserFromGroup(GluuCustomPerson person, String dn) throws Exception {
+        List<String> groups = person.getMemberOf();
+        for (String oneGroup : groups) {
 
-					tempGroupMembers.remove(oneMember);
+            GluuGroup aGroup = groupService.getGroupByDn(oneGroup);
+            List<String> groupMembers = aGroup.getMembers();
 
-					break;
-				}
-			}
+            List<String> tempGroupMembers = new ArrayList<String>();
+            if (groupMembers != null && !groupMembers.isEmpty()) {
+                for (String aMember : groupMembers) {
+                    tempGroupMembers.add(aMember);
+                }
+            }
 
-			List<String> cleanGroupMembers = new ArrayList<String>();
-			for (String aMember : tempGroupMembers) {
-				cleanGroupMembers.add(aMember);
-			}
+            for (String oneMember : tempGroupMembers) {
 
-			aGroup.setMembers(cleanGroupMembers);
+                if (oneMember.equalsIgnoreCase(dn)) {
+
+                    tempGroupMembers.remove(oneMember);
+
+                    break;
+                }
+            }
+
+            List<String> cleanGroupMembers = new ArrayList<String>();
+            for (String aMember : tempGroupMembers) {
+                cleanGroupMembers.add(aMember);
+            }
+
+            aGroup.setMembers(cleanGroupMembers);
 
             if (aGroup.getMembers() != null && aGroup.getMembers().isEmpty()) {
                 aGroup.setMembers(null);  // Reset to no members
             }
 
-			groupService.updateGroup(aGroup);
-		}
-	}
+            groupService.updateGroup(aGroup);
+        }
+    }
 
-	/**
-	 * Adds a group to a person's memberOf
-	 * 
-	 * @return void
-	 * @throws Exception
-	 */
-	public void personMembersAdder(GluuGroup gluuGroup, String dn) throws Exception {
-		List<String> members = gluuGroup.getMembers();
+    /**
+     * Adds a group to a person's memberOf
+     *
+     * @return void
+     * @throws Exception
+     */
+    public void personMembersAdder(GluuGroup gluuGroup, String dn) throws Exception {
+        List<String> members = gluuGroup.getMembers();
 
-		for (String member : members) {
-			GluuCustomPerson gluuPerson = personService.getPersonByDn(member);
+        for (String member : members) {
+            GluuCustomPerson gluuPerson = personService.getPersonByDn(member);
 
-			List<String> groups = gluuPerson.getMemberOf();
-			if (!isMemberOfExist(groups, dn)) {
+            List<String> groups = gluuPerson.getMemberOf();
+            if (!isMemberOfExist(groups, dn)) {
 
-				List<String> cleanGroups = new ArrayList<String>();
-				cleanGroups.add(dn);
-				for (String aGroup : groups) {
-					cleanGroups.add(aGroup);
-				}
+                List<String> cleanGroups = new ArrayList<String>();
+                cleanGroups.add(dn);
+                for (String aGroup : groups) {
+                    cleanGroups.add(aGroup);
+                }
 
-				gluuPerson.setMemberOf(cleanGroups);
-				personService.updatePerson(gluuPerson);
-			}
+                gluuPerson.setMemberOf(cleanGroups);
+                personService.updatePerson(gluuPerson);
+            }
 
-		}
+        }
 
-	}
+    }
 
-	/**
-	 * checks if the memeberOf attribute already contains a given group
-	 * 
-	 * @return boolean
-	 */
-	private boolean isMemberOfExist(List<String> groups, String dn) {
-		for (String group : groups) {
-			if (group.equalsIgnoreCase(dn)) {
-				return true;
-			}
+    /**
+     * checks if the memeberOf attribute already contains a given group
+     *
+     * @return boolean
+     */
+    private boolean isMemberOfExist(List<String> groups, String dn) {
+        for (String group : groups) {
+            if (group.equalsIgnoreCase(dn)) {
+                return true;
+            }
 
-		}
-		return false;
-	}
+        }
+        return false;
+    }
 
-	/**
-	 * Adds a person to a group
-	 * 
-	 * @return void
-	 * @throws Exception
-	 */
-	public void groupMembersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
-		List<String> groups = gluuPerson.getMemberOf();
+    /**
+     * Adds a person to a group
+     *
+     * @return void
+     * @throws Exception
+     */
+    public void groupMembersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
+        List<String> groups = gluuPerson.getMemberOf();
 
-		for (String group : groups) {
+        for (String group : groups) {
 
-			GluuGroup oneGroup = groupService.getGroupByDn(group);
+            GluuGroup oneGroup = groupService.getGroupByDn(group);
 
-			List<String> groupMembers = oneGroup.getMembers();
+            List<String> groupMembers = oneGroup.getMembers();
 
-			if ((groupMembers != null && !groupMembers.isEmpty()) && !isMemberExist(groupMembers, dn)) {
+            if ((groupMembers != null && !groupMembers.isEmpty()) && !isMemberExist(groupMembers, dn)) {
 
-				List<String> cleanGroupMembers = new ArrayList<String>();
-				cleanGroupMembers.add(dn);
+                List<String> cleanGroupMembers = new ArrayList<String>();
+                cleanGroupMembers.add(dn);
 
-				for (String personDN : groupMembers) {
-					cleanGroupMembers.add(personDN);
-				}
+                for (String personDN : groupMembers) {
+                    cleanGroupMembers.add(personDN);
+                }
 
-				oneGroup.setMembers(cleanGroupMembers);
-				groupService.updateGroup(oneGroup);
-			}
-		}
-	}
+                oneGroup.setMembers(cleanGroupMembers);
+                groupService.updateGroup(oneGroup);
+            }
+        }
+    }
 
-	/**
-	 * checks if the member already exist in a group
-	 * 
-	 * @return boolean
-	 */
-	private boolean isMemberExist(List<String> groupMembers, String dn) {
+    /**
+     * checks if the member already exist in a group
+     *
+     * @return boolean
+     */
+    private boolean isMemberExist(List<String> groupMembers, String dn) {
 
-		for (String member : groupMembers) {
-			if (member.equalsIgnoreCase(dn)) {
-				return true;
-			}
-		}
-		return false;
-	}
+        for (String member : groupMembers) {
+            if (member.equalsIgnoreCase(dn)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public String getPersonParentInum() {
-		return appConfiguration.getOrgInum() + OxTrustConstants.inumDelimiter
-				+ OxTrustConstants.INUM_PERSON_OBJECTTYPE;
-	}
+    public String getPersonParentInum() {
+        return appConfiguration.getOrgInum() + OxTrustConstants.inumDelimiter
+                + OxTrustConstants.INUM_PERSON_OBJECTTYPE;
+    }
 
-	public String getPersonParentIname() {
-		return appConfiguration.getOrgIname() + OxTrustConstants.inameDelimiter
-				+ OxTrustConstants.INAME_PERSON_OBJECTTYPE;
-	}
-        
+    public String getPersonParentIname() {
+        return appConfiguration.getOrgIname() + OxTrustConstants.inameDelimiter
+                + OxTrustConstants.INAME_PERSON_OBJECTTYPE;
+    }
+
     /**
      * Copy uploaded file to byte array.
-     * 
+     *
      * @param uploadedFile
      * @return byte array
-     * @throws IOException 
+     * @throws IOException
      */
     public byte[] copyUploadedFile(UploadedFile uploadedFile) throws IOException {
-        
+
         InputStream in = uploadedFile.getInputStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
@@ -284,24 +282,24 @@ public class ServiceUtil implements Serializable {
         }
         return out.toByteArray();
     }
-    
+
     /**
      * Save file with random name with provided base directory and extension.
      * @param array binary content of file.
-     * @param baseDir Write to directory. 
+     * @param baseDir Write to directory.
      * @param extension Filename extension.
      * @return Return full path
-     * @throws IOException 
+     * @throws IOException
      */
     public static String saveRandomFile(byte[] array, String baseDir, String extension) throws IOException {
         final String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
-        
+
         final File dir = new File(baseDir);
         if (!dir.exists())
             dir.mkdirs();
         else if (!dir.isDirectory())
             throw new IllegalArgumentException("parameter baseDir should be directory. The value: " + baseDir);
-        
+
         InputStream in = new ByteArrayInputStream(array);
         FileOutputStream out = new FileOutputStream(filepath);
         try {
@@ -315,234 +313,155 @@ public class ServiceUtil implements Serializable {
         }
         return filepath;
     }
-        
+
     /**
      * Save uploaded file with random name.
      * @param uploadedFile
-     * @param baseDir Write to directory. 
+     * @param baseDir Write to directory.
      * @param extension Filename extension.
      * @return Return full path
-     * @throws IOException 
+     * @throws IOException
      */
     public String saveUploadedFile(UploadedFile uploadedFile, String baseDir, String extension) throws IOException {
         byte[] fileContent = copyUploadedFile(uploadedFile);
-        
+
         return saveRandomFile(fileContent, baseDir, extension);
     }
 
-	/**
-	 * One-way sync from "oxTrustEmail" to "mail". Ultimately this is persisted so "mail" will be
-	 * updated by values from "oxTrustEmail".
-	 *
-	 * @param gluuCustomPerson
-	 * @return
-	 * @throws Exception
-	 */
-	public static GluuCustomPerson syncEmailForward(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
-
-		logger.info(" IN Utils.syncEmailForward()...");
-
-		GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
-
-		if (oxTrustEmail != null && oxTrustEmail.getValues().length > 0) {
-
-			String[] oxTrustEmails = oxTrustEmail.getValues();  // JSON array in element 0
-			String[] newMails = new String[oxTrustEmails.length];
-
-			ObjectMapper mapper = getObjectMapper();
-
-			if (isScim2) {
-
-				/*
-				Email[] emails = getObjectMapper().readValue(oxTrustEmails[0], Email[].class);
-				newMails = new String[emails.length];
-
-				for (int i = 0; i < emails.length; i++) {
-					newMails[i] = emails[i].getValue();
-				}
-				*/
-
-				for (int i = 0; i < oxTrustEmails.length; i++) {
-					Email email = mapper.readValue(oxTrustEmails[i], Email.class);
-					newMails[i] = email.getValue();
-				}
-
-			} else {
-
-				/*
-				ScimPersonEmails[] emails = mapper.readValue(oxTrustEmails[0], ScimPersonEmails[].class);
-				newMails = new String[emails.length];
-
-				for (int i = 0; i < emails.length; i++) {
-					newMails[i] = emails[i].getValue();
-				}
-				*/
-
-				for (int i = 0; i < oxTrustEmails.length; i++) {
-					ScimPersonEmails email = mapper.readValue(oxTrustEmails[i], ScimPersonEmails.class);
-					newMails[i] = email.getValue();
-				}
-			}
-
-			gluuCustomPerson.setAttribute("mail", newMails);
-
-		/* // Just do nothing if null, same as in UserWebService.updateUser()
-		} else {
-			gluuCustomPerson.setAttribute("mail", new String[0]);
-		*/
-		}
-
-		logger.info(" LEAVING Utils.syncEmailForward()...");
-
-		return gluuCustomPerson;
-	}
-
-	/**
-	 * One-way sync from "mail" to "oxTrustEmail". This will persist the email in "oxTrustEmail"
-	 * in SCIM 2.0 format since the SCIM 1.1 format is a subset of SCIM 2.0.
-	 *
-	 * @param gluuCustomPerson
-	 * @param isScim2
-	 * @return
-	 * @throws Exception
+    /**
+     * One-way sync from "oxTrustEmail" to "mail". Ultimately this is persisted so "mail" will be
+     * updated by values from "oxTrustEmail".
+     *
+     * @param gluuCustomPerson
+     * @return
+     * @throws Exception
      */
-	public static GluuCustomPerson syncEmailReverse(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
+    public static GluuCustomPerson syncEmailForward(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
 
-		logger.info(" IN Utils.syncEmailReverse()...");
+        logger.info(" IN Utils.syncEmailForward()...");
 
-		GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
-		GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
+        GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
 
-		if (mail != null && mail.getValues().length > 0) {
+        if (oxTrustEmail != null && oxTrustEmail.getValues()!=null && oxTrustEmail.getValues().length > 0) {
 
-			String[] mails = mail.getValues();  // String array
+            String[] oxTrustEmails = oxTrustEmail.getValues();  // JSON array in element 0
+            String[] newMails = new String[oxTrustEmails.length];
 
-			String[] oxTrustEmails = null;
-			if (oxTrustEmail != null) {
-				oxTrustEmails = oxTrustEmail.getValues();  // In the old format, JSON array is in element 0
-			}
+            ObjectMapper mapper = getObjectMapper();
 
-			ObjectMapper mapper = getObjectMapper();
+            if (isScim2) {
 
-			// Retain the switch just in case this will be useful in the future
-			// if (isScim2) {
-
-				List<String> newOxTrustEmails = new ArrayList<String>();
-				Email[] emails = null;
-
-				if (oxTrustEmails != null && oxTrustEmails.length > 0) {
-
-					// emails = mapper.readValue(oxTrustEmails[0], Email[].class);
-					emails = new Email[oxTrustEmails.length];
-
-					for (int i = 0; i < oxTrustEmails.length; i++) {
-						Email email = mapper.readValue(oxTrustEmails[i], Email.class);
-						emails[i] = email;
-					}
-				}
-
-				for (int i = 0; i < mails.length; i++) {
-
-					if (emails != null && (i < emails.length) && (emails[i] != null)) {
-
-						Email email = emails[i];
-						email.setDisplay((email.getDisplay() != null && !email.getDisplay().equalsIgnoreCase(email.getValue())) ? email.getDisplay() : mails[i]);
-						email.setValue(mails[i]);
-
-						newOxTrustEmails.add(mapper.writeValueAsString(email));
-
-					} else {
-
-						Email email = new Email();
-						email.setValue(mails[i]);
-						email.setPrimary(i == 0 ? true : false);
-						email.setDisplay(mails[i]);
-						email.setType(Email.Type.OTHER);
-
-						newOxTrustEmails.add(mapper.writeValueAsString(email));
-					}
-				}
-
-			    /*
-				StringWriter stringWriter = new StringWriter();
-				getObjectMapper().writeValue(stringWriter, newOxTrustEmails);
-				String newOxTrustEmail = stringWriter.toString();
-				*/
-
-				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmails.toArray(new String[]{}));
-
-			/*
-			} else {
-
-				List<ScimPersonEmails> newOxTrustEmails = new ArrayList<ScimPersonEmails>();
-				ScimPersonEmails[] scimPersonEmails = new ScimPersonEmails[mails.length];
-
-				if (oxTrustEmails != null && oxTrustEmails.length > 0) {
-					scimPersonEmails = getObjectMapper().readValue(oxTrustEmails[0], ScimPersonEmails[].class);
-				}
-
-				for (int i = 0; i < mails.length; i++) {
-
-					if (i < scimPersonEmails.length && (scimPersonEmails[i] != null)) {
-
-						ScimPersonEmails scimPersonEmail = scimPersonEmails[i];
-						scimPersonEmail.setValue(mails[i]);
-
-						newOxTrustEmails.add(scimPersonEmail);
-
-					} else {
-
-						ScimPersonEmails scimPersonEmail = new ScimPersonEmails();
-						scimPersonEmail.setValue(mails[i]);
-						scimPersonEmail.setPrimary(i == 0 ? "true" : "false");
-						scimPersonEmail.setType(Email.Type.OTHER.getValue());
-
-						newOxTrustEmails.add(scimPersonEmail);
-					}
-				}
-
-				StringWriter stringWriter = new StringWriter();
-				getObjectMapper().writeValue(stringWriter, newOxTrustEmails);
-				String newOxTrustEmail = stringWriter.toString();
-
-				gluuCustomPerson.setAttribute("oxTrustEmail", newOxTrustEmail);
-			}
-			*/
-		}
-
-		logger.info(" LEAVING Utils.syncEmailReverse()...");
-
-		return gluuCustomPerson;
-	}
-
-	public static ObjectMapper getObjectMapper() {
-		return mapper;
-	}
-        
-        /**
-	 * Read all bytes from the supplied input stream. Closes the input stream.
-	 *
-	 * @param is Input stream
-	 * @return All bytes
-	 * @throws IOException If an I/O problem occurs
-	 */
-	public static byte[] readFully(InputStream is) throws IOException {
-            ByteArrayOutputStream baos = null;
-
-            try {
-                baos = new ByteArrayOutputStream();
-
-                byte[] buffer = new byte[2048];
-                int read = 0;
-
-                while ((read = is.read(buffer)) != -1) {
-                    baos.write(buffer, 0, read);
+                for (int i = 0; i < oxTrustEmails.length; i++) {
+                    newMails[i] = mapper.readValue(oxTrustEmails[i], Email.class).getValue();
                 }
 
-                return baos.toByteArray();
-            } finally {
-                IOUtils.closeQuietly(baos);
-                IOUtils.closeQuietly(is);
             }
-	}
+            gluuCustomPerson.setAttribute("mail", newMails);
+        }
+
+        logger.info(" LEAVING Utils.syncEmailForward()...");
+
+        return gluuCustomPerson;
+    }
+
+    /**
+     * One-way sync from "mail" to "oxTrustEmail". This will persist the email in "oxTrustEmail"
+     * in SCIM 2.0 format since the SCIM 1.1 format is a subset of SCIM 2.0.
+     *
+     * @param gluuCustomPerson
+     * @param isScim2
+     * @return
+     * @throws Exception
+     */
+    public static GluuCustomPerson syncEmailReverse(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
+
+        logger.info(" IN Utils.syncEmailReverse()...");
+
+        GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
+        GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
+
+        if (mail == null) {
+            gluuCustomPerson.setAttribute("oxTrustEmail", new String[0]);
+        }
+        else{
+            ObjectMapper mapper = getObjectMapper();
+
+            Set<String> mailSet=new HashSet<String>();
+            if (mail.getValues()!=null)
+                mailSet.addAll(Arrays.asList(mail.getValues()));
+
+            Set<String> mailSetCopy=new HashSet<String>(mailSet);
+            Set<String> oxTrustEmailSet =new HashSet<String>();
+            List<Email> oxTrustEmails=new ArrayList<Email>();
+
+            if (oxTrustEmail!=null && oxTrustEmail.getValues()!=null){
+                for (String oxTrustEmailJson : oxTrustEmail.getValues())
+                    oxTrustEmails.add(mapper.readValue(oxTrustEmailJson, Email.class));
+
+                for (Email email : oxTrustEmails)
+                    oxTrustEmailSet.add(email.getValue());
+            }
+            mailSetCopy.removeAll(oxTrustEmailSet); //Keep those in "mail" and not in oxTrustEmail
+            oxTrustEmailSet.removeAll(mailSet);     //Keep those in oxTrustEmail and not in "mail"
+
+            List<Integer> delIndexes=new ArrayList<Integer>();
+            //Build a list of indexes that should be removed in oxTrustEmails
+            for (int i=0;i<oxTrustEmails.size();i++) {
+                if (oxTrustEmailSet.contains(oxTrustEmails.get(i).getValue()))
+                    delIndexes.add(0, i);
+            }
+            //Delete unmatched oxTrustEmail entries from highest index to lowest
+            for (Integer idx : delIndexes)
+                oxTrustEmails.remove(idx.intValue());   //must not pass an Integer directly
+
+            List<String> newValues=new ArrayList<String>();
+            for (Email email : oxTrustEmails)
+                newValues.add(mapper.writeValueAsString(email));
+
+            for (String mailStr : mailSetCopy){
+                Email email = new Email();
+                email.setValue(mailStr);
+                newValues.add(mapper.writeValueAsString(email));
+            }
+
+            gluuCustomPerson.setAttribute("oxTrustEmail", newValues.toArray(new String[0]));
+
+        }
+
+        logger.info(" LEAVING Utils.syncEmailReverse()...");
+
+        return gluuCustomPerson;
+
+    }
+
+    public static ObjectMapper getObjectMapper() {
+        return mapper;
+    }
+
+    /**
+     * Read all bytes from the supplied input stream. Closes the input stream.
+     *
+     * @param is Input stream
+     * @return All bytes
+     * @throws IOException If an I/O problem occurs
+     */
+    public static byte[] readFully(InputStream is) throws IOException {
+        ByteArrayOutputStream baos = null;
+
+        try {
+            baos = new ByteArrayOutputStream();
+
+            byte[] buffer = new byte[2048];
+            int read = 0;
+
+            while ((read = is.read(buffer)) != -1) {
+                baos.write(buffer, 0, read);
+            }
+
+            return baos.toByteArray();
+        } finally {
+            IOUtils.closeQuietly(baos);
+            IOUtils.closeQuietly(is);
+        }
+    }
 }
