@@ -61,6 +61,7 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -77,7 +78,8 @@ import org.xdi.util.StringHelper;
  */
 @Path("/restv1/apis/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-@Api(value = "/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
+//@Api(value = "/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
+//@UmaSecure(scopes = {"apis_saml", "/auth/oxtrust.allow-saml-config-all", "/auth/oxtrust.allow-saml-modify-all"})
 public class TrustRelationshipWebService {
     
     @Inject
@@ -100,9 +102,6 @@ public class TrustRelationshipWebService {
 	
     @Inject
     private MetadataValidationTimer metadataValidationTimer;
-	
-    @Inject
-    private SSLService sslService;
 
     @Inject
     private TrustContactsAction trustContactsAction;

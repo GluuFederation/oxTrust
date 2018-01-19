@@ -14,7 +14,7 @@ import javax.inject.Named;
 import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
- * Provides service to protect APIs UMA Rest service endpoints
+ * Provides service to protect APIs Rest service endpoints with UMA scope.
  * 
  * @author Dmitry Ognyannikov
  */
