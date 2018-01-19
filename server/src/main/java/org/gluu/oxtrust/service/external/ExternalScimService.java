@@ -27,7 +27,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     public ExternalScimService() {
         super(CustomScriptType.SCIM);
-        System.out.println(">>>>> Initializing ExternalScimService()...");
+        //System.out.println(">>>>> Initializing ExternalScimService()...");
     }
 
     public boolean executeScimCreateUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {

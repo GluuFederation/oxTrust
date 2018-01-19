@@ -127,6 +127,12 @@
                                                                 </h:panelGroup>
                                                             </ox:decorate> -->
 
+                                        <ox:decorate id="expression" label="#{msg['uma.scopeExpression']}">
+                                            <div class="col-sm-9">
+												<h:outputText value="#{gluufn:trimToLength(_resourceSet.scopeExpression, 160)}" />
+											</div>
+                                        </ox:decorate>
+
                                         <h:panelGroup>
                                             <a4j:commandButton
                                                     onclick="#{rich:component('scope:selectEntityModalPanel')}.show();"

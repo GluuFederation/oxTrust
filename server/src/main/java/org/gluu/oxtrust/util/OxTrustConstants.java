@@ -157,42 +157,8 @@ public final class OxTrustConstants extends OxConstants {
     public static final int searchGroupSizeLimit = 20;
     public static final int searchSectorIdentifierSizeLimit = 20;
     public static final int searchSizeLimit = 20;
-    
-    // SCIM
-    /**
-     * The HTTP query parameter used in a URI to select specific SCIM
-     * attributes.
-     */
-    public static final String QUERY_PARAMETER_ATTRIBUTES = "attributes";
-
-    /**
-     * The HTTP query parameter used in a URI to provide a filter expression.
-     */
-    public static final String QUERY_PARAMETER_FILTER = "filter";
-
-    /**
-     * The HTTP query parameter used in a URI to sort by a SCIM attribute.
-     */
-    public static final String QUERY_PARAMETER_SORT_BY = "sortBy";
-
-    /**
-     * The HTTP query parameter used in a URI to specify the sort order.
-     */
-    public static final String QUERY_PARAMETER_SORT_ORDER = "sortOrder";
-
-    /**
-     * The HTTP query parameter used in a URI to specify the starting index for
-     * page results.
-     */
-    public static final String QUERY_PARAMETER_START_INDEX = "startIndex";
 
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Unexpected processing error; please check the input parameters";
-
-    /**
-     * The HTTP query parameter used in a URI to specify the maximum size of a
-     * page of results.
-     */
-    public static final String QUERY_PARAMETER_COUNT = "count";
 
     public static final String PRE_REGISTRATION_SCRIPT = "PreRegistrationScript";
 

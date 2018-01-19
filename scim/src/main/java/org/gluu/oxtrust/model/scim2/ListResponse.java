@@ -1,99 +1,99 @@
 /*
  * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
  *
- * Copyright (c) 2014, Gluu
+ * Copyright (c) 2015, Gluu
  */
-
 package org.gluu.oxtrust.model.scim2;
 
-import java.io.Serializable;
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import static org.gluu.oxtrust.model.scim2.Constants.LIST_RESPONSE_SCHEMA_ID;
 
 /**
- * SCIM List Response
- * 
+ * This class models the contents of a search response. See section 3.4.2 RFC 7644.
  * @author Rahat Ali Date: 05.08.2015
  */
+/*
+ * Udpated by jgomer on 2017-10-01.
+ */
+public class ListResponse {
 
-@XmlRootElement(name = "Resources")
-@XmlAccessorType(XmlAccessType.FIELD)
-@JsonPropertyOrder({ "totalResults", "itemsPerPage", "startIndex", "schemas", "Resources" })
-@XmlType(propOrder = { "totalResults", "itemsPerPage", "startIndex", "schemas", "Resources" })
-@JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
-public class ListResponse implements Serializable {
+    private List<String> schemas;
+    private int totalResults;
+    private int startIndex;
+    private int itemsPerPage;
 
-	private static final long serialVersionUID = 433980309301930837L;
-	@XmlElement
-	private int totalResults;
-	@XmlElement
-	private int startIndex;
-	@XmlElement
-	private int itemsPerPage;  
-	// @XmlTransient
-	private List<String> schemas;
+    @JsonProperty("Resources")
+    private List<BaseScimResource> resources;
 
-	@XmlElementWrapper(name = "Resources")
-	@XmlElement(name = "Resource")
-	@JsonProperty
-	private List<Resource> Resources;
+    /**
+     * Default no arg constructor. It creates a instance of <code>ListResponse</code> with the {@link #getSchemas() schemas}
+     * properly initialized.
+     */
+    public ListResponse(){
+        initSchemas();
+    }
 
-	public ListResponse() {
-		schemas = new ArrayList<String>();
-		Resources = new ArrayList<Resource>();
-	}
+    /**
+     * Constructs a list response with the arguments supplied, and {@link #getSchemas() schemas} initialized properly.
+     * @param sindex Specifies a start index
+     * @param ippage Specifies a number of items per page
+     * @param total Specifies a total number of results
+     */
+    public ListResponse(int sindex, int ippage, int total){
+        initSchemas();
+        totalResults=total;
+        startIndex=sindex;
+        itemsPerPage=ippage;
+        resources =new ArrayList<BaseScimResource>();
+    }
 
-	public List<String> getSchemas() {
-		return this.schemas;
-	}
+    private void initSchemas(){
+        schemas=new ArrayList<String>();
+        schemas.add(LIST_RESPONSE_SCHEMA_ID);
+    }
 
-	public void setSchemas(List<String> schemas) {
-		this.schemas = schemas;
-	}
+    /**
+     * Adds the resource to the list of results of this <code>ListResponse</code>.
+     * @param resource A SCIM resource
+     */
+    public void addResource(BaseScimResource resource){
+        resources.add(resource);
+    }
 
-	public List<Resource> getResources() {
-		return this.Resources;
-	}
+    public int getTotalResults() {
+        return totalResults;
+    }
 
-	public void setResources(List<Resource> Resources) {
-		this.Resources = Resources;
-	}
+    public int getStartIndex() {
+        return startIndex;
+    }
 
-	public int getTotalResults() {
-		return totalResults;
-	}
+    public int getItemsPerPage() {
+        return itemsPerPage;
+    }
 
-	public void setTotalResults(int totalResults) {
-		this.totalResults = totalResults;
-	}
+    /**
+     * Retrieves a list with all resources contained in this <code>ListResponse</code>.
+     * @return A List of BaseScimResource objects
+     */
+    public List<BaseScimResource> getResources() {
+        return resources;
+    }
 
-	public int getStartIndex() {
-		return startIndex;
-	}
+    public void setResources(List<BaseScimResource> resources) {
+        this.resources = resources;
+    }
 
-	public void setStartIndex(int startIndex) {
-		this.startIndex = startIndex;
-	}
+    public List<String> getSchemas() {
+        return schemas;
+    }
 
-	public int getItemsPerPage() {
-		return itemsPerPage;
-	}
+    public void setSchemas(List<String> schemas) {
+        this.schemas = schemas;
+    }
 
-	public void setItemsPerPage(int itemsPerPage) {
-		this.itemsPerPage = itemsPerPage;
-	}
 }
