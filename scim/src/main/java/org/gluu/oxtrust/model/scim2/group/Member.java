@@ -79,4 +79,21 @@ public class Member {
         this.type = type;
     }
 
+    @Override
+    public boolean equals(Object obj){
+
+        if (obj!=null){
+            if (getClass().isAssignableFrom(obj.getClass())) {
+                Member other=(Member) obj;
+                return value.equalsIgnoreCase(other.getValue());
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return value==null ? "".hashCode() : value.toLowerCase().hashCode();
+    }
+
 }
