@@ -275,7 +275,16 @@
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-remove"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
-                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory}">
+                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultivaluedAttribute.value}">
+                                                                <!--   <h:graphicImage value="/img/remove.gif" />-->
+                                                                <f:param name="sv" value="1"/>
+                                                            </a4j:commandLink>
+                                                            <a4j:commandLink
+                                                                    action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+                                                                    render="selectedCustomAttributesId"
+                                                                    styleClass="glyphicon glyphicon-remove"
+                                                                    onbegin="changeAttributeVisibility('#{_aid}', true);"
+                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0}">
                                                                 <!--   <h:graphicImage value="/img/remove.gif" />-->
                                                                 <f:param name="sv" value="1"/>
                                                             </a4j:commandLink>
@@ -288,10 +297,10 @@
                                                                 <f:param name="sv" value="1"/>
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
-                                                            		action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
+                                                            		action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory,_custAttr.values[_valueIdx])}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-minus"
-                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0 }">
+                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value }">
                                                                 <!--   <h:graphicImage value="/img/remove.gif" />-->
                                                                 <f:param name="sv" value="1"/>
                                                             </a4j:commandLink>
