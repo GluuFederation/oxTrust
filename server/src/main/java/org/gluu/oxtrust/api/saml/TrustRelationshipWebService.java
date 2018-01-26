@@ -79,7 +79,7 @@ import org.xdi.util.StringHelper;
 @Path("/restv1/apis/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 @Api(value = "/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
-//@UmaSecure(scopes = {"apis_saml", "/auth/oxtrust.allow-saml-config-all", "/auth/oxtrust.allow-saml-modify-all"})
+@UmaSecure(scopes = {"apis_saml", "/auth/oxtrust.allow-saml-config-all", "/auth/oxtrust.allow-saml-modify-all"})
 public class TrustRelationshipWebService {
     
     @Inject
@@ -120,7 +120,6 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
-    //@UmaSecure("#{umaPermissionService.hasScope('apis_saml', '/auth/oxtrust.allow-saml-config-all', '/auth/oxtrust.allow-saml-modify-all')}")
     @ApiOperation(value = "read TrustRelationship", notes = "Returns a SAMLTrustRelationship", response = GluuSAMLTrustRelationship.class)
     public String read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         logger.trace("Read Trust Relationship");

@@ -6,6 +6,7 @@
 package org.gluu.oxtrust.service.uma.annotations;
 
 import java.lang.annotation.*;
+import javax.interceptor.InterceptorBinding;
 
 /**
  * Marks a class as a UMA scope resource.
@@ -14,6 +15,8 @@ import java.lang.annotation.*;
  * 
  * @author Dmitry Ognyannikov
  */
+@Inherited
+@InterceptorBinding
 @Target(value = {ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UmaSecure {
@@ -25,5 +28,5 @@ public @interface UmaSecure {
     /**
      * List of UMA scopes
      */
-    //String[] scopes() default new String[0];
+    String[] scopes() default "";
 }
