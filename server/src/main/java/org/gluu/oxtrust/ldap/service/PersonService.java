@@ -151,7 +151,7 @@ public class PersonService implements Serializable, IPersonService {
         Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
         Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-        Filter ppidFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
+        Filter ppidFilter = Filter.createSubstringFilter(OxTrustConstants.ppid, null, targetArray, null);
         Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
         Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter, ppidFilter, inumFilter);
 
