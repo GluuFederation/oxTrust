@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.service;
 
+import java.io.Serializable;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.security.Identity;
@@ -22,7 +23,9 @@ import javax.inject.Named;
  */
 @ApplicationScoped
 @Named
-public class PermissionService {
+public class PermissionService implements Serializable {
+    
+    private static final long serialVersionUID = -5283102477313448031L;
 
     @Inject
     private Logger log;
