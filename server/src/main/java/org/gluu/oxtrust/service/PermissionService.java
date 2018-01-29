@@ -25,7 +25,7 @@ import javax.inject.Named;
 @Named
 public class PermissionService implements Serializable {
     
-    private static final long serialVersionUID = -5283102477313448031L;
+    private static final long serialVersionUID = 8880839485161960537L;
 
     @Inject
     private Logger log;
