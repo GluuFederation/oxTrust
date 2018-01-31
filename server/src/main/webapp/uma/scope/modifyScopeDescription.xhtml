@@ -62,11 +62,12 @@
                                                                id="oxId" inputWidth="180" maxlength="60"
                                                                required="true" style="width:100% !important"
                                                                value="#{_scopeDescription.id}"/>
+                                            <rich:tooltip value="Scope id, for example: edit, add, http://rs.com/scope/view." target="oxId"/>  
                                         </ox:decorate>
                                         <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
                                             <rich:inplaceInput defaultLabel="Click to enter Display Name"
                                                                id="displayNameId" inputWidth="180" maxlength="60"
-                                                               required="true" style="width:100% !important"
+                                                               style="width:100% !important"
                                                                value="#{_scopeDescription.displayName}"/>
                                         </ox:decorate>
                                         
