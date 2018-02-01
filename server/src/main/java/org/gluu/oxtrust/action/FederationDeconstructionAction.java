@@ -82,8 +82,8 @@ public class FederationDeconstructionAction implements Serializable {
 	public List<String> getBulkEntities() {
 		if (bulkEntities == null) {
 			bulkEntities = new ArrayList<String>();
-			if (trustRelationship.getContainerFederation() != null) {
-				trustRelationship = trustRelationship.getContainerFederation();
+			if (trustService.getTrustContainerFederation(trustRelationship) != null) {
+				trustRelationship = trustService.getTrustContainerFederation(trustRelationship) ;
 			}
 
 			bulkEntities.addAll(trustRelationship.getGluuEntityId());

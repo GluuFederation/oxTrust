@@ -102,7 +102,7 @@ public class EntityIDMonitoringService {
 			log.trace("Evaluating TR " + tr.getDn());
 			boolean meatadataAvailable = tr.getSpMetaDataFN() != null && StringHelper.isNotEmpty(tr.getSpMetaDataFN());
 			log.trace("meatadataAvailable:" + meatadataAvailable);
-			boolean correctType = tr.getContainerFederation() == null;
+			boolean correctType = trustService.getTrustContainerFederation(tr) == null;
 			log.trace("correctType:" + correctType);
 			boolean isValidated = GluuValidationStatus.VALIDATION_SUCCESS.equals(tr.getValidationStatus());
 			log.trace("isValidated:" + isValidated);

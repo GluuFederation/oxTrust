@@ -394,7 +394,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 			} else {
 
-				String federationInum = trustRelationship.getContainerFederation().getInum();
+				String federationInum = trustService.getTrustContainerFederation(trustRelationship).getInum();
 
 				if (deconstructedMap.get(federationInum) == null) {
 					deconstructedMap.put(federationInum, new ArrayList<String>());
@@ -933,7 +933,7 @@ public class Shibboleth3ConfService implements Serializable {
 		subversionFiles.add(new SubversionFile(SHIB3_SP, spConfFolder + SHIB3_SP_SHIBBOLETH2_FILE));
 
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			if (trustRelationship.getContainerFederation() == null) {
+			if (trustService.getTrustContainerFederation(trustRelationship)  == null) {
 				subversionFiles.add(new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_FOLDER, idpMetadataFolder
 						+ trustRelationship.getSpMetaDataFN()));
 			}

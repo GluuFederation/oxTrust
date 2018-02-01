@@ -1293,8 +1293,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public SelectItem getContainerFederation() {
-		return new SelectItem(trustRelationship.getContainerFederation(),
-				trustRelationship.getContainerFederation() == null ? "Select Federation" : trustRelationship.getContainerFederation()
+		return new SelectItem(trustService.getTrustContainerFederation(trustRelationship) ,
+				trustService.getTrustContainerFederation(trustRelationship) == null ? "Select Federation" : trustService.getTrustContainerFederation(trustRelationship) 
 						.getDisplayName());
 	}
 
@@ -1345,7 +1345,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		filteredEntities = null;
 		if (StringHelper.isNotEmpty(getFilterString())) {
 			filteredEntities = new ArrayList<String>();
-			for (String entity : trustRelationship.getContainerFederation().getGluuEntityId()) {
+			for (String entity : trustService.getTrustContainerFederation(trustRelationship).getGluuEntityId()) {
 				if (entity.toLowerCase().contains(getFilterString().toLowerCase())) {
 					filteredEntities.add(entity);
 				}
@@ -1360,10 +1360,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public List<String> getAvailableEntities() {
-		if (trustRelationship.getContainerFederation() == null) {
+		if (trustService.getTrustContainerFederation(trustRelationship) == null) {
 			return null;
 		} else {
-			if (!trustRelationship.getContainerFederation().getGluuEntityId().contains(trustRelationship.getEntityId())) {
+			if (!trustService.getTrustContainerFederation(trustRelationship).getGluuEntityId().contains(trustRelationship.getEntityId())) {
 				trustRelationship.setEntityId(null);
 				availableEntities = null;
 			}
@@ -1371,8 +1371,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		if (availableEntities == null) {
 			availableEntities = new ArrayList<String>();
-			if (trustRelationship.getContainerFederation() != null) {
-				availableEntities.addAll(trustRelationship.getContainerFederation().getGluuEntityId());
+			if (trustService.getTrustContainerFederation(trustRelationship) != null) {
+				availableEntities.addAll(trustService.getTrustContainerFederation(trustRelationship).getGluuEntityId());
 			}
 
 		}
