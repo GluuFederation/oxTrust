@@ -25,18 +25,61 @@
     </prerequisites>
 	
 	<dependencies>
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxcore-ldap-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxcore-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.xdi</groupId>
-            <artifactId>oxcore-model</artifactId>
-        </dependency>
+		<!-- Gluu -->
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-ldap-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-ldap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-service</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-saml</artifactId>
+		</dependency>		
+                <!-- oxAuth -->
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxauth-model</artifactId>
+		</dependency>
+                <!-- Jackson -->
+                <dependency>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                    <version>2.9.3</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                    <version>2.9.3</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                    <version>2.9.3</version>
+                </dependency>		
+                <!-- Documentation -->
+		<dependency>
+			<groupId>com.wordnik</groupId>
+			<artifactId>swagger-annotations</artifactId>
+		</dependency>
 	</dependencies>
 	
 	<!--<build>
