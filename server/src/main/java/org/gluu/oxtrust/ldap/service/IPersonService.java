@@ -11,8 +11,8 @@ import java.util.Map;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.gluu.site.ldap.persistence.AttributeData;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.gluu.persist.model.AttributeData;
 
 public interface IPersonService {
 

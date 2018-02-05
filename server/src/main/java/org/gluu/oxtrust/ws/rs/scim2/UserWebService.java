@@ -46,12 +46,12 @@ import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.ws.rs.scim2.validators.UserValidator;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
+import org.gluu.persist.exception.mapping.EntryPersistenceException;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.SortOrder;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -120,9 +120,9 @@ public class UserWebService extends BaseScimWebService {
             } else {
                 log.info(" Searching users from LDAP ");
 
-                VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+                ListViewResponse<GluuCustomPerson> vlvResponse = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, attributesArray);
 
-                List<GluuCustomPerson> gluuCustomPersons = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
+                List<GluuCustomPerson> gluuCustomPersons = vlvResponse.getResult();
                 // List<GluuCustomPerson> personList = personService.findAllPersons(null);
 
                 ListResponse usersListResponse = new ListResponse();
@@ -195,9 +195,9 @@ public class UserWebService extends BaseScimWebService {
 
         try {
             String filterString = "id eq \"" + id + "\"";
-            VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+            ListViewResponse<GluuCustomPerson> vlvResponse = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, 1, 1, "id", SortOrder.ASCENDING.getValue(), attributesArray);
 
-            List<GluuCustomPerson> personList = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, 1, 1, "id", SortOrder.ASCENDING.getValue(), vlvResponse, attributesArray);
+            List<GluuCustomPerson> personList = vlvResponse.getResult();
             // GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
 
             if (personList == null || personList.isEmpty() || vlvResponse.getTotalResults() == 0) {

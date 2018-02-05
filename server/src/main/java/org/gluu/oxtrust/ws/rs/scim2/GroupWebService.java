@@ -43,12 +43,12 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseGroupSerialize
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
+import org.gluu.persist.exception.mapping.EntryPersistenceException;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.SortOrder;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -115,9 +115,9 @@ public class GroupWebService extends BaseScimWebService {
 			} else {
 				log.info(" Searching groups from LDAP ");
 
-				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+				ListViewResponse<GluuGroup> vlvResponse = search(groupService.getDnForGroup(null), GluuGroup.class, filterString, startIndex, count, sortBy, sortOrder, attributesArray);
 
-				List<GluuGroup> groupList = search(groupService.getDnForGroup(null), GluuGroup.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
+				List<GluuGroup> groupList = vlvResponse.getResult();
 				// List<GluuGroup> groupList = groupService.getAllGroupsList();
 
 				ListResponse groupsListResponse = new ListResponse();
@@ -158,7 +158,6 @@ public class GroupWebService extends BaseScimWebService {
 
 				return Response.ok(json).location(location).build();
 			}
-
 		} catch (Exception ex) {
 
             log.error("Error in searchGroups", ex);
@@ -190,9 +189,9 @@ public class GroupWebService extends BaseScimWebService {
 
 		try {
 			String filterString = "id eq \"" + id + "\"";
-			VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+			ListViewResponse<GluuGroup> vlvResponse = search(groupService.getDnForGroup(null), GluuGroup.class, filterString, 1, 1, "id", SortOrder.ASCENDING.getValue(), attributesArray);
 
-			List<GluuGroup> groupList = search(groupService.getDnForGroup(null), GluuGroup.class, filterString, 1, 1, "id", SortOrder.ASCENDING.getValue(), vlvResponse, attributesArray);
+			List<GluuGroup> groupList = vlvResponse.getResult();
 			// GluuGroup gluuGroup = groupService.getGroupByInum(id);
 
 			if (groupList == null || groupList.isEmpty() || vlvResponse.getTotalResults() == 0) {

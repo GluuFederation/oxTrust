@@ -32,9 +32,9 @@ import org.gluu.oxtrust.model.scim2.Role;
 import org.gluu.oxtrust.model.scim2.User;
 import org.gluu.oxtrust.model.scim2.X509Certificate;
 import org.gluu.oxtrust.util.CopyUtils2;
+import org.gluu.persist.model.base.GluuStatus;
 import org.testng.annotations.Test;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 
 import com.unboundid.util.StaticUtils;
 

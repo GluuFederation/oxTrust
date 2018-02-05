@@ -19,7 +19,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerDailyEvent;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.cdi.event.Scheduled;
@@ -102,7 +102,7 @@ public class StatusCheckerDaily {
 		GluuAppliance appliance;
 		try {
 			appliance = applianceService.getAppliance();
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to load current appliance", ex);
 			return;
 		}
@@ -115,7 +115,7 @@ public class StatusCheckerDaily {
 
 		try {
 			applianceService.updateAppliance(appliance);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to update current appliance", ex);
 			return;
 		}
@@ -131,7 +131,7 @@ public class StatusCheckerDaily {
 				} else {
 					centralLdapService.addAppliance(appliance);
 				}
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to update appliance at central server", ex);        
 				return;
 			}

@@ -7,11 +7,11 @@
 package org.gluu.oxtrust.model;
 
 import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.persist.model.base.Entry;
+import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.ldap.model.Entry;
-import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.service.cdi.util.CdiUtil;

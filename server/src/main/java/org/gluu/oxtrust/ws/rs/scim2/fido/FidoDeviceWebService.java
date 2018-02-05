@@ -44,12 +44,12 @@ import org.gluu.oxtrust.service.scim2.Scim2FidoDeviceService;
 import org.gluu.oxtrust.util.CopyUtils2;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
+import org.gluu.persist.exception.mapping.EntryPersistenceException;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.SortOrder;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -116,9 +116,9 @@ public class FidoDeviceWebService extends BaseScimWebService {
 				String baseDn = fidoDeviceService.getDnForFidoDevice(userId, null);
 				log.info("##### baseDn = " + baseDn);
 
-				VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+				ListViewResponse<GluuCustomFidoDevice> vlvResponse = search(baseDn, GluuCustomFidoDevice.class, filterString, startIndex, count, sortBy, sortOrder, attributesArray);
 
-				List<GluuCustomFidoDevice> gluuCustomFidoDevices = search(baseDn, GluuCustomFidoDevice.class, filterString, startIndex, count, sortBy, sortOrder, vlvResponse, attributesArray);
+				List<GluuCustomFidoDevice> gluuCustomFidoDevices = vlvResponse.getResult();
 
 				ListResponse devicesListResponse = new ListResponse();
 
@@ -188,9 +188,9 @@ public class FidoDeviceWebService extends BaseScimWebService {
 			log.info("##### baseDn = " + baseDn);
 
 			String filterString = "id eq \"" + id + "\"";
-			VirtualListViewResponse vlvResponse = new VirtualListViewResponse();
+			ListViewResponse<GluuCustomFidoDevice> vlvResponse = search(baseDn, GluuCustomFidoDevice.class, filterString, 1, 1, "id", SortOrder.ASCENDING.getValue(), attributesArray);
 
-			List<GluuCustomFidoDevice> gluuCustomFidoDevices = search(baseDn, GluuCustomFidoDevice.class, filterString, 1, 1, "id", SortOrder.ASCENDING.getValue(), vlvResponse, attributesArray);
+			List<GluuCustomFidoDevice> gluuCustomFidoDevices = vlvResponse.getResult();
 
 			if (gluuCustomFidoDevices == null || gluuCustomFidoDevices.isEmpty() || vlvResponse.getTotalResults() == 0) {
 				// sets HTTP status code 404 Not Found

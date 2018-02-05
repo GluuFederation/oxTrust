@@ -27,7 +27,7 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
@@ -193,7 +193,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					customScriptService.remove(oldCustomScript);
 				}
 			}
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to update custom scripts", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update custom script configuration");
 

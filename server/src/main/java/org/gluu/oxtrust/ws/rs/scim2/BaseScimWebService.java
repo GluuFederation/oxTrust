@@ -36,11 +36,11 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.SortOrder;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.oxauth.client.ClientInfoClient;
 import org.xdi.oxauth.client.ClientInfoResponse;
 import org.xdi.oxauth.model.uma.wrapper.Token;
@@ -142,7 +142,7 @@ public class BaseScimWebService {
 		return null;
 	}
 
-	public <T> List<T> search(String dn, Class<T> entryClass, String filterString, int startIndex, int count, String sortBy, String sortOrder, VirtualListViewResponse vlvResponse, String attributesArray) throws Exception {
+	public <T> ListViewResponse<T> search(String dn, Class<T> entryClass, String filterString, int startIndex, int count, String sortBy, String sortOrder, String attributesArray) throws Exception {
 
 		log.info("----------");
 		log.info(" ### RAW PARAMS ###");
@@ -270,12 +270,12 @@ public class BaseScimWebService {
 		log.info(" attributes = " + ((attributes != null && attributes.length > 0) ? new ObjectMapper().writeValueAsString(attributes) : null));
 
 		// List<T> result = ldapEntryManager.findEntriesVirtualListView(dn, entryClass, filter, startIndex, count, sortBy, sortOrderEnum, vlvResponse, attributes);
-		List<T> result = ldapEntryManager.findEntriesSearchSearchResult(dn, entryClass, filter, startIndex, count, getMaxCount(), sortBy, sortOrderEnum, vlvResponse, attributes);
+		ListViewResponse<T> result = ldapEntryManager.findListViewResponse(dn, entryClass, filter, startIndex, count, getMaxCount(), sortBy, sortOrderEnum, attributes);
 
 		log.info(" ### RESULTS INFO ###");
-		log.info(" totalResults = " + vlvResponse.getTotalResults());
-		log.info(" itemsPerPage = " + vlvResponse.getItemsPerPage());
-		log.info(" startIndex = " + vlvResponse.getStartIndex());
+		log.info(" totalResults = " + result.getTotalResults());
+		log.info(" itemsPerPage = " + result.getItemsPerPage());
+		log.info(" startIndex = " + result.getStartIndex());
 		log.info("----------");
 
 		return result;

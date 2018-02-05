@@ -17,8 +17,8 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.CentralLdapService;
-import org.gluu.site.ldap.LdapConnectionProvider;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.slf4j.Logger;
 import org.xdi.service.cdi.event.LdapStatusEvent;
 import org.xdi.service.cdi.event.Scheduled;
@@ -80,13 +80,13 @@ public class LdapStatusTimer {
     private void processInt() {
     	logConnectionProviderStatistic(ldapEntryManager, "connectionProvider");
     	
-    	if (centralLdapService.isUseCentralServer() && (ldapCentralEntryManager.getLdapOperationService() != null)) {
+    	if (centralLdapService.isUseCentralServer() && (ldapCentralEntryManager.getOperationService() != null)) {
     		logConnectionProviderStatistic(ldapCentralEntryManager, "centralConnectionProvider");
     	}
     }
 
 	public void logConnectionProviderStatistic(LdapEntryManager ldapEntryManager, String connectionProviderName) {
-		LdapConnectionProvider ldapConnectionProvider = ldapEntryManager.getLdapOperationService().getConnectionProvider();
+		LdapConnectionProvider ldapConnectionProvider = ldapEntryManager.getOperationService().getConnectionProvider();
         
         if (ldapConnectionProvider == null) {
         	log.error("{} is empty", connectionProviderName);

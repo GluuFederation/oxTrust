@@ -18,9 +18,9 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushDevice;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.base.SimpleBranch;
 import org.slf4j.Logger;
-import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.util.StringHelper;
 
 import org.gluu.search.filter.Filter;
@@ -127,7 +127,7 @@ public class PushDeviceService implements Serializable {
 	 * @return List of oxPush devices
 	 */
 	public List<PushDevice> getAllPushDevices(String... ldapReturnAttributes) {
-		return ldapEntryManager.findEntries(getDnForPushDevice(null), PushDevice.class, ldapReturnAttributes, null);
+		return ldapEntryManager.findEntries(getDnForPushDevice(null), PushDevice.class, null, ldapReturnAttributes);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class PushDeviceService implements Serializable {
 		Filter oxAuthUserIdFilter = Filter.createSubstringFilter("oxAuthUserId", null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, oxTypeFilter, oxAuthUserIdFilter);
 
-		List<PushDevice> result = ldapEntryManager.findEntries(getDnForPushDevice(null), PushDevice.class, searchFilter, 0, sizeLimit);
+		List<PushDevice> result = ldapEntryManager.findEntries(getDnForPushDevice(null), PushDevice.class, searchFilter, sizeLimit);
 
 		return result;
 	}

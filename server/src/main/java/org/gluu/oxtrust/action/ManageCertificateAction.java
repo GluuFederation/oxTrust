@@ -54,7 +54,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -445,7 +445,7 @@ public class ManageCertificateAction implements Serializable {
 			}
 
 			applianceService.updateAppliance(tmpAppliance);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
 			return false;

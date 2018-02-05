@@ -9,9 +9,9 @@ package org.gluu.oxtrust.ldap.service.uma;
 import org.gluu.search.filter.Filter;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.base.SimpleBranch;
 import org.slf4j.Logger;
-import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.oxauth.model.uma.persistence.UmaResource;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -99,7 +99,7 @@ public class ResourceSetService implements Serializable {
 	}
 	
   public List<UmaResource> getAllResources(int sizeLimit) {
-		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, 0, sizeLimit);
+		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, sizeLimit);
     }
 
 	/**
@@ -108,7 +108,7 @@ public class ResourceSetService implements Serializable {
 	 * @return List of resources
 	 */
 	public List<UmaResource> getAllResources(String... ldapReturnAttributes) {
-		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, ldapReturnAttributes, null);
+		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, ldapReturnAttributes);
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class ResourceSetService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
 
-		List<UmaResource> result = ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter, 0, sizeLimit);
+		List<UmaResource> result = ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter, sizeLimit);
 
 		return result;
 	}

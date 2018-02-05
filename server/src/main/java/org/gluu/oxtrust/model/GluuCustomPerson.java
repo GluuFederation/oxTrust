@@ -23,11 +23,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.model.helper.DateUtil;
 import org.gluu.oxtrust.model.scim2.Extension;
 import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
+import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.ldap.model.GluuBoolean;
-import org.xdi.ldap.model.GluuStatus;
 
 /**
  * Person

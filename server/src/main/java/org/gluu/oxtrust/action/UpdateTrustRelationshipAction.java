@@ -74,11 +74,11 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
@@ -245,7 +245,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		this.update = true;
 		try {
 			this.trustRelationship = trustService.getRelationshipByInum(inum);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find trust relationship {}", inum, ex);
 		}
 
@@ -406,7 +406,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			if (update) {
 				try {
 					saveTR(update);
-				} catch (LdapMappingException ex) {
+				} catch (BaseMappingException ex) {
 					log.error("Failed to update trust relationship {}", inum, ex);
 					return OxTrustConstants.RESULT_FAILURE;
 				}
@@ -416,7 +416,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				this.trustRelationship.setDn(dn);
 				try {
 					saveTR(update);
-				} catch (LdapMappingException ex) {
+				} catch (BaseMappingException ex) {
 					log.error("Failed to add new trust relationship {}", this.trustRelationship.getInum(), ex);
 					return OxTrustConstants.RESULT_FAILURE;
 				}
@@ -802,7 +802,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				GluuSAMLTrustRelationship tmpTrustRelationship = trustService.getRelationshipByInum(this.trustRelationship.getInum());
 				tmpTrustRelationship.setStatus(GluuStatus.INACTIVE);
 				saveTR(update);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to update trust relationship {}", inum, ex);
 			}
 		} else {
@@ -941,7 +941,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					svnSyncTimer.removeTrustRelationship(this.trustRelationship, identity.getCredentials().getUsername());
 				}
 				result = OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				result = OxTrustConstants.RESULT_FAILURE;
 				log.error("Failed to remove trust relationship {}", this.trustRelationship.getInum(), ex);
 			} catch (InterruptedException e) {

@@ -19,7 +19,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.xdi.oxauth.model.common.ScopeType;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -148,7 +148,7 @@ public class ScopeService implements Serializable {
 			Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 			searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 		}
-		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, searchFilter, 0, sizeLimit);
+		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, searchFilter, sizeLimit);
 
 		return result;
 	}
@@ -163,21 +163,6 @@ public class ScopeService implements Serializable {
 		String orgInum = organizationService.getInumForOrganization();
 		return orgInum + OxTrustConstants.inumDelimiter + "0009" + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
 
-	}
-
-	/**
-	 * returns a list of all scopes
-	 * 
-	 * @return list of scopes
-	 * @throws Exception
-	 */
-
-	public List<OxAuthScope> getAllScopesList() throws Exception {
-
-		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class,
-				Filter.createPresenceFilter("inum"), 0, 10);
-
-		return result;
 	}
 
 	/**

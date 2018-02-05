@@ -11,7 +11,7 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.INumGenerator;
@@ -73,7 +73,7 @@ public class SectorIdentifierService implements Serializable {
         String[] targetArray = new String[]{pattern};
         Filter searchFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
 
-        List<OxAuthSectorIdentifier> result = ldapEntryManager.findEntries(getDnForSectorIdentifier(null), OxAuthSectorIdentifier.class, searchFilter, 0, sizeLimit);
+        List<OxAuthSectorIdentifier> result = ldapEntryManager.findEntries(getDnForSectorIdentifier(null), OxAuthSectorIdentifier.class, searchFilter, sizeLimit);
 
         return result;
     }
