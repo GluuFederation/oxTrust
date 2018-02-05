@@ -120,7 +120,7 @@ public class LdapFilterListener extends ScimFilterBaseListener {
                     subfilter=STRING_EQUALS_INNER.get(ldapAttribute, subAttribute, value);
 
                 if (operator.equals(ScimOperator.NOT_EQUAL))
-                    subfilter= "!(" + subfilter + ")";
+                    subfilter= "(!" + subfilter + ")";
                 break;
             case CONTAINS:
                 if (subAttribute==null)
@@ -186,7 +186,7 @@ public class LdapFilterListener extends ScimFilterBaseListener {
                     subfilter=NUMERIC_EQUALS_INNER.get(ldapAttribute, subAttribute, value);
 
                 if (operator.equals(ScimOperator.NOT_EQUAL))
-                    subfilter= "!(" + subfilter + ")";
+                    subfilter= "(!" + subfilter + ")";
                 break;
             case GREATER_THAN:
                 if (subAttribute==null) {
@@ -235,7 +235,7 @@ public class LdapFilterListener extends ScimFilterBaseListener {
                 subfilter=BOOLEAN_EQUALS_INNER.get(ldapAttribute, subAttribute, value);
 
             if (operator.equals(ScimOperator.NOT_EQUAL))
-                subfilter= "!(" + subfilter + ")";
+                subfilter= "(!" + subfilter + ")";
         }
         else
             error=FilterUtil.getOperatorInconsistencyError(operator.getValue(), attrType.toString(), subAttribute);
