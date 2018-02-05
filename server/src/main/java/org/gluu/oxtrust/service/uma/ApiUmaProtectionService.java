@@ -19,37 +19,44 @@ import org.xdi.config.oxtrust.AppConfiguration;
  * @author Dmitry Ognyannikov
  */
 @ApplicationScoped
-@Named("apisUmaProtectionService")
-public class ApisUmaProtectionService extends BaseUmaProtectionService implements Serializable {
+@Named("apiUmaProtectionService")
+public class ApiUmaProtectionService extends BaseUmaProtectionService implements Serializable {
     
 
     @Inject
     private AppConfiguration appConfiguration;
 
+    @Override
     protected String getClientId() {
-        return appConfiguration.getApisUmaClientId();
+        return appConfiguration.getApiUmaClientId();
     }
 
+    @Override
     protected String getClientKeyStorePassword() {
-        return appConfiguration.getApisUmaClientKeyStorePassword();
+        return appConfiguration.getApiUmaClientKeyStorePassword();
     }
 
+    @Override
     protected String getClientKeyStoreFile() {
-        return appConfiguration.getApisUmaClientKeyStoreFile();
+        return appConfiguration.getApiUmaClientKeyStoreFile();
     }
 
+    @Override
     protected String getClientKeyId() {
-        return appConfiguration.getApisUmaClientKeyId();
+        return appConfiguration.getApiUmaClientKeyId();
     }
 
+    @Override
     public String getUmaResourceId() {
-        return appConfiguration.getApisUmaResourceId();
+        return appConfiguration.getApiUmaResourceId();
     }
 
+    @Override
     public String getUmaScope() {
-        return appConfiguration.getApisUmaScope();
+        return appConfiguration.getApiUmaScope();
     }
 
+    @Override
     public boolean isEnabled() {
         return isEnabledUmaAuthentication();
     }

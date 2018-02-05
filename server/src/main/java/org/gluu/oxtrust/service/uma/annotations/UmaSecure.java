@@ -21,12 +21,7 @@ import javax.interceptor.InterceptorBinding;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UmaSecure {
     /**
-     * UMA scope as single string
+     * UMA scopes as single string
      */
     String scope() default "";
-    
-    /**
-     * List of UMA scopes
-     */
-    String[] scopes() default "";
 }

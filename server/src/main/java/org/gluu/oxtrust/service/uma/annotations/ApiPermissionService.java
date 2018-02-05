@@ -24,7 +24,7 @@ import org.xdi.util.StringHelper;
  */
 @ApplicationScoped
 @Named
-public class UmaPermissionService implements Serializable {
+public class ApiPermissionService implements Serializable {
     
     private static final long serialVersionUID = 8290321709004847387L;
 

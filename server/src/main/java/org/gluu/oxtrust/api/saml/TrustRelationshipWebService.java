@@ -76,10 +76,10 @@ import org.xdi.util.StringHelper;
  * 
  * @author Dmitry Ognyannikov
  */
-@Path("/restv1/apis/saml/tr")
+@Path("/apis/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-@Api(value = "/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
-@UmaSecure(scopes = {"apis_saml", "/auth/oxtrust.allow-saml-config-all", "/auth/oxtrust.allow-saml-modify-all"})
+@Api(value = "/apis/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
+@UmaSecure(scope = "'apis_saml', '/auth/oxtrust.allow-saml-config-all', '/auth/oxtrust.allow-saml-modify-all'")
 public class TrustRelationshipWebService {
     
     @Inject
