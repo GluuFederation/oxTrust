@@ -595,8 +595,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				log.debug(pemCertPre);
 				log.debug(Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE);
 			    
-				saveCert(trustRelationship, pemCertPre);
-				saveKey(trustRelationship, keyWriter.toString());
+				shibboleth3ConfService.saveCert(trustRelationship, pemCertPre);
+				shibboleth3ConfService.saveKey(trustRelationship, keyWriter.toString());
 	    
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -699,8 +699,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		// regardless of namespace(as long as it is not more then 9 characters)
 		String certRegEx = "(?ms)(?<=<[^</>]{0,10}X509Certificate>).*(?=</[^</>]{0,10}?X509Certificate>)";
 		try {
-			saveCert(trustRelationship, certificate);
-			saveKey(trustRelationship, null);
+			shibboleth3ConfService.saveCert(trustRelationship, certificate);
+			shibboleth3ConfService.saveKey(trustRelationship, null);
 			
 			String metadataFileName = this.trustRelationship.getSpMetaDataFN();
 			File metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(metadataFileName));
@@ -714,88 +714,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	}
 
-	/**
-	 * @param trustRelationship
-	 * @param certificate
-	 */
-	private void saveCert(GluuSAMLTrustRelationship trustRelationship,
-			String certificate) {
-		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
-				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
-				+ File.separator;
-		File sslDir = new File(sslDirFN);
-		if (!sslDir.exists()) {
-			log.debug("creating directory: " + sslDirFN);
-			boolean result = sslDir.mkdir();
-			if (result) {
-				log.debug("DIR created");
 
-			}
-		}
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(
-			            new FileWriter(
-			                       sslDirFN	
-			                       + shibboleth3ConfService
-			                           .getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".crt")));
-			writer.write(Shibboleth3ConfService.PUBLIC_CERTIFICATE_START_LINE + "\n" 
-						+ certificate
-						+ Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE);
-		} catch (IOException e) {
-		} finally {
-			try {
-				if (writer != null) {
-					writer.close();
-				}
-			} catch (IOException e) {
-			}
-		}
-
-	}
-
-	/**
-	 * @param trustRelationship
-	 * @param key
-	 */
-	private void saveKey(GluuSAMLTrustRelationship trustRelationship,
-			String key) {
-		
-		
-		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
-				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
-				+ File.separator;
-		File sslDir = new File(sslDirFN);
-		if (!sslDir.exists()) {
-			log.debug("creating directory: " + sslDirFN);
-			boolean result = sslDir.mkdir();
-			if (result) {
-				log.debug("DIR created");
-
-			}
-		}
-		if(key != null){
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(sslDirFN	+ shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".key")));
-			writer.write(key);
-		} catch (IOException e) {
-		} finally {
-			try {
-				if (writer != null) {
-					writer.close();
-				}
-			} catch (IOException e) {
-			}
-		}
-		}else{
-			File keyFile = new File(sslDirFN +  shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".key"));
-			if(keyFile.exists()){
-				keyFile.delete();
-			}
-		}
-
-	}
 
 	private void markAsInactive() {
 		// Mark this configuration as not active because we don't have correct
@@ -1374,8 +1293,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public SelectItem getContainerFederation() {
-		return new SelectItem(trustRelationship.getContainerFederation(),
-				trustRelationship.getContainerFederation() == null ? "Select Federation" : trustRelationship.getContainerFederation()
+		return new SelectItem(trustService.getTrustContainerFederation(trustRelationship) ,
+				trustService.getTrustContainerFederation(trustRelationship) == null ? "Select Federation" : trustService.getTrustContainerFederation(trustRelationship) 
 						.getDisplayName());
 	}
 
@@ -1426,7 +1345,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		filteredEntities = null;
 		if (StringHelper.isNotEmpty(getFilterString())) {
 			filteredEntities = new ArrayList<String>();
-			for (String entity : trustRelationship.getContainerFederation().getGluuEntityId()) {
+			for (String entity : trustService.getTrustContainerFederation(trustRelationship).getGluuEntityId()) {
 				if (entity.toLowerCase().contains(getFilterString().toLowerCase())) {
 					filteredEntities.add(entity);
 				}
@@ -1441,10 +1360,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public List<String> getAvailableEntities() {
-		if (trustRelationship.getContainerFederation() == null) {
+		if (trustService.getTrustContainerFederation(trustRelationship) == null) {
 			return null;
 		} else {
-			if (!trustRelationship.getContainerFederation().getGluuEntityId().contains(trustRelationship.getEntityId())) {
+			if (!trustService.getTrustContainerFederation(trustRelationship).getGluuEntityId().contains(trustRelationship.getEntityId())) {
 				trustRelationship.setEntityId(null);
 				availableEntities = null;
 			}
@@ -1452,8 +1371,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		if (availableEntities == null) {
 			availableEntities = new ArrayList<String>();
-			if (trustRelationship.getContainerFederation() != null) {
-				availableEntities.addAll(trustRelationship.getContainerFederation().getGluuEntityId());
+			if (trustService.getTrustContainerFederation(trustRelationship) != null) {
+				availableEntities.addAll(trustService.getTrustContainerFederation(trustRelationship).getGluuEntityId());
 			}
 
 		}

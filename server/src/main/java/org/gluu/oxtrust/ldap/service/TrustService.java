@@ -388,7 +388,7 @@ public class TrustService implements Serializable {
 	public List<GluuSAMLTrustRelationship> getDeconstructedTrustRelationships(GluuSAMLTrustRelationship trustRelationship) {
 		List<GluuSAMLTrustRelationship> result = new ArrayList<GluuSAMLTrustRelationship>();
 		for (GluuSAMLTrustRelationship trust : getAllTrustRelationships()) {
-			if (trustRelationship.equals(trust.getContainerFederation())) {
+			if (trustRelationship.equals(getTrustContainerFederation(trust))) {
 				result.add(trust);
 			}
 		}
@@ -403,6 +403,10 @@ public class TrustService implements Serializable {
 		}
 		return null;
 	}
+        
+        public GluuSAMLTrustRelationship getTrustContainerFederation(GluuSAMLTrustRelationship trustRelationship) {
+            return getRelationshipByDn(trustRelationship.getGluuContainerFederation());
+        }
 	
 	public List<GluuSAMLTrustRelationship> searchSAMLTrustRelationships(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
