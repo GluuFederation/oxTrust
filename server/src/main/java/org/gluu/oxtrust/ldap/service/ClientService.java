@@ -24,12 +24,11 @@ import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
-
-import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with clients
@@ -202,6 +201,10 @@ public class ClientService implements Serializable {
     public List<OxAuthClient> getAllClients(int sizeLimit) {		
 		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, null, sizeLimit);
     }
+
+    public List<OxAuthClient> getAllClients() {
+		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, null);
+	}
 
     /**
      * returns oxAuthClient by Dn

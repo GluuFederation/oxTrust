@@ -5,12 +5,6 @@
  */
 package org.gluu.oxtrust.api.saml;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.Authorization;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -27,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -39,6 +34,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CharSequenceInputStream;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -52,7 +48,6 @@ import org.bouncycastle.util.encoders.Base64;
 import org.gluu.oxtrust.action.TrustContactsAction;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
-import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TrustService;
@@ -60,16 +55,23 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
+import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.TrustContact;
 import org.xdi.util.StringHelper;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
 
 /**
  * WS endpoint for TrustRelationship actions.
@@ -514,7 +516,7 @@ public class TrustRelationshipWebService {
             if (update) {
                 try {
                     saveTR(trustRelationship, update);
-                } catch (LdapMappingException ex) {
+                } catch (BaseMappingException ex) {
                     logger.error("Failed to update trust relationship {}", inum, ex);
                     return OxTrustConstants.RESULT_FAILURE;
                 }
@@ -524,7 +526,7 @@ public class TrustRelationshipWebService {
                 trustRelationship.setDn(dn);
                 try {
                         saveTR(trustRelationship, update);
-                } catch (LdapMappingException ex) {
+                } catch (BaseMappingException ex) {
                         logger.error("Failed to add new trust relationship {}", trustRelationship.getInum(), ex);
                         return OxTrustConstants.RESULT_FAILURE;
                 }

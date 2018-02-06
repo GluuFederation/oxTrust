@@ -5,38 +5,59 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import static org.gluu.oxtrust.model.scim2.Constants.MEDIA_TYPE_SCIM_JSON;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_ATTRIBUTES;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_COUNT;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_EXCLUDED_ATTRS;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_FILTER;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_SORT_BY;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_SORT_ORDER;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_START_INDEX;
+import static org.gluu.oxtrust.model.scim2.Constants.UTF8_CHARSET_FRAGMENT;
+
+import java.net.URI;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.management.InvalidAttributeValueException;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.Authorization;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.exception.SCIMException;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.service.scim2.Scim2PatchService;
-import org.gluu.oxtrust.service.scim2.interceptor.ScimAuthorization;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
+import org.gluu.oxtrust.service.scim2.interceptor.ScimAuthorization;
+import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.SortOrder;
 import org.joda.time.format.ISODateTimeFormat;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
 
-import java.net.URI;
-import java.util.List;
-
-import static org.gluu.oxtrust.model.scim2.Constants.*;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.Authorization;
 
 /**
  * Implementation of /Groups endpoint. Methods here are intercepted and/or decorated.
@@ -224,11 +245,10 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         try {
             log.debug("Executing web service method. searchGroups");
 
-            VirtualListViewResponse vlv = new VirtualListViewResponse();
-            List<BaseScimResource> resources = scim2GroupService.searchGroups(filter, sortBy, SortOrder.getByValue(sortOrder),
-                    startIndex, count, vlv, endpointUrl, userWebService.getEndpointUrl(), getMaxCount());
+            ListViewResponse<BaseScimResource> resources = scim2GroupService.searchGroups(filter, sortBy, SortOrder.getByValue(sortOrder),
+                    startIndex, count, endpointUrl, userWebService.getEndpointUrl(), getMaxCount());
 
-            String json = getListResponseSerialized(vlv.getTotalResults(), startIndex, resources, attrsList, excludedAttrsList, count==0);
+            String json = getListResponseSerialized(resources.getTotalResults(), startIndex, resources.getResult(), attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
         }
         catch (SCIMException e){

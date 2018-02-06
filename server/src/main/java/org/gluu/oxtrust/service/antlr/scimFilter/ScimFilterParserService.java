@@ -5,7 +5,11 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter;
 
-import com.unboundid.ldap.sdk.Filter;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -17,13 +21,8 @@ import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterBaseListener;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterLexer;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
-import org.slf4j.Logger;
-
 import org.gluu.search.filter.Filter;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.*;
+import org.slf4j.Logger;
 
 /**
  * @author Val Pecaoco

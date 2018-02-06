@@ -6,14 +6,15 @@
 package org.gluu.oxtrust.service.scim2;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.management.InvalidAttributeValueException;
 
-import com.unboundid.ldap.sdk.Filter;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.IGroupService;
@@ -25,28 +26,34 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
-import org.gluu.oxtrust.model.scim2.user.*;
+import org.gluu.oxtrust.model.scim2.user.Address;
+import org.gluu.oxtrust.model.scim2.user.Email;
+import org.gluu.oxtrust.model.scim2.user.Entitlement;
+import org.gluu.oxtrust.model.scim2.user.Group;
+import org.gluu.oxtrust.model.scim2.user.InstantMessagingAddress;
+import org.gluu.oxtrust.model.scim2.user.Name;
+import org.gluu.oxtrust.model.scim2.user.PhoneNumber;
+import org.gluu.oxtrust.model.scim2.user.Photo;
+import org.gluu.oxtrust.model.scim2.user.Role;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.user.X509Certificate;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.persist.exception.mapping.EntryPersistenceException;
-import org.gluu.persist.exception.operation.DuplicateEntryException;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.SortOrder;
+import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.persist.model.base.GluuStatus;
+import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
-
-import static org.xdi.ldap.model.GluuBoolean.*;
 
 /**
  * This class holds the most important business logic of the SCIM service for the resource type "User". It's devoted to
@@ -174,7 +181,7 @@ public class Scim2UserService implements Serializable {
         //Why are both gluuStatus and oxTrustActive used for active? it's for active being used in filter queries?
         Boolean active=res.getActive()!=null && res.getActive();
         person.setAttribute("oxTrustActive", active.toString());
-        person.setAttribute("gluuStatus", active ? ACTIVE.getValue() : INACTIVE.getValue());
+        person.setAttribute("gluuStatus", active ? GluuStatus.ACTIVE.getValue() : GluuStatus.INACTIVE.getValue());
         person.setUserPassword(res.getPassword());
 
         person.setAttribute("oxTrustEmail", getComplexMultivaluedAsArray(res.getEmails()));
@@ -461,8 +468,8 @@ public class Scim2UserService implements Serializable {
 
     }
 
-    public List<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
-                                              VirtualListViewResponse vlvResponse, String url, int maxCount) throws Exception{
+    public ListViewResponse<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
+                                              String url, int maxCount) throws Exception{
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", UserResource.class);
         //Transform scim attribute to LDAP attribute
@@ -471,17 +478,22 @@ public class Scim2UserService implements Serializable {
         log.info("Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        List<GluuCustomPerson> list=ldapEntryManager.findEntriesSearchSearchResult(personService.getDnForPerson(null),
-                GluuCustomPerson.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, vlvResponse, null);
+        ListViewResponse<GluuCustomPerson> list=ldapEntryManager.findListViewResponse(personService.getDnForPerson(null),
+                GluuCustomPerson.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, null);
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
-        for (GluuCustomPerson person : list){
+        for (GluuCustomPerson person : list.getResult()){
             UserResource scimUsr=new UserResource();
             transferAttributesToUserResource(person, scimUsr, url);
             resources.add(scimUsr);
         }
-        log.info ("Found {} matching entries - returning {}", vlvResponse.getTotalResults(), list.size());
-        return resources;
+        log.info ("Found {} matching entries - returning {}", list.getTotalResults(), list.getResult().size());
+
+        ListViewResponse<BaseScimResource> result = new ListViewResponse<BaseScimResource>();
+        result.setResult(resources);
+        result.setTotalResults(list.getTotalResults());
+
+        return result;
 
     }
 

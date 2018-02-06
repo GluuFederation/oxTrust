@@ -5,20 +5,20 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
-import com.unboundid.ldap.sdk.Filter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.scim2.Group;
-import org.gluu.oxtrust.service.external.ExternalScimService;
-import org.gluu.oxtrust.util.CopyUtils2;
-import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.persist.exception.mapping.EntryPersistenceException;
-import org.gluu.persist.exception.operation.DuplicateEntryException;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
@@ -26,19 +26,14 @@ import org.gluu.oxtrust.model.scim2.group.Member;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.SortOrder;
+import org.gluu.persist.model.base.GluuStatus;
+import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
-import org.xdi.ldap.model.GluuStatus;
-import org.xdi.ldap.model.SortOrder;
-import org.xdi.ldap.model.VirtualListViewResponse;
 import org.xdi.util.Pair;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * @author Val Pecaoco
@@ -217,8 +212,8 @@ public class Scim2GroupService implements Serializable {
 
     }
 
-    public List<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
-                                               VirtualListViewResponse vlvResponse, String groupsUrl, String usersUrl, int maxCount) throws Exception{
+    public ListViewResponse<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
+                                               String groupsUrl, String usersUrl, int maxCount) throws Exception{
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", GroupResource.class);
         //Transform scim attribute to LDAP attribute
@@ -227,11 +222,11 @@ public class Scim2GroupService implements Serializable {
         log.info("Executing search for groups using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        List<GluuGroup> list=ldapEntryManager.findEntriesSearchSearchResult(groupService.getDnForGroup(null),
-                GluuGroup.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, vlvResponse, null);
+        ListViewResponse<GluuGroup> list=ldapEntryManager.findListViewResponse(groupService.getDnForGroup(null),
+                GluuGroup.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, null);
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
-        for (GluuGroup group: list){
+        for (GluuGroup group: list.getResult()){
             GroupResource scimGroup=new GroupResource();
             transferAttributesToGroupResource(group, scimGroup, groupsUrl, usersUrl);
             //TODO: Delete this IF in the future - added for backwards compatibility with SCIM-Client <= 3.1.2.
@@ -240,8 +235,13 @@ public class Scim2GroupService implements Serializable {
 
             resources.add(scimGroup);
         }
-        log.info ("Found {} matching entries - returning {}", vlvResponse.getTotalResults(), list.size());
-        return resources;
+        log.info ("Found {} matching entries - returning {}", list.getTotalResults(), list.getResult().size());
+        
+        ListViewResponse<BaseScimResource> result = new ListViewResponse<BaseScimResource>();
+        result.setResult(resources);
+        result.setTotalResults(list.getTotalResults());
+
+        return result;
 
     }
 

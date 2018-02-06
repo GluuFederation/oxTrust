@@ -247,7 +247,7 @@ public class PersonService implements Serializable, IPersonService {
         Filter filter = Filter.createORFilter(mailidFilters);
 
         List<GluuCustomPerson> result = ldapEntryManager
-                .findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, filter);
+                .findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
 
         return result;
     }

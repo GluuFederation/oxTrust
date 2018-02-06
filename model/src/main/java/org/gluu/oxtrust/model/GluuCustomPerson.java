@@ -9,20 +9,10 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.oxtrust.model.helper.DateUtil;
-import org.gluu.oxtrust.model.scim2.Extension;
-import org.gluu.oxtrust.model.scim2.ExtensionFieldType;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
@@ -47,7 +37,6 @@ public class GluuCustomPerson extends User
 
     @LdapAttribute(name = "gluuWhitePagesListed")
     private String gluuAllowPublication;
-    
 
     @LdapAttribute(name = "oxGuid")
     private String guid;
@@ -60,19 +49,15 @@ public class GluuCustomPerson extends User
     
     @LdapAttribute(name = "oxPPID")
     private List<String> oxPPID;
-    
+
     @LdapAttribute(name = "oxExternalUid")
     private List<String> oxExternalUid;
 
-	@LdapAttribute(name = "oxCreationTimestamp")
-    private Date creationDate;	
+    @LdapAttribute(name = "oxCreationTimestamp")
+    private Date creationDate;
 
-	@LdapAttribute
-    private Date updatedAt;	
-
-	// Value object holders
-    private Set<String> schemas = new HashSet<String>();
-    private Map<String, Extension> extensions = new HashMap<String, Extension>();
+    @LdapAttribute
+    private Date updatedAt;
 
     public String getIname() {
         return getAttribute("iname");
@@ -322,68 +307,20 @@ public class GluuCustomPerson extends User
 		this.updatedAt = updatedAt;
 	}
 
-	public Set<String> getSchemas() {
-        return Collections.unmodifiableSet(schemas);
-    }
-
-    public void setSchemas(Set<String> schemas) {
-        this.schemas = schemas;
-    }
-
-    public Map<String, Extension> getExtensions() {
-        return Collections.unmodifiableMap(extensions);
-    }
-    
-    public Map<String, Extension> fetchExtensions() {
-        return extensions;
-    }
-    
     public List<String> getOxExternalUid() {
-		return oxExternalUid;
-	}
+        return oxExternalUid;
+    }
 
-	public void setOxExternalUid(List<String> oxExternalUid) {
-		this.oxExternalUid = oxExternalUid;
-	}
+    public void setOxExternalUid(List<String> oxExternalUid) {
+        this.oxExternalUid = oxExternalUid;
+    }
 
-	public List<String> getOxPPID() {
-		return oxPPID;
-	}
+    public List<String> getOxPPID() {
+        return oxPPID;
+    }
 
-	public void setOxPPID(List<String> oxPPID) {
-		this.oxPPID = oxPPID;
-	}
-
-    public void setExtensions(Map<String, Extension> extensions) throws Exception {
-
-        this.extensions = extensions;
-
-        for (Map.Entry<String, Extension> extensionEntry : extensions.entrySet()) {
-
-            Extension extension = extensionEntry.getValue();
-
-            for (Map.Entry<String, Extension.Field> fieldEntry : extension.getFields().entrySet()) {
-                String value=fieldEntry.getValue().getValue();
-
-                if (value != null) {
-                    if (fieldEntry.getValue().isMultiValued()) {
-
-                        ObjectMapper mapper = new ObjectMapper();
-                        mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-                        String[] values = mapper.readValue(value, String[].class);
-                        setAttribute(fieldEntry.getKey(), values);
-                    }
-                    else{
-                        if (fieldEntry.getValue().getType().equals(ExtensionFieldType.DATE_TIME)){
-                            //In the extension object, single valued dates are stored in ISO time, so convert to LDAP suitable format
-                            value=DateUtil.ISOToGeneralizedStringDate(value);
-                        }
-                        setAttribute(fieldEntry.getKey(), value);
-                    }
-                }
-            }
-        }
+    public void setOxPPID(List<String> oxPPID) {
+        this.oxPPID = oxPPID;
     }
 
 	/* (non-Javadoc)
