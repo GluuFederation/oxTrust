@@ -2,9 +2,8 @@ package org.gluu.oxtrust.model.passport;
 
 /**
  * @author Shekhar L.
- * @Date 07/17/2016
+ * @version 07/17/2016
  */
-
 public class PassportStrategy {
 
 	private String clientID;
