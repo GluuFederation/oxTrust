@@ -168,7 +168,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public void setGluuEntityId(Set<String> gluuEntityId) {
 		this.gluuEntityId = new ArrayList<String>(gluuEntityId);
 	}
-	/**
+	/*
 	 * This method is for ldap persistance only. For purposes of crud - please use setGluuEntityId(Set<String> gluuEntityId)
 	 */
 	@Deprecated
@@ -177,7 +177,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	}
 
 
-	/**
+	/*
 	 * This method returns entityId for site TRs only.
 	 */
 	public String getEntityId() {
