@@ -15,7 +15,7 @@ import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.IUserWebService;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.slf4j.Logger;
 
 import javax.annotation.Priority;
