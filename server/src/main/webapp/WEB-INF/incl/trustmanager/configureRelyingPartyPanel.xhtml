@@ -78,7 +78,7 @@
         <h:form>
             <h:panelGrid columns="1" id="RelyingPartyMenu" width="700"  style="margin: 0 auto; ">
                 <rich:pickList id="profileConfigurationSelection" value="#{relyingPartyAction.profileConfigurations}"
-                    listsHeight="150" listWidth="230" sourceCaption="#{msg['trustmanager.availableProfileConfigurations']}" targetCaption="#{msg['trustmanager.selectedProfileConfigurations']}">
+                    listsHeight="150" listWidth="330" sourceCaption="#{msg['trustmanager.availableProfileConfigurations']}" targetCaption="#{msg['trustmanager.selectedProfileConfigurations']}">
 
                     <f:selectItems value="#{relyingPartyAction.availableProfileConfigurations}" var="item" itemValue="#{item}" itemLabel="#{item}" />
                     <f:converter converterId="profileConfigurationConverter" />
@@ -87,7 +87,7 @@
                 </rich:pickList>
 
                 <h:panelGroup id="ProfileConfigurationConfigMenu">
-                    <h:panelGroup style="overflow:auto; height: 300px; width: 900px;" layout="block" rendered="#{relyingPartyAction.profileConfigurations.size() > 0}">
+                    <h:panelGroup style="overflow:auto; height: 300px; width: 100%;" layout="block" rendered="#{relyingPartyAction.profileConfigurations.size() > 0}">
                         <!--
                         <ui:decorate template="/WEB-INF/incl/trustmanager/profileConfiguration/saml1sso.xhtml">
                             <ui:param name="_relyingPartyAction" value="#{relyingPartyAction}" />
