@@ -12,8 +12,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.OpenIdService;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.*;
 import org.xdi.service.JsonService;
@@ -153,7 +153,7 @@ public class JsonConfigurationService implements Serializable {
 			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
 
 			return conf;
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
 
@@ -165,7 +165,7 @@ public class JsonConfigurationService implements Serializable {
 			configurationDn = configurationDn.replace("ou=oxtrust", "ou=oxauth");
 			LdapOxAuthConfiguration conf = ldapEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
 			return conf;
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
 

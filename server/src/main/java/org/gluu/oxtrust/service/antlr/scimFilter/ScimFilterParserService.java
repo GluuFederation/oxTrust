@@ -19,6 +19,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.slf4j.Logger;
 
+import org.gluu.search.filter.Filter;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,7 +29,6 @@ import java.util.*;
  * @author Val Pecaoco
  * Re-engineered by jgomer on 2017-12-09.
  */
-@Stateless
 @Named
 public class ScimFilterParserService {
 

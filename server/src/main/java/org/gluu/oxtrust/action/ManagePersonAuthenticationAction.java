@@ -36,12 +36,12 @@ import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.LDAPConnectionProvider;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
+import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
@@ -211,7 +211,7 @@ public class ManagePersonAuthenticationAction
 			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
 
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
 			return OxTrustConstants.RESULT_FAILURE;
@@ -338,7 +338,7 @@ public class ManagePersonAuthenticationAction
 			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
-			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(
+			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(
 					PropertiesDecrypter.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();

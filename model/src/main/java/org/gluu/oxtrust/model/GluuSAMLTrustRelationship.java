@@ -24,6 +24,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import org.gluu.oxtrust.ldap.service.TrustService;
+import org.gluu.persist.model.base.GluuStatus;
+import org.gluu.persist.model.base.InumEntry;
+import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.gluu.site.ldap.persistence.annotation.LdapEntry;
+import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;

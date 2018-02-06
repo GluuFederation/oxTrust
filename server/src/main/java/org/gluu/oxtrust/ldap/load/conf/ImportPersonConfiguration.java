@@ -18,7 +18,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
+import org.gluu.persist.exception.mapping.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.ImportPerson;
 import org.xdi.model.GluuAttribute;

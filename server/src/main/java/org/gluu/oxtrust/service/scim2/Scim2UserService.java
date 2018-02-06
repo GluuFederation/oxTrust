@@ -31,6 +31,10 @@ import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
+import org.gluu.persist.exception.mapping.EntryPersistenceException;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
@@ -52,7 +56,6 @@ import static org.xdi.ldap.model.GluuBoolean.*;
  * @author Val Pecaoco
  * Re-engineered by jgomer on 2017-09-15.
  */
-@Stateless
 @Named
 public class Scim2UserService implements Serializable {
 

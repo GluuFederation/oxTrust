@@ -35,7 +35,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -86,7 +86,6 @@ public class UpdateOrganizationAction implements Serializable {
 	@Inject
 	private AppInitializer appInitializer;
 
-
     @Inject
 	private MailService mailService;
 
@@ -118,7 +117,6 @@ public class UpdateOrganizationAction implements Serializable {
 	private LdapOxAuthConfiguration  ldapOxAuthConfiguration;
 
 	private SmtpConfiguration smtpConfiguration;
-
 
 	public String modify()  {
 		if (this.initialized) {
@@ -157,7 +155,7 @@ public class UpdateOrganizationAction implements Serializable {
 				log.error("Failed to load organization", ex);
 				this.organization = null;
 			}
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to load organization", ex);
 		}
 
@@ -193,7 +191,7 @@ public class UpdateOrganizationAction implements Serializable {
 			 if(webKeysSettings == null){
 				 webKeysSettings = new WebKeysSettings(); 
 			 } 			 
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
 	}
@@ -229,7 +227,7 @@ public class UpdateOrganizationAction implements Serializable {
 			/* Resolv.conf update */
 			// saveDnsInformation(); // This will be handled by puppet.
 			/* Resolv.conf update */
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to update organization", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update organization");
 

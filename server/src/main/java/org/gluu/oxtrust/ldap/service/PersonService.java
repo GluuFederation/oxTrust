@@ -26,16 +26,16 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.gluu.site.ldap.persistence.AttributeData;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.AttributeData;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with persons
@@ -121,7 +121,7 @@ public class PersonService implements Serializable, IPersonService {
     @Override
     public void removePerson(GluuCustomPerson person) {
         // Remove person
-        ldapEntryManager.removeWithSubtree(person.getDn());
+        ldapEntryManager.removeRecursively(person.getDn());
     }
 
     /* (non-Javadoc)
@@ -136,7 +136,7 @@ public class PersonService implements Serializable, IPersonService {
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
         Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
 
-        List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, 0, sizeLimit);
+        List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
 
         return result;
     }
@@ -155,7 +155,7 @@ public class PersonService implements Serializable, IPersonService {
         Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
         Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter, ppidFilter, inumFilter);
 
-        List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, 0);
+        List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter);
 
         return result;
     }
@@ -166,7 +166,7 @@ public class PersonService implements Serializable, IPersonService {
     @Override
     public List<GluuCustomPerson> findPersons(GluuCustomPerson person, int sizeLimit) {
         person.setBaseDn(getDnForPerson(null));
-        return ldapEntryManager.findEntries(person, 0, sizeLimit);
+        return ldapEntryManager.findEntries(person, sizeLimit);
     }
 
     /* (non-Javadoc)
@@ -200,7 +200,7 @@ public class PersonService implements Serializable, IPersonService {
             searchFilter = Filter.createANDFilter(orFilter, notFilter);
         }
 
-        List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, 0, sizeLimit);
+        List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
 
         return result;
 
@@ -211,7 +211,7 @@ public class PersonService implements Serializable, IPersonService {
      */
     @Override
     public List<GluuCustomPerson> findAllPersons(String[] returnAttributes)  {
-        List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, null);
+        List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, null, returnAttributes);
 
         return result;
     }
@@ -229,7 +229,7 @@ public class PersonService implements Serializable, IPersonService {
         Filter filter = Filter.createORFilter(uidFilters);
 
         List<GluuCustomPerson> result = ldapEntryManager
-                .findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, filter);
+                .findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
 
         return result;
     }

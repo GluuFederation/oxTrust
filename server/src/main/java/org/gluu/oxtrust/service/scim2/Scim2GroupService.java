@@ -11,6 +11,14 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.scim2.Group;
+import org.gluu.oxtrust.service.external.ExternalScimService;
+import org.gluu.oxtrust.util.CopyUtils2;
+import org.gluu.oxtrust.util.ServiceUtil;
+import org.gluu.persist.exception.mapping.EntryPersistenceException;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
@@ -36,7 +44,6 @@ import java.util.*;
  * @author Val Pecaoco
  * Re-engineered by jgomer on 2017-10-18.
  */
-@Stateless
 @Named
 public class Scim2GroupService implements Serializable {
 

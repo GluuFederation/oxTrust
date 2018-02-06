@@ -23,7 +23,7 @@ import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
@@ -98,7 +98,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
             if(sectorIdentifier.getClientIds() != null && sectorIdentifier.getClientIds().size()>0)
             	this.loginUris.addAll(clientRedirectUriList(sectorIdentifier.getClientIds()));
             this.clientDisplayNameEntries = loadClientDisplayNameEntries();
-        } catch (LdapMappingException ex) {
+        } catch (BaseMappingException ex) {
             log.error("Failed to load login Uris", ex);
 
             facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
@@ -131,7 +131,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         try {
             log.info("inum : " + inum);
             this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierByInum(inum);
-        } catch (LdapMappingException ex) {
+        } catch (BaseMappingException ex) {
             log.error("Failed to find sector identifier {}", inum, ex);
         }
 
@@ -169,7 +169,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
         List<DisplayNameEntry> oldClientDisplayNameEntries = null;
         try {
             oldClientDisplayNameEntries = loadClientDisplayNameEntries();
-        } catch (LdapMappingException ex) {
+        } catch (BaseMappingException ex) {
             log.info("error getting old clients");
             log.error("Failed to load client display names", ex);
 
@@ -184,7 +184,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
             try {
                 sectorIdentifierService.updateSectorIdentifier(this.sectorIdentifier);
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
-            } catch (LdapMappingException ex) {
+            } catch (BaseMappingException ex) {
                 log.info("error updating sector identifier ", ex);
                 log.error("Failed to update sector identifier {}", this.inum, ex);
 
@@ -205,7 +205,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
             try {
                 sectorIdentifierService.addSectorIdentifier(this.sectorIdentifier);
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
-            } catch (LdapMappingException ex) {
+            } catch (BaseMappingException ex) {
                 log.info("error saving sector identifier ");
                 log.error("Failed to add new sector identifier {}", this.sectorIdentifier.getInum(), ex);
 
@@ -234,7 +234,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-            } catch (LdapMappingException ex) {
+            } catch (BaseMappingException ex) {
                 log.error("Failed to remove sector identifier {}", this.sectorIdentifier.getInum(), ex);
             }
         }

@@ -10,8 +10,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import org.gluu.persist.model.base.Entry;
 import org.gluu.site.ldap.persistence.annotation.LdapCustomObjectClass;
-import org.xdi.ldap.model.Entry;
 import org.xdi.util.StringHelper;
 
 /**

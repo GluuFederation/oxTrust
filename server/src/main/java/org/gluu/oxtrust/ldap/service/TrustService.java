@@ -24,11 +24,11 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.base.GluuStatus;
+import org.gluu.persist.model.base.InumEntry;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
-import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.TrustContact;
 import org.xdi.service.MailService;
@@ -36,7 +36,7 @@ import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with trust relationships
@@ -416,13 +416,13 @@ public class TrustService implements Serializable {
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, inumFilter);
 
-		List<GluuSAMLTrustRelationship> result = ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, searchFilter, 0, sizeLimit);
+		List<GluuSAMLTrustRelationship> result = ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, searchFilter, sizeLimit);
 
 		return result;
 	}
 	
 	public List<GluuSAMLTrustRelationship> getAllSAMLTrustRelationships(int sizeLimit) {		
-			return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null, 0, sizeLimit);
+			return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null, sizeLimit);
 	}
 
 	/**

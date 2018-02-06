@@ -18,8 +18,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.site.ldap.persistence.DeleteNotifier;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.event.DeleteNotifier;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 

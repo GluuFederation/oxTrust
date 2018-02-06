@@ -14,7 +14,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;

@@ -18,7 +18,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;

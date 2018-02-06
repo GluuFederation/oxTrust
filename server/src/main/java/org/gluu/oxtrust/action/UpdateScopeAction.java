@@ -26,7 +26,7 @@ import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuAttribute;
@@ -106,7 +106,7 @@ public class UpdateScopeAction implements Serializable {
 				this.claims = new ArrayList<DisplayNameEntry>();
 			}
 
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to load scopes", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
 
@@ -132,7 +132,7 @@ public class UpdateScopeAction implements Serializable {
 
 			log.debug("inum : " + this.inum);
 			this.scope = scopeService.getScopeByInum(this.inum);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find scope {}", inum, ex);
 
 		}
@@ -154,7 +154,7 @@ public class UpdateScopeAction implements Serializable {
 			}
 			this.dynamicScripts = getInitialDynamicScripts();
 
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to load claims", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load scope");
 
@@ -198,7 +198,7 @@ public class UpdateScopeAction implements Serializable {
 			// Update scope
 			try {
 				scopeService.updateScope(this.scope);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to update scope {}", this.inum, ex);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope '#{updateScopeAction.scope.displayName}'");
@@ -260,7 +260,7 @@ public class UpdateScopeAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to remove scope {}", this.scope.getInum(), ex);
 
 			}
@@ -511,7 +511,7 @@ public class UpdateScopeAction implements Serializable {
 			
 			this.availableDynamicScripts = tmpAvailableDynamicScripts;
 			selectAddedDynamicScripts();
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find available authorization policies", ex);
 		}
 
