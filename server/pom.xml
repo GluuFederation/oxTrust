@@ -246,6 +246,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-persist-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
 			<artifactId>oxcore-ldap</artifactId>
 		</dependency>
 		<dependency>
